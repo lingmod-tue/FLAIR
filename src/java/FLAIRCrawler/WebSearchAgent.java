@@ -6,14 +6,14 @@ import java.util.ArrayList;
  *
  * @author shadeMe
  */
-public interface WebSearchAgent
+public abstract class WebSearchAgent
 {
     public static final int			MAX_SEARCH_RESULTS = 100;
     public static final ArrayList<String>	BLACKLISTED_URLS = new ArrayList<>();
     
-    public boolean			hasResults();
-    public ArrayList<SearchResult>	getResults();
-    public void				performSearch();
+    public abstract boolean			hasResults();
+    public abstract ArrayList<SearchResult>	getResults();
+    public abstract void			performSearch();
     
     public static boolean isBlacklistPopulated() {
 	return BLACKLISTED_URLS.isEmpty() == false;

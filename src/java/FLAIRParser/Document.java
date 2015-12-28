@@ -5,20 +5,20 @@
  */
 package FLAIRParser;
 
-import FLAIRCrawler.SearchResult;
+import FLAIRGrammar.Construction;
 import java.util.StringTokenizer;
 
 /**
  * Represents a text document that's parsed by the NLP Parser
  * @author shadeMe
  */
-public class Document 
+public class Document implements AbstractDocument
 {
     private static final String		        READABILITY_LEVEL_A = "LEVEL-a";
     private static final String		        READABILITY_LEVEL_B = "LEVEL-b";
     private static final String			READABILITY_LEVEL_C = "LEVEL-c";
 
-    private final SearchResult			parentSearchResult;
+    private final AbstractDocumentSource	source;
     private final double			readabilityScore;
     private final String			readabilityLevel;	// calculate from the readability score
     private final ConstructionDataCollection	constructionData;
@@ -32,17 +32,16 @@ public class Document
     private double				avgTreeDepth;
 
     private int					tokenCount;		// no of words "essentailly" (kinda), formerly known as "docLength". updated with the dependency count after parsing
-    private double				fancyDocLength;	// ### TODO better name needed, formerly "docLenTfIdf"
+    private double				fancyDocLength;	    // ### TODO better name needed, formerly "docLenTfIdf"
     
-    public Document(SearchResult parent)
+    public Document(AbstractDocumentSource parent)
     {
 	assert parent != null;
-	assert parent.isTextFetched() == true;
 	
-	parentSearchResult = parent;
+	source = parent;
 	constructionData = new ConstructionDataCollection(new DocumentConstructionDataFactory(this));
 	
-	String pageText = parentSearchResult.getPageText();
+	String pageText = source.getSourceText();
 	StringTokenizer tokenizer = new StringTokenizer(pageText, " ");
 	
 	// calculate readability score, level, etc
@@ -73,10 +72,12 @@ public class Document
 	avgWordLength = avgSentenceLength = avgTreeDepth = fancyDocLength = 0;
     }
     
+    @Override
     public String getText() {
-	return parentSearchResult.getPageText();
+	return source.getSourceText();
     }
     
+    @Override
     public DocumentConstructionData getConstructionData(Construction type)
     {
 	return (DocumentConstructionData)constructionData.getData(type);
@@ -100,35 +101,51 @@ public class Document
 	fancyDocLength = squareRoot;
     }
     
+    @Override
+    public double getReadabilityScore() {
+	return readabilityScore;
+    }
     
+    @Override
     public String getReadabilityLevel() {
 	return readabilityLevel;
     }
     
+    @Override
     public int getNumCharacters() {
 	return numCharacters;
     }
     
+    @Override
     public int getNumSentences() {
 	return numSentences;
     }
     
+    /**
+     *
+     * @return
+     */
+    @Override
     public int getNumDependencies() {
 	return numDependencies;
     }
     
+    @Override
     public double getAvgWordLength() {
 	return avgWordLength;
     }
     
+    @Override
     public double getAvgSentenceLength() {
 	return avgSentenceLength;
     }
     
+    @Override
     public double getAvgTreeDepth() {
 	return avgTreeDepth;
     }
     
+    @Override
     public int getLength() {
 	return tokenCount;
     }
@@ -141,31 +158,47 @@ public class Document
 	return fancyDocLength;
     }
     
+    @Override
     public void setNumCharacters(int value) {
 	numCharacters = value;
     }
     
+    @Override
     public void setNumSentences(int value) {
 	numSentences = value;
     }
     
+    @Override
     public void setNumDependencies(int value) {
 	numDependencies = value;
     }
     
+    @Override
     public void setAvgWordLength(double value) {
 	avgWordLength = value;
     }
     
+    @Override
     public void setAvgSentenceLength(double value) {
 	avgSentenceLength = value;
     }
     
+    @Override
     public void setAvgTreeDepth(double value) {
 	avgTreeDepth = value;
     }
     
+    @Override
     public void setLength(int value) {
 	tokenCount = value;
+    }
+}
+
+class DocumentFactory implements AbstractDocumentFactory
+{
+    @Override
+    public AbstractDocument create(AbstractDocumentSource source)
+    {
+	return new Document(source);
     }
 }

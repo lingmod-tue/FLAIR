@@ -5,6 +5,8 @@
  */
 package FLAIRParser;
 
+import FLAIRGrammar.Construction;
+
 /**
  * Basic interface for construction specific data
  * @author shadeMe

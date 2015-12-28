@@ -112,6 +112,8 @@ public class SearchResult
 		stream.setByteStream(pageURL.openStream());
 		
 		pageText = DefaultExtractor.INSTANCE.getText(stream);
+		if (pageText.isEmpty())
+		    return false;
 		
 		// ensure that all EOL punctuation marks are periods
 		StringBuilder textWriter = new StringBuilder();

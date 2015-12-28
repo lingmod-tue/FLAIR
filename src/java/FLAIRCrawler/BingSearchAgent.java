@@ -9,10 +9,10 @@ import net.billylieurance.azuresearch.AzureSearchWebResult;
  *
  * @author shadeMe
  */
-public class BingSearchAgent implements WebSearchAgent
+public class BingSearchAgent extends WebSearchAgent
 {
-    private static final String		API_KEY = "CV3dQG6gOI3fO9wOHdArFimFprbt1Q3ZjMzYGhJaTFA";
-    private static final int		RESULTS_PER_PAGE = 15;
+    private static final String			API_KEY = "CV3dQG6gOI3fO9wOHdArFimFprbt1Q3ZjMzYGhJaTFA";
+    private static final int			RESULTS_PER_PAGE = 15;
     
     private final String			query;
     private final int				numResults;
@@ -30,10 +30,12 @@ public class BingSearchAgent implements WebSearchAgent
     }
     
     
+    @Override
     public boolean hasResults() {
 	return cachedResults.isEmpty() == false;
     }
     
+    @Override
     public ArrayList<SearchResult> getResults() {
 	return cachedResults;
     }
@@ -62,6 +64,7 @@ public class BingSearchAgent implements WebSearchAgent
 	}
     }
     
+    @Override
     public void performSearch()
     {
 	AzureSearchWebQuery azureQuery = new AzureSearchWebQuery();

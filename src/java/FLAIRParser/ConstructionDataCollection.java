@@ -5,6 +5,7 @@
  */
 package FLAIRParser;
 
+import FLAIRGrammar.Construction;
 import java.util.EnumMap;
 
 /**

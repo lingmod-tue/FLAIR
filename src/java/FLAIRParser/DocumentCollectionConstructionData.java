@@ -5,6 +5,9 @@
  */
 package FLAIRParser;
 
+import FLAIRGrammar.Construction;
+
+
 /**
  * Represent the properties of a construction in the larger domain of a set of (related) documents
  * @author shadeMe
@@ -28,7 +31,30 @@ public class DocumentCollectionConstructionData extends AbstractConstructionData
 	invertedDocFrequency = docFrequency = 0;
     }
     
+   public int getTotalCount() {
+       return totalCount;
+   }
    
+   public double getAverageCount() {
+       return averageCount;
+   } 
+   
+   public int getDocFrequency() {
+       return docFrequency;
+   }
+   
+   public double getInvertedDocFrequency() {
+       return invertedDocFrequency;
+   }
+   
+   public void calculateData(int totalDocCount, int occurrencesInCollection, int numDocsWithOccurrences)
+   {
+       totalCount = occurrencesInCollection;
+       docFrequency = numDocsWithOccurrences;
+       
+       averageCount = (double)totalCount / (double)totalDocCount;
+       invertedDocFrequency = Math.log10((1 + totalDocCount) / docFrequency);
+   }
 }
 
 

@@ -16,7 +16,8 @@ import parsing.Construction;
 import parsing.Occurrence;
 
 /**
- *
+ * Represents the 
+ * 
  * @author Maria
  */
 public class Document implements java.io.Serializable {
@@ -34,6 +35,7 @@ public class Document implements java.io.Serializable {
     private String text; // from Boilerpipe
 
     // distribution of grammatical structures in this doc
+    // !!! all of the 
     private ArrayList<String> constructions; // the order will be taken from DeepParserCoreNLP initializeConstructions()
     private ArrayList<Double> relFrequencies; // normalised by the non-fancy doc length
     private ArrayList<Integer> frequencies; // or raw tf
@@ -167,13 +169,37 @@ public class Document implements java.io.Serializable {
         this.html = html;
     }
 
-    // getter and setter
-    public ArrayList<Occurrence> getHighlights() {
-        return highlights;
+    // <editor-fold desc="getter and setter methods">
+  
+
+
+
+    public String getQuery() {
+        return query;
     }
 
-    public void setHighlights(ArrayList<Occurrence> highlights) {
-        this.highlights = highlights;
+
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+
+    public String getUrlToDisplay() {
+        return urlToDisplay;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+
+    public String getSnippet() {
+        return snippet;
     }
 
     public String getReadabilityLevel() {
@@ -183,102 +209,8 @@ public class Document implements java.io.Serializable {
     public void setReadabilityLevel(String readabilityLevel) {
         this.readabilityLevel = readabilityLevel;
     }
+    
 
-//    
-//    public ArrayList<Occurrence> getHighlightIndices() {
-//        return highlights;
-//    }
-//
-//    public void setHighlightIndices(ArrayList<Occurrence> highlights) {
-//        this.highlights = highlights;
-//    }
-    public String getQuery() {
-        return query;
-    }
-
-    public void setQuery(String query) {
-        this.query = query;
-    }
-
-    public String getHtml() {
-        return html;
-    }
-
-    public void setHtml(String html) {
-        this.html = html;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
-    public String getUrlToDisplay() {
-        return urlToDisplay;
-    }
-
-    public void setUrlToDisplay(String urlToDisplay) {
-        this.urlToDisplay = urlToDisplay;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public String getSnippet() {
-        return snippet;
-    }
-
-    public void setSnippet(String snippet) {
-        this.snippet = snippet;
-    }
-
-    public ArrayList<Integer> getFrequencies() {
-        return frequencies;
-    }
-
-    public void setFrequencies(ArrayList<Integer> frequencies) {
-        this.frequencies = frequencies;
-    }
-
-    public ArrayList<String> getConstructions() {
-        return constructions;
-    }
-
-    public void setConstructions(ArrayList<String> constructions) {
-        this.constructions = constructions;
-    }
-
-    public ArrayList<Double> getRelFrequencies() {
-        return relFrequencies;
-    }
-
-    public void setRelFrequencies(ArrayList<Double> relFrequencies) {
-        this.relFrequencies = relFrequencies;
-    }
-
-    public ArrayList<Double> getTfNorm() {
-        return tfNorm;
-    }
-
-    public void setTfNorm(ArrayList<Double> tfNorm) {
-        this.tfNorm = tfNorm;
-    }
 
     public double getDocLength() {
         return docLength;
@@ -288,77 +220,6 @@ public class Document implements java.io.Serializable {
         this.docLength = docLength;
     }
 
-    public int getPreRank() {
-        return preRank;
-    }
-
-    public void setPreRank(int preRank) {
-        this.preRank = preRank;
-    }
-
-    public int getPostRank() {
-        return postRank;
-    }
-
-    public void setPostRank(int postRank) {
-        this.postRank = postRank;
-    }
-
-    public double getReadabilityARI() {
-        return readabilityARI;
-    }
-
-    public void setReadabilityARI(double readabilityARI) {
-        this.readabilityARI = readabilityARI;
-    }
-
-    public double getReadabilityBennoehr() {
-        return readabilityBennoehr;
-    }
-
-    public void setReadabilityBennoehr(double readabilityBennoehr) {
-        this.readabilityBennoehr = readabilityBennoehr;
-    }
-
-    public double getReadabilityScore() {
-        return readabilityScore;
-    }
-
-    public void setReadabilityScore(double readabilityScore) {
-        this.readabilityScore = readabilityScore;
-    }
-
-    public double getTextWeight() {
-        return textWeight;
-    }
-
-    public void setTextWeight(double textWeight) {
-        this.textWeight = textWeight;
-    }
-
-    public double getRankWeight() {
-        return rankWeight;
-    }
-
-    public void setRankWeight(double rankWeight) {
-        this.rankWeight = rankWeight;
-    }
-
-    public double getGramScore() {
-        return gramScore;
-    }
-
-    public void setGramScore(double gramScore) {
-        this.gramScore = gramScore;
-    }
-
-    public double getTotalWeight() {
-        return totalWeight;
-    }
-
-    public void setTotalWeight(double totalWeight) {
-        this.totalWeight = totalWeight;
-    }
 
     public int getNumChars() {
         return numChars;
@@ -407,27 +268,13 @@ public class Document implements java.io.Serializable {
     public void setAvTreeDepth(double avTreeDepth) {
         this.avTreeDepth = avTreeDepth;
     }
-
-    public ArrayList<Double> getTfIdf() {
-        return tfIdf;
-    }
-
-    public void setTfIdf(ArrayList<Double> tfIdf) {
-        this.tfIdf = tfIdf;
-    }
-
-    public double getDocLenTfIdf() {
-        return docLenTfIdf;
-    }
-
-    public void setDocLenTfIdf(double docLenTfIdf) {
-        this.docLenTfIdf = docLenTfIdf;
-    }
-
+// </editor-fold>
+    
     // other public methods
     @Override
     public String toString() {
-        return "Document{" + "query=" + this.getQuery() + ", preRank=" + this.getPreRank() + ", postRank=" + this.getPostRank() + ", title=" + this.getTitle() + ", url=" + this.getUrl() + ", urlToDisplay=" + this.getUrlToDisplay() + ", snippet=" + this.getSnippet() + ", html=" + this.getHtml() + ", text=" + this.getText() + ", constructions=" + this.getConstructions() + ", relFrequencies=" + this.getRelFrequencies() + ", occurrences=" + this.getFrequencies() + ", tfsNorm=" + this.getTfNorm() + ", docLength=" + this.getDocLength() + ", readabilityScore=" + this.getReadabilityARI() + ", rankWeight=" + this.getRankWeight() + ", gramScore=" + this.getGramScore() + ", totalWeight=" + this.getTotalWeight() + ", numChars=" + this.getNumChars() + ", numSents=" + this.getNumSents() + ", numDeps=" + this.getNumDeps() + ", avWordLength=" + this.getAvWordLength() + ", avSentLength=" + this.getAvSentLength() + ", avTreeDepth=" + this.getAvTreeDepth() + '}';
+	return "";
+      //  return "Document{" + "query=" + this.getQuery() + ", preRank=" + this.getPreRank() + ", postRank=" + this.getPostRank() + ", title=" + this.getTitle() + ", url=" + this.getUrl() + ", urlToDisplay=" + this.getUrlToDisplay() + ", snippet=" + this.getSnippet() + ", html=" + this.getHtml() + ", text=" + this.getText() + ", constructions=" + this.getConstructions() + ", relFrequencies=" + this.getRelFrequencies() + ", occurrences=" + this.getFrequencies() + ", tfsNorm=" + this.getTfNorm() + ", docLength=" + this.getDocLength() + ", readabilityScore=" + this.getReadabilityARI() + ", rankWeight=" + this.getRankWeight() + ", gramScore=" + this.getGramScore() + ", totalWeight=" + this.getTotalWeight() + ", numChars=" + this.getNumChars() + ", numSents=" + this.getNumSents() + ", numDeps=" + this.getNumDeps() + ", avWordLength=" + this.getAvWordLength() + ", avSentLength=" + this.getAvSentLength() + ", avTreeDepth=" + this.getAvTreeDepth() + '}';
     }
 
     public Document addConstructionsToDoc(HashMap<String, Construction> allConstructs, int docNum) {
@@ -669,22 +516,6 @@ public class Document implements java.io.Serializable {
         String json = gson.toJson(this);
         return json;
     }
-
-//// CALCULATE IT IN DeepParserCoreNLP !!! and SET() for every Document!
-//    private double calculateAvWordLength() {
-//        double avLen = 0.0;
-//        return avLen;
-//    }
-//    
-//    private double calculateAvSentLength() {
-//        double avLen = 0.0;
-//        return avLen;
-//    }
-//    
-//    private double calculateAvTreeDepth() {
-//        double avDepth = 0.0;
-//        return avDepth;
-//    }
 }
 
 class IndexComparator implements Comparator<Occurrence> {

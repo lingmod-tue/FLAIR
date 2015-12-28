@@ -7,7 +7,6 @@ package parsing;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import reranking.Document;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.IndexedWord;
@@ -37,6 +36,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import static parsing.Constants.NUM_OF_RESULTS;
+import reranking.Document;
 
 /**
  * POS tagging for the top N results for 1(!) query.
@@ -1971,7 +1971,7 @@ public class DeepParserCoreNLP {
                         doc.setTfIdf(new ArrayList<Double>());
                         doc.setTfNorm(new ArrayList<Double>());
                         doc.setRelFrequencies(new ArrayList<Double>());
-                        doc.setFrequencies(new ArrayList<Integer>());
+			    doc.setFrequencies(new ArrayList<Integer>());
 
                         doc.setHighlights(new ArrayList<Occurrence>());
                         documents.add(doc);
