@@ -3,33 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/FLAIRParser/StanfordDocumentParserEnglishStrategy.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/FLAIRTaskManager/AbstractTask.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/FLAIRParser/DocumentConstructionData.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/FLAIRTaskManager/AbstractTaskResult.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/FLAIRParser/SearchResultDocumentSource.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/FLAIRTaskManager/DocumentParserPool.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/FLAIRParser/BasicStanfordDocumentParserStrategy.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/FLAIRTaskManager/AbstractJob.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/FLAIRTaskManager/Constants.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/FLAIRParser/AbstractParsingStrategy.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/FLAIRTaskManager/TaskType.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/FLAIRTaskManager/WebCrawlerTask.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/FLAIRParser/StanfordDocumentParserFactory.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/FLAIRParser/AbstractDocumentFactory.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/FLAIRTaskManager/AbstractTaskExecutor.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/FLAIRTaskManager/DocumentParsingTask.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/FLAIRCrawler/WebSearchAgent.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/FLAIRTaskManager/WebDocumentParserJob.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/FLAIRTaskManager/WebDocumentPipeline.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/FLAIRTaskManager/AbstractTaskContinuation.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/FLAIRParser/DocumentCollection.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/FLAIRParser/Document.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/FLAIRCrawler/SearchResult.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/FLAIRCrawler/BingSearchAgent.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/FLAIRParser/AbstractDocumentSource.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/FLAIRTaskManager/WebCrawlerTaskExecutor.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/FLAIRTaskManager/DocumentParsingTaskExecutor.java</file>
+            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/FLAIRservlet/SearchServletTeacher.java</file>
+            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/taskmanager/WebSearchPipeline.java</file>
+            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/parser/StanfordDocumentParserEnglishStrategy.java</file>
+            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/taskmanager/WebDocumentParserJob.java</file>
+            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/taskmanager/WebCrawlerTaskExecutor.java</file>
+            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/web/js/functions.js</file>
+            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/web/visual.jsp</file>
+            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/parser/DocumentCollection.java</file>
+            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/taskmanager/AbstractJob.java</file>
         </group>
     </open-files>
 </project-private>

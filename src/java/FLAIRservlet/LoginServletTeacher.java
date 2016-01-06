@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import logging.UserBean;
 
 /**
  *
@@ -33,10 +32,10 @@ public class LoginServletTeacher extends HttpServlet {
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         
-        UserBean user = new UserBean(request.getParameter("first_name"), request.getParameter("last_name"));
+    //    UserBean user = new UserBean(request.getParameter("first_name"), request.getParameter("last_name"));
         
         HttpSession sess = request.getSession();
-        sess.setAttribute("user", user);
+        sess.setAttribute("user", "abacab");
         sess.setAttribute("hello_name", request.getParameter("first_name"));
 
 //        request.setAttribute("hello_name", request.getAttribute("first_name").toString()); // pass the name 

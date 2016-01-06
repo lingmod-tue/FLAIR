@@ -7,7 +7,6 @@
 <%@page import="java.util.List"%>
 <%@page import="java.io.File"%>
 <%@page import="java.util.ArrayList"%>
-<%@page import="reranking.Document"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
 
@@ -1133,8 +1132,7 @@
                                         <% if (request != null
                                                     && request.getSession() != null
                                                     && request.getSession().getAttribute("docs") != null
-                                                    && request.getSession().getAttribute("output") != null
-                                                    && ((List<Document>) request.getSession().getAttribute("docs")).size() > 0) {%>
+                                                    && request.getSession().getAttribute("output") != null) {%>
                                         <%= request.getSession().getAttribute("output")%>
                                         <%-- if (request.getSession().getAttribute("stage") == null) {%>
                                         <% request.getSession().setAttribute("stage", "crawled");%>

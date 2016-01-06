@@ -4,6 +4,6 @@
 <comment/>
 <entry key="org.netbeans.modules.profiler.v2.features.MethodsFeature_SelectedMethodsMode_SELECTION_FLAG">webSearch.BingSearch,crawl,()V HTMLprocessing.HttpUrlConnection_Boilerpipe,updateDocs,()V </entry>
 <entry key="ACTIVATED_FEATURES">#org.netbeans.modules.profiler.v2.features.MethodsFeature@</entry>
-<entry key="org.netbeans.modules.profiler.v2.features.MethodsFeature_MODE_FLAG">SelectedMethodsMode</entry>
 <entry key="org.netbeans.modules.profiler.v2.features.MethodsFeature_SETTINGS_FLAG">true</entry>
+<entry key="org.netbeans.modules.profiler.v2.features.MethodsFeature_MODE_FLAG">ProjectClassesMode</entry>
 </properties>

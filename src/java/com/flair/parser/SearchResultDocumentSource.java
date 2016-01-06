@@ -1,0 +1,40 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.flair.parser;
+
+import com.flair.crawler.SearchResult;
+import com.flair.grammar.Language;
+
+/**
+ * Represents a document source object that encapsulates a search result
+ * @author shadeMe
+ */
+public class SearchResultDocumentSource implements AbstractDocumentSource
+{
+    private final SearchResult		   parentSearchResult;
+    private final Language		   language;
+    
+    public SearchResultDocumentSource(SearchResult parent)
+    {
+	assert parent.isTextFetched() == true;
+	parentSearchResult = parent;
+	language = parent.getLanguage();
+    }
+    
+    public SearchResult getSearchResult() {
+	return parentSearchResult;
+    }
+    
+    @Override
+    public String getSourceText() {
+	return parentSearchResult.getPageText();
+    }
+
+    @Override
+    public Language getLanguage() {
+	return language;
+    }
+}
