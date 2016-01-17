@@ -54,7 +54,9 @@ class DocumentParserPool
     
     private synchronized void markAsUnused(DocumentParserPoolData acquired)
     {
-	assert usageState[acquired.getID()] == true;
+	if (usageState[acquired.getID()] == false)
+	    throw new IllegalStateException("Unused parser being freed");
+	
 	usageState[acquired.getID()] = false;
     }
     

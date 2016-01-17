@@ -42,9 +42,12 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
     
     private void initializeState(AbstractDocument doc)
     {
+	if (pipeline == null)
+	    throw new IllegalStateException("Parser not set");
+	else if (isLanguageSupported(doc.getLanguage()) == false)
+	    throw new IllegalArgumentException("Document language " + doc.getLanguage() + " not supported (Strategy language: " + Language.ENGLISH +")");
+	
 	workingDoc = doc;
-	assert pipeline != null;
-	assert isLanguageSupported(workingDoc.getLanguage()) == true;
     }
     
     private void resetState()
@@ -64,7 +67,8 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
     
     private void addConstructionOccurrence(GrammaticalConstruction type, int start, int end, String expr)
     {
-	workingDoc.getConstructionData(type).addOccurence(start, end, expr);
+	// ### is the expr param really reqd?
+	workingDoc.getConstructionData(type).addOccurrence(start, end);
     }
     
      
@@ -266,18 +270,18 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
                     
 		    superlativeMostFound = false;
                 } //// pronouns (reflexive or possessive)
-		else if (labelTag.equalsIgnoreCase("prp") && EnglishGrammaticalConstants.reflexivePronouns.contains(labelWord))
+		else if (labelTag.equalsIgnoreCase("prp") && EnglishGrammaticalConstants.REFLEXIVE_PRONOUNS.contains(labelWord))
 		{
 		    addConstructionOccurrence(GrammaticalConstruction.PRONOUNS_REFLEXIVE, label.beginPosition(), label.endPosition(), labelWord);
 		    addConstructionOccurrence(GrammaticalConstruction.PRONOUNS, label.beginPosition(), label.endPosition(), labelWord);
                 }
-		else if (labelTag.equalsIgnoreCase("prp$") && EnglishGrammaticalConstants.possessivePronouns.contains(labelWord))
+		else if (labelTag.equalsIgnoreCase("prp$") && EnglishGrammaticalConstants.POSSESSIVE_PRONOUNS.contains(labelWord))
 		{
                     // it can actually be either possessive or objective (stanford parser crashes on that!)
 		    addConstructionOccurrence(GrammaticalConstruction.PRONOUNS_POSSESSIVE, label.beginPosition(), label.endPosition(), labelWord);
 		    addConstructionOccurrence(GrammaticalConstruction.PRONOUNS, label.beginPosition(), label.endPosition(), labelWord);
                 } 
-		else if (EnglishGrammaticalConstants.possessiveAbsolutePronouns.contains(labelWord))
+		else if (EnglishGrammaticalConstants.POSSESSIVE_ABSOLUTE_PRONOUNS.contains(labelWord))
 		{
 		    addConstructionOccurrence(GrammaticalConstruction.PRONOUNS_POSSESSIVE_ABSOLUTE, label.beginPosition(), label.endPosition(), labelWord);
 		    addConstructionOccurrence(GrammaticalConstruction.PRONOUNS, label.beginPosition(), label.endPosition(), labelWord);
@@ -285,9 +289,9 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 		// conjunctions (all or simple)
                 else if (labelTag.equalsIgnoreCase("in") || labelTag.equalsIgnoreCase("cc") || labelTag.equalsIgnoreCase("rb") || labelTag.equalsIgnoreCase("wrb"))
 		{
-                    if (EnglishGrammaticalConstants.advancedConjunctions.contains(labelWord))
+                    if (EnglishGrammaticalConstants.ADVANCED_CONJUNCTIONS.contains(labelWord))
 			addConstructionOccurrence(GrammaticalConstruction.CONJUNCTIONS_ADVANCED, label.beginPosition(), label.endPosition(), labelWord);
-                    else if (EnglishGrammaticalConstants.simpleConjunctions.contains(labelWord))
+                    else if (EnglishGrammaticalConstants.SIMPLE_CONJUNCTIONS.contains(labelWord))
 			addConstructionOccurrence(GrammaticalConstruction.CONJUNCTIONS_SIMPLE, label.beginPosition(), label.endPosition(), labelWord);
 
                     if (labelTag.equalsIgnoreCase("rb"))
@@ -332,7 +336,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 		// ing noun forms
                 else if (labelTag.startsWith("nn"))
 		{
-                    if (labelWord.endsWith("ing") && labelWord.length() > 4 && (!EnglishGrammaticalConstants.ingNouns.contains(labelWord)))
+                    if (labelWord.endsWith("ing") && labelWord.length() > 4 && (!EnglishGrammaticalConstants.ING_NOUNS.contains(labelWord)))
 			addConstructionOccurrence(GrammaticalConstruction.NOUNFORMS_ING, label.beginPosition(), label.endPosition(), labelWord);
                     
                     // plural noun forms
@@ -527,9 +531,9 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
                 continue;
 
             // negation
-            if (EnglishGrammaticalConstants.negation.contains(gov.word().toLowerCase()) || EnglishGrammaticalConstants.negation.contains(dep.word().toLowerCase())) 
+            if (EnglishGrammaticalConstants.NEGATION.contains(gov.word().toLowerCase()) || EnglishGrammaticalConstants.NEGATION.contains(dep.word().toLowerCase())) 
 		addConstructionOccurrence(GrammaticalConstruction.NEGATION_ALL, start, end, dependency.toString());
-            else if (EnglishGrammaticalConstants.partialNegation.contains(gov.word().toLowerCase()) || EnglishGrammaticalConstants.partialNegation.contains(dep.word().toLowerCase()))
+            else if (EnglishGrammaticalConstants.PARTIAL_NEGATION.contains(gov.word().toLowerCase()) || EnglishGrammaticalConstants.PARTIAL_NEGATION.contains(dep.word().toLowerCase()))
 		addConstructionOccurrence(GrammaticalConstruction.NEGATION_PARTIAL, gov.beginPosition(), dep.endPosition(), dependency.toString());
            
 
@@ -569,7 +573,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
                                 endPrep = l.endPosition();
 
                                 // add constructions here: in case of a duplicate, it'll not be added anyway
-                                if (l.tag().equalsIgnoreCase("in") && EnglishGrammaticalConstants.simplePrepositions.contains(prep)) 
+                                if (l.tag().equalsIgnoreCase("in") && EnglishGrammaticalConstants.SIMPLE_PREPOSITIONS.contains(prep)) 
 				{
 				    addConstructionOccurrence(GrammaticalConstruction.PREPOSITIONS, startPrep, endPrep, dependency.toString());
 				    addConstructionOccurrence(GrammaticalConstruction.PREPOSITIONS_SIMPLE, startPrep, endPrep, dependency.toString());
@@ -614,7 +618,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
                 }
 		
                 /// objective pronouns after a preposition
-                if (dep.tag().equalsIgnoreCase("prp") && EnglishGrammaticalConstants.objectivePronouns.contains(dep.word().toLowerCase()))
+                if (dep.tag().equalsIgnoreCase("prp") && EnglishGrammaticalConstants.OBJECTIVE_PRONOUNS.contains(dep.word().toLowerCase()))
 		{
 		    addConstructionOccurrence(GrammaticalConstruction.PRONOUNS, depBegin, depEnd, dep.word());
 		    addConstructionOccurrence(GrammaticalConstruction.PRONOUNS_OBJECTIVE, depBegin, depEnd, dep.word());
@@ -626,7 +630,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 		// indirect object
 		addConstructionOccurrence(GrammaticalConstruction.OBJECT_INDIRECT, start, end, dependency.toString());
 		
-                if (dep.tag().equalsIgnoreCase("prp") && EnglishGrammaticalConstants.objectivePronouns.contains(dep.word().toLowerCase()))
+                if (dep.tag().equalsIgnoreCase("prp") && EnglishGrammaticalConstants.OBJECTIVE_PRONOUNS.contains(dep.word().toLowerCase()))
 		{
 		    addConstructionOccurrence(GrammaticalConstruction.PRONOUNS, depBegin, depEnd, dependency.toString());
 		    addConstructionOccurrence(GrammaticalConstruction.PRONOUNS_OBJECTIVE, depBegin, depEnd, dependency.toString());
@@ -637,7 +641,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 		// direct object
 		addConstructionOccurrence(GrammaticalConstruction.OBJECT_DIRECT, start, end, dependency.toString());
 		
-                if (dep.tag().equalsIgnoreCase("prp") && EnglishGrammaticalConstants.objectivePronouns.contains(dep.word().toLowerCase()))
+                if (dep.tag().equalsIgnoreCase("prp") && EnglishGrammaticalConstants.OBJECTIVE_PRONOUNS.contains(dep.word().toLowerCase()))
 		{
                     addConstructionOccurrence(GrammaticalConstruction.PRONOUNS, depBegin, depEnd, dependency.toString());
 		    addConstructionOccurrence(GrammaticalConstruction.PRONOUNS_OBJECTIVE, depBegin, depEnd, dependency.toString());
@@ -646,7 +650,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 	    else if (rel.equalsIgnoreCase("nsubj")) 
 	    { 
 		// subjective pronouns
-                if (dep.tag().equalsIgnoreCase("prp") && EnglishGrammaticalConstants.subjectivePronouns.contains(dep.word().toLowerCase()))
+                if (dep.tag().equalsIgnoreCase("prp") && EnglishGrammaticalConstants.SUBJECTIVE_PRONOUNS.contains(dep.word().toLowerCase()))
 		{
 		    addConstructionOccurrence(GrammaticalConstruction.PRONOUNS, depBegin, depEnd, dep.word());
 		    addConstructionOccurrence(GrammaticalConstruction.PRONOUNS_SUBJECTIVE, depBegin, depEnd, dep.word());

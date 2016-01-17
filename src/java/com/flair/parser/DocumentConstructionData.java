@@ -13,7 +13,7 @@ import java.util.List;
  * Represents basic properties of a construction for a specific document
  * @author shadeMe
  */
-class DocumentConstructionData extends AbstractConstructionData
+public class DocumentConstructionData extends AbstractConstructionData
 {
     private final AbstractDocument		    parentDocument;
     private final ArrayList<Occurrence>		    occurrences;
@@ -58,7 +58,7 @@ class DocumentConstructionData extends AbstractConstructionData
 	return getWeightedFrequency() / parentDocument.getFancyLength();
     }
     
-    public boolean addOccurence(int start, int end, String expression)
+    public boolean addOccurrence(int start, int end, String expression)
     {
 	// especially in case of dependencies (gov/dep): make sure start is smaller than end
 	if (start > end)
@@ -73,8 +73,18 @@ class DocumentConstructionData extends AbstractConstructionData
 	if (hasOccurence(start, end) == true)
 	    return false;
 	
-	occurrences.add(new Occurrence(getParentConstruction(), start, end, expression));
+	Occurrence newOcc;
+	if (expression.isEmpty())
+	    newOcc = new Occurrence(getParentConstruction(), start, end);
+	else
+	    newOcc = new Occurrence(getParentConstruction(), start, end, expression);
+	
+	occurrences.add(newOcc);
 	return true;
+    }
+    
+    public boolean addOccurrence(int start, int end) {
+	return addOccurrence(start, end, "");
     }
     
     public List<Occurrence> getOccurrences() {

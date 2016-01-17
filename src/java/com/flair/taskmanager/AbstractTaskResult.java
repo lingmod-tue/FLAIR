@@ -13,8 +13,7 @@ abstract class AbstractTaskResult
 {
     private final TaskType		type;
     
-    public AbstractTaskResult(TaskType type)
-    {
+    public AbstractTaskResult(TaskType type) {
 	this.type = type;
     }
     

@@ -38,6 +38,8 @@ public abstract class WebSearchAgent
 	    BLACKLISTED_URLS.add("tmz.com");
 	    BLACKLISTED_URLS.add("thefreedictionary.com");
 	    BLACKLISTED_URLS.add("imdb.com");
+	    BLACKLISTED_URLS.add("facebook.com");
+	    BLACKLISTED_URLS.add("buzzfeed.com");
 	}
     }
     

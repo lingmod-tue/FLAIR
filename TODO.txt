@@ -1,0 +1,7 @@
+> Implement DB backing store (HSQL)
+> Look into DWR RPC calls for JS<>Java interop
+    > WebSockets would work?
+> Preprocess the CoreNLP parser's input to speed up the process
+    > Runtime = O(n^3) (PCFG) | http://nlp.stanford.edu/software/pos-tagger-faq.shtml#h
+    > Reduce/limit sentence lengths
+

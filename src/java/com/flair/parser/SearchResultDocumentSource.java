@@ -19,7 +19,9 @@ public class SearchResultDocumentSource implements AbstractDocumentSource
     
     public SearchResultDocumentSource(SearchResult parent)
     {
-	assert parent.isTextFetched() == true;
+	if (parent.isTextFetched() == false)
+	    throw new IllegalArgumentException("Search result doesn't have text");
+	
 	parentSearchResult = parent;
 	language = parent.getLanguage();
     }
@@ -36,5 +38,10 @@ public class SearchResultDocumentSource implements AbstractDocumentSource
     @Override
     public Language getLanguage() {
 	return language;
+    }
+
+    @Override
+    public String getDescription() {
+	return parentSearchResult.getTitle() + " (" + parentSearchResult.getDisplayURL() + ")";
     }
 }

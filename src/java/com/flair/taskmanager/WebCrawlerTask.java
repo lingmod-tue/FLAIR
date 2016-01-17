@@ -58,8 +58,8 @@ class WebCrawlerTask extends AbstractTask
     @Override
     protected AbstractTaskResult performTask()
     {
-	assert fetchExecutor != null;
-	FLAIRLogger.trace("WebCrawlerTask for " + input.getURL() + "BEGIN");
+	if (fetchExecutor == null)
+	    throw new IllegalStateException("Auxiliary threadpool not set");
 	
 	WebCrawlerTaskResult result = new WebCrawlerTaskResult(input);
 	FutureTask<Boolean> fetchWrapper = new FutureTask<>(new FetchRunnable(input));
@@ -67,12 +67,12 @@ class WebCrawlerTask extends AbstractTask
 	    fetchExecutor.submit(fetchWrapper).get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
 	}
 	catch (TimeoutException ex) {
-	    FLAIRLogger.trace("WebCrawlerTask timedout for " + input.getURL());
+	    FLAIRLogger.get().error("Fetch text timed out for URL: " + input.getURL());
 	}
 	catch (InterruptedException | ExecutionException ex) {
 	}
 	
-	FLAIRLogger.trace("WebCrawlerTask for " + input.getURL() + "END");
+	FLAIRLogger.get().trace("Search Result (" + input.getURL() + ") text fetched: " + result.wasSuccessful());
 	return result;
     }
 }

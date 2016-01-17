@@ -10,11 +10,9 @@ import com.google.gson.GsonBuilder;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
- *
+ * Generic jSOn serializer
  * @author shadeMe
  */
 public class JSONWriter
@@ -36,7 +34,6 @@ public class JSONWriter
 	
 	// create intermediate dirs as reqd.
 	pathObj.mkdirs();
-	
 	try 
 	{
 	    FileWriter stream = new FileWriter(path + "\\" + fileName + ".json");
@@ -47,7 +44,7 @@ public class JSONWriter
 	}
 	catch (IOException e)
 	{
-	    Logger.getLogger(JSONWriter.class.getName()).log(Level.SEVERE, null, e);
+	    FLAIRLogger.get().error("Couldn't serialize object to JSON. Exception: " + e.getMessage());
 	    return false;
 	}
     }

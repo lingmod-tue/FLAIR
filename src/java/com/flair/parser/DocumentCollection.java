@@ -8,13 +8,14 @@ package com.flair.parser;
 import com.flair.grammar.GrammaticalConstruction;
 import com.flair.utilities.JSONWriter;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
  * A collection of related documents represeting a corpus
  * @author shadeMe
  */
-public class DocumentCollection
+public class DocumentCollection implements Iterable<AbstractDocument>
 {
     private final List<AbstractDocument>		dataStore;
     private final ConstructionDataCollection		constructionData;
@@ -46,7 +47,11 @@ public class DocumentCollection
 	}
     }
     
-    public synchronized int getCount() {
+    public DocumentCollectionConstructionData getConstructionData(GrammaticalConstruction construction) {
+	return (DocumentCollectionConstructionData)constructionData.getData(construction);
+    }
+    
+    public synchronized int size() {
 	return dataStore.size();
     }
     
@@ -65,7 +70,12 @@ public class DocumentCollection
 	for (int i = 0; i < dataStore.size(); i++)
 	{
 	    String outfile = path + "/" + String.format("%03d", i);
-	    writer.writeObject(dataStore.get(i).getSerializable(), String.format("%03d", i) + ".json", outfile);
+	    writer.writeObject(dataStore.get(i).getSerializable(), String.format("%03d", i), outfile);
 	}
+    }
+
+    @Override
+    public Iterator<AbstractDocument> iterator() {
+	return dataStore.iterator();
     }
 }

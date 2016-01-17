@@ -5,6 +5,8 @@
  */
 package com.flair.parser;
 
+import com.flair.grammar.Language;
+
 /**
  * Represents an abstract document parser
  * @author shadeMe
@@ -19,5 +21,6 @@ public abstract class AbstractDocumentParser
 	docFactory = factory;
     }
     
+    public abstract boolean		    isLanguageSupported(Language lang);
     public abstract AbstractDocument	    parse(AbstractDocumentSource source, AbstractParsingStrategy strategy);
 }

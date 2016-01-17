@@ -5,11 +5,11 @@
  */
 package com.flair.taskmanager;
 
+import com.flair.parser.DocumentCollection;
+import com.flair.utilities.FLAIRLogger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Represents an executable job, which is basically a collection of tasks
@@ -17,18 +17,18 @@ import java.util.logging.Logger;
  */
 abstract class AbstractJob
 {
-    private final List<AbstractTask>		queuedTasks;
+    private final List<AbstractTask>		registeredTasks;    // tasks that are either running or have been queued for execution
     private boolean				cancelled;
     
     public AbstractJob()
     {
-	queuedTasks = new ArrayList<>();
+	registeredTasks = new ArrayList<>();
 	cancelled = false;
     }
     
-    public synchronized boolean isRegistered(AbstractTask task)
+    public synchronized boolean isTaskRegistered(AbstractTask task)
     {
-	for (AbstractTask itr : queuedTasks)
+	for (AbstractTask itr : registeredTasks)
 	{
 	    if (itr == task)
 		return true;
@@ -39,14 +39,14 @@ abstract class AbstractJob
     
     private synchronized AbstractTask getFirstTask()
     {
-	if (queuedTasks.isEmpty())
+	if (registeredTasks.isEmpty())
 	    return null;
 	else
-	    return queuedTasks.get(0);
+	    return registeredTasks.get(0);
     }
     
-    private synchronized boolean isCompleted() {
-	return cancelled == true || queuedTasks.isEmpty();
+    protected synchronized boolean isCompleted() {
+	return cancelled == true || registeredTasks.isEmpty();
     }
     
     protected void waitForCompletion()
@@ -61,7 +61,7 @@ abstract class AbstractJob
 		first.getFutureTask().get();
 	    }
 	    catch (InterruptedException | ExecutionException e) {
-		Logger.getLogger(AbstractJob.class.getName()).log(Level.SEVERE, null, e);
+		FLAIRLogger.get().error("Job encounted an exception while waiting. Exception: " + e.getMessage());
 	    } 
 	}
 	
@@ -69,24 +69,32 @@ abstract class AbstractJob
     
     public synchronized void registerTask(AbstractTask task)
     {
-	assert isRegistered(task) == false;
+	if (isTaskRegistered(task))
+	    throw new IllegalStateException("Task already registered");
+	
 	if (cancelled == false)
-	    queuedTasks.add(task);
+	    registeredTasks.add(task);
     }
     
     public synchronized void unregisterTask(AbstractTask task)
     {
-	if (isRegistered(task));
-	    queuedTasks.remove(task);
+	if (isTaskRegistered(task));
+	    registeredTasks.remove(task);
     }
     
     public synchronized void cancel()
     {
 	cancelled = true;
-	for (AbstractTask itr : queuedTasks)
-	    itr.getFutureTask().cancel(false);
+	List<AbstractTask> nonexec = new ArrayList<>();
+	for (AbstractTask itr : registeredTasks)
+	{
+	    itr.cancel();
+	    if (itr.isExecuting() == false)
+		nonexec.add(itr);
+	}
 	
-	queuedTasks.clear();
+	// just remove those tasks that were never executed
+	registeredTasks.removeAll(nonexec);
     }
     
     public synchronized boolean isCancelled() {
@@ -94,6 +102,11 @@ abstract class AbstractJob
     }
     
     public abstract void begin();
+}
+
+interface BasicParsingJobOutput
+{
+    public DocumentCollection	getParsedDocuments();
 }
 
 abstract class AbstractTaskLinkingJob extends AbstractJob implements AbstractTaskLinker
@@ -106,3 +119,4 @@ abstract class AbstractTaskLinkingJob extends AbstractJob implements AbstractTas
 	this.jobStarted = false;
     }
 }
+

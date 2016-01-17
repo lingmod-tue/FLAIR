@@ -6,18 +6,8 @@
 package FLAIRservlet;
 
 
-import com.flair.crawler.SearchResult;
-import com.flair.crawler.WebSearchAgent;
-import com.flair.crawler.WebSearchAgentFactory;
-import com.flair.grammar.Language;
-import com.flair.parser.DocumentCollection;
-import com.flair.taskmanager.BasicPipelineOperation;
-import com.flair.taskmanager.WebSearchPipeline;
-import com.flair.utilities.JSONWriter;
-import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -65,11 +55,12 @@ public class SearchServletTeacher extends HttpServlet {
         } catch (UnsupportedEncodingException ex) {
            
         }
-
+	String output = "";
+/*
 	WebSearchAgent agent = WebSearchAgentFactory.create(WebSearchAgentFactory.SearchAgent.BING, Language.ENGLISH, encodedQuery, 20);
 	agent.performSearch();
 	List<SearchResult> searchResults = agent.getResults();
-	BasicPipelineOperation operation = WebSearchPipeline.get().scheduleOperation(Language.ENGLISH, searchResults);
+	AbstractPipelineOperation operation = MasterJobPipeline.get().scheduleJob(Language.ENGLISH, searchResults);
 	DocumentCollection docCol = operation.getOutput();
 	String rootPath = "webapps/FLAIR/results/";
 	File f1 = new File(rootPath);
@@ -80,8 +71,7 @@ public class SearchServletTeacher extends HttpServlet {
         dir.mkdir();
 	
 	docCol.serialize(new JSONWriter(), dir.getAbsolutePath());
-	
-        String output = "";
+        
         for (int i = 0; i < searchResults.size(); i++) {
 
             String out = "<tr><td class='num_cell' style='font-size:x-large;'>"
@@ -94,6 +84,7 @@ public class SearchServletTeacher extends HttpServlet {
 
             output += out;
         }
+*/	
 
         if (output.isEmpty()) {
             output = "No results found. Try searching for something else.";

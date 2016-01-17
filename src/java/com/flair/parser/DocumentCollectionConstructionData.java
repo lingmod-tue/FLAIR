@@ -12,7 +12,7 @@ import com.flair.grammar.GrammaticalConstruction;
  * Represent the properties of a construction in the larger domain of a set of (related) documents
  * @author shadeMe
  */
-class DocumentCollectionConstructionData extends AbstractConstructionData
+public class DocumentCollectionConstructionData extends AbstractConstructionData
 {
     private final DocumentCollection		    parentDocumentCollection;
     

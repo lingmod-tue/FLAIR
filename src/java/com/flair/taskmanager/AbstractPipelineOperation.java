@@ -8,10 +8,10 @@ package com.flair.taskmanager;
 import com.flair.parser.DocumentCollection;
 
 /**
- * Represents a(n executing) pipeline operation
+ * Represents the interface of a(n executing) pipeline operation. A Future essentially
  * @author shadeMe
  */
-public interface BasicPipelineOperation
+public interface AbstractPipelineOperation
 {
     public boolean			isCancelled();
     public void				cancel();

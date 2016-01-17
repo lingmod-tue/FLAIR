@@ -10,7 +10,6 @@ import com.flair.grammar.Language;
 import com.flair.parser.AbstractParsingStrategyFactory;
 import com.flair.parser.DocumentCollection;
 import com.flair.parser.SearchResultDocumentSource;
-import com.flair.utilities.FLAIRLogger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +17,7 @@ import java.util.List;
  * Takes a list of search results, crawls their text and parses them
  * @author shadeMe
  */
-class WebDocumentParserJob extends AbstractTaskLinkingJob
+class WebDocumentParserJob extends AbstractTaskLinkingJob implements BasicParsingJobOutput
 {
     private final WebDocumentParserJobInput	    input;
     private final WebDocumentParserJobOutput	    output;
@@ -32,16 +31,16 @@ class WebDocumentParserJob extends AbstractTaskLinkingJob
     
     public WebDocumentParserJobOutput getOutput()
     {
-	FLAIRLogger.trace("WebDocumentParserJob waiting for completion...");
 	waitForCompletion();
-	FLAIRLogger.trace("WebDocumentParserJob waiting COMPLETE...");
 	return output;
     }
     
     @Override
     public void begin() 
     {
-	assert jobStarted == false;
+	if (jobStarted)
+	    throw new IllegalStateException("Job has already begun");
+	
 	jobStarted = true;
 	
 	List<WebCrawlerTask> tasks = new ArrayList<>();
@@ -76,7 +75,6 @@ class WebDocumentParserJob extends AbstractTaskLinkingJob
 								      input.docParsingStrategy.create(),
 								      input.docParserPool);
 
-		FLAIRLogger.trace("WebDocumentParserJob linking Crawler to Parser for " + result.getOutput().getURL());
 		registerTask(newTask);
 		input.docParsingExecutor.queue(newTask);
 		break;
@@ -86,10 +84,23 @@ class WebDocumentParserJob extends AbstractTaskLinkingJob
 		// add the result to the doc collection
 		DocumentParsingTaskResult result = (DocumentParsingTaskResult)previousResult;
 		output.parsedDocs.add(result.getOutput(), true);
-		FLAIRLogger.trace("WebDocumentParserJob linking Parser to Collection for " + result.getOutput());
 		break;
 	    }
 	}
+    }
+
+    @Override
+    public DocumentCollection getParsedDocuments() {
+	return getOutput().parsedDocs;
+    }
+    
+    @Override
+    public String toString()
+    {
+	if (isCompleted() == false)
+	    return "WebDocumentParserJob is still running";
+	else
+	    return "WebDocumentParserJob Output:\nInput:\n\tLanguage: " + input.sourceLanguage + "\n\tSearch Results: " + input.searchResults.size() + "\nOutput:\n\tParsed Docs: " + output.parsedDocs.size() + "\n\tDelinquents: " + output.delinquents.size();
     }
 }
 

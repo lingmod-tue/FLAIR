@@ -15,4 +15,5 @@ public interface AbstractDocumentSource
 {
     public Language	    getLanguage();
     public String	    getSourceText();
+    public String	    getDescription();
 }

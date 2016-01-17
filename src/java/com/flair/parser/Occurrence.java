@@ -11,7 +11,7 @@ import com.flair.grammar.GrammaticalConstruction;
  * Represents an occurrence of a construction in a text
  * @author shadeMe
  */
-class Occurrence extends AbstractConstructionData
+public class Occurrence extends AbstractConstructionData
 {
     private final int				startIdx;
     private final int				endIdx;

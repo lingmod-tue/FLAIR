@@ -15,8 +15,7 @@ abstract class AbstractConstructionData
 {
     private final GrammaticalConstruction		    parentConstruction;
     
-    public AbstractConstructionData(GrammaticalConstruction parent)
-    {
+    public AbstractConstructionData(GrammaticalConstruction parent) {
 	parentConstruction = parent;
     }
     
@@ -24,8 +23,7 @@ abstract class AbstractConstructionData
 	return parentConstruction;
     }
     
-    public boolean equals(AbstractConstructionData rhs)
-    {
+    public boolean equals(AbstractConstructionData rhs) {
 	return parentConstruction == rhs.parentConstruction;
     }
 }

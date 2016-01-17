@@ -90,6 +90,11 @@ class Document implements AbstractDocument
     }
     
     @Override
+    public String getDescription() {
+	return "{" + source.getDescription() + " | S[" + numSentences + "], C[" + numCharacters + "]" + "}";
+    }
+    
+    @Override
     public DocumentConstructionData getConstructionData(GrammaticalConstruction type)
     {
 	return (DocumentConstructionData)constructionData.getData(type);
@@ -207,7 +212,9 @@ class Document implements AbstractDocument
     @Override
     public void flagAsParsed()
     {
-	assert parsed == false;
+	if (parsed)
+	    throw new IllegalStateException("Document already flagged as parsed");
+	
 	parsed = true;
 	calculateFancyDocLength();
     }
@@ -261,7 +268,8 @@ class Document implements AbstractDocument
 
 	public DocumentFirstRevisionDecorator(Document source)
 	{
-	    assert parsed == true;
+	    if (parsed== false)
+		throw new IllegalStateException("Document not flagged as parsed");
 	    
 	    SearchResultDocumentSource searchSource = (SearchResultDocumentSource)source.source;
 	    SearchResult searchResult = searchSource.getSearchResult();

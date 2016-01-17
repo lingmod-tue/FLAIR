@@ -1,13 +1,12 @@
 package com.flair.crawler;
 
 import com.flair.grammar.Language;
+import com.flair.utilities.FLAIRLogger;
 import de.l3s.boilerpipe.BoilerpipeProcessingException;
 import de.l3s.boilerpipe.extractors.DefaultExtractor;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.xml.sax.InputSource;
 
 /**
@@ -115,8 +114,6 @@ public class SearchResult
             {
                 // fetch text
                 // TODO: check for encoding!!!
-		
-		
                 InputSource stream = new InputSource();
 		stream.setEncoding("UTF-8");
 		stream.setByteStream(pageURL.openStream());
@@ -145,10 +142,8 @@ public class SearchResult
                 pageText = textWriter.toString();
 		return true;
             }
-        }
-        catch (IOException | BoilerpipeProcessingException e) 
-        {
-            Logger.getLogger(SearchResult.class.getName()).log(Level.SEVERE, null, e);
+        } catch (IOException | BoilerpipeProcessingException ex) {
+            FLAIRLogger.get().error("Couldn't fetch page text. Exception: " + ex.getMessage());
         }
 
         return false;

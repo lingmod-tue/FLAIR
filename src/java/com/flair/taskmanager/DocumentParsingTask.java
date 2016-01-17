@@ -9,8 +9,6 @@ import com.flair.parser.AbstractDocument;
 import com.flair.parser.AbstractDocumentSource;
 import com.flair.parser.AbstractParsingStrategy;
 import com.flair.utilities.FLAIRLogger;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Parses a document source and returns a parsed document
@@ -38,26 +36,31 @@ class DocumentParsingTask extends AbstractTask
     @Override
     protected AbstractTaskResult performTask()
     {
-	assert parserPool != null;
+	if (parserPool == null)
+	    throw new IllegalStateException("Parser pool not set");
+	
 	AbstractDocument output = null;
 	DocumentParserPoolData parserPoolData = null;
-	FLAIRLogger.trace("DocumentParsingTask for " + input + "BEGIN");
 	long startTime = System.currentTimeMillis();
+	boolean error = false;
 	try 
 	{
 	    parserPoolData = parserPool.acquire();
 	    output = parserPoolData.getParser().parse(input, strategy);
-	    
+	    assert output.isParsed() == true;
 	}
-	catch (Exception e) {
-	    Logger.getLogger(DocumentParsingTaskExecutor.class.getName()).log(Level.SEVERE, null, e);
+	catch (Exception ex) {
+	    FLAIRLogger.get().error("Document parsing task encountered an error. Exception: " + ex.getMessage());
+	    error = true;
 	}
 	finally {
 	    parserPoolData.release();
 	}
-	long endTime = System.currentTimeMillis();
 	
-	FLAIRLogger.trace("DocumentParsingTask for " + input + " (" + (endTime - startTime) + " ms) END");
+	long endTime = System.currentTimeMillis();
+	if (false == error)
+	    FLAIRLogger.get().trace("Document " + output.getDescription() + " parsed in " + (endTime - startTime) + " ms");
+	
 	DocumentParsingTaskResult result = new DocumentParsingTaskResult(output);
 	return result;
     } 

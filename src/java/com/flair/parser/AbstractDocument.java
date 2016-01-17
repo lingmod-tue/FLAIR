@@ -17,6 +17,7 @@ public interface AbstractDocument
 {
     public Language					getLanguage();
     public String					getText();
+    public String					getDescription();
     public DocumentConstructionData			getConstructionData(GrammaticalConstruction type);
     
     public double					getReadabilityScore();
