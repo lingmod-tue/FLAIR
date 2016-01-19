@@ -9,6 +9,7 @@
             <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/parser/SearchResultDocumentSource.java</file>
             <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/parser/AbstractDocument.java</file>
             <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/taskmanager/TaskType.java</file>
+            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/parser/LocalFileDocumentSource.java</file>
             <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/taskmanager/MasterJobPipeline.java</file>
             <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/parser/SimpleDocumentSource.java</file>
             <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/parser/DocumentCollection.java</file>
@@ -17,6 +18,7 @@
             <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/parser/AbstractDocumentSource.java</file>
             <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/testing/LocalFileParsingTest.java</file>
             <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/parser/DocumentCollectionConstructionData.java</file>
+            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/parser/StanfordDocumentParser.java</file>
         </group>
     </open-files>
 </project-private>

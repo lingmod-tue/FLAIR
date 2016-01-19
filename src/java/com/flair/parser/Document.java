@@ -271,17 +271,24 @@ class Document implements AbstractDocument
 	    if (parsed== false)
 		throw new IllegalStateException("Document not flagged as parsed");
 	    
-	    SearchResultDocumentSource searchSource = (SearchResultDocumentSource)source.source;
-	    SearchResult searchResult = searchSource.getSearchResult();
+	    if (SearchResultDocumentSource.class.isAssignableFrom(source.source.getClass()) == false)
+	    {
+		query = title = url = urlToDisplay = snippet = "";
+	    }
+	    else
+	    {
+		SearchResultDocumentSource searchSource = (SearchResultDocumentSource)source.source;
+		SearchResult searchResult = searchSource.getSearchResult();
+
+		query = searchResult.getQuery();
+		title = searchResult.getTitle();
+		url = searchResult.getURL();
+		urlToDisplay = searchResult.getDisplayURL();
+		snippet = searchResult.getSnippet();
+	    }
 	    
-	    query = searchResult.getQuery();
-	    title = searchResult.getTitle();
-	    url = searchResult.getURL();
-	    urlToDisplay = searchResult.getDisplayURL();
-	    snippet = searchResult.getSnippet();
-	    text = source.getText();
 	    html = "";
-	    
+	    text = source.getText();
 	    preRank = postRank = 0;
 	    
 	    constructions = new ArrayList<>();

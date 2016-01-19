@@ -11,15 +11,13 @@ import com.flair.parser.AbstractDocument;
 import com.flair.parser.AbstractDocumentSource;
 import com.flair.parser.DocumentCollection;
 import com.flair.parser.DocumentConstructionData;
-import com.flair.parser.SimpleDocumentSource;
+import com.flair.parser.LocalFileDocumentSource;
 import com.flair.taskmanager.AbstractPipelineOperation;
 import com.flair.taskmanager.MasterJobPipeline;
 import com.flair.utilities.FLAIRLogger;
 import com.flair.utilities.JSONWriter;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -54,61 +52,49 @@ public class LocalFileParsingTest
 	List<AbstractDocumentSource> inputSource = new ArrayList<>();
 	for (File itr : inputFiles)
 	{
-	   try (BufferedReader br = new BufferedReader(new FileReader(itr))) 
-	   {
-		StringBuilder sb = new StringBuilder();
-		String line = br.readLine();
-
-		while (line != null) {
-		    sb.append(line);
-		    sb.append(System.lineSeparator());
-		    line = br.readLine();
-		}
-		String everything = sb.toString();
-		if (everything.isEmpty() == false)
-		    inputSource.add(new SimpleDocumentSource(everything, Language.ENGLISH));
-	   } catch (IOException ex) {
-	   }
-	   
-	   long startTime = System.currentTimeMillis();
-	   AbstractPipelineOperation op = MasterJobPipeline.get().parseDocumentSources(Language.ENGLISH, inputSource);
-	   DocumentCollection docCol = op.getOutput();
-	   long endTime = System.currentTimeMillis();
-	   
-	   File outFile = new File(rootOutPath);
-	   outFile.mkdirs();
-	   docCol.serialize(serializer, outFile.getAbsolutePath());
-	   
-	   try (BufferedWriter bw = new BufferedWriter(new FileWriter(rootOutPath + "/constructions.csv"))) 
-	   {
-		String header = "document,";
-		for (GrammaticalConstruction itr1 : GrammaticalConstruction.values())
-		    header += itr1.name() + ",";
-		
-		header += "# of sentences,# of dependencies,readability score";
-		bw.write(header);
-		bw.newLine();
-		
-		int i = 1;
-		for (AbstractDocument itr1 : docCol)
-		{
-		    String outString = "" + i++ + ",";
-		    for (GrammaticalConstruction itr2 : GrammaticalConstruction.values())
-		    {
-			DocumentConstructionData data = itr1.getConstructionData(itr2);
-			outString += data.getRelativeFrequency() + ",";
-		    }
-		    
-		    outString += itr1.getNumSentences() + "," + itr1.getNumDependencies() + "," + itr1.getReadabilityScore();
-		    bw.write(outString);
-		    bw.newLine();
-		}
-	   } catch (IOException ex) {
-	   }
-	   
-	   FLAIRLogger.get().trace(op.toString());
-	   FLAIRLogger.get().trace("LocalFileParsingTest parsed " + docCol.size() + " documents in " + (endTime - startTime) + " ms");
-	   System.exit(0);
+	    if (itr.isDirectory() == false)
+		inputSource.add(new LocalFileDocumentSource(itr, Language.ENGLISH));
 	}
-    }
+	    
+   
+	long startTime = System.currentTimeMillis();
+	AbstractPipelineOperation op = MasterJobPipeline.get().parseDocumentSources(Language.ENGLISH, inputSource);
+	DocumentCollection docCol = op.getOutput();
+	long endTime = System.currentTimeMillis();
+
+	File outFile = new File(rootOutPath);
+	outFile.mkdirs();
+	docCol.serialize(serializer, outFile.getAbsolutePath());
+
+	try (BufferedWriter bw = new BufferedWriter(new FileWriter(rootOutPath + "/constructions.csv"))) 
+	{
+	     String header = "document,";
+	     for (GrammaticalConstruction itr1 : GrammaticalConstruction.values())
+		 header += itr1.name() + ",";
+
+	     header += "# of sentences,# of dependencies,readability score";
+	     bw.write(header);
+	     bw.newLine();
+
+	     int i = 1;
+	     for (AbstractDocument itr1 : docCol)
+	     {
+		 String outString = "" + i++ + ",";
+		 for (GrammaticalConstruction itr2 : GrammaticalConstruction.values())
+		 {
+		     DocumentConstructionData data = itr1.getConstructionData(itr2);
+		     outString += data.getRelativeFrequency() + ",";
+		 }
+
+		 outString += itr1.getNumSentences() + "," + itr1.getNumDependencies() + "," + itr1.getReadabilityScore();
+		 bw.write(outString);
+		 bw.newLine();
+	     }
+	} catch (IOException ex) {
+	}
+
+	FLAIRLogger.get().trace(op.toString());
+	FLAIRLogger.get().trace("LocalFileParsingTest parsed " + docCol.size() + " documents in " + (endTime - startTime) + " ms");
+	System.exit(0);
+     }
 }
