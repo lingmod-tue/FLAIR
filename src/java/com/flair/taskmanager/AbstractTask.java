@@ -80,9 +80,12 @@ abstract class AbstractTask implements Callable<AbstractTaskResult>
 		 if (isCancelled() == false && continuation != null)
 		     continuation.run(result);
 	    }
-	} catch (Exception ex) {
+	} 
+	catch (Exception ex) {
 	    FLAIRLogger.get().error("Uncaught exception in AbstractTask: " + ex.getMessage());
-	} finally {
+	} 
+	finally 
+	{
 	    parentJob.unregisterTask(this);
 	    setExecuting(false);
 	}

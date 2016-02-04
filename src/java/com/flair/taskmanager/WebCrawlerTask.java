@@ -23,7 +23,7 @@ class WebCrawlerTask extends AbstractTask
     private final SearchResult		    input;
     private ExecutorService		    fetchExecutor;
     
-    private static final int		    TIMEOUT_SECONDS = 15;
+    private static final int		    TIMEOUT_SECONDS = 10;
     
     class FetchRunnable implements Callable<Boolean>
     {

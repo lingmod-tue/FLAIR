@@ -136,19 +136,6 @@ function displayEach(jsonList, reranked, from_cache) {
         constructions[i]["idf"] = Math.log((jsonList.length + 1) / count);
 
     }
-//        if (count > 0) {
-//            norm += Math.pow(Math.log(NUM_OF_RESULTS / count), 2);
-//        }
-//    if (norm > 0 || norm < 0) {  // cannot be NaN
-//        norm = Math.sqrt(norm);
-//    }
-//    for (var c in constructions) {
-//        if (norm > 0 || norm < 0) {  // cannot be NaN
-//            constructions[c]["tfIdf"] = constructions[c]["idf"] / norm;
-//        } else {
-//            constructions[c]["tfIdf"] = 0.0;
-//        }
-//    }
 
     // calculate average doc length
     for (var d in jsonList) {
@@ -187,41 +174,12 @@ function displayEach(jsonList, reranked, from_cache) {
 
                     dTotal += gramScore * constructions[constr]["weight"];
                 }
-////                if ((qTfIdf > 0 || qTfIdf < 0) && (dTfIdf > 0 || dTfIdf < 0)) { // cannot be NaN
-//                if (dTfIdf > 0 || dTfIdf < 0) { // cannot be NaN
-//                    dTotal += dTfIdf * constructions[constr]["weight"];
-//                }
             }
-
-/////// start new
-//            var qTf = 0.0;
-//            if (constructions[constr]["docWeightedTf"] > 0 || constructions[constr]["docWeightedTf"] < 0) {
-//                qTf = constructions[constr]["docWeightedTf"][d];
-//                alert(qTf);
-//            }
-//            var qIdf = constructions[constr]["idf"];
-//
-//            if ((constructions[constr]["weight"] > 0 || constructions[constr]["weight"] < 0) && (qTf > 0 || qTf < 0) && (qIdf > 0 || qIdf < 0)) { // cannot be NaN
-//
-//                dTotal += qTf * qIdf * constructions[constr]["weight"];
-//                alert("???");
-//            }
-/////// end new
-
         }
         jsonList[d]["gramScore"] = dTotal; // grammar score
-
         jsonList[d]["totalWeight"] = jsonList[d]["gramScore"]; // total weight : TODO add rankWeight and textWeight
-
-
     }
     //// - end of calculating the total weight
-
-
-
-
-
-
 
 
     if (reranked) {
@@ -279,19 +237,6 @@ function displayEach(jsonList, reranked, from_cache) {
         var i;
         for (i = 0; i < jsonList.length; i++) {
             // show each object in a row of 3 cells: html / titles, urls and snippets / text
-//        var html = jsonList[i].html;
-//        var text = jsonList[i].text;
-//        out += '<tr onclick="showSnapshot(' + i + ');"><td class="num_cell" style="width:2%;text-align:center;font-size:x-large;">' + jsonList[i].postRank + '<br><span style="color:lightgrey;font-size:small">(' + jsonList[i].preRank + ')</span></td><td class="text_cell" style="width:10%;"><div style="font-size:4pt;height:100px;overflow:scroll;color:lightblue;border:solid 1px lightgrey;border-radius:5px;padding:5px;">' + text + '</div></td><td  class="url_cell" style="width:50%"><a href="' + jsonList[i].url + '" target="_blank"><b>' + jsonList[i].title + '</b></a><br><span style="color:grey;font-size:smaller;">' + jsonList[i].urlToDisplay + '</span><br><span>' + jsonList[i].snippet + '</span></td></tr>';
-// Relevant box:
-//        out += '<tr><td class="num_cell" style="font-size:x-large;">' + (i + 1) + '&nbsp;<span style="color:lightgrey;font-size:small" title="original position in the rank">(' + jsonList[i].preRank + ')</span><br><div class="helpful" style="font-size:small">Relevant? <br><input type="checkbox" value="' + reranked + '-' + (i + 1) + '"></div></td><td  class="url_cell" style="width:40%"><div><a href="' + jsonList[i].url + '" target="_blank"><b>' + jsonList[i].title + '</b></a></div><div id="show_text_cell" title="Click to show text" onclick="showText(' + i + ');"><span style="color:grey;font-size:smaller;">' + jsonList[i].urlToDisplay + '</span><br><span>' + jsonList[i].snippet + '</span></div></td></tr>';
-// Thumbs up/down:
-//        out += '<tr><td class="num_cell" style="font-size:x-large;">' + (i + 1) + '&nbsp;<span style="color:lightgrey;font-size:small" title="original position in the rank">(' + jsonList[i].preRank + ')</span><br>' + 
-//                '<div class="helpful" style="font-size:small">' + 
-//                '<span id="up_' + (i + 1) + '" class="thumbs_up glyphicon glyphicon-thumbs-up" onclick="log_feedback("' + reranked + '-' + (i + 1) + '",true)"></span>  ' + 
-//                '<span id="down_' + (i + 1) + '"  class="thumbs_down glyphicon glyphicon-thumbs-down" onclick="log_feedback("' + reranked + '-' + (i + 1) + '",false)"></span>' + 
-//                '</div></td><td  class="url_cell" style="width:40%"><div><a href="' + jsonList[i].url + '" target="_blank"><b>' + jsonList[i].title + '</b></a></div>' + 
-//                '<div id="show_text_cell" title="Click to show text" onclick="showText(' + i + ');"><span style="color:grey;font-size:smaller;">' + jsonList[i].urlToDisplay + '</span><br><span>' + jsonList[i].snippet + '</span></div></td></tr>';
-// Star:
             out += '<tr><td class="num_cell" style="font-size:x-large;">' +
                     (i + 1) + '&nbsp;<span style="color:lightgrey;font-size:small" title="original position in the rank">(' + jsonList[i].preRank + ')</span><br>' +
                     '<div class="helpful" style="font-size:small">' +
@@ -412,34 +357,7 @@ function leftPad(number, targetLength) {
     }
     return output;
 }
-//
-///**
-// * Use html2canvas library to take a snapshot
-// * @param {type} doc_number
-// * @returns {undefined}
-// */
-//function showSnapshot(doc_number) {
-//    hideSnapshot(); // remove the previous one
-//
-//    doc_num = doc_number;
-//
-//    // highlight the corresponding result
-//    document.getElementById("results_table").childNodes[doc_num].style.backgroundColor = "#fdf6e6";
-//
-//    var html_string = docs[doc_num].html;
-//    var iframe = document.createElement('iframe');
-//    document.getElementById("snapshot").appendChild(iframe);
-//    setTimeout(function () {
-//        var iframedoc = iframe.contentDocument || iframe.contentWindow.document;
-//        iframedoc.body.innerHTML = html_string;
-//        html2canvas(iframedoc.body, {
-//            onrendered: function (canvas) {
-//                document.getElementById("snapshot").appendChild(canvas);
-//                document.getElementById("snapshot").removeChild(iframe);
-//            }
-//        });
-//    }, 10);
-//}
+
 
 function hideSnapshot() {
     // clear the snapshot area
@@ -467,7 +385,6 @@ function showText(doc_number) {
         $('#myModal_Extract').modal('show');
     }
     
-//$(document).ready(function(){
     hideText(); // remove the previous one
 
     // show Settings sidebar
@@ -478,15 +395,10 @@ function showText(doc_number) {
 
 
         // highlight the corresponding result
-//        document.getElementById("results_table").childNodes[doc_num].style.backgroundColor = "#fdf6e6";
         $("#results_table tr:nth-child(" + (doc_num + 1) + ")").css("background-color", "#fdf6e6");
 
 
         // show a modal if text has not been extracted
-
-
-
-
         var info_box_1 = "<table style='width:100%'><tr>";
         if (doc.readabilityLevel !== null && doc.readabilityLevel.length > 3) {
             info_box_1 += "<td class='text-cell'><b>" + formatLevel(doc.readabilityLevel) + "</b></td>";
@@ -499,24 +411,7 @@ function showText(doc_number) {
         }
         info_box_1 += "</tr></table>";
 
-
-//        info_box_1 += "<br><br>";
-//
-//        info_box_1 += "<table><tr><td><p>Average sentence length: " + Number(doc.avSentLength).toFixed(2) + " words</p>";
-//        info_box_1 += "<p>Average word length: " + Number(doc.avWordLength).toFixed(2) + " letters</p>";
-//        info_box_1 += "<p>Average tree depth: " + Number(doc.avTreeDepth).toFixed(2) + " levels</p>";
-//
-//        info_box_1 += "</td><td style='padding-left:20px;'>";
-//
-//        info_box_1 += "<p>Grammar weight: " + doc.gramScore + "</p>";
-//        info_box_1 += "<p>Rank weight: " + Number(doc.rankWeight).toFixed(2) + "</p>";
-//        info_box_1 += "<p>Text length weight: " + Number(doc.textWeight).toFixed(2) + "</p>";
-//        info_box_1 += "<p>Total weight: " + Number(doc.totalWeight).toFixed(2) + "</p></td></tr></table>";
-
-
-//    info_box += "<p> <strong>Grammatical constructions </strong></p>";
         var info_box_2 = "<table id='constructions-table'><thead><tr><td><b>Construct</b></td><td><b>Count</b></td><td><b>Weight</b></td></tr></thead><tbody>";
-
         var info_box_3 = "<div id='show_all_constructions' hidden><table><thead><tr><td><b>Construct</b></td><td><b>Count</b></td><td><b>%</b></td></tr></thead><tbody>";
 
         var count_col = 0;
@@ -545,26 +440,17 @@ function showText(doc_number) {
                             col = colors[count_col];
                             count_col++;
                         }
-
                         info_box_2 += "<tr class='constructions_line'><td style='background-color:" + col + "'>" + name_to_show + "</td><td class='text-cell'>" + doc["frequencies"][ind] + "</td><td class='text-cell'>(" + constructions[i]["weight"] + ")</td></tr>";
                     }
-
                     info_box_3 += "<tr><td>" + name_to_show + "</td><td class='text-cell'>" + doc["frequencies"][ind] + "</td><td class='text-cell'>(" + ((Number(doc["relFrequencies"][ind])) * 100).toFixed(4) + ")</td></tr>";
-
                 }
-
-
-
             }
         }
+        
         info_box_2 += "</tbody></table><br> <div id='info-highlights'></div>";
-
-
-
         info_box_3 += "</tbody></table><br></div><br><br><br>";
 
         // add a "copy text" button
-//    var text_string = "<button type='button' class='btn btn-default' onclick='SelectText(\"sidebar_text\")'><b>select text</b></button><br><br>";
         var text_string = "<br>";
         text_string += "<div id='sidebar_text' readonly>";
         text_string += highlightText(doc);
@@ -588,7 +474,6 @@ function showText(doc_number) {
             document.getElementById("constructions-table").hidden = true;
         }
     }
-//    });
 }
 
 function show_all_constructions() {
@@ -624,38 +509,23 @@ function hideText() {
     document.getElementById("snapshot").innerHTML = "";
     // remove the highlight from the results
     if (doc_num > -1 && document.getElementById("results_table").childNodes.length > 0) {
-        //document.getElementById("results_table").childNodes[doc_num].style.backgroundColor = "white";
-//        alert($("#results_table tr:nth-child(" + (doc_num + 1) + ")").css("background-color"));
         $("#results_table tr:nth-child(" + (doc_num + 1) + ")").css("background-color", "white");
     }
-    //doc_num = -1;
 }
-
-
-
-function show_progress(percent) {
-//    if (percent === 100) {
-//        $("#search_button").html("GO!");
-//    } else {
-//        $("#search_button").html("<span class='badge'>" + percent + "%</span>");
-//
-////        $("#search_button").html("<img style='width:100%;height:100%;' src='ajax-loader.gif' alt='Loading...'/>");
-//    }
-
-}
-
 
 function search_cache(query) {
     document.getElementById("search_field").value = query;
     the_query = query.split(" ").join("_");
     $("#myModal_Cache").modal('hide');
     get_documents(true);
-    //rerank(false);
 
 }
 
 function rerank(called_from_search, docs_path) {
-
+    if (the_query === null || the_query === "") {
+        the_query = document.getElementById("search_field").value.trim().split(" ").join("_");
+    }
+    
     var search = the_query.split("_").join(" ");
     b_parameter = ($(".lengthSlider").slider("option", "value")) / 5;
     if (b_parameter === null) {
@@ -666,96 +536,43 @@ function rerank(called_from_search, docs_path) {
         $("#recent_searches").prepend('<p onclick="search_cache(\'' + the_query + '\')">' + search + '</p>');
     }
 
-
-//    if (docs_path) {
-//        alert ("CONEXT_ROOT was: " + CONTEXT_ROOT);
-//        PATH_TO_RESULTS = docs_path;
-//        alert ("PATH_TO_RESULTS now: " + PATH_TO_RESULTS);
-//    }
-
-// TODO: uncomment
-    //PATH_TO_RESULTS = "results/";
-
-//    document.getElementById("results_table").innerHTML = "<img src='ajax-loader.gif' alt='Loading...'/>";
-
 // hide the right sidebar
     $("#sidebar-wrapper-right").removeClass("active");
     $("#page-content-wrapper").removeClass("active");
 
     from_show_distribution = false;
 
-    the_query = document.getElementById("search_field").value.trim().split(" ").join("_");
-
-//    if (the_query === "" && called_from_search) {
-//        alert("default query: Jennifer Lawrence");
-//        console.log("default query: Jennifer Lawrence");
-//        the_query = "Jennifer_Lawrence";
-//        document.getElementById("search_field").value = the_query.split("_").join(" ");
-//    } else 
     if (the_query === "") {
         return;
     }
 
     hideSnapshot();
-    //document.getElementById("results_table").innerHTML = "";
-
     // get the settings
     get_settings(false); // do not read from file
-//    // show progress
-//    show_progress(0);
-
-//    // write into the settings file
-//    $.ajax({
-//        type: 'POST',
-//        url: settings_file,
-//        dataType: "json",
-//        data: constructions,
-//        success: function () {
-//            console.log('successfully written into: ' + settings_file);
-//        },
-//        error: function () {
-//            console.log('no settings file found: ' + settings_file);
-//        }
-//    });
-
+    
     docs = [];
     if (called_from_search) {
         doc_filter = [];
-//        // show progress
-//        show_progress(0);
-        get_documents();
+        get_documents(false, docs_path);
     } else {
-//        // show progress
-//        show_progress(10);
         addDocs(true, false); // true: reranked; false: not from cache
     }
-
-
-
-
 
     // generate parallel coordinates - visualization
     // TODO: uncomment:
     // visualize();
-
 }
 
 
 
-function get_documents(from_cache) {
-
+function get_documents(from_cache, pathToResult) {
     original_docs = [];
+    if (pathToResult === null)
+            pathToResult = PATH_TO_RESULTS + the_query;
+        
     for (var i = 1; i < NUM_OF_RESULTS + 1; i++) {
-        var path = PATH_TO_RESULTS + the_query + '/weights/' + leftPad(i, 3) + '.json';
-
+        var path = pathToResult + '/weights/' + leftPad(i, 3) + '.json';
         console.log(path);
-
-//        $.getJSON(path, function (result) {
-//            $.each(result, function () {
-//                original_docs.push(result);
-//            });
-//        });
-
         var count = 1;
 
         ($.ajax({
@@ -776,8 +593,6 @@ function get_documents(from_cache) {
             },
             complete: function () {
                 if (count === NUM_OF_RESULTS) {
-                    // show progress
-                    //show_progress(90);
                     addDocs(true, from_cache);
                 } else {
                     count++;
@@ -789,27 +604,19 @@ function get_documents(from_cache) {
 
 
 function reset(what) {
-//    var g;
     if (what === "all") {
-        //g = document.getElementById("settings_panel").getElementsByTagName("input");
         $(".gradientSlider").each(function () {
             if ($(this).slider("option", "value") !== 0) {
                 $(this).slider("option", "value", 0);
             }
         });
     } else {
-        //g = document.getElementById("collapse_" + what).getElementsByTagName("input");
-//        var s = $("#collapse_" + what);
         $("#collapse_" + what + " div[id$='-gradientSlider']").each(function () {
             if ($(this).slider("option", "value") !== 0) {
                 $(this).slider("option", "value", 0);
             }
         });
-
     }
-//    for (var i = 0; i < g.length; i++) {
-//        g[i].value = 0;
-//    }
 }
 
 function setSearchEngine(searchEngine) {
@@ -956,7 +763,6 @@ function highlightText(doc) {
     var tmp = document.createElement("DIV");
     tmp.innerHTML = docText;
     docText = tmp.textContent || tmp.innerText;
-////
 
     var prevStartInd = -1; // int // prev ind of a start-tag
     var prevEndInd = -1; // int // prev ind of a start-tag
@@ -996,11 +802,9 @@ function highlightText(doc) {
             prevEndInd = parseInt(curItem.substring(curItem.indexOf("-") + 1)); // int
             prevStartTag = toInsertBefore + tag;
             prevConstruct = tag.substring(tag.indexOf("title='") + 7, tag.indexOf("'>"));
-
         }
-
+        
         docText = docText.substring(0, insertHere) + tag + docText.substring(insertHere);
-
     }
     newText = docText;
 
@@ -1008,84 +812,9 @@ function highlightText(doc) {
 }
 
 
-//
-///**
-// * Resets the order of docs
-// * @returns {undefined}
-// */
-//function show_distribution() {
-//
-//    from_show_distribution = true;
-//
-//    if (the_query === "") {
-//        alert("default query: Jennifer Lawrence");
-//        console.log("default query: Jennifer Lawrence");
-//        the_query = "Jennifer_Lawrence";
-//    }
-//
-//
-//    // save the settings
-//    settings = [];
-//    // save the level info
-//    var levels = document.getElementById("settings_levels").getElementsByTagName("input");
-//    for (var k = 0; k < levels.length; k++) {
-//        var setObj = {};
-//        setObj["name"] = levels[k].id;
-//        if (levels[k].checked) {
-//            setObj["weight"] = 1;
-//        } else {
-//            setObj["weight"] = 0;
-//        }
-//        settings.push(setObj);
-//    }
-//
-//    // save the weights for constructions
-//    var g = document.getElementById("settings_panel").getElementsByTagName("input");
-//    for (var i = 0; i < g.length; i++) {
-//        if (g[i].value !== 0) {
-//            var setObj = {};
-//            setObj["name"] = g[i].id;
-//            setObj["weight"] = g[i].value;
-//            settings.push(setObj);
-//        }
-//    }
-//
-//    // show distribution
-//    for (var s in settings) {
-//        document.getElementById(settings[s]["name"] + "-df").innerHTML = "(" + settings[s]["df"] + " / " + nonempty_docs + " pages)";
-//    }
-//
-//
-//    docs = [];
-//    hideSnapshot();
-//    document.getElementById("results_table").innerHTML = "";
-////    document.getElementById("display_query").innerHTML = query.split("_").join(" ");
-//    addDocs(true); // false: ranked (but from_show_distribution)
-//}
-
-//
-//function set_weight() {
-//
-//    if (docs.length > 0) {
-//        docs = [];
-//        addDocs(true); // false: ranked (but from_show_distribution)
-//    }
-//    //alert(weight);
-//}
 
 function get_settings(readFromFile) {
     if (readFromFile) {
-//        // read settings from the file
-//        ($.ajax({
-//            url: settings_file,
-//            dataType: "json",
-//            success: function (data) {
-//                settings = data;
-//            },
-//            error: function () {
-//                console.log('no constructions file: ' + settings_file);
-//            }
-//        }));
     } else { // get the current settings from the tool
         // save the settings
         settings = [];
@@ -1118,18 +847,6 @@ function get_settings(readFromFile) {
             }
             constructions.push(setObj);
         });
-
-//        var g = document.getElementById("settings_panel").getElementsByTagName("input");
-//        for (var i = 0; i < g.length; i++) {
-//            if (g[i].value !== 0) {
-//                var setObj = {};
-//                setObj["name"] = g[i].id;
-//                setObj["weight"] = g[i].value;
-//                settings.push(setObj);
-//            }
-//        }
-
-
     }
 }
 

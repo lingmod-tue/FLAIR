@@ -58,7 +58,7 @@ public class DocumentConstructionData extends AbstractConstructionData
 	return getWeightedFrequency() / parentDocument.getFancyLength();
     }
     
-    public boolean addOccurrence(int start, int end, String expression)
+    public boolean addOccurrence(int start, int end)
     {
 	// especially in case of dependencies (gov/dep): make sure start is smaller than end
 	if (start > end)
@@ -73,18 +73,10 @@ public class DocumentConstructionData extends AbstractConstructionData
 	if (hasOccurence(start, end) == true)
 	    return false;
 	
-	Occurrence newOcc;
-	if (expression.isEmpty())
-	    newOcc = new Occurrence(getParentConstruction(), start, end);
-	else
-	    newOcc = new Occurrence(getParentConstruction(), start, end, expression);
+	Occurrence newOcc = new Occurrence(getParentConstruction(), start, end);
 	
 	occurrences.add(newOcc);
 	return true;
-    }
-    
-    public boolean addOccurrence(int start, int end) {
-	return addOccurrence(start, end, "");
     }
     
     public List<Occurrence> getOccurrences() {
@@ -96,8 +88,7 @@ class DocumentConstructionDataFactory extends AbstractConstructionDataFactory
 {
     private final Document			    parent;
 
-    public DocumentConstructionDataFactory(Document parent)
-    {
+    public DocumentConstructionDataFactory(Document parent) {
 	this.parent = parent;
     }
 

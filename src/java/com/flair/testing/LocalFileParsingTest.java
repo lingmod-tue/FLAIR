@@ -70,7 +70,7 @@ public class LocalFileParsingTest
 	{
 	     String header = "document,";
 	     for (GrammaticalConstruction itr1 : GrammaticalConstruction.values())
-		 header += itr1.name() + ",";
+		 header += itr1.toString() + ",";
 
 	     header += "# of sentences,# of dependencies,readability score";
 	     bw.write(header);

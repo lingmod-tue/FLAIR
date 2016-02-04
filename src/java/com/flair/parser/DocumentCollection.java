@@ -69,7 +69,7 @@ public class DocumentCollection implements Iterable<AbstractDocument>
 	    
 	for (int i = 0; i < dataStore.size(); i++)
 	{
-	    String outfile = path + "/" + String.format("%03d", i);
+	    String outfile = path + "/";
 	    writer.writeObject(dataStore.get(i).getSerializable(), String.format("%03d", i), outfile);
 	}
     }

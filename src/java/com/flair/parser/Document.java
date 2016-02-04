@@ -223,6 +223,11 @@ class Document implements AbstractDocument
     public Serializable getSerializable() {
 	return new DocumentFirstRevisionDecorator(this);
     }
+
+    @Override
+    public AbstractDocumentSource getDocumentSource() {
+	return source;
+    }
     
     final class DocumentFirstRevisionDecorator implements java.io.Serializable
     {
@@ -272,9 +277,7 @@ class Document implements AbstractDocument
 		throw new IllegalStateException("Document not flagged as parsed");
 	    
 	    if (SearchResultDocumentSource.class.isAssignableFrom(source.source.getClass()) == false)
-	    {
 		query = title = url = urlToDisplay = snippet = "";
-	    }
 	    else
 	    {
 		SearchResultDocumentSource searchSource = (SearchResultDocumentSource)source.source;
@@ -303,7 +306,7 @@ class Document implements AbstractDocument
 		DocumentConstructionData data = getConstructionData(itr);
 		if (data.hasConstruction())
 		{
-		    constructions.add(itr.name());
+		    constructions.add(itr.toString());
 		    relFrequencies.add(data.getRelativeFrequency());
 		    frequencies.add(data.getFrequency());
 		    tfNorm.add(data.getWeightedFrequency());
@@ -313,8 +316,7 @@ class Document implements AbstractDocument
 		    {
 			highlights.add(new OccurrenceFirstRevisionDecorator(occr.getStart(),
 									    occr.getEnd(),
-									    occr.getText(),
-									    itr.name()));
+									    itr.toString()));
 		    }
 		}
 	    }
@@ -341,8 +343,7 @@ class Document implements AbstractDocument
 class DocumentFactory implements AbstractDocumentFactory
 {
     @Override
-    public AbstractDocument create(AbstractDocumentSource source)
-    {
+    public AbstractDocument create(AbstractDocumentSource source) {
 	return new Document(source);
     }
 }

@@ -15,6 +15,7 @@ import java.io.Serializable;
  */
 public interface AbstractDocument
 {
+    public AbstractDocumentSource			getDocumentSource();
     public Language					getLanguage();
     public String					getText();
     public String					getDescription();

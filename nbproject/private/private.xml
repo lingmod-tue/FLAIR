@@ -3,22 +3,25 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/testing/WebCrawlerTest.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/parser/DocumentConstructionData.java</file>
             <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/web/js/visualization.js</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/parser/SearchResultDocumentSource.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/parser/AbstractDocument.java</file>
+            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/taskmanager/DocumentParsingTask.java</file>
+            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/taskmanager/DocumentParserPool.java</file>
+            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/taskmanager/AbstractTaskExecutor.java</file>
+            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/web/js/functions.js</file>
+            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/taskmanager/Constants.java</file>
             <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/taskmanager/TaskType.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/parser/LocalFileDocumentSource.java</file>
+            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/taskmanager/AbstractTask.java</file>
             <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/taskmanager/MasterJobPipeline.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/parser/SimpleDocumentSource.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/parser/DocumentCollection.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/parser/ConstructionDataCollection.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/parser/Document.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/parser/AbstractDocumentSource.java</file>
+            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/web/visual.jsp</file>
+            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/taskmanager/DocumentParsingTaskExecutor.java</file>
+            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/taskmanager/WebDocumentParserJob.java</file>
+            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/taskmanager/AbstractTaskContinuation.java</file>
+            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/taskmanager/LocalDocumentParserJob.java</file>
+            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/taskmanager/WebCrawlerTaskExecutor.java</file>
             <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/testing/LocalFileParsingTest.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/parser/DocumentCollectionConstructionData.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/parser/StanfordDocumentParser.java</file>
+            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/taskmanager/AbstractTaskResult.java</file>
+            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/taskmanager/WebCrawlerTask.java</file>
+            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/taskmanager/AbstractJob.java</file>
         </group>
     </open-files>
 </project-private>

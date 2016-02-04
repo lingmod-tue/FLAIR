@@ -49,7 +49,8 @@ class DocumentParsingTask extends AbstractTask
 	    output = parserPoolData.getParser().parse(input, strategy);
 	    assert output.isParsed() == true;
 	}
-	catch (Exception ex) {
+	catch (Exception ex)
+	{
 	    FLAIRLogger.get().error("Document parsing task encountered an error. Exception: " + ex.getMessage());
 	    error = true;
 	}

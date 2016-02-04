@@ -11,13 +11,11 @@ package com.flair.taskmanager;
  */
 class DocumentParsingTaskExecutor extends AbstractTaskExecutor
 {
-    public DocumentParsingTaskExecutor()
-    {
+    public DocumentParsingTaskExecutor() {
 	super(Constants.PARSER_THREADPOOL_SIZE);
     }
     
-    public void parse(DocumentParsingTask task)
-    {
+    public void parse(DocumentParsingTask task) {
 	queue(task);
     }
 }

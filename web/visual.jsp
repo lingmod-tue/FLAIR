@@ -1129,16 +1129,10 @@
                             <div class="col-md-8 results">
                                 <table class="table table-hover" style="width:100%; margin-left:10px;padding-right:10px;">
                                     <tbody id="results_table">
-                                        <% if (request != null
-                                                    && request.getSession() != null
-                                                    && request.getSession().getAttribute("docs") != null
-                                                    && request.getSession().getAttribute("output") != null) {%>
+                                        <% if (request != null &&
+                                               request.getSession() != null &&
+                                               request.getSession().getAttribute("output") != null) {%>
                                         <%= request.getSession().getAttribute("output")%>
-                                        <%-- if (request.getSession().getAttribute("stage") == null) {%>
-                                        <% request.getSession().setAttribute("stage", "crawled");%>
-                                        <% } else if (((String) request.getSession().getAttribute("stage")).equalsIgnoreCase("crawled")) {%>
-                                        <% request.getSession().setAttribute("stage", "parse");%>  
-                                        <% }--%>
                                         <% } else {%>
                                         <%= "1. Search <br>2. Parse <br>3. Explore"%>
                                         <%}%> 
@@ -1406,8 +1400,6 @@
         <script type="text/javascript" src="js/visualization.js"></script>
 
         <!--        <script type="text/javascript" src="js/libs/html2canvas.js"></script>-->
-
-        <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
 
 
 

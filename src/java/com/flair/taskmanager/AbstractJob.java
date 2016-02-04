@@ -64,7 +64,6 @@ abstract class AbstractJob
 		FLAIRLogger.get().error("Job encounted an exception while waiting. Exception: " + e.getMessage());
 	    } 
 	}
-	
     }
     
     public synchronized void registerTask(AbstractTask task)
