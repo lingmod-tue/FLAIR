@@ -38,6 +38,7 @@ class WebDocumentParserJob extends AbstractTaskLinkingJob implements BasicParsin
     @Override
     public void begin() 
     {
+	// ### TODO sort the doc collection according the original search ranking
 	if (jobStarted)
 	    throw new IllegalStateException("Job has already begun");
 	
@@ -99,6 +100,8 @@ class WebDocumentParserJob extends AbstractTaskLinkingJob implements BasicParsin
     {
 	if (isCompleted() == false)
 	    return "WebDocumentParserJob is still running";
+	else if (isCancelled())
+	    return "WebDocumentParserJob was cancelled";
 	else
 	    return "WebDocumentParserJob Output:\nInput:\n\tLanguage: " + input.sourceLanguage + "\n\tSearch Results: " + input.searchResults.size() + "\nOutput:\n\tParsed Docs: " + output.parsedDocs.size() + "\n\tDelinquents: " + output.delinquents.size();
     }

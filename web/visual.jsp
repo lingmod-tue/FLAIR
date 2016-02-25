@@ -12,6 +12,8 @@
 
     String query = "";
     String docs_path = "";
+    String numFiles = "";
+    String csvPath = "";
     if (request != null && request.getSession() != null) {
         Object q = request.getSession().getAttribute("query");
         if (q != null && !((String) q).trim().isEmpty()) {
@@ -144,13 +146,13 @@
                                 <div class="col-md-2">&nbsp;</div>
                                 <div class="col-md-8" id="settings_levels" style="border-left:1px lightgrey solid;">
                                     Levels:  <br><br>
-                                    <div><input type="checkbox" aria-label="A1-A2" onclick="rerank(false)" id="LEVEL-a" checked> A1-A2
+                                    <div><input type="checkbox" aria-label="A1-A2" onclick="refreshRanking()" id="LEVEL-a" checked> A1-A2
                                         <br><span class="df" id="LEVEL-a-df"></span><br>
                                     </div>
-                                    <div><input type="checkbox" aria-label="B1-B2" onclick="rerank(false)" id="LEVEL-b" checked> B1-B2
+                                    <div><input type="checkbox" aria-label="B1-B2" onclick="refreshRanking()" id="LEVEL-b" checked> B1-B2
                                         <br><span class="df" id="LEVEL-b-df"></span><br>
                                     </div>
-                                    <div><input type="checkbox" aria-label="C1-C2" onclick="rerank(false)" id="LEVEL-c" checked> C1-C2
+                                    <div><input type="checkbox" aria-label="C1-C2" onclick="refreshRanking()" id="LEVEL-c" checked> C1-C2
                                         <br><span class="df" id="LEVEL-c-df"></span><br>
                                     </div>
                                 </div>
@@ -1099,23 +1101,10 @@
                                     <span class="glyphicon glyphicon-envelope"></span><a href="mailto:maria.chinkina@gmail.com?Subject=Feedback%20(FLAIR)" target="_top" title="Report a problem or just share your feedback."> Report a problem</a>
                                 </div>
 
-
-
-
-
-
-
-
                                 <br><br><br><br><br><br>
                             </div>
-
-
-                            <!--                            <button     type="button" id="show-btn"  data-loading-text="Searching..." class="btn btn-lg btn-warning" onclick="rerank()">Save & Rerank</button>-->
-
                         </div>
-
                     </div>
-
                 </div>
 
 
@@ -1128,73 +1117,12 @@
                             <!-- show results here -->
                             <div class="col-md-8 results">
                                 <table class="table table-hover" style="width:100%; margin-left:10px;padding-right:10px;">
-                                    <tbody id="results_table">
-                                        <% if (request != null &&
-                                               request.getSession() != null &&
-                                               request.getSession().getAttribute("output") != null) {%>
-                                        <%= request.getSession().getAttribute("output")%>
-                                        <% } else {%>
-                                        <%= "1. Search <br>2. Parse <br>3. Explore"%>
-                                        <%}%> 
+                                    <tbody id="results_table">                                        
+                                    <br>Enter a query in the search box and hit Go!"</br>
                                     </tbody>
                                 </table>
                             </div>
-
                         </div>
-
-
-                        <!--            <div class="row" id="statistics" style="width:100%; background-color: white;" >
-                                        <hr>
-
-                                         d3 visualization??? graph!
-                                         visualization: a small picture of a text with highlighted constructions!
-                                         OR: show small pics as small multiples - next to each link, to show the distribution
-
-                                        <div class="col-lg-3" style="text-align: left; padding-left: 25px;">
-                                            <div>
-                                                <span id="stats_popover" class="popover-element stats" data-html=true data-container="body" data-toggle="popover" data-placement="right" data-trigger="hover" data-content="Select a construction to see its distribution across the top N(40) results." > &nbsp; Show distribution: <span class="glyphicon glyphicon-question-sign"></span></span>
-                                            </div>
-                                            <div class="form-group">
-                                                <select class="form-control" id="stats-select">
-                                                    <option value="no_thanks" selected="selected">No, thanks</option>
-                                                    <option value="yes_please">Yes, please</option>
-                                                </select>
-                                            </div>
-                                                                <input id="slider" data-slider-id='slider1' data-slider-min="-5" data-slider-max="10" data-slider-step="1" data-slider-value="0" type="text" style="width:30%;"/>
-                                        </div>
-
-                                        <div class="col-lg-7">
-                                            <div id="alertStatistics" class="alert alert-danger" style="width:60%;position: relative;" hidden></div>
-                                        </div>
-
-                                        <br><br><br><br><br>
-                                    </div>
-
-                                    <br>
-
-                                     to actually show the statistics (and texts?)
-                                    <div class="row" id="lowRow">
-                                         show graphs
-                                        <div class="col-md-9">
-                                            <svg >
-                                            <g class="graphArea" id="graph_multiples">
-                                            </g>
-                                            </svg>
-                                        </div>
-                                         nothing here
-                                        <div class="col-md-2">
-                                        </div>
-                                    </div>-->
-
-                        <!--                     REPORT A PROBLEM. Copyright.
-                                            <div class="row">
-                                                <div style="text-align: center; color:orange; margin-top:40px;" id="report-problem" class="col-md-2">
-                                                    <span class="glyphicon glyphicon-envelope"></span><a href="mailto:maria.chinkina@gmail.com?Subject=Feedback%20(FLAIR)" target="_top" title="Report a problem or just share your feedback." style="color:orange;"> Report a problem</a>
-                                                </div>
-                                                <div style=" text-align: center; margin-left: 60px;" class="col-md-7 text_license">
-                                                    <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png" /></a><br/> <span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/InteractiveResource" property="dct:title" rel="dct:type">FLAIR</span> by <span xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName">Maria Chinkina</span><br/> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International License</a>.
-                                                </div>
-                                            </div>-->
                     </div>
                 </div>
             </div>
@@ -1406,59 +1334,6 @@
 
 
         <script type="text/javascript">
-
-
-
-
-//                            $("#search_form").submit(function () {
-//                                // first check the cache
-//
-//                                // search
-//
-//                            });
-
-            <%-- if (request.getSession().getAttribute("stage") == null || ((String) request.getSession().getAttribute("stage")).isEmpty()) {
-            %>
-
-                                // check the cache
-                                // simply crawl                            
-                                return true;
-
-// if crawled
-            <%               } else if (request.getSession().getAttribute("stage") != null && ((String) request.getSession().getAttribute("stage")).equalsIgnoreCase("crawled")) {
-            %>
-                                //$("#search_button").click();
-                                // show dialog window
-                                $('#myModal_Extract').modal('show');
-// if extracted
-            <%
-            } else if (request.getSession().getAttribute("stage") != null && ((String) request.getSession().getAttribute("stage")).equalsIgnoreCase("extracted")) {
-            %>
-                                $('#myModal_Parse').modal('show');
-// if parsed
-            <%  } else if (request.getSession().getAttribute("stage") != null && ((String) request.getSession().getAttribute("stage")).equalsIgnoreCase("parsed")) {
-            %>
-                                $("#sidebar_grammar_button").click(function (e) {
-                                    e.preventDefault();
-                                    toggle_left_sidebar(false);
-                                });
-            <% }--%>
-
-
-//////////////////
-
-
-            <%--  if (request != null && request.getSession() != null
-                        && request.getSession().getAttribute("stage") != null
-                        && (((String) request.getSession().getAttribute("stage")).equalsIgnoreCase("extracted")
-                        || ((String) request.getSession().getAttribute("stage")).equalsIgnoreCase("crawled"))) {
-                    // TODO: why ""?    
-                    request.getSession().setAttribute("stage", "");
-                }
-            --%>
-
-
-//////////////////
             // Settings Menu Toggle Script
             <%                if (request != null && request.getSession() != null
                         && request.getSession().getAttribute("stage") != null
@@ -1510,48 +1385,27 @@
                         }, 3000);
                     });
 
-            if ($("#hello_name").html().trim().length < 2) {
-                $(window).load(function () {
-                    $('#myModal_Login').modal('show');
-                });
-            }
+ //           if ($("#hello_name").html().trim().length < 2) {
+ //               $(window).load(function () {
+ //                   $('#myModal_Login').modal('show');
+//                });
+//            }
             ;
 
-
-
-            <%--                if (request.getSession().getAttribute("docs_path") != null) {
-                    docs_path = (String) request.getSession().getAttribute("docs_path");
-            %>
-                                window.onload = rerank(true, "<%=docs_path%>");
-            <%
-                }
-            --%>
-
-
-
-
-            <%--                if (request.getSession().getAttribute("stage") != null && ((String) request.getSession().getAttribute("stage")).equalsIgnoreCase("crawled")) {
-            %>
-                            //$("#search_button").click();
-                            // show dialog window
-                            $('#myModal_Extract').modal('show');
-            <%
-            } else if (request.getSession().getAttribute("stage") != null && ((String) request.getSession().getAttribute("stage")).equalsIgnoreCase("parsed")) {
-            %>
-                            $("#sidebar_grammar_button").click(function (e) {
-                                e.preventDefault();
-                                toggle_left_sidebar(false);
-                            });
-            <% }--%>
-
-            // MAIN: get the docs path, read docs from there and re-rank
+             contextRootPath = "<%= request.getContextPath()%>";
             <%
                 if (request != null && request.getSession() != null
-                        && request.getSession().getAttribute("docs_path") != null) {
+                        && request.getSession().getAttribute("docs_path") != null)
+                {
                     docs_path = (String) request.getSession().getAttribute("docs_path");
+                    numFiles = request.getSession().getAttribute("num_files").toString();
+                    csvPath = (String) request.getSession().getAttribute("csv_path");
+                    
+                    docs_path = docs_path.substring(1);
+                    csvPath = csvPath.substring(1);
             %>
 
-            window.onload = rerank(true, "<%=docs_path%>");
+            window.onload = initRanker("<%=docs_path%>", <%=numFiles%>, "<%=csvPath%>");
             <%
                 }
             %>

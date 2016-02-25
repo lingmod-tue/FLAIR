@@ -1,0 +1,603 @@
+{
+  "query": "dream theater",
+  "preRank": 9,
+  "postRank": 0,
+  "title": "Dream Theater Wiki - Wikia",
+  "url": "http://dreamtheater.wikia.com/wiki/Dream_Theater_Wiki",
+  "urlToDisplay": "dreamtheater.wikia.com",
+  "snippet": "Dream Theater Wiki is a community site that anyone can contribute to. Discover, share and add your knowledge!",
+  "html": "",
+  "text": "Wikia.\nWelcome to Dream Theater Wiki.\nContents.\nMembers.\n05-21-09 - Dream Theater Wikia created by NecroVMX , founder of The Crooked Step.\nFeatured article.\nContribute to this wiki.\nTo write a new article, just enter the article title in the box below.\nNot sure where to start?\nIf you are new to wikis, check Help:Getting Started .\nCheck out the community portal to see what the community is working on.\nOther languages.\n",
+  "constructions": [
+    "advancedConjunctions",
+    "subordinateClause",
+    "relativeClause",
+    "adverbialClause",
+    "complexSentence",
+    "compoundSentence",
+    "incompleteSentence",
+    "directObject",
+    "pronouns",
+    "pronounsSubjective",
+    "articles",
+    "theArticle",
+    "aArticle",
+    "pluralRegular",
+    "negAll",
+    "noNotNever",
+    "not",
+    "directQuestions",
+    "presentSimple",
+    "presentProgressive",
+    "simpleAspect",
+    "progressiveAspect",
+    "presentTime",
+    "longVerbForms",
+    "auxiliariesBeDoHave",
+    "copularVerbs",
+    "ingVerbForms",
+    "regularVerbs",
+    "positiveAdj",
+    "positiveAdv"
+  ],
+  "relFrequencies": [
+    0.011494252873563218,
+    0.034482758620689655,
+    0.011494252873563218,
+    0.011494252873563218,
+    0.034482758620689655,
+    0.022988505747126436,
+    0.08045977011494253,
+    0.05747126436781609,
+    0.011494252873563218,
+    0.011494252873563218,
+    0.06896551724137931,
+    0.05747126436781609,
+    0.011494252873563218,
+    0.034482758620689655,
+    0.011494252873563218,
+    0.011494252873563218,
+    0.011494252873563218,
+    0.011494252873563218,
+    0.011494252873563218,
+    0.011494252873563218,
+    0.04597701149425287,
+    0.011494252873563218,
+    0.022988505747126436,
+    0.022988505747126436,
+    0.011494252873563218,
+    0.011494252873563218,
+    0.022988505747126436,
+    0.034482758620689655,
+    0.05747126436781609,
+    0.022988505747126436
+  ],
+  "frequencies": [
+    1,
+    3,
+    1,
+    1,
+    3,
+    2,
+    7,
+    5,
+    1,
+    1,
+    6,
+    5,
+    1,
+    3,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    4,
+    1,
+    2,
+    2,
+    1,
+    1,
+    2,
+    3,
+    5,
+    2
+  ],
+  "tfNorm": [
+    1.0,
+    2.09861228866811,
+    1.0,
+    1.0,
+    2.09861228866811,
+    1.6931471805599454,
+    2.9459101490553135,
+    2.6094379124341005,
+    1.0,
+    1.0,
+    2.791759469228055,
+    2.6094379124341005,
+    1.0,
+    2.09861228866811,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    2.386294361119891,
+    1.0,
+    1.6931471805599454,
+    1.6931471805599454,
+    1.0,
+    1.0,
+    1.6931471805599454,
+    2.09861228866811,
+    2.6094379124341005,
+    1.6931471805599454
+  ],
+  "highlights": [
+    {
+      "docNum": -1,
+      "start": 278,
+      "end": 280,
+      "construction": "advancedConjunctions"
+    },
+    {
+      "docNum": -1,
+      "start": 253,
+      "end": 277,
+      "construction": "subordinateClause"
+    },
+    {
+      "docNum": -1,
+      "start": 278,
+      "end": 331,
+      "construction": "subordinateClause"
+    },
+    {
+      "docNum": -1,
+      "start": 332,
+      "end": 403,
+      "construction": "subordinateClause"
+    },
+    {
+      "docNum": -1,
+      "start": 332,
+      "end": 403,
+      "construction": "relativeClause"
+    },
+    {
+      "docNum": -1,
+      "start": 278,
+      "end": 331,
+      "construction": "adverbialClause"
+    },
+    {
+      "docNum": -1,
+      "start": 253,
+      "end": 277,
+      "construction": "complexSentence"
+    },
+    {
+      "docNum": -1,
+      "start": 278,
+      "end": 331,
+      "construction": "complexSentence"
+    },
+    {
+      "docNum": -1,
+      "start": 332,
+      "end": 403,
+      "construction": "complexSentence"
+    },
+    {
+      "docNum": -1,
+      "start": 7,
+      "end": 37,
+      "construction": "compoundSentence"
+    },
+    {
+      "docNum": -1,
+      "start": 182,
+      "end": 252,
+      "construction": "compoundSentence"
+    },
+    {
+      "docNum": -1,
+      "start": 0,
+      "end": 6,
+      "construction": "incompleteSentence"
+    },
+    {
+      "docNum": -1,
+      "start": 38,
+      "end": 47,
+      "construction": "incompleteSentence"
+    },
+    {
+      "docNum": -1,
+      "start": 48,
+      "end": 56,
+      "construction": "incompleteSentence"
+    },
+    {
+      "docNum": -1,
+      "start": 57,
+      "end": 138,
+      "construction": "incompleteSentence"
+    },
+    {
+      "docNum": -1,
+      "start": 139,
+      "end": 156,
+      "construction": "incompleteSentence"
+    },
+    {
+      "docNum": -1,
+      "start": 157,
+      "end": 181,
+      "construction": "incompleteSentence"
+    },
+    {
+      "docNum": -1,
+      "start": 404,
+      "end": 420,
+      "construction": "incompleteSentence"
+    },
+    {
+      "docNum": -1,
+      "start": 18,
+      "end": 36,
+      "construction": "directObject"
+    },
+    {
+      "docNum": -1,
+      "start": 185,
+      "end": 204,
+      "construction": "directObject"
+    },
+    {
+      "docNum": -1,
+      "start": 211,
+      "end": 234,
+      "construction": "directObject"
+    },
+    {
+      "docNum": -1,
+      "start": 332,
+      "end": 362,
+      "construction": "directObject"
+    },
+    {
+      "docNum": -1,
+      "start": 370,
+      "end": 399,
+      "construction": "directObject"
+    },
+    {
+      "docNum": -1,
+      "start": 281,
+      "end": 284,
+      "construction": "pronouns"
+    },
+    {
+      "docNum": -1,
+      "start": 281,
+      "end": 284,
+      "construction": "pronounsSubjective"
+    },
+    {
+      "docNum": -1,
+      "start": 121,
+      "end": 124,
+      "construction": "articles"
+    },
+    {
+      "docNum": -1,
+      "start": 191,
+      "end": 192,
+      "construction": "articles"
+    },
+    {
+      "docNum": -1,
+      "start": 217,
+      "end": 220,
+      "construction": "articles"
+    },
+    {
+      "docNum": -1,
+      "start": 238,
+      "end": 241,
+      "construction": "articles"
+    },
+    {
+      "docNum": -1,
+      "start": 342,
+      "end": 345,
+      "construction": "articles"
+    },
+    {
+      "docNum": -1,
+      "start": 375,
+      "end": 378,
+      "construction": "articles"
+    },
+    {
+      "docNum": -1,
+      "start": 121,
+      "end": 124,
+      "construction": "theArticle"
+    },
+    {
+      "docNum": -1,
+      "start": 217,
+      "end": 220,
+      "construction": "theArticle"
+    },
+    {
+      "docNum": -1,
+      "start": 238,
+      "end": 241,
+      "construction": "theArticle"
+    },
+    {
+      "docNum": -1,
+      "start": 342,
+      "end": 345,
+      "construction": "theArticle"
+    },
+    {
+      "docNum": -1,
+      "start": 375,
+      "end": 378,
+      "construction": "theArticle"
+    },
+    {
+      "docNum": -1,
+      "start": 191,
+      "end": 192,
+      "construction": "aArticle"
+    },
+    {
+      "docNum": -1,
+      "start": 38,
+      "end": 46,
+      "construction": "pluralRegular"
+    },
+    {
+      "docNum": -1,
+      "start": 48,
+      "end": 55,
+      "construction": "pluralRegular"
+    },
+    {
+      "docNum": -1,
+      "start": 410,
+      "end": 419,
+      "construction": "pluralRegular"
+    },
+    {
+      "docNum": -1,
+      "start": 253,
+      "end": 256,
+      "construction": "negAll"
+    },
+    {
+      "docNum": -1,
+      "start": 253,
+      "end": 256,
+      "construction": "noNotNever"
+    },
+    {
+      "docNum": -1,
+      "start": 253,
+      "end": 256,
+      "construction": "not"
+    },
+    {
+      "docNum": -1,
+      "start": 253,
+      "end": 277,
+      "construction": "directQuestions"
+    },
+    {
+      "docNum": -1,
+      "start": 285,
+      "end": 292,
+      "construction": "presentSimple"
+    },
+    {
+      "docNum": -1,
+      "start": 389,
+      "end": 399,
+      "construction": "presentProgressive"
+    },
+    {
+      "docNum": -1,
+      "start": 7,
+      "end": 14,
+      "construction": "simpleAspect"
+    },
+    {
+      "docNum": -1,
+      "start": 185,
+      "end": 190,
+      "construction": "simpleAspect"
+    },
+    {
+      "docNum": -1,
+      "start": 285,
+      "end": 292,
+      "construction": "simpleAspect"
+    },
+    {
+      "docNum": -1,
+      "start": 332,
+      "end": 337,
+      "construction": "simpleAspect"
+    },
+    {
+      "docNum": -1,
+      "start": 389,
+      "end": 399,
+      "construction": "progressiveAspect"
+    },
+    {
+      "docNum": -1,
+      "start": 285,
+      "end": 292,
+      "construction": "presentTime"
+    },
+    {
+      "docNum": -1,
+      "start": 389,
+      "end": 399,
+      "construction": "presentTime"
+    },
+    {
+      "docNum": -1,
+      "start": 285,
+      "end": 288,
+      "construction": "longVerbForms"
+    },
+    {
+      "docNum": -1,
+      "start": 389,
+      "end": 391,
+      "construction": "longVerbForms"
+    },
+    {
+      "docNum": -1,
+      "start": 389,
+      "end": 391,
+      "construction": "auxiliariesBeDoHave"
+    },
+    {
+      "docNum": -1,
+      "start": 285,
+      "end": 292,
+      "construction": "copularVerbs"
+    },
+    {
+      "docNum": -1,
+      "start": 314,
+      "end": 321,
+      "construction": "ingVerbForms"
+    },
+    {
+      "docNum": -1,
+      "start": 392,
+      "end": 399,
+      "construction": "ingVerbForms"
+    },
+    {
+      "docNum": -1,
+      "start": 88,
+      "end": 95,
+      "construction": "regularVerbs"
+    },
+    {
+      "docNum": -1,
+      "start": 139,
+      "end": 147,
+      "construction": "regularVerbs"
+    },
+    {
+      "docNum": -1,
+      "start": 322,
+      "end": 329,
+      "construction": "regularVerbs"
+    },
+    {
+      "docNum": -1,
+      "start": 125,
+      "end": 132,
+      "construction": "positiveAdj"
+    },
+    {
+      "docNum": -1,
+      "start": 193,
+      "end": 196,
+      "construction": "positiveAdj"
+    },
+    {
+      "docNum": -1,
+      "start": 257,
+      "end": 261,
+      "construction": "positiveAdj"
+    },
+    {
+      "docNum": -1,
+      "start": 289,
+      "end": 292,
+      "construction": "positiveAdj"
+    },
+    {
+      "docNum": -1,
+      "start": 404,
+      "end": 409,
+      "construction": "positiveAdj"
+    },
+    {
+      "docNum": -1,
+      "start": 206,
+      "end": 210,
+      "construction": "positiveAdv"
+    },
+    {
+      "docNum": -1,
+      "start": 253,
+      "end": 256,
+      "construction": "positiveAdv"
+    }
+  ],
+  "tfIdf": [
+    0.10567693468810223,
+    0.22177491376522862,
+    0.10567693468810223,
+    0.10567693468810223,
+    0.22177491376522862,
+    0.17892660401737778,
+    0.31131475441873585,
+    0.2757573998449563,
+    0.10567693468810223,
+    0.10567693468810223,
+    0.29502458309450413,
+    0.2757573998449563,
+    0.10567693468810223,
+    0.22177491376522862,
+    0.10567693468810223,
+    0.10567693468810223,
+    0.10567693468810223,
+    0.10567693468810223,
+    0.10567693468810223,
+    0.10567693468810223,
+    0.2521762733466533,
+    0.10567693468810223,
+    0.17892660401737778,
+    0.17892660401737778,
+    0.10567693468810223,
+    0.10567693468810223,
+    0.17892660401737778,
+    0.22177491376522862,
+    0.2757573998449563,
+    0.17892660401737778
+  ],
+  "docLenTfIdf": 9.46280286186789,
+  "docLength": 87.0,
+  "readabilityScore": -10.0,
+  "readabilityLevel": "LEVEL-a",
+  "readabilityARI": 0.0,
+  "readabilityBennoehr": 0.0,
+  "textWeight": 0.0,
+  "rankWeight": 0.0,
+  "gramScore": 0.0,
+  "totalWeight": 0.0,
+  "numChars": 334,
+  "numSents": 12,
+  "numDeps": 87,
+  "avWordLength": 3.839080459770115,
+  "avSentLength": 7.25,
+  "avTreeDepth": 6.583333333333333
+}

@@ -47,6 +47,6 @@ public interface AbstractDocument
     public boolean					isParsed();
     public void						flagAsParsed();
     
-    public Serializable					getSerializable();
+    public Serializable					getSerializable(Object param);
 }
 

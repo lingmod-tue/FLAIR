@@ -37,12 +37,7 @@ function visualize() {
 //    // clear the svg area
 //    $("#graph_coordinates").html("");
     svg.selectAll("*").remove();
-    
-    if (!parsed) {
-        return;
-    }
-
-    d3.csv(PATH_TO_RESULTS + the_query + "/all_documents_" + the_query + ".csv", function (error, docs) {
+    d3.csv(pathToConstructionDataCSV, function (error, docs) {
 
         // Extract the list of dimensions and create a scale for each.
         x.domain(dimensions = d3.keys(docs[0]).filter(function (d) {
@@ -141,7 +136,7 @@ function visualize() {
 
 function position(d) {
     var v = dragging[d];
-    return v == null ? x(d) : v;
+    return v === null ? x(d) : v;
 }
 
 function transition(g) {

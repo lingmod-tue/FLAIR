@@ -57,7 +57,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 	workingDoc = null;
     }
     
-    private int countSubstr(String str, String substr)
+    private int countSubstr(String substr, String str)
     {
 	// ###TODO can be made faster?
 	// the result of split() will contain one more element than the delimiter

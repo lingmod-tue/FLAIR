@@ -220,8 +220,8 @@ class Document implements AbstractDocument
     }
 
     @Override
-    public Serializable getSerializable() {
-	return new DocumentFirstRevisionDecorator(this);
+    public Serializable getSerializable(Object param) {
+	return new DocumentFirstRevisionDecorator(this, (int)param);
     }
 
     @Override
@@ -271,7 +271,7 @@ class Document implements AbstractDocument
 	private final double			avSentLength;
 	private final double			avTreeDepth;
 
-	public DocumentFirstRevisionDecorator(Document source)
+	public DocumentFirstRevisionDecorator(Document source, int defaultRank)
 	{
 	    if (parsed== false)
 		throw new IllegalStateException("Document not flagged as parsed");
@@ -292,7 +292,8 @@ class Document implements AbstractDocument
 	    
 	    html = "";
 	    text = source.getText();
-	    preRank = postRank = 0;
+	    preRank = defaultRank;
+	    postRank = 0;
 	    
 	    constructions = new ArrayList<>();
 	    relFrequencies = new ArrayList<>();
@@ -306,7 +307,7 @@ class Document implements AbstractDocument
 		DocumentConstructionData data = getConstructionData(itr);
 		if (data.hasConstruction())
 		{
-		    constructions.add(itr.toString());
+		    constructions.add(itr.getLegacyID());
 		    relFrequencies.add(data.getRelativeFrequency());
 		    frequencies.add(data.getFrequency());
 		    tfNorm.add(data.getWeightedFrequency());
@@ -316,7 +317,7 @@ class Document implements AbstractDocument
 		    {
 			highlights.add(new OccurrenceFirstRevisionDecorator(occr.getStart(),
 									    occr.getEnd(),
-									    itr.toString()));
+									    itr.getLegacyID()));
 		    }
 		}
 	    }

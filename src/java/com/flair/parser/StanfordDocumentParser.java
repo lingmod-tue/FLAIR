@@ -34,6 +34,10 @@ class StanfordDocumentParser extends AbstractDocumentParser
 	Properties pipelineProps = new Properties();
 	pipelineProps.put("annotators", "tokenize, ssplit, pos, lemma, parse");
 	
+	// ### TODO update the parsing strategy to support universal deps
+	// ### TODO consider using the neural network depparser
+	pipelineProps.put("parse.originalDependencies", "");
+	
 	switch (modelLanguage)
 	{
 	    case ENGLISH:

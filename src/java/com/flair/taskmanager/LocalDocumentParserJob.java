@@ -78,6 +78,8 @@ class LocalDocumentParserJob extends AbstractTaskLinkingJob implements BasicPars
     {
 	if (isCompleted() == false)
 	    return "LocalDocumentParserJob is still running";
+	else if (isCancelled())
+	    return "LocalDocumentParserJob was cancelled";
 	else
 	    return "LocalDocumentParserJob Output:\nInput:\n\tLanguage: " + input.sourceLanguage + "\n\tDocument Sources: " + input.docSources.size() + "\nOutput:\n\tParsed Docs: " + output.parsedDocs.size();
     }

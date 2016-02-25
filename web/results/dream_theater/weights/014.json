@@ -1,0 +1,2063 @@
+{
+  "query": "dream theater",
+  "preRank": 14,
+  "postRank": 0,
+  "title": "Dream Theater - Listen to Free Music by Dream Theater on ...",
+  "url": "http://www.pandora.com/dream-theater",
+  "urlToDisplay": "www.pandora.com/dream-theater",
+  "snippet": "Listen to music by Dream Theater on Pandora. Discover new music you\u0027ll love, listen to free personalized radio.",
+  "html": "",
+  "text": "Dear Pandora Visitor,.\nWe are deeply, deeply sorry to say that due to licensing constraints, we can no longer allow access to Pandora for listeners located outside of the U.S., Australia and New Zealand. We will continue to work diligently to realize the vision of a truly global Pandora, but for the time being we are required to restrict its use. We are very sad to have to do this, but there is no other alternative.\nWe believe that you are in Germany (your IP address appears to be 78.43.213.12).  If you believe we have made a mistake, we apologize and ask that you please email us .\nIf you have been using Pandora, we will keep a record of your existing stations and bookmarked artists and songs, so that when we are able to launch in your country, they will be waiting for you.\nWe will be notifying listeners as licensing agreements are established in individual countries. If you would like to be notified by email when Pandora is available in your country, please enter your email address below. The pace of global licensing is hard to predict, but we have the ultimate goal of being able to offer our service everywhere.\nWe share your disappointment and greatly appreciate your understanding.\nSincerely,.\nFounder.\nEnter your email address and we will let you know when Pandora is available in your country:.\nLet me know.\n",
+  "constructions": [
+    "existentialThere",
+    "thereIsAre",
+    "advancedConjunctions",
+    "simpleConjunctions",
+    "subordinateClause",
+    "relativeClause",
+    "relativeClauseReduced",
+    "adverbialClause",
+    "simpleSentence",
+    "complexSentence",
+    "compoundSentence",
+    "incompleteSentence",
+    "directObject",
+    "pronouns",
+    "pronounsSubjective",
+    "pronounsObjective",
+    "pronounsPossessive",
+    "articles",
+    "theArticle",
+    "aArticle",
+    "pluralRegular",
+    "ingNounForms",
+    "negAll",
+    "noNotNever",
+    "presentSimple",
+    "presentPerfect",
+    "futureSimple",
+    "futurePerfProg",
+    "simpleAspect",
+    "perfectAspect",
+    "perfProgAspect",
+    "presentTime",
+    "futureTime",
+    "longVerbForms",
+    "auxiliariesBeDoHave",
+    "copularVerbs",
+    "ingVerbForms",
+    "modals",
+    "simpleModals",
+    "advancedModals",
+    "can",
+    "irregularVerbs",
+    "regularVerbs",
+    "passiveVoice",
+    "positiveAdj",
+    "positiveAdv"
+  ],
+  "relFrequencies": [
+    0.003787878787878788,
+    0.003787878787878788,
+    0.011363636363636364,
+    0.03787878787878788,
+    0.030303030303030304,
+    0.011363636363636364,
+    0.007575757575757576,
+    0.015151515151515152,
+    0.003787878787878788,
+    0.030303030303030304,
+    0.011363636363636364,
+    0.011363636363636364,
+    0.056818181818181816,
+    0.12121212121212122,
+    0.07575757575757576,
+    0.003787878787878788,
+    0.041666666666666664,
+    0.030303030303030304,
+    0.01893939393939394,
+    0.011363636363636364,
+    0.030303030303030304,
+    0.015151515151515152,
+    0.007575757575757576,
+    0.007575757575757576,
+    0.05303030303030303,
+    0.003787878787878788,
+    0.007575757575757576,
+    0.003787878787878788,
+    0.10227272727272728,
+    0.003787878787878788,
+    0.003787878787878788,
+    0.056818181818181816,
+    0.015151515151515152,
+    0.05303030303030303,
+    0.01893939393939394,
+    0.03409090909090909,
+    0.022727272727272728,
+    0.026515151515151516,
+    0.003787878787878788,
+    0.003787878787878788,
+    0.003787878787878788,
+    0.007575757575757576,
+    0.015151515151515152,
+    0.007575757575757576,
+    0.045454545454545456,
+    0.041666666666666664
+  ],
+  "frequencies": [
+    1,
+    1,
+    3,
+    10,
+    8,
+    3,
+    2,
+    4,
+    1,
+    8,
+    3,
+    3,
+    15,
+    32,
+    20,
+    1,
+    11,
+    8,
+    5,
+    3,
+    8,
+    4,
+    2,
+    2,
+    14,
+    1,
+    2,
+    1,
+    27,
+    1,
+    1,
+    15,
+    4,
+    14,
+    5,
+    9,
+    6,
+    7,
+    1,
+    1,
+    1,
+    2,
+    4,
+    2,
+    12,
+    11
+  ],
+  "tfNorm": [
+    1.0,
+    1.0,
+    2.09861228866811,
+    3.302585092994046,
+    3.0794415416798357,
+    2.09861228866811,
+    1.6931471805599454,
+    2.386294361119891,
+    1.0,
+    3.0794415416798357,
+    2.09861228866811,
+    2.09861228866811,
+    3.70805020110221,
+    4.465735902799727,
+    3.995732273553991,
+    1.0,
+    3.3978952727983707,
+    3.0794415416798357,
+    2.6094379124341005,
+    2.09861228866811,
+    3.0794415416798357,
+    2.386294361119891,
+    1.6931471805599454,
+    1.6931471805599454,
+    3.6390573296152584,
+    1.0,
+    1.6931471805599454,
+    1.0,
+    4.295836866004329,
+    1.0,
+    1.0,
+    3.70805020110221,
+    2.386294361119891,
+    3.6390573296152584,
+    2.6094379124341005,
+    3.1972245773362196,
+    2.791759469228055,
+    2.9459101490553135,
+    1.0,
+    1.0,
+    1.0,
+    1.6931471805599454,
+    2.386294361119891,
+    1.6931471805599454,
+    3.4849066497880004,
+    3.3978952727983707
+  ],
+  "highlights": [
+    {
+      "docNum": -1,
+      "start": 389,
+      "end": 397,
+      "construction": "existentialThere"
+    },
+    {
+      "docNum": -1,
+      "start": 389,
+      "end": 397,
+      "construction": "thereIsAre"
+    },
+    {
+      "docNum": -1,
+      "start": 502,
+      "end": 504,
+      "construction": "advancedConjunctions"
+    },
+    {
+      "docNum": -1,
+      "start": 589,
+      "end": 591,
+      "construction": "advancedConjunctions"
+    },
+    {
+      "docNum": -1,
+      "start": 881,
+      "end": 883,
+      "construction": "advancedConjunctions"
+    },
+    {
+      "docNum": -1,
+      "start": 187,
+      "end": 190,
+      "construction": "simpleConjunctions"
+    },
+    {
+      "docNum": -1,
+      "start": 289,
+      "end": 292,
+      "construction": "simpleConjunctions"
+    },
+    {
+      "docNum": -1,
+      "start": 385,
+      "end": 388,
+      "construction": "simpleConjunctions"
+    },
+    {
+      "docNum": -1,
+      "start": 554,
+      "end": 557,
+      "construction": "simpleConjunctions"
+    },
+    {
+      "docNum": -1,
+      "start": 669,
+      "end": 672,
+      "construction": "simpleConjunctions"
+    },
+    {
+      "docNum": -1,
+      "start": 692,
+      "end": 695,
+      "construction": "simpleConjunctions"
+    },
+    {
+      "docNum": -1,
+      "start": 703,
+      "end": 705,
+      "construction": "simpleConjunctions"
+    },
+    {
+      "docNum": -1,
+      "start": 1054,
+      "end": 1057,
+      "construction": "simpleConjunctions"
+    },
+    {
+      "docNum": -1,
+      "start": 1160,
+      "end": 1163,
+      "construction": "simpleConjunctions"
+    },
+    {
+      "docNum": -1,
+      "start": 1249,
+      "end": 1252,
+      "construction": "simpleConjunctions"
+    },
+    {
+      "docNum": -1,
+      "start": 23,
+      "end": 203,
+      "construction": "subordinateClause"
+    },
+    {
+      "docNum": -1,
+      "start": 420,
+      "end": 500,
+      "construction": "subordinateClause"
+    },
+    {
+      "docNum": -1,
+      "start": 502,
+      "end": 588,
+      "construction": "subordinateClause"
+    },
+    {
+      "docNum": -1,
+      "start": 589,
+      "end": 784,
+      "construction": "subordinateClause"
+    },
+    {
+      "docNum": -1,
+      "start": 785,
+      "end": 880,
+      "construction": "subordinateClause"
+    },
+    {
+      "docNum": -1,
+      "start": 881,
+      "end": 1004,
+      "construction": "subordinateClause"
+    },
+    {
+      "docNum": -1,
+      "start": 1005,
+      "end": 1130,
+      "construction": "subordinateClause"
+    },
+    {
+      "docNum": -1,
+      "start": 1224,
+      "end": 1317,
+      "construction": "subordinateClause"
+    },
+    {
+      "docNum": -1,
+      "start": 23,
+      "end": 203,
+      "construction": "relativeClause"
+    },
+    {
+      "docNum": -1,
+      "start": 420,
+      "end": 500,
+      "construction": "relativeClause"
+    },
+    {
+      "docNum": -1,
+      "start": 502,
+      "end": 588,
+      "construction": "relativeClause"
+    },
+    {
+      "docNum": -1,
+      "start": 502,
+      "end": 588,
+      "construction": "relativeClauseReduced"
+    },
+    {
+      "docNum": -1,
+      "start": 1005,
+      "end": 1130,
+      "construction": "relativeClauseReduced"
+    },
+    {
+      "docNum": -1,
+      "start": 502,
+      "end": 588,
+      "construction": "adverbialClause"
+    },
+    {
+      "docNum": -1,
+      "start": 589,
+      "end": 784,
+      "construction": "adverbialClause"
+    },
+    {
+      "docNum": -1,
+      "start": 785,
+      "end": 880,
+      "construction": "adverbialClause"
+    },
+    {
+      "docNum": -1,
+      "start": 881,
+      "end": 1004,
+      "construction": "adverbialClause"
+    },
+    {
+      "docNum": -1,
+      "start": 1131,
+      "end": 1202,
+      "construction": "simpleSentence"
+    },
+    {
+      "docNum": -1,
+      "start": 23,
+      "end": 203,
+      "construction": "complexSentence"
+    },
+    {
+      "docNum": -1,
+      "start": 420,
+      "end": 500,
+      "construction": "complexSentence"
+    },
+    {
+      "docNum": -1,
+      "start": 502,
+      "end": 588,
+      "construction": "complexSentence"
+    },
+    {
+      "docNum": -1,
+      "start": 589,
+      "end": 784,
+      "construction": "complexSentence"
+    },
+    {
+      "docNum": -1,
+      "start": 785,
+      "end": 880,
+      "construction": "complexSentence"
+    },
+    {
+      "docNum": -1,
+      "start": 881,
+      "end": 1004,
+      "construction": "complexSentence"
+    },
+    {
+      "docNum": -1,
+      "start": 1005,
+      "end": 1130,
+      "construction": "complexSentence"
+    },
+    {
+      "docNum": -1,
+      "start": 1224,
+      "end": 1317,
+      "construction": "complexSentence"
+    },
+    {
+      "docNum": -1,
+      "start": 204,
+      "end": 348,
+      "construction": "compoundSentence"
+    },
+    {
+      "docNum": -1,
+      "start": 349,
+      "end": 419,
+      "construction": "compoundSentence"
+    },
+    {
+      "docNum": -1,
+      "start": 1318,
+      "end": 1330,
+      "construction": "compoundSentence"
+    },
+    {
+      "docNum": -1,
+      "start": 0,
+      "end": 22,
+      "construction": "incompleteSentence"
+    },
+    {
+      "docNum": -1,
+      "start": 1203,
+      "end": 1214,
+      "construction": "incompleteSentence"
+    },
+    {
+      "docNum": -1,
+      "start": 1215,
+      "end": 1223,
+      "construction": "incompleteSentence"
+    },
+    {
+      "docNum": -1,
+      "start": 110,
+      "end": 122,
+      "construction": "directObject"
+    },
+    {
+      "docNum": -1,
+      "start": 243,
+      "end": 261,
+      "construction": "directObject"
+    },
+    {
+      "docNum": -1,
+      "start": 331,
+      "end": 347,
+      "construction": "directObject"
+    },
+    {
+      "docNum": -1,
+      "start": 376,
+      "end": 383,
+      "construction": "directObject"
+    },
+    {
+      "docNum": -1,
+      "start": 578,
+      "end": 586,
+      "construction": "directObject"
+    },
+    {
+      "docNum": -1,
+      "start": 525,
+      "end": 539,
+      "construction": "directObject"
+    },
+    {
+      "docNum": -1,
+      "start": 606,
+      "end": 619,
+      "construction": "directObject"
+    },
+    {
+      "docNum": -1,
+      "start": 629,
+      "end": 642,
+      "construction": "directObject"
+    },
+    {
+      "docNum": -1,
+      "start": 796,
+      "end": 815,
+      "construction": "directObject"
+    },
+    {
+      "docNum": -1,
+      "start": 973,
+      "end": 997,
+      "construction": "directObject"
+    },
+    {
+      "docNum": -1,
+      "start": 1061,
+      "end": 1083,
+      "construction": "directObject"
+    },
+    {
+      "docNum": -1,
+      "start": 1101,
+      "end": 1118,
+      "construction": "directObject"
+    },
+    {
+      "docNum": -1,
+      "start": 1134,
+      "end": 1159,
+      "construction": "directObject"
+    },
+    {
+      "docNum": -1,
+      "start": 1172,
+      "end": 1201,
+      "construction": "directObject"
+    },
+    {
+      "docNum": -1,
+      "start": 1224,
+      "end": 1248,
+      "construction": "directObject"
+    },
+    {
+      "docNum": -1,
+      "start": 23,
+      "end": 25,
+      "construction": "pronouns"
+    },
+    {
+      "docNum": -1,
+      "start": 93,
+      "end": 95,
+      "construction": "pronouns"
+    },
+    {
+      "docNum": -1,
+      "start": 340,
+      "end": 343,
+      "construction": "pronouns"
+    },
+    {
+      "docNum": -1,
+      "start": 204,
+      "end": 206,
+      "construction": "pronouns"
+    },
+    {
+      "docNum": -1,
+      "start": 349,
+      "end": 351,
+      "construction": "pronouns"
+    },
+    {
+      "docNum": -1,
+      "start": 456,
+      "end": 460,
+      "construction": "pronouns"
+    },
+    {
+      "docNum": -1,
+      "start": 420,
+      "end": 422,
+      "construction": "pronouns"
+    },
+    {
+      "docNum": -1,
+      "start": 436,
+      "end": 439,
+      "construction": "pronouns"
+    },
+    {
+      "docNum": -1,
+      "start": 567,
+      "end": 570,
+      "construction": "pronouns"
+    },
+    {
+      "docNum": -1,
+      "start": 584,
+      "end": 586,
+      "construction": "pronouns"
+    },
+    {
+      "docNum": -1,
+      "start": 505,
+      "end": 508,
+      "construction": "pronouns"
+    },
+    {
+      "docNum": -1,
+      "start": 517,
+      "end": 519,
+      "construction": "pronouns"
+    },
+    {
+      "docNum": -1,
+      "start": 541,
+      "end": 543,
+      "construction": "pronouns"
+    },
+    {
+      "docNum": -1,
+      "start": 646,
+      "end": 650,
+      "construction": "pronouns"
+    },
+    {
+      "docNum": -1,
+      "start": 741,
+      "end": 745,
+      "construction": "pronouns"
+    },
+    {
+      "docNum": -1,
+      "start": 716,
+      "end": 718,
+      "construction": "pronouns"
+    },
+    {
+      "docNum": -1,
+      "start": 755,
+      "end": 759,
+      "construction": "pronouns"
+    },
+    {
+      "docNum": -1,
+      "start": 592,
+      "end": 595,
+      "construction": "pronouns"
+    },
+    {
+      "docNum": -1,
+      "start": 621,
+      "end": 623,
+      "construction": "pronouns"
+    },
+    {
+      "docNum": -1,
+      "start": 785,
+      "end": 787,
+      "construction": "pronouns"
+    },
+    {
+      "docNum": -1,
+      "start": 952,
+      "end": 956,
+      "construction": "pronouns"
+    },
+    {
+      "docNum": -1,
+      "start": 979,
+      "end": 983,
+      "construction": "pronouns"
+    },
+    {
+      "docNum": -1,
+      "start": 884,
+      "end": 887,
+      "construction": "pronouns"
+    },
+    {
+      "docNum": -1,
+      "start": 1107,
+      "end": 1110,
+      "construction": "pronouns"
+    },
+    {
+      "docNum": -1,
+      "start": 1058,
+      "end": 1060,
+      "construction": "pronouns"
+    },
+    {
+      "docNum": -1,
+      "start": 1140,
+      "end": 1144,
+      "construction": "pronouns"
+    },
+    {
+      "docNum": -1,
+      "start": 1183,
+      "end": 1187,
+      "construction": "pronouns"
+    },
+    {
+      "docNum": -1,
+      "start": 1131,
+      "end": 1133,
+      "construction": "pronouns"
+    },
+    {
+      "docNum": -1,
+      "start": 1230,
+      "end": 1234,
+      "construction": "pronouns"
+    },
+    {
+      "docNum": -1,
+      "start": 1303,
+      "end": 1307,
+      "construction": "pronouns"
+    },
+    {
+      "docNum": -1,
+      "start": 1253,
+      "end": 1255,
+      "construction": "pronouns"
+    },
+    {
+      "docNum": -1,
+      "start": 1265,
+      "end": 1268,
+      "construction": "pronouns"
+    },
+    {
+      "docNum": -1,
+      "start": 23,
+      "end": 25,
+      "construction": "pronounsSubjective"
+    },
+    {
+      "docNum": -1,
+      "start": 93,
+      "end": 95,
+      "construction": "pronounsSubjective"
+    },
+    {
+      "docNum": -1,
+      "start": 204,
+      "end": 206,
+      "construction": "pronounsSubjective"
+    },
+    {
+      "docNum": -1,
+      "start": 349,
+      "end": 351,
+      "construction": "pronounsSubjective"
+    },
+    {
+      "docNum": -1,
+      "start": 420,
+      "end": 422,
+      "construction": "pronounsSubjective"
+    },
+    {
+      "docNum": -1,
+      "start": 436,
+      "end": 439,
+      "construction": "pronounsSubjective"
+    },
+    {
+      "docNum": -1,
+      "start": 567,
+      "end": 570,
+      "construction": "pronounsSubjective"
+    },
+    {
+      "docNum": -1,
+      "start": 505,
+      "end": 508,
+      "construction": "pronounsSubjective"
+    },
+    {
+      "docNum": -1,
+      "start": 517,
+      "end": 519,
+      "construction": "pronounsSubjective"
+    },
+    {
+      "docNum": -1,
+      "start": 541,
+      "end": 543,
+      "construction": "pronounsSubjective"
+    },
+    {
+      "docNum": -1,
+      "start": 716,
+      "end": 718,
+      "construction": "pronounsSubjective"
+    },
+    {
+      "docNum": -1,
+      "start": 755,
+      "end": 759,
+      "construction": "pronounsSubjective"
+    },
+    {
+      "docNum": -1,
+      "start": 592,
+      "end": 595,
+      "construction": "pronounsSubjective"
+    },
+    {
+      "docNum": -1,
+      "start": 621,
+      "end": 623,
+      "construction": "pronounsSubjective"
+    },
+    {
+      "docNum": -1,
+      "start": 785,
+      "end": 787,
+      "construction": "pronounsSubjective"
+    },
+    {
+      "docNum": -1,
+      "start": 884,
+      "end": 887,
+      "construction": "pronounsSubjective"
+    },
+    {
+      "docNum": -1,
+      "start": 1058,
+      "end": 1060,
+      "construction": "pronounsSubjective"
+    },
+    {
+      "docNum": -1,
+      "start": 1131,
+      "end": 1133,
+      "construction": "pronounsSubjective"
+    },
+    {
+      "docNum": -1,
+      "start": 1253,
+      "end": 1255,
+      "construction": "pronounsSubjective"
+    },
+    {
+      "docNum": -1,
+      "start": 1265,
+      "end": 1268,
+      "construction": "pronounsSubjective"
+    },
+    {
+      "docNum": -1,
+      "start": 584,
+      "end": 586,
+      "construction": "pronounsObjective"
+    },
+    {
+      "docNum": -1,
+      "start": 340,
+      "end": 343,
+      "construction": "pronounsPossessive"
+    },
+    {
+      "docNum": -1,
+      "start": 456,
+      "end": 460,
+      "construction": "pronounsPossessive"
+    },
+    {
+      "docNum": -1,
+      "start": 646,
+      "end": 650,
+      "construction": "pronounsPossessive"
+    },
+    {
+      "docNum": -1,
+      "start": 741,
+      "end": 745,
+      "construction": "pronounsPossessive"
+    },
+    {
+      "docNum": -1,
+      "start": 952,
+      "end": 956,
+      "construction": "pronounsPossessive"
+    },
+    {
+      "docNum": -1,
+      "start": 979,
+      "end": 983,
+      "construction": "pronounsPossessive"
+    },
+    {
+      "docNum": -1,
+      "start": 1107,
+      "end": 1110,
+      "construction": "pronounsPossessive"
+    },
+    {
+      "docNum": -1,
+      "start": 1140,
+      "end": 1144,
+      "construction": "pronounsPossessive"
+    },
+    {
+      "docNum": -1,
+      "start": 1183,
+      "end": 1187,
+      "construction": "pronounsPossessive"
+    },
+    {
+      "docNum": -1,
+      "start": 1230,
+      "end": 1234,
+      "construction": "pronounsPossessive"
+    },
+    {
+      "docNum": -1,
+      "start": 1303,
+      "end": 1307,
+      "construction": "pronounsPossessive"
+    },
+    {
+      "docNum": -1,
+      "start": 167,
+      "end": 170,
+      "construction": "articles"
+    },
+    {
+      "docNum": -1,
+      "start": 251,
+      "end": 254,
+      "construction": "articles"
+    },
+    {
+      "docNum": -1,
+      "start": 265,
+      "end": 266,
+      "construction": "articles"
+    },
+    {
+      "docNum": -1,
+      "start": 297,
+      "end": 300,
+      "construction": "articles"
+    },
+    {
+      "docNum": -1,
+      "start": 530,
+      "end": 531,
+      "construction": "articles"
+    },
+    {
+      "docNum": -1,
+      "start": 634,
+      "end": 635,
+      "construction": "articles"
+    },
+    {
+      "docNum": -1,
+      "start": 1005,
+      "end": 1008,
+      "construction": "articles"
+    },
+    {
+      "docNum": -1,
+      "start": 1066,
+      "end": 1069,
+      "construction": "articles"
+    },
+    {
+      "docNum": -1,
+      "start": 167,
+      "end": 170,
+      "construction": "theArticle"
+    },
+    {
+      "docNum": -1,
+      "start": 251,
+      "end": 254,
+      "construction": "theArticle"
+    },
+    {
+      "docNum": -1,
+      "start": 297,
+      "end": 300,
+      "construction": "theArticle"
+    },
+    {
+      "docNum": -1,
+      "start": 1005,
+      "end": 1008,
+      "construction": "theArticle"
+    },
+    {
+      "docNum": -1,
+      "start": 1066,
+      "end": 1069,
+      "construction": "theArticle"
+    },
+    {
+      "docNum": -1,
+      "start": 265,
+      "end": 266,
+      "construction": "aArticle"
+    },
+    {
+      "docNum": -1,
+      "start": 530,
+      "end": 531,
+      "construction": "aArticle"
+    },
+    {
+      "docNum": -1,
+      "start": 634,
+      "end": 635,
+      "construction": "aArticle"
+    },
+    {
+      "docNum": -1,
+      "start": 80,
+      "end": 91,
+      "construction": "pluralRegular"
+    },
+    {
+      "docNum": -1,
+      "start": 138,
+      "end": 147,
+      "construction": "pluralRegular"
+    },
+    {
+      "docNum": -1,
+      "start": 660,
+      "end": 668,
+      "construction": "pluralRegular"
+    },
+    {
+      "docNum": -1,
+      "start": 684,
+      "end": 691,
+      "construction": "pluralRegular"
+    },
+    {
+      "docNum": -1,
+      "start": 696,
+      "end": 701,
+      "construction": "pluralRegular"
+    },
+    {
+      "docNum": -1,
+      "start": 806,
+      "end": 815,
+      "construction": "pluralRegular"
+    },
+    {
+      "docNum": -1,
+      "start": 829,
+      "end": 839,
+      "construction": "pluralRegular"
+    },
+    {
+      "docNum": -1,
+      "start": 870,
+      "end": 879,
+      "construction": "pluralRegular"
+    },
+    {
+      "docNum": -1,
+      "start": 70,
+      "end": 79,
+      "construction": "ingNounForms"
+    },
+    {
+      "docNum": -1,
+      "start": 819,
+      "end": 828,
+      "construction": "ingNounForms"
+    },
+    {
+      "docNum": -1,
+      "start": 1024,
+      "end": 1033,
+      "construction": "ingNounForms"
+    },
+    {
+      "docNum": -1,
+      "start": 1188,
+      "end": 1201,
+      "construction": "ingNounForms"
+    },
+    {
+      "docNum": -1,
+      "start": 100,
+      "end": 102,
+      "construction": "negAll"
+    },
+    {
+      "docNum": -1,
+      "start": 398,
+      "end": 400,
+      "construction": "negAll"
+    },
+    {
+      "docNum": -1,
+      "start": 100,
+      "end": 102,
+      "construction": "noNotNever"
+    },
+    {
+      "docNum": -1,
+      "start": 398,
+      "end": 400,
+      "construction": "noNotNever"
+    },
+    {
+      "docNum": -1,
+      "start": 26,
+      "end": 50,
+      "construction": "presentSimple"
+    },
+    {
+      "docNum": -1,
+      "start": 395,
+      "end": 397,
+      "construction": "presentSimple"
+    },
+    {
+      "docNum": -1,
+      "start": 352,
+      "end": 364,
+      "construction": "presentSimple"
+    },
+    {
+      "docNum": -1,
+      "start": 423,
+      "end": 430,
+      "construction": "presentSimple"
+    },
+    {
+      "docNum": -1,
+      "start": 472,
+      "end": 479,
+      "construction": "presentSimple"
+    },
+    {
+      "docNum": -1,
+      "start": 440,
+      "end": 454,
+      "construction": "presentSimple"
+    },
+    {
+      "docNum": -1,
+      "start": 544,
+      "end": 553,
+      "construction": "presentSimple"
+    },
+    {
+      "docNum": -1,
+      "start": 509,
+      "end": 516,
+      "construction": "presentSimple"
+    },
+    {
+      "docNum": -1,
+      "start": 719,
+      "end": 727,
+      "construction": "presentSimple"
+    },
+    {
+      "docNum": -1,
+      "start": 936,
+      "end": 948,
+      "construction": "presentSimple"
+    },
+    {
+      "docNum": -1,
+      "start": 1034,
+      "end": 1041,
+      "construction": "presentSimple"
+    },
+    {
+      "docNum": -1,
+      "start": 1061,
+      "end": 1065,
+      "construction": "presentSimple"
+    },
+    {
+      "docNum": -1,
+      "start": 1134,
+      "end": 1139,
+      "construction": "presentSimple"
+    },
+    {
+      "docNum": -1,
+      "start": 1287,
+      "end": 1299,
+      "construction": "presentSimple"
+    },
+    {
+      "docNum": -1,
+      "start": 525,
+      "end": 529,
+      "construction": "presentPerfect"
+    },
+    {
+      "docNum": -1,
+      "start": 207,
+      "end": 220,
+      "construction": "futureSimple"
+    },
+    {
+      "docNum": -1,
+      "start": 624,
+      "end": 633,
+      "construction": "futureSimple"
+    },
+    {
+      "docNum": -1,
+      "start": 596,
+      "end": 611,
+      "construction": "futurePerfProg"
+    },
+    {
+      "docNum": -1,
+      "start": 26,
+      "end": 50,
+      "construction": "simpleAspect"
+    },
+    {
+      "docNum": -1,
+      "start": 110,
+      "end": 115,
+      "construction": "simpleAspect"
+    },
+    {
+      "docNum": -1,
+      "start": 212,
+      "end": 220,
+      "construction": "simpleAspect"
+    },
+    {
+      "docNum": -1,
+      "start": 395,
+      "end": 397,
+      "construction": "simpleAspect"
+    },
+    {
+      "docNum": -1,
+      "start": 352,
+      "end": 364,
+      "construction": "simpleAspect"
+    },
+    {
+      "docNum": -1,
+      "start": 423,
+      "end": 430,
+      "construction": "simpleAspect"
+    },
+    {
+      "docNum": -1,
+      "start": 472,
+      "end": 479,
+      "construction": "simpleAspect"
+    },
+    {
+      "docNum": -1,
+      "start": 483,
+      "end": 498,
+      "construction": "simpleAspect"
+    },
+    {
+      "docNum": -1,
+      "start": 440,
+      "end": 454,
+      "construction": "simpleAspect"
+    },
+    {
+      "docNum": -1,
+      "start": 544,
+      "end": 553,
+      "construction": "simpleAspect"
+    },
+    {
+      "docNum": -1,
+      "start": 571,
+      "end": 577,
+      "construction": "simpleAspect"
+    },
+    {
+      "docNum": -1,
+      "start": 509,
+      "end": 516,
+      "construction": "simpleAspect"
+    },
+    {
+      "docNum": -1,
+      "start": 629,
+      "end": 633,
+      "construction": "simpleAspect"
+    },
+    {
+      "docNum": -1,
+      "start": 719,
+      "end": 727,
+      "construction": "simpleAspect"
+    },
+    {
+      "docNum": -1,
+      "start": 973,
+      "end": 978,
+      "construction": "simpleAspect"
+    },
+    {
+      "docNum": -1,
+      "start": 894,
+      "end": 898,
+      "construction": "simpleAspect"
+    },
+    {
+      "docNum": -1,
+      "start": 936,
+      "end": 948,
+      "construction": "simpleAspect"
+    },
+    {
+      "docNum": -1,
+      "start": 1034,
+      "end": 1041,
+      "construction": "simpleAspect"
+    },
+    {
+      "docNum": -1,
+      "start": 1061,
+      "end": 1065,
+      "construction": "simpleAspect"
+    },
+    {
+      "docNum": -1,
+      "start": 1087,
+      "end": 1097,
+      "construction": "simpleAspect"
+    },
+    {
+      "docNum": -1,
+      "start": 1134,
+      "end": 1139,
+      "construction": "simpleAspect"
+    },
+    {
+      "docNum": -1,
+      "start": 1224,
+      "end": 1229,
+      "construction": "simpleAspect"
+    },
+    {
+      "docNum": -1,
+      "start": 1261,
+      "end": 1264,
+      "construction": "simpleAspect"
+    },
+    {
+      "docNum": -1,
+      "start": 1269,
+      "end": 1273,
+      "construction": "simpleAspect"
+    },
+    {
+      "docNum": -1,
+      "start": 1287,
+      "end": 1299,
+      "construction": "simpleAspect"
+    },
+    {
+      "docNum": -1,
+      "start": 1318,
+      "end": 1321,
+      "construction": "simpleAspect"
+    },
+    {
+      "docNum": -1,
+      "start": 1325,
+      "end": 1329,
+      "construction": "simpleAspect"
+    },
+    {
+      "docNum": -1,
+      "start": 525,
+      "end": 529,
+      "construction": "perfectAspect"
+    },
+    {
+      "docNum": -1,
+      "start": 596,
+      "end": 611,
+      "construction": "perfProgAspect"
+    },
+    {
+      "docNum": -1,
+      "start": 26,
+      "end": 50,
+      "construction": "presentTime"
+    },
+    {
+      "docNum": -1,
+      "start": 395,
+      "end": 397,
+      "construction": "presentTime"
+    },
+    {
+      "docNum": -1,
+      "start": 352,
+      "end": 364,
+      "construction": "presentTime"
+    },
+    {
+      "docNum": -1,
+      "start": 423,
+      "end": 430,
+      "construction": "presentTime"
+    },
+    {
+      "docNum": -1,
+      "start": 472,
+      "end": 479,
+      "construction": "presentTime"
+    },
+    {
+      "docNum": -1,
+      "start": 440,
+      "end": 454,
+      "construction": "presentTime"
+    },
+    {
+      "docNum": -1,
+      "start": 544,
+      "end": 553,
+      "construction": "presentTime"
+    },
+    {
+      "docNum": -1,
+      "start": 509,
+      "end": 516,
+      "construction": "presentTime"
+    },
+    {
+      "docNum": -1,
+      "start": 525,
+      "end": 529,
+      "construction": "presentTime"
+    },
+    {
+      "docNum": -1,
+      "start": 719,
+      "end": 727,
+      "construction": "presentTime"
+    },
+    {
+      "docNum": -1,
+      "start": 936,
+      "end": 948,
+      "construction": "presentTime"
+    },
+    {
+      "docNum": -1,
+      "start": 1034,
+      "end": 1041,
+      "construction": "presentTime"
+    },
+    {
+      "docNum": -1,
+      "start": 1061,
+      "end": 1065,
+      "construction": "presentTime"
+    },
+    {
+      "docNum": -1,
+      "start": 1134,
+      "end": 1139,
+      "construction": "presentTime"
+    },
+    {
+      "docNum": -1,
+      "start": 1287,
+      "end": 1299,
+      "construction": "presentTime"
+    },
+    {
+      "docNum": -1,
+      "start": 207,
+      "end": 220,
+      "construction": "futureTime"
+    },
+    {
+      "docNum": -1,
+      "start": 760,
+      "end": 775,
+      "construction": "futureTime"
+    },
+    {
+      "docNum": -1,
+      "start": 624,
+      "end": 633,
+      "construction": "futureTime"
+    },
+    {
+      "docNum": -1,
+      "start": 788,
+      "end": 805,
+      "construction": "futureTime"
+    },
+    {
+      "docNum": -1,
+      "start": 26,
+      "end": 29,
+      "construction": "longVerbForms"
+    },
+    {
+      "docNum": -1,
+      "start": 315,
+      "end": 318,
+      "construction": "longVerbForms"
+    },
+    {
+      "docNum": -1,
+      "start": 352,
+      "end": 355,
+      "construction": "longVerbForms"
+    },
+    {
+      "docNum": -1,
+      "start": 368,
+      "end": 372,
+      "construction": "longVerbForms"
+    },
+    {
+      "docNum": -1,
+      "start": 395,
+      "end": 397,
+      "construction": "longVerbForms"
+    },
+    {
+      "docNum": -1,
+      "start": 440,
+      "end": 443,
+      "construction": "longVerbForms"
+    },
+    {
+      "docNum": -1,
+      "start": 520,
+      "end": 524,
+      "construction": "longVerbForms"
+    },
+    {
+      "docNum": -1,
+      "start": 596,
+      "end": 600,
+      "construction": "longVerbForms"
+    },
+    {
+      "docNum": -1,
+      "start": 719,
+      "end": 722,
+      "construction": "longVerbForms"
+    },
+    {
+      "docNum": -1,
+      "start": 840,
+      "end": 843,
+      "construction": "longVerbForms"
+    },
+    {
+      "docNum": -1,
+      "start": 936,
+      "end": 938,
+      "construction": "longVerbForms"
+    },
+    {
+      "docNum": -1,
+      "start": 1034,
+      "end": 1036,
+      "construction": "longVerbForms"
+    },
+    {
+      "docNum": -1,
+      "start": 1061,
+      "end": 1065,
+      "construction": "longVerbForms"
+    },
+    {
+      "docNum": -1,
+      "start": 1287,
+      "end": 1289,
+      "construction": "longVerbForms"
+    },
+    {
+      "docNum": -1,
+      "start": 520,
+      "end": 524,
+      "construction": "auxiliariesBeDoHave"
+    },
+    {
+      "docNum": -1,
+      "start": 765,
+      "end": 767,
+      "construction": "auxiliariesBeDoHave"
+    },
+    {
+      "docNum": -1,
+      "start": 596,
+      "end": 600,
+      "construction": "auxiliariesBeDoHave"
+    },
+    {
+      "docNum": -1,
+      "start": 601,
+      "end": 605,
+      "construction": "auxiliariesBeDoHave"
+    },
+    {
+      "docNum": -1,
+      "start": 793,
+      "end": 795,
+      "construction": "auxiliariesBeDoHave"
+    },
+    {
+      "docNum": -1,
+      "start": 26,
+      "end": 50,
+      "construction": "copularVerbs"
+    },
+    {
+      "docNum": -1,
+      "start": 352,
+      "end": 364,
+      "construction": "copularVerbs"
+    },
+    {
+      "docNum": -1,
+      "start": 483,
+      "end": 498,
+      "construction": "copularVerbs"
+    },
+    {
+      "docNum": -1,
+      "start": 440,
+      "end": 454,
+      "construction": "copularVerbs"
+    },
+    {
+      "docNum": -1,
+      "start": 719,
+      "end": 727,
+      "construction": "copularVerbs"
+    },
+    {
+      "docNum": -1,
+      "start": 936,
+      "end": 948,
+      "construction": "copularVerbs"
+    },
+    {
+      "docNum": -1,
+      "start": 1034,
+      "end": 1041,
+      "construction": "copularVerbs"
+    },
+    {
+      "docNum": -1,
+      "start": 1087,
+      "end": 1097,
+      "construction": "copularVerbs"
+    },
+    {
+      "docNum": -1,
+      "start": 1287,
+      "end": 1299,
+      "construction": "copularVerbs"
+    },
+    {
+      "docNum": -1,
+      "start": 306,
+      "end": 311,
+      "construction": "ingVerbForms"
+    },
+    {
+      "docNum": -1,
+      "start": 606,
+      "end": 611,
+      "construction": "ingVerbForms"
+    },
+    {
+      "docNum": -1,
+      "start": 651,
+      "end": 659,
+      "construction": "ingVerbForms"
+    },
+    {
+      "docNum": -1,
+      "start": 768,
+      "end": 775,
+      "construction": "ingVerbForms"
+    },
+    {
+      "docNum": -1,
+      "start": 796,
+      "end": 805,
+      "construction": "ingVerbForms"
+    },
+    {
+      "docNum": -1,
+      "start": 1087,
+      "end": 1092,
+      "construction": "ingVerbForms"
+    },
+    {
+      "docNum": -1,
+      "start": 96,
+      "end": 99,
+      "construction": "modals"
+    },
+    {
+      "docNum": -1,
+      "start": 207,
+      "end": 211,
+      "construction": "modals"
+    },
+    {
+      "docNum": -1,
+      "start": 624,
+      "end": 628,
+      "construction": "modals"
+    },
+    {
+      "docNum": -1,
+      "start": 760,
+      "end": 764,
+      "construction": "modals"
+    },
+    {
+      "docNum": -1,
+      "start": 788,
+      "end": 792,
+      "construction": "modals"
+    },
+    {
+      "docNum": -1,
+      "start": 888,
+      "end": 893,
+      "construction": "modals"
+    },
+    {
+      "docNum": -1,
+      "start": 1256,
+      "end": 1260,
+      "construction": "modals"
+    },
+    {
+      "docNum": -1,
+      "start": 96,
+      "end": 99,
+      "construction": "simpleModals"
+    },
+    {
+      "docNum": -1,
+      "start": 888,
+      "end": 893,
+      "construction": "advancedModals"
+    },
+    {
+      "docNum": -1,
+      "start": 96,
+      "end": 99,
+      "construction": "can"
+    },
+    {
+      "docNum": -1,
+      "start": 525,
+      "end": 529,
+      "construction": "irregularVerbs"
+    },
+    {
+      "docNum": -1,
+      "start": 601,
+      "end": 605,
+      "construction": "irregularVerbs"
+    },
+    {
+      "docNum": -1,
+      "start": 319,
+      "end": 327,
+      "construction": "regularVerbs"
+    },
+    {
+      "docNum": -1,
+      "start": 673,
+      "end": 683,
+      "construction": "regularVerbs"
+    },
+    {
+      "docNum": -1,
+      "start": 844,
+      "end": 855,
+      "construction": "regularVerbs"
+    },
+    {
+      "docNum": -1,
+      "start": 905,
+      "end": 913,
+      "construction": "regularVerbs"
+    },
+    {
+      "docNum": -1,
+      "start": 315,
+      "end": 327,
+      "construction": "passiveVoice"
+    },
+    {
+      "docNum": -1,
+      "start": 840,
+      "end": 855,
+      "construction": "passiveVoice"
+    },
+    {
+      "docNum": -1,
+      "start": 45,
+      "end": 50,
+      "construction": "positiveAdj"
+    },
+    {
+      "docNum": -1,
+      "start": 63,
+      "end": 66,
+      "construction": "positiveAdj"
+    },
+    {
+      "docNum": -1,
+      "start": 148,
+      "end": 155,
+      "construction": "positiveAdj"
+    },
+    {
+      "docNum": -1,
+      "start": 273,
+      "end": 279,
+      "construction": "positiveAdj"
+    },
+    {
+      "docNum": -1,
+      "start": 361,
+      "end": 364,
+      "construction": "positiveAdj"
+    },
+    {
+      "docNum": -1,
+      "start": 401,
+      "end": 406,
+      "construction": "positiveAdj"
+    },
+    {
+      "docNum": -1,
+      "start": 859,
+      "end": 869,
+      "construction": "positiveAdj"
+    },
+    {
+      "docNum": -1,
+      "start": 939,
+      "end": 948,
+      "construction": "positiveAdj"
+    },
+    {
+      "docNum": -1,
+      "start": 1017,
+      "end": 1023,
+      "construction": "positiveAdj"
+    },
+    {
+      "docNum": -1,
+      "start": 1037,
+      "end": 1041,
+      "construction": "positiveAdj"
+    },
+    {
+      "docNum": -1,
+      "start": 1070,
+      "end": 1078,
+      "construction": "positiveAdj"
+    },
+    {
+      "docNum": -1,
+      "start": 1290,
+      "end": 1299,
+      "construction": "positiveAdj"
+    },
+    {
+      "docNum": -1,
+      "start": 30,
+      "end": 36,
+      "construction": "positiveAdv"
+    },
+    {
+      "docNum": -1,
+      "start": 38,
+      "end": 44,
+      "construction": "positiveAdv"
+    },
+    {
+      "docNum": -1,
+      "start": 100,
+      "end": 102,
+      "construction": "positiveAdv"
+    },
+    {
+      "docNum": -1,
+      "start": 103,
+      "end": 109,
+      "construction": "positiveAdv"
+    },
+    {
+      "docNum": -1,
+      "start": 229,
+      "end": 239,
+      "construction": "positiveAdv"
+    },
+    {
+      "docNum": -1,
+      "start": 267,
+      "end": 272,
+      "construction": "positiveAdv"
+    },
+    {
+      "docNum": -1,
+      "start": 356,
+      "end": 360,
+      "construction": "positiveAdv"
+    },
+    {
+      "docNum": -1,
+      "start": 703,
+      "end": 705,
+      "construction": "positiveAdv"
+    },
+    {
+      "docNum": -1,
+      "start": 1119,
+      "end": 1129,
+      "construction": "positiveAdv"
+    },
+    {
+      "docNum": -1,
+      "start": 1164,
+      "end": 1171,
+      "construction": "positiveAdv"
+    },
+    {
+      "docNum": -1,
+      "start": 1203,
+      "end": 1212,
+      "construction": "positiveAdv"
+    }
+  ],
+  "tfIdf": [
+    0.057191025725250574,
+    0.057191025725250574,
+    0.12002178938854487,
+    0.18887822901325155,
+    0.17611642042961678,
+    0.12002178938854487,
+    0.09683282396003932,
+    0.13647462219482806,
+    0.057191025725250574,
+    0.17611642042961678,
+    0.12002178938854487,
+    0.12002178938854487,
+    0.21206719444175706,
+    0.2554000168991943,
+    0.22852002724804027,
+    0.057191025725250574,
+    0.19432911595831895,
+    0.17611642042961678,
+    0.1492364307784628,
+    0.12002178938854487,
+    0.17611642042961678,
+    0.13647462219482806,
+    0.09683282396003932,
+    0.09683282396003932,
+    0.2081214213536879,
+    0.057191025725250574,
+    0.09683282396003932,
+    0.057191025725250574,
+    0.2456833167151334,
+    0.057191025725250574,
+    0.057191025725250574,
+    0.21206719444175706,
+    0.13647462219482806,
+    0.2081214213536879,
+    0.1492364307784628,
+    0.18285255305183915,
+    0.15966358762333357,
+    0.1684796231188992,
+    0.057191025725250574,
+    0.057191025725250574,
+    0.057191025725250574,
+    0.09683282396003932,
+    0.13647462219482806,
+    0.09683282396003932,
+    0.19930538585812232,
+    0.19432911595831895
+  ],
+  "docLenTfIdf": 17.485260796056803,
+  "docLength": 264.0,
+  "readabilityScore": 8.0,
+  "readabilityLevel": "LEVEL-b",
+  "readabilityARI": 0.0,
+  "readabilityBennoehr": 0.0,
+  "textWeight": 0.0,
+  "rankWeight": 0.0,
+  "gramScore": 0.0,
+  "totalWeight": 0.0,
+  "numChars": 1076,
+  "numSents": 15,
+  "numDeps": 264,
+  "avWordLength": 4.075757575757576,
+  "avSentLength": 17.6,
+  "avTreeDepth": 11.2
+}

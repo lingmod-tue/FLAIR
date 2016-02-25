@@ -13,159 +13,165 @@ public enum GrammaticalConstruction
 {
     // (simple) constructions 
 // (simple) constructions 
-    EXISTENTIAL_THERE("Existential There"),
-    THERE_IS_ARE("There, Is, Are"),
-    THERE_WAS_WERE("There, Was, Were"),
+    EXISTENTIAL_THERE("existentialThere", "Existential There"),
+    THERE_IS_ARE("thereIsAre", "There, Is, Are"),
+    THERE_WAS_WERE("thereWasWere", "There, Was, Were"),
     
-    CONJUNCTIONS_ADVANCED("Advanced Conjunctions"),
-    CONJUNCTIONS_SIMPLE("Simple Conjunctions"),
+    CONJUNCTIONS_ADVANCED("advancedConjunctions", "Advanced Conjunctions"),
+    CONJUNCTIONS_SIMPLE("simpleConjunctions", "Simple Conjunctions"),
     
-    PREPOSITIONS("Prepositions"),
-    PREPOSITIONS_SIMPLE("Simple Prepositions"),
-    PREPOSITIONS_COMPLEX("Complex Prepositions"),
-    PREPOSITIONS_ADVANCED("Advanced Prepositions"),
+    PREPOSITIONS("prepositions", "Prepositions"),
+    PREPOSITIONS_SIMPLE("simplePrepositions", "Simple Prepositions"),
+    PREPOSITIONS_COMPLEX("complexPrepositions", "Complex Prepositions"),
+    PREPOSITIONS_ADVANCED("advancedPrepositions", "Advanced Prepositions"),
     
     // sentence structure
-    CLAUSE_SUBORDINATE("Subordinate Clause"),
-    CLAUSE_RELATIVE("Relative Clause"),
-    CLAUSE_RELATIVE_REDUCED("Reduced Relative Clause"),
-    CLAUSE_ADVERBIAL("Adverbial Clause"),
-    SENTENCE_SIMPLE("Simple Sentence"),
-    SENTENCE_COMPLEX("Complex Sentence"),
-    SENTENCE_COMPOUND("Compound Sentence"),
-    SENTENCE_INCOMPLETE("Incomplete Sentence"),
+    CLAUSE_SUBORDINATE("subordinateClause", "Subordinate Clause"),
+    CLAUSE_RELATIVE("relativeClause", "Relative Clause"),
+    CLAUSE_RELATIVE_REDUCED("relativeClauseReduced", "Reduced Relative Clause"),
+    CLAUSE_ADVERBIAL("adverbialClause", "Adverbial Clause"),
+    SENTENCE_SIMPLE("simpleSentence", "Simple Sentence"),
+    SENTENCE_COMPLEX("complexSentence", "Complex Sentence"),
+    SENTENCE_COMPOUND("compoundSentence", "Compound Sentence"),
+    SENTENCE_INCOMPLETE("incompleteSentence", "Incomplete Sentence"),
     
-    OBJECT_DIRECT("Direct Object"),	 // "give me"
-    OBJECT_INDIRECT("Indirect Object"),	 // "give it toPrep me"
+    OBJECT_DIRECT("directObject", "Direct Object"),	 // "give me"
+    OBJECT_INDIRECT("indirectObject", "Indirect Object"),	 // "give it toPrep me"
     
-    PRONOUNS("Pronouns"),
-    PRONOUNS_SUBJECTIVE("Subjective Pronouns"), // /PRP + I, you, they...
-    PRONOUNS_OBJECTIVE("Objective Pronouns"), // /PRP + me, you, them...
-    PRONOUNS_POSSESSIVE("Posssessive Pronouns"), // /PRP$ (my, your, their)
-    PRONOUNS_POSSESSIVE_ABSOLUTE("Absolute Possessive Pronouns"), // /JJ or PRP... (mine, yours, theirs)
-    PRONOUNS_REFLEXIVE("Reflexive Pronouns"), // /PRP + myself, themselves, etc.
+    PRONOUNS("pronouns", "Pronouns"),
+    PRONOUNS_SUBJECTIVE("pronounsSubjective", "Subjective Pronouns"), // /PRP + I, you, they...
+    PRONOUNS_OBJECTIVE("pronounsObjective", "Objective Pronouns"), // /PRP + me, you, them...
+    PRONOUNS_POSSESSIVE("pronounsPossessive", "Posssessive Pronouns"), // /PRP$ ("", my, your, their)
+    PRONOUNS_POSSESSIVE_ABSOLUTE("pronounsPossessiveAbsolute", "Absolute Possessive Pronouns"), // /JJ or PRP... ("", mine, yours, theirs)
+    PRONOUNS_REFLEXIVE("pronounsReflexive", "Reflexive Pronouns"), // /PRP + myself, themselves, etc.
     
     // quantifiers
-    DETERMINER_SOME("Determiner 'Some'"),
-    DETERMINER_ANY("Determiner 'Any'"),
-    DETERMINER_MUCH("Determiner 'Much'"),
-    DETERMINER_MANY("Determeiner 'Many'"),
-    DETERMINER_A_LOT_OF("Determiner 'A lot of'"),
+    DETERMINER_SOME("someDet", "Determiner 'Some'"),
+    DETERMINER_ANY("anyDet", "Determiner 'Any'"),
+    DETERMINER_MUCH("muchDet", "Determiner 'Much'"),
+    DETERMINER_MANY("manyDet", "Determeiner 'Many'"),
+    DETERMINER_A_LOT_OF("aLotOfDet", "Determiner 'A lot of'"),
     
-    ARTICLES("Articles"),
-    ARTICLE_THE("Article 'The'"),
-    ARTICLE_A("Article 'A'"),
-    ARTICLE_AN("Article 'An"),
+    ARTICLES("articles", "Articles"),
+    ARTICLE_THE("theArticle", "Article 'The'"),
+    ARTICLE_A("aArticle", "Article 'A'"),
+    ARTICLE_AN("anArticle", "Article 'An"),
     
-    PLURAL_REGULAR("Regular Plural"),
-    PLURAL_IRREGULAR("Irregular Plural"),
-    NOUNFORMS_ING("'-ing' Noun Forms"),
+    PLURAL_REGULAR("pluralRegular", "Regular Plural"),
+    PLURAL_IRREGULAR("pluralIrregular", "Irregular Plural"),
+    NOUNFORMS_ING("ingNounForms", "'-ing' Noun Forms"),
     
-    NEGATION_ALL("All Negation"), // nobody, nowhere, etc.
-    NEGATION_PARTIAL("Partial Negation"), // rarely, barely, seldom, hardly, scarcely
-    NEGATION_NO_NOT_NEVER("No, Not, Never"),
-    NEGATION_NT("'-nt' Negation"),
-    NEGATION_NOT("'Not' Negation"),
+    NEGATION_ALL("negAll", "All Negation"), // nobody, nowhere, etc.
+    NEGATION_PARTIAL("partialNegation", "Partial Negation"), // rarely, barely, seldom, hardly, scarcely
+    NEGATION_NO_NOT_NEVER("noNotNever", "No, Not, Never"),
+    NEGATION_NT("nt", "'-nt' Negation"),
+    NEGATION_NOT("not", "'Not' Negation"),
     
-    QUESTIONS_DIRECT("Direct Questions"),
-    QUESTIONS_INDIRECT("Indirect Questions"),
-    QUESTIONS_YESNO("'Yes/No' Questions"), // direct: "Are you ok?"
-    QUESTIONS_WH("'Wh-' Questions"), // direct: "What do you do?"
-    QUESTIONS_TO_BE("'To Be' Questions"), // direct: "What's this?"
-    QUESTIONS_TO_DO("'To Do' Questions"), // direct: "What do you do?"
-    QUESTIONS_TO_HAVE("'To Have' Questions"), // direct: "What have you done?"
-    QUESTIONS_MODAL("Modal Questions"), // direct: "Should I go?", "What should I do?"
-    QUESTIONS_WHAT("'What' Questions"),
-    QUESTIONS_WHO("'Who' Questions"),
-    QUESTIONS_HOW("'How' Questions"),
-    QUESTIONS_WHY("'Why' Questions"),
-    QUESTIONS_WHERE("'Where' Questions"),
-    QUESTIONS_WHEN("'When' Questions"),
-    QUESTIONS_WHOSE("'Whose' Questions"),
-    QUESTIONS_WHOM("'Whom' Questions"),
-    QUESTIONS_WHICH("'Which' Questions"),
-    QUESTIONS_TAG("Question Tag"), // ", isn't it?"
+    QUESTIONS_DIRECT("directQuestions", "Direct Questions"),
+    QUESTIONS_INDIRECT("indirectQuestions", "Indirect Questions"),
+    QUESTIONS_YESNO("yesNoQuestions", "'Yes/No' Questions"), // direct: "Are you ok?"
+    QUESTIONS_WH("whQuestions", "'Wh-' Questions"), // direct: "What do you do?"
+    QUESTIONS_TO_BE("toBeQuestions", "'To Be' Questions"), // direct: "What's this?"
+    QUESTIONS_TO_DO("toDoQuestions", "'To Do' Questions"), // direct: "What do you do?"
+    QUESTIONS_TO_HAVE("toHaveQuestions", "'To Have' Questions"), // direct: "What have you done?"
+    QUESTIONS_MODAL("modalQuestions", "Modal Questions"), // direct: "Should I go?", "What should I do?"
+    QUESTIONS_WHAT("what", "'What' Questions"),
+    QUESTIONS_WHO("who", "'Who' Questions"),
+    QUESTIONS_HOW("how", "'How' Questions"),
+    QUESTIONS_WHY("why", "'Why' Questions"),
+    QUESTIONS_WHERE("where", "'Where' Questions"),
+    QUESTIONS_WHEN("when", "'When' Questions"),
+    QUESTIONS_WHOSE("whose", "'Whose' Questions"),
+    QUESTIONS_WHOM("whom", "'Whom' Questions"),
+    QUESTIONS_WHICH("which", "'Which' Questions"),
+    QUESTIONS_TAG("tagQuestions", "Question Tag"), // ", isn't it?"
     
     // conditionals - check first, before tenses
-    CONDITIONALS("Conditionals"),
-    CONDITIONALS_REAL("Real Conditionals"),
-    CONDITIONALS_UNREAL("Unreal Conditionals"),
+    CONDITIONALS("conditionals", "Conditionals"),
+    CONDITIONALS_REAL("condReal", "Real Conditionals"),
+    CONDITIONALS_UNREAL("condUnreal", "Unreal Conditionals"),
     
     // tenses - only if not conditional
-    TENSE_PRESENT_SIMPLE("Present Simple"),
-    TENSE_PRESENT_PROGRESSIVE("Present Progressive"),
-    TENSE_PRESENT_PERFECT("Present Perfect"),
-    TENSE_PRESENT_PERFECT_PROGRESSIVE("Present Perfect Progressive"),
-    TENSE_PAST_SIMPLE("Past Simple"),
-    TENSE_PAST_PROGRESSIVE("Past Progressive"),
-    TENSE_PAST_PERFECT("Past Perfect"),
-    TENSE_PAST_PERFECT_PROGRESSIVE("Past Perfect Progressive"),
-    TENSE_FUTURE_SIMPLE("Future Simple"),
-    TENSE_FUTURE_PROGRESSIVE("Future Progressive"),
-    TENSE_FUTURE_PERFECT("Future Perfect"),
-    TENSE_FUTURE_PERFECT_PROGRESSIVE("Future Perfect Progressive"),
+    TENSE_PRESENT_SIMPLE("presentSimple", "Present Simple"),
+    TENSE_PRESENT_PROGRESSIVE("presentProgressive", "Present Progressive"),
+    TENSE_PRESENT_PERFECT("presentPerfect", "Present Perfect"),
+    TENSE_PRESENT_PERFECT_PROGRESSIVE("presentPerfProg", "Present Perfect Progressive"),
+    TENSE_PAST_SIMPLE("pastSimple", "Past Simple"),
+    TENSE_PAST_PROGRESSIVE("pastProgressive", "Past Progressive"),
+    TENSE_PAST_PERFECT("pastPerfect", "Past Perfect"),
+    TENSE_PAST_PERFECT_PROGRESSIVE("pastPerfProg", "Past Perfect Progressive"),
+    TENSE_FUTURE_SIMPLE("futureSimple", "Future Simple"),
+    TENSE_FUTURE_PROGRESSIVE("futureProgressive", "Future Progressive"),
+    TENSE_FUTURE_PERFECT("futurePerfect", "Future Perfect"),
+    TENSE_FUTURE_PERFECT_PROGRESSIVE("futurePerfProg", "Future Perfect Progressive"),
     
-    ASPECT_SIMPLE("Simple Aspect"),
-    ASPECT_PROGRESSIVE("Progressive Aspect"),
-    ASPECT_PERFECT("Perfect Aspect"),
-    ASPECT_PERFECT_PROGRESSIVE("Perfect Progressive Aspect"),
+    ASPECT_SIMPLE("simpleAspect", "Simple Aspect"),
+    ASPECT_PROGRESSIVE("progressiveAspect", "Progressive Aspect"),
+    ASPECT_PERFECT("perfectAspect", "Perfect Aspect"),
+    ASPECT_PERFECT_PROGRESSIVE("perfProgAspect", "Perfect Progressive Aspect"),
     
-    TIME_PRESENT("Present Time"),
-    TIME_PAST("Past Time"),
-    TIME_FUTURE("Future Time"),
+    TIME_PRESENT("presentTime", "Present Time"),
+    TIME_PAST("pastTime", "Past Time"),
+    TIME_FUTURE("futureTime", "Future Time"),
     
-    VERBCONST_GOING_TO("'Going To' Verb"),
-    VERBCONST_USED_TO("'Used To' Verb"),
+    VERBCONST_GOING_TO("goingTo", "'Going To' Verb"),
+    VERBCONST_USED_TO("usedTo", "'Used To' Verb"),
     
-    VERBFORM_SHORT("Short Verb Forms"), // 's, 're, 'm, 's, 've, 'd??!
-    VERBFORM_LONG("Long Verb Forms"), // is, are, am, has, have, had??!
-    VERBFORM_AUXILIARIES_BE_DO_HAVE("Auxiliary Verbs"), // be, do, have??! (got?), NOT modals!!! + V
-    VERBFORM_COPULAR("Copular Verbs"), // be, stay, seem, etc. - CHECK the parser
-    VERBFORM_ING("'-ing' Verb Forms"), // gerund, participle, nouns 
-    VERBFORM_TO_INFINITIVE("'To Infinitive' Verb Forms"), // "I want toPrep do it."
-    VERBFORM_EMPATHIC_DO("Empathic 'Do' Verb Form"), // "I do realize it": do/did/VBP followed by /VB
+    VERBFORM_SHORT("shortVerbForms", "Short Verb Forms"), // 's, 're, 'm, 's, 've, 'd??!
+    VERBFORM_LONG("longVerbForms", "Long Verb Forms"), // is, are, am, has, have, had??!
+    VERBFORM_AUXILIARIES_BE_DO_HAVE("auxiliariesBeDoHave", "Auxiliary Verbs"), // be, do, have??! ("", got?), NOT modals!!! + V
+    VERBFORM_COPULAR("copularVerbs", "Copular Verbs"), // be, stay, seem, etc. - CHECK the parser
+    VERBFORM_ING("ingVerbForms", "'-ing' Verb Forms"), // gerund, participle, nouns 
+    VERBFORM_TO_INFINITIVE("toInfinitiveForms", "'To Infinitive' Verb Forms"), // "I want toPrep do it."
+    VERBFORM_EMPATHIC_DO("emphaticDo", "Empathic 'Do' Verb Form"), // "I do realize it": do/did/VBP followed by /VB
     
-    MODALS("Modals"), // all
-    MODALS_SIMPLE("Simple Modals"), // can, must, need, may
-    MODALS_ADVANCED("Advanced Modals"), // the others
-    MODALS_CAN("'Can' Modal"), // Klasse 6
-    MODALS_MUST("'Must' Modal"), // Klasse 6
-    MODALS_NEED("'Need' Modal"), // Klasse 6
-    MODALS_MAY("'May' Modal"), // Klasse 6
-    MODALS_COULD("'Could' Modal"), // Klasse 10
-    MODALS_MIGHT("'Might' Modal"), // Klasse 10
-    MODALS_OUGHT("'Ought' Modal"), // Klasse 10
-    MODALS_ABLE("'Able' Modal"), // Klasse 10 (annotated as JJ)
-    MODALS_HAVE_TO("'Have To' Modal"), // ??
+    MODALS("modals", "Modals"), // all
+    MODALS_SIMPLE("simpleModals", "Simple Modals"), // can, must, need, may
+    MODALS_ADVANCED("advancedModals", "Advanced Modals"), // the others
+    MODALS_CAN("can", "'Can' Modal"), // Klasse 6
+    MODALS_MUST("must", "'Must' Modal"), // Klasse 6
+    MODALS_NEED("need", "'Need' Modal"), // Klasse 6
+    MODALS_MAY("may", "'May' Modal"), // Klasse 6
+    MODALS_COULD("could", "'Could' Modal"), // Klasse 10
+    MODALS_MIGHT("might", "'Might' Modal"), // Klasse 10
+    MODALS_OUGHT("ought", "'Ought' Modal"), // Klasse 10
+    MODALS_ABLE("able", "'Able' Modal"), // Klasse 10 ("", annotated as JJ)
+    MODALS_HAVE_TO("haveTo", "'Have To' Modal"), // ??
     
-    VERBS_IRREGULAR("Irregular Verbs"), // past tense or past participle not ending with -ed
-    VERBS_REGULAR("Regular Verbs"), // past tense or past participle ending with -ed
-    VERBS_PHRASAL("Phrasal Verbs"),// phrasal verbs (& verbs with prepositions: look atPrep)
+    VERBS_IRREGULAR("irregularVerbs", "Irregular Verbs"), // past tense or past participle not ending with -ed
+    VERBS_REGULAR("regularVerbs", "Regular Verbs"), // past tense or past participle ending with -ed
+    VERBS_PHRASAL("phrasalVerbs", "Phrasal Verbs"),// phrasal verbs ("", & verbs with prepositions: look atPrep)
     
-    IMPERATIVES("Imperatives"), // start with a Verb, often end with "!": "Do it yourself!"
-    PASSIVE_VOICE("Passive Voice"),
+    IMPERATIVES("imperatives", "Imperatives"), // start with a Verb, often end with "!": "Do it yourself!"
+    PASSIVE_VOICE("passiveVoice", "Passive Voice"),
     
-    ADJECTIVE_POSITIVE("Positive Adjective"), // "nice"
-    ADJECTIVE_COMPARATIVE_SHORT("Comparative Adjective Short"), // "nicer"
-    ADJECTIVE_SUPERLATIVE_SHORT("Superlative Adjective Short"), // "nicest"
-    ADJECTIVE_COMPARATIVE_LONG("Comparative Adjective Long"), // "more beautiful"
-    ADJECTIVE_SUPERLATIVE_LONG("Superlative Adjective Long"), // "most beautiful"
+    ADJECTIVE_POSITIVE("positiveAdj", "Positive Adjective"), // "nice"
+    ADJECTIVE_COMPARATIVE_SHORT("comparativeAdjShort", "Comparative Adjective Short"), // "nicer"
+    ADJECTIVE_SUPERLATIVE_SHORT("superlativeAdjShort", "Superlative Adjective Short"), // "nicest"
+    ADJECTIVE_COMPARATIVE_LONG("comparativeAdjLong", "Comparative Adjective Long"), // "more beautiful"
+    ADJECTIVE_SUPERLATIVE_LONG("superlativeAdjLong", "Superlative Adjective Long"), // "most beautiful"
     
-    ADVERB_POSITIVE("Postive Adverb"), // "quickly"
-    ADVERB_COMPARATIVE_SHORT("Comparative Adverb Short"), // "faster"
-    ADVERB_SUPERLATIVE_SHORT("Superlative Adverb Short"), // "fastest"
-    ADVERB_COMPARATIVE_LONG("Comparative Adverb Long"), // "more quickly"
-    ADVERB_SUPERLATIVE_LONG("Superlative Adverb Long"), // "most quickly"
+    ADVERB_POSITIVE("positiveAdv", "Postive Adverb"), // "quickly"
+    ADVERB_COMPARATIVE_SHORT("comparativeAdvShort", "Comparative Adverb Short"), // "faster"
+    ADVERB_SUPERLATIVE_SHORT("superlativeAdvShort", "Superlative Adverb Short"), // "fastest"
+    ADVERB_COMPARATIVE_LONG("comparativeAdvLong", "Comparative Adverb Long"), // "more quickly"
+    ADVERB_SUPERLATIVE_LONG("superlativeAdvLong", "Superlative Adverb Long"), // "most quickly"
     ;
 
+    private final String		legacyID;
     private final String		prettyName;
     
-    GrammaticalConstruction(String prettyName) {
+    GrammaticalConstruction(String legacyID, String prettyName) {
+	this.legacyID = legacyID;
 	this.prettyName = prettyName;
     }
     
     @Override
     public String toString() {
 	return prettyName;
+    }
+    
+    public String getLegacyID() {
+	return this.legacyID;
     }
 }
