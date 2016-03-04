@@ -18,12 +18,12 @@ public class WebSearchAgentFactory
 	BING
     }
     
-    public static WebSearchAgent create(SearchAgent type, Language lang, String query, int numResults)
+    public static WebSearchAgent create(SearchAgent type, Language lang, String query)
     {
 	switch (type)
 	{
 	    case BING:
-		return new BingSearchAgent(lang, query, numResults);
+		return new BingSearchAgent(lang, query);
 	}
 	
 	return null;

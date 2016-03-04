@@ -5,16 +5,19 @@
  */
 package com.flair.taskmanager;
 
-import com.flair.parser.DocumentCollection;
-
 /**
- * Represents the interface of a(n executing) pipeline operation. A Future essentially
+ * Represents the interface of a (possibly executing) pipeline operation. A Future essentially.
  * @author shadeMe
  */
 public interface AbstractPipelineOperation
 {
+    public PipelineOperationType	getType();
+    
+    public void				begin();
     public boolean			isCancelled();
     public void				cancel();
+    public boolean			isCompleted();	    // returns true if the op was cancelled
+    public void				registerCompletionListener(AbstractPipelineOperationCompletionListener listener);
     
-    public DocumentCollection		getOutput();
+    public Object			getOutput();
 }

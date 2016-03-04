@@ -44,4 +44,18 @@ public class SearchResultDocumentSource implements AbstractDocumentSource
     public String getDescription() {
 	return parentSearchResult.getTitle() + " (" + parentSearchResult.getDisplayURL() + ")";
     }
+
+    @Override
+    public int compareTo(AbstractDocumentSource t) {
+	if (t instanceof SearchResultDocumentSource == false)
+	    throw new IllegalArgumentException("Incompatible source type");
+	
+	SearchResultDocumentSource rhs = (SearchResultDocumentSource)t;
+	if (parentSearchResult.getRank() < rhs.parentSearchResult.getRank())
+	    return -1;
+	else if (parentSearchResult.getRank() > rhs.parentSearchResult.getRank())
+	    return 1;
+	else
+	    return 0;
+    }
 }

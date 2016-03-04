@@ -12,7 +12,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 /**
- * Generic jSOn serializer
+ * Generic JSON serializer
  * @author shadeMe
  */
 public class JSONWriter

@@ -3,6 +3,7 @@ package com.flair.crawler;
 import com.flair.grammar.Language;
 import com.flair.utilities.FLAIRLogger;
 import java.util.ArrayList;
+import java.util.List;
 import net.billylieurance.azuresearch.AzureSearchResultSet;
 import net.billylieurance.azuresearch.AzureSearchWebQuery;
 import net.billylieurance.azuresearch.AzureSearchWebResult;
@@ -16,35 +17,86 @@ class BingSearchAgent extends WebSearchAgent
     private static final String			API_KEY = "CV3dQG6gOI3fO9wOHdArFimFprbt1Q3ZjMzYGhJaTFA";
     private static final int			RESULTS_PER_PAGE = 15;
     
-    private int					parsedResults;
+    private final AzureSearchWebQuery		pipeline;
+    private int					nextPage;
+    private int					nextRank;
     private final ArrayList<SearchResult>	cachedResults;
     
-    public BingSearchAgent(Language lang, String query, int noOfResults)
+    public BingSearchAgent(Language lang, String query)
     {
-	super(lang, query, noOfResults);
-	this.parsedResults = 0;
+	super(lang, query);
+	this.pipeline = new AzureSearchWebQuery();
+	this.nextPage = 1;
+	this.nextRank = 0;
 	this.cachedResults = new ArrayList<>();
-    }
-    
-    @Override
-    public boolean hasResults() {
-	return cachedResults.isEmpty() == false;
-    }
-    
-    @Override
-    public ArrayList<SearchResult> getResults() {
-	return cachedResults;
-    }
-    
-    private void querySearch(AzureSearchWebQuery azureQuery, int pageNo)
-    {
-	azureQuery.setPage(pageNo);
-	azureQuery.doQuery();
+	
+	String qPrefix = "";
+	String qPostfix = " language:en";
 
-	AzureSearchResultSet<AzureSearchWebResult> azureResults = azureQuery.getQueryResult();
+	switch (lang)
+	{
+	    case ENGLISH:
+		qPostfix = " language:en";
+		break;
+	    default:
+		throw new IllegalStateException("Unsupported language " + lang);
+	}
+
+	pipeline.setAppid(API_KEY);
+	pipeline.setQuery(qPrefix + query + qPostfix);
+	pipeline.setPerPage(RESULTS_PER_PAGE);
+    }
+    
+
+    @Override
+    public List<SearchResult> getNext(int numResults)
+    {
+	List<SearchResult> output = new ArrayList<>();
+	int consumedResults = consumeCache(output, numResults);
+	while (consumedResults != numResults)
+	{
+	    cacheNextPage();
+	    consumedResults = consumeCache(output, numResults - consumedResults);
+	}
+	
+	return output;
+    }
+    
+    private int consumeCache(List<SearchResult> dest, int numToConsume)
+    {
+	List<SearchResult> toRemove = new ArrayList<>();
+	int numLeft = numToConsume;
+	
+	for (SearchResult itr : cachedResults)
+	{
+	    if (numLeft > 0)
+	    {
+		dest.add(itr);
+		toRemove.add(itr);
+		numLeft--;
+	    }
+	    else
+		break;
+	}
+	
+	for (SearchResult itr : toRemove)
+	    cachedResults.remove(itr);
+	
+	return numToConsume - numLeft;
+    }
+    
+    private void cacheNextPage()
+    {
+	pipeline.setPage(nextPage);
+	pipeline.doQuery();
+	nextPage++;
+	
+	AzureSearchResultSet<AzureSearchWebResult> azureResults = pipeline.getQueryResult();
 	for (AzureSearchWebResult itr : azureResults)
 	{
-	    if (parsedResults < numResults)
+	    if (WebSearchAgent.isURLBlacklisted(itr.getUrl()) == true)
+		FLAIRLogger.get().info("Blacklisted URL: " + itr.getUrl());
+	    else
 	    {
 		SearchResult newResult = new SearchResult(lang,
 							  query,
@@ -54,66 +106,11 @@ class BingSearchAgent extends WebSearchAgent
 							  itr.getDescription());
 
 		cachedResults.add(newResult);
-		parsedResults++;
+		newResult.setRank(nextRank);
+		nextRank++;
 		
-		FLAIRLogger.get().info("Result " + parsedResults + ": " + itr.getTitle() + ", URL: " + itr.getUrl());
-	    }
-	    else
-		break;
-	}
-    }
-    
-    @Override
-    public void performSearch()
-    {
-	long startTime = System.currentTimeMillis();
-	FLAIRLogger.get().trace("Peforming BING search on query: " + query);
-	FLAIRLogger.get().indent();
-	{
-	    AzureSearchWebQuery azureQuery = new AzureSearchWebQuery();
-	    String qPrefix = "about ";
-	    String qPostfix = " language:en";
-
-	    switch (lang)
-	    {
-		case ENGLISH:
-		    qPostfix = " language:en";
-		    break;
-		default:
-		    throw new IllegalStateException("Unsupported language " + lang);
-	    }
-
-	    azureQuery.setAppid(API_KEY);
-	    azureQuery.setQuery(qPrefix + query + qPostfix);
-	    azureQuery.setPerPage(RESULTS_PER_PAGE);
-
-	    parsedResults = 0;
-	    int pageNo = 1;
-	    ArrayList<SearchResult> delinquents = new ArrayList<>();
-
-	    while (parsedResults < numResults)
-	    {
-		for (;parsedResults < numResults; pageNo++)
-		   querySearch(azureQuery, pageNo);
-
-		// run the results through the blacklist, remove delinquents, repeat 'til we have the reqd. no of results
-		for (SearchResult itr : cachedResults)
-		{
-		    if (WebSearchAgent.isURLBlacklisted(itr.getURL()) == true)
-		    {
-			delinquents.add(itr);
-			FLAIRLogger.get().info("Blacklisted URL: " + itr.getURL());
-		    }
-		}
-
-		cachedResults.removeAll(delinquents);
-		parsedResults -= delinquents.size();
-		delinquents.clear();
+		FLAIRLogger.get().info("Result " + (nextRank - 1)  + ": " + itr.getTitle() + ", URL: " + itr.getUrl());
 	    }
 	}
-	FLAIRLogger.get().exdent();
-	
-	long endTime = System.currentTimeMillis();
-	FLAIRLogger.get().trace("BING search complete in " + (endTime - startTime) + " ms");
     }
 }

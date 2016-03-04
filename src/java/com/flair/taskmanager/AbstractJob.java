@@ -5,7 +5,6 @@
  */
 package com.flair.taskmanager;
 
-import com.flair.parser.DocumentCollection;
 import com.flair.utilities.FLAIRLogger;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,16 +16,49 @@ import java.util.concurrent.ExecutionException;
  */
 abstract class AbstractJob
 {
-    private final List<AbstractTask>		registeredTasks;    // tasks that are either running or have been queued for execution
+    private final List<AbstractTask>		registeredTasks;	// tasks that are either running or have been queued for execution
     private boolean				cancelled;
+    private final List<Runnable>		completionListeners;
+    private boolean				started;
+    
+    class NotifyThread extends Thread
+    {
+	private final List<Runnable>		listeners;
+
+	public NotifyThread(List<Runnable> listeners) {
+	    this.listeners = new ArrayList<>(listeners);
+	}
+	
+	@Override
+	public void run()
+	{
+	    for (Runnable itr : listeners)
+		itr.run();
+	}
+    }
     
     public AbstractJob()
     {
 	registeredTasks = new ArrayList<>();
 	cancelled = false;
+	completionListeners = new ArrayList<>();
+	started = false;
     }
     
-    public synchronized boolean isTaskRegistered(AbstractTask task)
+    protected synchronized boolean isStarted() {
+	return started;
+    }
+    
+    protected synchronized void flagStarted() 
+    {
+	started = true;
+	
+	// in the rare event when the job's over before the begin() method returns
+	if (isCompleted())
+	    notifyCompletionListeners();
+    }
+    
+    protected synchronized boolean isTaskRegistered(AbstractTask task)
     {
 	for (AbstractTask itr : registeredTasks)
 	{
@@ -43,6 +75,19 @@ abstract class AbstractJob
 	    return null;
 	else
 	    return registeredTasks.get(0);
+    }
+    
+    private synchronized void notifyCompletionListeners()
+    {
+	if (isStarted() == false || completionListeners.isEmpty())
+	    return;
+	
+	// we use a separate thread for notification to prevent deadlocks (when a listener attempts to access the job object)
+	new NotifyThread(completionListeners).start();
+	
+	// remove all registered listeners to prevent them being notified multiple times
+	// for instance, when the job is cancelled while there are active tasks
+	completionListeners.clear();
     }
     
     protected synchronized boolean isCompleted() {
@@ -79,10 +124,16 @@ abstract class AbstractJob
     {
 	if (isTaskRegistered(task));
 	    registeredTasks.remove(task);
+	    
+	if (isCompleted())
+	    notifyCompletionListeners();
     }
     
     public synchronized void cancel()
     {
+	if (isCompleted())
+	    return;
+	
 	cancelled = true;
 	List<AbstractTask> nonexec = new ArrayList<>();
 	for (AbstractTask itr : registeredTasks)
@@ -94,28 +145,32 @@ abstract class AbstractJob
 	
 	// just remove those tasks that were never executed
 	registeredTasks.removeAll(nonexec);
+	notifyCompletionListeners();
     }
     
     public synchronized boolean isCancelled() {
 	return cancelled;
     }
     
-    public abstract void begin();
-}
-
-interface BasicParsingJobOutput
-{
-    public DocumentCollection	getParsedDocuments();
+    // returns false if the job is already complete, true otherwise
+    // DOES NOT execute the callback in the former case
+    public synchronized boolean registerCompletionListener(Runnable callback)
+    {
+	if (isCompleted())
+	    return false;
+	
+	completionListeners.add(callback);
+	return true;
+    }
+    
+    public abstract void	begin();
+    public abstract Object	getOutput();
 }
 
 abstract class AbstractTaskLinkingJob extends AbstractJob implements AbstractTaskLinker
 {
-    protected boolean		jobStarted;
-    
-    public AbstractTaskLinkingJob() 
-    {
+    public AbstractTaskLinkingJob() {
 	super();
-	this.jobStarted = false;
     }
 }
 

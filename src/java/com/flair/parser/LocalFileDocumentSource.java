@@ -68,4 +68,15 @@ public class LocalFileDocumentSource implements AbstractDocumentSource
     public String getDescription() {
 	return "Local File: " + filename;
     }
+    
+    @Override
+    public int compareTo(AbstractDocumentSource t) {
+	if (t instanceof LocalFileDocumentSource == false)
+	    throw new IllegalArgumentException("Incompatible source type");
+	
+	LocalFileDocumentSource rhs = (LocalFileDocumentSource)t;
+	
+	// compare source strings
+	return sourceString.compareTo(rhs.sourceString);
+    }
 }

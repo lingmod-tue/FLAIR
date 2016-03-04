@@ -228,6 +228,11 @@ class Document implements AbstractDocument
     public AbstractDocumentSource getDocumentSource() {
 	return source;
     }
+
+    @Override
+    public int compareTo(AbstractDocument t) {
+	return source.compareTo(t.getDocumentSource());
+    }
     
     final class DocumentFirstRevisionDecorator implements java.io.Serializable
     {
@@ -273,7 +278,7 @@ class Document implements AbstractDocument
 
 	public DocumentFirstRevisionDecorator(Document source, int defaultRank)
 	{
-	    if (parsed== false)
+	    if (parsed == false)
 		throw new IllegalStateException("Document not flagged as parsed");
 	    
 	    if (SearchResultDocumentSource.class.isAssignableFrom(source.source.getClass()) == false)

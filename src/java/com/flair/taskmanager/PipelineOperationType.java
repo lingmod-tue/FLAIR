@@ -6,12 +6,11 @@
 package com.flair.taskmanager;
 
 /**
- * Describes a type of concurrently executable task
+ * Describes the type of a pipeline operation
  * @author shadeMe
  */
-public enum TaskType
+public enum PipelineOperationType
 {
-    FETCH_SEARCHRESULTS,
-    FETCH_SEARCHRESULT_TEXT,
-    PARSE_DOCUMENT,
+    WEB_SEARCH_CRAWL,
+    PARSE_DOCUMENTS
 }

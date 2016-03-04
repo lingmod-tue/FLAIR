@@ -43,4 +43,15 @@ public class SimpleDocumentSource implements AbstractDocumentSource
 	else
 	    return "Simple String: " + sourceString.substring(0, 10) + "...";
     }
+    
+    @Override
+    public int compareTo(AbstractDocumentSource t) {
+	if (t instanceof SimpleDocumentSource == false)
+	    throw new IllegalArgumentException("Incompatible source type");
+	
+	SimpleDocumentSource rhs = (SimpleDocumentSource)t;
+	
+	// compare source strings
+	return sourceString.compareTo(rhs.sourceString);
+    }
 }

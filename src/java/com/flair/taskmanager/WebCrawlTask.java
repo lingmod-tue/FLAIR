@@ -7,9 +7,12 @@ package com.flair.taskmanager;
 
 import com.flair.crawler.SearchResult;
 import com.flair.utilities.FLAIRLogger;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -18,7 +21,7 @@ import java.util.concurrent.TimeoutException;
  * Fetches a SearchResult's text
  * @author shadeMe
  */
-class WebCrawlerTask extends AbstractTask
+class WebCrawlTask extends AbstractTask
 {
     private final SearchResult		    input;
     private ExecutorService		    fetchExecutor;
@@ -43,9 +46,9 @@ class WebCrawlerTask extends AbstractTask
 	}
     }
     
-    public WebCrawlerTask(AbstractJob job, AbstractTaskContinuation continuation, SearchResult source)
+    public WebCrawlTask(AbstractJob job, AbstractTaskContinuation continuation, SearchResult source)
     {
-	super(job, TaskType.FETCH_DOCUMENT_TEXT, continuation);
+	super(job, TaskType.FETCH_SEARCHRESULT_TEXT, continuation);
 	
 	this.input = source;
 	this.fetchExecutor = null;
@@ -61,7 +64,7 @@ class WebCrawlerTask extends AbstractTask
 	if (fetchExecutor == null)
 	    throw new IllegalStateException("Auxiliary threadpool not set");
 	
-	WebCrawlerTaskResult result = new WebCrawlerTaskResult(input);
+	WebCrawlTaskResult result = new WebCrawlTaskResult(input);
 	FutureTask<Boolean> fetchWrapper = new FutureTask<>(new FetchRunnable(input));
 	try {
 	    fetchExecutor.submit(fetchWrapper).get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
@@ -77,13 +80,13 @@ class WebCrawlerTask extends AbstractTask
     }
 }
 
-class WebCrawlerTaskResult extends AbstractTaskResult
+class WebCrawlTaskResult extends AbstractTaskResult
 {
     private final SearchResult		    output;
     
-    public WebCrawlerTaskResult(SearchResult output)
+    public WebCrawlTaskResult(SearchResult output)
     {
-	super(TaskType.FETCH_DOCUMENT_TEXT);
+	super(TaskType.FETCH_SEARCHRESULT_TEXT);
 	this.output = output;
     }
     
@@ -93,5 +96,32 @@ class WebCrawlerTaskResult extends AbstractTaskResult
     
     public boolean wasSuccessful() {
 	return output.isTextFetched();
+    }
+}
+
+
+class WebCrawlTaskExecutor extends AbstractTaskExecutor
+{
+    private final ExecutorService	    auxThreadPool;	    // silly workaround to prevent the I/O op from blocking perpetually
+								    // wouldn't be an issue if the boilerpipe API had a timeout param
+    public WebCrawlTaskExecutor()
+    {
+	super(Constants.TEXTFETCHER_THREADPOOL_SIZE);
+	auxThreadPool = Executors.newFixedThreadPool(Constants.TEXTFETCHER_THREADPOOL_SIZE);
+    }
+    
+    public void crawl(List<WebCrawlTask> tasks)
+    {
+	// ### TODO needs to be fair when handling requests from multiple clients
+	// e.g, the first client requests some 100 results but the second only wants 10 or so
+	if (tasks.isEmpty())
+	    return;
+	
+	for (WebCrawlTask itr : tasks)
+	    itr.setFetchExecutor(auxThreadPool);
+	
+	List<AbstractTask> collection = new ArrayList<>();
+	collection.addAll(tasks);
+	queue(collection);
     }
 }

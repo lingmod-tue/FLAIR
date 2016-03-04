@@ -41,14 +41,12 @@ public class Occurrence extends AbstractConstructionData
 
 final class OccurrenceFirstRevisionDecorator
 {
-    public final int		docNum;
     public final int		start;
     public final int		end;
     public final String		construction;
 
     public OccurrenceFirstRevisionDecorator(int start, int end, String construction) 
     {
-	this.docNum = -1;
 	this.start = start;
 	this.end = end;
 	this.construction = construction;

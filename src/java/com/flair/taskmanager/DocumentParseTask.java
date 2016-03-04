@@ -14,13 +14,13 @@ import com.flair.utilities.FLAIRLogger;
  * Parses a document source and returns a parsed document
  * @author shadeMe
  */
-class DocumentParsingTask extends AbstractTask
+class DocumentParseTask extends AbstractTask
 {
     private final AbstractDocumentSource		input;
     private final AbstractParsingStrategy		strategy;
     private final DocumentParserPool			parserPool;
   
-    public DocumentParsingTask(AbstractJob job,
+    public DocumentParseTask(AbstractJob job,
 			       AbstractTaskContinuation continuation, 
 			       AbstractDocumentSource source,
 			       AbstractParsingStrategy strategy,
@@ -62,17 +62,17 @@ class DocumentParsingTask extends AbstractTask
 	if (false == error)
 	    FLAIRLogger.get().trace("Document " + output.getDescription() + " parsed in " + (endTime - startTime) + " ms");
 	
-	DocumentParsingTaskResult result = new DocumentParsingTaskResult(output);
+	DocumentParseTaskResult result = new DocumentParseTaskResult(output);
 	return result;
     } 
 }
 
 
-class DocumentParsingTaskResult extends AbstractTaskResult
+class DocumentParseTaskResult extends AbstractTaskResult
 {
     private final AbstractDocument		    output;
     
-    public DocumentParsingTaskResult(AbstractDocument output)
+    public DocumentParseTaskResult(AbstractDocument output)
     {
 	super(TaskType.PARSE_DOCUMENT);
 	this.output = output;
@@ -80,5 +80,17 @@ class DocumentParsingTaskResult extends AbstractTaskResult
     
     public AbstractDocument getOutput() {
 	return output;
+    }
+}
+
+
+class DocumentParseTaskExecutor extends AbstractTaskExecutor
+{
+    public DocumentParseTaskExecutor() {
+	super(Constants.PARSER_THREADPOOL_SIZE);
+    }
+    
+    public void parse(DocumentParseTask task) {
+	queue(task);
     }
 }

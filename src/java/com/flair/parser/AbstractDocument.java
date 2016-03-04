@@ -13,7 +13,7 @@ import java.io.Serializable;
  * The interface all parsable documents must implement
  * @author shadeMe
  */
-public interface AbstractDocument
+public interface AbstractDocument extends Comparable<AbstractDocument>
 {
     public AbstractDocumentSource			getDocumentSource();
     public Language					getLanguage();

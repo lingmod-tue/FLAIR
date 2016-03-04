@@ -1,0 +1,130 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.flair.taskmanager;
+
+import com.flair.crawler.SearchResult;
+import com.flair.crawler.WebSearchAgent;
+import com.flair.crawler.WebSearchAgentFactory;
+import com.flair.grammar.Language;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Searches the web for a particular query in a given language
+ * @author shadeMe
+ */
+class BasicWebSearchAndCrawlJobInput
+{
+    public final Language			    sourceLanguage;
+    public final String				    query;
+    public final int				    numResults;
+    public final WebCrawlTaskExecutor		    webCrawlerExecutor;
+    public final WebSearchTaskExecutor		    webSearchExecutor;
+
+    public BasicWebSearchAndCrawlJobInput(Language sourceLanguage,
+					  String query,
+					  int numResults,
+					  WebCrawlTaskExecutor webCrawlerExecutor,
+					  WebSearchTaskExecutor webSearchExecutor)
+    {
+	this.sourceLanguage = sourceLanguage;
+	this.query = query;
+	this.numResults = numResults;
+	this.webCrawlerExecutor = webCrawlerExecutor;
+	this.webSearchExecutor = webSearchExecutor;
+    }
+}
+
+class BasicWebSearchAndCrawlJobOutput
+{
+    public final List<SearchResult>	searchResults;
+    
+    public BasicWebSearchAndCrawlJobOutput() {
+	this.searchResults = new ArrayList<>();
+    }
+}
+
+class BasicWebSearchAndCrawlJob extends AbstractTaskLinkingJob 
+{
+    private final BasicWebSearchAndCrawlJobInput	    input;
+    private final BasicWebSearchAndCrawlJobOutput	    output;
+    
+    public BasicWebSearchAndCrawlJob(BasicWebSearchAndCrawlJobInput in)
+    {
+	super();
+	this.input = in;
+	this.output = new BasicWebSearchAndCrawlJobOutput();
+    }
+    
+    @Override
+    public Object getOutput()
+    {
+	waitForCompletion();
+	return output;
+    }
+    
+    @Override
+    public void begin() 
+    {
+	if (isStarted())
+	    throw new IllegalStateException("Job has already begun");
+	
+	WebSearchAgent agent = WebSearchAgentFactory.create(WebSearchAgentFactory.SearchAgent.BING,
+							    input.sourceLanguage,
+							    input.query);
+	
+	WebSearchTask newTask = new WebSearchTask(this, new BasicTaskChain(this), agent, input.numResults);
+	registerTask(newTask);
+	input.webSearchExecutor.search(newTask);
+	flagStarted();
+    }
+
+    @Override
+    public void performLinking(TaskType previousType, AbstractTaskResult previousResult)
+    {
+	switch (previousType)
+	{
+	    case FETCH_SEARCHRESULTS:
+	    {
+		// create a new web crawl job with the output and wait for completion
+		// if there are any delinquents, create a new search task with the remainder
+		WebSearchTaskResult result = (WebSearchTaskResult)previousResult;
+		BasicWebCrawlJobInput crawlParams = new BasicWebCrawlJobInput(result.getOutput(), input.webCrawlerExecutor);
+		BasicWebCrawlJob crawlJob = new BasicWebCrawlJob(crawlParams);
+		crawlJob.begin();
+		
+		BasicWebCrawlJobOutput crawlOutput = (BasicWebCrawlJobOutput)crawlJob.getOutput();
+		synchronized(output)
+		{
+		    for (SearchResult itr : result.getOutput())
+			output.searchResults.add(itr);
+		}
+		
+		int delta = input.numResults - crawlOutput.delinquents.size();
+		if (delta > 0)
+		{
+		    WebSearchTask newTask = new WebSearchTask(this, new BasicTaskChain(this), result.getAgent(), delta);
+		    registerTask(newTask);
+		    input.webSearchExecutor.search(newTask);
+		}
+		
+		break;
+	    }
+	}
+    }
+
+    @Override
+    public String toString()
+    {
+	if (isCompleted() == false)
+	    return "BasicWebSearchAndCrawlJob is still running";
+	else if (isCancelled())
+	    return "BasicWebSearchAndCrawlJob was cancelled";
+	else
+	    return "BasicWebSearchAndCrawlJob Output:\nInput:\n\tLanguage: " + input.sourceLanguage + "\n\tQuery: " + input.query + "\n\tRequired Results: " + input.numResults + "\nOutput\n\tSearch Results: " + output.searchResults.size();
+    }
+}
+

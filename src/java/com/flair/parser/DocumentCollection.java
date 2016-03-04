@@ -8,6 +8,7 @@ package com.flair.parser;
 import com.flair.grammar.GrammaticalConstruction;
 import com.flair.utilities.JSONWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -77,5 +78,17 @@ public class DocumentCollection implements Iterable<AbstractDocument>
     @Override
     public Iterator<AbstractDocument> iterator() {
 	return dataStore.iterator();
+    }
+    
+    public synchronized void sort() {
+	Collections.sort(dataStore);
+    }
+    
+    public synchronized AbstractDocument get(int i) 
+    {
+	if (i >= dataStore.size() || i < 0)
+	    throw new IllegalArgumentException("Index must be 0 < " + i + " < " + dataStore.size());
+	
+	return dataStore.get(i);
     }
 }

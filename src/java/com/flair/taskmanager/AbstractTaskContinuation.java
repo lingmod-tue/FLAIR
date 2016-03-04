@@ -6,7 +6,7 @@
 package com.flair.taskmanager;
 
 /**
- * Represents a functor that gets called after an AbstractTask has run to completion
+ * Represents a functor that gets called after an AbstractTask has successfully run to completion
  * @author shadeMe
  */
 

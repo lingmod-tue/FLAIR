@@ -17,8 +17,7 @@ abstract class AbstractTaskExecutor
 {
     private final ExecutorService	threadPool;
     
-    public AbstractTaskExecutor(int numThreads)
-    {
+    public AbstractTaskExecutor(int numThreads) {
 	threadPool = Executors.newFixedThreadPool(numThreads);
     }
     
@@ -28,8 +27,7 @@ abstract class AbstractTaskExecutor
 	    threadPool.submit(itr.getFutureTask());
     }
     
-    protected void queue(AbstractTask task)
-    {
+    protected void queue(AbstractTask task) {
 	threadPool.submit(task.getFutureTask());
     }
 }

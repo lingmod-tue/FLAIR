@@ -21,6 +21,7 @@ public class SearchResult
     private final String            URL;
     private final String            displayURL;
     private final String            snippet;
+    private int			    rank;	    // as returned by the search engine
     private String                  pageText;       // page text without any markup
     
     public SearchResult(Language lang, String query, String title, String URL, String displayURL, String snippet)
@@ -32,6 +33,7 @@ public class SearchResult
         this.displayURL = displayURL;
         this.snippet = snippet;
         this.pageText = "";
+	this.rank = -1;
     }
     
     public Language getLanguage() {
@@ -60,6 +62,14 @@ public class SearchResult
     
     public String getPageText() {
         return pageText;
+    }
+    
+    public int getRank() {
+	return rank;
+    }
+    
+    public void setRank(int rank) {
+	this.rank = rank;
     }
     
     public boolean isTextFetched() {

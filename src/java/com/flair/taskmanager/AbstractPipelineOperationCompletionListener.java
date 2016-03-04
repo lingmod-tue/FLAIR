@@ -6,12 +6,10 @@
 package com.flair.taskmanager;
 
 /**
- * Describes a type of concurrently executable task
+ * Represents an observer of an AbstractPipelineOperation object that gets notified of events
  * @author shadeMe
  */
-public enum TaskType
+public interface AbstractPipelineOperationCompletionListener
 {
-    FETCH_SEARCHRESULTS,
-    FETCH_SEARCHRESULT_TEXT,
-    PARSE_DOCUMENT,
+    public void		handleCompletion(AbstractPipelineOperation source);	// including cancellation
 }

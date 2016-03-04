@@ -11,7 +11,7 @@ import com.flair.grammar.Language;
  * Represents the source of a document object
  * @author shadeMe
  */
-public interface AbstractDocumentSource
+public interface AbstractDocumentSource extends Comparable<AbstractDocumentSource>
 {
     public Language	    getLanguage();
     public String	    getSourceText();

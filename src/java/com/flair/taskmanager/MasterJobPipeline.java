@@ -9,9 +9,10 @@ import com.flair.crawler.SearchResult;
 import com.flair.grammar.Language;
 import com.flair.parser.AbstractDocumentSource;
 import com.flair.parser.AbstractParsingStrategyFactory;
-import com.flair.parser.DocumentCollection;
 import com.flair.parser.MasterParsingFactoryGenerator;
 import com.flair.parser.ParserType;
+import com.flair.parser.SearchResultDocumentSource;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -36,16 +37,19 @@ public final class MasterJobPipeline
 	return SINGLETON;
     }
     
-    private final WebCrawlerTaskExecutor	    webCrawlerExecutor;
-    private final DocumentParsingTaskExecutor	    docParsingExecutor;
+    private final WebSearchTaskExecutor		    webSearchExecutor;
+    private final WebCrawlTaskExecutor		    webCrawlExecutor;
+    private final DocumentParseTaskExecutor	    docParseExecutor;
     
     private final DocumentParserPool		    stanfordParserEnglishPool;
     private final AbstractParsingStrategyFactory    stanfordEnglishStrategy;
 
     private MasterJobPipeline()
     {
-	this.webCrawlerExecutor = new WebCrawlerTaskExecutor();
-	this.docParsingExecutor = new DocumentParsingTaskExecutor();
+	this.webSearchExecutor = new WebSearchTaskExecutor();
+	this.webCrawlExecutor = new WebCrawlTaskExecutor();
+	this.docParseExecutor = new DocumentParseTaskExecutor();
+	
 	this.stanfordParserEnglishPool = new DocumentParserPool(MasterParsingFactoryGenerator.createParser(ParserType.STANFORD_CORENLP, Language.ENGLISH));
 	this.stanfordEnglishStrategy = MasterParsingFactoryGenerator.createParsingStrategy(ParserType.STANFORD_CORENLP, Language.ENGLISH);
     }
@@ -72,31 +76,28 @@ public final class MasterJobPipeline
 	}
     }
     
-    public AbstractPipelineOperation parseSearchResults(Language lang, List<SearchResult> searchResults)
+    public AbstractPipelineOperation performWebSearch(Language lang, String query, int numResults)
     {
-	WebDocumentParserJobInput jobParams = new WebDocumentParserJobInput(lang,
-									    searchResults, 
-									    webCrawlerExecutor,
-									    docParsingExecutor, 
-									    getParserPoolForLanguage(lang),
-									    getStrategyForLanguage(lang));
-	WebDocumentParserJob newJob = new WebDocumentParserJob(jobParams);
-	BasicPipelineOperation result = new BasicPipelineOperation(newJob);
-	newJob.begin();
+	BasicWebSearchAndCrawlJobInput jobParams = new BasicWebSearchAndCrawlJobInput(lang, query, numResults, webCrawlExecutor, webSearchExecutor);
+	BasicWebSearchAndCrawlJob newJob = new BasicWebSearchAndCrawlJob(jobParams);
+	BasicPipelineOperation result = new BasicPipelineOperation(newJob, PipelineOperationType.WEB_SEARCH_CRAWL);
 	
 	return result;
     }
     
-    public AbstractPipelineOperation parseDocumentSources(Language lang, List<AbstractDocumentSource> docSources)
+    public AbstractPipelineOperation performSearchResultParsing(Language lang, List<SearchResult> searchResults)
     {
-	LocalDocumentParserJobInput jobParams = new LocalDocumentParserJobInput(lang,
-									    docSources, 
-									    docParsingExecutor, 
+	List<AbstractDocumentSource> sources = new ArrayList<>();
+	for (SearchResult itr : searchResults)
+	    sources.add(new SearchResultDocumentSource(itr));
+	
+	BasicDocumentParseJobInput jobParams = new BasicDocumentParseJobInput(lang,
+									    sources, 
+									    docParseExecutor, 
 									    getParserPoolForLanguage(lang),
 									    getStrategyForLanguage(lang));
-	LocalDocumentParserJob newJob = new LocalDocumentParserJob(jobParams);
-	BasicPipelineOperation result = new BasicPipelineOperation(newJob);
-	newJob.begin();
+	BasicDocumentParseJob newJob = new BasicDocumentParseJob(jobParams);
+	BasicPipelineOperation result = new BasicPipelineOperation(newJob, PipelineOperationType.PARSE_DOCUMENTS);
 	
 	return result;
     }
@@ -104,10 +105,35 @@ public final class MasterJobPipeline
 
 class BasicPipelineOperation implements AbstractPipelineOperation
 {
-    private final AbstractJob	job;
+    class JobCompletionListener implements Runnable
+    {
+	private final BasicPipelineOperation				source;
+	private final AbstractPipelineOperationCompletionListener	callback;
 
-    public BasicPipelineOperation(AbstractJob job) {
+	public JobCompletionListener(BasicPipelineOperation source, AbstractPipelineOperationCompletionListener callback)
+	{
+	    this.source = source;
+	    this.callback = callback;
+	}
+	
+	@Override
+	public void run() {
+	    callback.handleCompletion(source);
+	}
+    }
+    
+    private final AbstractJob		    job;
+    private final PipelineOperationType	    type;
+    
+    public BasicPipelineOperation(AbstractJob job, PipelineOperationType type) 
+    {
 	this.job = job;
+	this.type = type;
+    }
+    
+    @Override
+    public void begin() {
+	job.begin();
     }
     
     @Override
@@ -121,14 +147,30 @@ class BasicPipelineOperation implements AbstractPipelineOperation
     }
 
     @Override
-    public DocumentCollection getOutput() 
+    public String toString() {
+	return job.toString();
+    }
+
+    @Override
+    public boolean isCompleted() {
+	return job.isCompleted();
+    }
+
+    @Override
+    public void registerCompletionListener(AbstractPipelineOperationCompletionListener listener)
     {
-	assert BasicParsingJobOutput.class.isAssignableFrom(job.getClass()) == true;
-	return ((BasicParsingJobOutput)job).getParsedDocuments();
+	// immediately execute the callback if the job's already complete
+	if (job.registerCompletionListener(new JobCompletionListener(this, listener)) == false)
+	    listener.handleCompletion(this);
     }
     
     @Override
-    public String toString() {
-	return job.toString();
+    public PipelineOperationType getType() {
+	return type;
+    }
+
+    @Override
+    public Object getOutput() {
+	return job.getOutput();
     }
 }
