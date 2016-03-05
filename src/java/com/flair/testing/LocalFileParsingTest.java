@@ -5,28 +5,12 @@
  */
 package com.flair.testing;
 
-import com.flair.grammar.GrammaticalConstruction;
-import com.flair.grammar.Language;
-import com.flair.parser.AbstractDocument;
-import com.flair.parser.AbstractDocumentSource;
-import com.flair.parser.DocumentCollection;
-import com.flair.parser.DocumentConstructionData;
-import com.flair.parser.LocalFileDocumentSource;
-import com.flair.taskmanager.AbstractPipelineOperation;
-import com.flair.taskmanager.MasterJobPipeline;
-import com.flair.utilities.FLAIRLogger;
-import com.flair.utilities.JSONWriter;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Executable test for the local document parsing framework. Takes a single param - absolute path to a directory with the text documents
  * @author shadeMe
  */
+
+/*
 public class LocalFileParsingTest
 {
     public static void main(String[] args)
@@ -98,3 +82,4 @@ public class LocalFileParsingTest
 	System.exit(0);
      }
 }
+*/

@@ -40,7 +40,7 @@ class BasicWebCrawlJobOutput
 class BasicWebCrawlJob extends AbstractTaskLinkingJob
 {
     private final BasicWebCrawlJobInput	    input;
-    private final BasicWebCrawlJobOutput	    output;
+    private final BasicWebCrawlJobOutput    output;
     
     public BasicWebCrawlJob(BasicWebCrawlJobInput in)
     {

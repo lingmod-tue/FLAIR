@@ -13,12 +13,14 @@ import com.flair.parser.DocumentCollection;
 import com.flair.parser.SearchResultDocumentSource;
 import com.flair.taskmanager.AbstractPipelineOperation;
 import com.flair.taskmanager.AbstractPipelineOperationCompletionListener;
+import com.flair.taskmanager.MasterJobPipeline;
 import com.flair.taskmanager.PipelineOperationType;
 import com.flair.utilities.FLAIRLogger;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.UUID;
 import javax.websocket.Session;
 
@@ -39,7 +41,8 @@ class SessionState
 	private final String				    opID;
 	private final BasicInteropMessage.MessageType	    reqType;
 
-	public SessionOperationCompletionListener(String opID, BasicInteropMessage.MessageType reqType) {
+	public SessionOperationCompletionListener(String opID, BasicInteropMessage.MessageType reqType)
+	{
 	    this.opID = opID;
 	    this.reqType = reqType;
 	}
@@ -47,7 +50,9 @@ class SessionState
 	@Override
 	public void handleCompletion(AbstractPipelineOperation source) 
 	{
-	    if (isValid()) {
+	    if (isValid() && source.isCancelled() == false )
+	    {
+		FLAIRLogger.get().info("Pipeline operation complete. Details:\n" + source.toString());
 		sendMessage(new JobCompleteResponse(reqType, opID));
 	    }
 	}
@@ -81,30 +86,35 @@ class SessionState
     
     private synchronized void sendMessage(Object response)
     {
-	try {
-	    parentSession.getBasicRemote().sendText(ServerClientInteropManager.toResponseJSON(response));
+	try 
+	{
+	    String msg = ServerClientInteropManager.toResponseJSON(response);
+	    parentSession.getBasicRemote().sendText(msg);
+//	    FLAIRLogger.get().info("Sent response to client. Message: " + msg);
 	}
 	catch (IOException ex) {
-	    FLAIRLogger.get().error("Couldn't send message to session " + parentSession + ". Exception - " + ex.getMessage());
+	    FLAIRLogger.get().error("Couldn't send message to session " + parentSession.getId() + ". Exception - " + ex.getMessage());
 	}
     }
     
     private AbstractPipelineOperation performWebSearchJob(String query, Language lang, int numResults)
     {
-	AbstractPipelineOperation op = null;
+	AbstractPipelineOperation op = MasterJobPipeline.get().performWebSearch(lang, query, numResults);
 	return op;
     }
     
-     private AbstractPipelineOperation performDocumentParsingJob(List<AbstractDocumentSource> docs)
+     private AbstractPipelineOperation performDocumentParsingJob(Language lang, List<AbstractDocumentSource> docSources)
     {
-	AbstractPipelineOperation op = null;
+	AbstractPipelineOperation op = MasterJobPipeline.get().performDocumentParsing(lang, docSources);
 	return op;
     }
     
     
     public synchronized void handleMessage(String message)
     {
+	FLAIRLogger.get().info("Received request from client. Message: " + message);
 	BasicInteropMessage.MessageType responseType = ServerClientInteropManager.getRequestType(message);
+	
 	switch (responseType)
 	{
 	    case CANCEL_JOB:
@@ -150,8 +160,17 @@ class SessionState
 			FLAIRLogger.get().error("Invalid fetch search results request. Start index " + req.start + " > available results (" + searchResults.size() + ")");
 		    else
 		    {
-			for (int i = req.start - 1; i < searchResults.size() && i < req.start - 1 + req.count; i++)
-			    toSend.add(searchResults.get(i));
+			if (req.start == -1 && req.count == -1)
+			{
+			    // return all
+			    for (SearchResult itr : searchResults)
+				toSend.add(itr);
+			}
+			else
+			{
+			    for (int i = req.start - 1; i < searchResults.size() && i < req.start - 1 + req.count; i++)
+				toSend.add(searchResults.get(i)); 
+			}
 			
 			sendMessage(new FetchSearchResultsResponse(req.jobID, toSend));
 		    }
@@ -175,14 +194,28 @@ class SessionState
 		    List<SearchResult> searchResults = (List<SearchResult>)output;
 		    List<AbstractDocumentSource> docSources = new ArrayList<>();
 		    
+		    // rerank the results correctly
+		    int i = 0;
 		    for (SearchResult itr : searchResults)
-			docSources.add(new SearchResultDocumentSource(itr));
+		    {
+			itr.setRank(i);
+			i++;
+		    }
 		    
-		    AbstractPipelineOperation newOp = performDocumentParsingJob(docSources);
-		    String id = registerOperation(newOp, responseType);
-		
-		    sendMessage(new ParseSearchResultsResponse(id));
-		    newOp.begin();
+		    if (searchResults.isEmpty())
+			FLAIRLogger.get().error("Invalid parse search results request. Operation with ID " + req.jobID + " has zero results");
+		    else
+		    {
+			for (SearchResult itr : searchResults)
+			    docSources.add(new SearchResultDocumentSource(itr));
+		    
+			AbstractPipelineOperation newOp = performDocumentParsingJob(searchResults.get(0).getLanguage(), docSources);
+			String id = registerOperation(newOp, responseType);
+
+			sendMessage(new ParseSearchResultsResponse(id));
+			newOp.begin();
+		    }
+		    
 		}
 		
 		break;
@@ -207,8 +240,17 @@ class SessionState
 			FLAIRLogger.get().error("Invalid fetch parsed data request. Start index " + req.start + " > available results (" + parsedDocs.size() + ")");
 		    else
 		    {
-			for (int i = req.start - 1; i < parsedDocs.size() && i < req.start - 1 + req.count; i++)
-			    toSend.add(parsedDocs.get(i));
+			if (req.start == -1 && req.count == -1)
+			{
+			    // return all
+			    for (AbstractDocument itr : parsedDocs)
+				toSend.add(itr);
+			}
+			else
+			{
+			    for (int i = req.start - 1; i < parsedDocs.size() && i < req.start - 1 + req.count; i++)
+				toSend.add(parsedDocs.get(i)); 
+			}
 			
 			sendMessage(new FetchParsedDataResponse(req.jobID, toSend));
 		    }
@@ -228,6 +270,15 @@ class SessionState
 	
 	if (lastQueuedOperation != null)
 	    lastQueuedOperation.cancel();
+	
+	for (Entry<String, AbstractPipelineOperation> itr : idTable.entrySet())
+	{
+	    if (itr.getValue().isCompleted() == false)
+	    {
+		FLAIRLogger.get().error("Pipeline operation is still executing at the time of shutdown. Status: " + itr.getValue().toString());
+		itr.getValue().cancel();
+	    }
+	}
 	
 	lastQueuedOperation = null;
 	idTable.clear();

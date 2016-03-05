@@ -14,6 +14,7 @@ import com.flair.parser.Occurrence;
 import com.flair.parser.SearchResultDocumentSource;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.SerializedName;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,23 +31,32 @@ class BasicInteropMessage
 {
     public enum MessageSource
     {
+	@SerializedName("CLIENT")
 	CLIENT,		// requests
+	@SerializedName("SERVER")
 	SERVER		// responses/push messages
     }
     
     public enum MessageType
     {
 	// request-only
+	@SerializedName("CANCEL_JOB")
 	CANCEL_JOB,
 	
 	// response-only
+	@SerializedName("NEW_JOB")
 	NEW_JOB,
+	@SerializedName("JOB_COMPLETE")
 	JOB_COMPLETE,
 	
 	// bi-directional
+	@SerializedName("PERFORM_SEARCH")
 	PERFORM_SEARCH,
+	@SerializedName("FETCH_SEARCH_RESULTS")
 	FETCH_SEARCH_RESULTS,
+	@SerializedName("PARSE_SEARCH_RESULTS")
 	PARSE_SEARCH_RESULTS,
+	@SerializedName("FETCH_PARSED_DATA")
 	FETCH_PARSED_DATA
 	;
 	
@@ -137,6 +147,7 @@ class FetchSearchResultsRequest
     public final String			    jobID;	    // corresponding to the search operation
     public final int			    start;	    // nth result from which to fetch
     public final int			    count;	    // num of results to fetch from the nth result
+							    // if start == count == -1, return all
 
     public FetchSearchResultsRequest(String jobID, int start, int count)
     {
@@ -214,6 +225,7 @@ class FetchParsedDataRequest
     public final String			    jobID;	    // corresponding to the parse operation
     public final int			    start;	    // nth result from which to fetch
     public final int			    count;	    // num of results to fetch from the nth result
+							    // if start == count == -1, return all
 
     public FetchParsedDataRequest(String jobID, int start, int count)
     {

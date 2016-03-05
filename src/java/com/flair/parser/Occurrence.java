@@ -38,17 +38,3 @@ public class Occurrence extends AbstractConstructionData
 	       endIdx == rhs.endIdx;
     }
 }
-
-final class OccurrenceFirstRevisionDecorator
-{
-    public final int		start;
-    public final int		end;
-    public final String		construction;
-
-    public OccurrenceFirstRevisionDecorator(int start, int end, String construction) 
-    {
-	this.start = start;
-	this.end = end;
-	this.construction = construction;
-    }
-}

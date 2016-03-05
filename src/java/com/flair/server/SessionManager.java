@@ -5,6 +5,7 @@
  */
 package com.flair.server;
 
+import com.flair.utilities.FLAIRLogger;
 import java.util.HashMap;
 import javax.websocket.Session;
 
@@ -14,7 +15,7 @@ import javax.websocket.Session;
  */
 public class SessionManager
 {
-    private static SessionManager	    SINGLETON = new SessionManager();
+    private static SessionManager	    SINGLETON = null;
     
     public static SessionManager get()
     {
@@ -45,6 +46,7 @@ public class SessionManager
 	    throw new IllegalArgumentException("Session is not open");
 	
 	activeSessions.put(newSession, new SessionState(newSession));
+	FLAIRLogger.get().info("New WebSocket session opened. ID: "+ newSession.getId());
     }
     
     public synchronized void removeSession(Session oldSession)
@@ -55,6 +57,7 @@ public class SessionManager
 	SessionState state = activeSessions.get(oldSession);
 	state.release();
 	activeSessions.remove(oldSession);
+	FLAIRLogger.get().info("WebSocket session " + oldSession.getId() + " closed");
     }
     
     public synchronized void routeMessage(String message, Session session)

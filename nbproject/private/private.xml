@@ -3,22 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/taskmanager/AbstractPipelineOperationCompletionListener.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/utilities/FLAIRLogger.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/taskmanager/AbstractTaskExecutor.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/web/js/functions.js</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/taskmanager/MasterJobPipeline.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/taskmanager/AbstractTask.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/web/visual.jsp</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/server/SessionManager.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/FLAIRservlet/SearchServletTeacher.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/taskmanager/AbstractPipelineOperation.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/parser/StanfordDocumentParserEnglishStrategy.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/taskmanager/WebDocumentParserJob.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/taskmanager/LocalDocumentParserJob.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/grammar/GrammaticalConstruction.java</file>
+            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/web/js/plumbing.js</file>
+            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/web/js/webranker.js</file>
             <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/server/SessionState.java</file>
-            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/src/java/com/flair/taskmanager/AbstractJob.java</file>
+            <file>file:/C:/Users/shadeMe/Documents/FLAIR/Repo/SVN/web/visual.jsp</file>
         </group>
     </open-files>
 </project-private>

@@ -1,21 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
-    <servlet>
-        <servlet-name>LoginServletTeacher</servlet-name>
-        <servlet-class>FLAIRservlet.LoginServletTeacher</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>SearchServletTeacher</servlet-name>
-        <servlet-class>FLAIRservlet.SearchServletTeacher</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>LoginServletTeacher</servlet-name>
-        <url-pattern>/LoginServletTeacher</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>SearchServletTeacher</servlet-name>
-        <url-pattern>/SearchServletTeacher</url-pattern>
-    </servlet-mapping>
+    <display-name>FLAIR WebRanker</display-name>
+    <listener>
+        <listener-class>com.flair.server.BasicServletContextListener</listener-class>
+    </listener>
+    <listener>
+        <listener-class>com.flair.server.BasicHttpSessionListener</listener-class>
+    </listener>
     <session-config>
         <session-timeout>
             30

@@ -62,7 +62,7 @@ class BasicDocumentParseJob extends AbstractTaskLinkingJob
     public Object getOutput()
     {
 	waitForCompletion();
-	return output;
+	return output.parsedDocs;
     }
     
     @Override

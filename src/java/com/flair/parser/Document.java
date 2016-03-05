@@ -5,11 +5,8 @@
  */
 package com.flair.parser;
 
-import com.flair.crawler.SearchResult;
 import com.flair.grammar.GrammaticalConstruction;
 import com.flair.grammar.Language;
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 /**
@@ -220,11 +217,6 @@ class Document implements AbstractDocument
     }
 
     @Override
-    public Serializable getSerializable(Object param) {
-	return new DocumentFirstRevisionDecorator(this, (int)param);
-    }
-
-    @Override
     public AbstractDocumentSource getDocumentSource() {
 	return source;
     }
@@ -232,116 +224,6 @@ class Document implements AbstractDocument
     @Override
     public int compareTo(AbstractDocument t) {
 	return source.compareTo(t.getDocumentSource());
-    }
-    
-    final class DocumentFirstRevisionDecorator implements java.io.Serializable
-    {
-	private final String			query;
-
-	private final int			preRank;
-	private final int			postRank;
-
-	private final String			title;
-	private final String			url;
-	private final String			urlToDisplay;
-	private final String			snippet;
-	private final String			html;
-	private final String			text;
-
-
-	private final ArrayList<String>		constructions;
-	private final ArrayList<Double>		relFrequencies;
-	private final ArrayList<Integer>	frequencies;
-	private final ArrayList<Double>		tfNorm;
-	private final ArrayList<OccurrenceFirstRevisionDecorator>  highlights;
-	private final ArrayList<Double>		tfIdf;
-	private final double			docLenTfIdf;
-
-	private final double			docLength;
-
-	private final double			readabilityScore;
-	private final String			readabilityLevel;
-	private final double			readabilityARI;
-	private final double			readabilityBennoehr;
-	private final double			textWeight;
-	private final double			rankWeight;
-	private final double			gramScore;
-	private final double			totalWeight;
-
-	private final int			numChars;
-	private final int			numSents;
-	private final int			numDeps;
-
-	private final double			avWordLength;
-	private final double			avSentLength;
-	private final double			avTreeDepth;
-
-	public DocumentFirstRevisionDecorator(Document source, int defaultRank)
-	{
-	    if (parsed == false)
-		throw new IllegalStateException("Document not flagged as parsed");
-	    
-	    if (SearchResultDocumentSource.class.isAssignableFrom(source.source.getClass()) == false)
-		query = title = url = urlToDisplay = snippet = "";
-	    else
-	    {
-		SearchResultDocumentSource searchSource = (SearchResultDocumentSource)source.source;
-		SearchResult searchResult = searchSource.getSearchResult();
-
-		query = searchResult.getQuery();
-		title = searchResult.getTitle();
-		url = searchResult.getURL();
-		urlToDisplay = searchResult.getDisplayURL();
-		snippet = searchResult.getSnippet();
-	    }
-	    
-	    html = "";
-	    text = source.getText();
-	    preRank = defaultRank;
-	    postRank = 0;
-	    
-	    constructions = new ArrayList<>();
-	    relFrequencies = new ArrayList<>();
-	    frequencies = new ArrayList<>();
-	    tfNorm = new ArrayList<>();
-	    highlights = new ArrayList<>();
-	    tfIdf = new ArrayList<>();
-	    
-	    for (GrammaticalConstruction itr : GrammaticalConstruction.values())
-	    {
-		DocumentConstructionData data = getConstructionData(itr);
-		if (data.hasConstruction())
-		{
-		    constructions.add(itr.getLegacyID());
-		    relFrequencies.add(data.getRelativeFrequency());
-		    frequencies.add(data.getFrequency());
-		    tfNorm.add(data.getWeightedFrequency());
-		    tfIdf.add(data.getRelativeWeightedFrequency());
-		    
-		    for (Occurrence occr : data.getOccurrences())
-		    {
-			highlights.add(new OccurrenceFirstRevisionDecorator(occr.getStart(),
-									    occr.getEnd(),
-									    itr.getLegacyID()));
-		    }
-		}
-	    }
-	    
-	    docLenTfIdf = source.fancyDocLength;
-	    docLength = source.tokenCount;
-	    readabilityScore = source.readabilityScore;
-	    readabilityLevel = source.readabilityLevel;
-	    readabilityARI = readabilityBennoehr = textWeight = 0;
-	    rankWeight = gramScore = totalWeight = 0;
-
-	    numChars = source.numCharacters;
-	    numSents = source.numSentences;
-	    numDeps = source.numDependencies;
-
-	    avWordLength = source.avgWordLength;
-	    avSentLength = source.avgSentenceLength;
-	    avTreeDepth = source.avgTreeDepth;
-	}
     }
 }
 

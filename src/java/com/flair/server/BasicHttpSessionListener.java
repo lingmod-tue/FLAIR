@@ -12,15 +12,17 @@ import javax.servlet.http.HttpSessionListener;
  * Handles HTTP session creation and deletion(in the servlet context)
  * @author shadeMe
  */
-public class BasicSessionListener implements HttpSessionListener
+public class BasicHttpSessionListener implements HttpSessionListener
 {
     @Override
     public void sessionCreated(HttpSessionEvent hse)
     {
+	// nothing yet
     }
 
     @Override
     public void sessionDestroyed(HttpSessionEvent hse)
     {
+	// nothing yet
     }
 }

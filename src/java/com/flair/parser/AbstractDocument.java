@@ -7,7 +7,6 @@ package com.flair.parser;
 
 import com.flair.grammar.GrammaticalConstruction;
 import com.flair.grammar.Language;
-import java.io.Serializable;
 
 /**
  * The interface all parsable documents must implement
@@ -46,7 +45,5 @@ public interface AbstractDocument extends Comparable<AbstractDocument>
     
     public boolean					isParsed();
     public void						flagAsParsed();
-    
-    public Serializable					getSerializable(Object param);
 }
 

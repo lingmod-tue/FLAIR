@@ -5,14 +5,11 @@
  */
 package com.flair.taskmanager;
 
-import com.flair.crawler.SearchResult;
 import com.flair.grammar.Language;
 import com.flair.parser.AbstractDocumentSource;
 import com.flair.parser.AbstractParsingStrategyFactory;
 import com.flair.parser.MasterParsingFactoryGenerator;
 import com.flair.parser.ParserType;
-import com.flair.parser.SearchResultDocumentSource;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,7 +18,7 @@ import java.util.List;
  */
 public final class MasterJobPipeline
 {   
-    private static MasterJobPipeline	    SINGLETON = new MasterJobPipeline();
+    private static MasterJobPipeline	    SINGLETON = null;
     
     public static MasterJobPipeline get()
     {
@@ -85,14 +82,10 @@ public final class MasterJobPipeline
 	return result;
     }
     
-    public AbstractPipelineOperation performSearchResultParsing(Language lang, List<SearchResult> searchResults)
+    public AbstractPipelineOperation performDocumentParsing(Language lang, List<AbstractDocumentSource> docsSources)
     {
-	List<AbstractDocumentSource> sources = new ArrayList<>();
-	for (SearchResult itr : searchResults)
-	    sources.add(new SearchResultDocumentSource(itr));
-	
 	BasicDocumentParseJobInput jobParams = new BasicDocumentParseJobInput(lang,
-									    sources, 
+									    docsSources, 
 									    docParseExecutor, 
 									    getParserPoolForLanguage(lang),
 									    getStrategyForLanguage(lang));

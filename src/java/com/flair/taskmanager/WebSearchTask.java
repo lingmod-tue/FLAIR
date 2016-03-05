@@ -31,7 +31,7 @@ class WebSearchTask extends AbstractTask
     {
 	List<SearchResult> hits = input.getNext(numResults);
 	WebSearchTaskResult result = new WebSearchTaskResult(hits, input);
-	FLAIRLogger.get().trace("Web Search for '" + input.getQuery() + ") fetched " + hits.size() + " results");
+	FLAIRLogger.get().trace("Web Search for '" + input.getQuery() + "' fetched " + hits.size() + " results");
 	return result;
     }
 }

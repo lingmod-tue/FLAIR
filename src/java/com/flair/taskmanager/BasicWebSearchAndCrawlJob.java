@@ -63,7 +63,7 @@ class BasicWebSearchAndCrawlJob extends AbstractTaskLinkingJob
     public Object getOutput()
     {
 	waitForCompletion();
-	return output;
+	return output.searchResults;
     }
     
     @Override
@@ -99,16 +99,19 @@ class BasicWebSearchAndCrawlJob extends AbstractTaskLinkingJob
 		BasicWebCrawlJobOutput crawlOutput = (BasicWebCrawlJobOutput)crawlJob.getOutput();
 		synchronized(output)
 		{
-		    for (SearchResult itr : result.getOutput())
+		    for (SearchResult itr : crawlOutput.crawledResults)
 			output.searchResults.add(itr);
 		}
 		
-		int delta = input.numResults - crawlOutput.delinquents.size();
-		if (delta > 0)
+		if (output.searchResults.size() < input.numResults)
 		{
-		    WebSearchTask newTask = new WebSearchTask(this, new BasicTaskChain(this), result.getAgent(), delta);
-		    registerTask(newTask);
-		    input.webSearchExecutor.search(newTask);
+		    int delta = input.numResults - output.searchResults.size();
+		    if (delta > 0)
+		    {
+			WebSearchTask newTask = new WebSearchTask(this, new BasicTaskChain(this), result.getAgent(), delta);
+			registerTask(newTask);
+			input.webSearchExecutor.search(newTask);
+		    }
 		}
 		
 		break;

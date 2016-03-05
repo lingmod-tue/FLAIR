@@ -56,7 +56,7 @@ class BingSearchAgent extends WebSearchAgent
 	while (consumedResults != numResults)
 	{
 	    cacheNextPage();
-	    consumedResults = consumeCache(output, numResults - consumedResults);
+	    consumedResults += consumeCache(output, numResults - consumedResults);
 	}
 	
 	return output;

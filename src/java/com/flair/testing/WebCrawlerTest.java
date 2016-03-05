@@ -5,22 +5,11 @@
  */
 package com.flair.testing;
 
-import com.flair.crawler.SearchResult;
-import com.flair.crawler.WebSearchAgent;
-import com.flair.crawler.WebSearchAgentFactory;
-import com.flair.grammar.Language;
-import com.flair.parser.DocumentCollection;
-import com.flair.taskmanager.AbstractPipelineOperation;
-import com.flair.taskmanager.MasterJobPipeline;
-import com.flair.utilities.FLAIRLogger;
-import com.flair.utilities.JSONWriter;
-import java.io.File;
-import java.util.List;
-
 /**
  * Executable test for the web result framework. Takes a single param - absolute path to a directory
  * @author shadeMe
  */
+/*
 public class WebCrawlerTest
 {
     public static void main(String[] args)
@@ -66,3 +55,4 @@ public class WebCrawlerTest
 	System.exit(0);
     }
 }
+*/

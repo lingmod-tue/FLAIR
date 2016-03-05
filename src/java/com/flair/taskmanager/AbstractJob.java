@@ -79,7 +79,7 @@ abstract class AbstractJob
     
     private synchronized void notifyCompletionListeners()
     {
-	if (isStarted() == false || completionListeners.isEmpty())
+	if (started == false || completionListeners.isEmpty())
 	    return;
 	
 	// we use a separate thread for notification to prevent deadlocks (when a listener attempts to access the job object)
@@ -91,7 +91,7 @@ abstract class AbstractJob
     }
     
     protected synchronized boolean isCompleted() {
-	return cancelled == true || registeredTasks.isEmpty();
+	return started == true && (cancelled == true || registeredTasks.isEmpty());
     }
     
     protected void waitForCompletion()

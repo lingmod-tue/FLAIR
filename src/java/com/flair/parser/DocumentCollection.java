@@ -6,7 +6,6 @@
 package com.flair.parser;
 
 import com.flair.grammar.GrammaticalConstruction;
-import com.flair.utilities.JSONWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -61,18 +60,6 @@ public class DocumentCollection implements Iterable<AbstractDocument>
 	dataStore.add(doc);
 	if (recalcConstructionData)
 	    refreshConstructionData();
-    }
-    
-    public synchronized void serialize(JSONWriter writer, String path)
-    {
-	if (dataStore.isEmpty())
-	    return;
-	    
-	for (int i = 0; i < dataStore.size(); i++)
-	{
-	    String outfile = path + "/";
-	    writer.writeObject(dataStore.get(i).getSerializable(0), String.format("%03d", i), outfile);
-	}
     }
 
     @Override

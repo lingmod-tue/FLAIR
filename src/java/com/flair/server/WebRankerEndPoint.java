@@ -5,8 +5,10 @@
  */
 package com.flair.server;
 
+import com.flair.utilities.FLAIRLogger;
 import javax.websocket.EndpointConfig;
 import javax.websocket.OnClose;
+import javax.websocket.OnError;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
 import javax.websocket.Session;
@@ -34,5 +36,10 @@ public class WebRankerEndPoint
     @OnClose
     public void onClose(Session session) {
 	SessionManager.get().removeSession(session);
+    }
+    
+    @OnError
+    public void onError(Session session, Throwable thr) {
+	FLAIRLogger.get().error("WebRankerEndPoint error for session " + session.getId() + ": " + thr.toString());
     }
 }
