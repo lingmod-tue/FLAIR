@@ -10,6 +10,7 @@ import com.flair.parser.AbstractDocumentSource;
 import com.flair.parser.AbstractParsingStrategyFactory;
 import com.flair.parser.MasterParsingFactoryGenerator;
 import com.flair.parser.ParserType;
+import com.flair.utilities.FLAIRLogger;
 import java.util.List;
 
 /**
@@ -135,8 +136,13 @@ class BasicPipelineOperation implements AbstractPipelineOperation
     }
 
     @Override
-    public void cancel() {
-	job.cancel();
+    public void cancel() 
+    {
+	if (isCompleted() == false)
+	{
+	    job.cancel();
+	    FLAIRLogger.get().info("Pipeline operation " + getType() + " was cancelled");
+	}
     }
 
     @Override

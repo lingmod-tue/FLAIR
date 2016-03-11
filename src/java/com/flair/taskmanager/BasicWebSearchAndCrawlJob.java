@@ -11,6 +11,7 @@ import com.flair.crawler.WebSearchAgentFactory;
 import com.flair.grammar.Language;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * Searches the web for a particular query in a given language
@@ -49,6 +50,8 @@ class BasicWebSearchAndCrawlJobOutput
 
 class BasicWebSearchAndCrawlJob extends AbstractTaskLinkingJob 
 {
+    private static final int				    MINIMUM_TOKEN_COUNT = 100;	    // in the page text
+    
     private final BasicWebSearchAndCrawlJobInput	    input;
     private final BasicWebSearchAndCrawlJobOutput	    output;
     
@@ -100,10 +103,16 @@ class BasicWebSearchAndCrawlJob extends AbstractTaskLinkingJob
 		synchronized(output)
 		{
 		    for (SearchResult itr : crawlOutput.crawledResults)
-			output.searchResults.add(itr);
+		    {
+			// quick/naive word count
+			StringTokenizer tokenizer = new StringTokenizer(itr.getPageText(), " ");
+			if (MINIMUM_TOKEN_COUNT < tokenizer.countTokens())
+			    output.searchResults.add(itr);
+		    }
 		}
 		
-		if (output.searchResults.size() < input.numResults)
+		if (result.getAgent().hasNoMoreResults() == false &&
+		    output.searchResults.size() < input.numResults)
 		{
 		    int delta = input.numResults - output.searchResults.size();
 		    if (delta > 0)

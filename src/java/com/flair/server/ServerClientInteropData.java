@@ -9,6 +9,7 @@ import com.flair.crawler.SearchResult;
 import com.flair.grammar.GrammaticalConstruction;
 import com.flair.grammar.Language;
 import com.flair.parser.AbstractDocument;
+import com.flair.parser.DocumentCollection;
 import com.flair.parser.DocumentConstructionData;
 import com.flair.parser.Occurrence;
 import com.flair.parser.SearchResultDocumentSource;
@@ -16,6 +17,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import javax.json.Json;
@@ -57,7 +59,9 @@ class BasicInteropMessage
 	@SerializedName("PARSE_SEARCH_RESULTS")
 	PARSE_SEARCH_RESULTS,
 	@SerializedName("FETCH_PARSED_DATA")
-	FETCH_PARSED_DATA
+	FETCH_PARSED_DATA,
+	@SerializedName("FETCH_PARSED_VISUALISATION_DATA")
+	FETCH_PARSED_VISUALISATION_DATA
 	;
 	
 	@Override
@@ -108,6 +112,38 @@ class JobCompleteResponse
 	baseData = new BasicInteropMessage(BasicInteropMessage.MessageSource.SERVER, BasicInteropMessage.MessageType.JOB_COMPLETE);
 	this.request = requestMessage;
 	this.jobID = jobID;
+    }
+}
+
+class WebSearchCompleteResponse
+{
+    public final BasicInteropMessage			    baseData;
+    public final BasicInteropMessage.MessageType	    request;			// the message associated with the job
+    public final String					    jobID;
+    public final int					    totalResultsFetched;	// no of results crawled/fetched
+
+    public WebSearchCompleteResponse(String jobID, int totalResults) 
+    {
+	baseData = new BasicInteropMessage(BasicInteropMessage.MessageSource.SERVER, BasicInteropMessage.MessageType.JOB_COMPLETE);
+	this.request = BasicInteropMessage.MessageType.PERFORM_SEARCH;
+	this.jobID = jobID;
+	this.totalResultsFetched = totalResults;
+    }
+}
+
+class ParseSearchResultsCompleteResponse
+{
+    public final BasicInteropMessage			    baseData;
+    public final BasicInteropMessage.MessageType	    request;		// the message associated with the job
+    public final String					    jobID;
+    public final int					    totalResultsParsed;	// no of search results parsed
+
+    public ParseSearchResultsCompleteResponse(String jobID, int totalResults) 
+    {
+	baseData = new BasicInteropMessage(BasicInteropMessage.MessageSource.SERVER, BasicInteropMessage.MessageType.JOB_COMPLETE);
+	this.request = BasicInteropMessage.MessageType.PARSE_SEARCH_RESULTS;
+	this.jobID = jobID;
+	this.totalResultsParsed = totalResults;
     }
 }
 
@@ -372,6 +408,59 @@ class FetchParsedDataResponse
     }
 }
 
+class FetchParsedVisualisationDataRequest
+{
+    public final BasicInteropMessage	    baseData;
+    public final String			    jobID;	    // corresponding to the parse operation
+    
+    public FetchParsedVisualisationDataRequest(String jobID)
+    {
+	baseData = new BasicInteropMessage(BasicInteropMessage.MessageSource.CLIENT, BasicInteropMessage.MessageType.FETCH_PARSED_VISUALISATION_DATA);
+	this.jobID = jobID;
+    }
+}
+
+class FetchParsedVisualisationDataResponse
+{
+    public final BasicInteropMessage		    baseData;
+    public final String				    jobID;		    // corresponding to the parse operation
+    public final String				    csvTable;
+
+    public FetchParsedVisualisationDataResponse(String jobID, DocumentCollection parsedDocs)
+    {
+	baseData = new BasicInteropMessage(BasicInteropMessage.MessageSource.SERVER, BasicInteropMessage.MessageType.FETCH_PARSED_VISUALISATION_DATA);
+	this.jobID = jobID;
+	
+	// construct CSV string
+	StringWriter writer = new StringWriter();
+	// the header first
+	writer.append("document,");
+	for (GrammaticalConstruction itr : GrammaticalConstruction.values())
+		 writer.append(itr.getLegacyID() + ",");
+	writer.append("# of sentences,# of words,readability score");
+	writer.append("\n");
+	
+	// the rest comes next
+	Integer i = 0;
+	for (AbstractDocument itr : parsedDocs)
+	{
+	    writer.append(i.toString());
+	    for (GrammaticalConstruction gramConst : GrammaticalConstruction.values())
+	    {
+		DocumentConstructionData data = itr.getConstructionData(gramConst);
+		Double relFreq = data.getRelativeFrequency();
+		writer.append(relFreq.toString() + ",");
+	    }
+
+	    writer.append("" + itr.getNumSentences() + "," + itr.getNumDependencies() + "," + itr.getReadabilityScore());
+	    writer.append("\n");
+	    i++;
+	}
+	
+	this.csvTable = writer.toString();
+    }
+}
+
 class ServerClientInteropManager
 {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -395,6 +484,8 @@ class ServerClientInteropManager
 	    return BasicInteropMessage.MessageType.PARSE_SEARCH_RESULTS;
 	else if (messageType.equals(BasicInteropMessage.MessageType.FETCH_PARSED_DATA.toString()))
 	    return BasicInteropMessage.MessageType.FETCH_PARSED_DATA;
+	else if (messageType.equals(BasicInteropMessage.MessageType.FETCH_PARSED_VISUALISATION_DATA.toString()))
+	    return BasicInteropMessage.MessageType.FETCH_PARSED_VISUALISATION_DATA;
 	else
 	    throw new IllegalArgumentException("Invalid request type '" + messageType + "'");
     }
@@ -446,6 +537,13 @@ class ServerClientInteropManager
 	checkMessage(requestJSON, BasicInteropMessage.MessageSource.CLIENT, BasicInteropMessage.MessageType.FETCH_PARSED_DATA);
 	Gson deserializer = getGson();
 	return deserializer.fromJson(requestJSON, FetchParsedDataRequest.class);
+    }
+    
+    public static FetchParsedVisualisationDataRequest toFetchParsedVisualisationDataRequest(String requestJSON)
+    {
+	checkMessage(requestJSON, BasicInteropMessage.MessageSource.CLIENT, BasicInteropMessage.MessageType.FETCH_PARSED_VISUALISATION_DATA);
+	Gson deserializer = getGson();
+	return deserializer.fromJson(requestJSON, FetchParsedVisualisationDataRequest.class);
     }
     
     public static String toResponseJSON(Object response)

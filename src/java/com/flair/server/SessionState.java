@@ -46,14 +46,35 @@ class SessionState
 	    this.opID = opID;
 	    this.reqType = reqType;
 	}
-
+	
 	@Override
 	public void handleCompletion(AbstractPipelineOperation source) 
 	{
-	    if (isValid() && source.isCancelled() == false )
+	    if (isValid() && source.isCancelled() == false)
 	    {
-		FLAIRLogger.get().info("Pipeline operation complete. Details:\n" + source.toString());
-		sendMessage(new JobCompleteResponse(reqType, opID));
+		FLAIRLogger.get().info("Pipeline operation " + opID + " complete. Details:\n" + source.toString());
+		
+		switch (source.getType())
+		{
+		    case WEB_SEARCH_CRAWL:
+		    {	
+			Object output = source.getOutput();
+			List<SearchResult> searchResults = (List<SearchResult>)output;
+			sendMessage(new WebSearchCompleteResponse(opID, searchResults.size()));
+			break;
+		    }
+		    
+		    case PARSE_DOCUMENTS:
+		    {
+			Object output = source.getOutput();
+			DocumentCollection parsedDocs = (DocumentCollection)output;
+			sendMessage(new ParseSearchResultsCompleteResponse(opID, parsedDocs.size()));
+			break;
+		    }
+				    
+		    default:
+			FLAIRLogger.get().error("Couldn't generate response for pipeline operation " + opID + " of type " + source.getType());
+		}
 	    }
 	}
     }
@@ -81,6 +102,8 @@ class SessionState
 	operationTable.put(operation, id);
 	lastQueuedOperation = operation;
 	operation.registerCompletionListener(new SessionOperationCompletionListener(id, requestType));
+	
+	FLAIRLogger.get().info("Queued pipeline operation of type " + operation.getType() + " for session " + parentSession.getId());
 	return id;
     }
     
@@ -103,7 +126,7 @@ class SessionState
 	return op;
     }
     
-     private AbstractPipelineOperation performDocumentParsingJob(Language lang, List<AbstractDocumentSource> docSources)
+    private AbstractPipelineOperation performDocumentParsingJob(Language lang, List<AbstractDocumentSource> docSources)
     {
 	AbstractPipelineOperation op = MasterJobPipeline.get().performDocumentParsing(lang, docSources);
 	return op;
@@ -254,6 +277,25 @@ class SessionState
 			
 			sendMessage(new FetchParsedDataResponse(req.jobID, toSend));
 		    }
+		}
+		
+		break;
+	    }
+	    
+	    case FETCH_PARSED_VISUALISATION_DATA:
+	    {
+		FetchParsedVisualisationDataRequest req = ServerClientInteropManager.toFetchParsedVisualisationDataRequest(message);
+		AbstractPipelineOperation op = idTable.get(req.jobID);
+		
+		if (op == null)
+		    FLAIRLogger.get().error("Invalid fetch parsed data request. No operation with ID " + req.jobID);
+		else if (op.getType() != PipelineOperationType.PARSE_DOCUMENTS)
+		    FLAIRLogger.get().error("Invalid fetch parsed data request. Operation with ID " + req.jobID + " is of type " + op.getType());
+		else
+		{
+		    Object output = op.getOutput();
+		    DocumentCollection parsedDocs = (DocumentCollection)output;
+		    sendMessage(new FetchParsedVisualisationDataResponse(req.jobID, parsedDocs));
 		}
 		
 		break;

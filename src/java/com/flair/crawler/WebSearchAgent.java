@@ -63,4 +63,5 @@ public abstract class WebSearchAgent
     }
     
     public abstract List<SearchResult>		getNext(int numResults);	// returns the next n results
+    public abstract boolean			hasNoMoreResults();		// returns true if there are no more results, false otherwise
 }

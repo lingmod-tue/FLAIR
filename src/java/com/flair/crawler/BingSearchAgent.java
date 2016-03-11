@@ -21,6 +21,7 @@ class BingSearchAgent extends WebSearchAgent
     private int					nextPage;
     private int					nextRank;
     private final ArrayList<SearchResult>	cachedResults;
+    private boolean				noMoreResults;
     
     public BingSearchAgent(Language lang, String query)
     {
@@ -29,6 +30,7 @@ class BingSearchAgent extends WebSearchAgent
 	this.nextPage = 1;
 	this.nextRank = 0;
 	this.cachedResults = new ArrayList<>();
+	this.noMoreResults = false;
 	
 	String qPrefix = "";
 	String qPostfix = " language:en";
@@ -47,13 +49,12 @@ class BingSearchAgent extends WebSearchAgent
 	pipeline.setPerPage(RESULTS_PER_PAGE);
     }
     
-
     @Override
     public List<SearchResult> getNext(int numResults)
     {
 	List<SearchResult> output = new ArrayList<>();
 	int consumedResults = consumeCache(output, numResults);
-	while (consumedResults != numResults)
+	while (noMoreResults == false && consumedResults != numResults)
 	{
 	    cacheNextPage();
 	    consumedResults += consumeCache(output, numResults - consumedResults);
@@ -85,17 +86,39 @@ class BingSearchAgent extends WebSearchAgent
 	return numToConsume - numLeft;
     }
     
+    private boolean isURLDuplicate(String url)
+    {
+	for (SearchResult itr: cachedResults)
+	{
+	    if (itr.getURL().equalsIgnoreCase(url) == true)
+		return true;
+	}
+	
+	return false;
+    }
+    
     private void cacheNextPage()
     {
+	if (noMoreResults == true)
+	    return;
+	
 	pipeline.setPage(nextPage);
 	pipeline.doQuery();
-	nextPage++;
 	
 	AzureSearchResultSet<AzureSearchWebResult> azureResults = pipeline.getQueryResult();
+	if (azureResults.getASRs().isEmpty())
+	{
+	    FLAIRLogger.get().info("No more results for query '" + query + "'");
+	    noMoreResults = true;
+	    return;
+	}
+	    
 	for (AzureSearchWebResult itr : azureResults)
 	{
 	    if (WebSearchAgent.isURLBlacklisted(itr.getUrl()) == true)
 		FLAIRLogger.get().info("Blacklisted URL: " + itr.getUrl());
+	    else if (isURLDuplicate(itr.getUrl()) == true)
+		FLAIRLogger.get().info("Duplicate URL: " + itr.getUrl());
 	    else
 	    {
 		SearchResult newResult = new SearchResult(lang,
@@ -112,5 +135,12 @@ class BingSearchAgent extends WebSearchAgent
 		FLAIRLogger.get().info("Result " + (nextRank - 1)  + ": " + itr.getTitle() + ", URL: " + itr.getUrl());
 	    }
 	}
+	
+	nextPage++;	
+    }
+
+    @Override
+    public boolean hasNoMoreResults() {
+	return noMoreResults;
     }
 }
