@@ -441,10 +441,10 @@ class FetchParsedVisualisationDataResponse
 	writer.append("\n");
 	
 	// the rest comes next
-	Integer i = 0;
+	int i = 0;
 	for (AbstractDocument itr : parsedDocs)
 	{
-	    writer.append(i.toString());
+	    writer.append("" + i + ",");
 	    for (GrammaticalConstruction gramConst : GrammaticalConstruction.values())
 	    {
 		DocumentConstructionData data = itr.getConstructionData(gramConst);
