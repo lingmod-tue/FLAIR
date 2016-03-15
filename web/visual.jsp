@@ -1085,7 +1085,7 @@
                                 <div class="col-md-3" style="border-left:1px lightgrey solid; padding-left: 20px;">
                                     <div id="list_of_constructs_vis" style="height:370px;overflow-y: scroll;">
                                         <div style="text-align: right;">
-                                            <a href="javascript:FLAIR.WEBRANKER.singleton.resetAllSettingsAndFilters(false, false, true, true);" style="color:grey;">RESET ALL <span class="glyphicon glyphicon-erase" title="reset"></span></a>
+                                            <a href="javascript:FLAIR.WEBRANKER.singleton.resetAllSettingsAndFilters(true, false, true, true);" style="color:grey;">RESET ALL <span class="glyphicon glyphicon-erase" title="reset"></span></a>
 
                                         </div>
                                         <table class="table table-hover table-condensed">

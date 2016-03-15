@@ -92,8 +92,7 @@ class Document implements AbstractDocument
     }
     
     @Override
-    public DocumentConstructionData getConstructionData(GrammaticalConstruction type)
-    {
+    public DocumentConstructionData getConstructionData(GrammaticalConstruction type) {
 	return (DocumentConstructionData)constructionData.getData(type);
     }
     

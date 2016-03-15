@@ -524,7 +524,7 @@ FLAIR.WEBRANKER.STATE = function() {
     };
     this.rerank = function() {
 	bParam = ($(".lengthSlider").slider("option", "value")) / 10;
-	if (bParam === null)
+	if (bParam === null || bParam === undefined)
 	    bParam = 5;
 
 	if (parsedDocs.length === 0)
@@ -565,9 +565,12 @@ FLAIR.WEBRANKER.STATE = function() {
 		if (doc.frequencies[constr_ind] > 0)
 		    appropriateDoc = false;
 	    }
-
+	    
+	    if ($.inArray(k.toString(), filteredDocs) !== -1)
+		appropriateDoc = false;
+	    
 	    // add data to object
-	    if (appropriateDoc && ($.inArray(k, filteredDocs) === -1))
+	    if (appropriateDoc)
 		displayedDocs.push(doc);
 	}
 
@@ -816,7 +819,7 @@ FLAIR.WEBRANKER.VISUALISATION = function(delegate_isDocFiltered, delegate_isCons
     // PRIVATE INTERFACE
     var position = function(d) {
 	var v = dragging[d];
-	return v === null ? x(d) : v;
+	return (v === undefined || v === null) ? x(d) : v;
     };
     var transition = function(g) {
 	return g.transition().duration(500);
@@ -824,7 +827,7 @@ FLAIR.WEBRANKER.VISUALISATION = function(delegate_isDocFiltered, delegate_isCons
     var path = function(d) {
 	// returns the path for a given data point
 	return line(dimensions.map(function (p) {
-	    return [position(p), y[p](d[p])];
+	    return [position(p), y[p](+d[p])];
 	}));
     };
     var brushstart = function() {
@@ -1188,8 +1191,9 @@ FLAIR.WEBRANKER.INSTANCE = function() {
     };
     this.toggleConstruction = function(const_element) {
 	state.toggleConstructionExclusion(const_element);
-	state.rerank();
+	
 	visualiser.visualise();
+	state.rerank();
     };
     this.displayDetails = function(index) {
 	state.displayDocText(index);
@@ -1201,11 +1205,16 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	if (text_characteristics === true)
 	    FLAIR.WEBRANKER.UTIL.resetTextCharacteristics();
 	
-	if (visualiser_axes === true)
-	    visualiser.resetAxes();
-	
 	if (doc_filter === true)
 	    state.clearFilteredDocs();
+	
+	if (visualiser_axes === true)
+	{
+	    visualiser.resetAxes();
+	    visualiser.visualise();
+	}
+	
+	state.rerank();
     };
     this.toggleVisualiserAxis = function(axis_element) {
 	visualiser.toggleAxis(axis_element);
