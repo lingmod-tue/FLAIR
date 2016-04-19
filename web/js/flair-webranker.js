@@ -3,11 +3,13 @@ FLAIR.createNS("FLAIR.WEBRANKER");
 FLAIR.createNS("FLAIR.WEBRANKER.CONSTANTS");
 FLAIR.createNS("FLAIR.WEBRANKER.UTIL");
 FLAIR.createNS("FLAIR.WEBRANKER.UTIL.TOGGLE");
+FLAIR.createNS("FLAIR.WEBRANKER.UTIL.TOAST");
+FLAIR.createNS("FLAIR.WEBRANKER.UTIL.WAIT");
 
 //=================== FLAIR.WEBRANKER.CONSTANTS =============//
-FLAIR.WEBRANKER.CONSTANTS.DEFAULT_NUM_RESULTS = 20;		// no of web results to crawl/process
+FLAIR.WEBRANKER.CONSTANTS.DEFAULT_NUM_RESULTS = 20;
 FLAIR.WEBRANKER.CONSTANTS.DEFAULT_LANGUAGE = "ENGLISH";
-FLAIR.WEBRANKER.CONSTANTS.HIGHLIGHT_COLORS = ["lightgreen", "lightblue", "lightpink", "lightcyan", "lightsalmon", "lightgrey", "lightyellow"];   
+FLAIR.WEBRANKER.CONSTANTS.HIGHLIGHT_COLORS = ["lightgreen", "lightblue", "lightpink", "lightcyan", "lightsalmon", "lightgrey", "lightyellow"];
 
 //=================== FLAIR.WEBRANKER.UTIL =============//
 FLAIR.WEBRANKER.UTIL.formatDocLevel = function(level) {
@@ -92,13 +94,66 @@ FLAIR.WEBRANKER.UTIL.updateWaitDialog = function(content, cancellable) {
     else
 	document.getElementById('modal_waitIdle_buttonCancel').style.visibility = 'visible';
 };
-FLAIR.WEBRANKER.UTIL.resetUI = function() {
-    FLAIR.WEBRANKER.UTIL.TOGGLE.leftSidebar(false);
-    FLAIR.WEBRANKER.UTIL.TOGGLE.rightSidebar(false);
-    FLAIR.WEBRANKER.UTIL.TOGGLE.waitDialog(false);
-    FLAIR.WEBRANKER.UTIL.resetSlider("all");
-    $("#snapshot").html("<div id='empty_sidebar_info'>Click on a search result <br>to display text here.</div>");    
-    document.getElementById("results_table").innerHTML = "<tr><td><br><br> Welcome to <b>FLAIR</b> - a tool that: <br><br><br> - searches the web for a topic of interest <br><br> - analyses the top 20 results for grammatical constructions and readability levels <br><br> - re-ranks the results according to your (pedagogical or learning) needs specified in the settings</td></tr>";
+FLAIR.WEBRANKER.UTIL.resetUI = function(leftSidebar, rightSidebar, waitDialog, sliders, snapshot, resultsTable) {
+    if (leftSidebar === true || leftSidebar === undefined)
+	FLAIR.WEBRANKER.UTIL.TOGGLE.leftSidebar(false);
+    if (rightSidebar === true || rightSidebar === undefined)
+	FLAIR.WEBRANKER.UTIL.TOGGLE.rightSidebar(false);
+    if (waitDialog === true || waitDialog === undefined)
+	FLAIR.WEBRANKER.UTIL.TOGGLE.waitDialog(false);
+    if (sliders === true || sliders === undefined)
+	FLAIR.WEBRANKER.UTIL.resetSlider("all");
+    if (snapshot === true || snapshot === undefined)
+	$("#snapshot").html("<div id='empty_sidebar_info'>Click on a search result <br>to display text here.</div>");    
+    if (resultsTable === true || resultsTable === undefined) {
+	document.getElementById("results_table").innerHTML = "<tr><td><br><br> Welcome to <b>FLAIR</b> - a tool that: <br><br><br> - searches the web for a topic of interest <br><br> - analyses the results for grammatical constructions and readability levels <br><br> - re-ranks the results according to your (pedagogical or learning) needs specified in the settings</td></tr>";
+    }
+};
+FLAIR.WEBRANKER.UTIL.cancelCurrentOperation = function() {
+    FLAIR.WEBRANKER.singleton.cancelOperation();
+    FLAIR.WEBRANKER.UTIL.TOAST.clear(true);
+    FLAIR.WEBRANKER.UTIL.TOAST.warning("The operation was cancelled.", true, 4000);
+};
+
+
+//=================== FLAIR.WEBRANKER.UTIL.TOAST =============//
+FLAIR.WEBRANKER.UTIL.TOAST.info = function(message, dismissOnTap, timeout) {
+    toastr.options.closeButton = false;
+    toastr.options.tapToDismiss = dismissOnTap;
+    toastr.options.timeOut = timeout;
+    toastr.options.extendedTimeOut = timeout;
+    toastr.options.positionClass = "toast-bottom-center";
+    toastr.info(message);
+};
+FLAIR.WEBRANKER.UTIL.TOAST.success = function(message, dismissOnTap, timeout) {
+    toastr.options.closeButton = false;
+    toastr.options.tapToDismiss = dismissOnTap;
+    toastr.options.timeOut = timeout;
+    toastr.options.extendedTimeOut = timeout;
+    toastr.options.positionClass = "toast-bottom-center";
+    toastr.success(message);
+};
+FLAIR.WEBRANKER.UTIL.TOAST.error = function(message, dismissOnTap, timeout) {
+    toastr.options.closeButton = false;
+    toastr.options.tapToDismiss = dismissOnTap;
+    toastr.options.timeOut = timeout;
+    toastr.options.extendedTimeOut = timeout;
+    toastr.options.positionClass = "toast-bottom-center";
+    toastr.error(message);
+};
+FLAIR.WEBRANKER.UTIL.TOAST.warning = function(message, dismissOnTap, timeout) {
+    toastr.options.closeButton = false;
+    toastr.options.tapToDismiss = dismissOnTap;
+    toastr.options.timeOut = timeout;
+    toastr.options.extendedTimeOut = timeout;
+    toastr.options.positionClass = "toast-bottom-center";
+    toastr.warning(message);
+};
+FLAIR.WEBRANKER.UTIL.TOAST.clear = function(immediate) {
+    if (immediate === false)
+	toastr.clear();  
+    else
+	toastr.remove();
 };
 
 //=================== FLAIR.WEBRANKER.UTIL.TOGGLE =============//
@@ -142,6 +197,7 @@ FLAIR.WEBRANKER.STATE = function() {
     var language = FLAIR.WEBRANKER.CONSTANTS.DEFAULT_LANGUAGE;
     var totalResults = FLAIR.WEBRANKER.CONSTANTS.DEFAULT_NUM_RESULTS;		// no of results to search for, updated with the result count returned by the server
 
+    var searchResults = [];			    // collection of all the search results returned by the server
     var parsedDocs = [];			    // collection of all the parsed docs sent by the server
     var displayedDocs = [];			    // collection of all the docs being displayed
     var filteredDocs = [];			    // collection of the docs indices (in the parsed docs collection) that shouldn't be displayed
@@ -157,6 +213,9 @@ FLAIR.WEBRANKER.STATE = function() {
     var kParam = 1.7;				    // ### what's this?
     
     var parsedVisData = "";			    // CSV string of the parsed docs' construction data, used for visualisation
+    
+    var searchResultsFetched = false;		    // set to true after the search results are returned by the server
+    var parsedDataFetched = false;		    // set to true after all the parsed data has been received by the client
     
     // PRIVATE INTERFACE
     var createWeightSettingPrototype = function() {
@@ -387,6 +446,7 @@ FLAIR.WEBRANKER.STATE = function() {
 	language = FLAIR.WEBRANKER.CONSTANTS.DEFAULT_LANGUAGE;
 	totalResults = FLAIR.WEBRANKER.CONSTANTS.DEFAULT_NUM_RESULTS;
 	
+	searchResults = [];
 	parsedDocs = [];
 	displayedDocs = [];
 	filteredDocs = [];
@@ -402,125 +462,179 @@ FLAIR.WEBRANKER.STATE = function() {
 	kParam = 1.7;
 	
 	parsedVisData = "";
+	
+	searchResultsFetched = false;
+	parsedDataFetched = false;
     };
     this.displayDocText = function(index) {
-	if (displayedDocs.length === 0)
+	if (searchResultsFetched === false)
 	    return;
-	else if (displayedDocs.length <= index)
+	
+	if (parsedDataFetched === true)
 	{
-	    console.log("Invalid selection for text display. Must satisfy 0 < " + index + " < " + displayedDocs.length);
-	    return;
-	}
-
-	var previousSelection = selection;
-	selection = index;
-	var doc = displayedDocs[index];
-
-	document.getElementById("snapshot").innerHTML = "";
-	// remove the highlight from the results
-	if (previousSelection > -1 && document.getElementById("results_table").childNodes.length > 0)
-	    $("#results_table tr:nth-child(" + (previousSelection + 1) + ")").css("background-color", "white");
-
-	FLAIR.WEBRANKER.UTIL.TOGGLE.rightSidebar(true);
-
-	if (document.getElementById("results_table").childNodes.length > 0)
-	{
-	    // highlight the corresponding result
-	    $("#results_table tr:nth-child(" + (index + 1) + ")").css("background-color", "#fdf6e6");
-
-	    var info_box_1 = "<table style='width:100%'><tr>";
-	    if (doc.readabilityLevel !== null && doc.readabilityLevel.length > 3)
-		info_box_1 += "<td class='text-cell'><b>" + FLAIR.WEBRANKER.UTIL.formatDocLevel(doc.readabilityLevel) + "</b></td>";
-	    if (doc.numSents > 0)
-		info_box_1 += "<td class='text-cell'>~" + doc.numSents + " sentences</td>";
-	    if (doc.docLength > 0 || doc.numDeps > 0)
-		info_box_1 += "<td class='text-cell'>~" + doc.numDeps + " words</td>";
-	    info_box_1 += "</tr></table>";
-
-	    var info_box_2 = "<table id='constructions-table'><thead><tr><td><b>Construct</b></td><td><b>Count</b></td><td><b>Weight</b></td></tr></thead><tbody>";
-	    var info_box_3 = "<div id='show_all_constructions' hidden><table id='all_constructions_table' class='tablesorter'><thead><tr><td><b>Construct</b></td><td><b>Count</b></td><td><b>Relative Frequency %</b></td></tr></thead><tbody>";
-
-	    var count_col = 0;
-	    for (var i in weightSettings_constructions)
+	    // read from the diplayed docs
+	    if (displayedDocs.length === 0)
+		return;
+	    else if (displayedDocs.length <= index)
 	    {
-		var name = weightSettings_constructions[i]["name"];
-		var name_to_show = name;
-		var g = document.getElementById(weightSettings_constructions[i]["name"] + "-df");
-		if (g !== null)
+		console.log("Invalid selection for text display. Must satisfy 0 < " + index + " < " + displayedDocs.length);
+		return;
+	    }
+
+	    var previousSelection = selection;
+	    selection = index;
+	    var doc = displayedDocs[index];
+
+	    document.getElementById("snapshot").innerHTML = "";
+	    // remove the highlight from the results
+	    if (previousSelection > -1 && document.getElementById("results_table").childNodes.length > 0)
+		$("#results_table tr:nth-child(" + (previousSelection + 1) + ")").css("background-color", "white");
+
+	    FLAIR.WEBRANKER.UTIL.TOGGLE.rightSidebar(true);
+
+	    if (document.getElementById("results_table").childNodes.length > 0)
+	    {
+		// highlight the corresponding result
+		$("#results_table tr:nth-child(" + (index + 1) + ")").css("background-color", "#fdf6e6");
+
+		var info_box_1 = "<table style='width:100%'><tr>";
+		if (doc.readabilityLevel !== null && doc.readabilityLevel.length > 3)
+		    info_box_1 += "<td class='text-cell'><b>" + FLAIR.WEBRANKER.UTIL.formatDocLevel(doc.readabilityLevel) + "</b></td>";
+		if (doc.numSents > 0)
+		    info_box_1 += "<td class='text-cell'>~" + doc.numSents + " sentences</td>";
+		if (doc.docLength > 0 || doc.numDeps > 0)
+		    info_box_1 += "<td class='text-cell'>~" + doc.numDeps + " words</td>";
+		info_box_1 += "</tr></table>";
+
+		var info_box_2 = "<table id='constructions-table'><thead><tr><td><b>Construct</b></td><td><b>Count</b></td><td><b>Weight</b></td></tr></thead><tbody>";
+		var info_box_3 = "<div id='show_all_constructions' hidden><table id='all_constructions_table' class='tablesorter'><thead><tr><td><b>Construct</b></td><td><b>Count</b></td><td><b>Relative Frequency %</b></td></tr></thead><tbody>";
+
+		var count_col = 0;
+		for (var i in weightSettings_constructions)
 		{
-		    name_to_show = g.parentNode.textContent;
-		    if (name_to_show.indexOf("\n") > 0)
-			name_to_show = name_to_show.substring(0, name_to_show.indexOf("\n"));
-
-		    if (name_to_show.indexOf("(") > 0)
-			name_to_show = name_to_show.substring(0, name_to_show.indexOf("("));
-
-		    // one more layer of constructs
-		    var parent_name = g.parentNode; // div 
-		    if (parent_name !== null)
-			name_to_show = FLAIR.WEBRANKER.UTIL.generateConstructionName(parent_name, name_to_show);
-		}
-
-		var all = doc["constructions"];
-		for (var j in all)
-		{
-		    if (all[j] === name) 
+		    var name = weightSettings_constructions[i]["name"];
+		    var name_to_show = name;
+		    var g = document.getElementById(weightSettings_constructions[i]["name"] + "-df");
+		    if (g !== null)
 		    {
-			var ind = j;
-			if ((weightSettings_constructions[i]["weight"] > 0 ||
-			     weightSettings_constructions[i]["weight"] < 0))
+			name_to_show = g.parentNode.textContent;
+			if (name_to_show.indexOf("\n") > 0)
+			    name_to_show = name_to_show.substring(0, name_to_show.indexOf("\n"));
+
+			if (name_to_show.indexOf("(") > 0)
+			    name_to_show = name_to_show.substring(0, name_to_show.indexOf("("));
+
+			// one more layer of constructs
+			var parent_name = g.parentNode; // div 
+			if (parent_name !== null)
+			    name_to_show = FLAIR.WEBRANKER.UTIL.generateConstructionName(parent_name, name_to_show);
+		    }
+
+		    var all = doc["constructions"];
+		    for (var j in all)
+		    {
+			if (all[j] === name) 
 			{
-			    var col = "lightyellow";
-			    if (count_col < FLAIR.WEBRANKER.CONSTANTS.HIGHLIGHT_COLORS.length)
+			    var ind = j;
+			    if ((weightSettings_constructions[i]["weight"] > 0 ||
+				 weightSettings_constructions[i]["weight"] < 0))
 			    {
-				col = FLAIR.WEBRANKER.CONSTANTS.HIGHLIGHT_COLORS[count_col];
-				count_col++;
+				var col = "lightyellow";
+				if (count_col < FLAIR.WEBRANKER.CONSTANTS.HIGHLIGHT_COLORS.length)
+				{
+				    col = FLAIR.WEBRANKER.CONSTANTS.HIGHLIGHT_COLORS[count_col];
+				    count_col++;
+				}
+
+				info_box_2 += "<tr class='constructions_line'><td style='background-color:" + col + "'>" + name_to_show + "</td><td class='text-cell'>" + doc["frequencies"][ind] + "</td><td class='text-cell'>(" + weightSettings_constructions[i]["weight"] + ")</td></tr>";
 			    }
 
-			    info_box_2 += "<tr class='constructions_line'><td style='background-color:" + col + "'>" + name_to_show + "</td><td class='text-cell'>" + doc["frequencies"][ind] + "</td><td class='text-cell'>(" + weightSettings_constructions[i]["weight"] + ")</td></tr>";
+			    info_box_3 += "<tr><td>" + name_to_show + "</td><td class='text-cell'>" + doc["frequencies"][ind] + "</td><td class='text-cell'>(" + ((Number(doc["relFrequencies"][ind])) * 100).toFixed(4) + ")</td></tr>";
 			}
-
-			info_box_3 += "<tr><td>" + name_to_show + "</td><td class='text-cell'>" + doc["frequencies"][ind] + "</td><td class='text-cell'>(" + ((Number(doc["relFrequencies"][ind])) * 100).toFixed(4) + ")</td></tr>";
 		    }
 		}
-	    }
 
-	    info_box_2 += "</tbody></table><br> <div id='info-highlights'></div>";
-	    info_box_3 += "</tbody></table><br></div><br><br><br>";
+		info_box_2 += "</tbody></table><br> <div id='info-highlights'></div>";
+		info_box_3 += "</tbody></table><br></div><br><br><br>";
 
-	    // add a "copy text" button
-	    var text_string = "<br>";
-	    text_string += "<div id='sidebar_text' readonly>";
-	    text_string += getHighlightedDocHTML(doc);
-	    text_string += "</div><br>";
+		// add a "copy text" button
+		var text_string = "<br>";
+		text_string += "<div id='sidebar_text' readonly>";
+		text_string += getHighlightedDocHTML(doc);
+		text_string += "</div><br>";
 
-	    document.getElementById("snapshot").innerHTML = info_box_1 + text_string + info_box_2 + info_box_3;
+		document.getElementById("snapshot").innerHTML = info_box_1 + text_string + info_box_2 + info_box_3;
 
-	    var lines = document.getElementsByClassName("constructions_line");
-	    if (lines.length > 0)
-	    {
-		document.getElementById("constructions-table").hidden = false;
-		if (lines.length === 1)
+		var lines = document.getElementsByClassName("constructions_line");
+		if (lines.length > 0)
 		{
-		    document.getElementById("info-highlights").innerHTML = "";
-		    document.getElementById("info-highlights").innerHTML = "<div class='panel panel-default' style='text-align: center'><a href='javascript:FLAIR.WEBRANKER.UTIL.TOGGLE.constructionsList();' style='color:darkgrey;'><span class='caret'></span> all constructions <span class='caret'></span></a></div><br>";
-		}
+		    document.getElementById("constructions-table").hidden = false;
+		    if (lines.length === 1)
+		    {
+			document.getElementById("info-highlights").innerHTML = "";
+			document.getElementById("info-highlights").innerHTML = "<div class='panel panel-default' style='text-align: center'><a href='javascript:FLAIR.WEBRANKER.UTIL.TOGGLE.constructionsList();' style='color:darkgrey;'><span class='caret'></span> all constructions <span class='caret'></span></a></div><br>";
+		    }
+		    else
+		    {
+			document.getElementById("info-highlights").innerHTML = "* Highlights may overlap. Mouse over a highlight to see a tooltip<br> with the names of all embedded constructions.<br><br>"
+				+ "<div class='panel panel-default' style='text-align: center'><a href='javascript:FLAIR.WEBRANKER.UTIL.TOGGLE.constructionsList();' style='color:darkgreen;'><span class='caret'></span> all constructions <span class='caret'></span></a></div>";
+		    }
+		} 
 		else
 		{
-		    document.getElementById("info-highlights").innerHTML = "* Highlights may overlap. Mouse over a highlight to see a tooltip<br> with the names of all embedded constructions.<br><br>"
-			    + "<div class='panel panel-default' style='text-align: center'><a href='javascript:FLAIR.WEBRANKER.UTIL.TOGGLE.constructionsList();' style='color:darkgreen;'><span class='caret'></span> all constructions <span class='caret'></span></a></div>";
+		    document.getElementById("info-highlights").innerHTML = "<button type='button' class='btn btn-warning' onclick='FLAIR.WEBRANKER.UTIL.TOGGLE.leftSidebar(true)' id='sidebar_grammar_button'>GRAMMAR SETTINGS</button>";
+		    document.getElementById("constructions-table").hidden = true;
 		}
-	    } 
-	    else
+	    }
+
+	    var theVar = document.getElementById("all_constructions_table");
+	    if (theVar)
+		$("#all_constructions_table").tablesorter();
+	}
+	else
+	{
+	    // read from the search results
+	    if (searchResults.length === 0)
+		return;
+	    else if (searchResults.length <= index)
 	    {
-		document.getElementById("info-highlights").innerHTML = "<button type='button' class='btn btn-warning' onclick='FLAIR.WEBRANKER.UTIL.TOGGLE.leftSidebar(true)' id='sidebar_grammar_button'>GRAMMAR SETTINGS</button>";
-		document.getElementById("constructions-table").hidden = true;
+		console.log("Invalid selection for text display. Must satisfy 0 < " + index + " < " + searchResults.length);
+		return;
+	    }
+	    
+	    var previousSelection = selection;
+	    selection = index;
+	    var doc = searchResults[index];
+
+	    document.getElementById("snapshot").innerHTML = "";
+	    // remove the highlight from the results
+	    if (previousSelection > -1 && document.getElementById("results_table").childNodes.length > 0)
+		$("#results_table tr:nth-child(" + (previousSelection + 1) + ")").css("background-color", "white");
+
+	    FLAIR.WEBRANKER.UTIL.TOGGLE.rightSidebar(true);
+
+	    if (document.getElementById("results_table").childNodes.length > 0)
+	    {
+		// highlight the corresponding result
+		$("#results_table tr:nth-child(" + (index + 1) + ")").css("background-color", "#fdf6e6");
+
+		var info_box_1 = "<table style='width:100%'><tr>";
+		info_box_1 += "<td class='text-cell'><b>" + doc["title"] + "</b></td>";
+		info_box_1 += "</tr></table>";
+
+		var text_string = "<br>";
+		text_string += "<div id='sidebar_text' readonly>";
+		text_string += doc["text"];
+		text_string += "</div><br>";
+
+		document.getElementById("snapshot").innerHTML = info_box_1 + text_string;
+		if (document.getElementById("info-highlights") !== null)
+		    document.getElementById("info-highlights").innerHTML = "";
+		if (document.getElementById("constructions-table") !== null)
+		    document.getElementById("constructions-table").hidden = true;
 	    }
 	}
-
-	var theVar = document.getElementById("all_constructions_table");
-	if (theVar)
-	    $("#all_constructions_table").tablesorter();
+	
     };
     this.rerank = function() {
 	bParam = ($(".lengthSlider").slider("option", "value")) / 10;
@@ -720,6 +834,30 @@ FLAIR.WEBRANKER.STATE = function() {
 	totalResults = totalCount;
     };
     
+    this.addSearchResult = function(result) {
+	searchResults.push(result);
+    };
+    this.getSearchResultCount = function() {
+	return searchResults.length;
+    };
+    this.displaySearchResults = function() {
+	if (searchResultsFetched === false || searchResults.length === 0)
+	    return;
+	
+	var out = "";
+	var i;
+	for (i = 0; i < searchResults.length; i++)
+	{
+	    out += '<tr><td class="num_cell" style="font-size:x-large;">' +
+		    (searchResults[i].rank) + '&nbsp;<br>' +
+		    '</td><td  class="url_cell" style="width:40%;"><div><a href="' + searchResults[i].url + '" target="_blank"><b>' + searchResults[i].title + '</b></a></div>' +
+		    '<div id="show_text_cell" title="Click to show text" onclick="FLAIR.WEBRANKER.singleton.displayDetails(' + i + ');"><span style="color:grey;font-size:smaller;">' + searchResults[i].displayURL + '</span><br><span>' + searchResults[i].snippet + '</span></div></td></tr>';
+
+	}
+
+	document.getElementById("results_table").innerHTML = out;
+    };
+    
     this.addParsedDoc = function(doc) {
 	parsedDocs.push(doc);
     };
@@ -779,6 +917,19 @@ FLAIR.WEBRANKER.STATE = function() {
 	    return false;
 	else
 	    return true;
+    };
+    
+    this.flagAsSearchResultsFetched = function() {
+	searchResultsFetched = true;
+    };
+    this.flagAsParsedDataFetched = function() {
+	parsedDataFetched = true;
+    };
+    this.hasSearchResults = function() {
+	return searchResultsFetched;
+    };
+    this.hasParsedData = function() {
+	return parsedDataFetched;
     };
 };
 
@@ -1071,11 +1222,10 @@ FLAIR.WEBRANKER.VISUALISATION = function(delegate_isDocFiltered, delegate_isCons
 FLAIR.WEBRANKER.INSTANCE = function() {
     // HANDLERS
     var pipeline_noResults = function() {
-	FLAIR.WEBRANKER.UTIL.TOGGLE.waitDialog(false);
 	FLAIR.WEBRANKER.UTIL.resetUI();
 	
-	document.getElementById("results_table").innerHTML = "<h4>No results for '" + state.getQuery() + "'.";
 	state.reset();
+	FLAIR.WEBRANKER.UTIL.TOAST.error("No results for '" + state.getQuery() + "'", true, 6000);
     };
     var pipeline_onError = function() {
 	FLAIR.WEBRANKER.UTIL.resetUI();
@@ -1087,8 +1237,6 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	FLAIR.WEBRANKER.UTIL.updateWaitDialog(status, false);
     };
     var complete_webSearch = function(jobID, totalResults) {
-	var status = "<h4>Web search complete. Parsing search results now...</h4>";
-	FLAIR.WEBRANKER.UTIL.updateWaitDialog(status, true);
 	if (totalResults === 0)
 	{
 	    pipeline_noResults();
@@ -1096,12 +1244,16 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	}
 	
 	state.setTotalResults(totalResults);
-	if (pipeline.parseSearchResults(jobID) === false)
-	    pipeline_onError();
+	for (var i = 1; i <= totalResults; i++)
+	{
+	    if (pipeline.fetchSearchResults(i, 1) === false)
+	    {
+		pipeline_onError();
+		break;
+	    }
+	}
     }; 
     var complete_parseSearchResults = function(jobID, totalDocs) {
-	var status = "<h4>Parsing complete. Fetching results now...</h4>";
-	FLAIR.WEBRANKER.UTIL.updateWaitDialog(status, false);
 	if (totalDocs === 0)
 	{
 	    pipeline_noResults();
@@ -1118,30 +1270,45 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	    }
 	}
     };
-    var fetch_searchResults = function(searchResults) {
-	// ### nothing to do here as we fetch the parsed data directly
+    var fetch_searchResults = function(jobID, searchResults) {
+	for (var i = 0; i < searchResults.length; i++)
+	    state.addSearchResult(searchResults[i]);
+	
+	if (state.getSearchResultCount() === state.getTotalResults())
+	{
+	    state.flagAsSearchResultsFetched();
+	    state.displaySearchResults();
+	    FLAIR.WEBRANKER.UTIL.TOGGLE.waitDialog(false);
+	    
+	    FLAIR.WEBRANKER.UTIL.TOAST.info('<div style="text-align: center;">The search results can be reviewed whilst they are being parsed in the background.<br/><br/><button type="button" class="btn" onClick="FLAIR.WEBRANKER.UTIL.cancelCurrentOperation()">Cancel Parsing</button></div>', false, 0);
+	    
+	    if (pipeline.parseSearchResults(jobID) === false)
+		pipeline_onError();
+	}
     };
-    var fetch_parsedData = function(parsedDocs) {
+    var fetch_parsedData = function(jobID, parsedDocs) {
 	for (var i = 0; i < parsedDocs.length; i++)
 	    state.addParsedDoc(parsedDocs[i]);
 	
 	if (state.getParsedDocCount() === state.getTotalResults())
 	{
-	    var status = "<h4>Ranking results now...</h4>";
-	    FLAIR.WEBRANKER.UTIL.updateWaitDialog(status, false);
-	    
-	    state.rerank();
 	    if (pipeline.fetchParsedVisData() === false)
 		pipeline_onError();
 	}
     };
-    var fetch_parsedVisData = function(csvTable) {
+    var fetch_parsedVisData = function(jobID, csvTable) {
 	state.setParsedVisData(csvTable);
+	state.flagAsParsedDataFetched();
+	self.resetAllSettingsAndFilters(true, false, true, true);
+//	state.rerank();
 	visualiser.visualise(csvTable);
 	
+	FLAIR.WEBRANKER.UTIL.resetUI(false, false, false, false, true, false);
 	FLAIR.WEBRANKER.UTIL.TOGGLE.leftSidebar(true);
 	FLAIR.WEBRANKER.UTIL.TOGGLE.rightSidebar(true);
-	FLAIR.WEBRANKER.UTIL.TOGGLE.waitDialog(false);
+
+	FLAIR.WEBRANKER.UTIL.TOAST.clear(false);
+	FLAIR.WEBRANKER.UTIL.TOAST.success("Parsing complete!", true, 4000);
     };
     
     // PRIVATE VARS
@@ -1168,16 +1335,21 @@ FLAIR.WEBRANKER.INSTANCE = function() {
     };
     
     this.cancelOperation = function() {
-	FLAIR.WEBRANKER.UTIL.TOGGLE.waitDialog(false);
 	FLAIR.WEBRANKER.UTIL.resetUI();
     
-	pipeline.cancelLastJob();  
+	pipeline.cancelLastJob();
+	state.reset();
     };
     this.beginSearch = function() {
+	if (state.hasSearchResults() === true && state.hasParsedData() === false)
+	{
+	    
+	}
+	
 	FLAIR.WEBRANKER.UTIL.resetUI();
 	
 	state.reset();
-	state.setSearchParams(document.getElementById("search_field").value.trim(), FLAIR.WEBRANKER.CONSTANTS.DEFAULT_LANGUAGE, FLAIR.WEBRANKER.CONSTANTS.DEFAULT_NUM_RESULTS);
+	state.setSearchParams(document.getElementById("search_field").value.trim(), FLAIR.WEBRANKER.CONSTANTS.DEFAULT_LANGUAGE, document.getElementById("fetch_result_count").value);
 
 	FLAIR.WEBRANKER.UTIL.TOGGLE.waitDialog(true);
 	var status = "<h4>Performing web search now...</h4>";
@@ -1290,6 +1462,12 @@ window.onload = function() {
        change: function (d) {    
 	    FLAIR.WEBRANKER.singleton.refreshRanking();
        }
+    });
+    
+    $("#search_form").submit(function() {
+	// prevent the enter key from reloading the page
+	FLAIR.WEBRANKER.singleton.beginSearch();
+	return false;
     });
 
     $(document).ready(function () {

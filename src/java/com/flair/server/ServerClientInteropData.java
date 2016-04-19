@@ -6,18 +6,14 @@
 package com.flair.server;
 
 import com.flair.crawler.SearchResult;
-import com.flair.grammar.GrammaticalConstruction;
 import com.flair.grammar.Language;
 import com.flair.parser.AbstractDocument;
+import com.flair.parser.CompactDocumentData;
 import com.flair.parser.DocumentCollection;
-import com.flair.parser.DocumentConstructionData;
-import com.flair.parser.Occurrence;
-import com.flair.parser.SearchResultDocumentSource;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import javax.json.Json;
@@ -203,6 +199,7 @@ class FetchSearchResultsResponse
 	public final String		displayURL;
 	public final String		snippet;
 	public final int		rank;
+	public final String		text;
 
 	public CompactSearchResultData(SearchResult source) 
 	{
@@ -211,6 +208,7 @@ class FetchSearchResultsResponse
 	    this.displayURL = source.getDisplayURL();
 	    this.snippet = source.getSnippet();
 	    this.rank = source.getRank();
+	    this.text = source.getPageText();
 	}
     }
     
@@ -275,127 +273,9 @@ class FetchParsedDataRequest
 
 class FetchParsedDataResponse
 {
-    final class CompactParsedData
-    {
-	final class CompactOccurrence
-	{
-	    public final int		start;
-	    public final int		end;
-	    public final String		construction;
-
-	    public CompactOccurrence(int start, int end, String construction) 
-	    {
-		this.start = start;
-		this.end = end;
-		this.construction = construction;
-	    }
-	}
-	
-	private final int			preRank;
-	private final int			postRank;
-
-	private final String			title;
-	private final String			url;
-	private final String			urlToDisplay;
-	private final String			snippet;
-	private final String			text;
-
-	private final ArrayList<String>		constructions;
-	private final ArrayList<Double>		relFrequencies;
-	private final ArrayList<Integer>	frequencies;
-	private final ArrayList<Double>		tfNorm;
-	private final ArrayList<CompactOccurrence>  highlights;
-	private final ArrayList<Double>		tfIdf;
-	private final double			docLenTfIdf;
-	private final double			docLength;
-
-	private final double			readabilityScore;
-	private final String			readabilityLevel;
-	private final double			readabilityARI;
-	private final double			readabilityBennoehr;
-	
-	private final double			textWeight;
-	private final double			rankWeight;
-	private final double			gramScore;
-	private final double			totalWeight;
-
-	private final int			numChars;
-	private final int			numSents;
-	private final int			numDeps;
-
-	private final double			avWordLength;
-	private final double			avSentLength;
-	private final double			avTreeDepth;
-
-	public CompactParsedData(AbstractDocument source) 
-	{
-	    if (source.isParsed() == false)
-		throw new IllegalStateException("Document not flagged as parsed");
-	    
-	    if (SearchResultDocumentSource.class.isAssignableFrom(source.getDocumentSource().getClass()) == false)
-	    {
-		title = url = urlToDisplay = snippet = "";
-		preRank = -1;
-	    }
-	    else
-	    {
-		SearchResultDocumentSource searchSource = (SearchResultDocumentSource)source.getDocumentSource();
-		SearchResult searchResult = searchSource.getSearchResult();
-
-		title = searchResult.getTitle();
-		url = searchResult.getURL();
-		urlToDisplay = searchResult.getDisplayURL();
-		snippet = searchResult.getSnippet();
-		preRank = searchResult.getRank();
-	    }
-	    
-	    text = source.getText();
-	    postRank = 0;
-	    
-	    constructions = new ArrayList<>();
-	    relFrequencies = new ArrayList<>();
-	    frequencies = new ArrayList<>();
-	    tfNorm = new ArrayList<>();
-	    highlights = new ArrayList<>();
-	    tfIdf = new ArrayList<>();
-	    
-	    for (GrammaticalConstruction itr : GrammaticalConstruction.values())
-	    {
-		DocumentConstructionData data = source.getConstructionData(itr);
-		if (data.hasConstruction())
-		{
-		    constructions.add(itr.getLegacyID());
-		    relFrequencies.add(data.getRelativeFrequency());
-		    frequencies.add(data.getFrequency());
-		    tfNorm.add(data.getWeightedFrequency());
-		    tfIdf.add(data.getRelativeWeightedFrequency());
-		    
-		    for (Occurrence occr : data.getOccurrences())
-			highlights.add(new CompactOccurrence(occr.getStart(), occr.getEnd(), itr.getLegacyID()));
-		}
-	    }
-	    
-	    docLenTfIdf = source.getFancyLength();
-	    docLength = source.getLength();
-	    readabilityScore = source.getReadabilityScore();
-	    readabilityLevel = source.getReadabilityLevel();
-	    
-	    readabilityARI = readabilityBennoehr = textWeight = 0;
-	    rankWeight = gramScore = totalWeight = 0;
-
-	    numChars = source.getNumCharacters();
-	    numSents = source.getNumSentences();
-	    numDeps = source.getNumDependencies();
-
-	    avWordLength = source.getAvgWordLength();
-	    avSentLength = source.getAvgSentenceLength();
-	    avTreeDepth = source.getAvgTreeDepth();
-	}
-    }
-    
     public final BasicInteropMessage		    baseData;
     public final String				    jobID;		    // corresponding to the parse operation
-    public final List<CompactParsedData>	    parsedDocs;	    
+    public final List<CompactDocumentData>	    parsedDocs;	    
     
     public FetchParsedDataResponse(String jobID, List<AbstractDocument> documents)
     {
@@ -404,7 +284,7 @@ class FetchParsedDataResponse
 	this.parsedDocs = new ArrayList<>();
 	
 	for (AbstractDocument itr : documents)
-	    parsedDocs.add(new CompactParsedData(itr));
+	    parsedDocs.add(new CompactDocumentData(itr));
     }
 }
 
@@ -430,34 +310,7 @@ class FetchParsedVisualisationDataResponse
     {
 	baseData = new BasicInteropMessage(BasicInteropMessage.MessageSource.SERVER, BasicInteropMessage.MessageType.FETCH_PARSED_VISUALISATION_DATA);
 	this.jobID = jobID;
-	
-	// construct CSV string
-	StringWriter writer = new StringWriter();
-	// the header first
-	writer.append("document,");
-	for (GrammaticalConstruction itr : GrammaticalConstruction.values())
-		 writer.append(itr.getLegacyID() + ",");
-	writer.append("# of sentences,# of words,readability score");
-	writer.append("\n");
-	
-	// the rest comes next
-	int i = 0;
-	for (AbstractDocument itr : parsedDocs)
-	{
-	    writer.append("" + i + ",");
-	    for (GrammaticalConstruction gramConst : GrammaticalConstruction.values())
-	    {
-		DocumentConstructionData data = itr.getConstructionData(gramConst);
-		Double relFreq = data.getRelativeFrequency();
-		writer.append(relFreq.toString() + ",");
-	    }
-
-	    writer.append("" + itr.getNumSentences() + "," + itr.getNumDependencies() + "," + itr.getReadabilityScore());
-	    writer.append("\n");
-	    i++;
-	}
-	
-	this.csvTable = writer.toString();
+	this.csvTable = parsedDocs.generateFrequencyTable();
     }
 }
 

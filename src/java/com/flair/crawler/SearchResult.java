@@ -13,7 +13,7 @@ import org.xml.sax.InputSource;
  * Represents a single search result for a specific query
  * @author shadeMe
  */
-public class SearchResult
+public class SearchResult implements Comparable<SearchResult>
 {
     private final Language	    lang;
     private final String            query;
@@ -157,5 +157,15 @@ public class SearchResult
         }
 
         return false;
+    }
+    
+    @Override
+    public int compareTo(SearchResult t) {
+	if (rank < t.rank)
+	    return -1;
+	else if (rank > t.rank)
+	    return 1;
+	else
+	    return 0;
     }
 }

@@ -21,7 +21,7 @@
         <link rel="stylesheet" href="css/docs.min.css" />
         <link rel="stylesheet" href="css/number-polyfill.css" />
         <link rel="stylesheet" href="css/flair_visual.css" />
-
+	<link href="js/libs/toastr/toastr.min.css" rel="stylesheet"/>
 
         <title>FLAIR</title>
     </head>
@@ -36,14 +36,28 @@
                                 <a href="#menu-toggle" class="btn btn-warning" id="menu-toggle"><b>SETTINGS</b></a><br><br>
                             </div>
                             <div class="col-lg-6">
-                                <form name="search_form" id="search_form" onkeypress="return event.keyCode != 13;">
-                                    <div class="input-group">
-                                        <input type="text" id="search_field" name="query" class="form-control">
-                                        <div class="input-group-btn" >
-                                            <button type="button" class="btn" onclick="FLAIR.WEBRANKER.singleton.beginSearch()" id="search_button" data-loading-text="<img style='height:18px;' src='img/ajax-loader.gif' alt='...'/>">GO</button>
-                                        </div>
-                                    </div>
-                                </form>
+                                <form class="form-inline" name="search_form" id="search_form">
+				    <div class="form-group">
+					<div class="col-sm-6 input-group">
+					    <input type="text" id="search_field" name="query" class="form-control">
+					    <div class="input-group-btn" >
+						<button type="button" class="btn" onclick="FLAIR.WEBRANKER.singleton.beginSearch()" id="search_button" data-loading-text="<img style='height:18px;' src='img/ajax-loader.gif' alt='...'/>">GO</button>
+					    </div>
+					</div>
+
+
+					<div class="input-group">
+					    <div class="input-group-addon">Fetch</div>
+					    <select class="form-control" id="fetch_result_count">
+						<option>10</option> <option selected="selected">20</option> <option>30</option>
+						<option>40</option> <option>50</option> <option>60</option>
+						<option>70</option> <option>80</option> <option>90</option>
+						<option>100</option>
+					    </select>
+					    <div class="input-group-addon">Results</div>
+					</div>
+				    </div>
+				</form>
                             </div>
                             <div class="col-lg-3" style="text-align:right;"><span id="right-menu-toggle"><img src="img/glyphicons-517-menu-hamburger.png" alt=">"></span></div>
                         </div>
@@ -58,7 +72,7 @@
                             <br>
                             <div class="df" id="docs_info"></div>
                             <br><div class="panel panel-default" style="text-align: center">
-                                <a href="javascript:FLAIR.WEBRANKER.UTIL.TOGGLE.visualiserDialog(true)" style="color:orange" >VISUALIZE</a>
+                                <a href="javascript:FLAIR.WEBRANKER.UTIL.resetSlider('all');FLAIR.WEBRANKER.UTIL.TOGGLE.visualiserDialog(true);" style="color:orange" >VISUALIZE</a>
                             </div>
 
                             <!-- Shorter/longer documents slider -->
@@ -1830,7 +1844,7 @@
                     </center>
                     <div class="modal-footer">
                         <div style="text-align: center;">
-                            <button type="button" class="btn btn-primary" id="modal_waitIdle_buttonCancel" onclick="FLAIR.WEBRANKER.singleton.cancelOperation()">Cancel</button>
+                            <button type="button" class="btn btn-primary" id="modal_waitIdle_buttonCancel" onclick="FLAIR.WEBRANKER.UTIL.cancelCurrentOperation()">Cancel</button>
                         </div>
                     </div>
                 </div>
@@ -2775,19 +2789,20 @@
 
 
 
-        <script type="text/javascript" src="js/libs/jquery/jquery.js"></script>
+    <!--    <script type="text/javascript" src="js/libs/jquery/jquery.js"></script> -->
         <script type="text/javascript" src="js/libs/jquery/jquery.min.js"></script>
         <script type="text/javascript" src="js/libs/jqueryui/jquery-ui.js"></script>
         <script type="text/javascript" src="js/libs/tablesorter/jquery.tablesorter.js"></script>
         
-        <script type="text/javascript" src="js/libs/twitter-bootstrap/js/bootstrap.js"></script>
+    <!--    <script type="text/javascript" src="js/libs/twitter-bootstrap/js/bootstrap.js"></script> -->
         <script type="text/javascript" src="js/libs/twitter-bootstrap/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="js/libs/twitter-bootstrap/js/bootstrap-confirmation.js"></script>
         
         <script type="text/javascript" src="js/libs/number-polyfill.js"></script>
         <script type="text/javascript" src="js/libs/d3/d3.js"></script>
-        <script type="text/javascript" src="js/libs/d3/d3.v3.js"></script>
+    <!--    <script type="text/javascript" src="js/libs/d3/d3.v3.js"></script> -->
         <script type="text/javascript" src="js/libs/d3/d3.v3.min.js"></script>
+        <script type="text/javascript" src="js/libs/toastr/toastr.min.js"></script>
 
         <script type="text/javascript" src="js/flair-core.js"></script>
 	<script type="text/javascript" src="js/flair-plumbing.js"></script>

@@ -122,6 +122,15 @@ class BasicWebSearchAndCrawlJob extends AbstractTaskLinkingJob
 			input.webSearchExecutor.search(newTask);
 		    }
 		}
+		else
+		{
+		    int i = 1;
+		    for (SearchResult itr : output.searchResults)
+		    {
+			itr.setRank(i);
+			i++;
+		    }
+		}
 		
 		break;
 	    }

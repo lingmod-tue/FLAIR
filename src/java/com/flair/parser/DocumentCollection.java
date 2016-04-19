@@ -6,6 +6,7 @@
 package com.flair.parser;
 
 import com.flair.grammar.GrammaticalConstruction;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -77,5 +78,36 @@ public class DocumentCollection implements Iterable<AbstractDocument>
 	    throw new IllegalArgumentException("Index must be 0 < " + i + " < " + dataStore.size());
 	
 	return dataStore.get(i);
+    }
+    
+    public synchronized String generateFrequencyTable()
+    {
+	// construct CSV string
+	StringWriter writer = new StringWriter();
+	// the header first
+	writer.append("document,");
+	for (GrammaticalConstruction itr : GrammaticalConstruction.values())
+		 writer.append(itr.getLegacyID() + ",");
+	writer.append("# of sentences,# of words,readability score");
+	writer.append("\n");
+	
+	// the rest comes next
+	int i = 0;
+	for (AbstractDocument itr : dataStore)
+	{
+	    writer.append("" + i + ",");
+	    for (GrammaticalConstruction gramConst : GrammaticalConstruction.values())
+	    {
+		DocumentConstructionData data = itr.getConstructionData(gramConst);
+		Double relFreq = data.getRelativeFrequency();
+		writer.append(relFreq.toString() + ",");
+	    }
+
+	    writer.append("" + itr.getNumSentences() + "," + itr.getNumDependencies() + "," + itr.getReadabilityScore());
+	    writer.append("\n");
+	    i++;
+	}
+	
+	return writer.toString();
     }
 }

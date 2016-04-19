@@ -5,12 +5,27 @@
  */
 package com.flair.testing;
 
+import com.flair.grammar.Language;
+import com.flair.parser.AbstractDocumentSource;
+import com.flair.parser.CompactDocumentData;
+import com.flair.parser.DocumentCollection;
+import com.flair.parser.LocalFileDocumentSource;
+import com.flair.taskmanager.AbstractPipelineOperation;
+import com.flair.taskmanager.MasterJobPipeline;
+import com.flair.utilities.FLAIRLogger;
+import com.flair.utilities.JSONWriter;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Executable test for the local document parsing framework. Takes a single param - absolute path to a directory with the text documents
  * @author shadeMe
  */
 
-/*
 public class LocalFileParsingTest
 {
     public static void main(String[] args)
@@ -42,38 +57,20 @@ public class LocalFileParsingTest
 	    
    
 	long startTime = System.currentTimeMillis();
-	AbstractPipelineOperation op = MasterJobPipeline.get().parseDocumentSources(Language.ENGLISH, inputSource);
-	DocumentCollection docCol = op.getOutput();
+	AbstractPipelineOperation op = MasterJobPipeline.get().performDocumentParsing(Language.ENGLISH, inputSource);
+	DocumentCollection docCol = (DocumentCollection)op.getOutput();
 	long endTime = System.currentTimeMillis();
 
 	File outFile = new File(rootOutPath);
 	outFile.mkdirs();
-	docCol.serialize(serializer, outFile.getAbsolutePath());
-
-	try (BufferedWriter bw = new BufferedWriter(new FileWriter(rootOutPath + "/constructions.csv"))) 
+	for (int i = 0; i < docCol.size(); i++)
 	{
-	     String header = "document,";
-	     for (GrammaticalConstruction itr1 : GrammaticalConstruction.values())
-		 header += itr1.toString() + ",";
+	    String outfile = outFile.getAbsolutePath() + "/";
+	    serializer.writeObject(new CompactDocumentData(docCol.get(i)), String.format("%03d", i), outfile);
+	}
 
-	     header += "# of sentences,# of dependencies,readability score";
-	     bw.write(header);
-	     bw.newLine();
-
-	     int i = 1;
-	     for (AbstractDocument itr1 : docCol)
-	     {
-		 String outString = "" + i++ + ",";
-		 for (GrammaticalConstruction itr2 : GrammaticalConstruction.values())
-		 {
-		     DocumentConstructionData data = itr1.getConstructionData(itr2);
-		     outString += data.getRelativeFrequency() + ",";
-		 }
-
-		 outString += itr1.getNumSentences() + "," + itr1.getNumDependencies() + "," + itr1.getReadabilityScore();
-		 bw.write(outString);
-		 bw.newLine();
-	     }
+	try (BufferedWriter bw = new BufferedWriter(new FileWriter(rootOutPath + "/constructions.csv"))) {
+	     bw.write(docCol.generateFrequencyTable());
 	} catch (IOException ex) {
 	}
 
@@ -82,4 +79,3 @@ public class LocalFileParsingTest
 	System.exit(0);
      }
 }
-*/

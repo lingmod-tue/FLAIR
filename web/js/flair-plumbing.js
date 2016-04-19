@@ -90,7 +90,7 @@ FLAIR.PLUMBING.PIPELINE = function(webSearch_complete, parseSearchResults_comple
 		if (last_sent_request_type !== msg.baseData.type)
 		    console.log("Server response doesn't match with last request. Expected " + last_sent_request_type + ", received " + msg.baseData.type);
 		else
-		    handlers.fetch.searchResults(msg.searchResults);
+		    handlers.fetch.searchResults(msg.jobID, msg.searchResults);
 
 		break;
 
@@ -98,7 +98,7 @@ FLAIR.PLUMBING.PIPELINE = function(webSearch_complete, parseSearchResults_comple
 		if (last_sent_request_type !== msg.baseData.type)
 		    console.log("Server response doesn't match with last request. Expected " + last_sent_request_type + ", received " + msg.baseData.type);
 		else
-		    handlers.fetch.parsedData(msg.parsedDocs);
+		    handlers.fetch.parsedData(msg.jobID, msg.parsedDocs);
 
 		break;
 		
@@ -106,7 +106,7 @@ FLAIR.PLUMBING.PIPELINE = function(webSearch_complete, parseSearchResults_comple
 		if (last_sent_request_type !== msg.baseData.type)
 		    console.log("Server response doesn't match with last request. Expected " + last_sent_request_type + ", received " + msg.baseData.type);
 		else
-		    handlers.fetch.parsedVisData(msg.csvTable);
+		    handlers.fetch.parsedVisData(msg.jobID, msg.csvTable);
 
 		break;
 	}

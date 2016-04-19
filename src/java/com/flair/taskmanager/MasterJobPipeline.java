@@ -35,6 +35,12 @@ public final class MasterJobPipeline
 	return SINGLETON;
     }
     
+    public static void dispose()
+    {
+	if (SINGLETON != null)
+	    SINGLETON = null;
+    }
+    
     private final WebSearchTaskExecutor		    webSearchExecutor;
     private final WebCrawlTaskExecutor		    webCrawlExecutor;
     private final DocumentParseTaskExecutor	    docParseExecutor;

@@ -41,7 +41,7 @@ class BingSearchAgent extends WebSearchAgent
 		qPostfix = " language:en";
 		break;
 	    default:
-		throw new IllegalStateException("Unsupported language " + lang);
+		throw new IllegalArgumentException("Unsupported language " + lang);
 	}
 
 	pipeline.setAppid(API_KEY);
@@ -102,17 +102,27 @@ class BingSearchAgent extends WebSearchAgent
 	if (noMoreResults == true)
 	    return;
 	
-	pipeline.setPage(nextPage);
-	pipeline.doQuery();
+	AzureSearchResultSet<AzureSearchWebResult> azureResults = null;
+	try 
+	{
+	    // the pipeline can potentially throw an java.net.UnknownHostException, so wrap it in EH to be safe 
+	    pipeline.setPage(nextPage);
+	    pipeline.doQuery();
+	    azureResults = pipeline.getQueryResult();
+	}
+	catch (Exception e) {
+	    FLAIRLogger.get().error("Bing search API encountered a fatal error. Exception: " + e.getMessage());
+	    noMoreResults = true;
+	    return;
+	}
 	
-	AzureSearchResultSet<AzureSearchWebResult> azureResults = pipeline.getQueryResult();
 	if (azureResults.getASRs().isEmpty())
 	{
 	    FLAIRLogger.get().info("No more results for query '" + query + "'");
 	    noMoreResults = true;
 	    return;
 	}
-	    
+
 	for (AzureSearchWebResult itr : azureResults)
 	{
 	    if (WebSearchAgent.isURLBlacklisted(itr.getUrl()) == true)
@@ -131,11 +141,11 @@ class BingSearchAgent extends WebSearchAgent
 		cachedResults.add(newResult);
 		newResult.setRank(nextRank);
 		nextRank++;
-		
+
 		FLAIRLogger.get().info("Result " + (nextRank - 1)  + ": " + itr.getTitle() + ", URL: " + itr.getUrl());
 	    }
 	}
-	
+
 	nextPage++;	
     }
 

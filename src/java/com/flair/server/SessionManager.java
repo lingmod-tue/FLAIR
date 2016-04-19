@@ -7,6 +7,7 @@ package com.flair.server;
 
 import com.flair.utilities.FLAIRLogger;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import javax.websocket.Session;
 
 /**
@@ -30,12 +31,31 @@ public class SessionManager
 	
 	return SINGLETON;
     }
+    
+    public static void dispose()
+    {
+	if (SINGLETON != null)
+	{
+	    SINGLETON.releaseSessions();
+	    SINGLETON = null;
+	}
+    }
         
     private final HashMap<Session, SessionState>	    activeSessions;
     
     private SessionManager()
     {
 	activeSessions = new HashMap<>();
+    }
+
+    private synchronized void releaseSessions()
+    {
+	for (Entry<Session, SessionState> itr : activeSessions.entrySet())
+	{
+	    itr.getValue().release();
+	}
+	
+	activeSessions.clear();
     }
     
     public synchronized void addSession(Session newSession)

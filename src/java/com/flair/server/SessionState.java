@@ -217,14 +217,6 @@ class SessionState
 		    List<SearchResult> searchResults = (List<SearchResult>)output;
 		    List<AbstractDocumentSource> docSources = new ArrayList<>();
 		    
-		    // rerank the results correctly
-		    int i = 0;
-		    for (SearchResult itr : searchResults)
-		    {
-			itr.setRank(i);
-			i++;
-		    }
-		    
 		    if (searchResults.isEmpty())
 			FLAIRLogger.get().error("Invalid parse search results request. Operation with ID " + req.jobID + " has zero results");
 		    else

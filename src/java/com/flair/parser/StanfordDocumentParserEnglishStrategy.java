@@ -65,9 +65,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
         return str.split(Pattern.quote(substr), -1).length - 1;
     }
     
-    private void addConstructionOccurrence(GrammaticalConstruction type, int start, int end, String expr)
-    {
-	// ### is the expr param really reqd?
+    private void addConstructionOccurrence(GrammaticalConstruction type, int start, int end, String expr) {
 	workingDoc.getConstructionData(type).addOccurrence(start, end);
     }
     
@@ -1500,8 +1498,10 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
     public boolean apply(AbstractDocument docToParse)
     {
 	assert docToParse != null;
-	initializeState(docToParse);
+	try
 	{
+	    initializeState(docToParse);
+	    
 	    Annotation docAnnotation = new Annotation(workingDoc.getText());
 	    pipeline.annotate(docAnnotation);
 	    
@@ -1532,8 +1532,10 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 	    workingDoc.setNumSentences(sentenceCount);
 	    workingDoc.setNumCharacters(characterCount);
 	    workingDoc.flagAsParsed();
+	} finally {
+	    resetState();
 	}
-	resetState();
+	
 	return true;
     }
 }
