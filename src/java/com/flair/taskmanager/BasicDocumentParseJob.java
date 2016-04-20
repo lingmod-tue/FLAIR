@@ -105,7 +105,9 @@ class BasicDocumentParseJob extends AbstractTaskLinkingJob
     @Override
     public String toString()
     {
-	if (isCompleted() == false)
+	if (isStarted() == false)
+	    return "BasicDocumentParseJob has not started yet";
+	else if (isCompleted() == false)
 	    return "BasicDocumentParseJob is still running";
 	else if (isCancelled())
 	    return "BasicDocumentParseJob was cancelled";

@@ -140,7 +140,9 @@ class BasicWebSearchAndCrawlJob extends AbstractTaskLinkingJob
     @Override
     public String toString()
     {
-	if (isCompleted() == false)
+	if (isStarted() == false)
+	    return "BasicWebSearchAndCrawlJob has not started yet";
+	else if (isCompleted() == false)
 	    return "BasicWebSearchAndCrawlJob is still running";
 	else if (isCancelled())
 	    return "BasicWebSearchAndCrawlJob was cancelled";

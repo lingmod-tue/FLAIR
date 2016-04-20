@@ -96,6 +96,9 @@ abstract class AbstractJob
     
     protected void waitForCompletion()
     {
+	if (isStarted() == false)
+	    throw new IllegalStateException("Job has not started yet");
+	
 	while (isCompleted() == false)
 	{
 	   AbstractTask first = getFirstTask();

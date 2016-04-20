@@ -54,10 +54,15 @@ public class LocalFileParsingTest
 	    if (itr.isDirectory() == false)
 		inputSource.add(new LocalFileDocumentSource(itr, Language.ENGLISH));
 	}
-	    
+	
+	FLAIRLogger.get().info("Files to process:");
+	for (AbstractDocumentSource itr: inputSource)
+	     FLAIRLogger.get().info(itr.getDescription());
    
+	FLAIRLogger.get().info("Begin job...");
 	long startTime = System.currentTimeMillis();
 	AbstractPipelineOperation op = MasterJobPipeline.get().performDocumentParsing(Language.ENGLISH, inputSource);
+	op.begin();
 	DocumentCollection docCol = (DocumentCollection)op.getOutput();
 	long endTime = System.currentTimeMillis();
 

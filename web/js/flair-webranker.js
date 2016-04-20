@@ -87,20 +87,13 @@ FLAIR.WEBRANKER.UTIL.resetTextCharacteristics = function() {
     // reset the length slider
     $(".lengthSlider").slider("value", 5);
 };
-FLAIR.WEBRANKER.UTIL.updateWaitDialog = function(content, cancellable) {
-    document.getElementById("modal_waitIdle_body").innerHTML = content;
-    if (cancellable === false)
-	document.getElementById('modal_waitIdle_buttonCancel').style.visibility = 'hidden';
-    else
-	document.getElementById('modal_waitIdle_buttonCancel').style.visibility = 'visible';
-};
 FLAIR.WEBRANKER.UTIL.resetUI = function(leftSidebar, rightSidebar, waitDialog, sliders, snapshot, resultsTable) {
     if (leftSidebar === true || leftSidebar === undefined)
 	FLAIR.WEBRANKER.UTIL.TOGGLE.leftSidebar(false);
     if (rightSidebar === true || rightSidebar === undefined)
 	FLAIR.WEBRANKER.UTIL.TOGGLE.rightSidebar(false);
     if (waitDialog === true || waitDialog === undefined)
-	FLAIR.WEBRANKER.UTIL.TOGGLE.waitDialog(false);
+	FLAIR.WEBRANKER.UTIL.WAIT.singleton.clear();
     if (sliders === true || sliders === undefined)
 	FLAIR.WEBRANKER.UTIL.resetSlider("all");
     if (snapshot === true || snapshot === undefined)
@@ -115,6 +108,105 @@ FLAIR.WEBRANKER.UTIL.cancelCurrentOperation = function() {
     FLAIR.WEBRANKER.UTIL.TOAST.warning("The operation was cancelled.", true, 4000);
 };
 
+//=================== FLAIR.WEBRANKER.UTIL.WAIT =============//
+FLAIR.WEBRANKER.UTIL.WAIT.INSTANCE = function() {
+  // PRIVATE VARS
+  var handlers = {
+    onClick_yes: null,
+    onClick_no: null,
+    onClick_cancel: null
+  };
+  var content = null;
+  
+  // PRIVATE INTERFACE
+  var reset = function() {
+    handlers.onClick_cancel = null;
+    handlers.onClick_yes = null;
+    handlers.onClick_no = null;
+    content = "DEAD DOVE. DO NOT EAT";
+    
+    $("#modal_waitIdle_buttonCancel").hide();
+    $("#modal_waitIdle_buttonYes").hide();
+    $("#modal_waitIdle_buttonNo").hide();
+
+    $("#modal_waitIdle_buttonCancel").click(function(e) {
+	e.preventDefault();
+    });
+    $("#modal_waitIdle_buttonYes").click(function(e) {
+	e.preventDefault();
+    });
+    $("#modal_waitIdle_buttonNo").click(function(e) {
+	e.preventDefault();
+    });
+  };
+  var showDialog = function(show) {
+    if (show)
+	$("#modal_WaitIdle").modal('show');
+    else
+	$("#modal_WaitIdle").modal('hide');
+  };
+  
+  // PUBLIC INTERFACE
+  this.showYesNo = function(displayContent, handler_yes, handler_no) {
+    reset();
+    
+    content = displayContent;
+    handlers.onClick_yes = handler_yes;
+    handlers.onClick_no = handler_no;
+
+    $("#modal_waitIdle_buttonYes").click(function(e) {
+	if (handlers.onClick_yes !== null)
+	{
+	    e.preventDefault();
+	    showDialog(false);
+	    
+	    handlers.onClick_yes();
+	}
+    });
+    $("#modal_waitIdle_buttonNo").click(function(e) {
+	if (handlers.onClick_no !== null)
+	{
+	    e.preventDefault();
+   	    showDialog(false);
+
+	    handlers.onClick_no();
+	}
+    });
+    
+    $("#modal_waitIdle_buttonYes").show();
+    $("#modal_waitIdle_buttonNo").show();
+    $("#modal_waitIdle_body").html(content);
+    
+    showDialog(true);
+  };
+  this.showCancel = function(displayContent, handler_cancel) {
+    reset();
+    
+    content = displayContent;
+    handlers.onClick_cancel = handler_cancel;
+
+    $("#modal_waitIdle_buttonCancel").click(function(e) {
+	if (handlers.onClick_cancel !== null)
+	{
+	    e.preventDefault();
+	    showDialog(false);
+
+	    handlers.onClick_cancel();
+	}
+    });
+    
+    $("#modal_waitIdle_buttonCancel").show();
+    $("#modal_waitIdle_body").html(content);
+    
+    showDialog(true);
+  };
+  this.clear = function() {
+      reset();
+      showDialog(false);
+  };
+};
+
+FLAIR.WEBRANKER.UTIL.WAIT.singleton = new FLAIR.WEBRANKER.UTIL.WAIT.INSTANCE();
 
 //=================== FLAIR.WEBRANKER.UTIL.TOAST =============//
 FLAIR.WEBRANKER.UTIL.TOAST.info = function(message, dismissOnTap, timeout) {
@@ -176,12 +268,6 @@ FLAIR.WEBRANKER.UTIL.TOGGLE.rightSidebar = function(show) {
 	$("#sidebar-wrapper-right").addClass("active");
     else
 	$("#sidebar-wrapper-right").removeClass("active");
-};
-FLAIR.WEBRANKER.UTIL.TOGGLE.waitDialog = function(show) {
-    if (show)
-	$("#modal_WaitIdle").modal('show');
-    else
-	$("#modal_WaitIdle").modal('hide');
 };
 FLAIR.WEBRANKER.UTIL.TOGGLE.visualiserDialog = function(show) {
     if (show)
@@ -850,7 +936,7 @@ FLAIR.WEBRANKER.STATE = function() {
 	{
 	    out += '<tr><td class="num_cell" style="font-size:x-large;">' +
 		    (searchResults[i].rank) + '&nbsp;<br>' +
-		    '</td><td  class="url_cell" style="width:40%;"><div><a href="' + searchResults[i].url + '" target="_blank"><b>' + searchResults[i].title + '</b></a></div>' +
+		    '</td><td  class="url_cell" style="width:40%;"><div><a href="' + searchResults[i].URL + '" target="_blank"><b>' + searchResults[i].title + '</b></a></div>' +
 		    '<div id="show_text_cell" title="Click to show text" onclick="FLAIR.WEBRANKER.singleton.displayDetails(' + i + ');"><span style="color:grey;font-size:smaller;">' + searchResults[i].displayURL + '</span><br><span>' + searchResults[i].snippet + '</span></div></td></tr>';
 
 	}
@@ -1223,8 +1309,8 @@ FLAIR.WEBRANKER.INSTANCE = function() {
     // HANDLERS
     var pipeline_noResults = function() {
 	FLAIR.WEBRANKER.UTIL.resetUI();
-	
 	state.reset();
+
 	FLAIR.WEBRANKER.UTIL.TOAST.error("No results for '" + state.getQuery() + "'", true, 6000);
     };
     var pipeline_onError = function() {
@@ -1232,9 +1318,8 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	state.reset();
 	self.deinit();
 	
-	FLAIR.WEBRANKER.UTIL.TOGGLE.waitDialog(true);
-	var status = "<h4>DEAD DOVE. Do Not Eat!</h4>";
-	FLAIR.WEBRANKER.UTIL.updateWaitDialog(status, false);
+	FLAIR.WEBRANKER.UTIL.TOAST.clear(true);
+	FLAIR.WEBRANKER.UTIL.TOAST.error("DEAD DOVE. Do Not Eat!<br/><br/>FLAIR encountered a fatal error.", false, 0);
     };
     var complete_webSearch = function(jobID, totalResults) {
 	if (totalResults === 0)
@@ -1278,7 +1363,7 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	{
 	    state.flagAsSearchResultsFetched();
 	    state.displaySearchResults();
-	    FLAIR.WEBRANKER.UTIL.TOGGLE.waitDialog(false);
+	    FLAIR.WEBRANKER.UTIL.WAIT.singleton.clear();
 	    
 	    FLAIR.WEBRANKER.UTIL.TOAST.info('<div style="text-align: center;">The search results can be reviewed whilst they are being parsed in the background.<br/><br/><button type="button" class="btn" onClick="FLAIR.WEBRANKER.UTIL.cancelCurrentOperation()">Cancel Parsing</button></div>', false, 0);
 	    
@@ -1318,6 +1403,25 @@ FLAIR.WEBRANKER.INSTANCE = function() {
     var initialized = false;
     var self = this;
     
+    // PRIVATE INTERFACE
+    var queueSearchOp = function() {
+	FLAIR.WEBRANKER.UTIL.resetUI();
+	FLAIR.WEBRANKER.UTIL.TOAST.clear(false);
+	
+	state.reset();
+	state.setSearchParams(document.getElementById("search_field").value.trim(),
+			FLAIR.WEBRANKER.CONSTANTS.DEFAULT_LANGUAGE,
+			document.getElementById("fetch_result_count").value);
+
+	FLAIR.WEBRANKER.UTIL.WAIT.singleton.showCancel("<h4>Reticulating Search Results - Please Wait...</h4>", 
+	    function() {
+		FLAIR.WEBRANKER.UTIL.cancelCurrentOperation();
+	    });
+	    
+	if (pipeline.performSearch(state.getQuery(), state.getLanguage(), state.getTotalResults()) === false)
+	    pipeline_onError();
+    };
+    
     // PUBLIC INTERFACE
     this.init = function() {
 	if (pipeline.init() === false)
@@ -1343,20 +1447,20 @@ FLAIR.WEBRANKER.INSTANCE = function() {
     this.beginSearch = function() {
 	if (state.hasSearchResults() === true && state.hasParsedData() === false)
 	{
-	    
+	    FLAIR.WEBRANKER.UTIL.WAIT.singleton.showYesNo("<br/><h4>The current search results are being parsed in the background. Are you sure you want to begin a new search?</h4>",
+		function() {
+		    FLAIR.WEBRANKER.singleton.cancelOperation();
+		    FLAIR.WEBRANKER.UTIL.TOAST.clear(true);
+		    FLAIR.WEBRANKER.singleton.beginSearch();
+		},
+		function() {
+		    // nothing to do here
+		});
+		
+	    return;
 	}
 	
-	FLAIR.WEBRANKER.UTIL.resetUI();
-	
-	state.reset();
-	state.setSearchParams(document.getElementById("search_field").value.trim(), FLAIR.WEBRANKER.CONSTANTS.DEFAULT_LANGUAGE, document.getElementById("fetch_result_count").value);
-
-	FLAIR.WEBRANKER.UTIL.TOGGLE.waitDialog(true);
-	var status = "<h4>Performing web search now...</h4>";
-	FLAIR.WEBRANKER.UTIL.updateWaitDialog(status, true);
-
-	if (pipeline.performSearch(state.getQuery(), state.getLanguage(), state.getTotalResults()) === false)
-	    pipeline_onError();
+	queueSearchOp();
     };
     this.refreshRanking = function() {
 	state.rerank();
@@ -1419,15 +1523,6 @@ window.onload = function() {
     $("#constructs-toggle").click(function (e) {
 	e.preventDefault();
 	$("#myModal_Constructs").modal('show');
-    });
-
-    $('button[data-loading-text]')
-	.on('click', function () {
-	    var btn = $(this);
-	    btn.button('loading');
-	    setTimeout(function () {
-		btn.button('reset');
-	    }, 3000);
     });
 
     $("[id$=gradientSlider]").slider({

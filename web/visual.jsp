@@ -1831,12 +1831,12 @@
         </div>
 
 
-        <div class="modal fade modal-lg" id="modal_WaitIdle" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false" style="margin:0 auto;">
+        <div class="modal modal-lg" id="modal_WaitIdle" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false" style="margin:0 auto;">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <center>
                     <div class="modal-body">
-                        <br><img style='height:30px;' src='img/ajax-loader.gif' alt='...'/>&nbsp;&nbsp;&nbsp;
+                        <br><img style='height:30px;' src='img/ajax-loader.gif' alt='...'/><br/>
                         <div class="tab-pane fade active in" id="modal_waitIdle_body">
                                 <p>Please wait while we process your meat...</p>
                         </div>
@@ -1844,7 +1844,9 @@
                     </center>
                     <div class="modal-footer">
                         <div style="text-align: center;">
-                            <button type="button" class="btn btn-primary" id="modal_waitIdle_buttonCancel" onclick="FLAIR.WEBRANKER.UTIL.cancelCurrentOperation()">Cancel</button>
+			    <button type="button" class="btn btn-primary" id="modal_waitIdle_buttonYes">Yes</button>
+			    <button type="button" class="btn btn-primary" id="modal_waitIdle_buttonNo">No</button>
+                            <button type="button" class="btn btn-primary" id="modal_waitIdle_buttonCancel">Cancel</button>
                         </div>
                     </div>
                 </div>
