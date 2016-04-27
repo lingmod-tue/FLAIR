@@ -68,6 +68,10 @@ FLAIR.WEBRANKER.UTIL.resetSlider = function(name) {
             if ($(this).slider("option", "value") !== 0) {
                 $(this).slider("option", "value", 0);
             }
+	    
+	    var construct_name = this.id.substring(0, this.id.indexOf("-gradientSlider"));
+	    if ($("#tgl-" + construct_name).prop("checked") === false)
+		$("#tgl-" + construct_name).trigger("click");
         });
     } 
     else
@@ -76,6 +80,10 @@ FLAIR.WEBRANKER.UTIL.resetSlider = function(name) {
             if ($(this).slider("option", "value") !== 0) {
                 $(this).slider("option", "value", 0);
             }
+	    
+	    var construct_name = this.id.substring(0, this.id.indexOf("-gradientSlider"));
+	    if ($("#tgl-" + construct_name).prop("checked") === false)
+		$("#tgl-" + construct_name).trigger("click");
         });
     }
 };
@@ -106,6 +114,14 @@ FLAIR.WEBRANKER.UTIL.cancelCurrentOperation = function() {
     FLAIR.WEBRANKER.singleton.cancelOperation();
     FLAIR.WEBRANKER.UTIL.TOAST.clear(true);
     FLAIR.WEBRANKER.UTIL.TOAST.warning("The operation was cancelled.", true, 4000);
+};
+FLAIR.WEBRANKER.UTIL.showExportSettingsDialog = function(exportURL) {
+    $("#exported_settings_url").val(exportURL);
+    $("#modal_ExportSettings").modal('show'); 
+};
+FLAIR.WEBRANKER.UTIL.copyToClipboard = function(input_element) {
+    $(input_element).select();
+    document.execCommand("copy");
 };
 
 //=================== FLAIR.WEBRANKER.UTIL.WAIT =============//
@@ -302,6 +318,11 @@ FLAIR.WEBRANKER.STATE = function() {
     
     var searchResultsFetched = false;		    // set to true after the search results are returned by the server
     var parsedDataFetched = false;		    // set to true after all the parsed data has been received by the client
+    
+    var teacherMode = false;			    // when true, the imported settings are applied after each query is successfully parsed
+    var urlQueryString = "";			    // url query string
+    var importedSettings = {};			    // key-value pairs of the query string
+    var applyingImportedSettings = false;	    // set to true when settings are applied
     
     // PRIVATE INTERFACE
     var createWeightSettingPrototype = function() {
@@ -525,9 +546,34 @@ FLAIR.WEBRANKER.STATE = function() {
 	newText = docText;
 	return newText;
     };
+    var parseQueryString = function() {
+	importedSettings = {};
+	var match, 
+	    pl     = /\+/g,  // Regex for replacing addition symbol with a space
+	    search = /([^&=]+)=?([^&]*)/g,
+	    decode = function (s) { return decodeURIComponent(s.replace(pl, " ")); },
+	    query  = urlQueryString;
+
+	var propCount = 0;
+	if (query === "") 
+	    console.log("Empty query string");
+	else
+	{
+	    while (match = search.exec(query)) 
+	    {
+		importedSettings[decode(match[1])] = decode(match[2]);
+		propCount++;
+	    }
+	}
+	
+	if (propCount > 3)
+	    return true;
+	else
+	    return false;
+    };
     
     // PUBLIC INTERFACE
-    this.reset = function() {
+    this.reset = function(full_reset) {
 	query = "";
 	language = FLAIR.WEBRANKER.CONSTANTS.DEFAULT_LANGUAGE;
 	totalResults = FLAIR.WEBRANKER.CONSTANTS.DEFAULT_NUM_RESULTS;
@@ -551,6 +597,14 @@ FLAIR.WEBRANKER.STATE = function() {
 	
 	searchResultsFetched = false;
 	parsedDataFetched = false;
+	
+	// "Teacher mode" state persists for the entire session, so we don't reset it by default
+	if (full_reset === true)
+	{
+	    teacherMode = false;
+	    importedSettings = {};
+	    applyingImportedSettings = false;
+	}
     };
     this.displayDocText = function(index) {
 	if (searchResultsFetched === false)
@@ -723,6 +777,9 @@ FLAIR.WEBRANKER.STATE = function() {
 	
     };
     this.rerank = function() {
+	if (parsedDataFetched === false || applyingImportedSettings === true)
+	    return;
+	    
 	bParam = ($(".lengthSlider").slider("option", "value")) / 10;
 	if (bParam === null || bParam === undefined)
 	    bParam = 5;
@@ -900,6 +957,7 @@ FLAIR.WEBRANKER.STATE = function() {
 	}
 
 	document.getElementById("results_table").innerHTML = out;
+	FLAIR.WEBRANKER.UTIL.resetUI(false, false, false, false, true, false);
     };
     
     this.setSearchParams = function(searchQuery, lang, numResults) {
@@ -990,6 +1048,9 @@ FLAIR.WEBRANKER.STATE = function() {
 	
 	return false;
     };
+    this.clearExcludedConstructions = function() {
+	filteredConstructions = [];
+    };
     
     this.addFilteredDoc = function(index) {
 	if (filteredDocs.indexOf(index) === -1)
@@ -1016,6 +1077,105 @@ FLAIR.WEBRANKER.STATE = function() {
     };
     this.hasParsedData = function() {
 	return parsedDataFetched;
+    };
+    
+    this.exportSettings = function() {
+	var settingQueryString = "";
+	
+	// doc levels first
+	var levels = document.getElementById("settings_levels").getElementsByTagName("input");
+	for (var k = 0; k < levels.length; k++) 
+	{
+	    settingQueryString += levels[k].id + "=";
+	    if (levels[k].checked)
+		settingQueryString += "1&";
+	    else
+		settingQueryString += "0&";
+	}
+	
+	// the gradient sliders
+	$(".gradientSlider").each(function () {
+	    var value = $(this).slider("option", "value");
+	    var name = this.id.substring(0, this.id.indexOf("-"));
+	    var disabled = $(this).slider("option", "disabled");
+	    
+	    settingQueryString += name + "=" + value + "_" + disabled + "&";
+	});
+	
+	// remove the trailing ampersand
+	settingQueryString = settingQueryString.slice(0, -1);
+	
+	return settingQueryString;
+    };
+    
+    this.tryEnableTeacherMode = function() {
+	if (teacherMode === true)
+	{
+	    console.log("Teacher mode was already enabled");
+	    return;
+	}
+	
+	urlQueryString = window.location.search.substring(1);
+	if (parseQueryString() === true)
+	{
+	    teacherMode = true;
+	    return true;
+	}
+	else
+	    return false;
+    };
+    this.applyImportedSettings = function() {
+	if (teacherMode === false)
+	    return false;
+	
+	try 
+	{
+	    applyingImportedSettings = true;
+	  
+	    // set the doc levels
+	    var levels = document.getElementById("settings_levels").getElementsByTagName("input");
+	    for (var i = 0; i < levels.length; i++)
+	    {
+		if (importedSettings[levels[i].id] === "0")
+		    $("#" + levels[i].id).prop("checked", false);
+		else
+		    $("#" + levels[i].id).prop("checked", true);
+	    }
+
+	    // gradient sliders
+	    $("[id$=gradientSlider]").each(function () {
+		 var name = this.id.substring(0, this.id.indexOf("-"));
+		 if (name in importedSettings)
+		 {
+		     var param = importedSettings[name];
+		     var value = param.substring(0, param.indexOf("_"));
+		     var disabled = param.substring(param.indexOf("_") + 1, param.length);
+		     
+		     if (disabled === "true")
+		     {
+			var checkbox = document.getElementById("tgl-" + name);
+			FLAIR.WEBRANKER.singleton.toggleConstruction(checkbox);
+			$("#tgl-" + name).prop("checked", false);
+		     }
+
+		     $(this).slider("value", +value);
+		 }
+		 else
+		     console.log("Unknown gradient slider ID found in imported settings: " + name);
+	     });
+	    
+	    applyingImportedSettings = false;
+	    return true;
+	}
+	catch (err)
+	{
+	    console.log("Exception encountered whilst applying imported settings: " + err.message);
+	    applyingImportedSettings = false;
+	    teacherMode = false;
+	    
+	    FLAIR.WEBRANKER.UTIL.TOAST.error("FLAIR encountered an error while applying your custom settings", true, 3000);
+	    return false;
+	}
     };
 };
 
@@ -1319,7 +1479,7 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	self.deinit();
 	
 	FLAIR.WEBRANKER.UTIL.TOAST.clear(true);
-	FLAIR.WEBRANKER.UTIL.TOAST.error("DEAD DOVE. Do Not Eat!<br/><br/>FLAIR encountered a fatal error.", false, 0);
+	FLAIR.WEBRANKER.UTIL.TOAST.error("FLAIR encountered a fatal error.", false, 0);
     };
     var complete_webSearch = function(jobID, totalResults) {
 	if (totalResults === 0)
@@ -1385,8 +1545,6 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	state.setParsedVisData(csvTable);
 	state.flagAsParsedDataFetched();
 	self.resetAllSettingsAndFilters(true, false, true, true);
-//	state.rerank();
-	visualiser.visualise(csvTable);
 	
 	FLAIR.WEBRANKER.UTIL.resetUI(false, false, false, false, true, false);
 	FLAIR.WEBRANKER.UTIL.TOGGLE.leftSidebar(true);
@@ -1394,6 +1552,12 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 
 	FLAIR.WEBRANKER.UTIL.TOAST.clear(false);
 	FLAIR.WEBRANKER.UTIL.TOAST.success("Parsing complete!", true, 4000);
+	
+	if (state.applyImportedSettings() === true)
+	    FLAIR.WEBRANKER.UTIL.TOAST.info("Applied custom settings", true, 4500);
+	
+	visualiser.visualise(csvTable);
+	state.rerank();
     };
     
     // PRIVATE VARS
@@ -1409,11 +1573,17 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	FLAIR.WEBRANKER.UTIL.TOAST.clear(false);
 	
 	state.reset();
-	state.setSearchParams(document.getElementById("search_field").value.trim(),
-			FLAIR.WEBRANKER.CONSTANTS.DEFAULT_LANGUAGE,
-			document.getElementById("fetch_result_count").value);
+	
+	var query = document.getElementById("search_field").value.trim();
+	if (query.length === 0)
+	{
+	    FLAIR.WEBRANKER.UTIL.TOAST.error("Please enter a valid search query", true, 5000);
+	    return;
+	}
+	
+	state.setSearchParams(query, FLAIR.WEBRANKER.CONSTANTS.DEFAULT_LANGUAGE, document.getElementById("fetch_result_count").value);
 
-	FLAIR.WEBRANKER.UTIL.WAIT.singleton.showCancel("<h4>Reticulating Search Results - Please Wait...</h4>", 
+	FLAIR.WEBRANKER.UTIL.WAIT.singleton.showCancel("<h4>Searching the web - Please Wait...</h4>", 
 	    function() {
 		FLAIR.WEBRANKER.UTIL.cancelCurrentOperation();
 	    });
@@ -1426,6 +1596,12 @@ FLAIR.WEBRANKER.INSTANCE = function() {
     this.init = function() {
 	if (pipeline.init() === false)
 	    return;
+	
+	if (state.tryEnableTeacherMode() === true)
+	{
+	    FLAIR.WEBRANKER.UTIL.TOAST.info("FLAIR will automatically apply your custom settings", true, 5000);
+	    console.log("Teacher mode enabled");
+	}
 
 	initialized = true;	
     };
@@ -1476,7 +1652,10 @@ FLAIR.WEBRANKER.INSTANCE = function() {
     };
     this.resetAllSettingsAndFilters = function(sliders, text_characteristics, visualiser_axes, doc_filter) {
 	if (sliders === true)
+	{
 	    FLAIR.WEBRANKER.UTIL.resetSlider("all");
+	    state.clearExcludedConstructions();
+	}
 	
 	if (text_characteristics === true)
 	    FLAIR.WEBRANKER.UTIL.resetTextCharacteristics();
@@ -1503,6 +1682,10 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	    state.addFilteredDoc(docsToFilter[i]);
 	state.rerank();
 	FLAIR.WEBRANKER.UTIL.TOGGLE.visualiserDialog(false);
+    };
+    this.exportSettings = function() {
+	var exportString = document.location.host + document.location.pathname + "?" + state.exportSettings();
+	FLAIR.WEBRANKER.UTIL.showExportSettingsDialog(exportString);
     };
 };
 

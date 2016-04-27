@@ -22,6 +22,7 @@ class BingSearchAgent extends WebSearchAgent
     private int					nextRank;
     private final ArrayList<SearchResult>	cachedResults;
     private boolean				noMoreResults;
+    private final ArrayList<SearchResult>	fetchedResults;	    // collection of all the results fetched by the agent
     
     public BingSearchAgent(Language lang, String query)
     {
@@ -31,6 +32,7 @@ class BingSearchAgent extends WebSearchAgent
 	this.nextRank = 0;
 	this.cachedResults = new ArrayList<>();
 	this.noMoreResults = false;
+	this.fetchedResults = new ArrayList<>();
 	
 	String qPrefix = "";
 	String qPostfix = " language:en";
@@ -88,7 +90,7 @@ class BingSearchAgent extends WebSearchAgent
     
     private boolean isURLDuplicate(String url)
     {
-	for (SearchResult itr: cachedResults)
+	for (SearchResult itr: fetchedResults)
 	{
 	    if (itr.getURL().equalsIgnoreCase(url) == true)
 		return true;
@@ -105,7 +107,7 @@ class BingSearchAgent extends WebSearchAgent
 	AzureSearchResultSet<AzureSearchWebResult> azureResults = null;
 	try 
 	{
-	    // the pipeline can potentially throw an java.net.UnknownHostException, so wrap it in EH to be safe 
+	    // the pipeline can potentially throw a java.net.UnknownHostException, so wrap it in EH to be safe 
 	    pipeline.setPage(nextPage);
 	    pipeline.doQuery();
 	    azureResults = pipeline.getQueryResult();
@@ -139,6 +141,7 @@ class BingSearchAgent extends WebSearchAgent
 							  itr.getDescription());
 
 		cachedResults.add(newResult);
+		fetchedResults.add(newResult);
 		newResult.setRank(nextRank);
 		nextRank++;
 

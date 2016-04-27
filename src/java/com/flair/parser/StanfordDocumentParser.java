@@ -36,7 +36,7 @@ class StanfordDocumentParser extends AbstractDocumentParser
 	
 	// ### TODO update the parsing strategy to support universal deps
 	// ### TODO consider using the neural network depparser
-	pipelineProps.put("parse.originalDependencies", "");
+	pipelineProps.put("parse.originalDependencies", "true");
 	
 	switch (modelLanguage)
 	{

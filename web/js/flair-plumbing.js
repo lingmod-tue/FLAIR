@@ -127,7 +127,7 @@ FLAIR.PLUMBING.PIPELINE = function(webSearch_complete, parseSearchResults_comple
 	console.log("Pipeline closed. Close code: " + event.code + (event.reason === "" ? "" : ", Reason: " + event.reason));
     };  
     var private_onerror = function (event) {
-	console.log("Pipeline error: " + event);
+	console.log("Pipeline error");
     }; 
     
     var private_createRequestMessage = function(reqType) {

@@ -5,11 +5,19 @@
  */
 package com.flair.testing;
 
+import com.flair.crawler.SearchResult;
+import com.flair.grammar.Language;
+import com.flair.taskmanager.AbstractPipelineOperation;
+import com.flair.taskmanager.MasterJobPipeline;
+import com.flair.utilities.FLAIRLogger;
+import com.flair.utilities.JSONWriter;
+import java.util.List;
+
 /**
  * Executable test for the web result framework. Takes a single param - absolute path to a directory
  * @author shadeMe
  */
-/*
+
 public class WebCrawlerTest
 {
     public static void main(String[] args)
@@ -36,17 +44,25 @@ public class WebCrawlerTest
 	FLAIRLogger.get().trace("Root Output Path: " + rootOutPath);
 	for (String itr : queries)
 	{
-	   WebSearchAgent agent = WebSearchAgentFactory.create(WebSearchAgentFactory.SearchAgent.BING, Language.ENGLISH, itr, 50);
-	   agent.performSearch();
-	   
-	   List<SearchResult> searchResults = agent.getResults();
-	   long startTime = System.currentTimeMillis();
-	   AbstractPipelineOperation op = MasterJobPipeline.get().parseSearchResults(Language.ENGLISH, searchResults);
-	   DocumentCollection docCol = op.getOutput();
-	   long endTime = System.currentTimeMillis();
-	   File outFile = new File(rootOutPath + "/" + itr);
-	   outFile.mkdirs();
-	   docCol.serialize(serializer, outFile.getAbsolutePath());
+	    long startTime = System.currentTimeMillis();
+	    AbstractPipelineOperation op = MasterJobPipeline.get().performWebSearch(Language.ENGLISH, itr, 100);
+	    op.begin();
+	    Object output = op.getOutput();
+	    List<SearchResult> searchResults = (List<SearchResult>)output;
+/*	    
+	    List<String> urls = new ArrayList<>();
+	    for (SearchResult res : searchResults)
+	    {
+		if (urls.contains(res.getURL()) == true)
+		   FLAIRLogger.get().trace("Duplicate URL: " + res.getURL());
+		else {
+		//   FLAIRLogger.get().trace(res.getURL());
+		   urls.add(res.getURL());
+		}
+
+	    }
+	*/    
+	    long endTime = System.currentTimeMillis();
 	   
 	   FLAIRLogger.get().trace(op.toString());
 	   FLAIRLogger.get().trace("WebCrawlerTest for query '"+ itr + "' completed in " + (endTime - startTime) + " ms");
@@ -55,4 +71,3 @@ public class WebCrawlerTest
 	System.exit(0);
     }
 }
-*/

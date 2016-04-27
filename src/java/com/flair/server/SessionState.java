@@ -155,11 +155,16 @@ class SessionState
 	    case PERFORM_SEARCH:
 	    {
 		PerformSearchRequest req = ServerClientInteropManager.toPerformSearchRequest(message);
-		AbstractPipelineOperation op = performWebSearchJob(req.query, req.language, req.numResults);
-		String id = registerOperation(op, responseType);
-		
-		sendMessage(new PerformSearchResponse(id));
-		op.begin();
+		if (req.query.length() == 0)
+		     FLAIRLogger.get().error("Invalid search query");
+		else
+		{
+		    AbstractPipelineOperation op = performWebSearchJob(req.query, req.language, req.numResults);
+		    String id = registerOperation(op, responseType);
+
+		    sendMessage(new PerformSearchResponse(id));
+		    op.begin();
+		}
 		
 		break;
 	    }

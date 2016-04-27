@@ -50,6 +50,9 @@ public abstract class WebSearchAgent
 
     public WebSearchAgent(Language lang, String query)
     {
+	if (query.length() == 0)
+	    throw new IllegalArgumentException("Invalid/empty query");
+	
 	this.lang = lang;
 	this.query = query;
     }
