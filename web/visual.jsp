@@ -38,7 +38,7 @@
                             <div class="col-lg-6">
                                 <form class="form-inline" name="search_form" id="search_form">
 				    <div class="form-group">
-					<div class="col-sm-6 input-group">
+					<div class="col-lg-8 input-group">
 					    <input type="text" id="search_field" name="query" class="form-control">
 					    <div class="input-group-btn" >
 						<button type="button" class="btn" onclick="FLAIR.WEBRANKER.singleton.beginSearch()" id="search_button" data-loading-text="<img style='height:18px;' src='img/ajax-loader.gif' alt='...'/>">GO</button>
@@ -47,14 +47,15 @@
 
 
 					<div class="input-group">
-					    <div class="input-group-addon">Fetch</div>
+					<!--    <div class="input-group-addon">Fetch</div> -->
 					    <select class="form-control" id="fetch_result_count">
-						<option>10</option> <option selected="selected">20</option> <option>30</option>
-						<option>40</option> <option>50</option> <option>60</option>
-						<option>70</option> <option>80</option> <option>90</option>
-						<option>100</option>
+						<option value="10">10 Results</option>
+						<option selected="selected" value="20">20 Results</option>
+						<option value="30">30 Results</option>
+						<option value="40">40 Results</option>
+						<option value="50">50 Results</option>
 					    </select>
-					    <div class="input-group-addon">Results</div>
+					<!--    <div class="input-group-addon">Results</div> -->
 					</div>
 				    </div>
 				</form>

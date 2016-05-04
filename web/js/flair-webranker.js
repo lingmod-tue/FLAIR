@@ -1099,7 +1099,9 @@ FLAIR.WEBRANKER.STATE = function() {
 	    var name = this.id.substring(0, this.id.indexOf("-"));
 	    var disabled = $(this).slider("option", "disabled");
 	    
-	    settingQueryString += name + "=" + value + "_" + disabled + "&";
+	    // only add if it's different from the default settings
+	    if (disabled === true || value !== 0)
+		settingQueryString += name + "=" + value + "_" + disabled + "&";
 	});
 	
 	// remove the trailing ampersand
@@ -1160,8 +1162,6 @@ FLAIR.WEBRANKER.STATE = function() {
 
 		     $(this).slider("value", +value);
 		 }
-		 else
-		     console.log("Unknown gradient slider ID found in imported settings: " + name);
 	     });
 	    
 	    applyingImportedSettings = false;
