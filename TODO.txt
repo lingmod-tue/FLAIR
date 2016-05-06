@@ -1,5 +1,6 @@
 MADEESH
 
+
 >>> Word list functionality 
 > First step: AWL (slider + info on the right)
 > Next: upload a word list (target vocabulary)
@@ -19,9 +20,8 @@ If you can�t replicate it, don�t spend too much time on it though.
 
 
 
-MARIA
 
-> Add a logo
+MARIA
 
 
 > - A small button "About FLAIR" (on top right of page?) is missing - it
@@ -44,6 +44,9 @@ MARIA
 >  (both between the Welcome ... and the first - item and between the -
 >  items).
 + OK
+
+
+> Add a logo
 
 
 > Change the code to work with Universal Dependencies (or both, optionally)
