@@ -1,19 +1,11 @@
-1. Functionality (could you please look into these?)
+MADEESH
 
-> - When a search is started, why not display the results right when
->  they come in (instead of greying out the screen with the
->  information box saying "Performing web search now ��)
-Although it gives us a good idea of how much time each component needs,
-I agree that we might want to move the �Processing�� message somewhere else
-(where it won�t interfere with the user scrolling through results)
-and show the Bing results before extracting and parsing the documents.
-Does it make sense to you?
+>>> Word list functionality 
+> First step: AWL (slider + info on the right)
+> Next: upload a word list (target vocabulary)
 
-> - How about making the big black numbers of the results smaller (so
->  that it fits the size of the title of the text behind it)? Most
->  users won't care much about the number of the hit.
-I suggest keeping the numbers in FLAIR_Redux for debugging
-and deploy the numberless final version as FLAIR (which we�ll make public).
+>>> Upload and search a corpus instead of the web
+
 
 > - In the visualization, there were a couple of times where it didn't
 >  show the grey selected values on the construct-bar any more but
@@ -23,64 +15,41 @@ and deploy the numberless final version as FLAIR (which we�ll make public).
 Could you please look into this issue?
 If you can�t replicate it, don�t spend too much time on it though.
 
-> Overall - very nice!
-:)
 
 
-Design issues (I�ll look into it later):
 
-> - The css layout of the page should be improved to work better for
->  more narrow windows - it floats the Settings button to above and the
->  other three bar settings to below the search box (cf. attached screen shot).
-+
 
-> - The text "Welcome to FLAIR - a tool that: ..." should be slightly
->  increased in font size and the vertical space should be reduced
->  (both between the Welcome ... and the first - item and between the -
->  items).
-+
+MARIA
+
+> Add a logo
+
 
 > - A small button "About FLAIR" (on top right of page?) is missing - it
 >  should say what it is (similar to the initial splash information),
 >  point to the people involved, probably also include a link to your thesis,
 >  and contact information.
-+
++ OK
 
-> - Under Settings, why does every ruler (where one can select the value
->  of the construction) start with a checked box? Shouldn't it be
->  unchecked when I haven't selected it?
-and
-> - On the same topic, it used to be that I could prioritize and
->  deprioritize the setting (i.e. I could say I do *not* want to see
->  passives, i.e. rank them low). Not it seems I can only promote but
->  not depromote (i.e. the ruler starts out on the left instead of in
->  the middle.) Why is that? I kind of liked the way this originally
->  was.
-The first prototype had a slightly different design.
-I�ll discuss it with Detmar.
 
 > - In the visualization, I'd change the information that it shows on
 >  the top of that page - it's not visually pleasing. How about instead
 >  showing the search term there (instead of "interactive visualization
 >  of results" and putting the three help lines below behind a help
 >  button or something like that?
-+
-
->> We are changing a couple of things in the algorithm detecting the
->> grammatical structures right now, so there might be some bugs there
->> (e.g., zero values for some construction).
->
-> Yes, I noticed that the phrasal verbs are always zero?
++ OK
 
 
->>>
+> - The text "Welcome to FLAIR - a tool that: ..." should be slightly
+>  increased in font size and the vertical space should be reduced
+>  (both between the Welcome ... and the first - item and between the -
+>  items).
++ OK
 
-it seems to me that the best way to communicate the information
-between teachers and students is the following: The teacher configures
-the system the way (s)he wants it, and then generates a link that
-(s)he can send out for the students to use the sytem. I.e. the URL 
-contains the relevant settings. 
 
-In every other setup I can imagine, one would instead have to allow
-the teachers to change FLAIR (e.g. save settings files on the server)
-or to establish who is the teacher and who his/her students are, etc.
+> Change the code to work with Universal Dependencies (or both, optionally)
+
+
+> - The css layout of the page should be improved to work better for
+>  more narrow windows - it floats the Settings button to above and the
+>  other three bar settings to below the search box (cf. attached screen shot).
++ Bootstrap is a pain :/ will look into CSS etc.
