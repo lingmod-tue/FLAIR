@@ -107,7 +107,11 @@ FLAIR.WEBRANKER.UTIL.resetUI = function(leftSidebar, rightSidebar, waitDialog, s
     if (snapshot === true || snapshot === undefined)
 	$("#snapshot").html("<div id='empty_sidebar_info'>Click on a search result <br>to display text here.</div>");    
     if (resultsTable === true || resultsTable === undefined) {
-	document.getElementById("results_table").innerHTML = "<tr><td><br><br> Welcome to <b>FLAIR</b> - a tool that: <br><br><br> - searches the web for a topic of interest <br><br> - analyses the results for grammatical constructions and readability levels <br><br> - re-ranks the results according to your (pedagogical or learning) needs specified in the settings</td></tr>";
+        
+        document.getElementById("results_table").innerHTML = "<div class=\"panel panel-success\"> <div class=\"panel-heading\" style=\"text-align: center\"> <h3 class=\"panel-title\">SEARCH <span class=\"glyphicon glyphicon-search\"></span></h3> </div> <div class=\"panel-body\"> Type in a search query. <br> FLAIR will fetch the <b>top results</b> from the Bing search engine. </div> </div> <br><br> <div class=\"panel panel-warning\"> <div class=\"panel-heading\" style=\"text-align: center\"> <h3 class=\"panel-title\">CONFIGURE <span class=\"glyphicon glyphicon-cog\"></span></h3> </div> <div class=\"panel-body\"> Configure the settings: <b>text</b> (complexity, length) and <b>language</b> (the passive, wh- questions, academic vocabulary, ...) <br> You can <b>export</b> the settings to apply them to all further searches. </div> </div> <br><br> <div class=\"panel panel-info\" > <div class=\"panel-heading\" style=\"text-align: center\"> <h3 class=\"panel-title\">READ <span class=\"glyphicon glyphicon-menu-hamburger\"></span></h3> </div> <div class=\"panel-body\"> FLAIR will re-rank the documents according to the configured settings. <br> Click on the link to open the page in a new tab or read the <b>enhanced text</b> in the right-side panel. </div> </div>";
+        
+
+	//document.getElementById("results_table").innerHTML = "<tr><td><br><br> Welcome to <b>FLAIR</b> - a tool that: <br><br><br> - searches the web for a topic of interest <br><br> - analyses the results for grammatical constructions and readability levels <br><br> - re-ranks the results according to your (pedagogical or learning) needs specified in the settings</td></tr>";
     }
 };
 FLAIR.WEBRANKER.UTIL.cancelCurrentOperation = function() {
@@ -286,8 +290,10 @@ FLAIR.WEBRANKER.UTIL.TOGGLE.rightSidebar = function(show) {
 	$("#sidebar-wrapper-right").removeClass("active");
 };
 FLAIR.WEBRANKER.UTIL.TOGGLE.visualiserDialog = function(show) {
-    if (show)
+    if (show) {
+        $("#query_vis").html("\"" + $("#search_field").val() + "\" (" + $("#fetch_result_count").val() + " web pages)");
 	$("#myModal_Visualize").modal('show');
+    }
     else
 	$("#myModal_Visualize").modal('hide');
 };

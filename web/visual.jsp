@@ -29,39 +29,53 @@
     <body style="background-color: white;">
         <div id="wrapper" >
             <div class="container">
+                
                 <div class="navbar navbar-default navbar-fixed-top" role="navigation">
-                    <div class="container-fluid">
-                        <div class="row"  style="margin-top: 2%;">
-                            <div class="col-lg-3">
-                                <a href="#menu-toggle" class="btn btn-warning" id="menu-toggle"><b>SETTINGS</b></a><br><br>
+                    <div class="container-fluid">               
+                      
+                      
+                      <div class="row"  style="margin-top: 1%; margin-bottom:1%">
+                         
+                            <div class="col-lg-1"  style="text-align:left;">
+                                <a href="#menu-toggle" class="btn btn-warning" id="menu-toggle"><span class="glyphicon glyphicon-cog"></span></a>
                             </div>
-                            <div class="col-lg-6">
-                                <form class="form-inline" name="search_form" id="search_form">
-				    <div class="form-group">
-					<div class="col-lg-8 input-group">
-					    <input type="text" id="search_field" name="query" class="form-control">
-					    <div class="input-group-btn" >
+                         
+                            <div class="col-lg-10"  style="text-align:center;">
+                           
+                <form class="form-inline" name="search_form" id="search_form"  style="width:100%;">
+                                <div  class="input-group">
+                                  <a href="javascript:$('#myModal_About').modal('show');" style="color:orange" ><img src="img/logo_2.png" alt=">"></a>
+                                </div>
+                                
+					  <div class="input-group" style="width:60%;">
+                        <input type="text" id="search_field" name="query" class="form-control">
+<!--					    <div class="input-group-btn"  style="text-align:right;">
 						<button type="button" class="btn" onclick="FLAIR.WEBRANKER.singleton.beginSearch()" id="search_button" data-loading-text="<img style='height:18px;' src='img/ajax-loader.gif' alt='...'/>">GO</button>
-					    </div>
-					</div>
+                        </div> 
+-->
+					  </div>
 
-
-					<div class="input-group">
-					<!--    <div class="input-group-addon">Fetch</div> -->
+                  <div class="input-group">
 					    <select class="form-control" id="fetch_result_count">
-						<option value="10">10 Results</option>
-						<option selected="selected" value="20">20 Results</option>
-						<option value="30">30 Results</option>
-						<option value="40">40 Results</option>
-						<option value="50">50 Results</option>
+						  <option value="10">10 results</option>
+						  <option selected="selected" value="20">20 results</option>
+						  <option value="30">30 results</option>
+						  <option value="40">40 results</option>
+						  <option value="50">50 results</option>
 					    </select>
-					<!--    <div class="input-group-addon">Results</div> -->
-					</div>
-				    </div>
-				</form>
+					  </div>
+		</form>
                             </div>
-                            <div class="col-lg-3" style="text-align:right;"><span id="right-menu-toggle"><img src="img/glyphicons-517-menu-hamburger.png" alt=">"></span></div>
+                           
+                         
+                         <div class="col-lg-1" style="text-align:right;"><span id="right-menu-toggle"><img src="img/glyphicons-517-menu-hamburger.png" alt=">"></span>
+                         </div>
+                         
                         </div>
+                      
+                      
+                      
+
                     </div>
                 </div>
 
@@ -69,8 +83,6 @@
                 <div id="sidebar-wrapper">
                     <div  class="sidebar-nav" id="sidebar">
                         <div style="width:90%; padding-left: 10%;">
-
-                            <br>
                             <div class="df" id="docs_info"></div>
                             <br><div class="panel panel-default" style="text-align: center">
                                 <a href="javascript:FLAIR.WEBRANKER.UTIL.resetSlider('all');FLAIR.WEBRANKER.UTIL.TOGGLE.visualiserDialog(true);" style="color:orange" >VISUALIZE</a>
@@ -1082,6 +1094,106 @@
                 </div>
             </div>
         </div>
+        
+        
+        
+        
+        
+        
+        <!-- ABOUT FLAIR MODAL -->
+        <div class="modal fade modal-lg" id="myModal_About" tabindex="-1" role="dialog" aria-hidden="true" style="margin:0 auto;">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <center>
+                            <h3 class="modal-title">About FLAIR </h3>
+                                                    <p><span style="color:darkorange"><b>by</b></span> <a href="http://sfs.uni-tuebingen.de/~mchnkina/" target="_blank">Maria Chinkina</a> <a href="mailto:maria.chinkina@uni-tuebingen.de?Subject=FLAIR%20tool" target="_top" title="write to Maria Chinkina"><span class="glyphicon glyphicon-envelope"></span></a> 
+                            &
+                            <a href="" target="_blank">Madeesh Kannan</a> <a href="mailto:mkannan@sfs.uni-tuebingen.de?Subject=FLAIR%20tool" target="_top" title="write to Madeesh Kannan"><span class="glyphicon glyphicon-envelope"></span></a> supervised by 
+                            <a href="http://sfs.uni-tuebingen.de/~dm/" target="_blank">Prof. Dr. Detmar Meurers</a> 
+                            <br> <span style="color:darkorange">@</span> University of Tübingen, Germany <span style="color:darkorange">|</span> 2015-2016
+                        </p>
+                        </center>
+                    </div>
+                    <div class="modal-body">
+                        <div  style="text-align: center">
+                        <p>FLAIR is an online tool for language teachers and learners that:
+                        </p>
+                        <ul   style="text-align: left">
+                        <li>searches the web for a topic of interest </li>
+                        <li>analyzes the results for grammatical constructions and readability levels </li>
+                        <li>re-ranks the results according to your (pedagogical or learning) needs specified in the settings</li>
+                        </ul>
+                                                
+
+                        
+                        
+<!--                        <div class="panel panel-success" style="display:inline-block;width:30%;">
+                            <div class="panel-heading" style="text-align: center">
+                                <h3 class="panel-title">SEARCH</h3>
+                            </div>
+                            <div class="panel-body">
+                                Type in a search query. <br>
+                                FLAIR fetches the results from Microsoft Bing.
+                            </div>
+                        </div>
+                        <div class="panel panel-warning" style="display:inline-block;width:30%;">
+                            <div class="panel-heading" style="text-align: center">
+                                <h3 class="panel-title">CONFIGURE</h3>
+                            </div>
+                            <div class="panel-body">
+                                Configure the settings: <b>text</b> (complexity, length) and <b>language</b> (the passive, wh- questions, ...) 
+                            </div>
+                        </div>
+                        <div class="panel panel-info" style="display:inline-block;width:30%;">
+                            <div class="panel-heading" style="text-align: center">
+                                <h3 class="panel-title">READ</h3>
+                            </div>
+                            <div class="panel-body">
+                                Now FLAIR has re-ranked the documents to satisfy the configured settings.
+                                Enjoy!                      
+                            </div>
+                        </div>-->
+
+                        </div>
+                        
+                        <p><b>PAPERS:</b></p>
+                        <ul>
+                            <li><a href="http://sfs.uni-tuebingen.de/~mchnkina/downloads/Chinkina_Maria_thesis_2015.pdf" target="_blank">MA thesis by Maria Chinkina</a></li>
+                            <li><a href="http://sfs.uni-tuebingen.de/~mchnkina/downloads/Chinkina_Meurers_BEA_2016.pdf" target="_blank">BEA paper</a> (Maria Chinkina, Detmar Meurers)</li>
+                            <li><a href="http://sfs.uni-tuebingen.de/~mchnkina/downloads/Chinkina_Kannan_Meurers_ACL_2016.pdf" target="_blank">System description paper</a> (Maria Chinkina, Madeesh Kannan, Detmar Meurers)</li>
+                        </ul>
+                        <br>
+                        <p><b>ADDITIONAL MATERIAL:</b></p>
+                        <ul>
+                            <li><a href="http://sfs.uni-tuebingen.de/~mchnkina/downloads/FLAIR_Evaluation.pdf" target="_blank">Evaluation of the FLAIR algorithm</a> (81 grammatical constructions: Precision, Recall, F1)</li>
+                            <li><a href="http://sfs.uni-tuebingen.de/~mchnkina/downloads/AWL.pdf" target="_blank">AWL: Academic Word List</a> (<a href="http://onlinelibrary.wiley.com/doi/10.2307/3587951/abstract" target="_blank">Coxhead, 2000</a>)</li>
+                            <li><a href="http://sfs.uni-tuebingen.de/~mchnkina/img/heatmap_vert_color.png" target="_blank">Distribution of grammatical constructions in the Web</a> (top 55 hits for a query)</li>
+                        </ul>
+                        <br>
+                        <p><b>Third-party tools:</b></p>
+                        <ul>
+                            <li>Back-end: <a href="http://datamarket.azure.com/dataset/bing/search" target="_blank">Microsoft Bing API</a> (<a href="https://github.com/peculater/azure-bing-search-java" target="_blank">Java implementation</a>), <a href="https://github.com/kohlschutter/boilerpipe" target="_blank">Boilerpipe</a>, <a href="http://stanfordnlp.github.io/CoreNLP/" target="_blank">Stanford CoreNLP</a></li>
+                            <li>Front-end: <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>, <a href="http://glyphicons.com/" target="_blank">Glyphicons</a>, <a href="https://d3js.org" target="_blank">d3</a></li>
+                        </ul>
+                        <br>
+                        <p><b>LICENSE:</b> </p>
+<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/InteractiveResource" property="dct:title" rel="dct:type">FLAIR tool</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+                    </div>
+                    <div class="modal-footer">
+                        <center>
+                            <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="">CLOSE</button>
+                        </center>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        
+        
+        
+        
 
 	<!-- VISUALIZATION FILTER MODAL -->
         <div class="modal fade modal-xl" id="myModal_Visualize" tabindex="-1" role="dialog" aria-hidden="true" style="margin:0 auto;">
@@ -1089,10 +1201,10 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <center><h3 class="modal-title">Interactive visualization of results </h3>
-                            | <b>select ranges</b> by dragging the pointers up and down |<br>
-                            | <b>change the order of axes</b> by dragging them left and right |<br>
-                            | <b>add or remove axes</b> via checkboxes on the right |
+                        &nbsp;&nbsp;
+                        <button type="button" ><span aria-hidden="true"><span class="glyphicon glyphicon-question-sign" title="select ranges by dragging the pointers up and down *** change the order of axes by dragging them left and right *** add or remove axes via checkboxes on the right "></span></span></button>
+                        <center>
+                            <h4 style="" id="query_vis"> </h4> 
                         </center>
                     </div>
                     <div class="modal-body">
@@ -2822,6 +2934,12 @@
                 </div>
             </div>
         </div>
+        
+<!--            <div class="row">
+                <div style="text-align: center; color:orange; margin-top:40px;" id="report-problem" class="col-md-2">
+                    <span class="glyphicon glyphicon-envelope"></span><a href="mailto:maria.chinkina@uni-tuebingen.de?Subject=Feedback%20(FLAIR)" target="_top" title="Report a problem or just share your feedback." style="color:darkorange;"> Problem | Feedback</a>
+                </div>        
+            </div>-->
 
     <!--    <script type="text/javascript" src="js/libs/jquery/jquery.js"></script> -->
         <script type="text/javascript" src="js/libs/jquery/jquery.min.js"></script>
