@@ -24,35 +24,26 @@ If you can�t replicate it, don�t spend too much time on it though.
 MARIA
 
 
-> - A small button "About FLAIR" (on top right of page?) is missing - it
->  should say what it is (similar to the initial splash information),
->  point to the people involved, probably also include a link to your thesis,
->  and contact information.
-+ OK
-
-
-> - In the visualization, I'd change the information that it shows on
->  the top of that page - it's not visually pleasing. How about instead
->  showing the search term there (instead of "interactive visualization
->  of results" and putting the three help lines below behind a help
->  button or something like that?
-+ OK
-
-
-> - The text "Welcome to FLAIR - a tool that: ..." should be slightly
->  increased in font size and the vertical space should be reduced
->  (both between the Welcome ... and the first - item and between the -
->  items).
-+ OK
-
-
-> Add a logo
-
-
 > Change the code to work with Universal Dependencies (or both, optionally)
 
 
-> - The css layout of the page should be improved to work better for
->  more narrow windows - it floats the Settings button to above and the
->  other three bar settings to below the search box (cf. attached screen shot).
-+ Bootstrap is a pain :/ will look into CSS etc.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
