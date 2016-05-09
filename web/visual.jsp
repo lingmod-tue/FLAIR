@@ -1202,7 +1202,7 @@
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         &nbsp;&nbsp;
-                        <button type="button" ><span aria-hidden="true"><span class="glyphicon glyphicon-question-sign" title="select ranges by dragging the pointers up and down *** change the order of axes by dragging them left and right *** add or remove axes via checkboxes on the right "></span></span></button>
+                        <label class="close"><span aria-hidden="true"><span class="glyphicon glyphicon-question-sign" title="select ranges by dragging the pointers up and down *** change the order of axes by dragging them left and right *** add or remove axes via checkboxes on the right "></span></span></label>
                         <center>
                             <h4 style="" id="query_vis"> </h4> 
                         </center>

@@ -291,8 +291,12 @@ FLAIR.WEBRANKER.UTIL.TOGGLE.rightSidebar = function(show) {
 };
 FLAIR.WEBRANKER.UTIL.TOGGLE.visualiserDialog = function(show) {
     if (show) {
-        $("#query_vis").html("\"" + $("#search_field").val() + "\" (" + $("#fetch_result_count").val() + " web pages)");
-	$("#myModal_Visualize").modal('show');
+        if (($("#search_field").val()).trim() !== "") {
+            $("#query_vis").html("\"" + $("#search_field").val() + "\" (" + $("#fetch_result_count").val() + " web pages)");
+        } else {
+            $("#query_vis").html("Interactive Visualization");
+        }
+        $("#myModal_Visualize").modal('show');
     }
     else
 	$("#myModal_Visualize").modal('hide');
