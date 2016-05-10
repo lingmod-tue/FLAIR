@@ -1110,7 +1110,7 @@
                             <h3 class="modal-title">About FLAIR </h3>
                                                     <p><span style="color:darkorange"><b>by</b></span> <a href="http://sfs.uni-tuebingen.de/~mchnkina/" target="_blank">Maria Chinkina</a> <a href="mailto:maria.chinkina@uni-tuebingen.de?Subject=FLAIR%20tool" target="_top" title="write to Maria Chinkina"><span class="glyphicon glyphicon-envelope"></span></a> 
                             &
-                            <a href="" target="_blank">Madeesh Kannan</a> <a href="mailto:mkannan@sfs.uni-tuebingen.de?Subject=FLAIR%20tool" target="_top" title="write to Madeesh Kannan"><span class="glyphicon glyphicon-envelope"></span></a> supervised by 
+                            <a href="" target="_blank">Madeeswaran Kannan</a> <a href="mailto:mkannan@sfs.uni-tuebingen.de?Subject=FLAIR%20tool" target="_top" title="write to Madeeswaran Kannan"><span class="glyphicon glyphicon-envelope"></span></a> supervised by 
                             <a href="http://sfs.uni-tuebingen.de/~dm/" target="_blank">Prof. Dr. Detmar Meurers</a> 
                             <br> <span style="color:darkorange">@</span> University of Tübingen, Germany <span style="color:darkorange">|</span> 2015-2016
                         </p>
@@ -1162,7 +1162,7 @@
                         <ul>
                             <li><a href="http://sfs.uni-tuebingen.de/~mchnkina/downloads/Chinkina_Maria_thesis_2015.pdf" target="_blank">MA thesis by Maria Chinkina</a></li>
                             <li><a href="http://sfs.uni-tuebingen.de/~mchnkina/downloads/Chinkina_Meurers_BEA_2016.pdf" target="_blank">BEA paper</a> (Maria Chinkina, Detmar Meurers)</li>
-                            <li><a href="http://sfs.uni-tuebingen.de/~mchnkina/downloads/Chinkina_Kannan_Meurers_ACL_2016.pdf" target="_blank">System description paper</a> (Maria Chinkina, Madeesh Kannan, Detmar Meurers)</li>
+                            <li><a href="http://sfs.uni-tuebingen.de/~mchnkina/downloads/Chinkina_Kannan_Meurers_ACL_2016.pdf" target="_blank">System description paper</a> (Maria Chinkina, Madeeswaran Kannan, Detmar Meurers)</li>
                         </ul>
                         <br>
                         <p><b>ADDITIONAL MATERIAL:</b></p>
