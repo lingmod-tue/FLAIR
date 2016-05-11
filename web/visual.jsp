@@ -14,14 +14,14 @@
         <link rel='stylesheet' href='js/libs/bootstrap-3.3.4-dist/css/bootstrap.css'>
         <link rel='stylesheet' href="js/libs/bootstrap-3.3.4-dist/css/bootstrap.min.css">
         <link rel='stylesheet' href='js/libs/bootstrap-3.3.4-dist/css/bootstrap-theme.css'>
-        
+
         <link href="css/simple-sidebar.css" rel="stylesheet">
         <link href="css/simple-sidebar-right.css" rel="stylesheet">
         <link rel="stylesheet" href="css/dashboard.css" />
         <link rel="stylesheet" href="css/docs.min.css" />
         <link rel="stylesheet" href="css/number-polyfill.css" />
         <link rel="stylesheet" href="css/flair_visual.css" />
-	<link href="js/libs/toastr/toastr.min.css" rel="stylesheet"/>
+        <link href="js/libs/toastr/toastr.min.css" rel="stylesheet"/>
 
         <title>FLAIR</title>
     </head>
@@ -29,52 +29,52 @@
     <body style="background-color: white;">
         <div id="wrapper" >
             <div class="container">
-                
+
                 <div class="navbar navbar-default navbar-fixed-top" role="navigation">
                     <div class="container-fluid">               
-                      
-                      
-                      <div class="row"  style="margin-top: 1%; margin-bottom:1%">
-                         
+
+
+                        <div class="row"  style="margin-top: 1%; margin-bottom:1%">
+
                             <div class="col-lg-1"  style="text-align:left;">
                                 <a href="#menu-toggle" class="btn btn-warning" id="menu-toggle"><span class="glyphicon glyphicon-cog"></span></a>
                             </div>
-                         
-                            <div class="col-lg-10"  style="text-align:center;">
-                           
-                <form class="form-inline" name="search_form" id="search_form"  style="width:100%;">
-                                <div  class="input-group">
-                                  <a href="javascript:$('#myModal_About').modal('show');" style="color:orange" ><img src="img/logo_2.png" alt=">"></a>
-                                </div>
-                                
-					  <div class="input-group" style="width:60%;">
-                        <input type="text" id="search_field" name="query" class="form-control">
-<!--					    <div class="input-group-btn"  style="text-align:right;">
-						<button type="button" class="btn" onclick="FLAIR.WEBRANKER.singleton.beginSearch()" id="search_button" data-loading-text="<img style='height:18px;' src='img/ajax-loader.gif' alt='...'/>">GO</button>
-                        </div> 
--->
-					  </div>
 
-                  <div class="input-group">
-					    <select class="form-control" id="fetch_result_count">
-						  <option value="10">10 results</option>
-						  <option selected="selected" value="20">20 results</option>
-						  <option value="30">30 results</option>
-						  <option value="40">40 results</option>
-						  <option value="50">50 results</option>
-					    </select>
-					  </div>
-		</form>
+                            <div class="col-lg-10"  style="text-align:center;">
+
+                                <form class="form-inline" name="search_form" id="search_form"  style="width:100%;">
+                                    <div  class="input-group">
+                                        <a href="javascript:$('#myModal_About').modal('show');" style="color:orange" ><img src="img/logo_2.png" alt=">"></a>
+                                    </div>
+
+                                    <div class="input-group" style="width:60%;">
+                                        <input type="text" id="search_field" name="query" class="form-control">
+                                        <!--					    <div class="input-group-btn"  style="text-align:right;">
+                                                                                        <button type="button" class="btn" onclick="FLAIR.WEBRANKER.singleton.beginSearch()" id="search_button" data-loading-text="<img style='height:18px;' src='img/ajax-loader.gif' alt='...'/>">GO</button>
+                                                                </div> 
+                                        -->
+                                    </div>
+
+                                    <div class="input-group">
+                                        <select class="form-control" id="fetch_result_count">
+                                            <option value="10">10 results</option>
+                                            <option selected="selected" value="20">20 results</option>
+                                            <option value="30">30 results</option>
+                                            <option value="40">40 results</option>
+                                            <option value="50">50 results</option>
+                                        </select>
+                                    </div>
+                                </form>
                             </div>
-                           
-                         
-                         <div class="col-lg-1" style="text-align:right;"><span id="right-menu-toggle"><img src="img/glyphicons-517-menu-hamburger.png" alt=">"></span>
-                         </div>
-                         
+
+
+                            <div class="col-lg-1" style="text-align:right;"><span id="right-menu-toggle"><img src="img/glyphicons-517-menu-hamburger.png" alt=">"></span>
+                            </div>
+
                         </div>
-                      
-                      
-                      
+
+
+
 
                     </div>
                 </div>
@@ -112,13 +112,20 @@
                                     </div>
                                 </div>
                             </div>
-                            <hr>                            
+<!--                            <hr>  
+                                                        <div>
+                                                            Academic vocabulary <br>
+                                                            <div class="ui-widget-content" style="width:80%;">
+                                                                <div class="gradientSlider" title="move right to rank texts with this construct higher" id="awl-gradientSlider"></div>
+                                                            </div>
+                                                        </div>-->
+                            <hr>
                             <div id="settings_panel">
                                 <!-- a list of all constructions -->
                                 <div style="text-align: center;">
                                     <a href="#constructs-toggle" id="constructs-toggle"><b>LIST OF CONSTRUCTIONS</b></a><br><br>
                                 </div>
-                                
+
                                 <div class="panel panel-warning">
                                     <div class="panel-heading">
                                         <h4 class="panel-title">
@@ -1053,8 +1060,8 @@
 
 
                                 <br><hr>
-				
-				<div class="panel panel-info" style="text-align: center">
+
+                                <div class="panel panel-info" style="text-align: center">
                                     <a href="javascript:FLAIR.WEBRANKER.singleton.exportSettings();" style="color:grey;">EXPORT</a>
                                 </div>
 
@@ -1086,7 +1093,7 @@
             </div>
         </div>
 
-	<!-- RIGHT SIDEBAR-->
+        <!-- RIGHT SIDEBAR-->
         <div id="sidebar-wrapper-right">
             <div  class="sidebar-nav-right" id="sidebar-right">
                 <br><br><br><br>
@@ -1094,12 +1101,12 @@
                 </div>
             </div>
         </div>
-        
-        
-        
-        
-        
-        
+
+
+
+
+
+
         <!-- ABOUT FLAIR MODAL -->
         <div class="modal fade modal-lg" id="myModal_About" tabindex="-1" role="dialog" aria-hidden="true" style="margin:0 auto;">
             <div class="modal-dialog modal-lg">
@@ -1118,46 +1125,46 @@
                     </div>
                     <div class="modal-body">
                         <div  style="text-align: center">
-                        <p>FLAIR is an online tool for language teachers and learners that:
-                        </p>
-                        <ul   style="text-align: left">
-                        <li>searches the web for a topic of interest </li>
-                        <li>analyzes the results for grammatical constructions and readability levels </li>
-                        <li>re-ranks the results according to your (pedagogical or learning) needs specified in the settings</li>
-                        </ul>
-                                                
+                            <p>FLAIR is an online tool for language teachers and learners that:
+                            </p>
+                            <ul   style="text-align: left">
+                                <li>searches the web for a topic of interest </li>
+                                <li>analyzes the results for grammatical constructions and readability levels </li>
+                                <li>re-ranks the results according to your (pedagogical or learning) needs specified in the settings</li>
+                            </ul>
 
-                        
-                        
-<!--                        <div class="panel panel-success" style="display:inline-block;width:30%;">
-                            <div class="panel-heading" style="text-align: center">
-                                <h3 class="panel-title">SEARCH</h3>
-                            </div>
-                            <div class="panel-body">
-                                Type in a search query. <br>
-                                FLAIR fetches the results from Microsoft Bing.
-                            </div>
-                        </div>
-                        <div class="panel panel-warning" style="display:inline-block;width:30%;">
-                            <div class="panel-heading" style="text-align: center">
-                                <h3 class="panel-title">CONFIGURE</h3>
-                            </div>
-                            <div class="panel-body">
-                                Configure the settings: <b>text</b> (complexity, length) and <b>language</b> (the passive, wh- questions, ...) 
-                            </div>
-                        </div>
-                        <div class="panel panel-info" style="display:inline-block;width:30%;">
-                            <div class="panel-heading" style="text-align: center">
-                                <h3 class="panel-title">READ</h3>
-                            </div>
-                            <div class="panel-body">
-                                Now FLAIR has re-ranked the documents to satisfy the configured settings.
-                                Enjoy!                      
-                            </div>
-                        </div>-->
+
+
+
+                            <!--                        <div class="panel panel-success" style="display:inline-block;width:30%;">
+                                                        <div class="panel-heading" style="text-align: center">
+                                                            <h3 class="panel-title">SEARCH</h3>
+                                                        </div>
+                                                        <div class="panel-body">
+                                                            Type in a search query. <br>
+                                                            FLAIR fetches the results from Microsoft Bing.
+                                                        </div>
+                                                    </div>
+                                                    <div class="panel panel-warning" style="display:inline-block;width:30%;">
+                                                        <div class="panel-heading" style="text-align: center">
+                                                            <h3 class="panel-title">CONFIGURE</h3>
+                                                        </div>
+                                                        <div class="panel-body">
+                                                            Configure the settings: <b>text</b> (complexity, length) and <b>language</b> (the passive, wh- questions, ...) 
+                                                        </div>
+                                                    </div>
+                                                    <div class="panel panel-info" style="display:inline-block;width:30%;">
+                                                        <div class="panel-heading" style="text-align: center">
+                                                            <h3 class="panel-title">READ</h3>
+                                                        </div>
+                                                        <div class="panel-body">
+                                                            Now FLAIR has re-ranked the documents to satisfy the configured settings.
+                                                            Enjoy!                      
+                                                        </div>
+                                                    </div>-->
 
                         </div>
-                        
+
                         <p><b>PAPERS:</b></p>
                         <ul>
                             <li><a href="http://sfs.uni-tuebingen.de/~mchnkina/downloads/Chinkina_Maria_thesis_2015.pdf" target="_blank">MA thesis by Maria Chinkina</a></li>
@@ -1179,7 +1186,7 @@
                         </ul>
                         <br>
                         <p><b>LICENSE:</b> </p>
-<a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/InteractiveResource" property="dct:title" rel="dct:type">FLAIR tool</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+                        <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/InteractiveResource" property="dct:title" rel="dct:type">FLAIR tool</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
                     </div>
                     <div class="modal-footer">
                         <center>
@@ -1189,21 +1196,21 @@
                 </div>
             </div>
         </div>
-        
-        
-        
-        
-        
 
-	<!-- VISUALIZATION FILTER MODAL -->
+
+
+
+
+
+        <!-- VISUALIZATION FILTER MODAL -->
         <div class="modal fade modal-xl" id="myModal_Visualize" tabindex="-1" role="dialog" aria-hidden="true" style="margin:0 auto;">
             <div class="modal-dialog modal-xl">
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        &nbsp;&nbsp;
-                        <label class="close"><span aria-hidden="true"><span class="glyphicon glyphicon-question-sign" title="select ranges by dragging the pointers up and down *** change the order of axes by dragging them left and right *** add or remove axes via checkboxes on the right "></span></span></label>
-                        <center>
+
+                        <label class="close" data-toggle="popover" data-placement="auto left" data-content="<ul><li> <br><b>select ranges</b> by dragging the pointers up and down </li><br><li> <b>change the order of axes</b> by dragging them left and right </li><br><li> <b>add or remove axes</b> via checkboxes on the right </li></ul>"><span class="glyphicon glyphicon-question-sign" aria-hidden="true">&nbsp;</span></label>
+                        <center> 
                             <h4 style="" id="query_vis"> </h4> 
                         </center>
                     </div>
@@ -1949,31 +1956,31 @@
             </div>
         </div>
 
-	<!-- IDLE MODAL -->
+        <!-- IDLE MODAL -->
         <div class="modal modal-lg" id="modal_WaitIdle" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false" style="margin:0 auto;">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <center>
-                    <div class="modal-body">
-                        <br><img style='height:30px;' src='img/ajax-loader.gif' alt='...'/><br/>
-                        <div class="tab-pane fade active in" id="modal_waitIdle_body">
+                        <div class="modal-body">
+                            <br><img style='height:30px;' src='img/ajax-loader.gif' alt='...'/><br/>
+                            <div class="tab-pane fade active in" id="modal_waitIdle_body">
                                 <p>Please wait while we process your meat...</p>
+                            </div>
                         </div>
-                    </div>
                     </center>
                     <div class="modal-footer">
                         <div style="text-align: center;">
-			    <button type="button" class="btn btn-primary" id="modal_waitIdle_buttonYes">Yes</button>
-			    <button type="button" class="btn btn-primary" id="modal_waitIdle_buttonNo">No</button>
+                            <button type="button" class="btn btn-primary" id="modal_waitIdle_buttonYes">Yes</button>
+                            <button type="button" class="btn btn-primary" id="modal_waitIdle_buttonNo">No</button>
                             <button type="button" class="btn btn-primary" id="modal_waitIdle_buttonCancel">Cancel</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        
-	<!-- CONSTRUCTIONS MODAL -->
-         <div class="modal fade modal-lg" id="myModal_Constructs" tabindex="-1" role="dialog" aria-hidden="true" style="margin:0 auto;">
+
+        <!-- CONSTRUCTIONS MODAL -->
+        <div class="modal fade modal-lg" id="myModal_Constructs" tabindex="-1" role="dialog" aria-hidden="true" style="margin:0 auto;">
             <div class="modal-dialog modal-xl">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -2909,55 +2916,63 @@
             </div>
         </div>
 
-	<!-- EXPORT SETTINGS MODAL -->
-	<div class="modal fade modal-lg" id="modal_ExportSettings" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false" style="margin:0 auto;">
+        <!-- EXPORT SETTINGS MODAL -->
+        <div class="modal fade modal-lg" id="modal_ExportSettings" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false" style="margin:0 auto;">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content" style="text-align: center;">
-		    <div class="modal-header">
-			<button type="button" class="close" data-dismiss="modal">&times;</button>
-			<h4 class="modal-title">Export Settings</h4>
-		    </div>
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Export Settings</h4>
+                    </div>
                     <div class="modal-body">
                         <div class="tab-pane fade active in" id="modal_ExportSettings_body">
-                                <div class="input-group">
-				    <div class="input-group-addon">URL</div>
-				    <input class="form-control" id="exported_settings_url" readonly>
-				    <span class="input-group-btn">
-					<button class="btn btn-default" type="button" onclick="FLAIR.WEBRANKER.UTIL.copyToClipboard('#exported_settings_url')">Copy</button>
-				    </span>
-				</div>
+                            <div class="input-group">
+                                <div class="input-group-addon">URL</div>
+                                <input class="form-control" id="exported_settings_url" readonly>
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="button" onclick="FLAIR.WEBRANKER.UTIL.copyToClipboard('#exported_settings_url')">Copy</button>
+                                </span>
+                            </div>
                         </div>
-			<div class="modal-footer"  style="text-align: center;">
-			    You can use this URL to automatically apply your current settings to every search operation.
-			</div>
+                        <div class="modal-footer"  style="text-align: center;">
+                            You can use this URL to automatically apply your current settings to every search operation.
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        
-<!--            <div class="row">
-                <div style="text-align: center; color:orange; margin-top:40px;" id="report-problem" class="col-md-2">
-                    <span class="glyphicon glyphicon-envelope"></span><a href="mailto:maria.chinkina@uni-tuebingen.de?Subject=Feedback%20(FLAIR)" target="_top" title="Report a problem or just share your feedback." style="color:darkorange;"> Problem | Feedback</a>
-                </div>        
-            </div>-->
 
-    <!--    <script type="text/javascript" src="js/libs/jquery/jquery.js"></script> -->
+        <!--            <div class="row">
+                        <div style="text-align: center; color:orange; margin-top:40px;" id="report-problem" class="col-md-2">
+                            <span class="glyphicon glyphicon-envelope"></span><a href="mailto:maria.chinkina@uni-tuebingen.de?Subject=Feedback%20(FLAIR)" target="_top" title="Report a problem or just share your feedback." style="color:darkorange;"> Problem | Feedback</a>
+                        </div>        
+                    </div>-->
+
+        <!--    <script type="text/javascript" src="js/libs/jquery/jquery.js"></script> -->
         <script type="text/javascript" src="js/libs/jquery/jquery.min.js"></script>
         <script type="text/javascript" src="js/libs/jqueryui/jquery-ui.js"></script>
         <script type="text/javascript" src="js/libs/tablesorter/jquery.tablesorter.js"></script>
-        
-    <!--    <script type="text/javascript" src="js/libs/twitter-bootstrap/js/bootstrap.js"></script> -->
+
+        <!--    <script type="text/javascript" src="js/libs/twitter-bootstrap/js/bootstrap.js"></script> -->
         <script type="text/javascript" src="js/libs/twitter-bootstrap/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="js/libs/twitter-bootstrap/js/bootstrap-confirmation.js"></script>
-        
+
         <script type="text/javascript" src="js/libs/number-polyfill.js"></script>
         <script type="text/javascript" src="js/libs/d3/d3.js"></script>
-    <!--    <script type="text/javascript" src="js/libs/d3/d3.v3.js"></script> -->
+        <!--    <script type="text/javascript" src="js/libs/d3/d3.v3.js"></script> -->
         <script type="text/javascript" src="js/libs/d3/d3.v3.min.js"></script>
         <script type="text/javascript" src="js/libs/toastr/toastr.min.js"></script>
 
         <script type="text/javascript" src="js/flair-core.js"></script>
-	<script type="text/javascript" src="js/flair-plumbing.js"></script>
+        <script type="text/javascript" src="js/flair-plumbing.js"></script>
         <script type="text/javascript" src="js/flair-webranker.js"></script>
+
+        <script>
+                                        $(document).ready(function () {
+                                            $('[data-toggle="popover"]').popover({
+                                                html: true
+                                            });
+                                        });
+        </script>
     </body>
 </html>
