@@ -2968,11 +2968,7 @@
         <script type="text/javascript" src="js/flair-webranker.js"></script>
 
         <script>
-                                        $(document).ready(function () {
-                                            $('[data-toggle="popover"]').popover({
-                                                html: true
-                                            });
-                                        });
+                                        
         </script>
     </body>
 </html>

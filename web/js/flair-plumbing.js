@@ -9,6 +9,7 @@ FLAIR.PLUMBING.CONSTANTS.MESSAGE.SOURCE.CLIENT					= "CLIENT";
 FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.CANCEL_JOB				= "CANCEL_JOB";
 FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.NEW_JOB					= "NEW_JOB";
 FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.JOB_COMPLETE				= "JOB_COMPLETE";
+FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.SERVER_ERROR				= "SERVER_ERROR";
 FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.PERFORM_SEARCH				= "PERFORM_SEARCH";
 FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.PARSE_SEARCH_RESULTS			= "PARSE_SEARCH_RESULTS";
 FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.FETCH_SEARCH_RESULTS			= "FETCH_SEARCH_RESULTS";
@@ -16,7 +17,7 @@ FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.FETCH_PARSED_DATA				= "FETCH_PARSED_DATA"
 FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.FETCH_PARSED_VISUALISATION_DATA		= "FETCH_PARSED_VISUALISATION_DATA";
 
 //=============================== FLAIR.PLUMBING =============================//
-FLAIR.PLUMBING.PIPELINE = function(webSearch_complete, parseSearchResults_complete, searchResults_fetch, parsedData_fetch, parsedVisData_fetch) {
+FLAIR.PLUMBING.PIPELINE = function(webSearch_complete, parseSearchResults_complete, searchResults_fetch, parsedData_fetch, parsedVisData_fetch, pipeline_onClose, pipeline_onServerError) {
     // PRIVATE VARS
     var socket = null;				// main websocket
     var connected = false;			// socket status
@@ -34,7 +35,9 @@ FLAIR.PLUMBING.PIPELINE = function(webSearch_complete, parseSearchResults_comple
 	    searchResults: searchResults_fetch,
 	    parsedData: parsedData_fetch,
 	    parsedVisData: parsedVisData_fetch
-	}
+	},
+	pipeline_closed: pipeline_onClose,
+	pipeline_serverError: pipeline_onServerError
     };
     
     // PRIVATE INTERFACE
@@ -50,6 +53,19 @@ FLAIR.PLUMBING.PIPELINE = function(webSearch_complete, parseSearchResults_comple
 
 	switch (msg.baseData.type)
 	{
+	    case FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.SERVER_ERROR:
+		var errorSource = msg.source;
+		var errorMsg = msg.errorMessage;
+		console.log("Server encountered an error. Error source: " + errorSource + ", Error message: " + errorMsg);
+		
+		last_queued_job_id = null;
+		last_queued_job_type = null;
+		last_sent_request_type = null;
+		
+		handlers.pipeline_serverError();
+	    
+		break;
+		
 	    case FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.NEW_JOB:
 		var reqType = msg.request;
 		if (reqType !== last_sent_request_type)
@@ -122,6 +138,7 @@ FLAIR.PLUMBING.PIPELINE = function(webSearch_complete, parseSearchResults_comple
 	last_queued_job_type = null;
 	last_sent_request_type = null;
 	
+	handlers.pipeline_closed();
 	handlers = [];
 
 	console.log("Pipeline closed. Close code: " + event.code + (event.reason === "" ? "" : ", Reason: " + event.reason));

@@ -46,6 +46,8 @@ class BasicInteropMessage
 	NEW_JOB,
 	@SerializedName("JOB_COMPLETE")
 	JOB_COMPLETE,
+	@SerializedName("SERVER_ERROR")
+	SERVER_ERROR,
 	
 	// bi-directional
 	@SerializedName("PERFORM_SEARCH")
@@ -108,6 +110,20 @@ class JobCompleteResponse
 	baseData = new BasicInteropMessage(BasicInteropMessage.MessageSource.SERVER, BasicInteropMessage.MessageType.JOB_COMPLETE);
 	this.request = requestMessage;
 	this.jobID = jobID;
+    }
+}
+
+class ServerErrorResponse
+{
+    public final BasicInteropMessage			    baseData;
+    public final BasicInteropMessage.MessageType	    source;	    // the message associated with the error
+    public final String					    errorMessage;
+
+    public ServerErrorResponse(BasicInteropMessage.MessageType sourceMsg, String errorString)
+    {
+	baseData = new BasicInteropMessage(BasicInteropMessage.MessageSource.SERVER, BasicInteropMessage.MessageType.SERVER_ERROR);
+	this.source = sourceMsg;
+	this.errorMessage = errorString;
     }
 }
 

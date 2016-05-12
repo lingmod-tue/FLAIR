@@ -220,6 +220,15 @@ FLAIR.WEBRANKER.UTIL.WAIT.INSTANCE = function() {
     
     showDialog(true);
   };
+  this.showNonClosable = function(displayContent) {
+    reset();
+    
+    content = displayContent;
+    
+    $("#modal_waitIdle_body").html(content);
+    
+    showDialog(true);
+  };
   this.clear = function() {
       reset();
       showDialog(false);
@@ -1491,6 +1500,12 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	FLAIR.WEBRANKER.UTIL.TOAST.clear(true);
 	FLAIR.WEBRANKER.UTIL.TOAST.error("FLAIR encountered a fatal error.", false, 0);
     };
+    var pipeline_onClose = function() {
+	FLAIR.WEBRANKER.UTIL.resetUI();
+	state.reset();
+	
+	FLAIR.WEBRANKER.UTIL.WAIT.singleton.showNonClosable("Your session has expired. Please refresh your web browser.");
+    };
     var complete_webSearch = function(jobID, totalResults) {
 	if (totalResults === 0)
 	{
@@ -1572,7 +1587,7 @@ FLAIR.WEBRANKER.INSTANCE = function() {
     
     // PRIVATE VARS
     var state = new FLAIR.WEBRANKER.STATE();
-    var pipeline = new FLAIR.PLUMBING.PIPELINE(complete_webSearch, complete_parseSearchResults, fetch_searchResults, fetch_parsedData, fetch_parsedVisData);
+    var pipeline = new FLAIR.PLUMBING.PIPELINE(complete_webSearch, complete_parseSearchResults, fetch_searchResults, fetch_parsedData, fetch_parsedVisData, pipeline_onClose, pipeline_onError);
     var visualiser = new FLAIR.WEBRANKER.VISUALISATION(state.isDocFiltered, state.isConstructionEnabled);
     var initialized = false;
     var self = this;
@@ -1762,6 +1777,8 @@ window.onload = function() {
 	var theVar = document.getElementById("all_constructions_table");
 	if (theVar)
 	    $("#all_constructions_table").tablesorter();
+	
+	$('[data-toggle="popover"]').popover({ html: true });
     });
 
     FLAIR.WEBRANKER.UTIL.resetUI();
@@ -1770,3 +1787,4 @@ window.onload = function() {
 window.onbeforeunload = function() {
     FLAIR.WEBRANKER.singleton.deinit();
 };
+

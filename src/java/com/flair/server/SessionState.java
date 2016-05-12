@@ -73,7 +73,7 @@ class SessionState
 		    }
 				    
 		    default:
-			FLAIRLogger.get().error("Couldn't generate response for pipeline operation " + opID + " of type " + source.getType());
+			sendErrorResponse(BasicInteropMessage.MessageType.JOB_COMPLETE, "Couldn't generate response for pipeline operation " + opID + " of type " + source.getType());
 		}
 	    }
 	}
@@ -132,20 +132,25 @@ class SessionState
 	return op;
     }
     
+    private void sendErrorResponse(BasicInteropMessage.MessageType source, String errorString)
+    {
+	FLAIRLogger.get().error(errorString);
+	sendMessage(new ServerErrorResponse(source, errorString));
+    }
     
     public synchronized void handleMessage(String message)
     {
 	FLAIRLogger.get().info("Received request from client. Message: " + message);
-	BasicInteropMessage.MessageType responseType = ServerClientInteropManager.getRequestType(message);
+	BasicInteropMessage.MessageType requestType = ServerClientInteropManager.getRequestType(message);
 	
-	switch (responseType)
+	switch (requestType)
 	{
 	    case CANCEL_JOB:
 	    {
 		CancelJobRequest req = ServerClientInteropManager.toCancelJobRequest(message);
 		AbstractPipelineOperation op = idTable.get(req.jobID);
 		if (op == null)
-		    FLAIRLogger.get().error("Invalid cancellation request. No operation with ID " + req.jobID);
+		    sendErrorResponse(requestType, "Invalid cancellation request. No operation with ID " + req.jobID);
 		else
 		    op.cancel();
 		
@@ -156,11 +161,11 @@ class SessionState
 	    {
 		PerformSearchRequest req = ServerClientInteropManager.toPerformSearchRequest(message);
 		if (req.query.length() == 0)
-		     FLAIRLogger.get().error("Invalid search query");
+		     sendErrorResponse(requestType, "Empty search query");
 		else
 		{
 		    AbstractPipelineOperation op = performWebSearchJob(req.query, req.language, req.numResults);
-		    String id = registerOperation(op, responseType);
+		    String id = registerOperation(op, requestType);
 
 		    sendMessage(new PerformSearchResponse(id));
 		    op.begin();
@@ -175,9 +180,9 @@ class SessionState
 		AbstractPipelineOperation op = idTable.get(req.jobID);
 		
 		if (op == null)
-		    FLAIRLogger.get().error("Invalid fetch search results request. No operation with ID " + req.jobID);
+		    sendErrorResponse(requestType, "Invalid fetch search results request. No operation with ID " + req.jobID);
 		else if (op.getType() != PipelineOperationType.WEB_SEARCH_CRAWL)
-		    FLAIRLogger.get().error("Invalid fetch search results request. Operation with ID " + req.jobID + " is of type " + op.getType());
+		    sendErrorResponse(requestType, "Invalid fetch search results request. Operation with ID " + req.jobID + " is of type " + op.getType());
 		else
 		{
 		    Object output = op.getOutput();
@@ -185,7 +190,7 @@ class SessionState
 		    List<SearchResult> toSend = new ArrayList<>();
 		    
 		    if (req.start > searchResults.size())
-			FLAIRLogger.get().error("Invalid fetch search results request. Start index " + req.start + " > available results (" + searchResults.size() + ")");
+			sendErrorResponse(requestType, "Invalid fetch search results request. Start index " + req.start + " > available results (" + searchResults.size() + ")");
 		    else
 		    {
 			if (req.start == -1 && req.count == -1)
@@ -213,9 +218,9 @@ class SessionState
 		AbstractPipelineOperation op = idTable.get(req.jobID);
 		
 		if (op == null)
-		    FLAIRLogger.get().error("Invalid parse search results request. No invalid web search operation ID " + req.jobID);
+		    sendErrorResponse(requestType, "Invalid parse search results request. No invalid web search operation ID " + req.jobID);
 		else if (op.getType() != PipelineOperationType.WEB_SEARCH_CRAWL)
-		    FLAIRLogger.get().error("Invalid parse search results request. Operation with ID " + req.jobID + " is of type " + op.getType());
+		    sendErrorResponse(requestType, "Invalid parse search results request. Operation with ID " + req.jobID + " is of type " + op.getType());
 		else
 		{
 		    Object output = op.getOutput();
@@ -223,14 +228,14 @@ class SessionState
 		    List<AbstractDocumentSource> docSources = new ArrayList<>();
 		    
 		    if (searchResults.isEmpty())
-			FLAIRLogger.get().error("Invalid parse search results request. Operation with ID " + req.jobID + " has zero results");
+			sendErrorResponse(requestType, "Invalid parse search results request. Operation with ID " + req.jobID + " has zero results");
 		    else
 		    {
 			for (SearchResult itr : searchResults)
 			    docSources.add(new SearchResultDocumentSource(itr));
 		    
 			AbstractPipelineOperation newOp = performDocumentParsingJob(searchResults.get(0).getLanguage(), docSources);
-			String id = registerOperation(newOp, responseType);
+			String id = registerOperation(newOp, requestType);
 
 			sendMessage(new ParseSearchResultsResponse(id));
 			newOp.begin();
@@ -247,9 +252,9 @@ class SessionState
 		AbstractPipelineOperation op = idTable.get(req.jobID);
 		
 		if (op == null)
-		    FLAIRLogger.get().error("Invalid fetch parsed data request. No operation with ID " + req.jobID);
+		    sendErrorResponse(requestType, "Invalid fetch parsed data request. No operation with ID " + req.jobID);
 		else if (op.getType() != PipelineOperationType.PARSE_DOCUMENTS)
-		    FLAIRLogger.get().error("Invalid fetch parsed data request. Operation with ID " + req.jobID + " is of type " + op.getType());
+		    sendErrorResponse(requestType, "Invalid fetch parsed data request. Operation with ID " + req.jobID + " is of type " + op.getType());
 		else
 		{
 		    Object output = op.getOutput();
@@ -257,7 +262,7 @@ class SessionState
 		    List<AbstractDocument> toSend = new ArrayList<>();
 		    
 		    if (req.start > parsedDocs.size())
-			FLAIRLogger.get().error("Invalid fetch parsed data request. Start index " + req.start + " > available results (" + parsedDocs.size() + ")");
+			sendErrorResponse(requestType, "Invalid fetch parsed data request. Start index " + req.start + " > available results (" + parsedDocs.size() + ")");
 		    else
 		    {
 			if (req.start == -1 && req.count == -1)
@@ -285,9 +290,9 @@ class SessionState
 		AbstractPipelineOperation op = idTable.get(req.jobID);
 		
 		if (op == null)
-		    FLAIRLogger.get().error("Invalid fetch parsed data request. No operation with ID " + req.jobID);
+		    sendErrorResponse(requestType, "Invalid fetch parsed data request. No operation with ID " + req.jobID);
 		else if (op.getType() != PipelineOperationType.PARSE_DOCUMENTS)
-		    FLAIRLogger.get().error("Invalid fetch parsed data request. Operation with ID " + req.jobID + " is of type " + op.getType());
+		    sendErrorResponse(requestType, "Invalid fetch parsed data request. Operation with ID " + req.jobID + " is of type " + op.getType());
 		else
 		{
 		    Object output = op.getOutput();
