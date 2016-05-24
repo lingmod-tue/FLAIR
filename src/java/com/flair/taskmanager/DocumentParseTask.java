@@ -6,9 +6,14 @@
 package com.flair.taskmanager;
 
 import com.flair.parser.AbstractDocument;
+import com.flair.parser.AbstractDocumentKeywordSearcher;
+import com.flair.parser.AbstractDocumentParser;
 import com.flair.parser.AbstractDocumentSource;
 import com.flair.parser.AbstractParsingStrategy;
+import com.flair.parser.KeywordSearcherInput;
+import com.flair.parser.KeywordSearcherOutput;
 import com.flair.utilities.FLAIRLogger;
+import com.flair.utilities.SimpleObjectPoolResource;
 
 /**
  * Parses a document source and returns a parsed document
@@ -19,18 +24,24 @@ class DocumentParseTask extends AbstractTask
     private final AbstractDocumentSource		input;
     private final AbstractParsingStrategy		strategy;
     private final DocumentParserPool			parserPool;
+    private final AbstractDocumentKeywordSearcher	keywordSearcher;
+    private final KeywordSearcherInput			keywordSearcherInput;
   
     public DocumentParseTask(AbstractJob job,
 			       AbstractTaskContinuation continuation, 
 			       AbstractDocumentSource source,
 			       AbstractParsingStrategy strategy,
-			       DocumentParserPool parserPool)
+			       DocumentParserPool parserPool,
+			       AbstractDocumentKeywordSearcher keywordSearcher,
+			       KeywordSearcherInput keywordSearcherInput)
     {
 	super(job, TaskType.PARSE_DOCUMENT, continuation);
 	
 	this.input = source;
 	this.strategy = strategy;
 	this.parserPool = parserPool;
+	this.keywordSearcher = keywordSearcher;
+	this.keywordSearcherInput = keywordSearcherInput;
     }
     
     @Override
@@ -38,24 +49,31 @@ class DocumentParseTask extends AbstractTask
     {
 	if (parserPool == null)
 	    throw new IllegalStateException("Parser pool not set");
+	else if (keywordSearcher == null)
+	    throw new IllegalStateException("Keyword searcher not set");
 	
 	AbstractDocument output = null;
-	DocumentParserPoolData parserPoolData = null;
+	SimpleObjectPoolResource<AbstractDocumentParser> parserPoolData = null;
 	long startTime = System.currentTimeMillis();
 	boolean error = false;
 	try 
 	{
-	    parserPoolData = parserPool.acquire();
-	    output = parserPoolData.getParser().parse(input, strategy);
+	    parserPoolData = parserPool.get();
+	    output = parserPoolData.get().parse(input, strategy);
 	    assert output.isParsed() == true;
+	    
+	    KeywordSearcherOutput keywordData = keywordSearcher.search(output, keywordSearcherInput);
+	    output.setKeywordData(keywordData);
 	}
 	catch (Exception ex)
 	{
 	    FLAIRLogger.get().error("Document parsing task encountered an error. Exception: " + ex.getMessage());
 	    error = true;
 	}
-	finally {
-	    parserPoolData.release();
+	finally
+	{
+	    if (parserPoolData != null)
+		parserPoolData.release();
 	}
 	
 	long endTime = System.currentTimeMillis();

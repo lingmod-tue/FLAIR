@@ -88,7 +88,7 @@ public class DocumentCollection implements Iterable<AbstractDocument>
 	writer.append("document,");
 	for (GrammaticalConstruction itr : GrammaticalConstruction.values())
 		 writer.append(itr.getLegacyID() + ",");
-	writer.append("# of sentences,# of words,readability score");
+	writer.append("keywords,# of sentences,# of words,readability score");
 	writer.append("\n");
 	
 	// the rest comes next
@@ -102,8 +102,13 @@ public class DocumentCollection implements Iterable<AbstractDocument>
 		Double relFreq = data.getRelativeFrequency();
 		writer.append(relFreq.toString() + ",");
 	    }
-
-	    writer.append("" + itr.getNumSentences() + "," + itr.getNumDependencies() + "," + itr.getReadabilityScore());
+	    
+	    KeywordSearcherOutput keywordData = itr.getKeywordData();
+	    double keywordRelFreq = 0;
+	    if (keywordData != null)
+		keywordRelFreq = keywordData.getTotalHitCount() / (double)itr.getNumDependencies();
+	    
+	    writer.append("" + keywordRelFreq + "," + itr.getNumSentences() + "," + itr.getNumDependencies() + "," + itr.getReadabilityScore());
 	    writer.append("\n");
 	    i++;
 	}

@@ -16,7 +16,7 @@ public interface AbstractPipelineOperation
     public void				begin();
     public boolean			isCancelled();
     public void				cancel();
-    public boolean			isCompleted();	    // returns true if the op was cancelled
+    public boolean			isCompleted();	    // also returns true if the op was cancelled
     public void				registerCompletionListener(AbstractPipelineOperationCompletionListener listener);
     
     public Object			getOutput();

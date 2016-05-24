@@ -6,9 +6,11 @@
 package com.flair.taskmanager;
 
 import com.flair.grammar.Language;
+import com.flair.parser.AbstractDocumentKeywordSearcherFactory;
 import com.flair.parser.AbstractDocumentSource;
 import com.flair.parser.AbstractParsingStrategyFactory;
 import com.flair.parser.DocumentCollection;
+import com.flair.parser.KeywordSearcherInput;
 import java.util.List;
 
 /**
@@ -17,23 +19,29 @@ import java.util.List;
  */
 class BasicDocumentParseJobInput
 {
-    public final Language			    sourceLanguage;
-    public final List<AbstractDocumentSource>	    docSources;
-    public final DocumentParseTaskExecutor	    docParsingExecutor;
-    public final DocumentParserPool		    docParserPool;
-    public final AbstractParsingStrategyFactory	    docParsingStrategy;
+    public final Language				    sourceLanguage;
+    public final List<AbstractDocumentSource>		    docSources;
+    public final DocumentParseTaskExecutor		    docParsingExecutor;
+    public final DocumentParserPool			    docParserPool;
+    public final AbstractParsingStrategyFactory		    docParsingStrategy;
+    public final AbstractDocumentKeywordSearcherFactory	    keywordSearcher;
+    public final KeywordSearcherInput			    keywordSearcherInput;
     
     public BasicDocumentParseJobInput(Language sourceLanguage,
 				     List<AbstractDocumentSource> docSources,
 				     DocumentParseTaskExecutor docParser,
 				     DocumentParserPool parserPool,
-				     AbstractParsingStrategyFactory strategy)
+				     AbstractParsingStrategyFactory strategy,
+				     AbstractDocumentKeywordSearcherFactory keywordSearcher,
+				     KeywordSearcherInput keywordSearcherInput)
     {
 	this.sourceLanguage = sourceLanguage;
 	this.docSources = docSources;
 	this.docParsingExecutor = docParser;
 	this.docParserPool = parserPool;
 	this.docParsingStrategy = strategy;
+	this.keywordSearcher = keywordSearcher;
+	this.keywordSearcherInput = keywordSearcherInput;
     }
 }
 
@@ -77,7 +85,9 @@ class BasicDocumentParseJob extends AbstractTaskLinkingJob
 								  new BasicTaskChain(this),
 								  itr,
 								  input.docParsingStrategy.create(),
-								  input.docParserPool);
+								  input.docParserPool,
+								  input.keywordSearcher.create(),
+								  input.keywordSearcherInput);
 
 	    registerTask(newTask);
 	    input.docParsingExecutor.queue(newTask);

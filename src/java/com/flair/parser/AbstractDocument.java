@@ -43,6 +43,9 @@ public interface AbstractDocument extends Comparable<AbstractDocument>
     public void						setLength(int value);
     public double					getFancyLength();
     
+    public KeywordSearcherOutput			getKeywordData();
+    public void						setKeywordData(KeywordSearcherOutput data);
+    
     public boolean					isParsed();
     public void						flagAsParsed();
 }

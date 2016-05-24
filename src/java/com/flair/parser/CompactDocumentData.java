@@ -8,6 +8,7 @@ package com.flair.parser;
 import com.flair.crawler.SearchResult;
 import com.flair.grammar.GrammaticalConstruction;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A flattened version of a Document that is JSON-serializable
@@ -15,17 +16,31 @@ import java.util.ArrayList;
  */
 public final class CompactDocumentData
 {
-    final class CompactOccurrence
+    final class ConstructionOccurrence
     {
 	public final int		start;
 	public final int		end;
 	public final String		construction;
 
-	public CompactOccurrence(int start, int end, String construction) 
+	public ConstructionOccurrence(int start, int end, String construction) 
 	{
 	    this.start = start;
 	    this.end = end;
 	    this.construction = construction;
+	}
+    }
+    
+    final class KeywordOccurrence
+    {
+	public final int		start;
+	public final int		end;
+	public final String		keyword;
+
+	public KeywordOccurrence(int start, int end, String keyword) 
+	{
+	    this.start = start;
+	    this.end = end;
+	    this.keyword = keyword;
 	}
     }
 
@@ -38,14 +53,17 @@ public final class CompactDocumentData
     private final String			snippet;
     private final String			text;
 
-    private final ArrayList<String>		constructions;
-    private final ArrayList<Double>		relFrequencies;
-    private final ArrayList<Integer>		frequencies;
-    private final ArrayList<Double>		tfNorm;
-    private final ArrayList<CompactOccurrence>  highlights;
-    private final ArrayList<Double>		tfIdf;
-    private final double			docLenTfIdf;
-    private final double			docLength;
+    private final ArrayList<String>			constructions;
+    private final ArrayList<Double>			relFrequencies;
+    private final ArrayList<Integer>			frequencies;
+    private final ArrayList<Double>			tfNorm;
+    private final ArrayList<ConstructionOccurrence>	highlights;
+    private final ArrayList<Double>			tfIdf;
+    private final ArrayList<KeywordOccurrence>		keywords;
+    private final double				totalKeywords;	    // total hit count
+    private final double				relFreqKeywords;
+    private final double				docLenTfIdf;
+    private final double				docLength;
 
     private final double			readabilityScore;
     private final String			readabilityLevel;
@@ -70,7 +88,7 @@ public final class CompactDocumentData
 	if (source.isParsed() == false)
 	    throw new IllegalStateException("Document not flagged as parsed");
 
-	if (SearchResultDocumentSource.class.isAssignableFrom(source.getDocumentSource().getClass()) == false)
+	if (source.getDocumentSource() instanceof SearchResultDocumentSource == false)
 	{
 	    title = url = urlToDisplay = snippet = "";
 	    preRank = -1;
@@ -96,6 +114,7 @@ public final class CompactDocumentData
 	tfNorm = new ArrayList<>();
 	highlights = new ArrayList<>();
 	tfIdf = new ArrayList<>();
+	keywords = new ArrayList<>();
 
 	for (GrammaticalConstruction itr : GrammaticalConstruction.values())
 	{
@@ -108,10 +127,26 @@ public final class CompactDocumentData
 		tfNorm.add(data.getWeightedFrequency());
 		tfIdf.add(data.getRelativeWeightedFrequency());
 
-		for (Occurrence occr : data.getOccurrences())
-		    highlights.add(new CompactOccurrence(occr.getStart(), occr.getEnd(), itr.getLegacyID()));
+		for (com.flair.parser.ConstructionOccurrence occr : data.getOccurrences())
+		    highlights.add(new ConstructionOccurrence(occr.getStart(), occr.getEnd(), itr.getLegacyID()));
 	    }
 	}
+	
+	KeywordSearcherOutput keywordData = source.getKeywordData();
+	if (keywordData != null)
+	{
+	    for (String itr: keywordData.getKeywords())
+	    {
+		List<TextSegment> hits = keywordData.getHits(itr);
+		for (TextSegment hit : hits)
+		    keywords.add(new KeywordOccurrence(hit.getStart(), hit.getEnd(), itr));
+	    }
+	    
+	    totalKeywords = keywordData.getTotalHitCount();
+	    relFreqKeywords = totalKeywords / (double)source.getNumDependencies();
+	}
+	else
+	    totalKeywords = relFreqKeywords = 0;
 
 	docLenTfIdf = source.getFancyLength();
 	docLength = source.getLength();

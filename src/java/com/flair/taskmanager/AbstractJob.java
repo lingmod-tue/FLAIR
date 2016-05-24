@@ -114,7 +114,7 @@ abstract class AbstractJob
 	}
     }
     
-    public synchronized void registerTask(AbstractTask task)
+    protected synchronized void registerTask(AbstractTask task)
     {
 	if (isTaskRegistered(task))
 	    throw new IllegalStateException("Task already registered");
@@ -123,7 +123,7 @@ abstract class AbstractJob
 	    registeredTasks.add(task);
     }
     
-    public synchronized void unregisterTask(AbstractTask task)
+    protected synchronized void unregisterTask(AbstractTask task)
     {
 	if (isTaskRegistered(task));
 	    registeredTasks.remove(task);

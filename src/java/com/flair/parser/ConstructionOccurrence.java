@@ -11,30 +11,21 @@ import com.flair.grammar.GrammaticalConstruction;
  * Represents an occurrence of a construction in a text
  * @author shadeMe
  */
-public class Occurrence extends AbstractConstructionData
+public class ConstructionOccurrence extends AbstractConstructionData
 {
-    private final int				startIdx;
-    private final int				endIdx;
+    private final TextSegment			segment;
     
-    public Occurrence(GrammaticalConstruction type, int start, int end)
+    public ConstructionOccurrence(GrammaticalConstruction type, int start, int end)
     {
 	super(type);
-	this.startIdx = start;
-	this.endIdx = end;
+	this.segment = new TextSegment(start, end);
     }
     
     public int getStart() {
-	return startIdx;
+	return segment.getStart();
     }
     
     public int getEnd() {
-	return endIdx;
-    }
-    
-    public boolean equals(Occurrence rhs)
-    {
-	return super.equals(rhs) && 
-	       startIdx == rhs.startIdx &&
-	       endIdx == rhs.endIdx;
+	return segment.getEnd();
     }
 }

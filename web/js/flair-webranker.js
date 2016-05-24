@@ -114,9 +114,6 @@ FLAIR.WEBRANKER.UTIL.resetUI = function(leftSidebar, rightSidebar, waitDialog, s
     if (resultsTable === true || resultsTable === undefined) {
         
         document.getElementById("results_table").innerHTML = "<div class=\"panel panel-success\"> <div class=\"panel-heading\" style=\"text-align: center\"> <h3 class=\"panel-title\">SEARCH <span class=\"glyphicon glyphicon-search\"></span></h3> </div> <div class=\"panel-body\"> Type in a search query. <br> FLAIR will fetch the <b>top results</b> from the Bing search engine. </div> </div> <br><br> <div class=\"panel panel-warning\"> <div class=\"panel-heading\" style=\"text-align: center\"> <h3 class=\"panel-title\">CONFIGURE <span class=\"glyphicon glyphicon-cog\"></span></h3> </div> <div class=\"panel-body\"> Configure the settings: <b>text</b> (complexity, length) and <b>language</b> (the passive, wh- questions, academic vocabulary, ...) <br> You can <b>export</b> the settings to apply them to all further searches. </div> </div> <br><br> <div class=\"panel panel-info\" > <div class=\"panel-heading\" style=\"text-align: center\"> <h3 class=\"panel-title\">READ <span class=\"glyphicon glyphicon-menu-hamburger\"></span></h3> </div> <div class=\"panel-body\"> FLAIR will re-rank the documents according to the configured settings. <br> Click on the link to open the page in a new tab or read the <b>enhanced text</b> in the right-side panel. </div> </div>";
-        
-
-	//document.getElementById("results_table").innerHTML = "<tr><td><br><br> Welcome to <b>FLAIR</b> - a tool that: <br><br><br> - searches the web for a topic of interest <br><br> - analyses the results for grammatical constructions and readability levels <br><br> - re-ranks the results according to your (pedagogical or learning) needs specified in the settings</td></tr>";
     }
 };
 FLAIR.WEBRANKER.UTIL.cancelCurrentOperation = function() {
@@ -332,6 +329,7 @@ FLAIR.WEBRANKER.STATE = function() {
 
     var weightSettings_docLevel = [];		    // collection of weight data for the doc levels (A1-C2) and all constructions
     var weightSettings_constructions = [];	    // collection of weight data for grammatical constructions (### redundant?)
+    var weightSettings_customVocabList = null;	    // weight data for the vocab list
 
     var filteredConstructions = [];		    // collection of the grammatical constructions that are ignored when ranking
 
@@ -348,6 +346,8 @@ FLAIR.WEBRANKER.STATE = function() {
     var importedSettings = {};			    // key-value pairs of the query string
     var applyingImportedSettings = false;	    // set to true when settings are applied
     
+    var customVocabList = "";			    // delineated list of keywords entered by the user
+    
     // PRIVATE INTERFACE
     var createWeightSettingPrototype = function() {
 	var weightSetting = {
@@ -359,6 +359,7 @@ FLAIR.WEBRANKER.STATE = function() {
     var refreshWeightSettings = function() {
 	weightSettings_docLevel = [];
 	weightSettings_constructions = [];
+	weightSettings_customVocabList = null;
 
 	// doc levels
 	var levels = document.getElementById("settings_levels").getElementsByTagName("input");
@@ -374,6 +375,13 @@ FLAIR.WEBRANKER.STATE = function() {
 	    weightSettings_docLevel.push(weightSetting);
 	    weightSettings_constructions.push(weightSetting);
 	}
+	
+	// custom vocab
+	var vocab = $("#customVocabList-gradientSlider").slider("option", "value");
+	vocab = vocab / 5; // normalize
+	weightSettings_customVocabList = createWeightSettingPrototype();
+	weightSettings_customVocabList.name = "customVocabList";
+	weightSettings_customVocabList.weight = vocab;
 
 	// rest of the constructions
 	$(".gradientSlider").each(function () {
@@ -381,6 +389,9 @@ FLAIR.WEBRANKER.STATE = function() {
 	    w = w / 5; // turn into the scale from 0 to 1
 
 	    var n = this.id.substring(0, this.id.indexOf("-"));
+	    if (n.startsWith("customVocabList"))
+		return;
+	    
 	    var weightSetting = createWeightSettingPrototype();
 	    weightSetting.name = n;
 	    weightSetting.weight = w;
@@ -427,6 +438,19 @@ FLAIR.WEBRANKER.STATE = function() {
 			occs.push(o);
 		}
 	    }
+	}
+	
+	// highlight keywords
+	for (var j in doc.keywords)
+	{
+	    var o = doc.keywords[j];
+	    o["color"] = "gold";
+	    if (hasCustomVocab() === true)
+		o["construction"] = "academic keyword";
+	    else
+		o["construction"] = "keyword";
+
+	    occs.push(o);
 	}
 
 	// // sort the occurrences based on their (end) indices
@@ -579,9 +603,7 @@ FLAIR.WEBRANKER.STATE = function() {
 	    query  = urlQueryString;
 
 	var propCount = 0;
-	if (query === "") 
-	    console.log("Empty query string");
-	else
+	if (query !== "")
 	{
 	    while (match = search.exec(query)) 
 	    {
@@ -594,6 +616,20 @@ FLAIR.WEBRANKER.STATE = function() {
 	    return true;
 	else
 	    return false;
+    };
+    var hasCustomVocab = function() {
+	return customVocabList.length > 0;
+    };
+    var setCustomVocab = function(vocabList) {
+	if (vocabList === "")
+	    pipeline.setKeywords([]);
+	else
+	{
+	    // create keyword array
+	    var toSend = [];
+	    
+	    pipeline.setKeywords(toSend);
+	}
     };
     
     // PUBLIC INTERFACE
@@ -611,6 +647,7 @@ FLAIR.WEBRANKER.STATE = function() {
 
 	weightSettings_docLevel = [];
 	weightSettings_constructions = [];
+	weightSettings_customVocabList = null;
 
 	filteredConstructions = [];
 
@@ -622,12 +659,13 @@ FLAIR.WEBRANKER.STATE = function() {
 	searchResultsFetched = false;
 	parsedDataFetched = false;
 	
-	// "Teacher mode" state persists for the entire session, so we don't reset it by default
+	// "Teacher mode" state and custom vocab list persists for the entire session, so we don't reset it by default
 	if (full_reset === true)
 	{
 	    teacherMode = false;
 	    importedSettings = {};
 	    applyingImportedSettings = false;
+	    setCustomVocab("");
 	}
     };
     this.displayDocText = function(index) {
@@ -667,11 +705,24 @@ FLAIR.WEBRANKER.STATE = function() {
 		if (doc.numSents > 0)
 		    info_box_1 += "<td class='text-cell'>~" + doc.numSents + " sentences</td>";
 		if (doc.docLength > 0 || doc.numDeps > 0)
-		    info_box_1 += "<td class='text-cell'>~" + doc.numDeps + " words</td>";
-		info_box_1 += "</tr></table>";
+		    info_box_1 += "<td class='text-cell'>~" + doc.numDeps + " words (";
+		if (hasCustomVocab() === false)
+		    info_box_1 += "Academic: ~";
+		else
+		    info_box_1 += "Keywords: ~";
+		info_box_1 += Math.floor(doc.relFreqKeywords * 100) + "%)</td></tr></table>";
 
-		var info_box_2 = "<table id='constructions-table'><thead><tr><td><b>Construct</b></td><td><b>Count</b></td><td><b>Weight</b></td></tr></thead><tbody>";
-		var info_box_3 = "<div id='show_all_constructions' hidden><table id='all_constructions_table' class='tablesorter'><thead><tr><td><b>Construct</b></td><td><b>Count</b></td><td><b>Relative Frequency %</b></td></tr></thead><tbody>";
+		var info_box_2 = "<table id='constructions-table'><thead><tr><td><b>Construction</b></td><td><b>Count</b></td><td><b>Weight</b></td></tr></thead><tbody>";
+		var info_box_3 = "<div id='show_all_constructions' hidden><table id='all_constructions_table' class='tablesorter'><thead><tr><td><b>Construction</b></td><td><b>Count</b></td><td><b>Relative Frequency %</b></td></tr></thead><tbody>";
+		
+		// keyword data
+		info_box_2 += "<tr class='constructions_line'><td style='background-color:gold'>";
+		if (hasCustomVocab() === false)
+		    info_box_2 += "academic words";
+		else
+		    info_box_2 += "keywords";
+		
+		info_box_2 += "</td><td class='text-cell'>" + doc.totalKeywords + "</td><td class='text-cell'>(" + weightSettings_customVocabList.weight + ")</td></tr>";
 
 		var count_col = 0;
 		for (var i in weightSettings_constructions)
@@ -816,6 +867,7 @@ FLAIR.WEBRANKER.STATE = function() {
 
 	var avDocLen = -1;
 
+	// check if doc can be displayed
 	for (var k = 0; k < parsedDocs.length; k++) 
 	{
 	    var doc = parsedDocs[k];
@@ -868,7 +920,7 @@ FLAIR.WEBRANKER.STATE = function() {
 		    var lev = displayedDocs[j]["readabilityLevel"];
 		    if (lev === name)
 			count++;
-		} 
+		}
 		else
 		{
 		    var cs = displayedDocs[j]["constructions"];
@@ -888,10 +940,17 @@ FLAIR.WEBRANKER.STATE = function() {
 	    weightSettings_constructions[i]["df"] = count;
 	    weightSettings_constructions[i]["idf"] = Math.log((displayedDocs.length + 1) / count);
 	}
-
-	// calculate average doc length
-	for (var d in displayedDocs)
-	    avDocLen += displayedDocs[d]["docLength"];
+	
+	// update vocab weight data and calc avg do length
+	var count = 0;
+	for (var j in displayedDocs)
+	{
+	    avDocLen += displayedDocs[j]["docLength"];
+	    if (displayedDocs[j].totalKeywords > 0)
+		count++;
+	}
+	weightSettings_customVocabList["df"] = count;
+	weightSettings_customVocabList["idf"] = Math.log((displayedDocs.length + 1) / count);
 
 	if (displayedDocs.length > 0)
 	    avDocLen = avDocLen / displayedDocs.length;
@@ -926,6 +985,13 @@ FLAIR.WEBRANKER.STATE = function() {
 		    }
 		}
 	    }
+	    
+	    // apply vocab weight
+	    var tf = displayedDocs[d].totalKeywords;
+	    var idf = weightSettings_customVocabList["idf"];
+	    var tfNorm = ((kParam + 1) * tf) / (tf + kParam * (1 - bParam + bParam * (displayedDocs[d]["docLength"] / avDocLen)));
+	    var gramScore = tfNorm * idf;
+	    dTotal += gramScore * weightSettings_customVocabList["weight"];
 
 	    displayedDocs[d]["gramScore"] = dTotal; // grammar score
 	    displayedDocs[d]["totalWeight"] = displayedDocs[d]["gramScore"]; // total weight : TODO add rankWeight and textWeight
@@ -963,7 +1029,7 @@ FLAIR.WEBRANKER.STATE = function() {
 		    document.getElementById(weightSettings_constructions[s]["name"] + "-df").innerHTML = "(" + weightSettings_constructions[s]["df"] + " / " + displayedDocs.length + " results)";
 		else
 		    document.getElementById(weightSettings_constructions[s]["name"] + "-df").innerHTML = "";
-	    } 
+	    }
 	    else
 		document.getElementById(weightSettings_constructions[s]["name"] + "-df").innerHTML = "(" + weightSettings_constructions[s]["df"] + " / " + displayedDocs.length + ")";
 	}
@@ -1613,7 +1679,7 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	
 	state.setSearchParams(query, FLAIR.WEBRANKER.CONSTANTS.DEFAULT_LANGUAGE, document.getElementById("fetch_result_count").value);
 
-	FLAIR.WEBRANKER.UTIL.WAIT.singleton.showCancel("<h4>Searching the web - Please Wait...</h4>", 
+	FLAIR.WEBRANKER.UTIL.WAIT.singleton.showCancel("<h4>Searching the web - Please wait...</h4>", 
 	    function() {
 		FLAIR.WEBRANKER.UTIL.cancelCurrentOperation();
 	    });

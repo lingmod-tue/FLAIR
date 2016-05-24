@@ -28,12 +28,14 @@ class Document implements AbstractDocument
     private int					numSentences;
     private int					numDependencies;
     
-    private double				avgWordLength;	// doesn't include punctuation
+    private double				avgWordLength;		// doesn't include punctuation
     private double				avgSentenceLength;
     private double				avgTreeDepth;
 
     private int					tokenCount;		// no of words "essentailly" (kinda), formerly known as "docLength". updated with the dependency count after parsing
-    private double				fancyDocLength;	    // ### TODO better name needed, formerly "docLenTfIdf"
+    private double				fancyDocLength;		// ### TODO better name needed, formerly "docLenTfIdf"
+    
+    private KeywordSearcherOutput		keywordData;
     
     private boolean				parsed;
     
@@ -73,6 +75,7 @@ class Document implements AbstractDocument
 	    readabilityLevel = READABILITY_LEVEL_C;
 
 	avgWordLength = avgSentenceLength = avgTreeDepth = fancyDocLength = 0;
+	keywordData = null;
 	parsed = false;
     }
     
@@ -223,6 +226,16 @@ class Document implements AbstractDocument
     @Override
     public int compareTo(AbstractDocument t) {
 	return source.compareTo(t.getDocumentSource());
+    }
+
+    @Override
+    public KeywordSearcherOutput getKeywordData() {
+	return keywordData;
+    }
+
+    @Override
+    public void setKeywordData(KeywordSearcherOutput data) {
+	keywordData = data;
     }
 }
 

@@ -45,23 +45,12 @@ public class WebCrawlerTest
 	for (String itr : queries)
 	{
 	    long startTime = System.currentTimeMillis();
-	    AbstractPipelineOperation op = MasterJobPipeline.get().performWebSearch(Language.ENGLISH, itr, 100);
+	    AbstractPipelineOperation op = MasterJobPipeline.get().performWebSearch(Language.ENGLISH, itr, 10);
 	    op.begin();
 	    Object output = op.getOutput();
 	    List<SearchResult> searchResults = (List<SearchResult>)output;
-/*	    
-	    List<String> urls = new ArrayList<>();
-	    for (SearchResult res : searchResults)
-	    {
-		if (urls.contains(res.getURL()) == true)
-		   FLAIRLogger.get().trace("Duplicate URL: " + res.getURL());
-		else {
-		//   FLAIRLogger.get().trace(res.getURL());
-		   urls.add(res.getURL());
-		}
-
-	    }
-	*/    
+	//    op = MasterJobPipeline.get().performDocumentParsing(Language.ENGLISH, itr, 10);
+	//    op.begin();
 	    long endTime = System.currentTimeMillis();
 	   
 	   FLAIRLogger.get().trace(op.toString());

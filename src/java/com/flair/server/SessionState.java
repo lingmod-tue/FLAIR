@@ -6,10 +6,12 @@
 package com.flair.server;
 
 import com.flair.crawler.SearchResult;
+import com.flair.grammar.DefaultVocabularyList;
 import com.flair.grammar.Language;
 import com.flair.parser.AbstractDocument;
 import com.flair.parser.AbstractDocumentSource;
 import com.flair.parser.DocumentCollection;
+import com.flair.parser.KeywordSearcherInput;
 import com.flair.parser.SearchResultDocumentSource;
 import com.flair.taskmanager.AbstractPipelineOperation;
 import com.flair.taskmanager.AbstractPipelineOperationCompletionListener;
@@ -34,6 +36,8 @@ class SessionState
     private final HashMap<String, AbstractPipelineOperation>		idTable;		// maps operations to UIDs
     private final HashMap<AbstractPipelineOperation, String>		operationTable;		// maps UIDs to operations
     private AbstractPipelineOperation					lastQueuedOperation;
+    private KeywordSearcherInput					activeKeywords;		// as sent by the client
+    
     private boolean							valid;			// invalidated after release()
     
     final class SessionOperationCompletionListener implements AbstractPipelineOperationCompletionListener
@@ -85,6 +89,8 @@ class SessionState
 	lastQueuedOperation = null;
 	idTable = new HashMap<>();
 	operationTable = new HashMap<>();
+	activeKeywords = null;
+	
 	valid = true;
     }
     
@@ -95,7 +101,7 @@ class SessionState
     private String registerOperation(AbstractPipelineOperation operation, BasicInteropMessage.MessageType requestType)
     {
 	if (lastQueuedOperation != null && lastQueuedOperation.isCompleted() == false)
-	    throw new IllegalStateException("New operation started before previous operation was complete");
+	    throw new IllegalStateException("New operation started before previous operation was complete. Previous operation type: " + lastQueuedOperation.getType() + "\nDetails: " + lastQueuedOperation.toString());
 	
 	String id = generateUID();
 	idTable.put(id, operation);
@@ -113,7 +119,6 @@ class SessionState
 	{
 	    String msg = ServerClientInteropManager.toResponseJSON(response);
 	    parentSession.getBasicRemote().sendText(msg);
-//	    FLAIRLogger.get().info("Sent response to client. Message: " + msg);
 	}
 	catch (IOException ex) {
 	    FLAIRLogger.get().error("Couldn't send message to session " + parentSession.getId() + ". Exception - " + ex.getMessage());
@@ -128,7 +133,13 @@ class SessionState
     
     private AbstractPipelineOperation performDocumentParsingJob(Language lang, List<AbstractDocumentSource> docSources)
     {
-	AbstractPipelineOperation op = MasterJobPipeline.get().performDocumentParsing(lang, docSources);
+	KeywordSearcherInput keywords;
+	if (activeKeywords != null)
+	    keywords = activeKeywords;
+	else
+	    keywords = new KeywordSearcherInput(DefaultVocabularyList.get(lang));
+	
+	AbstractPipelineOperation op = MasterJobPipeline.get().performDocumentParsing(lang, docSources, keywords);
 	return op;
     }
     
@@ -153,6 +164,19 @@ class SessionState
 		    sendErrorResponse(requestType, "Invalid cancellation request. No operation with ID " + req.jobID);
 		else
 		    op.cancel();
+		
+		break;
+	    }
+	    
+	    case SET_KEYWORDS:
+	    {
+		SetKeywordsRequest req = ServerClientInteropManager.toSetKeywordsRequest(message);
+		
+		// remove the active keywords if it's an empty request
+		if (req.keywords.isEmpty())
+		    activeKeywords = null;
+		else
+		    activeKeywords = new KeywordSearcherInput(req.keywords);
 		
 		break;
 	    }
@@ -319,7 +343,7 @@ class SessionState
 	{
 	    if (itr.getValue().isCompleted() == false)
 	    {
-		FLAIRLogger.get().error("Pipeline operation is still executing at the time of shutdown. Status: " + itr.getValue().toString());
+		FLAIRLogger.get().warn("Pipeline operation is still executing at the time of shutdown. Status: " + itr.getValue().toString());
 		itr.getValue().cancel();
 	    }
 	}

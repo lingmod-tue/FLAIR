@@ -21,9 +21,9 @@ public final class MasterParsingFactoryGenerator
 	{
 	    case STANFORD_CORENLP:
 		return new StanfordDocumentParserFactory(new DocumentFactory(), lang);
+	    default:
+		throw new IllegalArgumentException("Couldn't create parser of type " + type);
 	}
-	
-	return null;
     }
     
     public static AbstractParsingStrategyFactory createParsingStrategy(ParserType type, Language lang)
@@ -32,8 +32,19 @@ public final class MasterParsingFactoryGenerator
 	{
 	    case STANFORD_CORENLP:
 		return new StanfordDocumentParserStrategyFactory(lang);
+	    default:
+		throw new IllegalArgumentException("Couldn't create parsing strategy of type " + type);
 	}
-	
-	return null;
+    }
+    
+    public static AbstractDocumentKeywordSearcherFactory createKeywordSearcher(KeywordSearcherType type)
+    {
+	switch (type)
+	{
+	    case AHO_CORASICK:
+		return new AhoCorasickKeywordSearcherFactory();
+	    default:
+		throw new IllegalArgumentException("Couldn't create keyword searcher of type " + type);
+	}
     }
 }

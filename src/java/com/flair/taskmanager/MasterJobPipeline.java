@@ -6,8 +6,11 @@
 package com.flair.taskmanager;
 
 import com.flair.grammar.Language;
+import com.flair.parser.AbstractDocumentKeywordSearcherFactory;
 import com.flair.parser.AbstractDocumentSource;
 import com.flair.parser.AbstractParsingStrategyFactory;
+import com.flair.parser.KeywordSearcherInput;
+import com.flair.parser.KeywordSearcherType;
 import com.flair.parser.MasterParsingFactoryGenerator;
 import com.flair.parser.ParserType;
 import com.flair.utilities.FLAIRLogger;
@@ -41,12 +44,14 @@ public final class MasterJobPipeline
 	    SINGLETON = null;
     }
     
-    private final WebSearchTaskExecutor		    webSearchExecutor;
-    private final WebCrawlTaskExecutor		    webCrawlExecutor;
-    private final DocumentParseTaskExecutor	    docParseExecutor;
+    private final WebSearchTaskExecutor				webSearchExecutor;
+    private final WebCrawlTaskExecutor				webCrawlExecutor;
+    private final DocumentParseTaskExecutor			docParseExecutor;
     
-    private final DocumentParserPool		    stanfordParserEnglishPool;
-    private final AbstractParsingStrategyFactory    stanfordEnglishStrategy;
+    private final DocumentParserPool				stanfordParserEnglishPool;
+    private final AbstractParsingStrategyFactory		stanfordEnglishStrategy;
+    
+    private final AbstractDocumentKeywordSearcherFactory	ahoCorasickSearcher;
 
     private MasterJobPipeline()
     {
@@ -56,6 +61,8 @@ public final class MasterJobPipeline
 	
 	this.stanfordParserEnglishPool = new DocumentParserPool(MasterParsingFactoryGenerator.createParser(ParserType.STANFORD_CORENLP, Language.ENGLISH));
 	this.stanfordEnglishStrategy = MasterParsingFactoryGenerator.createParsingStrategy(ParserType.STANFORD_CORENLP, Language.ENGLISH);
+	
+	this.ahoCorasickSearcher = MasterParsingFactoryGenerator.createKeywordSearcher(KeywordSearcherType.AHO_CORASICK);
     }
     
     private AbstractParsingStrategyFactory getStrategyForLanguage(Language lang)
@@ -82,20 +89,26 @@ public final class MasterJobPipeline
     
     public AbstractPipelineOperation performWebSearch(Language lang, String query, int numResults)
     {
-	BasicWebSearchAndCrawlJobInput jobParams = new BasicWebSearchAndCrawlJobInput(lang, query, numResults, webCrawlExecutor, webSearchExecutor);
+	BasicWebSearchAndCrawlJobInput jobParams = new BasicWebSearchAndCrawlJobInput(lang,
+										    query,
+										    numResults,
+										    webCrawlExecutor,
+										    webSearchExecutor);
 	BasicWebSearchAndCrawlJob newJob = new BasicWebSearchAndCrawlJob(jobParams);
 	BasicPipelineOperation result = new BasicPipelineOperation(newJob, PipelineOperationType.WEB_SEARCH_CRAWL);
 	
 	return result;
     }
     
-    public AbstractPipelineOperation performDocumentParsing(Language lang, List<AbstractDocumentSource> docsSources)
+    public AbstractPipelineOperation performDocumentParsing(Language lang, List<AbstractDocumentSource> docsSources, KeywordSearcherInput keywords)
     {
 	BasicDocumentParseJobInput jobParams = new BasicDocumentParseJobInput(lang,
 									    docsSources, 
 									    docParseExecutor, 
 									    getParserPoolForLanguage(lang),
-									    getStrategyForLanguage(lang));
+									    getStrategyForLanguage(lang),
+									    ahoCorasickSearcher,
+									    keywords);
 	BasicDocumentParseJob newJob = new BasicDocumentParseJob(jobParams);
 	BasicPipelineOperation result = new BasicPipelineOperation(newJob, PipelineOperationType.PARSE_DOCUMENTS);
 	

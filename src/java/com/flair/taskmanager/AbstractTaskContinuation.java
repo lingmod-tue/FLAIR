@@ -9,7 +9,6 @@ package com.flair.taskmanager;
  * Represents a functor that gets called after an AbstractTask has successfully run to completion
  * @author shadeMe
  */
-
 interface AbstractTaskContinuation
 {
     public void run(AbstractTaskResult previous);		// the result of the task that called the continuation
@@ -26,8 +25,7 @@ class BasicTaskChain implements AbstractTaskContinuation
 {
     private final AbstractTaskLinkingJob	parentJob;
     
-    public BasicTaskChain(AbstractTaskLinkingJob job)
-    {
+    public BasicTaskChain(AbstractTaskLinkingJob job) {
 	this.parentJob = job;
     }
     

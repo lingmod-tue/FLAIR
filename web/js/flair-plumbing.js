@@ -12,6 +12,7 @@ FLAIR.createNS("FLAIR.PLUMBING.CONSTANTS.MESSAGE.SOURCE");
 FLAIR.PLUMBING.CONSTANTS.MESSAGE.SOURCE.CLIENT					= "CLIENT";
 
 FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.CANCEL_JOB				= "CANCEL_JOB";
+FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.SET_KEYWORDS				= "SET_KEYWORDS";
 FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.NEW_JOB					= "NEW_JOB";
 FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.JOB_COMPLETE				= "JOB_COMPLETE";
 FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.SERVER_ERROR				= "SERVER_ERROR";
@@ -157,6 +158,17 @@ FLAIR.PLUMBING.PIPELINE = function(webSearch_complete, parseSearchResults_comple
 
 	switch (reqType)
 	{
+	    case FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.SET_KEYWORDS:
+		request = {
+		    baseData: {
+			source: FLAIR.PLUMBING.CONSTANTS.MESSAGE.SOURCE.CLIENT,
+			type: reqType
+		    },
+		    keywords: []
+		};
+		
+		break;
+		
 	    case FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.CANCEL_JOB:
 	    case FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.PARSE_SEARCH_RESULTS:
 	    case FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.FETCH_PARSED_VISUALISATION_DATA:
@@ -338,5 +350,10 @@ FLAIR.PLUMBING.PIPELINE = function(webSearch_complete, parseSearchResults_comple
 	    req.jobID = last_queued_job_id;
 	    return private_sendRequest(req);
 	}
+    };
+    this.setKeywords = function(keywords) {
+	var req = private_createRequestMessage(FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.SET_KEYWORDS);
+	req.keywords = keywords;
+	return private_sendRequest(req);
     };
 };

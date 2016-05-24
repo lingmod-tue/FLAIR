@@ -7,8 +7,10 @@ package com.flair.taskmanager;
 
 import com.flair.crawler.SearchResult;
 import com.flair.grammar.Language;
+import com.flair.parser.AbstractDocumentKeywordSearcherFactory;
 import com.flair.parser.AbstractParsingStrategyFactory;
 import com.flair.parser.DocumentCollection;
+import com.flair.parser.KeywordSearcherInput;
 import com.flair.parser.SearchResultDocumentSource;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,21 +19,25 @@ import java.util.List;
  * Takes a list of search results, crawls their text and parses them
  * @author shadeMe
  */
-class WebDocumentParserJobInput
+class WebDocumentParseJobInput
 {
-    public final Language			    sourceLanguage;
-    public final List<SearchResult>		    searchResults;
-    public final WebCrawlTaskExecutor		    webCrawlerExecutor;
-    public final DocumentParseTaskExecutor	    docParsingExecutor;
-    public final DocumentParserPool		    docParserPool;
-    public final AbstractParsingStrategyFactory	    docParsingStrategy;
+    public final Language					sourceLanguage;
+    public final List<SearchResult>				searchResults;
+    public final WebCrawlTaskExecutor				webCrawlerExecutor;
+    public final DocumentParseTaskExecutor			docParsingExecutor;
+    public final DocumentParserPool				docParserPool;
+    public final AbstractParsingStrategyFactory			docParsingStrategy;
+    public final AbstractDocumentKeywordSearcherFactory		keywordSearcher;
+    public final KeywordSearcherInput				keywordSearcherInput;
     
-    public WebDocumentParserJobInput(Language sourceLanguage,
+    public WebDocumentParseJobInput(Language sourceLanguage,
 				     List<SearchResult> searchResults,
 				     WebCrawlTaskExecutor webCrawler,
 				     DocumentParseTaskExecutor docParser,
 				     DocumentParserPool parserPool,
-				     AbstractParsingStrategyFactory strategy)
+				     AbstractParsingStrategyFactory strategy,
+				     AbstractDocumentKeywordSearcherFactory keywordSearcher,
+				     KeywordSearcherInput keywordSearcherInput)
     {
 	this.sourceLanguage = sourceLanguage;
 	this.searchResults = searchResults;
@@ -39,34 +45,37 @@ class WebDocumentParserJobInput
 	this.docParsingExecutor = docParser;
 	this.docParserPool = parserPool;
 	this.docParsingStrategy = strategy;
+	this.keywordSearcher = keywordSearcher;
+	this.keywordSearcherInput = keywordSearcherInput;
     }
 }
 
-class WebDocumentParserJobOutput
+class WebDocumentParseJobOutput
 {
     public final DocumentCollection	parsedDocs;
     public final List<SearchResult>	delinquents;
     
-    public WebDocumentParserJobOutput()
+    public WebDocumentParseJobOutput()
     {
 	this.parsedDocs = new DocumentCollection();
 	this.delinquents = new ArrayList<>();
     }
 }
 
-class WebDocumentParserJob extends AbstractTaskLinkingJob
+class WebDocumentParseJob extends AbstractTaskLinkingJob
 {
-    private final WebDocumentParserJobInput	    input;
-    private final WebDocumentParserJobOutput	    output;
+    private final WebDocumentParseJobInput	    input;
+    private final WebDocumentParseJobOutput	    output;
     
-    public WebDocumentParserJob(WebDocumentParserJobInput in)
+    public WebDocumentParseJob(WebDocumentParseJobInput in)
     {
 	super();
 	this.input = in;
-	this.output = new WebDocumentParserJobOutput();
+	this.output = new WebDocumentParseJobOutput();
     }
     
-    public WebDocumentParserJobOutput getOutput()
+    @Override
+    public WebDocumentParseJobOutput getOutput()
     {
 	waitForCompletion();
 	return output;
@@ -93,7 +102,9 @@ class WebDocumentParserJob extends AbstractTaskLinkingJob
 								      new BasicTaskChain(this),
 								      new SearchResultDocumentSource(itr),
 								      input.docParsingStrategy.create(),
-								      input.docParserPool);
+								      input.docParserPool,
+								      input.keywordSearcher.create(),
+								      input.keywordSearcherInput);
 
 		registerTask(newTask);
 		input.docParsingExecutor.queue(newTask);
@@ -123,7 +134,9 @@ class WebDocumentParserJob extends AbstractTaskLinkingJob
 								      new BasicTaskChain(this),
 								      new SearchResultDocumentSource(result.getOutput()),
 								      input.docParsingStrategy.create(),
-								      input.docParserPool);
+								      input.docParserPool,
+								      input.keywordSearcher.create(),
+								      input.keywordSearcherInput);
 
 		registerTask(newTask);
 		input.docParsingExecutor.queue(newTask);
@@ -143,10 +156,12 @@ class WebDocumentParserJob extends AbstractTaskLinkingJob
     @Override
     public String toString()
     {
-	if (isCompleted() == false)
-	    return "WebDocumentParserJob is still running";
+	if (isStarted() == false)
+	    return "WebDocumentParseJob has not started yet";
+	else if (isCompleted() == false)
+	    return "WebDocumentParseJob is still running";
 	else if (isCancelled())
-	    return "WebDocumentParserJob was cancelled";
+	    return "WebDocumentParseJob was cancelled";
 	else
 	    return "WebDocumentParserJob Output:\nInput:\n\tLanguage: " + input.sourceLanguage + "\n\tSearch Results: " + input.searchResults.size() + "\nOutput:\n\tParsed Docs: " + output.parsedDocs.size() + "\n\tDelinquents: " + output.delinquents.size();
     }

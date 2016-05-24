@@ -37,7 +37,7 @@ public final class FLAIRLogger
 	assert stackTrace.length > 4;
 	StackTraceElement caller = stackTrace[4];
 	
-	return "{" + caller.getClassName() + "." + caller.getMethodName() + "()}";
+	return "{" + caller.getClassName().substring(10) + "." + caller.getMethodName() + "()}";
     }
     
     private enum Channel

@@ -15,12 +15,12 @@ import java.util.List;
  */
 public class DocumentConstructionData extends AbstractConstructionData
 {
-    private final AbstractDocument		    parentDocument;
-    private final ArrayList<Occurrence>		    occurrences;
+    private final AbstractDocument			parentDocument;
+    private final ArrayList<ConstructionOccurrence>	occurrences;
     
     private boolean hasOccurence(int start, int end)
     {
-	for (Occurrence itr : occurrences)
+	for (ConstructionOccurrence itr : occurrences)
 	{
 	    if (itr.getStart() == start && itr.getEnd() == end)
 		return true;
@@ -73,13 +73,13 @@ public class DocumentConstructionData extends AbstractConstructionData
 	if (hasOccurence(start, end) == true)
 	    return false;
 	
-	Occurrence newOcc = new Occurrence(getParentConstruction(), start, end);
+	ConstructionOccurrence newOcc = new ConstructionOccurrence(getParentConstruction(), start, end);
 	
 	occurrences.add(newOcc);
 	return true;
     }
     
-    public List<Occurrence> getOccurrences() {
+    public List<ConstructionOccurrence> getOccurrences() {
 	return occurrences;
     }
 }

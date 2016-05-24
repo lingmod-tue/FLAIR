@@ -40,6 +40,8 @@ class BasicInteropMessage
 	// request-only
 	@SerializedName("CANCEL_JOB")
 	CANCEL_JOB,
+	@SerializedName("SET_KEYWORDS")
+	SET_KEYWORDS,
 	
 	// response-only
 	@SerializedName("NEW_JOB")
@@ -96,6 +98,18 @@ class CancelJobRequest
     {
 	baseData = new BasicInteropMessage(BasicInteropMessage.MessageSource.CLIENT, BasicInteropMessage.MessageType.CANCEL_JOB);
 	this.jobID = jobID;
+    }
+}
+
+class SetKeywordsRequest
+{
+    public final BasicInteropMessage		baseData;
+    public final List<String>			keywords;
+
+    public SetKeywordsRequest() 
+    {
+	baseData = new BasicInteropMessage(BasicInteropMessage.MessageSource.CLIENT, BasicInteropMessage.MessageType.SET_KEYWORDS);
+	this.keywords = new ArrayList<>();
     }
 }
 
@@ -307,7 +321,7 @@ class FetchParsedDataResponse
 class FetchParsedVisualisationDataRequest
 {
     public final BasicInteropMessage	    baseData;
-    public final String			    jobID;	    // corresponding to the parse operation
+    public final String			    jobID;			    // corresponding to the parse operation
     
     public FetchParsedVisualisationDataRequest(String jobID)
     {
@@ -345,6 +359,8 @@ class ServerClientInteropManager
 	
 	if (messageType.equals(BasicInteropMessage.MessageType.CANCEL_JOB.toString()))
 	    return BasicInteropMessage.MessageType.CANCEL_JOB;
+	else if (messageType.equals(BasicInteropMessage.MessageType.SET_KEYWORDS.toString()))
+	    return BasicInteropMessage.MessageType.SET_KEYWORDS;
 	else if (messageType.equals(BasicInteropMessage.MessageType.PERFORM_SEARCH.toString()))
 	    return BasicInteropMessage.MessageType.PERFORM_SEARCH;
 	else if (messageType.equals(BasicInteropMessage.MessageType.FETCH_SEARCH_RESULTS.toString()))
@@ -378,6 +394,13 @@ class ServerClientInteropManager
 	checkMessage(requestJSON, BasicInteropMessage.MessageSource.CLIENT, BasicInteropMessage.MessageType.CANCEL_JOB);
 	Gson deserializer = getGson();
 	return deserializer.fromJson(requestJSON, CancelJobRequest.class);
+    }
+    
+    public static SetKeywordsRequest toSetKeywordsRequest(String requestJSON)
+    {
+	checkMessage(requestJSON, BasicInteropMessage.MessageSource.CLIENT, BasicInteropMessage.MessageType.SET_KEYWORDS);
+	Gson deserializer = getGson();
+	return deserializer.fromJson(requestJSON, SetKeywordsRequest.class);
     }
     
     public static PerformSearchRequest toPerformSearchRequest(String requestJSON)

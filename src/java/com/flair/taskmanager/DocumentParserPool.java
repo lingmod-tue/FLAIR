@@ -7,7 +7,8 @@ package com.flair.taskmanager;
 
 import com.flair.parser.AbstractDocumentParser;
 import com.flair.parser.AbstractDocumentParserFactory;
-import java.util.concurrent.Semaphore;
+import com.flair.utilities.SimpleObjectPool;
+import com.flair.utilities.SimpleObjectPoolResource;
 
 /**
  * Provides a pool of document parsers for executing parsing tasks
@@ -15,86 +16,22 @@ import java.util.concurrent.Semaphore;
  */
 class DocumentParserPool
 {
-    private final AbstractDocumentParserFactory		    parserFactory;
-    private final AbstractDocumentParser[]		    parsers;
-    private final boolean[]				    usageState;
-    private final Semaphore				    synchronizer;
+    private final AbstractDocumentParserFactory			parserFactory;
+    private final SimpleObjectPool<AbstractDocumentParser>	resourcePool;
     
     public DocumentParserPool(AbstractDocumentParserFactory factory)
     {
 	parserFactory = factory;
 	assert Constants.PARSER_INSTANCEPOOL_SIZE >= Constants.PARSER_THREADPOOL_SIZE;
 	
-	parsers = new AbstractDocumentParser[Constants.PARSER_INSTANCEPOOL_SIZE];
-	usageState = new boolean[Constants.PARSER_INSTANCEPOOL_SIZE];
-	
+	AbstractDocumentParser[] parsers = new AbstractDocumentParser[Constants.PARSER_INSTANCEPOOL_SIZE];
 	for (int i = 0; i < Constants.PARSER_INSTANCEPOOL_SIZE; i++)
-	{
 	    parsers[i] = parserFactory.create();
-	    usageState[i] = false;
-	}
 	
-	synchronizer = new Semaphore(Constants.PARSER_INSTANCEPOOL_SIZE, true);
+	resourcePool = new SimpleObjectPool<>(Constants.PARSER_INSTANCEPOOL_SIZE, parsers);
     }
     
-    private synchronized DocumentParserPoolData getNextAvailable()
-    {
-	for (int i = 0; i < Constants.PARSER_INSTANCEPOOL_SIZE; i++)
-	{
-	    if (usageState[i] == false)
-	    {
-		DocumentParserPoolData result = new DocumentParserPoolData(this, i, parsers[i]);
-		usageState[i] = true;
-		return result;
-	    }
-	}
-	
-	return null;
-    }
-    
-    private synchronized void markAsUnused(DocumentParserPoolData acquired)
-    {
-	if (usageState[acquired.getID()] == false)
-	    throw new IllegalStateException("Unused parser being freed");
-	
-	usageState[acquired.getID()] = false;
-    }
-    
-    public DocumentParserPoolData acquire() throws InterruptedException
-    {
-	synchronizer.acquire();
-	return getNextAvailable();
-    }
-    
-    public void release(DocumentParserPoolData data)
-    {
-	markAsUnused(data);
-	synchronizer.release();
-    }
-}
-
-class DocumentParserPoolData
-{
-    private final DocumentParserPool		parent;
-    private final int				id;	// index into the pool array
-    private final AbstractDocumentParser	parser;
-
-    public DocumentParserPoolData(DocumentParserPool parent, int id, AbstractDocumentParser parser)
-    {
-	this.parent = parent;
-	this.id = id;
-	this.parser = parser;
-    }
-    
-    public int getID() {
-	return id;
-    }
-
-    public AbstractDocumentParser getParser() {
-	return parser;
-    }
-
-    public void release() {
-	parent.release(this);
+    public SimpleObjectPoolResource<AbstractDocumentParser> get() throws InterruptedException {
+	return resourcePool.get();
     }
 }

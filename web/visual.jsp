@@ -112,13 +112,13 @@
                                     </div>
                                 </div>
                             </div>
-<!--                            <hr>  
+                            <hr>  
                                                         <div>
                                                             Academic vocabulary <br>
                                                             <div class="ui-widget-content" style="width:80%;">
-                                                                <div class="gradientSlider" title="move right to rank texts with this construct higher" id="awl-gradientSlider"></div>
+                                                                <div class="gradientSlider" title="move right to rank texts with this construct higher" id="customVocabList-gradientSlider"></div>
                                                             </div>
-                                                        </div>-->
+                                                        </div>
                             <hr>
                             <div id="settings_panel">
                                 <!-- a list of all constructions -->
@@ -1117,7 +1117,7 @@
                             <h3 class="modal-title">About FLAIR </h3>
                                                     <p><span style="color:darkorange"><b>by</b></span> <a href="http://sfs.uni-tuebingen.de/~mchnkina/" target="_blank">Maria Chinkina</a> <a href="mailto:maria.chinkina@uni-tuebingen.de?Subject=FLAIR%20tool" target="_top" title="write to Maria Chinkina"><span class="glyphicon glyphicon-envelope"></span></a> 
                             &
-                            <a href="" target="_blank">Madeeswaran Kannan</a> <a href="mailto:mkannan@sfs.uni-tuebingen.de?Subject=FLAIR%20tool" target="_top" title="write to Madeeswaran Kannan"><span class="glyphicon glyphicon-envelope"></span></a> supervised by 
+                            <a href="http://sfs.uni-tuebingen.de/~mkannan/" target="_blank">Madeeswaran Kannan</a> <a href="mailto:mkannan@sfs.uni-tuebingen.de?Subject=FLAIR%20tool" target="_top" title="write to Madeeswaran Kannan"><span class="glyphicon glyphicon-envelope"></span></a> supervised by 
                             <a href="http://sfs.uni-tuebingen.de/~dm/" target="_blank">Prof. Dr. Detmar Meurers</a> 
                             <br> <span style="color:darkorange">@</span> University of Tübingen, Germany <span style="color:darkorange">|</span> 2015-2016
                         </p>
