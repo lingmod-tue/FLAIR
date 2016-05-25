@@ -992,23 +992,25 @@ FLAIR.WEBRANKER.STATE = function() {
 	    var tfNorm = ((kParam + 1) * tf) / (tf + kParam * (1 - bParam + bParam * (displayedDocs[d]["docLength"] / avDocLen)));
 	    var gramScore = tfNorm * idf;
 	    dTotal += gramScore * weightSettings_customVocabList["weight"];
-
+            
 	    displayedDocs[d]["gramScore"] = dTotal; // grammar score
 	    displayedDocs[d]["totalWeight"] = displayedDocs[d]["gramScore"]; // total weight : TODO add rankWeight and textWeight
 	}
 	//// - end of calculating the total weight
 
-	if (weightSettings_docLevel.length < 4)
+	if (weightSettings_docLevel.length < 4 && weightSettings_customVocabList == null)
 	{
 	    if (bParam === 0)
 	    {
 		displayedDocs.sort(function (a, b) {
+                    alert("1");
 		    return parseInt(a.preRank) - parseInt(b.preRank);
 		});
 	    } 
 	    else
 	    {
 		displayedDocs.sort(function (a, b) {
+                    alert("2");
 		    return parseInt(a.docLength) - parseInt(b.docLength);
 		});
 	    }
@@ -1016,6 +1018,7 @@ FLAIR.WEBRANKER.STATE = function() {
 	else
 	{
 	    displayedDocs.sort(function (a, b) {
+                alert("3");
 		return Number(b.totalWeight) - Number(a.totalWeight);
 	    });
 	}
