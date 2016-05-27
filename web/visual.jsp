@@ -113,12 +113,12 @@
                                 </div>
                             </div>
                             <hr>  
-                                                        <div>
-                                                            Academic vocabulary <br>
-                                                            <div class="ui-widget-content" style="width:80%;">
-                                                                <div class="gradientSlider" title="move right to rank texts with this construct higher" id="customVocabList-gradientSlider"></div>
-                                                            </div>
-                                                        </div>
+				<div>
+				    <input type="checkbox" onclick="FLAIR.WEBRANKER.singleton.toggleKeywordHighlighting()" id="tgl-customVocabList" title="check to highlight keywords" checked>&nbsp;Academic vocabulary <br>
+				    <div class="ui-widget-content" style="width:80%;">
+					<div class="gradientSlider" title="move right to rank texts with this construct higher" id="customVocabList-gradientSlider"></div>
+				    </div>
+				</div>
                             <hr>
                             <div id="settings_panel">
                                 <!-- a list of all constructions -->

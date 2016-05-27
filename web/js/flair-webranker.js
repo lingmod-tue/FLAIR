@@ -347,6 +347,7 @@ FLAIR.WEBRANKER.STATE = function() {
     var applyingImportedSettings = false;	    // set to true when settings are applied
     
     var customVocabList = "";			    // delineated list of keywords entered by the user
+    var highlightKeywords = false;
     
     // PRIVATE INTERFACE
     var createWeightSettingPrototype = function() {
@@ -441,17 +442,21 @@ FLAIR.WEBRANKER.STATE = function() {
 	}
 	
 	// highlight keywords
-	for (var j in doc.keywords)
+	if (highlightKeywords)
 	{
-	    var o = doc.keywords[j];
-	    o["color"] = "gold";
-	    if (hasCustomVocab() === true)
-		o["construction"] = "academic keyword";
-	    else
-		o["construction"] = "keyword";
+	    for (var j in doc.keywords)
+	    {
+		var o = doc.keywords[j];
+		o["color"] = "gold";
+		if (hasCustomVocab() === true)
+		    o["construction"] = "academic keyword";
+		else
+		    o["construction"] = "keyword";
 
-	    occs.push(o);
+		occs.push(o);
+	    }
 	}
+	
 
 	// // sort the occurrences based on their (end) indices
 	var allIndices = []; // String[][]
@@ -666,10 +671,16 @@ FLAIR.WEBRANKER.STATE = function() {
 	    importedSettings = {};
 	    applyingImportedSettings = false;
 	    setCustomVocab("");
+	    highlightKeywords = false;
 	}
     };
     this.displayDocText = function(index) {
 	if (searchResultsFetched === false)
+	    return;
+	
+	if (index === -1)
+	    index = selection;
+	if (index === -1)
 	    return;
 	
 	if (parsedDataFetched === true)
@@ -716,13 +727,16 @@ FLAIR.WEBRANKER.STATE = function() {
 		var info_box_3 = "<div id='show_all_constructions' hidden><table id='all_constructions_table' class='tablesorter'><thead><tr><td><b>Construction</b></td><td><b>Count</b></td><td><b>Relative Frequency %</b></td></tr></thead><tbody>";
 		
 		// keyword data
-		info_box_2 += "<tr class='constructions_line'><td style='background-color:gold'>";
-		if (hasCustomVocab() === false)
-		    info_box_2 += "academic words";
-		else
-		    info_box_2 += "keywords";
-		
-		info_box_2 += "</td><td class='text-cell'>" + doc.totalKeywords + "</td><td class='text-cell'>(" + weightSettings_customVocabList.weight + ")</td></tr>";
+		if (highlightKeywords)
+		{
+		    info_box_2 += "<tr class='constructions_line'><td style='background-color:gold'>";
+		    if (hasCustomVocab() === false)
+			info_box_2 += "academic words";
+		    else
+			info_box_2 += "keywords";
+
+		    info_box_2 += "</td><td class='text-cell'>" + doc.totalKeywords + "</td><td class='text-cell'>(" + weightSettings_customVocabList.weight + ")</td></tr>";
+		}
 
 		var count_col = 0;
 		for (var i in weightSettings_constructions)
@@ -998,19 +1012,17 @@ FLAIR.WEBRANKER.STATE = function() {
 	}
 	//// - end of calculating the total weight
 
-	if (weightSettings_docLevel.length < 4 && weightSettings_customVocabList == null)
+	if (weightSettings_docLevel.length < 4 && weightSettings_customVocabList === null)
 	{
 	    if (bParam === 0)
 	    {
 		displayedDocs.sort(function (a, b) {
-                    alert("1");
 		    return parseInt(a.preRank) - parseInt(b.preRank);
 		});
 	    } 
 	    else
 	    {
 		displayedDocs.sort(function (a, b) {
-                    alert("2");
 		    return parseInt(a.docLength) - parseInt(b.docLength);
 		});
 	    }
@@ -1018,7 +1030,6 @@ FLAIR.WEBRANKER.STATE = function() {
 	else
 	{
 	    displayedDocs.sort(function (a, b) {
-                alert("3");
 		return Number(b.totalWeight) - Number(a.totalWeight);
 	    });
 	}
@@ -1269,6 +1280,11 @@ FLAIR.WEBRANKER.STATE = function() {
 	    FLAIR.WEBRANKER.UTIL.TOAST.error("FLAIR encountered an error while applying your custom settings", true, 3000);
 	    return false;
 	}
+    };
+    
+    this.toggleKeywordHighlighting = function() {
+	highlightKeywords = highlightKeywords === false;
+	this.displayDocText(-1);
     };
 };
 
@@ -1786,6 +1802,9 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	var exportString = document.location.host + document.location.pathname + "?" + state.exportSettings();
 	FLAIR.WEBRANKER.UTIL.showExportSettingsDialog(exportString);
     };
+    this.toggleKeywordHighlighting = function() {
+	state.toggleKeywordHighlighting();
+    };
 };
 
 FLAIR.WEBRANKER.singleton = new FLAIR.WEBRANKER.INSTANCE();
@@ -1853,6 +1872,7 @@ window.onload = function() {
 	    $("#all_constructions_table").tablesorter();
 	
 	$('[data-toggle="popover"]').popover({ html: true });
+	$("#tgl-customVocabList").prop('checked', false);
     });
 
     FLAIR.WEBRANKER.UTIL.resetUI();

@@ -152,7 +152,7 @@ FLAIR.PLUMBING.PIPELINE = function(webSearch_complete, parseSearchResults_comple
     var private_onerror = function (event) {
 	console.log("Pipeline error");
     }; 
-    
+   
     var private_createRequestMessage = function(reqType) {
 	var request = null;
 
@@ -278,8 +278,6 @@ FLAIR.PLUMBING.PIPELINE = function(webSearch_complete, parseSearchResults_comple
 	    last_queued_job_id = null;
 	    last_queued_job_type = null;
 	    last_sent_request_type = null;
-
-	    handlers = [];
 
 	    console.log("Pipeline deinitialized");
 	    return true;
