@@ -44,7 +44,7 @@
 
                                 <form class="form-inline" name="search_form" id="search_form"  style="width:100%;">
                                     <div  class="input-group">
-                                        <a href="javascript:$('#myModal_About').modal('show');" style="color:orange" ><img src="img/logo_2.png" alt=">"></a>
+                                        <a href="#about-toggle" id="about-toggle" style="color:orange" ><img src="img/logo_2.png" alt=">"></a>
                                     </div>
 
                                     <div class="input-group" style="width:60%;">

@@ -98,7 +98,7 @@ FLAIR.WEBRANKER.UTIL.resetTextCharacteristics = function() {
     $("#LEVEL-b").prop('checked', true);
     $("#LEVEL-c").prop('checked', true);
     // reset the length slider
-    $(".lengthSlider").slider("value", 5);
+    $(".lengthSlider").slider("value", 0);
 };
 FLAIR.WEBRANKER.UTIL.resetUI = function(leftSidebar, rightSidebar, waitDialog, sliders, snapshot, resultsTable) {
     if (leftSidebar === true || leftSidebar === undefined)
@@ -333,8 +333,8 @@ FLAIR.WEBRANKER.STATE = function() {
 
     var filteredConstructions = [];		    // collection of the grammatical constructions that are ignored when ranking
 
-    var bParam = 0;				    // ### what's this? used with the doc length slider
-    var kParam = 1.7;				    // ### what's this?
+    var bParam = 0;				    // used with the doc length slider
+    var kParam = 1.7;				    // ### ?
     
     var parsedVisData = "";			    // CSV string of the parsed docs' construction data, used for visualisation
     
@@ -343,7 +343,7 @@ FLAIR.WEBRANKER.STATE = function() {
     
     var teacherMode = false;			    // when true, the imported settings are applied after each query is successfully parsed
     var urlQueryString = "";			    // url query string
-    var importedSettings = {};			    // key-value pairs of the query string
+    var importedSettings = {};		    // key-value pairs of the query string
     var applyingImportedSettings = false;	    // set to true when settings are applied
     
     var customVocabList = "";			    // delineated list of keywords entered by the user
@@ -870,8 +870,6 @@ FLAIR.WEBRANKER.STATE = function() {
 	    return;
 	    
 	bParam = ($(".lengthSlider").slider("option", "value")) / 10;
-	if (bParam === null || bParam === undefined)
-	    bParam = 5;
 
 	if (parsedDocs.length === 0)
 	    return;
@@ -1012,7 +1010,7 @@ FLAIR.WEBRANKER.STATE = function() {
 	}
 	//// - end of calculating the total weight
 
-	if (weightSettings_docLevel.length < 4 && weightSettings_customVocabList === null)
+	if (weightSettings_docLevel.length < 4 && weightSettings_customVocabList.weight === 0)
 	{
 	    if (bParam === 0)
 	    {
@@ -1824,6 +1822,11 @@ window.onload = function() {
     $("#constructs-toggle").click(function (e) {
 	e.preventDefault();
 	$("#myModal_Constructs").modal('show');
+    });
+    
+    $("#about-toggle").click(function (e) {
+	e.preventDefault();
+	$("#myModal_About").modal('show');
     });
 
     $("[id$=gradientSlider]").slider({

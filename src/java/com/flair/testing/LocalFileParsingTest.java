@@ -5,6 +5,7 @@
  */
 package com.flair.testing;
 
+/*
 import com.flair.grammar.Language;
 import com.flair.parser.AbstractDocumentSource;
 import com.flair.parser.CompactDocumentData;
@@ -20,6 +21,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+*/
 
 /**
  * Executable test for the local document parsing framework. Takes a single param - absolute path to a directory with the text documents
@@ -30,6 +32,7 @@ public class LocalFileParsingTest
 {
     public static void main(String[] args)
     {
+/*	
 	String rootInPath = System.getProperty("user.home") + "/FLAIRLocalTest";
 	String rootOutPath = rootInPath + "/FLAIROutput";
 	if (args.length != 0)
@@ -82,5 +85,6 @@ public class LocalFileParsingTest
 	FLAIRLogger.get().trace(op.toString());
 	FLAIRLogger.get().trace("LocalFileParsingTest parsed " + docCol.size() + " documents in " + (endTime - startTime) + " ms");
 	System.exit(0);
+*/
      }
 }
