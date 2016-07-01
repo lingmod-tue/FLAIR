@@ -8,6 +8,7 @@ package com.flair.server;
 import com.flair.utilities.FLAIRLogger;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import javax.servlet.http.HttpSession;
 import javax.websocket.EndpointConfig;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
@@ -20,14 +21,14 @@ import javax.websocket.server.ServerEndpoint;
  * Websocket endpoint for the search results ranking client
  * @author shadeMe
  */
-// ### TODO grab the HttpSession like so - http://stackoverflow.com/questions/21888425/accessing-servletcontext-and-httpsession-in-onmessage-of-a-jsr-356-serverendpo
 
-@ServerEndpoint("/webranker")
+@ServerEndpoint(value = "/webranker", configurator = HttpSessionConfigurator.class)
 public class WebRankerEndPoint
 {
     @OnOpen
     public void onOpen(Session session, EndpointConfig config) {
-	SessionManager.get().addSession(session);
+	HttpSession httpSession = (HttpSession)config.getUserProperties().get(HttpSession.class.getName());
+	SessionManager.get().addSession(session, httpSession);
     }
     
     @OnMessage

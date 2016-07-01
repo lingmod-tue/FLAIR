@@ -1196,10 +1196,8 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 		    // aux(watched-4, would-2) // aux(travel-4, to-3)
                     // conditionals
                     if (dep.word().equalsIgnoreCase("would") // or only would?
-                            || dep.word().equalsIgnoreCase("should")
                             || dep.word().equalsIgnoreCase("could")
-                            || dep.word().equalsIgnoreCase("might")
-                            || dep.word().equalsIgnoreCase("may"))
+                            || dep.word().equalsIgnoreCase("might"))
 		    {
                         would_found = true;
                         if (gov.tag().equalsIgnoreCase("VBN"))

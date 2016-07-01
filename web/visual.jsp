@@ -29,19 +29,14 @@
     <body style="background-color: white;">
         <div id="wrapper" >
             <div class="container">
-
                 <div class="navbar navbar-default navbar-fixed-top" role="navigation">
                     <div class="container-fluid">               
-
-
                         <div class="row"  style="margin-top: 1%; margin-bottom:1%">
-
                             <div class="col-lg-1"  style="text-align:left;">
                                 <a href="#menu-toggle" class="btn btn-warning" id="menu-toggle"><span class="glyphicon glyphicon-cog"></span></a>
                             </div>
 
                             <div class="col-lg-10"  style="text-align:center;">
-
                                 <form class="form-inline" name="search_form" id="search_form"  style="width:100%;">
                                     <div  class="input-group">
                                         <a href="#about-toggle" id="about-toggle" style="color:orange" ><img src="img/logo_2.png" alt=">"></a>
@@ -49,10 +44,6 @@
 
                                     <div class="input-group" style="width:60%;">
                                         <input type="text" id="search_field" name="query" class="form-control">
-                                        <!--					    <div class="input-group-btn"  style="text-align:right;">
-                                                                                        <button type="button" class="btn" onclick="FLAIR.WEBRANKER.singleton.beginSearch()" id="search_button" data-loading-text="<img style='height:18px;' src='img/ajax-loader.gif' alt='...'/>">GO</button>
-                                                                </div> 
-                                        -->
                                     </div>
 
                                     <div class="input-group">
@@ -66,16 +57,9 @@
                                     </div>
                                 </form>
                             </div>
-
-
                             <div class="col-lg-1" style="text-align:right;"><span id="right-menu-toggle"><img src="img/glyphicons-517-menu-hamburger.png" alt=">"></span>
                             </div>
-
                         </div>
-
-
-
-
                     </div>
                 </div>
 
@@ -114,7 +98,10 @@
                             </div>
                             <hr>  
 				<div>
-				    <input type="checkbox" onclick="FLAIR.WEBRANKER.singleton.toggleKeywordHighlighting()" id="tgl-customVocabList" title="check to highlight keywords" checked>&nbsp;Academic vocabulary <br>
+				    <input type="checkbox" onclick="FLAIR.WEBRANKER.singleton.toggleKeywordHighlighting()" id="tgl-customVocabList" title="check to highlight keywords" checked>&nbsp;<span id="customVocabList-label">Academic</span> Vocabulary&nbsp;
+					<a href="#customVocabList-upload" id="customVocabList-upload" title="Edit Vocabulary"><span class="glyphicon glyphicon-edit"></span></a>&nbsp;
+					<a href="#customVocabList-reset" id="customVocabList-reset" title="Use Defualt Academic Vocabulary"><span class="glyphicon glyphicon-repeat"></span></a>
+					<br>
 				    <div class="ui-widget-content" style="width:80%;">
 					<div class="gradientSlider" title="move right to rank texts with this construct higher" id="customVocabList-gradientSlider"></div>
 				    </div>
@@ -1065,10 +1052,6 @@
                                     <a href="javascript:FLAIR.WEBRANKER.singleton.exportSettings();" style="color:grey;">EXPORT</a>
                                 </div>
 
-                                <div id="report-problem" hidden>
-                                    <span class="glyphicon glyphicon-envelope"></span><a href="mailto:maria.chinkina@gmail.com?Subject=Feedback%20(FLAIR)" target="_top" title="Report a problem or just share your feedback."> Report a problem</a>
-                                </div>
-
                                 <br><br><br><br><br><br>
                             </div>
                         </div>
@@ -1081,7 +1064,7 @@
                     <div class="mainArea" style="margin-top: 60px;"><br>
                         <div class="row">
                             <!-- show results here -->
-                            <div class="col-md-8 results">
+                            <div class="col-md-7 results">
                                 <table class="table table-hover" style="width:100%; margin-left:10px;padding-right:10px;">
                                     <tbody id="results_table">
                                     </tbody>
@@ -1196,11 +1179,6 @@
                 </div>
             </div>
         </div>
-
-
-
-
-
 
         <!-- VISUALIZATION FILTER MODAL -->
         <div class="modal fade modal-xl" id="myModal_Visualize" tabindex="-1" role="dialog" aria-hidden="true" style="margin:0 auto;">
@@ -1985,13 +1963,11 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <br>
+                        <h4 class="modal-title" style="text-align: center;">List Of Constructions</h4>
                     </div>
                     <div class="modal-body">
                         <div class="tab-pane fade active in">
-                            <h4 style="color:grey;text-align: center;">List of constructions</h4>
-                            <div id="list_of_constructs">
-                                <br>
+                            <div id="list_of_constructs" class="pre-scrollable">
                                 <table class="table table-hover">
                                     <tbody>
                                         <tr class="warning">
@@ -2942,33 +2918,48 @@
             </div>
         </div>
 
-        <!--            <div class="row">
-                        <div style="text-align: center; color:orange; margin-top:40px;" id="report-problem" class="col-md-2">
-                            <span class="glyphicon glyphicon-envelope"></span><a href="mailto:maria.chinkina@uni-tuebingen.de?Subject=Feedback%20(FLAIR)" target="_top" title="Report a problem or just share your feedback." style="color:darkorange;"> Problem | Feedback</a>
-                        </div>        
-                    </div>-->
-
-        <!--    <script type="text/javascript" src="js/libs/jquery/jquery.js"></script> -->
+	<!-- UPLOAD CUSTOM VOCAB MODAL -->
+	<div class="modal fade modal-lg" id="modal_CustomVocab" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false" style="margin:0 auto;">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Edit Custom Vocabulary</h4>
+                    </div>
+		    <div hidden>
+			<input id="modalCustomVocab-fileSelect" type="file"/>
+		    </div>
+                    <div class="modal-body">
+                        <div class="tab-pane fade active in" id="modal_CustomVocab_body">
+                            <div class="form-group">
+                                <label>Custom Vocabulary:</label>
+                                <textarea class="form-control" rows="10" id="custom_vocab_textarea"></textarea><br/>
+				Words may be separated by commas, spaces or line breaks.
+                            </div>
+                        </div>
+                        <div class="modal-footer" style="text-align: center;">
+                            <button type="button" class="btn btn-primary" id="modal_customVocab_buttonYes">Apply</button>
+                            <button type="button" class="btn btn-primary" id="modal_customVocab_buttonCancel">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+		
+		
+		
         <script type="text/javascript" src="js/libs/jquery/jquery.min.js"></script>
         <script type="text/javascript" src="js/libs/jqueryui/jquery-ui.js"></script>
         <script type="text/javascript" src="js/libs/tablesorter/jquery.tablesorter.js"></script>
-
-        <!--    <script type="text/javascript" src="js/libs/twitter-bootstrap/js/bootstrap.js"></script> -->
         <script type="text/javascript" src="js/libs/twitter-bootstrap/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="js/libs/twitter-bootstrap/js/bootstrap-confirmation.js"></script>
 
         <script type="text/javascript" src="js/libs/number-polyfill.js"></script>
         <script type="text/javascript" src="js/libs/d3/d3.js"></script>
-        <!--    <script type="text/javascript" src="js/libs/d3/d3.v3.js"></script> -->
         <script type="text/javascript" src="js/libs/d3/d3.v3.min.js"></script>
         <script type="text/javascript" src="js/libs/toastr/toastr.min.js"></script>
 
         <script type="text/javascript" src="js/flair-core.js"></script>
         <script type="text/javascript" src="js/flair-plumbing.js"></script>
         <script type="text/javascript" src="js/flair-webranker.js"></script>
-
-        <script>
-                                        
-        </script>
     </body>
 </html>

@@ -36,3 +36,8 @@ FLAIR.createNS = function (namespace)
     // with empty namespaces and can be used.
     return parent;
 };
+
+String.prototype.replaceAll = function(search, replacement) {
+    var target = this;
+    return target.replace(new RegExp(search, 'g'), replacement);
+};

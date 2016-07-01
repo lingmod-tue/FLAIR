@@ -236,7 +236,6 @@ FLAIR.WEBRANKER.UTIL.WAIT.INSTANCE = function() {
       showDialog(false);
   };
 };
-
 FLAIR.WEBRANKER.UTIL.WAIT.singleton = new FLAIR.WEBRANKER.UTIL.WAIT.INSTANCE();
 
 //=================== FLAIR.WEBRANKER.UTIL.TOAST =============//
@@ -314,6 +313,117 @@ FLAIR.WEBRANKER.UTIL.TOGGLE.visualiserDialog = function(show) {
 };
 
 //=================== FLAIR.WEBRANKER =============//
+FLAIR.WEBRANKER.CUSTOMVOCAB = function(server_pipeline) {
+    // PRIVATE VARS
+    var wordList = "";		    // comma separated word list that was applied last
+    var inUse = false;		    // set to false when the default (academic) word list is used
+    var loadingFile = false;	    // set when loading a local file
+    var pipeline = server_pipeline;
+
+    // PRIVATE INTERFACE
+    var readLocalFile = function(path) {
+	var rawFile = new XMLHttpRequest();
+	rawFile.open("GET", path, false);
+	rawFile.onreadystatechange = function() {
+	    if (rawFile.readyState === 4)
+	    {
+		if (rawFile.status === 200 || rawFile.status === 0)
+		{
+		    var allText = rawFile.responseText;
+		    allText = allText.replace("\n", ",");
+		    $("#custom_vocab_textarea").val(allText);
+		    FLAIR.WEBRANKER.UTIL.TOAST.success("Loaded custom vocabulary from disk.", true, 3000);
+		    loadingFile = false;
+		}
+		else if (rawFile.status >= 400)
+		{
+		    FLAIR.WEBRANKER.UTIL.TOAST.error("Couldn't load file. Error code - " + rawFile.status, true, 3000);
+		    loadingFile = false;
+		}
+	    }
+	};
+	rawFile.ontimeout = function(e) {
+	    FLAIR.WEBRANKER.UTIL.TOAST.error("Couldn't load file - Operation timed out", true, 3000);
+	    loadingFile = false;
+	};
+	rawFile.onerror = function(e) {
+	    FLAIR.WEBRANKER.UTIL.TOAST.error("Couldn't load file.", true, 3000);
+	    loadingFile = false;
+	};
+	
+	loadingFile = true;
+	rawFile.send(null);
+    };
+    var showDialog = function(show) {
+	if (show)
+	    $("#modal_CustomVocab").modal('show');
+	else
+	    $("#modal_CustomVocab").modal('hide');
+    };
+    var apply = function() {
+	if (loadingFile)
+	{
+	    FLAIR.WEBRANKER.UTIL.TOAST.warning("Please wait until the previous operation is complete", true, 2500);
+	    return;
+	}
+	
+	var tempList = $("#custom_vocab_textarea").val();
+	tempList = tempList.replaceAll("\n", ",");
+	tempList = tempList.replaceAll(" ", ",");
+	var wordArray = tempList.split(",");
+	if (tempList.trim().length < 2 || wordArray.length < 1)
+	{
+	    FLAIR.WEBRANKER.UTIL.TOAST.warning("The word list is empty.", true, 2500);
+	    return;
+	}
+	
+	wordList = tempList;
+	inUse = true;
+	
+	if (pipeline.setKeywords(wordArray) === false)
+	    pipeline_onError();
+	else
+	{
+	    $("#customVocabList-label").html("Custom");
+	    FLAIR.WEBRANKER.UTIL.TOAST.success("The new vocabulary will be applied to the next search.", true, 3000);
+	    return true;
+	}
+	
+	return false;
+    };
+    
+    // PUBLIC INTERFACE
+    this.show = function() {
+	showDialog(true);
+    };
+    this.disable = function() {
+	if (inUse)
+	{
+	    var throwaway = [];
+	    if (pipeline.setKeywords(throwaway) === false)
+		pipeline_onError();
+	    else
+	    {
+		inUse = false;
+		$("#customVocabList-label").html("Academic");
+		FLAIR.WEBRANKER.UTIL.TOAST.info("Academic vocabulary will be applied to the next search.", true, 3000);
+	    }
+	}
+    };
+    
+    // C'TOR
+    $("#modal_customVocab_buttonYes").click(function (e) {
+	e.preventDefault();
+	if (apply())
+	    showDialog(false);
+    });
+    
+    $("#modal_customVocab_buttonCancel").click(function (e) {
+	e.preventDefault();
+	showDialog(false);
+    });
+};
+
 FLAIR.WEBRANKER.STATE = function() {
     // PRIVATE VARS
     var query = "";
@@ -346,8 +456,8 @@ FLAIR.WEBRANKER.STATE = function() {
     var importedSettings = {};		    // key-value pairs of the query string
     var applyingImportedSettings = false;	    // set to true when settings are applied
     
-    var customVocabList = "";			    // delineated list of keywords entered by the user
     var highlightKeywords = false;
+    var customVocab = false;
     
     // PRIVATE INTERFACE
     var createWeightSettingPrototype = function() {
@@ -448,7 +558,7 @@ FLAIR.WEBRANKER.STATE = function() {
 	    {
 		var o = doc.keywords[j];
 		o["color"] = "gold";
-		if (hasCustomVocab() === true)
+		if (hasCustomVocab() === false)
 		    o["construction"] = "academic keyword";
 		else
 		    o["construction"] = "keyword";
@@ -623,18 +733,7 @@ FLAIR.WEBRANKER.STATE = function() {
 	    return false;
     };
     var hasCustomVocab = function() {
-	return customVocabList.length > 0;
-    };
-    var setCustomVocab = function(vocabList) {
-	if (vocabList === "")
-	    pipeline.setKeywords([]);
-	else
-	{
-	    // create keyword array
-	    var toSend = [];
-	    
-	    pipeline.setKeywords(toSend);
-	}
+	return customVocab;
     };
     
     // PUBLIC INTERFACE
@@ -664,13 +763,20 @@ FLAIR.WEBRANKER.STATE = function() {
 	searchResultsFetched = false;
 	parsedDataFetched = false;
 	
-	// "Teacher mode" state and custom vocab list persists for the entire session, so we don't reset it by default
+	// rest the custom vocab state for each search
+	var label = $("#customVocabList-label").text();
+	label = label.toLowerCase();
+	if (label.startsWith("acad"))
+	    customVocab = false;
+	else
+	    customVocab = true;
+	
+	// "Teacher mode" state persists for the entire session, so we don't reset it by default
 	if (full_reset === true)
 	{
 	    teacherMode = false;
 	    importedSettings = {};
 	    applyingImportedSettings = false;
-	    setCustomVocab("");
 	    highlightKeywords = false;
 	}
     };
@@ -1589,6 +1695,9 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	FLAIR.WEBRANKER.UTIL.TOAST.error("FLAIR encountered a fatal error.", false, 0);
     };
     var pipeline_onClose = function() {
+	if (initialized === false)
+	    return;
+	
 	FLAIR.WEBRANKER.UTIL.resetUI();
 	state.reset();
 	
@@ -1677,6 +1786,7 @@ FLAIR.WEBRANKER.INSTANCE = function() {
     var state = new FLAIR.WEBRANKER.STATE();
     var pipeline = new FLAIR.PLUMBING.PIPELINE(complete_webSearch, complete_parseSearchResults, fetch_searchResults, fetch_parsedData, fetch_parsedVisData, pipeline_onClose, pipeline_onError);
     var visualiser = new FLAIR.WEBRANKER.VISUALISATION(state.isDocFiltered, state.isConstructionEnabled);
+    var customVocab = new FLAIR.WEBRANKER.CUSTOMVOCAB(pipeline);
     var initialized = false;
     var self = this;
     
@@ -1803,6 +1913,12 @@ FLAIR.WEBRANKER.INSTANCE = function() {
     this.toggleKeywordHighlighting = function() {
 	state.toggleKeywordHighlighting();
     };
+    this.showCustomVocab = function() {
+	customVocab.show();
+    }
+    this.disableCustomVocab = function() {
+	customVocab.disable();
+    };
 };
 
 FLAIR.WEBRANKER.singleton = new FLAIR.WEBRANKER.INSTANCE();
@@ -1827,6 +1943,16 @@ window.onload = function() {
     $("#about-toggle").click(function (e) {
 	e.preventDefault();
 	$("#myModal_About").modal('show');
+    });
+    
+    $("#customVocabList-upload").click(function (e) {
+	e.preventDefault();
+	FLAIR.WEBRANKER.singleton.showCustomVocab();
+    });
+    
+    $("#customVocabList-reset").click(function (e) {
+	e.preventDefault();
+	FLAIR.WEBRANKER.singleton.disableCustomVocab();
     });
 
     $("[id$=gradientSlider]").slider({

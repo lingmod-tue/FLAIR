@@ -8,6 +8,7 @@ package com.flair.server;
 import com.flair.utilities.FLAIRLogger;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import javax.servlet.http.HttpSession;
 import javax.websocket.Session;
 
 /**
@@ -42,10 +43,14 @@ public class SessionManager
     }
         
     private final HashMap<Session, SessionState>	    activeSessions;
+    private final HashMap<HttpSession, Session>		    httpToWebSocket;
+    private final HashMap<Session, HttpSession>		    webSocketToHttp;
     
     private SessionManager()
     {
 	activeSessions = new HashMap<>();
+	httpToWebSocket = new HashMap<>();
+	webSocketToHttp = new HashMap<>();
     }
 
     private synchronized void releaseSessions()
@@ -56,9 +61,11 @@ public class SessionManager
 	}
 	
 	activeSessions.clear();
+	httpToWebSocket.clear();
+	webSocketToHttp.clear();
     }
     
-    public synchronized void addSession(Session newSession)
+    public synchronized void addSession(Session newSession, HttpSession httpSession)
     {
 	if (activeSessions.containsKey(newSession))
 	    throw new IllegalArgumentException("Session already added");
@@ -66,6 +73,9 @@ public class SessionManager
 	    throw new IllegalArgumentException("Session is not open");
 	
 	activeSessions.put(newSession, new SessionState(newSession));
+	httpToWebSocket.put(httpSession, newSession);
+	webSocketToHttp.put(newSession, httpSession);
+	
 	FLAIRLogger.get().info("New WebSocket session opened. ID: "+ newSession.getId());
     }
     
@@ -77,6 +87,11 @@ public class SessionManager
 	SessionState state = activeSessions.get(oldSession);
 	state.release();
 	activeSessions.remove(oldSession);
+	
+	HttpSession oldHttp = webSocketToHttp.get(oldSession);
+	httpToWebSocket.remove(oldHttp);
+	webSocketToHttp.remove(oldSession);
+	
 	FLAIRLogger.get().info("WebSocket session " + oldSession.getId() + " closed");
     }
     
