@@ -50,6 +50,8 @@ class BasicInteropMessage
 	JOB_COMPLETE,
 	@SerializedName("SERVER_ERROR")
 	SERVER_ERROR,
+	@SerializedName("CUSTOM_CORPUS_UPLOADED")
+	CUSTOM_CORPUS_UPLOADED,
 	
 	// bi-directional
 	@SerializedName("PERFORM_SEARCH")
@@ -61,7 +63,9 @@ class BasicInteropMessage
 	@SerializedName("FETCH_PARSED_DATA")
 	FETCH_PARSED_DATA,
 	@SerializedName("FETCH_PARSED_VISUALISATION_DATA")
-	FETCH_PARSED_VISUALISATION_DATA
+	FETCH_PARSED_VISUALISATION_DATA,
+	@SerializedName("PARSE_CUSTOM_CORPUS")
+	PARSE_CUSTOM_CORPUS,
 	;
 	
 	@Override
@@ -141,6 +145,18 @@ class ServerErrorResponse
     }
 }
 
+class CustomCorpusUploadedResponse
+{
+    public final BasicInteropMessage			    baseData;
+    public final int					    filesUploaded;	// no of files that were successfully uploaded
+
+    public CustomCorpusUploadedResponse(int uploadCount)
+    {
+	baseData = new BasicInteropMessage(BasicInteropMessage.MessageSource.SERVER, BasicInteropMessage.MessageType.CUSTOM_CORPUS_UPLOADED);
+	filesUploaded = uploadCount;
+    }
+}
+
 class WebSearchCompleteResponse
 {
     public final BasicInteropMessage			    baseData;
@@ -170,6 +186,22 @@ class ParseSearchResultsCompleteResponse
 	this.request = BasicInteropMessage.MessageType.PARSE_SEARCH_RESULTS;
 	this.jobID = jobID;
 	this.totalResultsParsed = totalResults;
+    }
+}
+
+class ParseCustomCorpusCompleteResponse
+{
+    public final BasicInteropMessage			    baseData;
+    public final BasicInteropMessage.MessageType	    request;		// the message associated with the job
+    public final String					    jobID;
+    public final int					    totalFilesParsed;	// no of files parsed
+
+    public ParseCustomCorpusCompleteResponse(String jobID, int totalResults) 
+    {
+	baseData = new BasicInteropMessage(BasicInteropMessage.MessageSource.SERVER, BasicInteropMessage.MessageType.JOB_COMPLETE);
+	this.request = BasicInteropMessage.MessageType.PARSE_CUSTOM_CORPUS;
+	this.jobID = jobID;
+	this.totalFilesParsed = totalResults;
     }
 }
 
@@ -344,6 +376,32 @@ class FetchParsedVisualisationDataResponse
     }
 }
 
+class ParseCustomCorpusRequest
+{
+    public final BasicInteropMessage	    baseData;
+    public final Language		    language;
+    
+    public ParseCustomCorpusRequest(Language lang)
+    {
+	baseData = new BasicInteropMessage(BasicInteropMessage.MessageSource.CLIENT, BasicInteropMessage.MessageType.PARSE_CUSTOM_CORPUS);
+	this.language = lang;
+    }
+}
+
+class ParseCustomCorpusResponse
+{
+    public final BasicInteropMessage			baseData;
+    public final BasicInteropMessage.MessageType	request;	    // the message associated with the job
+    public final String					jobID;
+    
+    public ParseCustomCorpusResponse(String jobID) 
+    {
+	baseData = new BasicInteropMessage(BasicInteropMessage.MessageSource.SERVER, BasicInteropMessage.MessageType.NEW_JOB);
+	request = BasicInteropMessage.MessageType.PARSE_CUSTOM_CORPUS;
+	this.jobID = jobID;
+    }
+}
+
 class ServerClientInteropManager
 {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -371,6 +429,8 @@ class ServerClientInteropManager
 	    return BasicInteropMessage.MessageType.FETCH_PARSED_DATA;
 	else if (messageType.equals(BasicInteropMessage.MessageType.FETCH_PARSED_VISUALISATION_DATA.toString()))
 	    return BasicInteropMessage.MessageType.FETCH_PARSED_VISUALISATION_DATA;
+	else if (messageType.equals(BasicInteropMessage.MessageType.PARSE_CUSTOM_CORPUS.toString()))
+	    return BasicInteropMessage.MessageType.PARSE_CUSTOM_CORPUS;
 	else
 	    throw new IllegalArgumentException("Invalid request type '" + messageType + "'");
     }
@@ -436,6 +496,13 @@ class ServerClientInteropManager
 	checkMessage(requestJSON, BasicInteropMessage.MessageSource.CLIENT, BasicInteropMessage.MessageType.FETCH_PARSED_VISUALISATION_DATA);
 	Gson deserializer = getGson();
 	return deserializer.fromJson(requestJSON, FetchParsedVisualisationDataRequest.class);
+    }
+    
+    public static ParseCustomCorpusRequest toParseCustomCorpusRequest(String requestJSON)
+    {
+	checkMessage(requestJSON, BasicInteropMessage.MessageSource.CLIENT, BasicInteropMessage.MessageType.PARSE_CUSTOM_CORPUS);
+	Gson deserializer = getGson();
+	return deserializer.fromJson(requestJSON, ParseCustomCorpusRequest.class);
     }
     
     public static String toResponseJSON(Object response)

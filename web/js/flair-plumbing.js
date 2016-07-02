@@ -16,14 +16,16 @@ FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.SET_KEYWORDS				= "SET_KEYWORDS";
 FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.NEW_JOB					= "NEW_JOB";
 FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.JOB_COMPLETE				= "JOB_COMPLETE";
 FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.SERVER_ERROR				= "SERVER_ERROR";
+FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.CUSTOM_CORPUS_UPLOADED			= "CUSTOM_CORPUS_UPLOADED";
 FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.PERFORM_SEARCH				= "PERFORM_SEARCH";
 FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.PARSE_SEARCH_RESULTS			= "PARSE_SEARCH_RESULTS";
 FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.FETCH_SEARCH_RESULTS			= "FETCH_SEARCH_RESULTS";
 FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.FETCH_PARSED_DATA				= "FETCH_PARSED_DATA";
 FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.FETCH_PARSED_VISUALISATION_DATA		= "FETCH_PARSED_VISUALISATION_DATA";
+FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.PARSE_CUSTOM_CORPUS			= "PARSE_CUSTOM_CORPUS";
 
 //=============================== FLAIR.PLUMBING =============================//
-FLAIR.PLUMBING.PIPELINE = function(webSearch_complete, parseSearchResults_complete, searchResults_fetch, parsedData_fetch, parsedVisData_fetch, pipeline_onClose, pipeline_onServerError) {
+FLAIR.PLUMBING.PIPELINE = function(webSearch_complete, parseSearchResults_complete, parseCustomCorpus_complete, customCorpus_uploaded, searchResults_fetch, parsedData_fetch, parsedVisData_fetch, pipeline_onClose, pipeline_onServerError) {
     // PRIVATE VARS
     var socket = null;				// main websocket
     var connected = false;			// socket status
@@ -35,7 +37,9 @@ FLAIR.PLUMBING.PIPELINE = function(webSearch_complete, parseSearchResults_comple
     var handlers = {
 	completion: {
 	    webSearch: webSearch_complete,
-	    parseSearchResults: parseSearchResults_complete
+	    parseSearchResults: parseSearchResults_complete,
+	    parseCustomCorpus: parseCustomCorpus_complete,
+	    customCorpusUploaded: customCorpus_uploaded
 	},
 	fetch: {
 	    searchResults: searchResults_fetch,
@@ -83,7 +87,12 @@ FLAIR.PLUMBING.PIPELINE = function(webSearch_complete, parseSearchResults_comple
 		}
 
 		break;
+		
+	    case FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.CUSTOM_CORPUS_UPLOADED:
+		var reqType = msg.request;
+		handlers.completion.customCorpusUploaded(msg.filesUploaded);
 
+		break;
 	    case FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.JOB_COMPLETE:
 		var reqType = msg.request;
 		if (reqType !== last_queued_job_type)
@@ -98,6 +107,10 @@ FLAIR.PLUMBING.PIPELINE = function(webSearch_complete, parseSearchResults_comple
 
 			case FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.PARSE_SEARCH_RESULTS:
 			    handlers.completion.parseSearchResults(msg.jobID, msg.totalResultsParsed);
+			    break;
+			    
+			case FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.PARSE_CUSTOM_CORPUS:
+			    handlers.completion.parseCustomCorpus(msg.jobID, msg.totalFilesParsed);
 			    break;
 
 			default:
@@ -165,6 +178,17 @@ FLAIR.PLUMBING.PIPELINE = function(webSearch_complete, parseSearchResults_comple
 			type: reqType
 		    },
 		    keywords: []
+		};
+		
+		break;
+	
+	    case FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.PARSE_CUSTOM_CORPUS:
+		request = {
+		    baseData: {
+			source: FLAIR.PLUMBING.CONSTANTS.MESSAGE.SOURCE.CLIENT,
+			type: reqType
+		    },
+		    language: ""
 		};
 		
 		break;
@@ -322,7 +346,7 @@ FLAIR.PLUMBING.PIPELINE = function(webSearch_complete, parseSearchResults_comple
 	}
     };
     this.fetchParsedData = function(start, count) {
-	if (last_queued_job_type !== FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.PARSE_SEARCH_RESULTS)
+	if (last_queued_job_type !== FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.PARSE_SEARCH_RESULTS && last_queued_job_type !== FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.PARSE_CUSTOM_CORPUS)
 	{
 	    console.log("Fetch parsed data request called out of order. Last queued job was " + last_queued_job_type);
 	    return false;
@@ -337,7 +361,7 @@ FLAIR.PLUMBING.PIPELINE = function(webSearch_complete, parseSearchResults_comple
 	}
     };
     this.fetchParsedVisData = function() {
-	if (last_queued_job_type !== FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.PARSE_SEARCH_RESULTS)
+	if (last_queued_job_type !== FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.PARSE_SEARCH_RESULTS && last_queued_job_type !== FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.PARSE_CUSTOM_CORPUS)
 	{
 	    console.log("Fetch parsed visualisation data request called out of order. Last queued job was " + last_queued_job_type);
 	    return false;
@@ -352,6 +376,11 @@ FLAIR.PLUMBING.PIPELINE = function(webSearch_complete, parseSearchResults_comple
     this.setKeywords = function(keywords) {
 	var req = private_createRequestMessage(FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.SET_KEYWORDS);
 	req.keywords = keywords;
+	return private_sendRequest(req);
+    };
+    this.parseCustomCorpus = function(lang) {
+	var req = private_createRequestMessage(FLAIR.PLUMBING.CONSTANTS.MESSAGE.TYPE.PARSE_CUSTOM_CORPUS);
+	req.language = lang;
 	return private_sendRequest(req);
     };
 };

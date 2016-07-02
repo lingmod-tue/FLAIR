@@ -6,24 +6,24 @@
 package com.flair.parser;
 
 import com.flair.crawler.SearchResult;
-import com.flair.grammar.Language;
 
 /**
  * Represents a document source object that encapsulates a search result
  * @author shadeMe
  */
-public class SearchResultDocumentSource implements AbstractDocumentSource
+public class SearchResultDocumentSource extends AbstractDocumentSource
 {
     private final SearchResult		   parentSearchResult;
-    private final Language		   language;
+    private final String		   pageText;
     
     public SearchResultDocumentSource(SearchResult parent)
     {
+	super(parent.getLanguage());
 	if (parent.isTextFetched() == false)
 	    throw new IllegalArgumentException("Search result doesn't have text");
 	
 	parentSearchResult = parent;
-	language = parent.getLanguage();
+	pageText = preprocessText(parent.getPageText());
     }
     
     public SearchResult getSearchResult() {
@@ -32,12 +32,7 @@ public class SearchResultDocumentSource implements AbstractDocumentSource
     
     @Override
     public String getSourceText() {
-	return parentSearchResult.getPageText();
-    }
-
-    @Override
-    public Language getLanguage() {
-	return language;
+	return pageText;
     }
 
     @Override

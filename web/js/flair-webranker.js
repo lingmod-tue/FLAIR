@@ -115,6 +115,8 @@ FLAIR.WEBRANKER.UTIL.resetUI = function(leftSidebar, rightSidebar, waitDialog, s
         
         document.getElementById("results_table").innerHTML = "<div class=\"panel panel-success\"> <div class=\"panel-heading\" style=\"text-align: center\"> <h3 class=\"panel-title\">SEARCH <span class=\"glyphicon glyphicon-search\"></span></h3> </div> <div class=\"panel-body\"> Type in a search query. <br> FLAIR will fetch the <b>top results</b> from the Bing search engine. </div> </div> <br><br> <div class=\"panel panel-warning\"> <div class=\"panel-heading\" style=\"text-align: center\"> <h3 class=\"panel-title\">CONFIGURE <span class=\"glyphicon glyphicon-cog\"></span></h3> </div> <div class=\"panel-body\"> Configure the settings: <b>text</b> (complexity, length) and <b>language</b> (the passive, wh- questions, academic vocabulary, ...) <br> You can <b>export</b> the settings to apply them to all further searches. </div> </div> <br><br> <div class=\"panel panel-info\" > <div class=\"panel-heading\" style=\"text-align: center\"> <h3 class=\"panel-title\">READ <span class=\"glyphicon glyphicon-menu-hamburger\"></span></h3> </div> <div class=\"panel-body\"> FLAIR will re-rank the documents according to the configured settings. <br> Click on the link to open the page in a new tab or read the <b>enhanced text</b> in the right-side panel. </div> </div>";
     }
+    
+    FLAIR.WEBRANKER.UTIL.TOGGLE.customCorpusDialog(false);
 };
 FLAIR.WEBRANKER.UTIL.cancelCurrentOperation = function() {
     FLAIR.WEBRANKER.singleton.cancelOperation();
@@ -300,16 +302,19 @@ FLAIR.WEBRANKER.UTIL.TOGGLE.rightSidebar = function(show) {
 	$("#sidebar-wrapper-right").removeClass("active");
 };
 FLAIR.WEBRANKER.UTIL.TOGGLE.visualiserDialog = function(show) {
-    if (show) {
-        if (($("#search_field").val()).trim() !== "") {
-            $("#query_vis").html("\"" + $("#search_field").val() + "\" (" + $("#fetch_result_count").val() + " web pages)");
-        } else {
-            $("#query_vis").html("Interactive Visualization");
-        }
+    if (show)
         $("#myModal_Visualize").modal('show');
-    }
     else
 	$("#myModal_Visualize").modal('hide');
+};
+FLAIR.WEBRANKER.UTIL.TOGGLE.customCorpusDialog = function(show) {
+    if (show)
+    {
+	$("#modal_CustomCorpus_fileSelect").val(null);
+	$("#modal_CustomCorpus").modal('show');
+    }
+    else
+	$("#modal_CustomCorpus").modal('hide');
 };
 
 //=================== FLAIR.WEBRANKER =============//
@@ -337,13 +342,13 @@ FLAIR.WEBRANKER.CUSTOMVOCAB = function(server_pipeline) {
 		}
 		else if (rawFile.status >= 400)
 		{
-		    FLAIR.WEBRANKER.UTIL.TOAST.error("Couldn't load file. Error code - " + rawFile.status, true, 3000);
+		    FLAIR.WEBRANKER.UTIL.TOAST.error("Couldn't load file. Error code - " + rawFile.status + ".", true, 3000);
 		    loadingFile = false;
 		}
 	    }
 	};
 	rawFile.ontimeout = function(e) {
-	    FLAIR.WEBRANKER.UTIL.TOAST.error("Couldn't load file - Operation timed out", true, 3000);
+	    FLAIR.WEBRANKER.UTIL.TOAST.error("Couldn't load file - Operation timed out.", true, 3000);
 	    loadingFile = false;
 	};
 	rawFile.onerror = function(e) {
@@ -363,7 +368,7 @@ FLAIR.WEBRANKER.CUSTOMVOCAB = function(server_pipeline) {
     var apply = function() {
 	if (loadingFile)
 	{
-	    FLAIR.WEBRANKER.UTIL.TOAST.warning("Please wait until the previous operation is complete", true, 2500);
+	    FLAIR.WEBRANKER.UTIL.TOAST.warning("Please wait until the previous operation is complete.", true, 2500);
 	    return;
 	}
 	
@@ -385,7 +390,7 @@ FLAIR.WEBRANKER.CUSTOMVOCAB = function(server_pipeline) {
 	else
 	{
 	    $("#customVocabList-label").html("Custom");
-	    FLAIR.WEBRANKER.UTIL.TOAST.success("The new vocabulary will be applied to the next search.", true, 3000);
+	    FLAIR.WEBRANKER.UTIL.TOAST.success("The new vocabulary will be applied to the next search/parse operation.", true, 3000);
 	    return true;
 	}
 	
@@ -450,14 +455,16 @@ FLAIR.WEBRANKER.STATE = function() {
     
     var searchResultsFetched = false;		    // set to true after the search results are returned by the server
     var parsedDataFetched = false;		    // set to true after all the parsed data has been received by the client
+    var busy = false;				    // set to true at the start of a search/upload op, reset at its end/cancellation
     
     var teacherMode = false;			    // when true, the imported settings are applied after each query is successfully parsed
     var urlQueryString = "";			    // url query string
-    var importedSettings = {};		    // key-value pairs of the query string
+    var importedSettings = {};			    // key-value pairs of the query string
     var applyingImportedSettings = false;	    // set to true when settings are applied
     
     var highlightKeywords = false;
-    var customVocab = false;
+    var customVocab = false;			    // set to true when a custom vocab is in use
+    var customCorpus = true;			    // set to true when parsing a cutom corpus
     
     // PRIVATE INTERFACE
     var createWeightSettingPrototype = function() {
@@ -762,6 +769,8 @@ FLAIR.WEBRANKER.STATE = function() {
 	
 	searchResultsFetched = false;
 	parsedDataFetched = false;
+	busy = false;
+	customCorpus = false;
 	
 	// rest the custom vocab state for each search
 	var label = $("#customVocabList-label").text();
@@ -1279,6 +1288,7 @@ FLAIR.WEBRANKER.STATE = function() {
     };
     this.flagAsParsedDataFetched = function() {
 	parsedDataFetched = true;
+	busy = false;
     };
     this.hasSearchResults = function() {
 	return searchResultsFetched;
@@ -1381,7 +1391,7 @@ FLAIR.WEBRANKER.STATE = function() {
 	    applyingImportedSettings = false;
 	    teacherMode = false;
 	    
-	    FLAIR.WEBRANKER.UTIL.TOAST.error("FLAIR encountered an error while applying your custom settings", true, 3000);
+	    FLAIR.WEBRANKER.UTIL.TOAST.error("FLAIR encountered an error while applying your custom settings.", true, 3000);
 	    return false;
 	}
     };
@@ -1389,6 +1399,20 @@ FLAIR.WEBRANKER.STATE = function() {
     this.toggleKeywordHighlighting = function() {
 	highlightKeywords = highlightKeywords === false;
 	this.displayDocText(-1);
+    };
+    
+    this.flagAsBusy = function() {
+	busy = true;
+    };
+    this.isBusy = function() {
+	return busy;
+    };
+    
+    this.flagAsCustomCorpus = function() {
+	customCorpus = true;
+    };
+    this.isCustomCorpus = function() {
+	return customCorpus;
     };
 };
 
@@ -1684,7 +1708,7 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	FLAIR.WEBRANKER.UTIL.resetUI();
 	state.reset();
 
-	FLAIR.WEBRANKER.UTIL.TOAST.error("No results for '" + state.getQuery() + "'", true, 6000);
+	FLAIR.WEBRANKER.UTIL.TOAST.error("No results for '" + state.getQuery() + "'.", true, 6000);
     };
     var pipeline_onError = function() {
 	FLAIR.WEBRANKER.UTIL.resetUI();
@@ -1692,7 +1716,7 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	self.deinit();
 	
 	FLAIR.WEBRANKER.UTIL.TOAST.clear(true);
-	FLAIR.WEBRANKER.UTIL.TOAST.error("FLAIR encountered a fatal error.", false, 0);
+	FLAIR.WEBRANKER.UTIL.TOAST.error("FLAIR encountered a fatal error. Please refresh your browser.", false, 0);
     };
     var pipeline_onClose = function() {
 	if (initialized === false)
@@ -1737,6 +1761,47 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	    }
 	}
     };
+    var complete_customCorpusUploaded = function(uploadCount) {
+	if (uploadCount === 0)
+	{
+	    FLAIR.WEBRANKER.UTIL.resetUI();
+	    state.reset();
+
+	    FLAIR.WEBRANKER.UTIL.TOAST.info("No files were uploaded.", true, 3000);
+	    return;
+	}
+	
+	FLAIR.WEBRANKER.UTIL.WAIT.singleton.clear();
+	FLAIR.WEBRANKER.UTIL.WAIT.singleton.showCancel("<h4>Parsing custom corpus - Please wait...</h4>", 
+	    function() {
+		FLAIR.WEBRANKER.UTIL.cancelCurrentOperation();
+	    });
+	
+	state.flagAsCustomCorpus();
+	if (pipeline.parseCustomCorpus(FLAIR.WEBRANKER.CONSTANTS.DEFAULT_LANGUAGE) === false)
+	    pipeline_onError();
+    };
+    var complete_parseCustomCorpus = function(jobID, totalDocs) {
+	if (totalDocs === 0)
+	{
+	    FLAIR.WEBRANKER.UTIL.resetUI();
+	    state.reset();
+
+	    FLAIR.WEBRANKER.UTIL.TOAST.error("FLAIR couldn't parse any of the files.", true, 6000);
+	    return;
+	}
+	
+	state.setTotalResults(totalDocs);
+	state.flagAsSearchResultsFetched();
+	for (var i = 1; i <= state.getTotalResults(); i++)
+	{
+	    if (pipeline.fetchParsedData(i, 1) === false)
+	    {
+		pipeline_onError();
+		break;
+	    }
+	}
+    };
     var fetch_searchResults = function(jobID, searchResults) {
 	for (var i = 0; i < searchResults.length; i++)
 	    state.addSearchResult(searchResults[i]);
@@ -1755,7 +1820,12 @@ FLAIR.WEBRANKER.INSTANCE = function() {
     };
     var fetch_parsedData = function(jobID, parsedDocs) {
 	for (var i = 0; i < parsedDocs.length; i++)
+	{
+	    if (parsedDocs[i].preRank === -1)
+		parsedDocs[i].preRank = state.getParsedDocCount() + 1;
+	    
 	    state.addParsedDoc(parsedDocs[i]);
+	}
 	
 	if (state.getParsedDocCount() === state.getTotalResults())
 	{
@@ -1768,7 +1838,7 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	state.flagAsParsedDataFetched();
 	self.resetAllSettingsAndFilters(true, false, true, true);
 	
-	FLAIR.WEBRANKER.UTIL.resetUI(false, false, false, false, true, false);
+	FLAIR.WEBRANKER.UTIL.resetUI(false, false, true, false, true, false);
 	FLAIR.WEBRANKER.UTIL.TOGGLE.leftSidebar(true);
 	FLAIR.WEBRANKER.UTIL.TOGGLE.rightSidebar(true);
 
@@ -1776,7 +1846,7 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	FLAIR.WEBRANKER.UTIL.TOAST.success("Parsing complete!", true, 4000);
 	
 	if (state.applyImportedSettings() === true)
-	    FLAIR.WEBRANKER.UTIL.TOAST.info("Applied custom settings", true, 4500);
+	    FLAIR.WEBRANKER.UTIL.TOAST.info("Applied custom settings.", true, 4500);
 	
 	visualiser.visualise(csvTable);
 	state.rerank();
@@ -1784,7 +1854,7 @@ FLAIR.WEBRANKER.INSTANCE = function() {
     
     // PRIVATE VARS
     var state = new FLAIR.WEBRANKER.STATE();
-    var pipeline = new FLAIR.PLUMBING.PIPELINE(complete_webSearch, complete_parseSearchResults, fetch_searchResults, fetch_parsedData, fetch_parsedVisData, pipeline_onClose, pipeline_onError);
+    var pipeline = new FLAIR.PLUMBING.PIPELINE(complete_webSearch, complete_parseSearchResults, complete_parseCustomCorpus, complete_customCorpusUploaded, fetch_searchResults, fetch_parsedData, fetch_parsedVisData, pipeline_onClose, pipeline_onError);
     var visualiser = new FLAIR.WEBRANKER.VISUALISATION(state.isDocFiltered, state.isConstructionEnabled);
     var customVocab = new FLAIR.WEBRANKER.CUSTOMVOCAB(pipeline);
     var initialized = false;
@@ -1800,12 +1870,13 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	var query = document.getElementById("search_field").value.trim();
 	if (query.length === 0)
 	{
-	    FLAIR.WEBRANKER.UTIL.TOAST.error("Please enter a valid search query", true, 5000);
+	    FLAIR.WEBRANKER.UTIL.TOAST.error("Please enter a valid search query.", true, 5000);
 	    return;
 	}
 	
 	state.setSearchParams(query, FLAIR.WEBRANKER.CONSTANTS.DEFAULT_LANGUAGE, document.getElementById("fetch_result_count").value);
-
+	state.flagAsBusy();
+	
 	FLAIR.WEBRANKER.UTIL.WAIT.singleton.showCancel("<h4>Searching the web - Please wait...</h4>", 
 	    function() {
 		FLAIR.WEBRANKER.UTIL.cancelCurrentOperation();
@@ -1822,7 +1893,7 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	
 	if (state.tryEnableTeacherMode() === true)
 	{
-	    FLAIR.WEBRANKER.UTIL.TOAST.info("FLAIR will automatically apply your custom settings", true, 5000);
+	    FLAIR.WEBRANKER.UTIL.TOAST.info("FLAIR will automatically apply your custom settings.", true, 5000);
 	    console.log("Teacher mode enabled");
 	}
 
@@ -1915,9 +1986,36 @@ FLAIR.WEBRANKER.INSTANCE = function() {
     };
     this.showCustomVocab = function() {
 	customVocab.show();
-    }
+    };
     this.disableCustomVocab = function() {
 	customVocab.disable();
+    };
+    this.showCustomCorpus = function() {
+	if (state.isBusy() === true)
+	{
+	    FLAIR.WEBRANKER.UTIL.TOAST.info("Please wait until the current operation is complete.", true, 2500);
+	    return;
+	}
+	
+	FLAIR.WEBRANKER.UTIL.TOGGLE.customCorpusDialog(true);
+    };
+    this.uploadCustomCorpus = function() {
+	FLAIR.WEBRANKER.UTIL.TOGGLE.customCorpusDialog(false);
+	FLAIR.WEBRANKER.UTIL.WAIT.singleton.showNonClosable("Uploading files...");
+	
+	state.reset();
+	state.flagAsBusy();
+	FLAIR.WEBRANKER.UTIL.TOAST.clear(false);
+    };
+    this.showVisualiser = function() {
+	FLAIR.WEBRANKER.UTIL.resetSlider('all');
+	
+	if (state.isCustomCorpus() === false && state.getQuery() !== "") 
+            $("#query_vis").html("\"" + state.getQuery() + "\" (" + state.getTotalResults() + " web pages)");
+	else
+            $("#query_vis").html("Interactive Visualization");
+	
+	FLAIR.WEBRANKER.UTIL.TOGGLE.visualiserDialog(true);
     };
 };
 
@@ -1953,6 +2051,16 @@ window.onload = function() {
     $("#customVocabList-reset").click(function (e) {
 	e.preventDefault();
 	FLAIR.WEBRANKER.singleton.disableCustomVocab();
+    });
+    
+    $("#customCorpus-toggle").click(function (e) {
+	e.preventDefault();
+	FLAIR.WEBRANKER.singleton.showCustomCorpus();
+    });
+    
+    $("#modal_CustomCorpus_buttonSelectFiles").click(function (e) {
+	e.preventDefault();
+	$("#modal_CustomCorpus_fileSelect").trigger('click');
     });
 
     $("[id$=gradientSlider]").slider({

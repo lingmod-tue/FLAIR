@@ -88,12 +88,7 @@ public final class CompactDocumentData
 	if (source.isParsed() == false)
 	    throw new IllegalStateException("Document not flagged as parsed");
 
-	if (source.getDocumentSource() instanceof SearchResultDocumentSource == false)
-	{
-	    title = url = urlToDisplay = snippet = "";
-	    preRank = -1;
-	}
-	else
+	if (source.getDocumentSource() instanceof SearchResultDocumentSource)
 	{
 	    SearchResultDocumentSource searchSource = (SearchResultDocumentSource)source.getDocumentSource();
 	    SearchResult searchResult = searchSource.getSearchResult();
@@ -104,7 +99,27 @@ public final class CompactDocumentData
 	    snippet = searchResult.getSnippet();
 	    preRank = searchResult.getRank();
 	}
+	else if (source.getDocumentSource() instanceof StreamDocumentSource)
+	{
+	    StreamDocumentSource localSource = (StreamDocumentSource)source.getDocumentSource();
+	    
+	    title = localSource.getName();
+	    url = urlToDisplay = "";
+	    
+	    String textSnip = source.getText();
+	    if (textSnip.length() > 35)
+		snippet = textSnip.substring(0, 35) + "...";
+	    else
+		snippet = textSnip;
 
+	    preRank = -1;
+	}
+	else
+	{
+	    title = url = urlToDisplay = snippet = "";
+	    preRank = -1;
+	}
+	
 	text = source.getText();
 	postRank = 0;
 

@@ -55,6 +55,10 @@
                                             <option value="50">50 results</option>
                                         </select>
                                     </div>
+				    &nbsp;&nbsp;
+				    <a href="#customCorpus-toggle" class="btn btn-info" id="customCorpus-toggle">
+					<span class="glyphicon glyphicon-upload"></span>
+				    </a>
                                 </form>
                             </div>
                             <div class="col-lg-1" style="text-align:right;"><span id="right-menu-toggle"><img src="img/glyphicons-517-menu-hamburger.png" alt=">"></span>
@@ -69,7 +73,7 @@
                         <div style="width:90%; padding-left: 10%;">
                             <div class="df" id="docs_info"></div>
                             <br><div class="panel panel-default" style="text-align: center">
-                                <a href="javascript:FLAIR.WEBRANKER.UTIL.resetSlider('all');FLAIR.WEBRANKER.UTIL.TOGGLE.visualiserDialog(true);" style="color:orange" >VISUALIZE</a>
+                                <a href="javascript:FLAIR.WEBRANKER.singleton.showVisualiser();" style="color:orange" >VISUALIZE</a>
                             </div>
 
                             <!-- Shorter/longer documents slider -->
@@ -2945,7 +2949,39 @@
             </div>
         </div>
 		
-		
+	<!-- UPLOAD CORPUS MODAL -->
+	<div class="modal modal-lg" id="modal_CustomCorpus" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false" style="margin:0 auto;">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header" style="text-align: center;">
+			<button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Upload Custom Corpus</h4>
+                    </div>
+		    
+		    <form id="modal_CustomCorpus_MainForm" action="CustomCorpusServlet" method="post" enctype="multipart/form-data" target="modal_CustomCorpus_dummyTarget">
+			<div class="modal-body">
+			    <div class="tab-pane fade active in">
+				<div class="form-group" style="text-align: center;">
+				    <div hidden>
+					<input id="modal_CustomCorpus_fileSelect" type="file" name="file" multiple accept=".txt"/>
+				    </div>
+				    <button type="button" class="btn btn-info btn-lg" id="modal_CustomCorpus_buttonSelectFiles">Select Files</button>
+				    <br/><br/>
+				    You can upload text files for parsing.
+				</div>
+			    </div>
+			</div>
+			<div class="modal-footer"  style="text-align: center;">
+			    <input type="submit" class="btn btn-primary" value="Upload" onclick="FLAIR.WEBRANKER.singleton.uploadCustomCorpus();">
+			</div>
+		    </form>
+		    
+		    <div hidden>
+			<iframe name="modal_CustomCorpus_dummyTarget" src="about:blank"></iframe>
+		    </div>
+                </div>
+            </div>
+        </div>
 		
         <script type="text/javascript" src="js/libs/jquery/jquery.min.js"></script>
         <script type="text/javascript" src="js/libs/jqueryui/jquery-ui.js"></script>

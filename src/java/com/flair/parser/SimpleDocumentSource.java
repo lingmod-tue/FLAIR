@@ -11,28 +11,22 @@ import com.flair.grammar.Language;
  * Represents a document source object that encapsulates a string
  * @author shadeMe
  */
-public class SimpleDocumentSource implements AbstractDocumentSource
+public class SimpleDocumentSource extends AbstractDocumentSource
 {
     private final String		   sourceString;
-    private final Language		   language;
     
     public SimpleDocumentSource(String parent, Language lang)
     {
+	super(lang);
 	if (parent.isEmpty())
 	    throw new IllegalArgumentException("Empty string source");
 	
-	sourceString = parent;
-	language = lang;
+	sourceString = preprocessText(parent);
     }
     
     @Override
     public String getSourceText() {
 	return sourceString;
-    }
-
-    @Override
-    public Language getLanguage() {
-	return language;
     }
 
     @Override

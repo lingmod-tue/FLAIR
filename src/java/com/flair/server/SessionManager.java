@@ -6,8 +6,11 @@
 package com.flair.server;
 
 import com.flair.utilities.FLAIRLogger;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.websocket.Session;
 
@@ -65,14 +68,30 @@ public class SessionManager
 	webSocketToHttp.clear();
     }
     
+    private HttpSession getHttpSession(Session webSocketSession)
+    {
+	if (webSocketToHttp.containsKey(webSocketSession))
+	    return webSocketToHttp.get(webSocketSession);
+	else
+	    return null;
+    }
+    
+    private Session getWebSocketSession(HttpSession httpSession)
+    {
+	if (httpToWebSocket.containsKey(httpSession))
+	    return httpToWebSocket.get(httpSession);
+	else
+	    return null;
+    }
+    
     public synchronized void addSession(Session newSession, HttpSession httpSession)
     {
 	if (activeSessions.containsKey(newSession))
 	    throw new IllegalArgumentException("Session already added");
 	else if (newSession.isOpen() == false)
 	    throw new IllegalArgumentException("Session is not open");
-	
-	activeSessions.put(newSession, new SessionState(newSession));
+
+	activeSessions.put(newSession, new SessionState(newSession, httpSession));
 	httpToWebSocket.put(httpSession, newSession);
 	webSocketToHttp.put(newSession, httpSession);
 	
@@ -88,7 +107,7 @@ public class SessionManager
 	state.release();
 	activeSessions.remove(oldSession);
 	
-	HttpSession oldHttp = webSocketToHttp.get(oldSession);
+	HttpSession oldHttp = getHttpSession(oldSession);
 	httpToWebSocket.remove(oldHttp);
 	webSocketToHttp.remove(oldSession);
 	
@@ -101,5 +120,27 @@ public class SessionManager
 	    throw new IllegalArgumentException("Session is not tracked");
 	
 	activeSessions.get(session).handleMessage(message);
+    }
+ 
+    public synchronized void handleCorpusUpload(HttpServletRequest request) throws ServletException, IOException
+    {
+	HttpSession parentHttpSession = request.getSession();
+	if (parentHttpSession == null)
+	    throw new IllegalStateException("Invalid HTTP Session");
+	
+	Session webSocketSession = getWebSocketSession(parentHttpSession);
+	if (webSocketSession == null)
+	    throw new IllegalStateException("HTTP session is not tracked");
+	
+	activeSessions.get(webSocketSession).handleCorpusUpload(request);
+    }
+    
+    public synchronized void sendErrorResponse(Session session, Throwable ex)
+    {
+	if (activeSessions.containsKey(session) == false)
+	    throw new IllegalArgumentException("Session is not tracked");
+	
+	activeSessions.get(session).sendErrorResponse(BasicInteropMessage.MessageType.SERVER_ERROR,
+						      "Server encountered an error. Exception: " + ex.getMessage());
     }
 }

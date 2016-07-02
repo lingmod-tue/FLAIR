@@ -129,28 +129,7 @@ public class SearchResult implements Comparable<SearchResult>
 		stream.setByteStream(pageURL.openStream());
 		
 		pageText = DefaultExtractor.INSTANCE.getText(stream);
-		if (pageText.isEmpty())
-		    return false;
-		
-		// ensure that all EOL punctuation marks are periods
-		StringBuilder textWriter = new StringBuilder();
-		String[] sentences = pageText.split("\n");
-                for (String itr : sentences)
-		{
-                    textWriter.append(itr);
-                    if (!(itr.endsWith(".") || 
-			  itr.endsWith("!") || 
-			  itr.endsWith("?") ||
-			  itr.endsWith("\""))) 
-		    {
-                        textWriter.append(".\n");
-                    }
-		    else
-                        textWriter.append("\n");
-                }
-		
-                pageText = textWriter.toString();
-		return true;
+		return !pageText.isEmpty();
             }
         } catch (IOException | BoilerpipeProcessingException ex) {
             FLAIRLogger.get().error("Couldn't fetch page text. Exception: " + ex.getMessage());

@@ -13,17 +13,23 @@ import com.flair.parser.AbstractDocumentSource;
 import com.flair.parser.DocumentCollection;
 import com.flair.parser.KeywordSearcherInput;
 import com.flair.parser.SearchResultDocumentSource;
+import com.flair.parser.StreamDocumentSource;
 import com.flair.taskmanager.AbstractPipelineOperation;
 import com.flair.taskmanager.AbstractPipelineOperationCompletionListener;
 import com.flair.taskmanager.MasterJobPipeline;
 import com.flair.taskmanager.PipelineOperationType;
 import com.flair.utilities.FLAIRLogger;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.UUID;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
 import javax.websocket.Session;
 
 /**
@@ -32,13 +38,25 @@ import javax.websocket.Session;
  */
 class SessionState
 {   
+    final class CustomCorpusFile
+    {
+	private final InputStream	stream;
+	private final String		fileName;
+
+	public CustomCorpusFile(InputStream input, String fileName)
+	{
+	    this.stream = input;
+	    this.fileName = fileName;
+	}
+    }
+    
     private final Session						parentSession;
     private final HashMap<String, AbstractPipelineOperation>		idTable;		// maps operations to UIDs
     private final HashMap<AbstractPipelineOperation, String>		operationTable;		// maps UIDs to operations
     private AbstractPipelineOperation					lastQueuedOperation;
     private KeywordSearcherInput					activeKeywords;		// as sent by the client
-    
     private boolean							valid;			// invalidated after release()
+    private final List<CustomCorpusFile>				customCorpusFiles;	// the last set of files uploaded by the client
     
     final class SessionOperationCompletionListener implements AbstractPipelineOperationCompletionListener
     {
@@ -57,6 +75,7 @@ class SessionState
 	    if (isValid() && source.isCancelled() == false)
 	    {
 		FLAIRLogger.get().info("Pipeline operation " + opID + " complete. Details:\n" + source.toString());
+		boolean HasError = false;
 		
 		switch (source.getType())
 		{
@@ -72,24 +91,44 @@ class SessionState
 		    {
 			Object output = source.getOutput();
 			DocumentCollection parsedDocs = (DocumentCollection)output;
-			sendMessage(new ParseSearchResultsCompleteResponse(opID, parsedDocs.size()));
+			switch (reqType)
+			{
+			    case PARSE_SEARCH_RESULTS:
+				sendMessage(new ParseSearchResultsCompleteResponse(opID, parsedDocs.size()));
+				break;
+				
+			    case PARSE_CUSTOM_CORPUS:
+				customCorpusFiles.clear();
+				sendMessage(new ParseCustomCorpusCompleteResponse(opID, parsedDocs.size()));
+				break;
+				
+			    default:
+				HasError = true;
+			}
 			break;
 		    }
 				    
 		    default:
-			sendErrorResponse(BasicInteropMessage.MessageType.JOB_COMPLETE, "Couldn't generate response for pipeline operation " + opID + " of type " + source.getType());
+			HasError = true;
+		}
+		
+		if (HasError)
+		{
+		    sendErrorResponse(BasicInteropMessage.MessageType.JOB_COMPLETE,
+				      "Couldn't generate response for pipeline operation " + opID + " of type " + source.getType());
 		}
 	    }
 	}
     }
     
-    public SessionState(Session parent)
+    public SessionState(Session parent, HttpSession parentHttp)
     {
 	parentSession = parent;
 	lastQueuedOperation = null;
 	idTable = new HashMap<>();
 	operationTable = new HashMap<>();
 	activeKeywords = null;
+	customCorpusFiles = new ArrayList<>();
 	
 	valid = true;
     }
@@ -143,7 +182,7 @@ class SessionState
 	return op;
     }
     
-    private void sendErrorResponse(BasicInteropMessage.MessageType source, String errorString)
+    protected void sendErrorResponse(BasicInteropMessage.MessageType source, String errorString)
     {
 	FLAIRLogger.get().error(errorString);
 	sendMessage(new ServerErrorResponse(source, errorString));
@@ -163,7 +202,10 @@ class SessionState
 		if (op == null)
 		    sendErrorResponse(requestType, "Invalid cancellation request. No operation with ID " + req.jobID);
 		else
+		{
 		    op.cancel();
+		    customCorpusFiles.clear();
+		}
 		
 		break;
 	    }
@@ -177,6 +219,36 @@ class SessionState
 		    activeKeywords = null;
 		else
 		    activeKeywords = new KeywordSearcherInput(req.keywords);
+		
+		break;
+	    }
+	    
+	    case PARSE_CUSTOM_CORPUS:
+	    {
+		ParseCustomCorpusRequest req = ServerClientInteropManager.toParseCustomCorpusRequest(message);
+		
+		if (customCorpusFiles.isEmpty())
+		    sendErrorResponse(requestType, "Missing custom corpus files");
+		else
+		{
+		    List<AbstractDocumentSource> docSources = new ArrayList<>();
+		    try
+		    {
+			for (CustomCorpusFile itr : customCorpusFiles)
+			    docSources.add(new StreamDocumentSource(itr.stream, itr.fileName, req.language));
+		    }
+		    catch (Exception ex)
+		    {
+			sendErrorResponse(requestType, "Couldn't read custom corpus files. Exception: " + ex.getMessage());
+			break;
+		    }
+		   
+		    AbstractPipelineOperation newOp = performDocumentParsingJob(req.language, docSources);
+		    String id = registerOperation(newOp, requestType);
+
+		    sendMessage(new ParseCustomCorpusResponse(id));
+		    newOp.begin();
+		}
 		
 		break;
 	    }
@@ -355,6 +427,54 @@ class SessionState
     
     public synchronized boolean isValid() {
 	return valid;
+    }
+    
+    private String getUploadFileName(Part part)
+    {
+        String contentDisp = part.getHeader("content-disposition");
+        String[] tokens = contentDisp.split(";");
+        for (String token : tokens) 
+	{
+            if (token.trim().startsWith("filename"))
+                return token.substring(token.indexOf("=") + 2, token.length() - 1);
+        }
+	
+        return "";
+    }
+    
+    public synchronized void handleCorpusUpload(HttpServletRequest request)
+    {
+	FLAIRLogger.get().info("Received custom corpus from client");
+	
+	if (customCorpusFiles.isEmpty() == false)
+	{
+	    sendErrorResponse(BasicInteropMessage.MessageType.PARSE_CUSTOM_CORPUS,
+			      "Previous custom corpus exists. Associated parsing operation still running/was never started");
+	    return;
+	}
+	
+	try
+	{
+	    for (Part part : request.getParts())
+	    {
+		String orgName = getUploadFileName(part);
+		if (orgName.isEmpty())
+		    continue;
+		
+		int extIdx = orgName.lastIndexOf(".");
+		if (extIdx != -1)
+		    orgName = orgName.substring(0, extIdx);	// strip extension
+		
+		customCorpusFiles.add(new CustomCorpusFile(part.getInputStream(), orgName));
+		FLAIRLogger.get().info("Uploaded custom corpus file " + orgName);
+	    }
+	    
+	    // signal the client
+	    sendMessage(new CustomCorpusUploadedResponse(customCorpusFiles.size()));
+	}
+	catch (IOException | ServletException ex) {
+	    sendErrorResponse(BasicInteropMessage.MessageType.PARSE_CUSTOM_CORPUS, "Couldn't load custom corpus. Exception: " + ex.getMessage());
+	}
     }
 }
 

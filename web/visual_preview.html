@@ -53,6 +53,10 @@
                                             <option value="50">50 results</option>
                                         </select>
                                     </div>
+				    &nbsp;&nbsp;
+				    <a href="#customCorpus-toggle" class="btn btn-info" id="customCorpus-toggle">
+					<span class="glyphicon glyphicon-upload"></span>
+				    </a>
                                 </form>
                             </div>
                             <div class="col-lg-1" style="text-align:right;"><span id="right-menu-toggle"><img src="img/glyphicons-517-menu-hamburger.png" alt=">"></span>
@@ -96,9 +100,9 @@
                             </div>
                             <hr>  
 				<div>
-				    <input type="checkbox" onclick="FLAIR.WEBRANKER.singleton.toggleKeywordHighlighting()" id="tgl-customVocabList" title="check to highlight keywords" checked>&nbsp;<span id="customVocabList-label">Academic Vocabulary</span>&nbsp;
-					<a href="#customVocabList-upload" id="customVocabList-upload"><span class="glyphicon glyphicon-edit"></span></a>&nbsp;
-					<a href="#customVocabList-reset" id="customVocabList-reset"><span class="glyphicon glyphicon-repeat"></span></a>
+				    <input type="checkbox" onclick="FLAIR.WEBRANKER.singleton.toggleKeywordHighlighting()" id="tgl-customVocabList" title="check to highlight keywords" checked>&nbsp;<span id="customVocabList-label">Academic</span> Vocabulary&nbsp;
+					<a href="#customVocabList-upload" id="customVocabList-upload" title="Edit Vocabulary"><span class="glyphicon glyphicon-edit"></span></a>&nbsp;
+					<a href="#customVocabList-reset" id="customVocabList-reset" title="Use Defualt Academic Vocabulary"><span class="glyphicon glyphicon-repeat"></span></a>
 					<br>
 				    <div class="ui-widget-content" style="width:80%;">
 					<div class="gradientSlider" title="move right to rank texts with this construct higher" id="customVocabList-gradientSlider"></div>
@@ -1062,7 +1066,7 @@
                     <div class="mainArea" style="margin-top: 60px;"><br>
                         <div class="row">
                             <!-- show results here -->
-                            <div class="col-md-8 results">
+                            <div class="col-md-7 results">
                                 <table class="table table-hover" style="width:100%; margin-left:10px;padding-right:10px;">
                                     <tbody id="results_table">
                                     </tbody>
@@ -1961,13 +1965,11 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <br>
+                        <h4 class="modal-title" style="text-align: center;">List Of Constructions</h4>
                     </div>
                     <div class="modal-body">
                         <div class="tab-pane fade active in">
-                            <h4 style="color:grey;text-align: center;">List of constructions</h4>
-                            <div id="list_of_constructs">
-                                <br>
+                            <div id="list_of_constructs" class="pre-scrollable">
                                 <table class="table table-hover">
                                     <tbody>
                                         <tr class="warning">
@@ -2932,8 +2934,8 @@
                         <div class="tab-pane fade active in" id="modal_CustomVocab_body">
                             <div class="form-group">
                                 <label>Custom Vocabulary:</label>
-                                <textarea class="form-control" rows="15" id="custom_vocab_textarea"></textarea><br/>
-				Words must be separated by commas or line breaks.
+                                <textarea class="form-control" rows="10" id="custom_vocab_textarea"></textarea><br/>
+				Words may be separated by commas, spaces or line breaks.
                             </div>
                         </div>
                         <div class="modal-footer" style="text-align: center;">
@@ -2945,7 +2947,34 @@
             </div>
         </div>
 		
-		
+	<!-- UPLOAD CORPUS MODAL -->
+	<div class="modal fade modal-lg" id="modal_CustomCorpus" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false" style="margin:0 auto;">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header" style="text-align: center;">
+			<button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Upload Custom Corpus</h4>
+                    </div>
+		    <form action="CustomCorpusServlet" method="post" enctype="multipart/form-data">
+			<div class="modal-body">
+			    <div class="tab-pane fade active in">
+				<div class="form-group" style="text-align: center;">
+				    <div hidden>
+					<input id="modal_CustomCorpus_fileSelect" type="file" multiple accept=".txt"/>
+				    </div>
+				    <button type="button" class="btn btn-info btn-lg" id="modal_CustomCorpus_buttonSelectFiles">Select Files</button>
+				    <br/><br/>
+				    You can upload text files for parsing.
+				</div>
+			    </div>
+			</div>
+			<div class="modal-footer"  style="text-align: center;">
+			    <input type="submit" class="btn btn-primary" id="modal_CustomCorpus_buttonUpload" value="Upload">
+			</div>
+		    </form>
+                </div>
+            </div>
+        </div>
 		
         <script type="text/javascript" src="js/libs/jquery/jquery.min.js"></script>
         <script type="text/javascript" src="js/libs/jqueryui/jquery-ui.js"></script>

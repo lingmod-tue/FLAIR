@@ -1,7 +1,6 @@
 /*
  * This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/.
- 
  */
 package com.flair.parser;
 
@@ -11,9 +10,40 @@ import com.flair.grammar.Language;
  * Represents the source of a document object
  * @author shadeMe
  */
-public interface AbstractDocumentSource extends Comparable<AbstractDocumentSource>
+public abstract class AbstractDocumentSource implements Comparable<AbstractDocumentSource>
 {
-    public Language	    getLanguage();
-    public String	    getSourceText();
-    public String	    getDescription();
+    private final Language	    language;
+    
+    public AbstractDocumentSource(Language lang) {
+	language = lang;
+    }
+    
+    protected final String preprocessText(String input)
+    {
+	// ensure that all EOL punctuation marks are periods
+	StringBuilder textWriter = new StringBuilder();
+	String[] sentences = input.split("\n");
+	for (String itr : sentences)
+	{
+	    textWriter.append(itr);
+	    if (!(itr.endsWith(".") || 
+		  itr.endsWith("!") || 
+		  itr.endsWith("?") ||
+		  itr.endsWith("\""))) 
+	    {
+		textWriter.append(".\n");
+	    }
+	    else
+		textWriter.append("\n");
+	}
+	
+	return textWriter.toString();
+    }
+    
+    public final Language getLanguage() {
+	return language;
+    }
+    
+    abstract public String	    getSourceText();
+    abstract public String	    getDescription();
 }
