@@ -27,12 +27,13 @@ class Document implements AbstractDocument
     private int					numCharacters;
     private int					numSentences;
     private int					numDependencies;
+    private int					numWords;
+    private int					numTokens;		// no of words "essentailly" (kinda), later substituted with no of words (without punctuation)
     
     private double				avgWordLength;		// doesn't include punctuation
     private double				avgSentenceLength;
     private double				avgTreeDepth;
 
-    private int					tokenCount;		// no of words "essentailly" (kinda), formerly known as "docLength". updated with the dependency count after parsing
     private double				fancyDocLength;		// ### TODO better name needed, formerly "docLenTfIdf"
     
     private KeywordSearcherOutput		keywordData;
@@ -50,7 +51,7 @@ class Document implements AbstractDocument
 	StringTokenizer tokenizer = new StringTokenizer(pageText, " ");
 	
 	// calculate readability score, level, etc
-	tokenCount = tokenizer.countTokens();
+	numTokens = tokenizer.countTokens();
 	int whitespaceCount = 0;
 	for (int i = 0; i < pageText.length(); i++)
 	{
@@ -60,16 +61,16 @@ class Document implements AbstractDocument
 	numCharacters = pageText.length() - whitespaceCount;
 	tokenizer = new StringTokenizer(pageText, "[.!?]");
 	numSentences = tokenizer.countTokens();
-	numDependencies = tokenCount;
+	numDependencies = 0;
 	
-	if (tokenCount > 100 && numSentences != 0 && numCharacters != 0)
-            readabilityScore = Math.ceil(4.71 * ((double) numCharacters / (double)numDependencies) + 0.5 * (numDependencies / (double)numSentences) - 21.43);
+	if (numSentences != 0 && numCharacters != 0)
+            readabilityScore = Math.ceil(4.71 * ((double)numCharacters / (double)numTokens) + 0.5 * (numTokens / (double)numSentences) - 21.43);
 	else
 	    readabilityScore= -10.0;
 
-	if (readabilityScore < 6)
+	if (readabilityScore < 7)
 	    readabilityLevel = READABILITY_LEVEL_A;
-	else if (6 <= readabilityScore && readabilityScore <= 10)
+	else if (7 <= readabilityScore && readabilityScore <= 12)
 	    readabilityLevel = READABILITY_LEVEL_B;
 	else
 	    readabilityLevel = READABILITY_LEVEL_C;
@@ -160,7 +161,7 @@ class Document implements AbstractDocument
     
     @Override
     public int getLength() {
-	return tokenCount;
+	return numWords;
     }
     
     @Override
@@ -200,7 +201,7 @@ class Document implements AbstractDocument
     
     @Override
     public void setLength(int value) {
-	tokenCount = value;
+	numWords = value;
     }
 
     @Override
@@ -236,6 +237,26 @@ class Document implements AbstractDocument
     @Override
     public void setKeywordData(KeywordSearcherOutput data) {
 	keywordData = data;
+    }
+
+    @Override
+    public int getNumWords() {
+	return numWords;
+    }
+
+    @Override
+    public int getNumTokens() {
+	return numTokens;
+    }
+
+    @Override
+    public void setNumWords(int value) {
+	numWords = value;
+    }
+
+    @Override
+    public void setNumTokens(int value) {
+	numTokens = value;
     }
 }
 

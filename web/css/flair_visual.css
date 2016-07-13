@@ -368,15 +368,22 @@ svg {
     background: linear-gradient(to right,red,white,green);  Standard syntaxt, must be last */
 }
 
+/* BLUE */
 .ui-slider-horizontal .ui-slider-range {
     border: none;
-    background-image: -webkit-linear-gradient(top,#5cb85c 0,#419641 100%);
-    background-image: -o-linear-gradient(top,#5cb85c 0,#419641 100%);
-    background-image: -webkit-gradient(linear,left top,left bottom,from(#5cb85c),to(#419641));
-    background-image: linear-gradient(to bottom,#5cb85c 0,#419641 100%);
+    background-image: -webkit-linear-gradient(top, #fcf8e3, #96d5f6, #fcf8e3);
+    background-image: -o-linear-gradient(top, #fcf8e3, #96d5f6, #fcf8e3);
+    background-image: linear-gradient(to bottom, #fcf8e3, #96d5f6, #fcf8e3);
 }
 
-
+/* ORANGE */
+.ui-slider-horizontal .ui-slider-range {
+    border: none;
+    background-image: -webkit-linear-gradient(top, #fcf8e3 0, #faf2cc 100%);
+    background-image: -o-linear-gradient(top, #fcf8e3 0, #faf2cc 100%);
+    background-image: -webkit-gradient(linear,left top,left bottom,from(#fcf8e3),to(#faf2cc));
+    background-image: linear-gradient(to bottom, #fcf8e3 0, #faf2cc 100%);
+}
 .ui-widget-content > .gradientSlider, .ui-widget-content > .ui-slider, .ui-widget-content > .ui-slider-horizontal, .ui-widget-content > .ui-widget, .ui-widget-content > .ui-widget-content, .ui-widget-content > .ui-corner-all {
     border-radius: 3px;
 }

@@ -55,10 +55,12 @@
                                             <option value="50">50 results</option>
                                         </select>
                                     </div>
+				    <div hidden>
 				    &nbsp;&nbsp;
 				    <a href="#customCorpus-toggle" class="btn btn-info" id="customCorpus-toggle">
 					<span class="glyphicon glyphicon-upload"></span>
 				    </a>
+				    </div>
                                 </form>
                             </div>
                             <div class="col-lg-1" style="text-align:right;"><span id="right-menu-toggle"><img src="img/glyphicons-517-menu-hamburger.png" alt=">"></span>
@@ -75,7 +77,10 @@
                             <br><div class="panel panel-default" style="text-align: center">
                                 <a href="javascript:FLAIR.WEBRANKER.singleton.showVisualiser();" style="color:orange" >VISUALIZE</a>
                             </div>
-
+			    <hr>
+			    <div class="panel panel-info" style="text-align: center">
+				<a href="javascript:FLAIR.WEBRANKER.singleton.exportSettings();" style="color:grey;">SHARE <br> search setup</a>
+			    </div>
                             <!-- Shorter/longer documents slider -->
                             <hr>
                             <h4 style="color:grey">Text characteristics:</h4>
@@ -103,9 +108,11 @@
                             <hr>  
 				<div>
 				    <input type="checkbox" onclick="FLAIR.WEBRANKER.singleton.toggleKeywordHighlighting()" id="tgl-customVocabList" title="check to highlight keywords" checked>&nbsp;<span id="customVocabList-label">Academic</span> Vocabulary&nbsp;
+				    <div hidden>
 					<a href="#customVocabList-upload" id="customVocabList-upload" title="Edit Vocabulary"><span class="glyphicon glyphicon-edit"></span></a>&nbsp;
 					<a href="#customVocabList-reset" id="customVocabList-reset" title="Use Defualt Academic Vocabulary"><span class="glyphicon glyphicon-repeat"></span></a>
-					<br>
+				    </div>
+					<br><br>
 				    <div class="ui-widget-content" style="width:80%;">
 					<div class="gradientSlider" title="move right to rank texts with this construct higher" id="customVocabList-gradientSlider"></div>
 				    </div>
@@ -316,17 +323,17 @@
                                                 <div id="collapse_verbs" class="panel-collapse collapse">
                                                     <div class="panel-body">
                                                         <br>
-                                                        <div class="panel panel-success">
+                                                        <div class="panel panel-info success">
                                                             <div class="panel-heading">
                                                                 <h4 class="panel-title">
                                                                     <button type="button" class="close" style="font-size: 12px" onclick="FLAIR.WEBRANKER.UTIL.resetSlider('verbForms')"><span class="glyphicon glyphicon-erase" title="reset"></span></button>
                                                                     <a data-toggle="collapse" data-parent="#accordion"
-                                                                       href="#collapse_verbForms">
+                                                                       href="#collapse_Forms">
                                                                         verb forms
                                                                     </a>
                                                                 </h4>
                                                             </div>
-                                                            <div id="collapse_verbForms" class="panel-collapse collapse">
+                                                            <div id="collapse_Forms" class="panel-collapse collapse">
                                                                 <div class="panel-body">
                                                                     <div><input type="checkbox" onclick="FLAIR.WEBRANKER.singleton.toggleConstruction(this)" id="tgl-shortVerbForms" title="uncheck to exclude texts with this construct" checked>&nbsp;contracted (to be and to have: 'm, 's, 'd) <br><span class="df" id="shortVerbForms-df"></span>
                                                                         <div class="ui-widget-content" style="width:80%;">
@@ -385,7 +392,7 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="panel panel-success">
+                                                        <div class="panel panel-info success">
                                                             <div class="panel-heading">
                                                                 <h4 class="panel-title">
                                                                     <button type="button" class="close" style="font-size: 12px" onclick="FLAIR.WEBRANKER.UTIL.resetSlider('tenses')"><span class="glyphicon glyphicon-erase" title="reset"></span></button>
@@ -473,7 +480,7 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="panel panel-success">
+                                                        <div class="panel panel-info success">
                                                             <div class="panel-heading">
                                                                 <h4 class="panel-title">
                                                                     <button type="button" class="close" style="font-size: 12px" onclick="FLAIR.WEBRANKER.UTIL.resetSlider('aspects')"><span class="glyphicon glyphicon-erase" title="reset"></span></button>
@@ -512,7 +519,7 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="panel panel-success">
+                                                        <div class="panel panel-info success">
                                                             <div class="panel-heading">
                                                                 <h4 class="panel-title">
                                                                     <button type="button" class="close" style="font-size: 12px" onclick="FLAIR.WEBRANKER.UTIL.resetSlider('times')"><span class="glyphicon glyphicon-erase" title="reset"></span></button>
@@ -545,7 +552,7 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="panel panel-success">
+                                                        <div class="panel panel-info success">
                                                             <div class="panel-heading">
                                                                 <h4 class="panel-title">
                                                                     <button type="button" class="close" style="font-size: 12px" onclick="FLAIR.WEBRANKER.UTIL.resetSlider('voice')"><span class="glyphicon glyphicon-erase" title="reset"></span></button>
@@ -567,7 +574,7 @@
                                                         </div>
 
 
-                                                        <div class="panel panel-success">
+                                                        <div class="panel panel-info success">
                                                             <div class="panel-heading">
                                                                 <h4 class="panel-title">
                                                                     <button type="button" class="close" style="font-size: 12px" onclick="FLAIR.WEBRANKER.UTIL.resetSlider('phrasalVerbs')"><span class="glyphicon glyphicon-erase" title="reset"></span></button>
@@ -589,7 +596,7 @@
                                                         </div>
 
 
-                                                        <div class="panel panel-success">
+                                                        <div class="panel panel-info success">
                                                             <div class="panel-heading">
                                                                 <h4 class="panel-title">
                                                                     <button type="button" class="close" style="font-size: 12px" onclick="FLAIR.WEBRANKER.UTIL.resetSlider('modals')"><span class="glyphicon glyphicon-erase" title="reset"></span></button>
@@ -620,7 +627,7 @@
                                                         </div>
 
 
-                                                        <div class="panel panel-success">
+                                                        <div class="panel panel-info success">
                                                             <div class="panel-heading">
                                                                 <h4 class="panel-title">
                                                                     <button type="button" class="close" style="font-size: 12px" onclick="FLAIR.WEBRANKER.UTIL.resetSlider('transitive')"><span class="glyphicon glyphicon-erase" title="reset"></span></button>
@@ -647,7 +654,7 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="panel panel-success">
+                                                        <div class="panel panel-info success">
                                                             <div class="panel-heading">
                                                                 <h4 class="panel-title">
                                                                     <button type="button" class="close" style="font-size: 12px" onclick="FLAIR.WEBRANKER.UTIL.resetSlider('imperative')"><span class="glyphicon glyphicon-erase" title="reset"></span></button>
@@ -1045,15 +1052,8 @@
                                     </div>
                                 </div>
 
-                                <div class="panel panel-default" style="text-align: center">
-                                    <a href="javascript:FLAIR.WEBRANKER.singleton.resetAllSettingsAndFilters(true, true, true, true);" style="color:grey;">RESET ALL</a>
-                                </div>
-
-
-                                <br><hr>
-
-                                <div class="panel panel-info" style="text-align: center">
-                                    <a href="javascript:FLAIR.WEBRANKER.singleton.exportSettings();" style="color:grey;">EXPORT</a>
+                                <div class="panel panel-default" style="text-align: center; border:none;">
+                                    <span class="glyphicon glyphicon-erase">&nbsp;</span><a href="javascript:FLAIR.WEBRANKER.singleton.resetAllSettingsAndFilters(true, true, true, true);" style="color:grey;">RESET ALL</a>
                                 </div>
 
                                 <br><br><br><br><br><br>
@@ -1107,6 +1107,7 @@
                             <a href="http://sfs.uni-tuebingen.de/~mkannan/" target="_blank">Madeeswaran Kannan</a> <a href="mailto:mkannan@sfs.uni-tuebingen.de?Subject=FLAIR%20tool" target="_top" title="write to Madeeswaran Kannan"><span class="glyphicon glyphicon-envelope"></span></a> supervised by 
                             <a href="http://sfs.uni-tuebingen.de/~dm/" target="_blank">Prof. Dr. Detmar Meurers</a> 
                             <br> <span style="color:darkorange">@</span> University of Tübingen, Germany <span style="color:darkorange">|</span> 2015-2016
+			    <br> version 1.0
                         </p>
                         </center>
                     </div>
@@ -1123,7 +1124,7 @@
 
 
 
-                            <!--                        <div class="panel panel-success" style="display:inline-block;width:30%;">
+                            <!--                        <div class="panel panel-info success" style="display:inline-block;width:30%;">
                                                         <div class="panel-heading" style="text-align: center">
                                                             <h3 class="panel-title">SEARCH</h3>
                                                         </div>
@@ -1173,7 +1174,7 @@
                         </ul>
                         <br>
                         <p><b>LICENSE:</b> </p>
-                        <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/InteractiveResource" property="dct:title" rel="dct:type">FLAIR tool</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+                        <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><br/>FLAIR tool is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
                     </div>
                     <div class="modal-footer">
                         <center>
@@ -1191,7 +1192,7 @@
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 
-                        <label class="close" data-toggle="popover" data-placement="auto left" data-content="<ul><li> <br><b>select ranges</b> by dragging the pointers up and down </li><br><li> <b>change the order of axes</b> by dragging them left and right </li><br><li> <b>add or remove axes</b> via checkboxes on the right </li></ul>"><span class="glyphicon glyphicon-question-sign" aria-hidden="true">&nbsp;</span></label>
+                        <label class="close" data-toggle="popover" data-placement="auto left" data-content="<br><br><br><ul><li><b>select ranges</b> by dragging the pointers up and down </li><br><li> <b>change the order of axes</b> by dragging them left and right </li><br><li> <b>add or remove axes</b> via checkboxes on the right </li></ul>"><span class="glyphicon glyphicon-question-sign" aria-hidden="true">&nbsp;</span></label>
                         <center> 
                             <h4 style="" id="query_vis"> </h4> 
                         </center>
@@ -1218,17 +1219,17 @@
                                                     </td>
                                                 </tr>
                                                 <tr class="active">
-                                                    <td class="construct"> <input type="checkbox" onclick="FLAIR.WEBRANKER.singleton.toggleVisualiserAxis(this)" title="check/uncheck to add/remove an axis" id="sentences-def-vis" checked>
-                                                        # of sentences
-                                                    </td>
-                                                </tr>
-                                                <tr class="active">
                                                     <td class="construct"> <input type="checkbox" onclick="FLAIR.WEBRANKER.singleton.toggleVisualiserAxis(this)" title="check/uncheck to add/remove an axis" id="words-def-vis" checked>
                                                         # of words
                                                     </td>
                                                 </tr>
                                                 <tr class="active">
-                                                    <td class="construct"> <input type="checkbox" onclick="FLAIR.WEBRANKER.singleton.toggleVisualiserAxis(this)" title="check/uncheck to add/remove an axis" id="score-def-vis" checked>
+                                                    <td class="construct"> <input type="checkbox" onclick="FLAIR.WEBRANKER.singleton.toggleVisualiserAxis(this)" title="check/uncheck to add/remove an axis" id="sentences-def-vis">
+                                                        # of sentences
+                                                    </td>
+                                                </tr>
+                                                <tr class="active">
+                                                    <td class="construct"> <input type="checkbox" onclick="FLAIR.WEBRANKER.singleton.toggleVisualiserAxis(this)" title="check/uncheck to add/remove an axis" id="score-def-vis">
                                                         complexity
                                                     </td>
                                                 </tr>
@@ -2915,7 +2916,7 @@
                             </div>
                         </div>
                         <div class="modal-footer"  style="text-align: center;">
-                            You can use this URL to automatically apply your current settings to every search operation.
+                            You can use this link to apply your current settings to further searches<br/>or share the link with students so they can use the web search with your settings.
                         </div>
                     </div>
                 </div>

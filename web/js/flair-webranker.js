@@ -41,7 +41,7 @@ FLAIR.WEBRANKER.UTIL.generateConstructionName = function(parent, name_to_show) {
 		    // add parent_name to name
 		    name = parent + "  > " + name;
 
-		    if (grandparent !== null && grandparent.className.indexOf("panel-success") > -1)
+		    if (grandparent !== null && grandparent.className.indexOf("success") > -1)
 		    {	// e.g. verbs
 			// one more layer of constructs
 			grandparent = grandparent.parentNode; // div panel-body
@@ -75,7 +75,12 @@ FLAIR.WEBRANKER.UTIL.resetSlider = function(name) {
             }
 	    
 	    var construct_name = this.id.substring(0, this.id.indexOf("-gradientSlider"));
-	    if ($("#tgl-" + construct_name).prop("checked") === false)
+	    if ( construct_name === "customVocabList")
+	    {
+		if ($("#tgl-" + construct_name).prop("checked") === true)
+		    $("#tgl-" + construct_name).trigger("click");
+	    }
+	    else if ($("#tgl-" + construct_name).prop("checked") === false)
 		$("#tgl-" + construct_name).trigger("click");
         });
     } 
@@ -87,7 +92,12 @@ FLAIR.WEBRANKER.UTIL.resetSlider = function(name) {
             }
 	    
 	    var construct_name = this.id.substring(0, this.id.indexOf("-gradientSlider"));
-	    if ($("#tgl-" + construct_name).prop("checked") === false)
+	    if ( construct_name === "customVocabList")
+	    {
+		if ($("#tgl-" + construct_name).prop("checked") === true)
+		    $("#tgl-" + construct_name).trigger("click");
+	    }
+	    else if ($("#tgl-" + construct_name).prop("checked") === false)
 		$("#tgl-" + construct_name).trigger("click");
         });
     }
@@ -113,7 +123,7 @@ FLAIR.WEBRANKER.UTIL.resetUI = function(leftSidebar, rightSidebar, waitDialog, s
 	$("#snapshot").html("<div id='empty_sidebar_info'>Click on a search result <br>to display text here.</div>");    
     if (resultsTable === true || resultsTable === undefined) {
         
-        document.getElementById("results_table").innerHTML = "<div class=\"panel panel-success\"> <div class=\"panel-heading\" style=\"text-align: center\"> <h3 class=\"panel-title\">SEARCH <span class=\"glyphicon glyphicon-search\"></span></h3> </div> <div class=\"panel-body\"> Type in a search query. <br> FLAIR will fetch the <b>top results</b> from the Bing search engine. </div> </div> <br><br> <div class=\"panel panel-warning\"> <div class=\"panel-heading\" style=\"text-align: center\"> <h3 class=\"panel-title\">CONFIGURE <span class=\"glyphicon glyphicon-cog\"></span></h3> </div> <div class=\"panel-body\"> Configure the settings: <b>text</b> (complexity, length) and <b>language</b> (the passive, wh- questions, academic vocabulary, ...) <br> You can <b>export</b> the settings to apply them to all further searches. </div> </div> <br><br> <div class=\"panel panel-info\" > <div class=\"panel-heading\" style=\"text-align: center\"> <h3 class=\"panel-title\">READ <span class=\"glyphicon glyphicon-menu-hamburger\"></span></h3> </div> <div class=\"panel-body\"> FLAIR will re-rank the documents according to the configured settings. <br> Click on the link to open the page in a new tab or read the <b>enhanced text</b> in the right-side panel. </div> </div>";
+        document.getElementById("results_table").innerHTML = "<div class=\"panel panel-info\"> <div class=\"panel-heading\" style=\"text-align: center\"> <h3 class=\"panel-title\">SEARCH <span class=\"glyphicon glyphicon-search\"></span></h3> </div> <div class=\"panel-body\"> Type in a search query. <br> FLAIR will fetch the <b>top results</b> from the Bing search engine. </div> </div> <br><br> <div class=\"panel panel-warning\"> <div class=\"panel-heading\" style=\"text-align: center\"> <h3 class=\"panel-title\">CONFIGURE <span class=\"glyphicon glyphicon-cog\"></span></h3> </div> <div class=\"panel-body\"> Configure the settings: <b>text</b> (complexity, length) and <b>language</b> (the passive, wh- questions, academic vocabulary, ...) <br> You can <b>export</b> the settings to apply them to all further searches. </div> </div> <br><br> <div class=\"panel panel-info\" > <div class=\"panel-heading\" style=\"text-align: center\"> <h3 class=\"panel-title\">READ <span class=\"glyphicon glyphicon-menu-hamburger\"></span></h3> </div> <div class=\"panel-body\"> FLAIR will re-rank the documents according to the configured settings. <br> Click on the link to open the page in a new tab or read the <b>enhanced text</b> in the right-side panel. </div> </div>";
     }
     
     FLAIR.WEBRANKER.UTIL.TOGGLE.customCorpusDialog(false);
@@ -390,7 +400,7 @@ FLAIR.WEBRANKER.CUSTOMVOCAB = function(server_pipeline) {
 	else
 	{
 	    $("#customVocabList-label").html("Custom");
-	    FLAIR.WEBRANKER.UTIL.TOAST.success("The new vocabulary will be applied to the next search/parse operation.", true, 3000);
+	    FLAIR.WEBRANKER.UTIL.TOAST.success("The new vocabulary will be applied to the next search operation.", true, 3000);
 	    return true;
 	}
 	
@@ -771,8 +781,9 @@ FLAIR.WEBRANKER.STATE = function() {
 	parsedDataFetched = false;
 	busy = false;
 	customCorpus = false;
-	
-	// rest the custom vocab state for each search
+	highlightKeywords = false;
+
+	// reset the custom vocab state for each search
 	var label = $("#customVocabList-label").text();
 	label = label.toLowerCase();
 	if (label.startsWith("acad"))
@@ -786,7 +797,6 @@ FLAIR.WEBRANKER.STATE = function() {
 	    teacherMode = false;
 	    importedSettings = {};
 	    applyingImportedSettings = false;
-	    highlightKeywords = false;
 	}
     };
     this.displayDocText = function(index) {
@@ -1442,7 +1452,7 @@ FLAIR.WEBRANKER.VISUALISATION = function(delegate_isDocFiltered, delegate_isCons
 	    .append("g")
 	    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
     
-    var dimension_names = ["document", "# of sentences", "# of words", "readability score"];
+    var dimension_names = ["document", "# of words"];
     
     var delegates = {
 	isDocFiltered: delegate_isDocFiltered,
@@ -1696,9 +1706,12 @@ FLAIR.WEBRANKER.VISUALISATION = function(delegate_isDocFiltered, delegate_isCons
 	}
     }; 
     this.resetAxes = function() {
-	dimension_names = ["document", "# of sentences", "# of words", "readability score"];
+	dimension_names = ["document", "# of words"];
         $("input[id$='-vis']").prop("checked", false);
-        $("input[id$='-def-vis']").prop("checked", true);
+        $("input[id$='-def-vis']").prop("checked", false);
+	
+	$("#document-def-vis").prop("checked", true);
+	$("#words-def-vis").prop("checked", true);
     };
 };
 
@@ -1812,7 +1825,7 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	    state.displaySearchResults();
 	    FLAIR.WEBRANKER.UTIL.WAIT.singleton.clear();
 	    
-	    FLAIR.WEBRANKER.UTIL.TOAST.info('<div style="text-align: center;">The search results can be reviewed whilst they are being parsed in the background.<br/><br/><button type="button" class="btn" onClick="FLAIR.WEBRANKER.UTIL.cancelCurrentOperation()">Cancel Parsing</button></div>', false, 0);
+	    FLAIR.WEBRANKER.UTIL.TOAST.info('<div style="text-align: center;">The search results can be reviewed whilst they are being analyzed in the background.<br/><br/><button type="button" class="btn btn-primary" onClick="FLAIR.WEBRANKER.UTIL.cancelCurrentOperation()">Cancel Parsing</button></div>', false, 0);
 	    
 	    if (pipeline.parseSearchResults(jobID) === false)
 		pipeline_onError();
@@ -1917,7 +1930,7 @@ FLAIR.WEBRANKER.INSTANCE = function() {
     this.beginSearch = function() {
 	if (state.hasSearchResults() === true && state.hasParsedData() === false)
 	{
-	    FLAIR.WEBRANKER.UTIL.WAIT.singleton.showYesNo("<br/><h4>The current search results are being parsed in the background. Are you sure you want to begin a new search?</h4>",
+	    FLAIR.WEBRANKER.UTIL.WAIT.singleton.showYesNo("<br/><h4>The current search results are being analyzed the background. Are you sure you want to begin a new search?</h4>",
 		function() {
 		    FLAIR.WEBRANKER.singleton.cancelOperation();
 		    FLAIR.WEBRANKER.UTIL.TOAST.clear(true);
@@ -2109,11 +2122,12 @@ window.onload = function() {
 	    $("#all_constructions_table").tablesorter();
 	
 	$('[data-toggle="popover"]').popover({ html: true });
-	$("#tgl-customVocabList").prop('checked', false);
     });
 
     FLAIR.WEBRANKER.UTIL.resetUI();
     FLAIR.WEBRANKER.singleton.init();
+    
+    $("#tgl-customVocabList").prop('checked', false);
 };
 window.onbeforeunload = function() {
     FLAIR.WEBRANKER.singleton.deinit();

@@ -30,6 +30,8 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
     private AbstractDocument		workingDoc;
     
     private int				dependencyCount;    // count dependencies - correspond to token count without punctuation
+    private int				wordCount;	    // count words (without numbers, symbols and punctuation)
+    private int				tokenCount;	    // count tokens (incl. numbers, symbols and punctuation)
     private int				sentenceCount;	    // count sentences
     private int				depthCount;	    // count tree depthCount
     private int				characterCount;	    // count characters in words
@@ -37,7 +39,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
     public StanfordDocumentParserEnglishStrategy()
     {
 	workingDoc = null;
-	dependencyCount = sentenceCount = depthCount = characterCount = 0;
+	wordCount = tokenCount = dependencyCount = sentenceCount = depthCount = characterCount = 0;
     }
     
     private void initializeState(AbstractDocument doc)
@@ -52,7 +54,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
     
     private void resetState()
     {
-	dependencyCount = sentenceCount = depthCount = characterCount = 0;
+	wordCount = tokenCount = dependencyCount = sentenceCount = depthCount = characterCount = 0;
 	pipeline = null;
 	workingDoc = null;
     }
@@ -91,7 +93,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 		addConstructionOccurrence(GrammaticalConstruction.CLAUSE_SUBORDINATE, startInd, endInd, treeStr);     // highlight the whole sentence
 
 	    
-	    int withCC = countSubstr("(SBAR (WHNP ", treeStr) + countSubstr("(SBAR (IN that", treeStr); // with a conjunction // TODO: can be an indirect question: "She asked me what I like" -> check for reporting words in dependency?
+	    int withCC = countSubstr("(SBAR (WHNP ", treeStr); // with a conjunction // TODO: can be an indirect question: "She asked me what I like" -> check for reporting words in dependency?
             int withoutCC = countSubstr("(SBAR (S ", treeStr); // reduced relative clauses "The man I saw" // TODO: check
             for (int i = 0; i < withCC; i++)
                 addConstructionOccurrence(GrammaticalConstruction.CLAUSE_RELATIVE, startInd, endInd, treeStr); // highlight the whole sentence
@@ -128,9 +130,13 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 		    addConstructionOccurrence(GrammaticalConstruction.SENTENCE_SIMPLE, startInd, endInd, treeStr); // highlight the whole sentence
             }
 	    else if (numOfS > 1)
-		addConstructionOccurrence(GrammaticalConstruction.SENTENCE_COMPOUND, startInd, endInd, treeStr);
-            else
-		addConstructionOccurrence(GrammaticalConstruction.SENTENCE_INCOMPLETE, startInd, endInd, treeStr);
+	    {
+                // changed: also when numOfS > 1, it can be incomplete
+                if (!(treeStr.contains("VP") && treeStr.contains("NP")))
+		    addConstructionOccurrence(GrammaticalConstruction.SENTENCE_INCOMPLETE, startInd, endInd, treeStr); // highlight the whole sentence
+                else
+                    addConstructionOccurrence(GrammaticalConstruction.SENTENCE_COMPOUND, startInd, endInd, treeStr);
+            } 
 	}
 	
 	
@@ -170,11 +176,20 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
                 inspectQuestion(words, deps);
             }
 	    // imperatives
-            else if (lastWord.word().toLowerCase().endsWith("!") && lastWord.word().toLowerCase().startsWith("!"))
+        //  else if (lastWord.word().toLowerCase().endsWith("!") && lastWord.word().toLowerCase().startsWith("!"))
+	//  changed: removed the "!" condition (e.g., links, buttons, etc.)
+	    else
 	    {
                 // imperative - do it here in line
-                if (firstWord.tag() != null && firstWord.tag().equalsIgnoreCase("vb") || firstWord.tag().equalsIgnoreCase("vbp"))
+                 if (firstWord.tag() != null &&
+		     firstWord.word().equalsIgnoreCase("please") ||
+		     (firstWord.lemma().equalsIgnoreCase("do")) ||
+		     ((firstWord.tag().equalsIgnoreCase("vb") || 
+		       firstWord.tag().equalsIgnoreCase("vbp")) &&
+		      firstWord.lemma().equalsIgnoreCase(firstWord.word()))) // last condition - for "be"
+		 {
 		    addConstructionOccurrence(GrammaticalConstruction.IMPERATIVES, startInd, endInd, words.toString());
+		 }
             }
         }
 	
@@ -194,8 +209,6 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
             if (labelTag != null && labelWord != null &&
 		(!(labelTag.equalsIgnoreCase(".") || labelTag.equalsIgnoreCase(","))))
 	    {
-                characterCount += labelWord.length();
-
                 // "used to"
                 if (usedFound)
 		{
@@ -1516,19 +1529,32 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
                     dependencyCount += dependencies.size();
                     depthCount += tree.depth();
 		    
+		    // changed: only count words (no punctuation)
+                    for (CoreLabel cl : words)
+		    {
+                        tokenCount++;
+                        if (cl.tag().toLowerCase().matches("[a-z]*"))
+			{
+                            wordCount++;
+                            characterCount += cl.word().length();
+                        }
+                    }
+		    
 		    // extract gram.structures 
                     inspectSentence(tree, words, dependencies);
 		}
 	    }
 	    
 	    // update doc properties
-	    workingDoc.setAvgSentenceLength((double)dependencyCount / (double)sentenceCount);
+	    workingDoc.setAvgSentenceLength((double)wordCount / (double)sentenceCount);
 	    workingDoc.setAvgTreeDepth((double)depthCount / (double)sentenceCount);
-	    workingDoc.setAvgWordLength((double)characterCount / (double)dependencyCount);
-	    workingDoc.setLength(dependencyCount);
+	    workingDoc.setAvgWordLength((double)characterCount / (double)wordCount);
+	    workingDoc.setLength(wordCount);
 	    workingDoc.setNumDependencies(dependencyCount);
 	    workingDoc.setNumSentences(sentenceCount);
 	    workingDoc.setNumCharacters(characterCount);
+	    workingDoc.setNumWords(wordCount);
+	    workingDoc.setNumTokens(tokenCount);
 	    workingDoc.flagAsParsed();
 	} finally {
 	    resetState();

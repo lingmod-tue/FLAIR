@@ -78,6 +78,7 @@ public final class CompactDocumentData
     private final int				numChars;
     private final int				numSents;
     private final int				numDeps;
+    private final int				numWords;
 
     private final double			avWordLength;
     private final double			avSentLength;
@@ -158,7 +159,7 @@ public final class CompactDocumentData
 	    }
 	    
 	    totalKeywords = keywordData.getTotalHitCount();
-	    relFreqKeywords = totalKeywords / (double)source.getNumDependencies();
+	    relFreqKeywords = totalKeywords / (double)source.getNumWords();
 	}
 	else
 	    totalKeywords = relFreqKeywords = 0;
@@ -174,6 +175,7 @@ public final class CompactDocumentData
 	numChars = source.getNumCharacters();
 	numSents = source.getNumSentences();
 	numDeps = source.getNumDependencies();
+	numWords = source.getNumWords();
 
 	avWordLength = source.getAvgWordLength();
 	avSentLength = source.getAvgSentenceLength();

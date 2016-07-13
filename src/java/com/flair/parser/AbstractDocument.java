@@ -26,6 +26,8 @@ public interface AbstractDocument extends Comparable<AbstractDocument>
     public int						getNumCharacters();
     public int						getNumSentences();
     public int						getNumDependencies();
+    public int						getNumWords();
+    public int						getNumTokens();
     
     public double					getAvgWordLength();
     public double					getAvgSentenceLength();
@@ -34,6 +36,8 @@ public interface AbstractDocument extends Comparable<AbstractDocument>
     public void						setNumCharacters(int value);
     public void						setNumSentences(int value);
     public void						setNumDependencies(int value);
+    public void						setNumWords(int value);
+    public void						setNumTokens(int value);
     
     public void						setAvgWordLength(double value);
     public void						setAvgSentenceLength(double value);

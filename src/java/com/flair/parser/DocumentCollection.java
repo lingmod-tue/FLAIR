@@ -87,7 +87,7 @@ public class DocumentCollection implements Iterable<AbstractDocument>
 	// the header first
 	writer.append("document,");
 	for (GrammaticalConstruction itr : GrammaticalConstruction.values())
-		 writer.append(itr.getLegacyID() + ",");
+	    writer.append(itr.getLegacyID() + ",");
 	writer.append("keywords,# of sentences,# of words,readability score");
 	writer.append("\n");
 	
@@ -106,9 +106,9 @@ public class DocumentCollection implements Iterable<AbstractDocument>
 	    KeywordSearcherOutput keywordData = itr.getKeywordData();
 	    double keywordRelFreq = 0;
 	    if (keywordData != null)
-		keywordRelFreq = keywordData.getTotalHitCount() / (double)itr.getNumDependencies();
+		keywordRelFreq = keywordData.getTotalHitCount() / (double)itr.getNumWords();
 	    
-	    writer.append("" + keywordRelFreq + "," + itr.getNumSentences() + "," + itr.getNumDependencies() + "," + itr.getReadabilityScore());
+	    writer.append("" + keywordRelFreq + "," + itr.getNumSentences() + "," + itr.getNumWords() + "," + itr.getReadabilityScore());
 	    writer.append("\n");
 	    i++;
 	}

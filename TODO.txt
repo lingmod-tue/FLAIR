@@ -1,13 +1,4 @@
-MADEESH
-
-
->>> Word list functionality 
-> First step: AWL (slider + info on the right)
-> Next: upload a word list (target vocabulary)
-
->>> Upload and search a corpus instead of the web
-
-
+﻿MADEESH
 > - In the visualization, there were a couple of times where it didn't
 >  show the grey selected values on the construct-bar any more but
 >  still showed the blue and grey lines as though it was selected. I
