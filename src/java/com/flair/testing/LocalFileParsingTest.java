@@ -64,7 +64,7 @@ public class LocalFileParsingTest
    
 	FLAIRLogger.get().info("Begin job...");
 	long startTime = System.currentTimeMillis();
-	AbstractPipelineOperation op = MasterJobPipeline.get().performDocumentParsing(Language.ENGLISH, inputSource);
+	AbstractPipelineOperation op = MasterJobPipeline.get().performDocumentParsing(Language.ENGLISH, inputSource,null); // TODO: change the last parameter
 	op.begin();
 	DocumentCollection docCol = (DocumentCollection)op.getOutput();
 	long endTime = System.currentTimeMillis();

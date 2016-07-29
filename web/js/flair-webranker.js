@@ -1825,7 +1825,7 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	    state.displaySearchResults();
 	    FLAIR.WEBRANKER.UTIL.WAIT.singleton.clear();
 	    
-	    FLAIR.WEBRANKER.UTIL.TOAST.info('<div style="text-align: center;">The search results can be reviewed whilst they are being analyzed in the background.<br/><br/><button type="button" class="btn btn-primary" onClick="FLAIR.WEBRANKER.UTIL.cancelCurrentOperation()">Cancel Parsing</button></div>', false, 0);
+	    FLAIR.WEBRANKER.UTIL.TOAST.info('<div style="text-align: center;">The search results can be reviewed whilst they are being analyzed in the background.<br/><br/><button type="button" class="btn btn-primary" onClick="FLAIR.WEBRANKER.UTIL.cancelCurrentOperation()">Cancel</button></div>', false, 0);
 	    
 	    if (pipeline.parseSearchResults(jobID) === false)
 		pipeline_onError();
@@ -1856,7 +1856,7 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	FLAIR.WEBRANKER.UTIL.TOGGLE.rightSidebar(true);
 
 	FLAIR.WEBRANKER.UTIL.TOAST.clear(false);
-	FLAIR.WEBRANKER.UTIL.TOAST.success("Parsing complete!", true, 4000);
+	FLAIR.WEBRANKER.UTIL.TOAST.success("Analysis complete!", true, 4000);
 	
 	if (state.applyImportedSettings() === true)
 	    FLAIR.WEBRANKER.UTIL.TOAST.info("Applied custom settings.", true, 4500);
@@ -1930,7 +1930,7 @@ FLAIR.WEBRANKER.INSTANCE = function() {
     this.beginSearch = function() {
 	if (state.hasSearchResults() === true && state.hasParsedData() === false)
 	{
-	    FLAIR.WEBRANKER.UTIL.WAIT.singleton.showYesNo("<br/><h4>The current search results are being analyzed the background. Are you sure you want to begin a new search?</h4>",
+	    FLAIR.WEBRANKER.UTIL.WAIT.singleton.showYesNo("<br/><h4>The current search results are being analyzed in the background. Are you sure you want to begin a new search?</h4>",
 		function() {
 		    FLAIR.WEBRANKER.singleton.cancelOperation();
 		    FLAIR.WEBRANKER.UTIL.TOAST.clear(true);

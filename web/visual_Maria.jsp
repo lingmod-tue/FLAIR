@@ -29,21 +29,30 @@
     <body style="background-color: white;">
         <div id="wrapper" >
             <div class="container">
+
                 <div class="navbar navbar-default navbar-fixed-top" role="navigation">
                     <div class="container-fluid">               
+
+
                         <div class="row"  style="margin-top: 1%; margin-bottom:1%">
+
                             <div class="col-lg-1"  style="text-align:left;">
                                 <a href="#menu-toggle" class="btn btn-warning" id="menu-toggle"><span class="glyphicon glyphicon-cog"></span></a>
                             </div>
 
                             <div class="col-lg-10"  style="text-align:center;">
+
                                 <form class="form-inline" name="search_form" id="search_form"  style="width:100%;">
                                     <div  class="input-group">
-                                        <a href="#about-toggle" id="about-toggle" style="color:orange" ><img src="img/logo_2.png" alt=">"></a>
+                                        <a href="javascript:$('#myModal_About').modal('show');" style="color:orange" ><img src="img/logo_2.png" alt=">"></a>
                                     </div>
 
                                     <div class="input-group" style="width:60%;">
                                         <input type="text" id="search_field" name="query" class="form-control">
+                                        <!--					    <div class="input-group-btn"  style="text-align:right;">
+                                                                                        <button type="button" class="btn" onclick="FLAIR.WEBRANKER.singleton.beginSearch()" id="search_button" data-loading-text="<img style='height:18px;' src='img/ajax-loader.gif' alt='...'/>">GO</button>
+                                                                </div> 
+                                        -->
                                     </div>
 
                                     <div class="input-group">
@@ -55,17 +64,18 @@
                                             <option value="50">50 results</option>
                                         </select>
                                     </div>
-				    <div hidden>
-				    &nbsp;&nbsp;
-				    <a href="#customCorpus-toggle" class="btn btn-info" id="customCorpus-toggle">
-					<span class="glyphicon glyphicon-upload"></span>
-				    </a>
-				    </div>
                                 </form>
                             </div>
+
+
                             <div class="col-lg-1" style="text-align:right;"><span id="right-menu-toggle"><img src="img/glyphicons-517-menu-hamburger.png" alt=">"></span>
                             </div>
+
                         </div>
+
+
+
+
                     </div>
                 </div>
 
@@ -75,12 +85,11 @@
                         <div style="width:90%; padding-left: 10%;">
                             <div class="df" id="docs_info"></div>
                             <br><div class="panel panel-default" style="text-align: center">
-                                <a href="javascript:FLAIR.WEBRANKER.singleton.showVisualiser();" style="color:orange" >VISUALIZE</a>
+                                <a href="javascript:FLAIR.WEBRANKER.UTIL.resetSlider('all');FLAIR.WEBRANKER.UTIL.TOGGLE.visualiserDialog(true);" style="color:orange" >VISUALIZE</a>
                             </div>
-			    <hr>
-			    <div class="panel panel-info" style="text-align: center">
-				<a href="javascript:FLAIR.WEBRANKER.singleton.exportSettings();" style="color:grey;">SHARE <br> search setup</a>
-			    </div>
+                                
+                            <hr>
+
                                 <div class="panel panel-info" style="text-align: center">
                                     <a href="javascript:FLAIR.WEBRANKER.singleton.exportSettings();" style="color:grey;">SHARE <br> search setup</a>
                                 </div>
@@ -111,12 +120,7 @@
                             </div>
                             <hr>  
 				<div>
-				    <input type="checkbox" onclick="FLAIR.WEBRANKER.singleton.toggleKeywordHighlighting()" id="tgl-customVocabList" title="check to highlight keywords" checked>&nbsp;<span id="customVocabList-label">Academic</span> Vocabulary&nbsp;
-				    <div hidden>
-					<a href="#customVocabList-upload" id="customVocabList-upload" title="Edit Vocabulary"><span class="glyphicon glyphicon-edit"></span></a>&nbsp;
-					<a href="#customVocabList-reset" id="customVocabList-reset" title="Use Defualt Academic Vocabulary"><span class="glyphicon glyphicon-repeat"></span></a>
-				    </div>
-					<br><br>
+                                    <input type="checkbox" onclick="FLAIR.WEBRANKER.singleton.toggleKeywordHighlighting()" id="tgl-customVocabList" title="check to highlight keywords">&nbsp;Academic vocabulary <br><br>
 				    <div class="ui-widget-content" style="width:80%;">
 					<div class="gradientSlider" title="move right to rank texts with this construct higher" id="customVocabList-gradientSlider"></div>
 				    </div>
@@ -332,12 +336,12 @@
                                                                 <h4 class="panel-title">
                                                                     <button type="button" class="close" style="font-size: 12px" onclick="FLAIR.WEBRANKER.UTIL.resetSlider('verbForms')"><span class="glyphicon glyphicon-erase" title="reset"></span></button>
                                                                     <a data-toggle="collapse" data-parent="#accordion"
-                                                                       href="#collapse_Forms">
+                                                                       href="#collapse_forms">
                                                                         verb forms
                                                                     </a>
                                                                 </h4>
                                                             </div>
-                                                            <div id="collapse_Forms" class="panel-collapse collapse">
+                                                            <div id="collapse_forms" class="panel-collapse collapse">
                                                                 <div class="panel-body">
                                                                     <div><input type="checkbox" onclick="FLAIR.WEBRANKER.singleton.toggleConstruction(this)" id="tgl-shortVerbForms" title="uncheck to exclude texts with this construct" checked>&nbsp;contracted (to be and to have: 'm, 's, 'd) <br><span class="df" id="shortVerbForms-df"></span>
                                                                         <div class="ui-widget-content" style="width:80%;">
@@ -1060,6 +1064,10 @@
                                     <span class="glyphicon glyphicon-erase">&nbsp;</span><a href="javascript:FLAIR.WEBRANKER.singleton.resetAllSettingsAndFilters(true, true, true, true);" style="color:grey;">RESET ALL</a>
                                 </div>
 
+                                <div id="report-problem" hidden>
+                                    <span class="glyphicon glyphicon-envelope"></span><a href="mailto:maria.chinkina@gmail.com?Subject=Feedback%20(FLAIR)" target="_top" title="Report a problem or just share your feedback."> Report a problem</a>
+                                </div>
+
                                 <br><br><br><br><br><br>
                             </div>
                         </div>
@@ -1072,7 +1080,7 @@
                     <div class="mainArea" style="margin-top: 60px;"><br>
                         <div class="row">
                             <!-- show results here -->
-                            <div class="col-md-7 results">
+                            <div class="col-md-8 results">
                                 <table class="table table-hover" style="width:100%; margin-left:10px;padding-right:10px;">
                                     <tbody id="results_table">
                                     </tbody>
@@ -1111,7 +1119,6 @@
                             <a href="http://sfs.uni-tuebingen.de/~mkannan/" target="_blank">Madeeswaran Kannan</a> <a href="mailto:mkannan@sfs.uni-tuebingen.de?Subject=FLAIR%20tool" target="_top" title="write to Madeeswaran Kannan"><span class="glyphicon glyphicon-envelope"></span></a> supervised by 
                             <a href="http://sfs.uni-tuebingen.de/~dm/" target="_blank">Prof. Dr. Detmar Meurers</a> 
                             <br> <span style="color:darkorange">@</span> University of Tübingen, Germany <span style="color:darkorange">|</span> 2015-2016
-			    <br> version 1.0
                         </p>
                         </center>
                     </div>
@@ -1188,6 +1195,11 @@
                 </div>
             </div>
         </div>
+
+
+
+
+
 
         <!-- VISUALIZATION FILTER MODAL -->
         <div class="modal fade modal-xl" id="myModal_Visualize" tabindex="-1" role="dialog" aria-hidden="true" style="margin:0 auto;">
@@ -1972,11 +1984,13 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" style="text-align: center;">List Of Constructions</h4>
+                        <br>
                     </div>
                     <div class="modal-body">
                         <div class="tab-pane fade active in">
-                            <div id="list_of_constructs" class="pre-scrollable">
+                            <h4 style="color:grey;text-align: center;">List of constructions</h4>
+                            <div id="list_of_constructs">
+                                <br>
                                 <table class="table table-hover">
                                     <tbody>
                                         <tr class="warning">
@@ -2920,87 +2934,40 @@
                             </div>
                         </div>
                         <div class="modal-footer"  style="text-align: center;">
-                            You can use this link to apply your current settings to further searches<br/>or share the link with students so they can use the web search with your settings.
+                            You can use this link to apply your current settings to further searches or share the link with students so they can use the web search with your settings.
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-	<!-- UPLOAD CUSTOM VOCAB MODAL -->
-	<div class="modal fade modal-lg" id="modal_CustomVocab" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false" style="margin:0 auto;">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h4 class="modal-title">Edit Custom Vocabulary</h4>
-                    </div>
-		    <div hidden>
-			<input id="modalCustomVocab-fileSelect" type="file"/>
-		    </div>
-                    <div class="modal-body">
-                        <div class="tab-pane fade active in" id="modal_CustomVocab_body">
-                            <div class="form-group">
-                                <label>Custom Vocabulary:</label>
-                                <textarea class="form-control" rows="10" id="custom_vocab_textarea"></textarea><br/>
-				Words may be separated by commas, spaces or line breaks.
-                            </div>
-                        </div>
-                        <div class="modal-footer" style="text-align: center;">
-                            <button type="button" class="btn btn-primary" id="modal_customVocab_buttonYes">Apply</button>
-                            <button type="button" class="btn btn-primary" id="modal_customVocab_buttonCancel">Cancel</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-		
-	<!-- UPLOAD CORPUS MODAL -->
-	<div class="modal modal-lg" id="modal_CustomCorpus" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false" style="margin:0 auto;">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header" style="text-align: center;">
-			<button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Upload Custom Corpus</h4>
-                    </div>
-		    
-		    <form id="modal_CustomCorpus_MainForm" action="CustomCorpusServlet" method="post" enctype="multipart/form-data" target="modal_CustomCorpus_dummyTarget">
-			<div class="modal-body">
-			    <div class="tab-pane fade active in">
-				<div class="form-group" style="text-align: center;">
-				    <div hidden>
-					<input id="modal_CustomCorpus_fileSelect" type="file" name="file" multiple accept=".txt"/>
-				    </div>
-				    <button type="button" class="btn btn-info btn-lg" id="modal_CustomCorpus_buttonSelectFiles">Select Files</button>
-				    <br/><br/>
-				    You can upload text files for parsing.
-				</div>
-			    </div>
-			</div>
-			<div class="modal-footer"  style="text-align: center;">
-			    <input type="submit" class="btn btn-primary" value="Upload" onclick="FLAIR.WEBRANKER.singleton.uploadCustomCorpus();">
-			</div>
-		    </form>
-		    
-		    <div hidden>
-			<iframe name="modal_CustomCorpus_dummyTarget" src="about:blank"></iframe>
-		    </div>
-                </div>
-            </div>
-        </div>
-		
+        <!--            <div class="row">
+                        <div style="text-align: center; color:orange; margin-top:40px;" id="report-problem" class="col-md-2">
+                            <span class="glyphicon glyphicon-envelope"></span><a href="mailto:maria.chinkina@uni-tuebingen.de?Subject=Feedback%20(FLAIR)" target="_top" title="Report a problem or just share your feedback." style="color:darkorange;"> Problem | Feedback</a>
+                        </div>        
+                    </div>-->
+
+        <!--    <script type="text/javascript" src="js/libs/jquery/jquery.js"></script> -->
         <script type="text/javascript" src="js/libs/jquery/jquery.min.js"></script>
         <script type="text/javascript" src="js/libs/jqueryui/jquery-ui.js"></script>
         <script type="text/javascript" src="js/libs/tablesorter/jquery.tablesorter.js"></script>
+
+        <!--    <script type="text/javascript" src="js/libs/twitter-bootstrap/js/bootstrap.js"></script> -->
         <script type="text/javascript" src="js/libs/twitter-bootstrap/js/bootstrap.min.js"></script>
         <script type="text/javascript" src="js/libs/twitter-bootstrap/js/bootstrap-confirmation.js"></script>
 
         <script type="text/javascript" src="js/libs/number-polyfill.js"></script>
         <script type="text/javascript" src="js/libs/d3/d3.js"></script>
+        <!--    <script type="text/javascript" src="js/libs/d3/d3.v3.js"></script> -->
         <script type="text/javascript" src="js/libs/d3/d3.v3.min.js"></script>
         <script type="text/javascript" src="js/libs/toastr/toastr.min.js"></script>
 
         <script type="text/javascript" src="js/flair-core.js"></script>
         <script type="text/javascript" src="js/flair-plumbing.js"></script>
         <script type="text/javascript" src="js/flair-webranker.js"></script>
+
+        <script>
+                                        
+        </script>
     </body>
 </html>

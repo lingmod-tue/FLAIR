@@ -34,6 +34,7 @@ class Document implements AbstractDocument
     private double				avgSentenceLength;
     private double				avgTreeDepth;
 
+    private int					tokenCount;		// no of words "essentailly" (kinda), formerly known as "docLength". updated with the dependency count after parsing
     private double				fancyDocLength;		// ### TODO better name needed, formerly "docLenTfIdf"
     
     private KeywordSearcherOutput		keywordData;
@@ -143,6 +144,16 @@ class Document implements AbstractDocument
     public int getNumDependencies() {
 	return numDependencies;
     }
+
+    @Override
+    public int getNumWords() {
+        return numWords;
+    }
+
+    @Override
+    public int getNumTokens() {
+        return numTokens;
+    }
     
     @Override
     public double getAvgWordLength() {
@@ -182,6 +193,16 @@ class Document implements AbstractDocument
     @Override
     public void setNumDependencies(int value) {
 	numDependencies = value;
+    }
+
+    @Override
+    public void setNumWords(int numWords) {
+        this.numWords = numWords;
+    }
+
+    @Override
+    public void setNumTokens(int numTokens) {
+        this.numTokens = numTokens;
     }
     
     @Override
@@ -237,26 +258,6 @@ class Document implements AbstractDocument
     @Override
     public void setKeywordData(KeywordSearcherOutput data) {
 	keywordData = data;
-    }
-
-    @Override
-    public int getNumWords() {
-	return numWords;
-    }
-
-    @Override
-    public int getNumTokens() {
-	return numTokens;
-    }
-
-    @Override
-    public void setNumWords(int value) {
-	numWords = value;
-    }
-
-    @Override
-    public void setNumTokens(int value) {
-	numTokens = value;
     }
 }
 

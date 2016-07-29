@@ -375,6 +375,14 @@ svg {
     background-image: -o-linear-gradient(top, #fcf8e3, #96d5f6, #fcf8e3);
     background-image: linear-gradient(to bottom, #fcf8e3, #96d5f6, #fcf8e3);
 }
+/* ORANGE */
+/*.ui-slider-horizontal .ui-slider-range {
+    border: none;
+    background-image: -webkit-linear-gradient(top, #fcf8e3 0, #faf2cc 100%);
+    background-image: -o-linear-gradient(top, #fcf8e3 0, #faf2cc 100%);
+    background-image: -webkit-gradient(linear,left top,left bottom,from(#fcf8e3),to(#faf2cc));
+    background-image: linear-gradient(to bottom, #fcf8e3 0, #faf2cc 100%);
+}*/
 
 /* ORANGE */
 .ui-slider-horizontal .ui-slider-range {
