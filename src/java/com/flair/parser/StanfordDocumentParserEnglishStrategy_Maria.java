@@ -26,27 +26,27 @@ import java.util.regex.Pattern;
  *
  * @author shadeMe
  */
-class StanfordDocumentParserEnglishStrategy_Maria extends BasicStanfordDocumentParserStrategy {
+class StanfordDocumentParserEnglishStrategy_Maria extends BasicStanfordDocumentParserStrategy 
+{
+    private AbstractDocument	    workingDoc;
 
-    private AbstractDocument workingDoc;
-
-    private int dependencyCount;    // count dependencies - correspond to token count without punctuation
-    private int wordCount;          // count words (without numbers, symbols and punctuation)
-    private int tokenCount;         // count tokens (incl. numbers, symbols and punctuation)
-    private int sentenceCount;	    // count sentences
-    private int depthCount;	    // count tree depthCount
-    private int characterCount;	    // count characters in words
+    private int			    dependencyCount;	    // count dependencies - correspond to token count without punctuation
+    private int			    wordCount;		    // count words (without numbers, symbols and punctuation)
+    private int			    tokenCount;		    // count tokens (incl. numbers, symbols and punctuation)
+    private int			    sentenceCount;	    // count sentences
+    private int			    depthCount;		    // count tree depthCount
+    private int			    characterCount;	    // count characters in words
 
     // for easier access; is reset in every inspectSentence():
-    boolean conditionalFound; 
-    boolean usedFound; // for the "used to" construction
-    int goingToFound; 
-    boolean comparativeMoreFound; 
-    boolean superlativeMostFound; 
+    private boolean		    conditionalFound; 
+    private boolean		    usedFound;		    // for the "used to" construction
+    private int			    goingToFound; 
+    private boolean		    comparativeMoreFound; 
+    private boolean		    superlativeMostFound; 
 
-    private Tree treeOutput; // syntax tree: output from parser (Stanford CoreNLP)
-    private List<CoreLabel> wordsOutput; // annotated words: output from parser (Stanford CoreNLP)
-    private Collection<TypedDependency> depsOutput; // dependencies: output from parser (Stanford CoreNLP)
+    private Tree			    treeOutput;	    // syntax tree: output from parser (Stanford CoreNLP)
+    private List<CoreLabel>		    wordsOutput;    // annotated words: output from parser (Stanford CoreNLP)
+    private Collection<TypedDependency>	    depsOutput;	    // dependencies: output from parser (Stanford CoreNLP)
 
     public StanfordDocumentParserEnglishStrategy_Maria() {
         workingDoc = null;
@@ -319,9 +319,7 @@ class StanfordDocumentParserEnglishStrategy_Maria extends BasicStanfordDocumentP
             identifyTenses(depsOutput);
         }
     }
-
-    
-    
+      
     private void identifySentencesAndClauses() {
         // >>> simple/complex sentence + subordinate clauses
         String treeStr = treeOutput.toString(); // don't use toLowerCase() here
@@ -386,9 +384,6 @@ class StanfordDocumentParserEnglishStrategy_Maria extends BasicStanfordDocumentP
             }
         }
     }
-    
-    
-    
     
     private void identifyTenses(Collection<TypedDependency> dependencies) {
         boolean pastPartFound = false;
@@ -690,8 +685,6 @@ class StanfordDocumentParserEnglishStrategy_Maria extends BasicStanfordDocumentP
         }
     }
     
-    
-    
     private boolean[] findIngPastPartBaseForTenses(TypedDependency dependency, IndexedWord verb, boolean[] found) {
         
         int verbBegin = verb.beginPosition();
@@ -747,8 +740,6 @@ class StanfordDocumentParserEnglishStrategy_Maria extends BasicStanfordDocumentP
         return found;        
     }
     
-    
-
     private void identifyConditionals(List<CoreLabel> labeledWords, Collection<TypedDependency> dependencies) {
         int verbBegin = -1;
         int verbInd = -1;
@@ -1085,8 +1076,6 @@ class StanfordDocumentParserEnglishStrategy_Maria extends BasicStanfordDocumentP
         }
     }
     
-    
-    
     private void findUsedTo(CoreLabel label, String labelWord, String labelTag) {
         if (labelTag.equalsIgnoreCase("to")) // allows for elliptical structures, e.g., "yes, I used to."
         {
@@ -1094,7 +1083,6 @@ class StanfordDocumentParserEnglishStrategy_Maria extends BasicStanfordDocumentP
         }
         usedFound = false;
     }
-    
     
     private void findGoingTo(CoreLabel label, String labelWord, String labelTag) {
         switch (goingToFound) {
@@ -1494,17 +1482,21 @@ class StanfordDocumentParserEnglishStrategy_Maria extends BasicStanfordDocumentP
     }
 
     @Override
-    public boolean apply(AbstractDocument docToParse) {
+    public boolean apply(AbstractDocument docToParse)
+    {
         assert docToParse != null;
-        try {
+        try
+	{
             initializeState(docToParse);
 
             Annotation docAnnotation = new Annotation(workingDoc.getText());
             pipeline.annotate(docAnnotation);
 
             List<CoreMap> sentences = docAnnotation.get(CoreAnnotations.SentencesAnnotation.class);
-            for (CoreMap itr : sentences) {
-                if (itr.size() > 0) {
+            for (CoreMap itr : sentences)
+	    {
+                if (itr.size() > 0)
+		{
                     Tree tree = itr.get(TreeCoreAnnotations.TreeAnnotation.class);
                     List<CoreLabel> words = itr.get(CoreAnnotations.TokensAnnotation.class);
                     Collection<TypedDependency> dependencies = itr.get(SemanticGraphCoreAnnotations.CollapsedDependenciesAnnotation.class).typedDependencies();
@@ -1514,9 +1506,11 @@ class StanfordDocumentParserEnglishStrategy_Maria extends BasicStanfordDocumentP
                     depthCount += tree.depth();
 
                     // changed: only count words (no punctuation)
-                    for (CoreLabel cl : words) {
+                    for (CoreLabel cl : words) 
+		    {
                         tokenCount++;
-                        if (cl.tag().toLowerCase().matches("[a-z]*")) {
+                        if (cl.tag().toLowerCase().matches("[a-z]*")) 
+			{
                             wordCount++;
                             characterCount += cl.word().length();
                         }

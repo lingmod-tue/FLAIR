@@ -14,13 +14,21 @@ import java.util.List;
 public class KeywordSearcherInput implements Iterable<String>
 {
     private final List<String>		    keywords;
+    private final boolean		    debugMode;	    // prints debug output
 
     public KeywordSearcherInput() {
 	this.keywords = new ArrayList<>();
+	this.debugMode = false;
     }
     
     public KeywordSearcherInput(List<String> keywords) {
 	this.keywords = new ArrayList<>(keywords);
+	this.debugMode = false;
+    }
+    
+    public KeywordSearcherInput(List<String> keywords, boolean debugMode) {
+	this.keywords = new ArrayList<>(keywords);
+	this.debugMode = debugMode;
     }
     
     public void addKeyword(String keyword) 
@@ -34,5 +42,9 @@ public class KeywordSearcherInput implements Iterable<String>
     @Override
     public Iterator<String> iterator() {
 	return keywords.iterator();
+    }
+    
+    public boolean isDebuggable() {
+	return debugMode;
     }
 }

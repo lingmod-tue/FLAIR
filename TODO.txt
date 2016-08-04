@@ -1,12 +1,8 @@
 ﻿MADEESH
-> - In the visualization, there were a couple of times where it didn't
->  show the grey selected values on the construct-bar any more but
->  still showed the blue and grey lines as though it was selected. I
->  can't seem to replicate it right now though - so play with it a bit
->  to see where it misbehaves.
-Could you please look into this issue?
-If you can�t replicate it, don�t spend too much time on it though.
 
+> keyword highlighting is off, words aren't being detected (pride and prejudice)
+> The text dsplay code is slow for long texts
+> AhoCorasick is not consistent - Fix/Switch to something else
 
 
 

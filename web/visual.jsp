@@ -81,9 +81,6 @@
 			    <div class="panel panel-info" style="text-align: center">
 				<a href="javascript:FLAIR.WEBRANKER.singleton.exportSettings();" style="color:grey;">SHARE <br> search setup</a>
 			    </div>
-                                <div class="panel panel-info" style="text-align: center">
-                                    <a href="javascript:FLAIR.WEBRANKER.singleton.exportSettings();" style="color:grey;">SHARE <br> search setup</a>
-                                </div>
 
                             <!-- Shorter/longer documents slider -->
                             <hr>
@@ -2972,7 +2969,7 @@
 				    </div>
 				    <button type="button" class="btn btn-info btn-lg" id="modal_CustomCorpus_buttonSelectFiles">Select Files</button>
 				    <br/><br/>
-				    You can upload text files for parsing.
+				    You can upload text files for analysis.
 				</div>
 			    </div>
 			</div>

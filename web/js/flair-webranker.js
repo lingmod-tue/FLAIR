@@ -1459,6 +1459,7 @@ FLAIR.WEBRANKER.VISUALISATION = function(delegate_isDocFiltered, delegate_isCons
 	isConstructionEnabled: delegate_isConstructionEnabled
     };
     var cache_csvTable = null;	    // the last cached data
+    var updatingAxes = false;
     
     // PRIVATE INTERFACE
     var position = function(d) {
@@ -1635,7 +1636,12 @@ FLAIR.WEBRANKER.VISUALISATION = function(delegate_isDocFiltered, delegate_isCons
 	
 	return outArray;
     };
-    this.toggleAxis = function(axis_element) {
+    this.toggleAxis = function(axis_element, state) {
+	if (updatingAxes === true)
+	    return;
+	
+	updatingAxes = true;
+	
 	var element_id = axis_element.id;
 	// axis_name for the 4 default cases: "document", "sentences", "words", "score"
 	// for others: e.g., whQuestions, etc.
@@ -1647,9 +1653,9 @@ FLAIR.WEBRANKER.VISUALISATION = function(delegate_isDocFiltered, delegate_isCons
 	    var tmp_name = axis_name.substring(0, axis_name.indexOf("-def"));
 	    if (tmp_name === "document")
 	    {
-		if ($.inArray(tmp_name, dimension_names) === -1)
+		if ($.inArray(tmp_name, dimension_names) === -1 && (state === undefined || state === true))
 		    dimension_names.push(tmp_name);
-		else
+		else if (state === undefined || state === false)
 		{
 		    // the axis is shown
 		    var ind = dimension_names.indexOf(tmp_name);
@@ -1660,9 +1666,9 @@ FLAIR.WEBRANKER.VISUALISATION = function(delegate_isDocFiltered, delegate_isCons
 	    if (tmp_name === "score")
 	    {
 		tmp_name = "readability " + tmp_name;
-		if ($.inArray(tmp_name, dimension_names) === -1)
+		if ($.inArray(tmp_name, dimension_names) === -1 && (state === undefined || state === true))
 		    dimension_names.push(tmp_name);
-		else
+		else if (state === undefined || state === false)
 		{
 		    var ind = dimension_names.indexOf(tmp_name);
 		    dimension_names.splice(ind, 1);
@@ -1673,9 +1679,9 @@ FLAIR.WEBRANKER.VISUALISATION = function(delegate_isDocFiltered, delegate_isCons
 	    if (tmp_name === "sentences" || tmp_name === "words")
 	    {
 		tmp_name = "# of " + tmp_name;
-		if ($.inArray(tmp_name, dimension_names) === -1)
+		if ($.inArray(tmp_name, dimension_names) === -1 && (state === undefined || state === true))
 		    dimension_names.push(tmp_name);
-		else
+		else if (state === undefined || state === false)
 		{
 		    var ind = dimension_names.indexOf(tmp_name);
 		    dimension_names.splice(ind, 1);
@@ -1690,21 +1696,26 @@ FLAIR.WEBRANKER.VISUALISATION = function(delegate_isDocFiltered, delegate_isCons
 	    // will visualize automatically from rerank() when the value is changed
 	    var slider_id = axis_name + "-gradientSlider";
 	    // add/remove the axis name to/from the list
-	    if ($.inArray(axis_name, dimension_names) === -1)
+	    if ($.inArray(axis_name, dimension_names) === -1 && (state === undefined || state === true))
 	    { 
 		// the axis is removed
 		dimension_names.push(axis_name);
-		$("#" + slider_id).slider("value", 5);
+		if ($("#" + slider_id).slider("option", "value") === 0)
+		    $("#" + slider_id).slider("value", 5);
 	    }
-	    else
+	    else if (state === undefined || state === false)
 	    { 
 		// the axis is shown
 		var ind = dimension_names.indexOf(axis_name);
 		dimension_names.splice(ind, 1);
-		$("#" + slider_id).slider("value", 0);
+		
+		if ($("#" + slider_id).slider("option", "value") !== 0)
+		    $("#" + slider_id).slider("value", 0);
 	    }
 	}
-    }; 
+	
+	updatingAxes = false;
+    };
     this.resetAxes = function() {
 	dimension_names = ["document", "# of words"];
         $("input[id$='-vis']").prop("checked", false);
@@ -1718,10 +1729,10 @@ FLAIR.WEBRANKER.VISUALISATION = function(delegate_isDocFiltered, delegate_isCons
 FLAIR.WEBRANKER.INSTANCE = function() {
     // HANDLERS
     var pipeline_noResults = function() {
-	FLAIR.WEBRANKER.UTIL.resetUI();
-	state.reset();
+	FLAIR.WEBRANKER.UTIL.resetUI();	
 
 	FLAIR.WEBRANKER.UTIL.TOAST.error("No results for '" + state.getQuery() + "'.", true, 6000);
+	state.reset();
     };
     var pipeline_onError = function() {
 	FLAIR.WEBRANKER.UTIL.resetUI();
@@ -1785,7 +1796,7 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	}
 	
 	FLAIR.WEBRANKER.UTIL.WAIT.singleton.clear();
-	FLAIR.WEBRANKER.UTIL.WAIT.singleton.showCancel("<h4>Parsing custom corpus - Please wait...</h4>", 
+	FLAIR.WEBRANKER.UTIL.WAIT.singleton.showCancel("<h4>Analyzing custom corpus - Please wait...</h4>", 
 	    function() {
 		FLAIR.WEBRANKER.UTIL.cancelCurrentOperation();
 	    });
@@ -1913,12 +1924,12 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	initialized = true;	
     };
     this.deinit = function() {
+	initialized = false;
 	pipeline.deinit();
 	state.reset();
 	
 	pipeline = null;
 	state = null;
-	initialized = false;
     };
     
     this.cancelOperation = function() {
@@ -1978,8 +1989,8 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	
 	state.rerank();
     };
-    this.toggleVisualiserAxis = function(axis_element) {
-	visualiser.toggleAxis(axis_element);
+    this.toggleVisualiserAxis = function(axis_element, state) {
+	visualiser.toggleAxis(axis_element, state);
 	visualiser.visualise();
     };
     this.applyVisualiserFilter = function() {
@@ -2021,13 +2032,14 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	FLAIR.WEBRANKER.UTIL.TOAST.clear(false);
     };
     this.showVisualiser = function() {
-	FLAIR.WEBRANKER.UTIL.resetSlider('all');
+//	FLAIR.WEBRANKER.UTIL.resetSlider('all');
 	
 	if (state.isCustomCorpus() === false && state.getQuery() !== "") 
             $("#query_vis").html("\"" + state.getQuery() + "\" (" + state.getTotalResults() + " web pages)");
 	else
             $("#query_vis").html("Interactive Visualization");
 	
+	visualiser.visualise();
 	FLAIR.WEBRANKER.UTIL.TOGGLE.visualiserDialog(true);
     };
 };
@@ -2085,12 +2097,20 @@ window.onload = function() {
     });
     $("[id$=gradientSlider]").slider("value", 0);
     $("[id$=gradientSlider]").slider({
-       change: function (d) {
-	// (un)check the corresponding checkbox in the visualization
+       change: function (d) {	
 	var vis_id = this.id;
 	vis_id = vis_id.substring(0, vis_id.indexOf("-gradientSlider")) + "-vis";
-	var is_checked = $("#" + vis_id).prop("checked");
-	$("#" + vis_id).prop("checked", is_checked); // not intuitive but works this way since it is called twice
+	
+	if ($(this).slider("option", "value") !== 0)
+	{
+	    $("#" + vis_id).prop("checked", true);
+	    FLAIR.WEBRANKER.singleton.toggleVisualiserAxis($("#" + vis_id)[0], true);
+	}
+	else
+	{
+	    $("#" + vis_id).prop("checked", false);	
+	    FLAIR.WEBRANKER.singleton.toggleVisualiserAxis($("#" + vis_id)[0], false);
+	}
 	
 	FLAIR.WEBRANKER.singleton.refreshRanking();
        }

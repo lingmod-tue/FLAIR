@@ -3,6 +3,9 @@
  */
 package com.flair.parser;
 
+import com.flair.utilities.FLAIRLogger;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.Set;
 import org.arabidopsis.ahocorasick.AhoCorasick;
@@ -17,15 +20,31 @@ class AhoCorasickKeywordSearcher implements AbstractDocumentKeywordSearcher
     @Override
     public KeywordSearcherOutput search(AbstractDocument source, KeywordSearcherInput input)
     {
+	if (input == null)
+	    throw new IllegalArgumentException("No keyword search input");
+	
 	KeywordSearcherOutput output = new KeywordSearcherOutput(input);
 	AhoCorasick tree = new AhoCorasick();
 	
 	for (String itr : input)
 	    tree.add(itr.getBytes(), itr);
 	
+	
 	// force to lowercase
 	String sourceText = source.getText().toLowerCase();
 	tree.prepare();
+	
+	if (input.isDebuggable())
+	{
+	    FLAIRLogger.get().trace("Keyword searcher text length: " + sourceText.length());
+	    try (PrintWriter out = new PrintWriter("C:\\Users\\shadeMe\\FLAIRLocalTest\\keywordSearcherText.txt")) {
+		out.println(sourceText);
+	    }
+	    catch (FileNotFoundException ex) {
+		FLAIRLogger.get().trace("Output exception: " + ex.getMessage());
+	    }
+	}
+	
 	for (Iterator iter = tree.search(sourceText.getBytes()); iter.hasNext();)
 	{
 	    SearchResult result = (SearchResult)iter.next();
@@ -46,7 +65,7 @@ class AhoCorasickKeywordSearcher implements AbstractDocumentKeywordSearcher
 	    
 	    int endIdx = result.getLastIndex();
 	    int startIdx = endIdx - keyword.length();
-
+	    
 	    // check if it's at a word boundary
 	    boolean validStartBoundary = false, validEndBoundary = false;
 	    if (startIdx - 1 < 0 ||
@@ -65,6 +84,11 @@ class AhoCorasickKeywordSearcher implements AbstractDocumentKeywordSearcher
 		Character.isWhitespace(sourceText.charAt(endIdx)))
 	    {
 		validEndBoundary = true;
+	    }
+	    
+	    if (input.isDebuggable())
+	    {
+		FLAIRLogger.get().trace("Keyword hit '" + keyword + "' @{" + startIdx + "," + endIdx + "}; startBoundary: " + validStartBoundary + ", endBoundary: " + validEndBoundary);
 	    }
 	    
 	    if (validStartBoundary && validEndBoundary)

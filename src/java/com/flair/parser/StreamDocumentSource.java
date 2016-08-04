@@ -52,7 +52,8 @@ public class StreamDocumentSource extends AbstractDocumentSource
     }
     
     @Override
-    public int compareTo(AbstractDocumentSource t) {
+    public int compareTo(AbstractDocumentSource t) 
+    {
 	if (t instanceof StreamDocumentSource == false)
 	    throw new IllegalArgumentException("Incompatible source type");
 	
