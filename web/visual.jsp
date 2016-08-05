@@ -31,69 +31,76 @@
             <div class="container">
                 <div class="navbar navbar-default navbar-fixed-top" role="navigation">
                     <div class="container-fluid">               
-                        <div class="row"  style="margin-top: 1%; margin-bottom:1%">
-                            <div class="col-lg-1"  style="text-align:left;">
+                        <div class="row" style="margin-top: 1%; margin-bottom:1%">
+                            <div class="col-md-2 col-xs-2"  style="text-align:left; padding-top:0.8%;">
                                 <a href="#menu-toggle" class="btn btn-warning" id="menu-toggle"><span class="glyphicon glyphicon-cog"></span></a>
                             </div>
 
-                            <div class="col-lg-10"  style="text-align:center;">
+                            <div class="col-md-7 col-xs-8"  style="text-align:right;padding-top:0%;">
                                 <form class="form-inline" name="search_form" id="search_form"  style="width:100%;">
+                                    
+                                <div class="row">
                                     <div  class="input-group">
-                                        <a href="#about-toggle" id="about-toggle" style="color:orange" ><img src="img/logo_2.png" alt=">"></a>
+                                        <a href="#about-toggle" id="about-toggle" style="color:orange" ><img class="logo" src="img/logo_2.png" alt="FLAIR" height="55px"></a>
                                     </div>
-
-                                    <div class="input-group" style="width:60%;">
+                                    
+                                    <div class="input-group col-md-8 col-xs-12">
                                         <input type="text" id="search_field" name="query" class="form-control">
                                     </div>
-
-                                    <div class="input-group">
+                                    
+                                    <div class="input-group col-md-2 col-xs-6">
                                         <select class="form-control" id="fetch_result_count">
-                                            <option value="10">10 results</option>
-                                            <option selected="selected" value="20">20 results</option>
-                                            <option value="30">30 results</option>
-                                            <option value="40">40 results</option>
-                                            <option value="50">50 results</option>
+                                            <option value="10">10 pages</option>
+                                            <option selected="selected" value="20">20 pages</option>
+                                            <option value="30">30 pages</option>
+                                            <option value="40">40 pages</option>
+                                            <option value="50">50 pages</option>
                                         </select>
                                     </div>
-				    <div hidden>
-				    &nbsp;&nbsp;
-				    <a href="#customCorpus-toggle" class="btn btn-info" id="customCorpus-toggle">
+                                    
+                                </div>
+                                </form>
+
+                            </div>
+                            <div class="col-md-2 col-xs-2" style="padding-top:0.7%;">
+				    <a href="#customCorpus-toggle" id="customCorpus-toggle" style="text-align:left;">
 					<span class="glyphicon glyphicon-upload"></span>
 				    </a>
+                                        
 				    </div>
-                                </form>
-                            </div>
-                            <div class="col-lg-1" style="text-align:right;"><span id="right-menu-toggle"><img src="img/glyphicons-517-menu-hamburger.png" alt=">"></span>
-                            </div>
+                            <div class="col-md-1 col-xs-1" style="text-align:center;padding-top:1.2%;">
+                                <span id="right-menu-toggle">
+                                    <img src="img/glyphicons-517-menu-hamburger.png" alt=">"></span>
+                            </div> 
                         </div>
                     </div>
                 </div>
 
+                <div class="row">
                 <!-- Settings SIDE BAR -->
+                <div  class="col-md-3">
                 <div id="sidebar-wrapper">
                     <div  class="sidebar-nav" id="sidebar">
-                        <div style="width:90%; padding-left: 10%;">
+                        <div>
                             <div class="df" id="docs_info"></div>
                             <br><div class="panel panel-default" style="text-align: center">
                                 <a href="javascript:FLAIR.WEBRANKER.singleton.showVisualiser();" style="color:orange" >VISUALIZE</a>
                             </div>
 			    <hr>
-			    <div class="panel panel-info" style="text-align: center">
-				<a href="javascript:FLAIR.WEBRANKER.singleton.exportSettings();" style="color:grey;">SHARE <br> search setup</a>
-			    </div>
+
 
                             <!-- Shorter/longer documents slider -->
                             <hr>
                             <h4 style="color:grey">Text characteristics:</h4>
                             <div class="row">
-                                <div class="col-md-2">
+                                <div class="col-md-2 col-xs-2">
                                     Length: <br><br>
                                     <div class="ui-widget-content-len">
                                         <div class="lengthSlider" id="length-slider"></div>
                                     </div>
                                 </div>
-                                <div class="col-md-2">&nbsp;</div>
-                                <div class="col-md-8" id="settings_levels" style="border-left:1px lightgrey solid;">
+                                <div class="col-md-3 col-xs-2"></div>
+                                <div class="col-md-6 col-xs-8" id="settings_levels" style="border-left:1px lightgrey solid;">
                                     Levels:  <br><br>
                                     <div><input type="checkbox" aria-label="A1-A2" onclick="FLAIR.WEBRANKER.singleton.refreshRanking()" id="LEVEL-a" checked> A1-A2
                                         <br><span class="df" id="LEVEL-a-df"></span><br>
@@ -1062,26 +1069,33 @@
                         </div>
                     </div>
                 </div>
+                </div>
+                </div>
 
+                <div class="row">
 
                 <!-- MAIN AREA -->
+                <div class="col-md-10 col-xs-11">
                 <div id="page-content-wrapper">
                     <div class="mainArea" style="margin-top: 60px;"><br>
-                        <div class="row">
                             <!-- show results here -->
-                            <div class="col-md-7 results">
-                                <table class="table table-hover" style="width:100%; margin-left:10px;padding-right:10px;">
+<!--                            <div class="col-md-2"></div>-->
+                            <div class="results">
+                                <table class="table table-hover" style="width:100%; margin-left:10px;margin-right:10px;">
                                     <tbody id="results_table">
                                     </tbody>
                                 </table>
+                                <br><br><br><br><br><br><br>
                             </div>
-                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-
+                </div>
+                
+                <div class="row">
+            
         <!-- RIGHT SIDEBAR-->
+        <div class="col-md-3 col-xs-11">
         <div id="sidebar-wrapper-right">
             <div  class="sidebar-nav-right" id="sidebar-right">
                 <br><br><br><br>
@@ -1089,7 +1103,10 @@
                 </div>
             </div>
         </div>
-
+        </div>
+                </div>
+            </div>
+    </div>
 
 
 
