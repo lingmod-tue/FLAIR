@@ -2099,18 +2099,23 @@ window.onload = function() {
     $("[id$=gradientSlider]").slider({
        change: function (d) {	
 	var vis_id = this.id;
-	vis_id = vis_id.substring(0, vis_id.indexOf("-gradientSlider")) + "-vis";
+	vis_id = vis_id.substring(0, vis_id.indexOf("-gradientSlider"));
 	
-	if ($(this).slider("option", "value") !== 0)
+	if (vis_id !== "customVocabList")
 	{
-	    $("#" + vis_id).prop("checked", true);
-	    FLAIR.WEBRANKER.singleton.toggleVisualiserAxis($("#" + vis_id)[0], true);
-	}
-	else
-	{
-	    $("#" + vis_id).prop("checked", false);	
-	    FLAIR.WEBRANKER.singleton.toggleVisualiserAxis($("#" + vis_id)[0], false);
-	}
+		vis_id = vis_id  + "-vis";
+		
+		if ($(this).slider("option", "value") !== 0)
+		{
+			$("#" + vis_id).prop("checked", true);
+			FLAIR.WEBRANKER.singleton.toggleVisualiserAxis($("#" + vis_id)[0], true);
+		}
+		else
+		{
+			$("#" + vis_id).prop("checked", false);	
+			FLAIR.WEBRANKER.singleton.toggleVisualiserAxis($("#" + vis_id)[0], false);
+		}
+	}	
 	
 	FLAIR.WEBRANKER.singleton.refreshRanking();
        }
