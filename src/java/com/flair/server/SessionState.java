@@ -176,7 +176,7 @@ class SessionState
 	if (activeKeywords != null)
 	    keywords = activeKeywords;
 	else
-	    keywords = new KeywordSearcherInput(DefaultVocabularyList.get(lang));
+	    keywords = new KeywordSearcherInput(DefaultVocabularyList.get(lang), false);
 	
 	AbstractPipelineOperation op = MasterJobPipeline.get().performDocumentParsing(lang, docSources, keywords);
 	return op;

@@ -2025,7 +2025,8 @@ FLAIR.WEBRANKER.INSTANCE = function() {
     };
     this.uploadCustomCorpus = function() {
 	FLAIR.WEBRANKER.UTIL.TOGGLE.customCorpusDialog(false);
-	FLAIR.WEBRANKER.UTIL.WAIT.singleton.showNonClosable("Uploading files...");
+	FLAIR.WEBRANKER.UTIL.WAIT.singleton.showNonClosable("Uploading files...");	
+	FLAIR.WEBRANKER.UTIL.resetUI(true, true, false,  true, true, true);
 	
 	state.reset();
 	state.flagAsBusy();
@@ -2149,10 +2150,10 @@ window.onload = function() {
 	$('[data-toggle="popover"]').popover({ html: true });
     });
 
+    $("#tgl-customVocabList").prop('checked', false);
+    
     FLAIR.WEBRANKER.UTIL.resetUI();
     FLAIR.WEBRANKER.singleton.init();
-    
-    $("#tgl-customVocabList").prop('checked', false);
 };
 window.onbeforeunload = function() {
     FLAIR.WEBRANKER.singleton.deinit();

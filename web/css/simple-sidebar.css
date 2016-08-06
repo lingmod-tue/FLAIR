@@ -7,30 +7,29 @@
 /* Toggle Styles */
 
 #wrapper {
-/*    padding-left: 0;*/
+    padding-left: 0;
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
 }
-/*
+
 #wrapper.toggled {
-    padding-left: 50px;
+/*    padding-left: 50px;*/
 
-}*/
+}
 
-/*#page-content-wrapper {
-    padding-left: 20%;
-}*/
+#page-content-wrapper {
+    padding-left: 150px;
+}
 
 #sidebar-wrapper {
-    padding-left: 0;
     z-index: 1000;
     position: fixed;
-    left: 0%;
+    left: 275px;
     width: 0;
     height: 100%;
-/*    margin-left: -25%;*/
+    margin-left: -275px;
     overflow-y: auto;
     background: white;
     -webkit-transition: all 0.5s ease;
@@ -40,31 +39,30 @@
     margin-top: 60px;
     margin-bottom: 60px;
 }
-/*
+
 #wrapper.toggled #sidebar-wrapper {
-    width: 20%;
-}*/
+    width: 275px;
+}
 
-/*#page-content-wrapper {
-    width: 95%;
+#page-content-wrapper {
+    width: 100%;
     position: absolute;
-    padding-left: 20%;
     padding: 15px;
-}*/
+}
 
-/*#wrapper.toggled #page-content-wrapper {
-         width: 70%; 
+#wrapper.toggled #page-content-wrapper {
+    /*     width: 70%; */
     position: absolute;
-        margin-right: -275px;
-        margin-left: 275px;
-}*/
+    /*    margin-right: -275px;*/
+    /*    margin-left: 275px;*/
+}
 
 /* Sidebar Styles */
 
 .sidebar-nav {
     position: absolute;
-    top: 0%;
-    width: 80%; // width of the content inside the sidebar
+    top: 5%;
+    width: 275px;
     margin: 0;
     padding: 0;
     list-style: none;
@@ -115,25 +113,19 @@
 
     #wrapper.toggled {
         /*        padding-right: 275px;*/
-/*        padding-left: 5%;*/
+/*        padding-left: 50px;*/
     }
 
     #page-content-wrapper {
-        width: 98%;
-        padding-left: 20%;
+        padding-left: 150px;
     }
 
     #sidebar-wrapper {
         width: 0;
     }
 
-/*    #wrapper.toggled #sidebar-wrapper {
-        width: 20%;
-    }*/
     #wrapper.toggled #sidebar-wrapper {
-        width: 22%;
-        padding-left: 2%;
-
+        width: 275px;
     }
 
 /*    #page-content-wrapper {
@@ -141,7 +133,7 @@
     }*/
 
     #wrapper.toggled #page-content-wrapper {
-        padding-left: 20%;
+/*         position: absolute; */
         /*        margin-right: -275px;*/
         /*        margin-left: -275px;*/
     }

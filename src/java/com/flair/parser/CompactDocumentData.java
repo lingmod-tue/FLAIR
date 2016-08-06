@@ -137,14 +137,14 @@ public final class CompactDocumentData
 	    DocumentConstructionData data = source.getConstructionData(itr);
 	    if (data.hasConstruction())
 	    {
-		constructions.add(itr.getLegacyID());
+		constructions.add(itr.getFrontendID());
 		relFrequencies.add(data.getRelativeFrequency());
 		frequencies.add(data.getFrequency());
 		tfNorm.add(data.getWeightedFrequency());
 		tfIdf.add(data.getRelativeWeightedFrequency());
 
 		for (com.flair.parser.ConstructionOccurrence occr : data.getOccurrences())
-		    highlights.add(new ConstructionOccurrence(occr.getStart(), occr.getEnd(), itr.getLegacyID()));
+		    highlights.add(new ConstructionOccurrence(occr.getStart(), occr.getEnd(), itr.getFrontendID()));
 	    }
 	}
 	

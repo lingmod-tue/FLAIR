@@ -52,7 +52,8 @@ public final class MasterJobPipeline
     private final AbstractParsingStrategyFactory		stanfordEnglishStrategy;
     
     private final AbstractDocumentKeywordSearcherFactory	ahoCorasickSearcher;
-
+    private final AbstractDocumentKeywordSearcherFactory	naiveSubstringSearcher;
+    
     private MasterJobPipeline()
     {
 	this.webSearchExecutor = new WebSearchTaskExecutor();
@@ -63,6 +64,7 @@ public final class MasterJobPipeline
 	this.stanfordEnglishStrategy = MasterParsingFactoryGenerator.createParsingStrategy(ParserType.STANFORD_CORENLP, Language.ENGLISH);
 	
 	this.ahoCorasickSearcher = MasterParsingFactoryGenerator.createKeywordSearcher(KeywordSearcherType.AHO_CORASICK);
+	this.naiveSubstringSearcher = MasterParsingFactoryGenerator.createKeywordSearcher(KeywordSearcherType.NAIVE_SUBSTRING);
     }
     
     private AbstractParsingStrategyFactory getStrategyForLanguage(Language lang)
@@ -107,7 +109,7 @@ public final class MasterJobPipeline
 									    docParseExecutor, 
 									    getParserPoolForLanguage(lang),
 									    getStrategyForLanguage(lang),
-									    ahoCorasickSearcher,
+									    naiveSubstringSearcher,
 									    keywords);
 	BasicDocumentParseJob newJob = new BasicDocumentParseJob(jobParams);
 	BasicPipelineOperation result = new BasicPipelineOperation(newJob, PipelineOperationType.PARSE_DOCUMENTS);

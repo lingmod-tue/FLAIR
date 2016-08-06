@@ -8,7 +8,7 @@ package com.flair.testing;
 import com.flair.grammar.Language;
 import com.flair.parser.AbstractDocumentSource;
 import com.flair.parser.DocumentCollection;
-import com.flair.parser.StringDocumentSource;
+import com.flair.parser.SimpleDocumentSource;
 import com.flair.taskmanager.AbstractPipelineOperation;
 import com.flair.taskmanager.MasterJobPipeline;
 import com.flair.utilities.FLAIRLogger;
@@ -31,7 +31,7 @@ public class StringParsingTest {
 	FLAIRLogger.get().trace("Sentence: " + inputString);
         
 	List<AbstractDocumentSource> inputSource = new ArrayList<>();
-	inputSource.add(new StringDocumentSource(inputString, Language.ENGLISH));
+	inputSource.add(new SimpleDocumentSource(inputString, Language.ENGLISH));
   
 	FLAIRLogger.get().info("Begin job...");
 	long startTime = System.currentTimeMillis();

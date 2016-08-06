@@ -43,6 +43,8 @@ public final class MasterParsingFactoryGenerator
 	{
 	    case AHO_CORASICK:
 		return new AhoCorasickKeywordSearcherFactory();
+	    case NAIVE_SUBSTRING:
+		return new NaiveSubstringKeywordSearcherFactory();
 	    default:
 		throw new IllegalArgumentException("Couldn't create keyword searcher of type " + type);
 	}

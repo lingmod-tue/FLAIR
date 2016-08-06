@@ -45,6 +45,7 @@ class AhoCorasickKeywordSearcher implements AbstractDocumentKeywordSearcher
 	    }
 	}
 	
+	// ### TODO doesn't work consistently
 	for (Iterator iter = tree.search(sourceText.getBytes()); iter.hasNext();)
 	{
 	    SearchResult result = (SearchResult)iter.next();

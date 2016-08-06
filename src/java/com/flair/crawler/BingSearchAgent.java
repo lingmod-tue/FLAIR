@@ -15,7 +15,7 @@ import net.billylieurance.azuresearch.AzureSearchWebResult;
 class BingSearchAgent extends WebSearchAgent
 {
     private static final String			API_KEY = "CV3dQG6gOI3fO9wOHdArFimFprbt1Q3ZjMzYGhJaTFA";
-    private static final int			RESULTS_PER_PAGE = 15;
+    private static final int			RESULTS_PER_PAGE = 10;
     
     private final AzureSearchWebQuery		pipeline;
     private int					nextPage;

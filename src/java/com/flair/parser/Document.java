@@ -34,9 +34,7 @@ class Document implements AbstractDocument
     private double				avgSentenceLength;
     private double				avgTreeDepth;
 
-    private int					tokenCount;		// no of words "essentailly" (kinda), formerly known as "docLength". updated with the dependency count after parsing
-    private double				fancyDocLength;		// ### TODO better name needed, formerly "docLenTfIdf"
-    
+    private double				fancyDocLength;		// ### TODO better name needed, formerly "docLenTfIdf"    
     private KeywordSearcherOutput		keywordData;
     
     private boolean				parsed;

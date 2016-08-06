@@ -158,11 +158,11 @@ public enum GrammaticalConstruction
     ADVERB_SUPERLATIVE_LONG("superlativeAdvLong", "Superlative Adverb Long"), // "most quickly"
     ;
 
-    private final String		legacyID;
+    private final String		frontendID;	// identifier used in the front-end
     private final String		prettyName;
     
     GrammaticalConstruction(String legacyID, String prettyName) {
-	this.legacyID = legacyID;
+	this.frontendID = legacyID;
 	this.prettyName = prettyName;
     }
     
@@ -171,7 +171,7 @@ public enum GrammaticalConstruction
 	return prettyName;
     }
     
-    public String getLegacyID() {
-	return this.legacyID;
+    public String getFrontendID() {
+	return this.frontendID;
     }
 }
