@@ -50,16 +50,22 @@ class BasicWebSearchAndCrawlJobOutput
 
 class BasicWebSearchAndCrawlJob extends AbstractTaskLinkingJob 
 {
-    private static final int				    MINIMUM_TOKEN_COUNT = 100;	    // in the page text
+    private static final int				    MINIMUM_TOKEN_COUNT = 100;		// in the page text
+    private static final int				    TIMEOUT_THRESHOLD = 30 * 1000;	// max time in ms that's allocated to this job  
     
     private final BasicWebSearchAndCrawlJobInput	    input;
     private final BasicWebSearchAndCrawlJobOutput	    output;
+    
+    private long					    startTime;
+    private boolean					    timedOut;
     
     public BasicWebSearchAndCrawlJob(BasicWebSearchAndCrawlJobInput in)
     {
 	super();
 	this.input = in;
 	this.output = new BasicWebSearchAndCrawlJobOutput();
+	this.startTime = 0;
+	this.timedOut = false;
     }
     
     @Override
@@ -81,7 +87,8 @@ class BasicWebSearchAndCrawlJob extends AbstractTaskLinkingJob
 	
 	WebSearchTask newTask = new WebSearchTask(this, new BasicTaskChain(this), agent, input.numResults);
 	registerTask(newTask);
-	input.webSearchExecutor.search(newTask);
+	input.webSearchExecutor.search(newTask);	
+	startTime = System.currentTimeMillis();
 	flagStarted();
     }
 
@@ -93,7 +100,7 @@ class BasicWebSearchAndCrawlJob extends AbstractTaskLinkingJob
 	    case FETCH_SEARCHRESULTS:
 	    {
 		// create a new web crawl job with the output and wait for completion
-		// if there are any delinquents, create a new search task with the remainder
+		// if there are any delinquents, create a new search task with the remainder as long as it hasn't timed-out
 		WebSearchTaskResult result = (WebSearchTaskResult)previousResult;
 		BasicWebCrawlJobInput crawlParams = new BasicWebCrawlJobInput(result.getOutput(), input.webCrawlerExecutor);
 		BasicWebCrawlJob crawlJob = new BasicWebCrawlJob(crawlParams);
@@ -109,9 +116,14 @@ class BasicWebSearchAndCrawlJob extends AbstractTaskLinkingJob
 			if (MINIMUM_TOKEN_COUNT < tokenizer.countTokens())
 			    output.searchResults.add(itr);
 		    }
-		}
+		    
+		    long endTime = System.currentTimeMillis();
+		    if (endTime - startTime > TIMEOUT_THRESHOLD)
+			timedOut = true;
+		}	
 		
-		if (result.getAgent().hasNoMoreResults() == false &&
+		if (timedOut == false &&
+		    result.getAgent().hasNoMoreResults() == false &&
 		    output.searchResults.size() < input.numResults)
 		{
 		    int delta = input.numResults - output.searchResults.size();
@@ -147,7 +159,7 @@ class BasicWebSearchAndCrawlJob extends AbstractTaskLinkingJob
 	else if (isCancelled())
 	    return "BasicWebSearchAndCrawlJob was cancelled";
 	else
-	    return "BasicWebSearchAndCrawlJob Output:\nInput:\n\tLanguage: " + input.sourceLanguage + "\n\tQuery: " + input.query + "\n\tRequired Results: " + input.numResults + "\nOutput\n\tSearch Results: " + output.searchResults.size();
+	    return "BasicWebSearchAndCrawlJob Output:\nInput:\n\tLanguage: " + input.sourceLanguage + "\n\tQuery: " + input.query + "\n\tRequired Results: " + input.numResults + "\nOutput\n\tSearch Results: " + output.searchResults.size() + "\n\tTimed-out: " + timedOut;
     }
 }
 

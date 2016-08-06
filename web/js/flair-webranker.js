@@ -480,7 +480,10 @@ FLAIR.WEBRANKER.STATE = function() {
     var createWeightSettingPrototype = function() {
 	var weightSetting = {
 	    name: "",
-	    weight: 0
+	    weight: 0,
+	    df: 0,
+	    idf: 0,
+	    color: ""
 	};
 	return weightSetting;
     };
@@ -533,19 +536,21 @@ FLAIR.WEBRANKER.STATE = function() {
 	var newText = ""; // String
 	var occs = []; // occurrences of THESE constructionS in this doc
 	var color_count = 0;
-
+	
 	for (var i in weightSettings_docLevel)
 	{ 
 	    var name = weightSettings_docLevel[i]["name"];
 	    var color = "lightyellow";
 
-	    if (name.indexOf("LEVEL") < 0)
+	    if (name.indexOf("LEVEL") < 0 && weightSettings_docLevel[i]["df"] > 0)
 	    {
 		// assign colors
 		color = FLAIR.WEBRANKER.CONSTANTS.HIGHLIGHT_COLORS[color_count];
 		color_count++;
 	    }
-
+	    
+	    weightSettings_docLevel[i]["color"] = color;
+	    
 	    for (var j in doc["highlights"]) 
 	    {
 		var o = doc["highlights"][j];
@@ -834,6 +839,12 @@ FLAIR.WEBRANKER.STATE = function() {
 	    {
 		// highlight the corresponding result
 		$("#results_table tr:nth-child(" + (index + 1) + ")").css("background-color", "#fdf6e6");
+		
+		// get highlights
+		var highlightedText = "<br>";
+		highlightedText += "<div id='sidebar_text' readonly>";
+		highlightedText += getHighlightedDocHTML(doc);
+		highlightedText += "</div><br>";
 
 		var info_box_1 = "<table style='width:100%'><tr>";
 		if (doc.readabilityLevel !== null && doc.readabilityLevel.length > 3)
@@ -894,12 +905,15 @@ FLAIR.WEBRANKER.STATE = function() {
 				 weightSettings_constructions[i]["weight"] < 0))
 			    {
 				var col = "lightyellow";
-				if (count_col < FLAIR.WEBRANKER.CONSTANTS.HIGHLIGHT_COLORS.length)
-				{
-				    col = FLAIR.WEBRANKER.CONSTANTS.HIGHLIGHT_COLORS[count_col];
-				    count_col++;
-				}
-
+				for (var ws in weightSettings_docLevel)
+				{ 
+				    if (weightSettings_docLevel[ws]["name"] === weightSettings_constructions[i]["name"])
+				    {
+					col = weightSettings_docLevel[ws]["color"];
+					break;
+				    }
+				}			
+				
 				info_box_2 += "<tr class='constructions_line'><td style='background-color:" + col + "'>" + name_to_show + "</td><td class='text-cell'>" + doc["frequencies"][ind] + "</td><td class='text-cell'>(" + weightSettings_constructions[i]["weight"] + ")</td></tr>";
 			    }
 
@@ -911,13 +925,7 @@ FLAIR.WEBRANKER.STATE = function() {
 		info_box_2 += "</tbody></table><br> <div id='info-highlights'></div>";
 		info_box_3 += "</tbody></table><br></div><br><br><br>";
 
-		// add a "copy text" button
-		var text_string = "<br>";
-		text_string += "<div id='sidebar_text' readonly>";
-		text_string += getHighlightedDocHTML(doc);
-		text_string += "</div><br>";
-
-		document.getElementById("snapshot").innerHTML = info_box_1 + text_string + info_box_2 + info_box_3;
+		document.getElementById("snapshot").innerHTML = info_box_1 + highlightedText + info_box_2 + info_box_3;
 
 		var lines = document.getElementsByClassName("constructions_line");
 		if (lines.length > 0)
@@ -1074,8 +1082,14 @@ FLAIR.WEBRANKER.STATE = function() {
 		}
 	    }
 	    // add df (document count) and idf (inverse document frequency) to each construction in the settings
-	    weightSettings_constructions[i]["df"] = count;
+	    weightSettings_constructions[i]["df"] = count;	    
 	    weightSettings_constructions[i]["idf"] = Math.log((displayedDocs.length + 1) / count);
+	    
+	    for (var ws in weightSettings_docLevel)
+	    { 
+		if (weightSettings_docLevel[ws]["name"] === name)
+		    weightSettings_docLevel[ws]["df"] = count;
+	    }
 	}
 	
 	// update vocab weight data and calc avg do length
@@ -1757,6 +1771,9 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	    pipeline_noResults();
 	    return;
 	}
+	
+	if (totalResults < state.getTotalResults())
+	    FLAIR.WEBRANKER.UTIL.TOAST.warning("Some web pages couldn't be analyzed due to connectivity issues.", true, 4000);
 	
 	state.setTotalResults(totalResults);
 	for (var i = 1; i <= totalResults; i++)
