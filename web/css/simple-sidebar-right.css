@@ -17,10 +17,10 @@
     padding-right: 0;
     z-index: 1000;
     position: fixed;
-    right: 500px;
+    right: 1%;
     width: 0;
     height: 100%;
-    margin-right: -500px; 
+/*    margin-right: -19%; */
     overflow-y: auto;
     background: white;
     -webkit-transition: all 0.5s ease;
@@ -34,15 +34,14 @@
     width: 500px;
 }*/
 
-#sidebar-wrapper-right.active {
-    width: 500px;
-    padding-right: 500px;
-}
+/*#sidebar-wrapper-right.active {
+    width: 20%;
+}*/
 
 #page-content-wrapper.active {
 /*    width: 70%;*/
     position: absolute;
-    padding-right: 250px;
+    padding-right: 20%;
 /*    margin-left: 250px;*/
 }
 
@@ -63,7 +62,7 @@
 .sidebar-nav-right {
     position: absolute;
     top: 5%;
-    width: 500px;
+    width: 100%;
     margin: 0;
     padding: 0;
     list-style: none;
@@ -126,13 +125,13 @@
     }*/
 
     #sidebar-wrapper-right.active {
-        padding-right: 500px;
-        width: 500px;
+/*        padding-right: 30%;*/
+        width: 30%;
     }
     
     #page-content-wrapper.active {
         position: absolute;
-        padding-right: 300px;
+        padding-right: 15%;
 /*        margin-left: -250px;*/
     }
 
