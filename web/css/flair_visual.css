@@ -604,7 +604,7 @@ div.lengthSlider > .ui-state-default, div.lengthSlider > .ui-widget-content .ui-
 }
 
 span.glyphicon-upload {
-    font-size: 2.4em;
+    font-size: 2.5em; 
 }
 
 @media (min-width: 768px) {

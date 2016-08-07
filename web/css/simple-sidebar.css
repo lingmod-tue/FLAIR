@@ -30,7 +30,7 @@
     left: 0%;
     width: 0;
     height: 100%;
-/*    margin-left: -25%;*/
+/*    margin-left: 5px; */
     overflow-y: auto;
     background: white;
     -webkit-transition: all 0.5s ease;
@@ -66,7 +66,7 @@
     top: 0%;
     width: 80%; // width of the content inside the sidebar
     margin: 0;
-    padding: 0;
+    padding-left: 10%;
     list-style: none;
 }
 
