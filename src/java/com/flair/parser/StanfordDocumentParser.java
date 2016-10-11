@@ -81,12 +81,20 @@ class StanfordDocumentParser extends AbstractDocumentParser
     @Override
     public AbstractDocument parse(AbstractDocumentSource source, AbstractParsingStrategy strategy)
     {
-	AbstractDocument result = initializeState(source, strategy);
+	AbstractDocument result = null;	
+	try
 	{
-	   parsingStrategy.setPipeline(pipeline);
-	   parsingStrategy.apply(outputDoc);
+	    result = initializeState(source, strategy);
+	    parsingStrategy.setPipeline(pipeline);
+	    parsingStrategy.apply(outputDoc);
 	}
-	resetState();
+	catch (Exception e) {
+	    throw e;
+	}
+	finally {
+	    resetState();
+	}
+	
 	return result;
     }
 

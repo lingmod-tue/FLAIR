@@ -307,9 +307,15 @@ FLAIR.WEBRANKER.UTIL.TOGGLE.leftSidebar = function(show) {
 };
 FLAIR.WEBRANKER.UTIL.TOGGLE.rightSidebar = function(show) {
     if (show)
+    {
 	$("#sidebar-wrapper-right").addClass("active");
+	$("#page-content-wrapper").addClass("active");
+    }
     else
+    {
 	$("#sidebar-wrapper-right").removeClass("active");
+	$("#page-content-wrapper").removeClass("active");
+    }
 };
 FLAIR.WEBRANKER.UTIL.TOGGLE.visualiserDialog = function(show) {
     if (show)
@@ -1773,7 +1779,10 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	}
 	
 	if (totalResults < state.getTotalResults())
+	{
 	    FLAIR.WEBRANKER.UTIL.TOAST.warning("Some web pages couldn't be analyzed due to connectivity issues.", true, 4000);
+	    console.log("Expected search results = " + state.getTotalResults() + ", Received search results = " + totalResults);
+	}
 	
 	state.setTotalResults(totalResults);
 	for (var i = 1; i <= totalResults; i++)
@@ -1790,6 +1799,12 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	{
 	    pipeline_noResults();
 	    return;
+	}
+	
+	if (totalResults < state.getTotalResults())
+	{
+	    FLAIR.WEBRANKER.UTIL.TOAST.warning("Errors were encountered when analyzing some of the web pages.", true, 4000);
+	    console.log("Expected parsed search results = " + state.getTotalResults() + ", Received parsed search results = " + totalDocs);
 	}
 	
 	state.setTotalResults(totalDocs);
@@ -1819,6 +1834,7 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	    });
 	
 	state.flagAsCustomCorpus();
+	state.setTotalResults(uploadCount);
 	if (pipeline.parseCustomCorpus(FLAIR.WEBRANKER.CONSTANTS.DEFAULT_LANGUAGE) === false)
 	    pipeline_onError();
     };
@@ -1830,6 +1846,12 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 
 	    FLAIR.WEBRANKER.UTIL.TOAST.error("FLAIR couldn't parse any of the files.", true, 6000);
 	    return;
+	}
+	
+	if (totalResults < state.getTotalResults())
+	{
+	    FLAIR.WEBRANKER.UTIL.TOAST.warning("Errors were encountered when analyzing some of the uploaded files.", true, 4000);
+	    console.log("Expected parsed custom corpus results = " + state.getTotalResults() + ", Received parsed custom corpus results = " + totalDocs);
 	}
 	
 	state.setTotalResults(totalDocs);

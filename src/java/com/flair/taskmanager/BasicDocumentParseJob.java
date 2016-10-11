@@ -105,8 +105,12 @@ class BasicDocumentParseJob extends AbstractTaskLinkingJob
 	    {
 		// add the result to the doc collection
 		DocumentParseTaskResult result = (DocumentParseTaskResult)previousResult;
-		output.parsedDocs.add(result.getOutput(), true);
-		output.parsedDocs.sort();
+		if (result.getOutput() != null)
+		{
+		    output.parsedDocs.add(result.getOutput(), true);
+		    output.parsedDocs.sort();
+		}
+		
 		break;
 	    }
 	}

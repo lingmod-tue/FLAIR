@@ -14,5 +14,7 @@ import com.google.gson.annotations.SerializedName;
 public enum Language
 {
     @SerializedName("ENGLISH")
-    ENGLISH
+    ENGLISH,
+    @SerializedName("GERMAN")
+    GERMAN,
 }
