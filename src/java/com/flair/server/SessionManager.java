@@ -141,6 +141,6 @@ public class SessionManager
 	    throw new IllegalArgumentException("Session is not tracked");
 	
 	activeSessions.get(session).sendErrorResponse(BasicInteropMessage.MessageType.SERVER_ERROR,
-						      "Server encountered an error. Exception: " + ex.getMessage());
+						      "Server encountered an error. Exception: " + ex.toString());
     }
 }

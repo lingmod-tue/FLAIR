@@ -47,7 +47,7 @@ public class WebRankerEndPoint
 	StringWriter sw = new StringWriter();
 	thr.printStackTrace(new PrintWriter(sw));
 	FLAIRLogger.get().error("WebRankerEndPoint error for session " + session.getId() + ": " + thr.toString());
-	FLAIRLogger.get().error("Stacktrack: " + sw.toString());
+	FLAIRLogger.get().error("Stacktrace: " + sw.toString());
 	
 	SessionManager.get().sendErrorResponse(session, thr);
     }
