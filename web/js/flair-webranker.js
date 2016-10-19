@@ -1801,7 +1801,7 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	    return;
 	}
 	
-	if (totalResults < state.getTotalResults())
+	if (totalDocs < state.getTotalResults())
 	{
 	    FLAIR.WEBRANKER.UTIL.TOAST.warning("Errors were encountered when analyzing some of the web pages.", true, 4000);
 	    console.log("Expected parsed search results = " + state.getTotalResults() + ", Received parsed search results = " + totalDocs);
@@ -1848,7 +1848,7 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	    return;
 	}
 	
-	if (totalResults < state.getTotalResults())
+	if (totalDocs < state.getTotalResults())
 	{
 	    FLAIR.WEBRANKER.UTIL.TOAST.warning("Errors were encountered when analyzing some of the uploaded files.", true, 4000);
 	    console.log("Expected parsed custom corpus results = " + state.getTotalResults() + ", Received parsed custom corpus results = " + totalDocs);
