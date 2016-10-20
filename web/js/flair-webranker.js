@@ -1751,6 +1751,7 @@ FLAIR.WEBRANKER.INSTANCE = function() {
     var pipeline_noResults = function() {
 	FLAIR.WEBRANKER.UTIL.resetUI();	
 
+	FLAIR.WEBRANKER.UTIL.TOAST.clear(true);
 	FLAIR.WEBRANKER.UTIL.TOAST.error("No results for '" + state.getQuery() + "'.", true, 6000);
 	state.reset();
     };
