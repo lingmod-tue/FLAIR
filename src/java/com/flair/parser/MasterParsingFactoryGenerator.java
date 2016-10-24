@@ -41,8 +41,6 @@ public final class MasterParsingFactoryGenerator
     {
 	switch (type)
 	{
-	    case AHO_CORASICK:
-		return new AhoCorasickKeywordSearcherFactory();
 	    case NAIVE_SUBSTRING:
 		return new NaiveSubstringKeywordSearcherFactory();
 	    default:

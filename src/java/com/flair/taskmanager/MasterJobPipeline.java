@@ -51,7 +51,6 @@ public final class MasterJobPipeline
     private final DocumentParserPool				stanfordParserEnglishPool;
     private final AbstractParsingStrategyFactory		stanfordEnglishStrategy;
     
-    private final AbstractDocumentKeywordSearcherFactory	ahoCorasickSearcher;
     private final AbstractDocumentKeywordSearcherFactory	naiveSubstringSearcher;
     
     private MasterJobPipeline()
@@ -63,7 +62,6 @@ public final class MasterJobPipeline
 	this.stanfordParserEnglishPool = new DocumentParserPool(MasterParsingFactoryGenerator.createParser(ParserType.STANFORD_CORENLP, Language.ENGLISH));
 	this.stanfordEnglishStrategy = MasterParsingFactoryGenerator.createParsingStrategy(ParserType.STANFORD_CORENLP, Language.ENGLISH);
 	
-	this.ahoCorasickSearcher = MasterParsingFactoryGenerator.createKeywordSearcher(KeywordSearcherType.AHO_CORASICK);
 	this.naiveSubstringSearcher = MasterParsingFactoryGenerator.createKeywordSearcher(KeywordSearcherType.NAIVE_SUBSTRING);
     }
     

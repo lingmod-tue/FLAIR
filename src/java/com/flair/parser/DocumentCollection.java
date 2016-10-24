@@ -92,7 +92,7 @@ public class DocumentCollection implements Iterable<AbstractDocument>
 	writer.append("\n");
 	
 	// the rest comes next
-	int i = 0;
+	int i = 1;
 	for (AbstractDocument itr : dataStore)
 	{
 	    writer.append("" + i + ",");

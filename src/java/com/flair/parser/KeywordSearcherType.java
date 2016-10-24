@@ -9,6 +9,5 @@ package com.flair.parser;
  */
 public enum KeywordSearcherType
 {
-    AHO_CORASICK,
     NAIVE_SUBSTRING
 }

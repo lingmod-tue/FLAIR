@@ -1050,7 +1050,7 @@ FLAIR.WEBRANKER.STATE = function() {
 		    appropriateDoc = false;
 	    }
 	    
-	    if ($.inArray(k.toString(), filteredDocs) !== -1)
+	    if ($.inArray(k, filteredDocs) !== -1)
 		appropriateDoc = false;
 	    
 	    // add data to object
@@ -1649,9 +1649,10 @@ FLAIR.WEBRANKER.VISUALISATION = function(delegate_isDocFiltered, delegate_isCons
     this.getFilteredDocs = function() {
 	var outArray = [];
 	// go through "path" in "svg", select those withOUT style=display:none
+	// the csv document index is 1-based
 	$("path").each(function (d) {
-	    if (this.style.display === "none" && delegates.isDocFiltered(this.__data__.document) === false)
-		outArray.push(this.__data__.document);
+	    if (this.style.display === "none" && delegates.isDocFiltered(this.__data__.document - 1) === false)
+		outArray.push(this.__data__.document - 1);	
 	});
 	
 	return outArray;
