@@ -1,13 +1,9 @@
 package com.flair.crawler;
 
 import com.flair.grammar.Language;
-import com.flair.utilities.FLAIRLogger;
-import de.l3s.boilerpipe.BoilerpipeProcessingException;
-import de.l3s.boilerpipe.extractors.DefaultExtractor;
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import org.xml.sax.InputSource;
+import com.flair.utilities.AbstractTextExtractor;
+import com.flair.utilities.TextExtractorFactory;
+import com.flair.utilities.TextExtractorType;
 
 /**
  * Represents a single search result for a specific query
@@ -81,61 +77,16 @@ public class SearchResult implements Comparable<SearchResult>
         if (isTextFetched() == true && forceFetch == false)
             return false;
         
-        try
-        {
-            URL pageURL = new URL(URL);
-            HttpURLConnection connection = (HttpURLConnection)pageURL.openConnection();
-            
-            if (connection != null)
-            {
-                connection.setConnectTimeout(5000);
-		connection.setReadTimeout(5000);
-                connection.addRequestProperty("Accept-Language", "en-US,en;q=0.8");
-                connection.addRequestProperty("User-Agent", "Mozilla/4.76");
-                connection.addRequestProperty("Referer", "google.com");
-
-                boolean redirect = false;
-                // normally, 3xx is redirect
-                int status = connection.getResponseCode();
-                if (status == HttpURLConnection.HTTP_MOVED_TEMP ||
-                    status == HttpURLConnection.HTTP_MOVED_PERM ||
-                    status == HttpURLConnection.HTTP_SEE_OTHER)
-                {
-                    redirect = true;
-                }
-
-                if (redirect) 
-                {
-                    // get redirect url from "location" header field
-                    String newUrl = connection.getHeaderField("Location");
-                    
-                    pageURL = new URL(newUrl);
-                    // open the new connnection again
-                    connection = (HttpURLConnection)pageURL.openConnection();
-                    connection.setReadTimeout(5000);
-		    connection.setConnectTimeout(5000);
-                    connection.addRequestProperty("Accept-Language", "en-US,en;q=0.8");
-                    connection.addRequestProperty("User-Agent", "Mozilla/4.76");
-                    connection.addRequestProperty("Referer", "google.com");
-                }
-            }
-            
-            if (connection != null)
-            {
-                // fetch text
-                // TODO: check for encoding!!!
-                InputSource stream = new InputSource();
-		stream.setEncoding("UTF-8");
-		stream.setByteStream(pageURL.openStream());
-		
-		pageText = DefaultExtractor.INSTANCE.getText(stream);
-		return !pageText.isEmpty();
-            }
-        } catch (IOException | BoilerpipeProcessingException ex) {
-            FLAIRLogger.get().error("Couldn't fetch page text. Exception: " + ex.getMessage());
-        }
-
-        return false;
+	AbstractTextExtractor extractor = TextExtractorFactory.create(TextExtractorType.TIKA);
+	AbstractTextExtractor.Output output = extractor.extractText(URL);
+	
+	if (output.success == false || output.extractedText.isEmpty())
+	    return false;
+	else
+	{
+	    pageText = output.extractedText;
+	    return true;
+	} 
     }
     
     @Override

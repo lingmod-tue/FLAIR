@@ -1,8 +1,6 @@
 ﻿MADEESH
 
-> keyword highlighting is off, words aren't being detected (pride and prejudice)
 > The text dsplay code is slow for long texts
-> AhoCorasick is not consistent - Fix/Switch to something else
 > Improve sentence boundary detection (examine copus and get avg. length for lang)
 
 
