@@ -1,0 +1,17 @@
+Change Log FLAIR-DE
+
+M flair/FLAIR-DE/Repo/FLAIR-DE/web/visual.jsp
+M flair/FLAIR-DE/Repo/FLAIR-DE/web/visual_preview.html
+M flair/FLAIR-DE/Repo/FLAIR-DE/web/js/flair-webranker.js
+M flair/FLAIR-DE/Repo/FLAIR-DE/src/java/com/flair/crawler/BingSearchAgent.java
+M flair/FLAIR-DE/Repo/FLAIR-DE/src/java/com/flair/crawler/SearchResult.java
+M flair/FLAIR-DE/Repo/FLAIR-DE/src/java/com/flair/grammar/EnglishGrammaticalConstants.java
+A flair/FLAIR-DE/Repo/FLAIR-DE/src/java/com/flair/grammar/GermanGrammaticalTreePatterns.java
+M flair/FLAIR-DE/Repo/FLAIR-DE/src/java/com/flair/grammar/GrammaticalConstruction.java
+M flair/FLAIR-DE/Repo/FLAIR-DE/src/java/com/flair/grammar/Language.java
+A flair/FLAIR-DE/Repo/FLAIR-DE/src/java/com/flair/parser/StanfordDocumentParserGermanStrategy.java
+M flair/FLAIR-DE/Repo/FLAIR-DE/src/java/com/flair/parser/StanfordDocumentParser.java
+M flair/FLAIR-DE/Repo/FLAIR-DE/src/java/com/flair/parser/Document.java
+M flair/FLAIR-DE/Repo/FLAIR-DE/src/java/com/flair/parser/BasicStanfordDocumentParserStrategy.java
+M flair/FLAIR-DE/Repo/FLAIR-DE/src/java/com/flair/parser/Language.java
+ 
