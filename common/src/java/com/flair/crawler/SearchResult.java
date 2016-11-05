@@ -78,14 +78,14 @@ public class SearchResult implements Comparable<SearchResult>
             return false;
         
 	AbstractTextExtractor extractor = TextExtractorFactory.create(TextExtractorType.TIKA);
-	AbstractTextExtractor.Output output = extractor.extractText(URL, lang);
+	AbstractTextExtractor.Output output = extractor.extractText(new AbstractTextExtractor.Input(URL, lang));	
 	
-	if (output.success == false || output.extractedText.isEmpty())
+	if (output.success == false)
 	    return false;
 	else
 	{
 	    pageText = output.extractedText;
-	    return true;
+	    return pageText.isEmpty() == false;
 	} 
     }
     

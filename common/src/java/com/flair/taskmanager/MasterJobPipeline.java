@@ -64,8 +64,10 @@ public final class MasterJobPipeline
 	this.stanfordParserEnglishPool = new DocumentParserPool(MasterParsingFactoryGenerator.createParser(ParserType.STANFORD_CORENLP, Language.ENGLISH));
 	this.stanfordEnglishStrategy = MasterParsingFactoryGenerator.createParsingStrategy(ParserType.STANFORD_CORENLP, Language.ENGLISH);
 	
-	this.stanfordParserGermanPool = new DocumentParserPool(MasterParsingFactoryGenerator.createParser(ParserType.STANFORD_CORENLP, Language.GERMAN));
-	this.stanfordGermanStrategy = MasterParsingFactoryGenerator.createParsingStrategy(ParserType.STANFORD_CORENLP, Language.GERMAN);
+//	this.stanfordParserGermanPool = new DocumentParserPool(MasterParsingFactoryGenerator.createParser(ParserType.STANFORD_CORENLP, Language.GERMAN));
+//	this.stanfordGermanStrategy = MasterParsingFactoryGenerator.createParsingStrategy(ParserType.STANFORD_CORENLP, Language.GERMAN);
+	this.stanfordParserGermanPool = null;
+	this.stanfordGermanStrategy = null;
 	
 	this.naiveSubstringSearcher = MasterParsingFactoryGenerator.createKeywordSearcher(KeywordSearcherType.NAIVE_SUBSTRING);
     }

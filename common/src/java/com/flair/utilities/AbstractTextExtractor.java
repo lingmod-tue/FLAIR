@@ -6,13 +6,14 @@
 package com.flair.utilities;
 
 import com.flair.grammar.Language;
+import de.l3s.boilerpipe.BoilerpipeProcessingException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 /**
- * Extracts plain text from a given URI
+ * Extracts plain text from a given source
  * @author shadeMe
  */
 public abstract class AbstractTextExtractor
@@ -27,9 +28,9 @@ public abstract class AbstractTextExtractor
 	return type;
     }
     
-    public abstract Output extractText(String url, Language lang);
+    public abstract Output extractText(Input input);
     
-    protected InputStream openURLStream(String url, Language lang) throws IOException
+    protected static InputStream openURLStream(String url, Language lang) throws IOException
     {
 	URL pageURL = new URL(url);
 	HttpURLConnection connection = (HttpURLConnection)pageURL.openConnection();
@@ -85,17 +86,53 @@ public abstract class AbstractTextExtractor
 	    return connection.getInputStream();
     }
     
-    public class Output
+    public static class Input
     {
-	public final boolean	    success;	    // true if the text was extracted successfully, false otherwise
-	public final String	    sourceURL;
-	public final String	    extractedText;
-	
-	public Output(boolean success, String url, String extract)
+	public enum SourceType
 	{
-	    this.success = success;
-	    this.sourceURL = url;
-	    this.extractedText = extract;
+	    URL,
+	    STREAM
 	}
+	
+	public final SourceType	    sourceType;
+	public final String	    url;
+	public final InputStream    stream;
+	public final Language	    lang;
+
+	public Input(String url, Language lang)
+	{
+	    this.sourceType = SourceType.URL;
+	    this.url = url;
+	    this.stream = null;
+	    this.lang = lang;
+	}
+
+	public Input(InputStream stream, Language lang)
+	{
+	    this.sourceType = SourceType.STREAM;
+	    this.url = null;
+	    this.stream = stream;
+	    this.lang = lang;
+	}
+    }    
+    
+    public static class Output
+    {
+	public final Input	    input;
+	public final boolean	    success;	    // true if the text was extracted successfully, false otherwise
+	public final String	    extractedText;
+	public final boolean	    isHTML;
+	
+	public Output(Input input, boolean success, String extract, boolean isHTML)
+	{
+	    this.input = input;
+	    this.success = success;
+	    this.extractedText = extract;
+	    this.isHTML = isHTML;
+	}
+    }
+    
+    public static String doBoilerpipePass(String html) throws BoilerpipeProcessingException {
+	return BoilerpipeTextExtractor.parse(html, true);
     }
 }

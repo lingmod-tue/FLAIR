@@ -5,11 +5,9 @@
  */
 package com.flair.utilities;
 
-import com.flair.grammar.Language;
 import de.l3s.boilerpipe.BoilerpipeProcessingException;
+import de.l3s.boilerpipe.extractors.ArticleExtractor;
 import de.l3s.boilerpipe.extractors.DefaultExtractor;
-import java.io.IOException;
-import java.io.InputStream;
 import org.xml.sax.InputSource;
 
 /**
@@ -23,29 +21,44 @@ class BoilerpipeTextExtractor extends AbstractTextExtractor
     }
 
     @Override
-    public Output extractText(String url, Language lang)
+    public Output extractText(Input input)
     {
 	boolean error = false;
 	String pageText = "";
 	
 	try
         {
-	    try (InputStream stream = openURLStream(url, lang))
+	    // TODO: check for encoding!!!
+	    InputSource source = new InputSource();
+	    source.setEncoding("UTF-8");
+	    
+	    switch (input.sourceType)
 	    {
-		// TODO: check for encoding!!!
-		InputSource source = new InputSource();
-		source.setEncoding("UTF-8");
-		source.setByteStream(stream);
-
-		pageText = DefaultExtractor.INSTANCE.getText(source);
+		case URL:
+		   source.setByteStream(openURLStream(input.url, input.lang));
+		   break;
+		case STREAM:
+		   source.setByteStream(input.stream);
+		   break;
 	    }
+	
+	    pageText = DefaultExtractor.getInstance().getText(source);
         } 
-	catch (IOException | BoilerpipeProcessingException ex)
+	catch (Exception ex)
 	{
-            FLAIRLogger.get().error("Couldn't fetch page text. Exception: " + ex.getMessage());
+            FLAIRLogger.get().error("Couldn't fetch text. Exception: " + ex.getMessage());
 	    error = true;
         }
 	
-	return new Output(error == false, url, pageText);
-    }   
+	// boilerpipe always assumes that the stream is text/html
+	return new Output(input, error == false, pageText, true);
+    }
+    
+    public static String parse(String html, boolean useArticleExtractor) throws BoilerpipeProcessingException 
+    {
+	if (useArticleExtractor)
+	    return ArticleExtractor.getInstance().getText(html);
+	else
+	    return DefaultExtractor.getInstance().getText(html);
+    }
 }

@@ -49,8 +49,8 @@ public class WebCrawlerTest
 	    op.begin();
 	    Object output = op.getOutput();
 	    List<SearchResult> searchResults = (List<SearchResult>)output;
-	//    op = MasterJobPipeline.get().performDocumentParsing(Language.ENGLISH, itr, 10);
-	//    op.begin();
+//	    op = MasterJobPipeline.get().performDocumentParsing(Language.ENGLISH, itr, 10);
+//	    op.begin();
 	    long endTime = System.currentTimeMillis();
 	   
 	   FLAIRLogger.get().trace(op.toString());

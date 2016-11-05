@@ -4,10 +4,10 @@
 package com.flair.parser;
 
 import com.flair.grammar.Language;
-import java.io.BufferedReader;
-import java.io.IOException;
+import com.flair.utilities.AbstractTextExtractor;
+import com.flair.utilities.TextExtractorFactory;
+import com.flair.utilities.TextExtractorType;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 
 /**
  * Represents a document source that encapsulates an arbitrary InputStream
@@ -23,22 +23,13 @@ public class StreamDocumentSource extends AbstractDocumentSource
 	super(lang);
 	this.name = name;
 	
-	try (BufferedReader br = new BufferedReader(new InputStreamReader(source))) 
-	{
-	     StringBuilder sb = new StringBuilder();
-	     String line = br.readLine();
-
-	     while (line != null)
-	     {
-		 sb.append(line);
-		 sb.append(System.lineSeparator());
-		 line = br.readLine();
-	     }
-	     
-	     sourceString = preprocessText(sb.toString());
-	} catch (IOException ex) {
-	    throw new IllegalArgumentException("Cannot read from source stream. Exception: " + ex.getMessage());
-	}
+	AbstractTextExtractor extractor = TextExtractorFactory.create(TextExtractorType.TIKA);
+	AbstractTextExtractor.Output output = extractor.extractText(new AbstractTextExtractor.Input(source, lang));
+	
+	if (output.success == false)
+	    throw new IllegalArgumentException("Cannot read from source stream");
+	else
+	    sourceString = preprocessText(output.extractedText);
     }
     
     @Override
