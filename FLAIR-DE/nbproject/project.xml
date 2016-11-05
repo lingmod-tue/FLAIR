@@ -4,7 +4,7 @@
     <configuration>
         <buildExtensions xmlns="http://www.netbeans.org/ns/ant-build-extender/1"/>
         <data xmlns="http://www.netbeans.org/ns/web-project/3">
-            <name>FLAIR-EN</name>
+            <name>FLAIR-DE</name>
             <minimum-ant-version>1.6.5</minimum-ant-version>
             <web-module-libraries>
                 <library dirs="200">
@@ -58,7 +58,7 @@
             </web-module-libraries>
             <web-module-additional-libraries/>
             <source-roots>
-                <root id="src.java.dir" name="Source Packages"/>
+                <root id="src.dir"/>
             </source-roots>
             <test-roots/>
         </data>

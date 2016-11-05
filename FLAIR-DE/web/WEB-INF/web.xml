@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+    <display-name>FLAIR-DE WebRanker</display-name>
+    <filter>
+        <filter-name>GzipFilter</filter-name>
+        <filter-class>com.flair.server.GZIPFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>GzipFilter</filter-name>
+        <servlet-name>CustomCorpusServlet</servlet-name>
+    </filter-mapping>
+    <listener>
+        <listener-class>com.flair.server.BasicServletContextListener</listener-class>
+    </listener>
+    <listener>
+        <listener-class>com.flair.server.BasicHttpSessionListener</listener-class>
+    </listener>
+    <servlet>
+        <servlet-name>CustomCorpusServlet</servlet-name>
+        <servlet-class>com.flair.server.CustomCorpusServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>CustomCorpusServlet</servlet-name>
+        <url-pattern>/CustomCorpusServlet</url-pattern>
+    </servlet-mapping>
+    <session-config>
+        <session-timeout>
+            60
+        </session-timeout>
+    </session-config>
+    <welcome-file-list>
+        <welcome-file>visual.jsp</welcome-file>
+    </welcome-file-list>
+</web-app>

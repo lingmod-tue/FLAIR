@@ -13,7 +13,7 @@ FLAIR.createNS("FLAIR.WEBRANKER.UTIL.WAIT");
 
 //=================== FLAIR.WEBRANKER.CONSTANTS =============//
 FLAIR.WEBRANKER.CONSTANTS.DEFAULT_NUM_RESULTS = 20;
-FLAIR.WEBRANKER.CONSTANTS.DEFAULT_LANGUAGE = "ENGLISH";
+FLAIR.WEBRANKER.CONSTANTS.DEFAULT_LANGUAGE = "GERMAN";
 FLAIR.WEBRANKER.CONSTANTS.HIGHLIGHT_COLORS = ["lightgreen", "lightblue", "lightpink", "lightcyan", "lightsalmon", "lightgrey", "lightyellow"];
 
 //=================== FLAIR.WEBRANKER.UTIL =============//
@@ -120,10 +120,10 @@ FLAIR.WEBRANKER.UTIL.resetUI = function(leftSidebar, rightSidebar, waitDialog, s
     if (sliders === true || sliders === undefined)
 	FLAIR.WEBRANKER.UTIL.resetSlider("all");
     if (snapshot === true || snapshot === undefined)
-	$("#snapshot").html("<div id='empty_sidebar_info'>Click on a search result <br>to display text here.</div>");    
+	$("#snapshot").html("<div id='empty_sidebar_info'>Klicken Sie auf ein Suchergebnis, <br>um hier den Text anzuzeigen.</div>");    
     if (resultsTable === true || resultsTable === undefined) {
         
-        document.getElementById("results_table").innerHTML = "<div class=\"panel panel-info\"> <div class=\"panel-heading\" style=\"text-align: center\"> <h3 class=\"panel-title\">SEARCH <span class=\"glyphicon glyphicon-search\"></span></h3> </div> <div class=\"panel-body\"> Type in a search query. <br> FLAIR will fetch the <b>top results</b> from the Bing search engine. </div> </div> <br><br> <div class=\"panel panel-warning\"> <div class=\"panel-heading\" style=\"text-align: center\"> <h3 class=\"panel-title\">CONFIGURE <span class=\"glyphicon glyphicon-cog\"></span></h3> </div> <div class=\"panel-body\"> Configure the settings: <b>text</b> (complexity, length) and <b>language</b> (the passive, wh- questions, academic vocabulary, ...) <br> You can <b>export</b> the settings to apply them to all further searches. </div> </div> <br><br> <div class=\"panel panel-info\" > <div class=\"panel-heading\" style=\"text-align: center\"> <h3 class=\"panel-title\">READ <span class=\"glyphicon glyphicon-menu-hamburger\"></span></h3> </div> <div class=\"panel-body\"> FLAIR will re-rank the documents according to the configured settings. <br> Click on the link to open the page in a new tab or read the <b>enhanced text</b> in the right-side panel. </div> </div>";
+        document.getElementById("results_table").innerHTML = "<div class=\"panel panel-info\"> <div class=\"panel-heading\" style=\"text-align: center\"> <h3 class=\"panel-title\">SUCHEN <span class=\"glyphicon glyphicon-search\"></span></h3> </div> <div class=\"panel-body\"> Geben Sie eine Suchanfrage ein. <br> FLAIR wird die <b>obersten Ergebnisse</b> von der Suchmaschine Bing abrufen. </div> </div> <br><br> <div class=\"panel panel-warning\"> <div class=\"panel-heading\" style=\"text-align: center\"> <h3 class=\"panel-title\">KONFIGURIEREN <span class=\"glyphicon glyphicon-cog\"></span></h3> </div> <div class=\"panel-body\"> Konfgurieren Sie die Einstellungen: <b>Text</b> (Länge, Schwierigkeitsgrad) und <b>Grammatik</b> (Passiv, Wh-Fragen, akademisches Vokabular, ...) <br> Sie können die Einstellungen auch <b>exportieren</b>, um sie auf spätere Suchen anzuwenden. </div> </div> <br><br> <div class=\"panel panel-info\" > <div class=\"panel-heading\" style=\"text-align: center\"> <h3 class=\"panel-title\">LESEN <span class=\"glyphicon glyphicon-menu-hamburger\"></span></h3> </div> <div class=\"panel-body\"> FLAIR bewertet die Suchergebnisse neu entsprechend Ihren Einstellungen. <br> Klicken Sie auf den Link, um die Seite in einem neuen Tab zu öffnen, oder lesen Sie den extrahierten <b>erweiterten Text</b> im Textfeld auf der rechten Seite. </div> </div>";
     }
     
     FLAIR.WEBRANKER.UTIL.TOGGLE.customCorpusDialog(false);
@@ -131,7 +131,7 @@ FLAIR.WEBRANKER.UTIL.resetUI = function(leftSidebar, rightSidebar, waitDialog, s
 FLAIR.WEBRANKER.UTIL.cancelCurrentOperation = function() {
     FLAIR.WEBRANKER.singleton.cancelOperation();
     FLAIR.WEBRANKER.UTIL.TOAST.clear(true);
-    FLAIR.WEBRANKER.UTIL.TOAST.warning("The operation was cancelled.", true, 4000);
+    FLAIR.WEBRANKER.UTIL.TOAST.warning("Der Vorgang wurde agebrochen.", true, 4000);
 };
 FLAIR.WEBRANKER.UTIL.showExportSettingsDialog = function(exportURL) {
     $("#exported_settings_url").val(exportURL);
@@ -353,22 +353,22 @@ FLAIR.WEBRANKER.CUSTOMVOCAB = function(server_pipeline) {
 		    var allText = rawFile.responseText;
 		    allText = allText.replace("\n", ",");
 		    $("#custom_vocab_textarea").val(allText);
-		    FLAIR.WEBRANKER.UTIL.TOAST.success("Loaded custom vocabulary from disk.", true, 3000);
+		    FLAIR.WEBRANKER.UTIL.TOAST.success("Benutzerdefiniertes Vokabular hochgeladen.", true, 3000);
 		    loadingFile = false;
 		}
 		else if (rawFile.status >= 400)
 		{
-		    FLAIR.WEBRANKER.UTIL.TOAST.error("Couldn't load file. Error code - " + rawFile.status + ".", true, 3000);
+		    FLAIR.WEBRANKER.UTIL.TOAST.error("Datei konnte nicht geladen werden. Fehlercode - " + rawFile.status + ".", true, 3000);
 		    loadingFile = false;
 		}
 	    }
 	};
 	rawFile.ontimeout = function(e) {
-	    FLAIR.WEBRANKER.UTIL.TOAST.error("Couldn't load file - Operation timed out.", true, 3000);
+	    FLAIR.WEBRANKER.UTIL.TOAST.error("Datei konnte nicht geladen werden - Vorgang wurde gestoppt.", true, 3000);
 	    loadingFile = false;
 	};
 	rawFile.onerror = function(e) {
-	    FLAIR.WEBRANKER.UTIL.TOAST.error("Couldn't load file.", true, 3000);
+	    FLAIR.WEBRANKER.UTIL.TOAST.error("Datei konnte nicht geladen werden.", true, 3000);
 	    loadingFile = false;
 	};
 	
@@ -384,7 +384,7 @@ FLAIR.WEBRANKER.CUSTOMVOCAB = function(server_pipeline) {
     var apply = function() {
 	if (loadingFile)
 	{
-	    FLAIR.WEBRANKER.UTIL.TOAST.warning("Please wait until the previous operation is complete.", true, 2500);
+	    FLAIR.WEBRANKER.UTIL.TOAST.warning("Bitte warten Sie, bis der derzeitige Vorgang abgeschlossen ist.", true, 2500);
 	    return;
 	}
 	
@@ -394,7 +394,7 @@ FLAIR.WEBRANKER.CUSTOMVOCAB = function(server_pipeline) {
 	var wordArray = tempList.split(",");
 	if (tempList.trim().length < 2 || wordArray.length < 1)
 	{
-	    FLAIR.WEBRANKER.UTIL.TOAST.warning("The word list is empty.", true, 2500);
+	    FLAIR.WEBRANKER.UTIL.TOAST.warning("Die Wörterliste ist leer.", true, 2500);
 	    return;
 	}
 	
@@ -405,8 +405,8 @@ FLAIR.WEBRANKER.CUSTOMVOCAB = function(server_pipeline) {
 	    pipeline_onError();
 	else
 	{
-	    $("#customVocabList-label").html("Custom");
-	    FLAIR.WEBRANKER.UTIL.TOAST.success("The new vocabulary will be applied to the next search operation.", true, 3000);
+	    $("#customVocabList-label").html("Benutzerdefiniert");
+	    FLAIR.WEBRANKER.UTIL.TOAST.success("Das neue Vokabular wird beim nächsten Suchvorgang angewendet.", true, 3000);
 	    return true;
 	}
 	
@@ -426,8 +426,8 @@ FLAIR.WEBRANKER.CUSTOMVOCAB = function(server_pipeline) {
 	    else
 	    {
 		inUse = false;
-		$("#customVocabList-label").html("Academic");
-		FLAIR.WEBRANKER.UTIL.TOAST.info("Academic vocabulary will be applied to the next search.", true, 3000);
+		$("#customVocabList-label").html("Akademisch");
+		FLAIR.WEBRANKER.UTIL.TOAST.info("Das akademische Vokabular wird beim nächsten Suchvorgang angewendet.", true, 3000);
 	    }
 	}
     };
@@ -856,26 +856,26 @@ FLAIR.WEBRANKER.STATE = function() {
 		if (doc.readabilityLevel !== null && doc.readabilityLevel.length > 3)
 		    info_box_1 += "<td class='text-cell'><b>" + FLAIR.WEBRANKER.UTIL.formatDocLevel(doc.readabilityLevel) + "</b></td>";
 		if (doc.numSents > 0)
-		    info_box_1 += "<td class='text-cell'>~" + doc.numSents + " sentences</td>";
+		    info_box_1 += "<td class='text-cell'>~" + doc.numSents + " Sätze</td>";
 		if (doc.docLength > 0 || doc.numDeps > 0)
-		    info_box_1 += "<td class='text-cell'>~" + doc.numDeps + " words (";
+		    info_box_1 += "<td class='text-cell'>~" + doc.numDeps + " Wörter (";
 		if (hasCustomVocab() === false)
-		    info_box_1 += "Academic: ~";
+		    info_box_1 += "Akademisch: ~";
 		else
-		    info_box_1 += "Keywords: ~";
+		    info_box_1 += "Schlüsselwörter: ~";
 		info_box_1 += Math.floor(doc.relFreqKeywords * 100) + "%)</td></tr></table>";
 
-		var info_box_2 = "<table id='constructions-table'><thead><tr><td><b>Construction</b></td><td><b>Count</b></td><td><b>Weight</b></td></tr></thead><tbody>";
-		var info_box_3 = "<div id='show_all_constructions' hidden><table id='all_constructions_table' class='tablesorter'><thead><tr><td><b>Construction</b></td><td><b>Count</b></td><td><b>Relative Frequency %</b></td></tr></thead><tbody>";
+		var info_box_2 = "<table id='constructions-table'><thead><tr><td><b>Konstruktionen</b></td><td><b>Anzahl</b></td><td><b>Gewichtung</b></td></tr></thead><tbody>";
+		var info_box_3 = "<div id='show_all_constructions' hidden><table id='all_constructions_table' class='tablesorter'><thead><tr><td><b>Konstruktionen</b></td><td><b>Anzahl</b></td><td><b>Relative Häufigkeit in %</b></td></tr></thead><tbody>";
 		
 		// keyword data
 		if (highlightKeywords)
 		{
 		    info_box_2 += "<tr class='constructions_line'><td style='background-color:gold'>";
 		    if (hasCustomVocab() === false)
-			info_box_2 += "academic words";
+			info_box_2 += "Akademisches Vokabular";
 		    else
-			info_box_2 += "keywords";
+			info_box_2 += "Schlüsselwörter";
 
 		    info_box_2 += "</td><td class='text-cell'>" + doc.totalKeywords + "</td><td class='text-cell'>(" + weightSettings_customVocabList.weight + ")</td></tr>";
 		}
@@ -940,17 +940,17 @@ FLAIR.WEBRANKER.STATE = function() {
 		    if (lines.length === 1)
 		    {
 			document.getElementById("info-highlights").innerHTML = "";
-			document.getElementById("info-highlights").innerHTML = "<div class='panel panel-default' style='text-align: center'><a href='javascript:FLAIR.WEBRANKER.UTIL.TOGGLE.constructionsList();' style='color:darkgrey;'><span class='caret'></span> all constructions <span class='caret'></span></a></div><br>";
+			document.getElementById("info-highlights").innerHTML = "<div class='panel panel-default' style='text-align: center'><a href='javascript:FLAIR.WEBRANKER.UTIL.TOGGLE.constructionsList();' style='color:darkgrey;'><span class='caret'></span> alle Konstruktionen <span class='caret'></span></a></div><br>";
 		    }
 		    else
 		    {
-			document.getElementById("info-highlights").innerHTML = "* Highlights may overlap. Mouse over a highlight to see a tooltip<br> with the names of all embedded constructions.<br><br>"
-				+ "<div class='panel panel-default' style='text-align: center'><a href='javascript:FLAIR.WEBRANKER.UTIL.TOGGLE.constructionsList();' style='color:darkgreen;'><span class='caret'></span> all constructions <span class='caret'></span></a></div>";
+			document.getElementById("info-highlights").innerHTML = "* Hervorhebungen können sich überlappen. Bewegen Sie die Maus über eine Hervorhebung, um einen Tooltip<br> mit den Namen aller eingebetteten Konstruktionen zu sehen. <br><br>"
+				+ "<div class='panel panel-default' style='text-align: center'><a href='javascript:FLAIR.WEBRANKER.UTIL.TOGGLE.constructionsList();' style='color:darkgreen;'><span class='caret'></span> alle Konstruktionen <span class='caret'></span></a></div>";
 		    }
 		} 
 		else
 		{
-		    document.getElementById("info-highlights").innerHTML = "<button type='button' class='btn btn-warning' onclick='FLAIR.WEBRANKER.UTIL.TOGGLE.leftSidebar(true)' id='sidebar_grammar_button'>GRAMMAR SETTINGS</button>";
+		    document.getElementById("info-highlights").innerHTML = "<button type='button' class='btn btn-warning' onclick='FLAIR.WEBRANKER.UTIL.TOGGLE.leftSidebar(true)' id='sidebar_grammar_button'>GRAMMATIK-EINSTELLUNGEN</button>";
 		    document.getElementById("constructions-table").hidden = true;
 		}
 	    }
@@ -1088,7 +1088,7 @@ FLAIR.WEBRANKER.STATE = function() {
 		}
 	    }
 	    // add df (document count) and idf (inverse document frequency) to each construction in the settings
-	    weightSettings_constructions[i]["df"] = count;
+	    weightSettings_constructions[i]["df"] = count;	    
 	    if (count !== 0)
 		weightSettings_constructions[i]["idf"] = Math.log((displayedDocs.length + 1) / count);
 	    else
@@ -1183,7 +1183,7 @@ FLAIR.WEBRANKER.STATE = function() {
 	    });
 	}
 
-	document.getElementById("docs_info").innerHTML = (displayedDocs.length) + " results";
+	document.getElementById("docs_info").innerHTML = (displayedDocs.length) + " Ergebnisse";
 	for (var s in weightSettings_constructions) 
 	{
 	    if (weightSettings_constructions[s]["name"].startsWith("LEVEL"))
@@ -1203,9 +1203,9 @@ FLAIR.WEBRANKER.STATE = function() {
 	{
 	    // show each object in a row of 3 cells: html / titles, urls and snippets / text
 	    out += '<tr><td class="num_cell" style="font-size:x-large;">' +
-		    (i + 1) + '&nbsp;<span style="color:lightgrey;font-size:small" title="original position in the rank">(' + displayedDocs[i].preRank + ')</span><br>' +
+		    (i + 1) + '&nbsp;<span style="color:lightgrey;font-size:small" title="Ursprüngliche Position ind er Rangliste">(' + displayedDocs[i].preRank + ')</span><br>' +
 		    '</td><td  class="url_cell" style="width:40%;"><div><a href="' + displayedDocs[i].url + '" target="_blank"><b>' + displayedDocs[i].title + '</b></a></div>' +
-		    '<div id="show_text_cell" title="Click to show text" onclick="FLAIR.WEBRANKER.singleton.displayDetails(' + i + ');"><span style="color:grey;font-size:smaller;">' + displayedDocs[i].urlToDisplay + '</span><br><span>' + displayedDocs[i].snippet + '</span></div></td></tr>';
+		    '<div id="show_text_cell" title="Klicken, um Text anzuzeigen" onclick="FLAIR.WEBRANKER.singleton.displayDetails(' + i + ');"><span style="color:grey;font-size:smaller;">' + displayedDocs[i].urlToDisplay + '</span><br><span>' + displayedDocs[i].snippet + '</span></div></td></tr>';
 
 	}
 
@@ -1427,7 +1427,7 @@ FLAIR.WEBRANKER.STATE = function() {
 	    applyingImportedSettings = false;
 	    teacherMode = false;
 	    
-	    FLAIR.WEBRANKER.UTIL.TOAST.error("FLAIR encountered an error while applying your custom settings.", true, 3000);
+	    FLAIR.WEBRANKER.UTIL.TOAST.error("FLAIR ist beim Übernehmen Ihrer Einstellungen auf einen Fehler gestoßen.", true, 3000);
 	    return false;
 	}
     };
@@ -1478,7 +1478,7 @@ FLAIR.WEBRANKER.VISUALISATION = function(delegate_isDocFiltered, delegate_isCons
 	    .append("g")
 	    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
     
-    var dimension_names = ["document", "# of words"];
+    var dimension_names = ["Dokument", "# an Wörtern"];
     
     var delegates = {
 	isDocFiltered: delegate_isDocFiltered,
@@ -1758,8 +1758,8 @@ FLAIR.WEBRANKER.INSTANCE = function() {
     var pipeline_noResults = function() {
 	FLAIR.WEBRANKER.UTIL.resetUI();	
 
-	FLAIR.WEBRANKER.UTIL.TOAST.clear(true);
-	FLAIR.WEBRANKER.UTIL.TOAST.error("No results for '" + state.getQuery() + "'.", true, 6000);
+	FLAIR.WEBRANKER.UTIL.TOAST.clear(true);	
+	FLAIR.WEBRANKER.UTIL.TOAST.error("Keine Ergebnisse für '" + state.getQuery() + "'.", true, 6000);
 	state.reset();
     };
     var pipeline_onError = function() {
@@ -1768,8 +1768,10 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	self.deinit();
 	
 	FLAIR.WEBRANKER.UTIL.TOAST.clear(true);
-	FLAIR.WEBRANKER.UTIL.TOAST.error("FLAIR encountered a fatal error. Please refresh your browser.", false, 0);
+	FLAIR.WEBRANKER.UTIL.TOAST.error("FLAIR ist auf einen schweren Fehler gestoßen. Bitte laden Sie die Seite in Ihrem Browser neu.", false, 0);
     };
+    
+    // temporär auskommentiert, um offline nutzen zu können
     var pipeline_onClose = function() {
 	if (initialized === false)
 	    return;
@@ -1777,7 +1779,7 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	FLAIR.WEBRANKER.UTIL.resetUI();
 	state.reset();
 	
-	FLAIR.WEBRANKER.UTIL.WAIT.singleton.showNonClosable("Your session has expired. Please refresh your web browser.");
+	FLAIR.WEBRANKER.UTIL.WAIT.singleton.showNonClosable("Ihre Sitzung ist abgelaufen. Bitte laden Sie die Seite in Ihrem Browser neu.");
     };
     var complete_webSearch = function(jobID, totalResults) {
 	if (totalResults === 0)
@@ -1788,7 +1790,7 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	
 	if (totalResults < state.getTotalResults())
 	{
-	    FLAIR.WEBRANKER.UTIL.TOAST.warning("Some web pages couldn't be analyzed due to connectivity issues.", true, 4000);
+	    FLAIR.WEBRANKER.UTIL.TOAST.warning("Einige Webseiten konnten aufgrund von Konnektivitätsproblemen nicht analysiert werden.", true, 4000);
 	    console.log("Expected search results = " + state.getTotalResults() + ", Received search results = " + totalResults);
 	}
 	
@@ -1811,7 +1813,7 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	
 	if (totalDocs < state.getTotalResults())
 	{
-	    FLAIR.WEBRANKER.UTIL.TOAST.warning("Errors were encountered when analyzing some of the web pages.", true, 4000);
+	    FLAIR.WEBRANKER.UTIL.TOAST.warning("Einige Webseiten konnten nicht analysiert werden.", true, 4000);
 	    console.log("Expected parsed search results = " + state.getTotalResults() + ", Received parsed search results = " + totalDocs);
 	}
 	
@@ -1831,12 +1833,12 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	    FLAIR.WEBRANKER.UTIL.resetUI();
 	    state.reset();
 
-	    FLAIR.WEBRANKER.UTIL.TOAST.info("No files were uploaded.", true, 3000);
+	    FLAIR.WEBRANKER.UTIL.TOAST.info("Keine Dateien hochgeladen.", true, 3000);
 	    return;
 	}
 	
 	FLAIR.WEBRANKER.UTIL.WAIT.singleton.clear();
-	FLAIR.WEBRANKER.UTIL.WAIT.singleton.showCancel("<h4>Analyzing custom corpus - Please wait...</h4>", 
+	FLAIR.WEBRANKER.UTIL.WAIT.singleton.showCancel("<h4>Benutzerdefiniertes Korpus wird analysiert - Bitte warten...</h4>", 
 	    function() {
 		FLAIR.WEBRANKER.UTIL.cancelCurrentOperation();
 	    });
@@ -1852,13 +1854,13 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	    FLAIR.WEBRANKER.UTIL.resetUI();
 	    state.reset();
 
-	    FLAIR.WEBRANKER.UTIL.TOAST.error("FLAIR couldn't parse any of the files.", true, 6000);
+	    FLAIR.WEBRANKER.UTIL.TOAST.error("FLAIR konnte keine der Dateien verarbeiten.", true, 6000);
 	    return;
 	}
 	
 	if (totalDocs < state.getTotalResults())
 	{
-	    FLAIR.WEBRANKER.UTIL.TOAST.warning("Errors were encountered when analyzing some of the uploaded files.", true, 4000);
+	    FLAIR.WEBRANKER.UTIL.TOAST.warning("Einige Dateien konnten nicht analysiert werden.", true, 4000);
 	    console.log("Expected parsed custom corpus results = " + state.getTotalResults() + ", Received parsed custom corpus results = " + totalDocs);
 	}
 	
@@ -1883,7 +1885,7 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	    state.displaySearchResults();
 	    FLAIR.WEBRANKER.UTIL.WAIT.singleton.clear();
 	    
-	    FLAIR.WEBRANKER.UTIL.TOAST.info('<div style="text-align: center;">The search results can be reviewed whilst they are being analyzed in the background.<br/><br/><button type="button" class="btn btn-primary" onClick="FLAIR.WEBRANKER.UTIL.cancelCurrentOperation()">Cancel</button></div>', false, 0);
+	    FLAIR.WEBRANKER.UTIL.TOAST.info('<div style="text-align: center;">Die Suchergebnisse können angesehen werden, während sie im Hintergrund analysiert werden.<br/><br/><button type="button" class="btn btn-primary" onClick="FLAIR.WEBRANKER.UTIL.cancelCurrentOperation()">Abbrechen</button></div>', false, 0);
 	    
 	    if (pipeline.parseSearchResults(jobID) === false)
 		pipeline_onError();
@@ -1914,10 +1916,10 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	FLAIR.WEBRANKER.UTIL.TOGGLE.rightSidebar(true);
 
 	FLAIR.WEBRANKER.UTIL.TOAST.clear(false);
-	FLAIR.WEBRANKER.UTIL.TOAST.success("Analysis complete!", true, 4000);
+	FLAIR.WEBRANKER.UTIL.TOAST.success("Analyse abgeschlossen!", true, 4000);
 	
 	if (state.applyImportedSettings() === true)
-	    FLAIR.WEBRANKER.UTIL.TOAST.info("Applied custom settings.", true, 4500);
+	    FLAIR.WEBRANKER.UTIL.TOAST.info("Benutzerdefinierte Einstellungen wurden übernommen.", true, 4500);
 	
 	visualiser.visualise(csvTable);
 	state.rerank();
@@ -1941,14 +1943,14 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	var query = document.getElementById("search_field").value.trim();
 	if (query.length === 0)
 	{
-	    FLAIR.WEBRANKER.UTIL.TOAST.error("Please enter a valid search query.", true, 5000);
+	    FLAIR.WEBRANKER.UTIL.TOAST.error("Bitte geben Sie eine gültige Suchanfrage ein.", true, 5000);
 	    return;
 	}
 	
 	state.setSearchParams(query, FLAIR.WEBRANKER.CONSTANTS.DEFAULT_LANGUAGE, document.getElementById("fetch_result_count").value);
 	state.flagAsBusy();
 	
-	FLAIR.WEBRANKER.UTIL.WAIT.singleton.showCancel("<h4>Searching the web - Please wait...</h4>", 
+	FLAIR.WEBRANKER.UTIL.WAIT.singleton.showCancel("<h4>Web wird durchsucht - Bitte warten...</h4>", 
 	    function() {
 		FLAIR.WEBRANKER.UTIL.cancelCurrentOperation();
 	    });
@@ -1964,7 +1966,7 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	
 	if (state.tryEnableTeacherMode() === true)
 	{
-	    FLAIR.WEBRANKER.UTIL.TOAST.info("FLAIR will automatically apply your custom settings.", true, 5000);
+	    FLAIR.WEBRANKER.UTIL.TOAST.info("FLAIR wird Ihre benutzerdefinierten Einstellungen automatisch übernehmen.", true, 5000);
 	    console.log("Teacher mode enabled");
 	}
 
@@ -1988,7 +1990,7 @@ FLAIR.WEBRANKER.INSTANCE = function() {
     this.beginSearch = function() {
 	if (state.hasSearchResults() === true && state.hasParsedData() === false)
 	{
-	    FLAIR.WEBRANKER.UTIL.WAIT.singleton.showYesNo("<br/><h4>The current search results are being analyzed in the background. Are you sure you want to begin a new search?</h4>",
+	    FLAIR.WEBRANKER.UTIL.WAIT.singleton.showYesNo("<br/><h4>Die Suchergebnisse werden derzeit im Hintergrund analysiert. Sind Sie sicher, dass sie eine neue Suche starten wollen?</h4>",
 		function() {
 		    FLAIR.WEBRANKER.singleton.cancelOperation();
 		    FLAIR.WEBRANKER.UTIL.TOAST.clear(true);
@@ -2064,7 +2066,7 @@ FLAIR.WEBRANKER.INSTANCE = function() {
     this.showCustomCorpus = function() {
 	if (state.isBusy() === true)
 	{
-	    FLAIR.WEBRANKER.UTIL.TOAST.info("Please wait until the current operation is complete.", true, 2500);
+	    FLAIR.WEBRANKER.UTIL.TOAST.info("Bitte warten Sie, bis der derzeitige Vorgang abgeschlossen ist.", true, 2500);
 	    return;
 	}
 	
@@ -2072,7 +2074,7 @@ FLAIR.WEBRANKER.INSTANCE = function() {
     };
     this.uploadCustomCorpus = function() {
 	FLAIR.WEBRANKER.UTIL.TOGGLE.customCorpusDialog(false);
-	FLAIR.WEBRANKER.UTIL.WAIT.singleton.showNonClosable("Uploading files...");	
+	FLAIR.WEBRANKER.UTIL.WAIT.singleton.showNonClosable("Dateien werden hochgeladen...");	
 	FLAIR.WEBRANKER.UTIL.resetUI(true, true, false,  true, true, true);
 	
 	state.reset();
@@ -2083,9 +2085,9 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 //	FLAIR.WEBRANKER.UTIL.resetSlider('all');
 	
 	if (state.isCustomCorpus() === false && state.getQuery() !== "") 
-            $("#query_vis").html("\"" + state.getQuery() + "\" (" + state.getTotalResults() + " web pages)");
+            $("#query_vis").html("\"" + state.getQuery() + "\" (" + state.getTotalResults() + " Webseiten)");
 	else
-            $("#query_vis").html("Interactive Visualization");
+            $("#query_vis").html("Interaktive Visualisierung");
 	
 	visualiser.visualise();
 	FLAIR.WEBRANKER.UTIL.TOGGLE.visualiserDialog(true);
