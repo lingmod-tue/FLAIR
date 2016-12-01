@@ -25,6 +25,9 @@ public abstract class AbstractDocumentSource implements Comparable<AbstractDocum
 	String[] sentences = input.split("\n");
 	for (String itr : sentences)
 	{
+//	    if (itr.trim().isEmpty())
+//		continue;
+	    
 	    textWriter.append(itr);
 	    if (!(itr.endsWith(".") || 
 		  itr.endsWith("!") || 

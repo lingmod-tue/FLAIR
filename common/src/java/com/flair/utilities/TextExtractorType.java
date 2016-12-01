@@ -11,6 +11,7 @@ package com.flair.utilities;
  */
 public enum TextExtractorType
 {
+    AUTODETECT,
     BOILERPIPE,
     TIKA
 }

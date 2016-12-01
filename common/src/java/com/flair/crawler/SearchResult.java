@@ -77,7 +77,7 @@ public class SearchResult implements Comparable<SearchResult>
         if (isTextFetched() == true && forceFetch == false)
             return false;
         
-	AbstractTextExtractor extractor = TextExtractorFactory.create(TextExtractorType.TIKA);
+	AbstractTextExtractor extractor = TextExtractorFactory.create(TextExtractorType.AUTODETECT);
 	AbstractTextExtractor.Output output = extractor.extractText(new AbstractTextExtractor.Input(URL, lang));	
 	
 	if (output.success == false)

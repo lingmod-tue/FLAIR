@@ -7,10 +7,11 @@ package com.flair.taskmanager;
 
 import com.flair.crawler.SearchResult;
 import com.flair.utilities.FLAIRLogger;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
@@ -72,7 +73,12 @@ class WebCrawlTask extends AbstractTask
 	catch (TimeoutException ex) {
 	    FLAIRLogger.get().error("Fetch text timed out for URL: " + input.getURL());
 	}
-	catch (InterruptedException | ExecutionException ex) {
+	catch (Exception ex) 
+	{
+	    StringWriter sw = new StringWriter();
+	    ex.printStackTrace(new PrintWriter(sw));
+	    FLAIRLogger.get().error("Fetch text encountered an exception for URL: " + input.getURL() + ". Exception: " + ex.toString());
+	    FLAIRLogger.get().error("Stacktrace: " + sw.toString());	     
 	}
 	
 	FLAIRLogger.get().trace("Search Result (" + input.getURL() + ") text fetched: " + result.wasSuccessful());

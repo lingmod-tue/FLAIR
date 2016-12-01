@@ -6,7 +6,6 @@
 package com.flair.utilities;
 
 import com.flair.grammar.Language;
-import de.l3s.boilerpipe.BoilerpipeProcessingException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -132,7 +131,7 @@ public abstract class AbstractTextExtractor
 	}
     }
     
-    public static String doBoilerpipePass(String html) throws BoilerpipeProcessingException {
-	return BoilerpipeTextExtractor.parse(html, true);
+    public static String doBoilerpipePass(String html) {
+	return BoilerpipeTextExtractor.parse(html, false);
     }
 }

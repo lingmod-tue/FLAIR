@@ -15,6 +15,8 @@ public class TextExtractorFactory
     {
 	switch (type)
 	{
+	    case AUTODETECT:
+		return new AutoDetectTextExtractor();
 	    case BOILERPIPE:
 		return new BoilerpipeTextExtractor();
 	    case TIKA:

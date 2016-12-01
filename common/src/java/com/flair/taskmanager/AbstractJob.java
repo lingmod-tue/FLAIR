@@ -6,9 +6,10 @@
 package com.flair.taskmanager;
 
 import com.flair.utilities.FLAIRLogger;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Represents an executable job, which is basically a collection of tasks
@@ -108,8 +109,12 @@ abstract class AbstractJob
 	    try {
 		first.getFutureTask().get();
 	    }
-	    catch (InterruptedException | ExecutionException e) {
-		FLAIRLogger.get().error("Job encounted an exception while waiting. Exception: " + e.getMessage());
+	    catch (Exception ex) 
+	    {
+		StringWriter sw = new StringWriter();
+		ex.printStackTrace(new PrintWriter(sw));
+		FLAIRLogger.get().error("Job encounted an exception while waiting. Exception: " + ex.toString());
+		FLAIRLogger.get().error("Stacktrace: " + sw.toString());		
 	    } 
 	}
     }

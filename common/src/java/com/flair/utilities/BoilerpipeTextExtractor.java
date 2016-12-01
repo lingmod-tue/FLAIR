@@ -5,7 +5,6 @@
  */
 package com.flair.utilities;
 
-import de.l3s.boilerpipe.BoilerpipeProcessingException;
 import de.l3s.boilerpipe.extractors.ArticleExtractor;
 import de.l3s.boilerpipe.extractors.DefaultExtractor;
 import org.xml.sax.InputSource;
@@ -54,11 +53,18 @@ class BoilerpipeTextExtractor extends AbstractTextExtractor
 	return new Output(input, error == false, pageText, true);
     }
     
-    public static String parse(String html, boolean useArticleExtractor) throws BoilerpipeProcessingException 
+    public static String parse(String html, boolean useArticleExtractor) 
     {
-	if (useArticleExtractor)
-	    return ArticleExtractor.getInstance().getText(html);
-	else
-	    return DefaultExtractor.getInstance().getText(html);
+	// ### the default extractor seems to mostly return empty strings in this method, why? investigate
+	try 
+	{
+	    if (useArticleExtractor)
+		return ArticleExtractor.getInstance().getText(html);
+	    else
+		return DefaultExtractor.getInstance().getText(html);
+	}
+	catch (Exception ex) {
+	    return "";
+	}
     }
 }
