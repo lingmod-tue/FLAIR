@@ -97,6 +97,13 @@ class TikaTextExtractor extends AbstractTextExtractor
 	try (TikaInputStream in = TikaInputStream.get(openURLStream(url, lang))) {
 	    type = pipeline.getDetector().detect(in, new Metadata());
 	}
-	return type == MediaType.TEXT_HTML || type == MediaType.TEXT_PLAIN;
+	
+	if (type == MediaType.TEXT_HTML || type == MediaType.TEXT_PLAIN)
+	    return true;
+	else
+	{
+	    FLAIRLogger.get().trace("URL '" + url + "' media type: " + type);
+	    return false;
+	}
     }
 }

@@ -58,14 +58,21 @@ public class SessionManager
 
     private synchronized void releaseSessions()
     {
-	for (Entry<Session, SessionState> itr : activeSessions.entrySet())
+	try 
 	{
-	    itr.getValue().release();
+	    for (Entry<Session, SessionState> itr : activeSessions.entrySet())
+	    {
+		itr.getKey().close();
+		itr.getValue().release();
+	    }
+
+	    activeSessions.clear();
+	    httpToWebSocket.clear();
+	    webSocketToHttp.clear();
 	}
-	
-	activeSessions.clear();
-	httpToWebSocket.clear();
-	webSocketToHttp.clear();
+	catch (Exception ex) {
+	    FLAIRLogger.get().error(ex, "Exception encountered while closing sessions: " + ex.toString());
+	}
     }
     
     private HttpSession getHttpSession(Session webSocketSession)

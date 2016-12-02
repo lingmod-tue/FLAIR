@@ -41,7 +41,10 @@ public final class MasterJobPipeline
     public static void dispose()
     {
 	if (SINGLETON != null)
+	{
+	    SINGLETON.shutdown();
 	    SINGLETON = null;
+	}
     }
     
     private final WebSearchTaskExecutor				webSearchExecutor;
@@ -64,12 +67,19 @@ public final class MasterJobPipeline
 	this.stanfordParserEnglishPool = new DocumentParserPool(MasterParsingFactoryGenerator.createParser(ParserType.STANFORD_CORENLP, Language.ENGLISH));
 	this.stanfordEnglishStrategy = MasterParsingFactoryGenerator.createParsingStrategy(ParserType.STANFORD_CORENLP, Language.ENGLISH);
 	
-//	this.stanfordParserGermanPool = new DocumentParserPool(MasterParsingFactoryGenerator.createParser(ParserType.STANFORD_CORENLP, Language.GERMAN));
-//	this.stanfordGermanStrategy = MasterParsingFactoryGenerator.createParsingStrategy(ParserType.STANFORD_CORENLP, Language.GERMAN);
-	this.stanfordParserGermanPool = null;
-	this.stanfordGermanStrategy = null;
+	this.stanfordParserGermanPool = new DocumentParserPool(MasterParsingFactoryGenerator.createParser(ParserType.STANFORD_CORENLP, Language.GERMAN));
+	this.stanfordGermanStrategy = MasterParsingFactoryGenerator.createParsingStrategy(ParserType.STANFORD_CORENLP, Language.GERMAN);
+//	this.stanfordParserGermanPool = null;
+//	this.stanfordGermanStrategy = null;
 	
 	this.naiveSubstringSearcher = MasterParsingFactoryGenerator.createKeywordSearcher(KeywordSearcherType.NAIVE_SUBSTRING);
+    }
+    
+    private void shutdown() 
+    {
+	webSearchExecutor.shutdown(false);
+	webCrawlExecutor.shutdown(false);
+	docParseExecutor.shutdown(false);
     }
     
     private AbstractParsingStrategyFactory getStrategyForLanguage(Language lang)

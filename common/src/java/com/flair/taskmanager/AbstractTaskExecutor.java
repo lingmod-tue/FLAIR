@@ -30,4 +30,12 @@ abstract class AbstractTaskExecutor
     protected void queue(AbstractTask task) {
 	threadPool.submit(task.getFutureTask());
     }
+    
+    public void shutdown(boolean force) 
+    {
+	if (force)
+	    threadPool.shutdownNow();
+	else
+	    threadPool.shutdown();
+    }
 }

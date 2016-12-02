@@ -6,8 +6,6 @@
 package com.flair.taskmanager;
 
 import com.flair.utilities.FLAIRLogger;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -109,12 +107,8 @@ abstract class AbstractJob
 	    try {
 		first.getFutureTask().get();
 	    }
-	    catch (Exception ex) 
-	    {
-		StringWriter sw = new StringWriter();
-		ex.printStackTrace(new PrintWriter(sw));
-		FLAIRLogger.get().error("Job encounted an exception while waiting. Exception: " + ex.toString());
-		FLAIRLogger.get().error("Stacktrace: " + sw.toString());		
+	    catch (Exception ex) {
+		FLAIRLogger.get().error(ex, "Job encounted an exception while waiting. Exception: " + ex.toString());
 	    } 
 	}
     }

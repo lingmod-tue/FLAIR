@@ -6,8 +6,6 @@
 package com.flair.taskmanager;
 
 import com.flair.utilities.FLAIRLogger;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
@@ -83,12 +81,8 @@ abstract class AbstractTask implements Callable<AbstractTaskResult>
 		     continuation.run(result);
 	    }
 	} 
-	catch (Exception ex)
-	{
-	    FLAIRLogger.get().error("Uncaught exception in AbstractTask: " + ex.toString());
-	    StringWriter sw = new StringWriter();
-	    ex.printStackTrace(new PrintWriter(sw));
-	    FLAIRLogger.get().error("Stacktrace: " + sw.toString());
+	catch (Exception ex) {
+	    FLAIRLogger.get().error(ex, "Uncaught exception in AbstractTask: " + ex.toString());
 	} 
 	finally 
 	{

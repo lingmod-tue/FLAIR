@@ -6,8 +6,6 @@
 package com.flair.server;
 
 import com.flair.utilities.FLAIRLogger;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import javax.servlet.http.HttpSession;
 import javax.websocket.EndpointConfig;
 import javax.websocket.OnClose;
@@ -44,11 +42,7 @@ public class WebRankerEndPoint
     @OnError
     public void onError(Session session, Throwable thr) 
     {
-	StringWriter sw = new StringWriter();
-	thr.printStackTrace(new PrintWriter(sw));
-	FLAIRLogger.get().error("WebRankerEndPoint error for session " + session.getId() + ": " + thr.toString());
-	FLAIRLogger.get().error("Stacktrace: " + sw.toString());
-	
+	FLAIRLogger.get().error(thr, "WebRankerEndPoint error for session " + session.getId() + ": " + thr.toString());
 	SessionManager.get().sendErrorResponse(session, thr);
     }
 }

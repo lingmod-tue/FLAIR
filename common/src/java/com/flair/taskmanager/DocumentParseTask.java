@@ -14,8 +14,6 @@ import com.flair.parser.KeywordSearcherInput;
 import com.flair.parser.KeywordSearcherOutput;
 import com.flair.utilities.FLAIRLogger;
 import com.flair.utilities.SimpleObjectPoolResource;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 /**
  * Parses a document source and returns a parsed document
@@ -69,10 +67,7 @@ class DocumentParseTask extends AbstractTask
 	}
 	catch (Exception ex)
 	{
-	    StringWriter sw = new StringWriter();
-	    ex.printStackTrace(new PrintWriter(sw));
-	    FLAIRLogger.get().error("Document parsing task encountered an error. Exception: " + ex.toString());
-	    FLAIRLogger.get().error("Stacktrace: " + sw.toString());
+	    FLAIRLogger.get().error(ex, "Document parsing task encountered an error. Exception: " + ex.toString());
 	    output = null;
 	    error = true;
 	}

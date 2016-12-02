@@ -5,6 +5,8 @@
  */
 package com.flair.utilities;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,6 +80,14 @@ public final class FLAIRLogger
     
     public void error(String message) {
 	print(Channel.ERROR, message);
+    }
+    
+    public void error(Throwable ex, String message)
+    {
+	StringWriter sw = new StringWriter();
+	ex.printStackTrace(new PrintWriter(sw));
+	error(message);
+	error("Stacktrace: " + sw.toString());
     }
     
     public void info(String message) {
