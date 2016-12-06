@@ -14,6 +14,12 @@ import com.flair.parser.KeywordSearcherInput;
 import com.flair.parser.KeywordSearcherOutput;
 import com.flair.utilities.FLAIRLogger;
 import com.flair.utilities.SimpleObjectPoolResource;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Parses a document source and returns a parsed document
@@ -26,6 +32,43 @@ class DocumentParseTask extends AbstractTask
     private final DocumentParserPool			parserPool;
     private final AbstractDocumentKeywordSearcher	keywordSearcher;
     private final KeywordSearcherInput			keywordSearcherInput;
+    private ExecutorService				parseExecutor;
+    
+    private static final int				TIMEOUT_SECONDS = 5 * 60;
+
+    class ParseRunnable implements Callable<AbstractDocument>
+    {
+	private final AbstractDocumentSource		input;
+	private final AbstractParsingStrategy		strategy;
+	private final AbstractDocumentParser		parser;
+	private final AbstractDocumentKeywordSearcher	keywordSearcher;
+	private final KeywordSearcherInput		keywordSearcherInput;
+
+	public ParseRunnable(AbstractDocumentSource source,
+			       AbstractParsingStrategy strategy,
+			       AbstractDocumentParser parser,
+			       AbstractDocumentKeywordSearcher keywordSearcher,
+			       KeywordSearcherInput keywordSearcherInput)
+	{
+	    this.input = source;
+	    this.strategy = strategy;
+	    this.parser = parser;
+	    this.keywordSearcher = keywordSearcher;
+	    this.keywordSearcherInput = keywordSearcherInput;
+	}
+	
+	@Override
+	public AbstractDocument call()
+	{
+	    AbstractDocument output = parser.parse(input, strategy);
+	    if (output.isParsed() == false)
+		throw new IllegalStateException("Parser didn't set the document's parsed flag");
+
+	    KeywordSearcherOutput keywordData = keywordSearcher.search(output, keywordSearcherInput);
+	    output.setKeywordData(keywordData);
+	    return output;
+	}
+    }
   
     public DocumentParseTask(AbstractJob job,
 			       AbstractTaskContinuation continuation, 
@@ -42,28 +85,45 @@ class DocumentParseTask extends AbstractTask
 	this.parserPool = parserPool;
 	this.keywordSearcher = keywordSearcher;
 	this.keywordSearcherInput = keywordSearcherInput;
+	this.parseExecutor = null;
+    }
+    
+    protected void setParseExecutor(ExecutorService executor) {
+	this.parseExecutor = executor;
     }
     
     @Override
     protected AbstractTaskResult performTask()
     {
-	if (parserPool == null)
+	if (parseExecutor == null)
+	    throw new IllegalStateException("Auxiliary threadpool not set");
+	else if (parserPool == null)
 	    throw new IllegalStateException("Parser pool not set");
 	else if (keywordSearcher == null)
 	    throw new IllegalStateException("Keyword searcher not set");
 	
 	AbstractDocument output = null;
-	SimpleObjectPoolResource<AbstractDocumentParser> parserPoolData = null;
-	long startTime = System.currentTimeMillis();
+	SimpleObjectPoolResource<AbstractDocumentParser> parserPoolData = null;	
+	long startTime = 0;
 	boolean error = false;
+	
 	try 
 	{
 	    parserPoolData = parserPool.get();
-	    output = parserPoolData.get().parse(input, strategy);
-	    assert output.isParsed() == true;
-	    
-	    KeywordSearcherOutput keywordData = keywordSearcher.search(output, keywordSearcherInput);
-	    output.setKeywordData(keywordData);
+	    FutureTask<AbstractDocument> wrapper = new FutureTask<>(new ParseRunnable(input,
+								    strategy,
+								    parserPoolData.get(),
+								    keywordSearcher,
+								    keywordSearcherInput));
+	    startTime = System.currentTimeMillis();
+	    parseExecutor.submit(wrapper).get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
+	    output = wrapper.get();
+	}
+	catch (TimeoutException ex)
+	{
+	    FLAIRLogger.get().error("Document parsing task timed-out for " + input.toString());
+	    output = null;
+	    error = true;
 	}
 	catch (Exception ex)
 	{
@@ -105,11 +165,17 @@ class DocumentParseTaskResult extends AbstractTaskResult
 
 class DocumentParseTaskExecutor extends AbstractTaskExecutor
 {
-    public DocumentParseTaskExecutor() {
+    private final ExecutorService	    auxThreadPool;	// to allow timeouts
+
+    public DocumentParseTaskExecutor() 
+    {
 	super(Constants.PARSER_THREADPOOL_SIZE);
+	auxThreadPool = Executors.newFixedThreadPool(Constants.PARSER_THREADPOOL_SIZE);
     }
     
-    public void parse(DocumentParseTask task) {
+    public void parse(DocumentParseTask task)
+    {
+	task.setParseExecutor(auxThreadPool);
 	queue(task);
     }
 }

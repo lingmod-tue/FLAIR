@@ -50,13 +50,14 @@ public final class MasterJobPipeline
     private final WebSearchTaskExecutor				webSearchExecutor;
     private final WebCrawlTaskExecutor				webCrawlExecutor;
     private final DocumentParseTaskExecutor			docParseExecutor;
-    
-    private final DocumentParserPool				stanfordParserEnglishPool;
-    private final DocumentParserPool				stanfordParserGermanPool;
+        
     private final AbstractParsingStrategyFactory		stanfordEnglishStrategy;
     private final AbstractParsingStrategyFactory		stanfordGermanStrategy;
     
     private final AbstractDocumentKeywordSearcherFactory	naiveSubstringSearcher;
+
+    private DocumentParserPool					stanfordParserEnglishPool;
+    private DocumentParserPool					stanfordParserGermanPool;
     
     private MasterJobPipeline()
     {
@@ -64,15 +65,15 @@ public final class MasterJobPipeline
 	this.webCrawlExecutor = new WebCrawlTaskExecutor();
 	this.docParseExecutor = new DocumentParseTaskExecutor();
 	
-	this.stanfordParserEnglishPool = new DocumentParserPool(MasterParsingFactoryGenerator.createParser(ParserType.STANFORD_CORENLP, Language.ENGLISH));
-	this.stanfordEnglishStrategy = MasterParsingFactoryGenerator.createParsingStrategy(ParserType.STANFORD_CORENLP, Language.ENGLISH);
 	
-	this.stanfordParserGermanPool = new DocumentParserPool(MasterParsingFactoryGenerator.createParser(ParserType.STANFORD_CORENLP, Language.GERMAN));
+	this.stanfordEnglishStrategy = MasterParsingFactoryGenerator.createParsingStrategy(ParserType.STANFORD_CORENLP, Language.ENGLISH);	
 	this.stanfordGermanStrategy = MasterParsingFactoryGenerator.createParsingStrategy(ParserType.STANFORD_CORENLP, Language.GERMAN);
-//	this.stanfordParserGermanPool = null;
-//	this.stanfordGermanStrategy = null;
 	
 	this.naiveSubstringSearcher = MasterParsingFactoryGenerator.createKeywordSearcher(KeywordSearcherType.NAIVE_SUBSTRING);
+	
+	// lazy initilization
+	this.stanfordParserGermanPool = null;
+	this.stanfordParserEnglishPool = null;
     }
     
     private void shutdown() 
@@ -100,8 +101,18 @@ public final class MasterJobPipeline
 	switch (lang)
 	{
 	    case ENGLISH:
+		if (stanfordParserEnglishPool == null)
+		{
+		    stanfordParserEnglishPool = new DocumentParserPool(MasterParsingFactoryGenerator.createParser(ParserType.STANFORD_CORENLP, Language.ENGLISH));
+		}
+		
 		return stanfordParserEnglishPool;
 	    case GERMAN:
+		if (stanfordParserGermanPool == null)
+		{
+		    stanfordParserGermanPool = new DocumentParserPool(MasterParsingFactoryGenerator.createParser(ParserType.STANFORD_CORENLP, Language.GERMAN));
+		}
+		
 		return stanfordParserGermanPool;
 	    default:
 		throw new IllegalArgumentException("Language "+ lang + " not supported");

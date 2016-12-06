@@ -90,7 +90,7 @@ class BasicDocumentParseJob extends AbstractTaskLinkingJob
 								  input.keywordSearcherInput);
 
 	    registerTask(newTask);
-	    input.docParsingExecutor.queue(newTask);
+	    input.docParsingExecutor.parse(newTask);
 	}
 	
 	flagStarted();
