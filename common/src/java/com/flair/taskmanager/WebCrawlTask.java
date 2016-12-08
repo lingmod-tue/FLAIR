@@ -69,13 +69,13 @@ class WebCrawlTask extends AbstractTask
 	    fetchExecutor.submit(fetchWrapper).get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
 	}
 	catch (TimeoutException ex) {
-	    FLAIRLogger.get().error("Fetch text timed out for URL: " + input.getURL());
+	    FLAIRLogger.get().error("Fetch text timed out for URL: " + input.getDisplayURL());
 	}
 	catch (Exception ex) {
-	    FLAIRLogger.get().error(ex, "Fetch text encountered an exception for URL: " + input.getURL() + ". Exception: " + ex.toString());
+	    FLAIRLogger.get().error(ex, "Fetch text encountered an exception for URL: " + input.getDisplayURL() + ". Exception: " + ex.toString());
 	}
 	
-	FLAIRLogger.get().trace("Search Result (" + input.getURL() + ") text fetched: " + result.wasSuccessful());
+	FLAIRLogger.get().trace("Search Result (" + input.getDisplayURL() + ") text fetched: " + result.wasSuccessful());
 	return result;
     }
 }

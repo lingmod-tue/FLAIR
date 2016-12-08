@@ -1,12 +1,11 @@
 package com.flair.crawler;
 
+import com.flair.crawler.azurewebsearchv5.AzureWebSearch;
+import com.flair.crawler.azurewebsearchv5.AzureWebSearchResult;
 import com.flair.grammar.Language;
 import com.flair.utilities.FLAIRLogger;
 import java.util.ArrayList;
 import java.util.List;
-import net.billylieurance.azuresearch.AzureSearchResultSet;
-import net.billylieurance.azuresearch.AzureSearchWebQuery;
-import net.billylieurance.azuresearch.AzureSearchWebResult;
 
 /**
  * Implementation of the Bing Search engine
@@ -14,10 +13,10 @@ import net.billylieurance.azuresearch.AzureSearchWebResult;
  */
 class BingSearchAgent extends WebSearchAgent
 {
-    private static final String			API_KEY = "CV3dQG6gOI3fO9wOHdArFimFprbt1Q3ZjMzYGhJaTFA";
+    private static final String			API_KEY = "d7df76de918b4e9ab4700492a3c65b77";
     private static final int			RESULTS_PER_PAGE = 10;
     
-    private final AzureSearchWebQuery		pipeline;
+    private final AzureWebSearch		pipeline;
     private int					nextPage;
     private int					nextRank;
     private final ArrayList<SearchResult>	cachedResults;
@@ -27,7 +26,7 @@ class BingSearchAgent extends WebSearchAgent
     public BingSearchAgent(Language lang, String query)
     {
 	super(lang, query);
-	this.pipeline = new AzureSearchWebQuery();
+	this.pipeline = new AzureWebSearch();
 	this.nextPage = 1;
 	this.nextRank = 0;
 	this.cachedResults = new ArrayList<>();
@@ -36,22 +35,26 @@ class BingSearchAgent extends WebSearchAgent
 	
 	String qPrefix = "";
 	String qPostfix = " language:en";
+	String market = "";
 
 	switch (lang)
 	{
 	    case ENGLISH:
 		qPostfix = " language:en";
+		market = "en-US";
 		break;
 	    case GERMAN:
 		qPostfix = " language:de";
+		market = "de-DE";
 		break;
 	    default:
 		throw new IllegalArgumentException("Unsupported language " + lang);
 	}
 
-	pipeline.setAppid(API_KEY);
+	pipeline.setApiKey(API_KEY);
 	pipeline.setQuery(qPrefix + query + qPostfix);
 	pipeline.setPerPage(RESULTS_PER_PAGE);
+	pipeline.setMarket(market);
     }
     
     @Override
@@ -107,13 +110,13 @@ class BingSearchAgent extends WebSearchAgent
 	if (noMoreResults == true)
 	    return;
 	
-	AzureSearchResultSet<AzureSearchWebResult> azureResults = null;
+	List<AzureWebSearchResult> azureResults = null;
 	try 
 	{
 	    // the pipeline can potentially throw a java.net.UnknownHostException, so wrap it in EH to be safe 
 	    pipeline.setPage(nextPage);
 	    pipeline.doQuery();
-	    azureResults = pipeline.getQueryResult();
+	    azureResults = pipeline.getResults();
 	}
 	catch (Exception e) {
 	    FLAIRLogger.get().error("Bing search API encountered a fatal error. Exception: " + e.getMessage());
@@ -121,18 +124,19 @@ class BingSearchAgent extends WebSearchAgent
 	    return;
 	}
 	
-	if (azureResults.getASRs().isEmpty())
+	if (azureResults.isEmpty())
 	{
 	    FLAIRLogger.get().info("No more results for query '" + query + "'");
 	    noMoreResults = true;
 	    return;
 	}
-
-	for (AzureSearchWebResult itr : azureResults)
+	
+	for (AzureWebSearchResult itr : azureResults)
 	{
-	    if (WebSearchAgent.isURLBlacklisted(itr.getUrl()) == true)
+	    // ### the regular url redirects through bing.com, so use the diplay url (which is generally what we want any way)
+	    if (WebSearchAgent.isURLBlacklisted(itr.getDisplayUrl()) == true)
 		FLAIRLogger.get().info("Blacklisted URL: " + itr.getUrl());
-	    else if (isURLDuplicate(itr.getUrl()) == true)
+	    else if (isURLDuplicate(itr.getDisplayUrl()) == true)
 		FLAIRLogger.get().info("Duplicate URL: " + itr.getUrl());
 	    else
 	    {
@@ -148,7 +152,7 @@ class BingSearchAgent extends WebSearchAgent
 		newResult.setRank(nextRank);
 		nextRank++;
 
-		FLAIRLogger.get().info("Result " + (nextRank - 1)  + ": " + itr.getTitle() + ", URL: " + itr.getUrl());
+		FLAIRLogger.get().info("Result " + (nextRank - 1)  + ": " + itr.getTitle() + ", URL: " + itr.getDisplayUrl());
 	    }
 	}
 

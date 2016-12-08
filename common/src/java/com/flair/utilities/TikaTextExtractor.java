@@ -1,7 +1,6 @@
 /*
  * This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/.
- 
  */
 package com.flair.utilities;
 
@@ -96,9 +95,9 @@ class TikaTextExtractor extends AbstractTextExtractor
 	MediaType type;
 	try (TikaInputStream in = TikaInputStream.get(openURLStream(url, lang))) {
 	    type = pipeline.getDetector().detect(in, new Metadata());
-	}
+	}	
 	
-	if (type == MediaType.TEXT_HTML || type == MediaType.TEXT_PLAIN)
+	if (type == MediaType.TEXT_HTML || type == MediaType.TEXT_PLAIN || type == MediaType.APPLICATION_XML)
 	    return true;
 	else
 	{

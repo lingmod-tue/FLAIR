@@ -10,7 +10,6 @@ import com.flair.grammar.Language;
 import com.flair.taskmanager.AbstractPipelineOperation;
 import com.flair.taskmanager.MasterJobPipeline;
 import com.flair.utilities.FLAIRLogger;
-import com.flair.utilities.JSONWriter;
 import java.util.List;
 
 /**
@@ -40,7 +39,6 @@ public class WebCrawlerTest
 	if (args.length != 0)
 	   rootOutPath = args[0];
 	
-	JSONWriter serializer = new JSONWriter();
 	FLAIRLogger.get().trace("Root Output Path: " + rootOutPath);
 	for (String itr : queries)
 	{
@@ -49,8 +47,6 @@ public class WebCrawlerTest
 	    op.begin();
 	    Object output = op.getOutput();
 	    List<SearchResult> searchResults = (List<SearchResult>)output;
-//	    op = MasterJobPipeline.get().performDocumentParsing(Language.ENGLISH, itr, 10);
-//	    op.begin();
 	    long endTime = System.currentTimeMillis();
 	   
 	   FLAIRLogger.get().trace(op.toString());
