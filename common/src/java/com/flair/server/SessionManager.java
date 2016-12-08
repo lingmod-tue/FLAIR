@@ -70,7 +70,7 @@ public class SessionManager
 	    httpToWebSocket.clear();
 	    webSocketToHttp.clear();
 	}
-	catch (Exception ex) {
+	catch (Throwable ex) {
 	    FLAIRLogger.get().error(ex, "Exception encountered while closing sessions: " + ex.toString());
 	}
     }

@@ -107,7 +107,7 @@ abstract class AbstractJob
 	    try {
 		first.getFutureTask().get();
 	    }
-	    catch (Exception ex) {
+	    catch (Throwable ex) {
 		FLAIRLogger.get().error(ex, "Job encounted an exception while waiting. Exception: " + ex.toString());
 	    } 
 	}

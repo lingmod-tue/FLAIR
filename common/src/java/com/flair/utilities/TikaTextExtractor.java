@@ -80,7 +80,7 @@ class TikaTextExtractor extends AbstractTextExtractor
 	    
 	    stream.close();
         } 
-	catch (Exception ex)
+	catch (Throwable ex)
 	{
             FLAIRLogger.get().error("Couldn't fetch text. Exception: " + ex.getMessage());
 	    error = true;

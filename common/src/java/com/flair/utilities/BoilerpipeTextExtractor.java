@@ -43,7 +43,7 @@ class BoilerpipeTextExtractor extends AbstractTextExtractor
 	
 	    pageText = DefaultExtractor.getInstance().getText(source);
         } 
-	catch (Exception ex)
+	catch (Throwable ex)
 	{
             FLAIRLogger.get().error("Couldn't fetch text. Exception: " + ex.getMessage());
 	    error = true;
@@ -63,7 +63,7 @@ class BoilerpipeTextExtractor extends AbstractTextExtractor
 	    else
 		return DefaultExtractor.getInstance().getText(html);
 	}
-	catch (Exception ex) {
+	catch (Throwable ex) {
 	    return "";
 	}
     }

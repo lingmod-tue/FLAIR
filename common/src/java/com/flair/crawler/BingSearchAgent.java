@@ -14,7 +14,7 @@ import java.util.List;
 class BingSearchAgent extends WebSearchAgent
 {
     private static final String			API_KEY = "d7df76de918b4e9ab4700492a3c65b77";
-    private static final int			RESULTS_PER_PAGE = 10;
+    private static final int			RESULTS_PER_PAGE = 15;
     
     private final AzureWebSearch		pipeline;
     private int					nextPage;
@@ -98,7 +98,7 @@ class BingSearchAgent extends WebSearchAgent
     {
 	for (SearchResult itr: fetchedResults)
 	{
-	    if (itr.getURL().equalsIgnoreCase(url) == true)
+	    if (itr.getDisplayURL().equalsIgnoreCase(url) == true)
 		return true;
 	}
 	
@@ -118,7 +118,8 @@ class BingSearchAgent extends WebSearchAgent
 	    pipeline.doQuery();
 	    azureResults = pipeline.getResults();
 	}
-	catch (Exception e) {
+	catch (Throwable e) 
+	{
 	    FLAIRLogger.get().error("Bing search API encountered a fatal error. Exception: " + e.getMessage());
 	    noMoreResults = true;
 	    return;
@@ -133,11 +134,11 @@ class BingSearchAgent extends WebSearchAgent
 	
 	for (AzureWebSearchResult itr : azureResults)
 	{
-	    // ### the regular url redirects through bing.com, so use the diplay url (which is generally what we want any way)
+	    // ### the regular url redirects through bing.com, so use the diplay url (which is generally what we want anyway)
 	    if (WebSearchAgent.isURLBlacklisted(itr.getDisplayUrl()) == true)
-		FLAIRLogger.get().info("Blacklisted URL: " + itr.getUrl());
+		FLAIRLogger.get().info("Blacklisted URL: " + itr.getDisplayUrl());
 	    else if (isURLDuplicate(itr.getDisplayUrl()) == true)
-		FLAIRLogger.get().info("Duplicate URL: " + itr.getUrl());
+		FLAIRLogger.get().info("Duplicate URL: " + itr.getDisplayUrl());
 	    else
 	    {
 		SearchResult newResult = new SearchResult(lang,

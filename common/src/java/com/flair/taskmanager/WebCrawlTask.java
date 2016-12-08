@@ -71,7 +71,7 @@ class WebCrawlTask extends AbstractTask
 	catch (TimeoutException ex) {
 	    FLAIRLogger.get().error("Fetch text timed out for URL: " + input.getDisplayURL());
 	}
-	catch (Exception ex) {
+	catch (Throwable ex) {
 	    FLAIRLogger.get().error(ex, "Fetch text encountered an exception for URL: " + input.getDisplayURL() + ". Exception: " + ex.toString());
 	}
 	

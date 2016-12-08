@@ -125,7 +125,7 @@ class DocumentParseTask extends AbstractTask
 	    output = null;
 	    error = true;
 	}
-	catch (Exception ex)
+	catch (Throwable ex)
 	{
 	    FLAIRLogger.get().error(ex, "Document parsing task encountered an error. Exception: " + ex.toString());
 	    output = null;

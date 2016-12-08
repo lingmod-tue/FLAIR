@@ -25,6 +25,14 @@ public class BasicServletContextListener implements ServletContextListener
 	MasterJobPipeline.get();
 	SessionManager.get();
 	
+	Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler()
+	{
+	    @Override
+	    public void uncaughtException(Thread thread, Throwable thrwbl) {
+		FLAIRLogger.get().error(thrwbl, "Uncaught exception in thread " + thread.getName() + ": " + thrwbl.toString());
+	    }
+	});
+	
 	FLAIRLogger.get().exdent();
 	FLAIRLogger.get().info("FLAIR Context initialized!");
     }

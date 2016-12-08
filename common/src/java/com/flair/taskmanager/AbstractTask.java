@@ -81,7 +81,7 @@ abstract class AbstractTask implements Callable<AbstractTaskResult>
 		     continuation.run(result);
 	    }
 	} 
-	catch (Exception ex) {
+	catch (Throwable ex) {
 	    FLAIRLogger.get().error(ex, "Uncaught exception in AbstractTask: " + ex.toString());
 	} 
 	finally 

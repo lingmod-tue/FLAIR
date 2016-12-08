@@ -237,7 +237,7 @@ class SessionState
 			for (CustomCorpusFile itr : customCorpusFiles)
 			    docSources.add(new StreamDocumentSource(itr.stream, itr.fileName, req.language));
 		    }
-		    catch (Exception ex)
+		    catch (Throwable ex)
 		    {
 			sendErrorResponse(requestType, "Couldn't read custom corpus files. Exception: " + ex.getMessage());
 			break;

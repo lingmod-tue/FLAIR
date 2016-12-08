@@ -100,7 +100,7 @@ class StanfordDocumentParser extends AbstractDocumentParser
 	    parsingStrategy.setPipeline(pipeline);
 	    parsingStrategy.apply(outputDoc);
 	}
-	catch (Exception e) {
+	catch (Throwable e) {
 	    throw e;
 	}
 	finally {

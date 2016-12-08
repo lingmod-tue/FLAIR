@@ -42,13 +42,14 @@ public class TextExtractorTest
 	    if (itr.isDirectory())
 		continue;
 		
-	    try {
+	    try 
+	    {
 		FLAIRLogger.get().info("File: " + itr.getPath() + " | Type: " + pipeline.detect(itr));
 		String text = pipeline.parseToString(itr);
 		
 		FLAIRLogger.get().info("Text parsed! Length: " + text.length());
 	    }
-	    catch (Exception ex) {
+	    catch (Throwable ex) {
 		FLAIRLogger.get().error("Exception: " + ex.getMessage());
 	    }
 	}
