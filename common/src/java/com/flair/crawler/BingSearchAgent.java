@@ -13,7 +13,7 @@ import java.util.List;
  */
 class BingSearchAgent extends CachingSearchAgent
 {
-    private static final String			API_KEY = "d7df76de918b4e9ab4700492a3c65b77";
+    private static final String			API_KEY = "f163d542b4534b38986b91653237490b";
     private static final int			RESULTS_PER_PAGE = 15;
     
     private final AzureWebSearch		pipeline;
