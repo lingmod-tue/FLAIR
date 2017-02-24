@@ -94,9 +94,9 @@ abstract class CachingSearchAgent extends WebSearchAgent
 	
 	for (AbstractSearchAgentImplResult itr : apiResults)
 	{
-	    if (WebSearchAgent.isURLBlacklisted(itr.getUrl()) == true)
+	    if (WebSearchAgent.isURLBlacklisted(itr.getDisplayUrl()) == true)
 		FLAIRLogger.get().info("Blacklisted URL: " + itr.getDisplayUrl());
-	    else if (isURLDuplicate(itr.getUrl()) == true)
+	    else if (isURLDuplicate(itr.getDisplayUrl()) == true)
 		FLAIRLogger.get().info("Duplicate URL: " + itr.getDisplayUrl());
 	    else
 	    {

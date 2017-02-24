@@ -12,8 +12,6 @@ import com.flair.crawler.impl.AbstractSearchAgentImplResult;
 public class AzureWebSearchResult extends AbstractSearchAgentImplResult
 {
     public AzureWebSearchResult(String name, String url, String displayUrl, String snippet) {
-	// the regular url redirects through bing.com,
-	// so use the diplay url (which is generally what we want anyway)
-	super(name, displayUrl, displayUrl, snippet);
+	super(name, url, displayUrl, snippet);
     }
 }
