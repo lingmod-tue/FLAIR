@@ -8,14 +8,14 @@ package com.flair.crawler;
 import com.flair.grammar.Language;
 
 /**
- * Creates WebSearchAgent obejcts
+ * Creates WebSearchAgent objects
  * @author shadeMe
  */
 public class WebSearchAgentFactory
 {
     public enum SearchAgent
     {
-	BING
+	BING, FAROO
     }
     
     public static WebSearchAgent create(SearchAgent type, Language lang, String query)
@@ -24,6 +24,8 @@ public class WebSearchAgentFactory
 	{
 	    case BING:
 		return new BingSearchAgent(lang, query);
+	    case FAROO:
+		return new FarooSearchAgent(lang, query);
 	}
 	
 	return null;
