@@ -18,7 +18,7 @@ public abstract class LocalizedCompositeView extends Composite implements Locali
 {
 	protected final LocalizationEngine								localeCore;
 	protected final Map<LocalizationLanguage, LocalizationData>		localeData;
-	protected final List<LocalizedWidget<?>>						localizedWidgets;
+	protected final List<AbstractLocalizationWrapper>				localizedWidgets;
 	
 	public LocalizedCompositeView(LocalizationEngine locale)
 	{
@@ -53,11 +53,11 @@ public abstract class LocalizedCompositeView extends Composite implements Locali
 		localeData.remove(lang);
 	}
 	
-	protected final void registerLocalizedWidget(LocalizedWidget<?> widget) {
+	protected final void registerLocalizedWidget(AbstractLocalizationWrapper widget) {
 		localizedWidgets.add(widget);
 	}
 	
-	protected final void deregisterLocalizedWidget(LocalizedWidget<?> widget) {
+	protected final void deregisterLocalizedWidget(AbstractLocalizationWrapper widget) {
 		localizedWidgets.remove(widget);
 	}
 	
@@ -80,7 +80,7 @@ public abstract class LocalizedCompositeView extends Composite implements Locali
 		LocalizationData ldata = getLocalizationData(lang);
 
 		// simple widget update pass
-		for (LocalizedWidget<?> itr : localizedWidgets)
-			itr.updateLocale(ldata);
+		for (AbstractLocalizationWrapper itr : localizedWidgets)
+			itr.setLocale(ldata);
 	}
 }

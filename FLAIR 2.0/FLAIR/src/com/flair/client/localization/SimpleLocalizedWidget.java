@@ -3,9 +3,9 @@ package com.flair.client.localization;
 import com.google.gwt.user.client.ui.Widget;
 
 /*
- * Localization wrapper around GWT widgets
+ * Localization wrapper around GWT widgets with a single localizable field
  */
-public class LocalizedWidget<T>
+public class SimpleLocalizedWidget<T> implements AbstractLocalizationWrapper
 {
 	public interface Updateable<T>
 	{
@@ -16,7 +16,7 @@ public class LocalizedWidget<T>
 	public final String				desc;
 	private final Updateable<T>		invokable;
 	
-	public LocalizedWidget(T w, String desc, Updateable<T> invokable)
+	public SimpleLocalizedWidget(T w, String desc, Updateable<T> invokable)
 	{
 		if (w instanceof Widget == false)
 			throw new RuntimeException("Invalid widget class");
@@ -26,11 +26,12 @@ public class LocalizedWidget<T>
 		this.invokable = invokable;
 	}
 
-	public LocalizedWidget(T w, String desc) {
-		this(w,  desc, null);
+	public SimpleLocalizedWidget(T w, String desc) {
+		this(w, desc, null);
 	}
 	
-	public void updateLocale(LocalizationData data)
+	@Override
+	public final void setLocale(LocalizationData data)
 	{
 		if (invokable == null)
 			throw new RuntimeException("No update method specified");
@@ -56,10 +57,10 @@ public class LocalizedWidget<T>
 		if (obj == null) {
 			return false;
 		}
-		if (!(obj instanceof LocalizedWidget)) {
+		if (!(obj instanceof SimpleLocalizedWidget)) {
 			return false;
 		}
-		LocalizedWidget other = (LocalizedWidget) obj;
+		SimpleLocalizedWidget other = (SimpleLocalizedWidget) obj;
 		if (desc == null) {
 			if (other.desc != null) {
 				return false;

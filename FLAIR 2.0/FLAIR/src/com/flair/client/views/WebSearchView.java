@@ -9,8 +9,8 @@ import com.flair.client.ClientEndPoint;
 import com.flair.client.WebRankerCore;
 import com.flair.client.localization.LocalizationLanguage;
 import com.flair.client.localization.LocalizedCompositeView;
-import com.flair.client.localization.LocalizedTextWidget;
-import com.flair.client.localization.LocalizedWidget;
+import com.flair.client.localization.SimpleLocalizedTextWidget;
+import com.flair.client.localization.SimpleLocalizedWidget;
 import com.flair.client.views.MainViewport.MainViewportLocale;
 import com.flair.server.grammar.Language;
 import com.google.gwt.core.client.GWT;
@@ -69,32 +69,32 @@ public class WebSearchView extends LocalizedCompositeView
 
 	@UiField
 	TextBox							txtSearchBoxUI;
-	LocalizedWidget<TextBox>		txtSearchBoxLC;
+	SimpleLocalizedWidget<TextBox>		txtSearchBoxLC;
 	@UiField
 	Select							selResultCountUI;
 	@UiField
 	Option							selResultCountItm10UI;
-	LocalizedTextWidget<Option>		selResultCountItm10LC;
+	SimpleLocalizedTextWidget<Option>		selResultCountItm10LC;
 	@UiField
 	Option							selResultCountItm20UI;
-	LocalizedTextWidget<Option>		selResultCountItm20LC;
+	SimpleLocalizedTextWidget<Option>		selResultCountItm20LC;
 	@UiField
 	Option							selResultCountItm30UI;
-	LocalizedTextWidget<Option>		selResultCountItm30LC;
+	SimpleLocalizedTextWidget<Option>		selResultCountItm30LC;
 	@UiField
 	Option							selResultCountItm40UI;
-	LocalizedTextWidget<Option>		selResultCountItm40LC;
+	SimpleLocalizedTextWidget<Option>		selResultCountItm40LC;
 	@UiField
 	Option							selResultCountItm50UI;
-	LocalizedTextWidget<Option>		selResultCountItm50LC;
+	SimpleLocalizedTextWidget<Option>		selResultCountItm50LC;
 	@UiField
 	Select							selResultLangUI;
 	@UiField
 	Option							selResultLangItmEnUI;
-	LocalizedTextWidget<Option>		selResultLangItmEnLC;
+	SimpleLocalizedTextWidget<Option>		selResultLangItmEnLC;
 	@UiField
 	Option							selResultLangItmDeUI;
-	LocalizedTextWidget<Option>		selResultLangItmDeLC;
+	SimpleLocalizedTextWidget<Option>		selResultLangItmDeLC;
 	@UiField
 	SimplePanel						pnlRankerContainerUI;
 	
@@ -102,16 +102,16 @@ public class WebSearchView extends LocalizedCompositeView
 	
 	private void initLocale()
 	{	
-		txtSearchBoxLC = new LocalizedWidget<>(txtSearchBoxUI, WebSearchViewLocale.DESC_txtSearchBoxUI, (w, t) -> {
+		txtSearchBoxLC = new SimpleLocalizedWidget<>(txtSearchBoxUI, WebSearchViewLocale.DESC_txtSearchBoxUI, (w, t) -> {
 			w.setPlaceholder(t);
 		});
-		selResultCountItm10LC = new LocalizedTextWidget<>(selResultCountItm10UI, WebSearchViewLocale.DESC_selResultCountItm10UI);
-		selResultCountItm20LC = new LocalizedTextWidget<>(selResultCountItm20UI, WebSearchViewLocale.DESC_selResultCountItm20UI);
-		selResultCountItm30LC = new LocalizedTextWidget<>(selResultCountItm30UI, WebSearchViewLocale.DESC_selResultCountItm30UI);
-		selResultCountItm40LC = new LocalizedTextWidget<>(selResultCountItm40UI, WebSearchViewLocale.DESC_selResultCountItm40UI);
-		selResultCountItm50LC = new LocalizedTextWidget<>(selResultCountItm50UI, WebSearchViewLocale.DESC_selResultCountItm50UI);
-		selResultLangItmEnLC = new LocalizedTextWidget<>(selResultLangItmEnUI, WebSearchViewLocale.DESC_selResultLangItmEnUI);
-		selResultLangItmDeLC = new LocalizedTextWidget<>(selResultLangItmDeUI, WebSearchViewLocale.DESC_selResultLangItmDeUI);
+		selResultCountItm10LC = new SimpleLocalizedTextWidget<>(selResultCountItm10UI, WebSearchViewLocale.DESC_selResultCountItm10UI);
+		selResultCountItm20LC = new SimpleLocalizedTextWidget<>(selResultCountItm20UI, WebSearchViewLocale.DESC_selResultCountItm20UI);
+		selResultCountItm30LC = new SimpleLocalizedTextWidget<>(selResultCountItm30UI, WebSearchViewLocale.DESC_selResultCountItm30UI);
+		selResultCountItm40LC = new SimpleLocalizedTextWidget<>(selResultCountItm40UI, WebSearchViewLocale.DESC_selResultCountItm40UI);
+		selResultCountItm50LC = new SimpleLocalizedTextWidget<>(selResultCountItm50UI, WebSearchViewLocale.DESC_selResultCountItm50UI);
+		selResultLangItmEnLC = new SimpleLocalizedTextWidget<>(selResultLangItmEnUI, WebSearchViewLocale.DESC_selResultLangItmEnUI);
+		selResultLangItmDeLC = new SimpleLocalizedTextWidget<>(selResultLangItmDeUI, WebSearchViewLocale.DESC_selResultLangItmDeUI);
 		
 		registerLocale(WebSearchViewLocale.INSTANCE.en);
 		registerLocale(WebSearchViewLocale.INSTANCE.de);

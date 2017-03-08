@@ -8,7 +8,7 @@ import com.flair.client.ClientEndPoint;
 import com.flair.client.localization.LocalizationEngine;
 import com.flair.client.localization.LocalizationLanguage;
 import com.flair.client.localization.LocalizedCompositeView;
-import com.flair.client.localization.LocalizedTextWidget;
+import com.flair.client.localization.SimpleLocalizedTextWidget;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiConstructor;
@@ -80,22 +80,22 @@ public class MainViewport extends LocalizedCompositeView
 	SimplePanel									pnlMainUI;
 	@UiField
 	AnchorListItem								btnWebSearchUI;
-	LocalizedTextWidget<AnchorListItem>			btnWebSearchLC;
+	SimpleLocalizedTextWidget<AnchorListItem>			btnWebSearchLC;
 	@UiField
 	AnchorListItem								btnUploadUI;
-	LocalizedTextWidget<AnchorListItem>			btnUploadLC;
+	SimpleLocalizedTextWidget<AnchorListItem>			btnUploadLC;
 	@UiField
 	AnchorListItem								btnAboutUI;
-	LocalizedTextWidget<AnchorListItem>			btnAboutLC;
+	SimpleLocalizedTextWidget<AnchorListItem>			btnAboutLC;
 	@UiField
 	AnchorButton								btnSwitchLangUI;
-	LocalizedTextWidget<AnchorButton>			btnSwitchLangLC;
+	SimpleLocalizedTextWidget<AnchorButton>			btnSwitchLangLC;
 	@UiField
 	AnchorListItem								btnLangEnUI;
-	LocalizedTextWidget<AnchorListItem>			btnLangEnLC;
+	SimpleLocalizedTextWidget<AnchorListItem>			btnLangEnLC;
 	@UiField
 	AnchorListItem								btnLangDeUI;
-	LocalizedTextWidget<AnchorListItem>			btnLangDeLC;
+	SimpleLocalizedTextWidget<AnchorListItem>			btnLangDeLC;
 	@UiField
 	Modal										mdlAboutEnUI;
 	@UiField
@@ -115,12 +115,12 @@ public class MainViewport extends LocalizedCompositeView
 	
 	private void initLocale()
 	{	
-		btnWebSearchLC = new LocalizedTextWidget<>(btnWebSearchUI, MainViewportLocale.DESC_btnWebSearchUI);
-		btnUploadLC = new LocalizedTextWidget<>(btnUploadUI, MainViewportLocale.DESC_btnUploadUI);
-		btnAboutLC = new LocalizedTextWidget<>(btnAboutUI, MainViewportLocale.DESC_btnAboutUI);
-		btnSwitchLangLC = new LocalizedTextWidget<>(btnSwitchLangUI, MainViewportLocale.DESC_btnSwitchLangUI);
-		btnLangEnLC = new LocalizedTextWidget<>(btnLangEnUI, MainViewportLocale.DESC_btnLangEnUI);
-		btnLangDeLC = new LocalizedTextWidget<>(btnLangDeUI, MainViewportLocale.DESC_btnLangDeUI);
+		btnWebSearchLC = new SimpleLocalizedTextWidget<>(btnWebSearchUI, MainViewportLocale.DESC_btnWebSearchUI);
+		btnUploadLC = new SimpleLocalizedTextWidget<>(btnUploadUI, MainViewportLocale.DESC_btnUploadUI);
+		btnAboutLC = new SimpleLocalizedTextWidget<>(btnAboutUI, MainViewportLocale.DESC_btnAboutUI);
+		btnSwitchLangLC = new SimpleLocalizedTextWidget<>(btnSwitchLangUI, MainViewportLocale.DESC_btnSwitchLangUI);
+		btnLangEnLC = new SimpleLocalizedTextWidget<>(btnLangEnUI, MainViewportLocale.DESC_btnLangEnUI);
+		btnLangDeLC = new SimpleLocalizedTextWidget<>(btnLangDeUI, MainViewportLocale.DESC_btnLangDeUI);
 		
 		registerLocale(MainViewportLocale.INSTANCE.en);
 		registerLocale(MainViewportLocale.INSTANCE.de);

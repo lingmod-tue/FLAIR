@@ -5,9 +5,9 @@ import com.google.gwt.user.client.ui.HasHTML;
 /*
  * SetHTML update method specialization
  */
-public class LocalizedHTMLWidget<T extends HasHTML> extends LocalizedWidget<T>
+public class SimpleLocalizedHTMLWidget<T extends HasHTML> extends SimpleLocalizedWidget<T>
 {
-	public LocalizedHTMLWidget(T w, String desc)
+	public SimpleLocalizedHTMLWidget(T w, String desc)
 	{
 		super(w, desc, (widget, str) -> {
 			widget.setHTML(str);
