@@ -1,0 +1,104 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
+
+	<ui:style>
+	.center-text {
+		text-align: center;
+	}
+	.orange-text {
+		color: orange;
+	}
+	.gray-text {
+		color: gray;
+	}
+	.settings-levels {
+		border-left:1px lightgrey solid;
+	}
+	</ui:style>
+	<ui:style field="legacy" src="/FLAIR_Legacy.css"/>
+	
+	<g:HTMLPanel>
+		<b:Container fluid="true">
+			<b:Row>
+				<!-- Settings Pane -->
+				<b:Column size="MD_3">
+					<!-- Result Count -->
+					<g:HorizontalPanel styleName="{style.center-text}">
+						<g:Label ui:field="lblDocCountUI"/>&nbsp;<g:Label ui:field="lblDocCountTextUI"/>
+					</g:HorizontalPanel>
+					
+					<!-- Visualize -->
+					<b:Panel styleName="{style.center-text}">
+						<b:AnchorButton ui:field="btnVisualizeUI" styleName="{style.orange-text}">Visualize</b:AnchorButton>
+					</b:Panel>
+					<hr/>
+					<!-- Export Settings -->
+					<b:Panel styleName="{style.center-text}">
+						<b:AnchorButton ui:field="btnExportSettingsUI" styleName="{style.gray-text}">
+							SHARE<br/>Search Setup
+						</b:AnchorButton>
+					</b:Panel>
+					<hr/>
+					
+					<!-- Text Characteristics -->
+					<b:Heading size="H4" styleName="{style.gray-text"}>Text Characteristics</b:Heading>
+					<b:Row>
+						<!-- Length -->
+						<b:Column size="MD_2">
+							<g:Label ui:field="lblTextLengthUI">Length:</g:Label>
+							<br/><br/>
+							<g:HTML styleName="{legacy.ui-widget-content-len}">
+								<g:HTML ui:field="htmlLengthSliderUI" styleName="{legacy.lengthSlider}"/>
+							</g:HTML>
+						</b:Column>
+						<b:Column size="MD3"/>
+						<!-- Level -->
+						<b:Column size="MD_6" styleName="{style.settings-levels}">
+							<g:Label ui:field="lblTextLevelUI">Levels:</g:Label>
+							<br/><br/>
+							<g:CheckBox ui:field="chkTextLevelAUI" checked="true">A1-A2</g:CheckBox>
+							<br/><g:InlineHTML ui:field="htmlTextLevelACountUI" styleName="{legacy.df}"/><br/>
+							<g:CheckBox ui:field="chkTextLevelBUI" checked="true">B1-B2</g:CheckBox>
+							<br/><g:InlineHTML ui:field="htmlTextLevelBCountUI" styleName="{legacy.df}"/><br/>
+							<g:CheckBox ui:field="chkTextLevelCUI" checked="true">C1-C2</g:CheckBox>
+							<br/><g:InlineHTML ui:field="htmlTextLevelCCountUI" styleName="{legacy.df}"/><br/>
+						</b:Column>
+					</b:Row>
+					<hr/>
+					
+					<!-- Keywords/Vocab -->
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+				</b:Column>
+			
+					
+			</b:Row>
+		</b:Container>
+	</g:HTMLPanel>
+</ui:UiBinder> 

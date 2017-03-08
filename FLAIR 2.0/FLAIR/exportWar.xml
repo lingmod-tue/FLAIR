@@ -1,0 +1,40 @@
+<project name="FLAIR" basedir="." default="default">
+<property name="src.dir" value="src" />
+<property name="build.dir" value="war" />
+<path id="compile.classpath">
+    <fileset dir="${build.dir}/WEB-INF/lib">
+        <include name="**/*.jar" />
+        <include name="**/*.xml" />
+    </fileset>
+</path>
+
+<target name="default" depends="gwtc, buildwar,deploy">
+</target>
+
+<target name="gwtc" description="GWT compile to JavaScript">
+    <java failonerror="true" fork="true" classname="com.google.gwt.dev.Compiler">
+        <classpath>
+            <pathelement location="${src.dir}" />
+            <path refid="compile.classpath" />
+        </classpath>
+        <arg line="-logLevel INFO" />
+        <jvmarg value="-Xmx1024M" />
+        <arg value="com.flair.client.FLAIR" />
+    </java>
+</target>
+
+<target name="buildwar">
+    <war basedir="war" destfile="FLAIR.war" webxml="war/WEB-INF/web.xml">
+        <exclude name="WEB-INF/**" />
+        <webinf dir="war/WEB-INF/">
+            <include name="**/gwt-servlet.jar" />
+            <include name="**/classes/**" />
+        </webinf>
+    </war>
+</target>
+
+<target name="deploy">
+    <copy file="FLAIR.war" todir="." />
+</target>
+
+</project>
