@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * An implementation of WebSearchAgent that caches search results
+ * Implementation of WebSearchAgent that caches search results
  * @author shadeMe
  */
 abstract class CachingSearchAgent extends WebSearchAgent
