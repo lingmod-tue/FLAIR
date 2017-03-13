@@ -5,7 +5,7 @@
  */
 package com.flair.server.crawler;
 
-import com.flair.server.grammar.Language;
+import com.flair.shared.grammar.Language;
 
 /**
  * Creates WebSearchAgent objects

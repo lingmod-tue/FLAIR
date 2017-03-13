@@ -10,7 +10,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import com.flair.server.grammar.Language;
+import com.flair.shared.grammar.Language;
 
 /**
  * Extracts plain text from a given source

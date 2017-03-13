@@ -1,104 +1,179 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
+	 xmlns:b="urn:import:org.gwtbootstrap3.client.ui"
+	xmlns:flair="urn:import:com.flair.client.widgets">
 
+	<!-- 
+		IMPORTANT: While the page uses the Bootstrap grid for its layout, we override the styles to create scrollable columns.
+		This breaks the responsive behaviour of the grid system. I haven't been able to figure out a way to do this in a less hacky way.
+		
+		PS: Let it be known that I utterly despise web development. Ut-terly.
+	-->
 	<ui:style>
 	.center-text {
 		text-align: center;
 	}
-	.orange-text {
-		color: orange;
+	
+	.center-gray-text {
+    	text-align: center;
+    	color: lightgrey;	
 	}
-	.gray-text {
-		color: gray;
-	}
+
 	.settings-levels {
-		border-left:1px lightgrey solid;
+		border-left: 1px lightgrey solid;
+	}
+	
+	.wrapper {
+		height: 100%;
+    	width: 100%;
+    	overflow: hidden;
+	}
+	
+	.scroll-area {
+		height: 85vh;
+    	padding-right: 20px;
+    	padding-left: 20px
+	}
+	
+	.scroll-area-left {
+		width: 20%;
+		float: left;
+		overflow: hidden;
+	}
+	
+	.scroll-area-left:hover {
+		overflow-y: auto;
+	}
+	
+	.scroll-area-right {
+		width: 20%;
+		float: right;
+	}
+	
+	.scroll-area-right:hover {
+		overflow-y: auto;
+	}
+	
+	.scroll-area-center {
+		width: 60%;
+		float: left;
+		overflow: hidden;
+	}
+	
+	.text-level-badge {
+		margin-top: 5px;
+		margin-left: 15px;
 	}
 	</ui:style>
-	<ui:style field="legacy" src="/FLAIR_Legacy.css"/>
-	
-	<g:HTMLPanel>
-		<b:Container fluid="true">
-			<b:Row>
-				<!-- Settings Pane -->
-				<b:Column size="MD_3">
-					<!-- Result Count -->
-					<g:HorizontalPanel styleName="{style.center-text}">
-						<g:Label ui:field="lblDocCountUI"/>&nbsp;<g:Label ui:field="lblDocCountTextUI"/>
-					</g:HorizontalPanel>
-					
-					<!-- Visualize -->
-					<b:Panel styleName="{style.center-text}">
-						<b:AnchorButton ui:field="btnVisualizeUI" styleName="{style.orange-text}">Visualize</b:AnchorButton>
-					</b:Panel>
-					<hr/>
-					<!-- Export Settings -->
-					<b:Panel styleName="{style.center-text}">
-						<b:AnchorButton ui:field="btnExportSettingsUI" styleName="{style.gray-text}">
-							SHARE<br/>Search Setup
-						</b:AnchorButton>
-					</b:Panel>
-					<hr/>
-					
-					<!-- Text Characteristics -->
-					<b:Heading size="H4" styleName="{style.gray-text"}>Text Characteristics</b:Heading>
+
+	<b:Container fluid="true" styleName="{style.wrapper}">
+		<b:Row>
+			<!-- Settings Pane -->
+			<b:Column size="MD_3" styleName="{style.scroll-area} {style.scroll-area-left}">
+				<!-- Result Count -->
+				<g:HorizontalPanel addStyleNames="{style.center-text}">
+					<g:Label ui:field="lblDocCountUI" />
+					<g:HTML>&nbsp;</g:HTML>
+					<g:Label ui:field="lblDocCountTextUI" />
+				</g:HorizontalPanel>
+
+				<!-- Visualize -->
+				<b:Panel addStyleNames="{style.center-text}">
+					<b:Button ui:field="btnVisualizeUI" type="WARNING" icon="LINE_CHART" size="SMALL" block="true">
+						VISUALIZE
+					</b:Button>
+				</b:Panel>
+				
+				<!-- Export Settings -->
+				<b:Panel addStyleNames="{style.center-text}">
+					<b:Button ui:field="btnExportSettingsUI" icon="CHEVRON_CIRCLE_UP" size="SMALL" block="true">
+						SHARE SEARCH SETUP
+					</b:Button>
+				</b:Panel>
+				<g:HTML>
+					<hr />
+				</g:HTML>
+
+				<!-- Text Characteristics -->
+				<b:Heading size="H4" text="Text Characteristics" />
+				<b:Container fluid="true">
 					<b:Row>
 						<!-- Length -->
-						<b:Column size="MD_2">
+						<b:Column size="MD_5">
 							<g:Label ui:field="lblTextLengthUI">Length:</g:Label>
-							<br/><br/>
-							<g:HTML styleName="{legacy.ui-widget-content-len}">
-								<g:HTML ui:field="htmlLengthSliderUI" styleName="{legacy.lengthSlider}"/>
+							<g:HTML>
+								<br />
+							</g:HTML>
+							<flair:DocumentLengthSlider ui:field="sldDocLengthUI"/>
+						</b:Column>
+
+						<!-- Level -->
+						<b:Column size="MD_5" addStyleNames="{style.settings-levels}">
+							<g:Label ui:field="lblTextLevelUI">Levels:</g:Label>
+							<g:HTML>
+								<br />
+								<br />
+							</g:HTML>
+							<b:InlineCheckBox ui:field="chkTextLevelAUI"
+								value="true">A1-A2</b:InlineCheckBox>
+							<b:Badge ui:field="bdgTextLevelACountUI" 
+								addStyleNames="{style.text-level-badge}" text="50/50"/>
+							<g:HTML>
+								<br />
+							</g:HTML>
+							<b:InlineCheckBox ui:field="chkTextLevelBUI"
+								value="true">B1-B2</b:InlineCheckBox>
+							<b:Badge ui:field="bdgTextLevelBCountUI" 
+								addStyleNames="{style.text-level-badge}" text="50/50"/>
+							<g:HTML>
+								<br />
+							</g:HTML>
+							<b:InlineCheckBox ui:field="chkTextLevelCUI"
+								value="true">C1-C2</b:InlineCheckBox>
+							<b:Badge ui:field="bdgTextLevelCCountUI" 
+								addStyleNames="{style.text-level-badge}" text="50/50"/>
+							<g:HTML>
+								<br />
 							</g:HTML>
 						</b:Column>
-						<b:Column size="MD3"/>
-						<!-- Level -->
-						<b:Column size="MD_6" styleName="{style.settings-levels}">
-							<g:Label ui:field="lblTextLevelUI">Levels:</g:Label>
-							<br/><br/>
-							<g:CheckBox ui:field="chkTextLevelAUI" checked="true">A1-A2</g:CheckBox>
-							<br/><g:InlineHTML ui:field="htmlTextLevelACountUI" styleName="{legacy.df}"/><br/>
-							<g:CheckBox ui:field="chkTextLevelBUI" checked="true">B1-B2</g:CheckBox>
-							<br/><g:InlineHTML ui:field="htmlTextLevelBCountUI" styleName="{legacy.df}"/><br/>
-							<g:CheckBox ui:field="chkTextLevelCUI" checked="true">C1-C2</g:CheckBox>
-							<br/><g:InlineHTML ui:field="htmlTextLevelCCountUI" styleName="{legacy.df}"/><br/>
-						</b:Column>
 					</b:Row>
-					<hr/>
+				</b:Container>
 					
-					<!-- Keywords/Vocab -->
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-					
-				</b:Column>
-			
-					
-			</b:Row>
-		</b:Container>
-	</g:HTMLPanel>
+				<g:HTML>
+					<hr />
+				</g:HTML>
+
+				<!-- Keywords/Vocab -->
+				<flair:KeywordWeightSlider ui:field="sldKeywordsUI" />
+				<g:HTML>
+					<hr />
+				</g:HTML>
+
+				<b:Panel addStyleNames="{style.center-text}">
+					<b:Button ui:field="btnConstructionsListUI" type="LINK" size="EXTRA_SMALL" block="true">
+						LIST OF CONSTRUCTIONS
+					</b:Button>
+				</b:Panel>
+
+				<!-- Construction Weights -->
+				
+				
+			</b:Column>
+		
+			<!-- Results Pane -->
+			<b:Column size="MD_6" styleName="{style.scroll-area} {style.scroll-area-center}">
+				<g:HTML>
+					RESULTS PLACEHOLDER
+				</g:HTML>
+			</b:Column>
+
+			<!-- Preview Pane -->
+			<b:Column size="MD_3" styleName="{style.scroll-area} {style.scroll-area-right}">
+				<g:HTML>
+					PREVIEW PLACEHOLDER
+				</g:HTML>
+			</b:Column>
+		</b:Row>
+	</b:Container>
 </ui:UiBinder> 

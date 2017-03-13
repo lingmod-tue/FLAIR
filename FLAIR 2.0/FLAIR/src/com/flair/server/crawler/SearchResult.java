@@ -1,9 +1,9 @@
 package com.flair.server.crawler;
 
-import com.flair.server.grammar.Language;
 import com.flair.server.utilities.AbstractTextExtractor;
 import com.flair.server.utilities.TextExtractorFactory;
 import com.flair.server.utilities.TextExtractorType;
+import com.flair.shared.grammar.Language;
 
 /**
  * Represents a single search result for a specific query

@@ -1,30 +1,27 @@
 package com.flair.client.views;
 
-import org.gwtbootstrap3.client.ui.Button;
 import org.gwtbootstrap3.client.ui.TextBox;
 import org.gwtbootstrap3.extras.select.client.ui.Option;
 import org.gwtbootstrap3.extras.select.client.ui.Select;
 
 import com.flair.client.ClientEndPoint;
 import com.flair.client.WebRankerCore;
-import com.flair.client.localization.LocalizationLanguage;
 import com.flair.client.localization.LocalizedCompositeView;
 import com.flair.client.localization.SimpleLocalizedTextWidget;
 import com.flair.client.localization.SimpleLocalizedWidget;
-import com.flair.client.views.MainViewport.MainViewportLocale;
-import com.flair.server.grammar.Language;
+import com.flair.client.localization.SimpleLocale;
+import com.flair.shared.grammar.Language;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class WebSearchView extends LocalizedCompositeView
 {
-	static final class WebSearchViewLocale extends SimpleViewLocale
+	static final class WebSearchViewLocale extends SimpleLocale
 	{
 		static final String		DESC_txtSearchBoxUI = "txtSearchBoxUI";
 		static final String		DESC_selResultCountItm10UI = "selResultCountItm10UI";
@@ -36,7 +33,7 @@ public class WebSearchView extends LocalizedCompositeView
 		static final String		DESC_selResultLangItmDeUI = "selResultLangItmDeUI";
 		
 		@Override
-		void init()
+		public void init()
 		{
 			// EN
 			en.put(DESC_txtSearchBoxUI, "Enter a query");
@@ -68,37 +65,37 @@ public class WebSearchView extends LocalizedCompositeView
 	}
 
 	@UiField
-	TextBox							txtSearchBoxUI;
+	TextBox								txtSearchBoxUI;
 	SimpleLocalizedWidget<TextBox>		txtSearchBoxLC;
 	@UiField
-	Select							selResultCountUI;
+	Select								selResultCountUI;
 	@UiField
-	Option							selResultCountItm10UI;
-	SimpleLocalizedTextWidget<Option>		selResultCountItm10LC;
+	Option								selResultCountItm10UI;
+	SimpleLocalizedTextWidget<Option>	selResultCountItm10LC;
 	@UiField
-	Option							selResultCountItm20UI;
-	SimpleLocalizedTextWidget<Option>		selResultCountItm20LC;
+	Option								selResultCountItm20UI;
+	SimpleLocalizedTextWidget<Option>	selResultCountItm20LC;
 	@UiField
-	Option							selResultCountItm30UI;
-	SimpleLocalizedTextWidget<Option>		selResultCountItm30LC;
+	Option								selResultCountItm30UI;
+	SimpleLocalizedTextWidget<Option>	selResultCountItm30LC;
 	@UiField
-	Option							selResultCountItm40UI;
-	SimpleLocalizedTextWidget<Option>		selResultCountItm40LC;
+	Option								selResultCountItm40UI;
+	SimpleLocalizedTextWidget<Option>	selResultCountItm40LC;
 	@UiField
-	Option							selResultCountItm50UI;
-	SimpleLocalizedTextWidget<Option>		selResultCountItm50LC;
+	Option								selResultCountItm50UI;
+	SimpleLocalizedTextWidget<Option>	selResultCountItm50LC;
 	@UiField
-	Select							selResultLangUI;
+	Select								selResultLangUI;
 	@UiField
-	Option							selResultLangItmEnUI;
-	SimpleLocalizedTextWidget<Option>		selResultLangItmEnLC;
+	Option								selResultLangItmEnUI;
+	SimpleLocalizedTextWidget<Option>	selResultLangItmEnLC;
 	@UiField
-	Option							selResultLangItmDeUI;
-	SimpleLocalizedTextWidget<Option>		selResultLangItmDeLC;
+	Option								selResultLangItmDeUI;
+	SimpleLocalizedTextWidget<Option>	selResultLangItmDeLC;
 	@UiField
-	SimplePanel						pnlRankerContainerUI;
+	ScrollPanel							pnlRankerContainerUI;
 	
-	WebRankerCore					webranker;
+	WebRankerCore						webranker;
 	
 	private void initLocale()
 	{	
@@ -124,6 +121,8 @@ public class WebSearchView extends LocalizedCompositeView
 		registerLocalizedWidget(selResultCountItm50LC);
 		registerLocalizedWidget(selResultLangItmEnLC);
 		registerLocalizedWidget(selResultLangItmDeLC);
+		
+		refreshLocalization();
 	}
 	
 	private void initHandlers()
@@ -149,8 +148,7 @@ public class WebSearchView extends LocalizedCompositeView
 		
 		// attach the ranker view
 //		pnlRankerContainerUI.add(webranker.getView());
-		
-		refreshLocalization();
+		pnlRankerContainerUI.add(new RankerView());
 	}
 	
 	private void invokeSearch()
@@ -176,7 +174,7 @@ public class WebSearchView extends LocalizedCompositeView
 	}
 	
 	@Override
-	public void setLocalization(LocalizationLanguage lang)
+	public void setLocalization(Language lang)
 	{
 		super.setLocalization(lang);
 		

@@ -3,15 +3,17 @@ package com.flair.client.localization;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.flair.shared.grammar.Language;
+
 /*
  * Simple key-value data store that maps a descriptor to its localized string
  */
 public class LocalizationData 
 {
-	private final LocalizationLanguage			lang;
-	private final Map<String, String>			store;
+	private final Language					lang;
+	private final Map<String, String>		store;
 	
-	public LocalizationData(LocalizationLanguage lang)
+	public LocalizationData(Language lang)
 	{
 		this.lang = lang;
 		this.store = new HashMap<>();
@@ -33,7 +35,7 @@ public class LocalizationData
 			return store.get(desc);
 	}
 	
-	public LocalizationLanguage getLanguage() {
+	public Language getLanguage() {
 		return lang;
 	}
 }

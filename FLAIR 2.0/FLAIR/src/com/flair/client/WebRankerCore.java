@@ -1,6 +1,7 @@
 package com.flair.client;
 
-import com.flair.server.grammar.Language;
+import com.flair.client.views.RankerView;
+import com.flair.shared.grammar.Language;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
@@ -10,9 +11,18 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class WebRankerCore
 {
-
-	public WebRankerCore() {
-		// TODO Auto-generated constructor stub
+	private final RankerView		rankerView;
+	
+	private void init()
+	{
+		
+	}
+	
+	public WebRankerCore()
+	{
+		rankerView = new RankerView();
+		
+		init();
 	}
 
 	public void performSearch(String query, int resultCount, Language lang)

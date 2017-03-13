@@ -2,8 +2,8 @@ package com.flair.server.crawler;
 
 import com.flair.server.crawler.impl.AbstractSearchAgentImplResult;
 import com.flair.server.crawler.impl.azure.AzureWebSearch;
-import com.flair.server.grammar.Language;
 import com.flair.server.utilities.FLAIRLogger;
+import com.flair.shared.grammar.Language;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.List;
 class BingSearchAgent extends CachingSearchAgent
 {
     private static final String			API_KEY = "f163d542b4534b38986b91653237490b";
-    private static final int			RESULTS_PER_PAGE = 15;
+    private static final int			RESULTS_PER_PAGE = 50;			// larger numbers will reduce the number of search transactions but will increase the response size
     
     private final AzureWebSearch		pipeline;
     

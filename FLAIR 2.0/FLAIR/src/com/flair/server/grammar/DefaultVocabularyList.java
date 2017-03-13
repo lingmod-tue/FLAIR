@@ -6,6 +6,8 @@ package com.flair.server.grammar;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.flair.shared.grammar.Language;
+
 /**
  * Wraper class for the default keywords for each language
  * @author shadeMe

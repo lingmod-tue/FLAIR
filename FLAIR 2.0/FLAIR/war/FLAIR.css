@@ -1,34 +1,58 @@
-/** Add css rules here for your application. */
+/*
+ * Common styles
+ */
 
 
-/** Example rules used by the template application (remove for your app) */
-h1 {
-  font-size: 2em;
-  font-weight: bold;
-  color: #777777;
-  margin: 40px 0px 70px;
-  text-align: center;
+/*
+ * Weight widget styles
+ */
+.generic-weight-slider-toggle {
+	margin-bottom: 3px;
 }
 
-.sendButton {
-  display: block;
-  font-size: 16pt;
+.generic-weight-slider-wrapper {
+	margin-top: 5px;
+	width: 100%;
 }
 
-/** Most GWT widgets already have a style name defined */
-.gwt-DialogBox {
-  width: 400px;
+.generic-weight-slider-slider {
+	float: left;
+    clear: left;
+    width: 80%;
+    margin-left: 15px;
+    margin-right: 15px;
+    background: transparent;
 }
 
-.dialogVPanel {
-  margin: 5px;
+.construction-weight-slider-badge {
+    margin-left: 3px;
 }
 
-.serverResponseLabelError {
-  color: red;
+/*
+ * Document length widget styles
+ */
+.doc-length-slider-wrapper {
+	width: 100%;
 }
 
-/** Set ids using widget.getElement().setId("idOfElement") */
-#closeButton {
-  margin: 15px 6px 6px;
+.doc-length-slider-slider {
+	width: 200%;
 }
+
+.doc-length-slider {
+
+}
+
+/*
+ * Hide scrollbars (Webkit only)
+ */
+/* 
+html {
+    overflow: scroll;
+    overflow-x: hidden;
+}
+::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+}
+*/

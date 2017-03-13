@@ -5,7 +5,7 @@
  */
 package com.flair.server.parser;
 
-import com.flair.server.grammar.Language;
+import com.flair.shared.grammar.Language;
 
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 

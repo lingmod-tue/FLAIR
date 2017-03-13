@@ -54,7 +54,7 @@
 			</b:Row>
 		</b:Container>
 		
-		<g:SimplePanel ui:field="pnlRankerContainerUI" />
+		<g:ScrollPanel ui:field="pnlRankerContainerUI"/>
 	</g:HTMLPanel>
 	
 </ui:UiBinder> 

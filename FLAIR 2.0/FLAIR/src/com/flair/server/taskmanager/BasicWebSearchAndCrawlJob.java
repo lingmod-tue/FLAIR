@@ -8,7 +8,7 @@ package com.flair.server.taskmanager;
 import com.flair.server.crawler.SearchResult;
 import com.flair.server.crawler.WebSearchAgent;
 import com.flair.server.crawler.WebSearchAgentFactory;
-import com.flair.server.grammar.Language;
+import com.flair.shared.grammar.Language;
 
 import java.util.ArrayList;
 import java.util.List;

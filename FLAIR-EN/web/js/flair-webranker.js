@@ -11,12 +11,12 @@ FLAIR.createNS("FLAIR.WEBRANKER.UTIL.TOGGLE");
 FLAIR.createNS("FLAIR.WEBRANKER.UTIL.TOAST");
 FLAIR.createNS("FLAIR.WEBRANKER.UTIL.WAIT");
 
-//=================== FLAIR.WEBRANKER.CONSTANTS =============//
+// =================== FLAIR.WEBRANKER.CONSTANTS =============//
 FLAIR.WEBRANKER.CONSTANTS.DEFAULT_NUM_RESULTS = 20;
 FLAIR.WEBRANKER.CONSTANTS.DEFAULT_LANGUAGE = "ENGLISH";
 FLAIR.WEBRANKER.CONSTANTS.HIGHLIGHT_COLORS = ["lightgreen", "lightblue", "lightpink", "lightcyan", "lightsalmon", "lightgrey", "lightyellow"];
 
-//=================== FLAIR.WEBRANKER.UTIL =============//
+// =================== FLAIR.WEBRANKER.UTIL =============//
 FLAIR.WEBRANKER.UTIL.formatDocLevel = function(level) {
     // turns a string "LEVEL-c" into "C1-C2"
     var l = level.substring(level.indexOf("-") + 1);
@@ -30,7 +30,7 @@ FLAIR.WEBRANKER.UTIL.generateConstructionName = function(parent, name_to_show) {
 	parent = parent.parentNode; // div panel-body
 	if (parent !== null)
 	{
-	    parent = parent.parentNode; // div 
+	    parent = parent.parentNode; // div
 	    if (parent !== null) 
 	    {
 		var grandparent = parent.parentNode;
@@ -47,7 +47,8 @@ FLAIR.WEBRANKER.UTIL.generateConstructionName = function(parent, name_to_show) {
 			grandparent = grandparent.parentNode; // div panel-body
 			if (grandparent !== null)
 			{
-			    grandparent = grandparent.parentNode; // div panel-collapse collapse
+			    grandparent = grandparent.parentNode; // div panel-collapse
+														// collapse
 			    if (grandparent !== null)
 			    {
 				grandparent = grandparent.id;
@@ -142,7 +143,7 @@ FLAIR.WEBRANKER.UTIL.copyToClipboard = function(input_element) {
     document.execCommand("copy");
 };
 
-//=================== FLAIR.WEBRANKER.UTIL.WAIT =============//
+// =================== FLAIR.WEBRANKER.UTIL.WAIT =============//
 FLAIR.WEBRANKER.UTIL.WAIT.INSTANCE = function() {
   // PRIVATE VARS
   var handlers = {
@@ -250,7 +251,7 @@ FLAIR.WEBRANKER.UTIL.WAIT.INSTANCE = function() {
 };
 FLAIR.WEBRANKER.UTIL.WAIT.singleton = new FLAIR.WEBRANKER.UTIL.WAIT.INSTANCE();
 
-//=================== FLAIR.WEBRANKER.UTIL.TOAST =============//
+// =================== FLAIR.WEBRANKER.UTIL.TOAST =============//
 FLAIR.WEBRANKER.UTIL.TOAST.info = function(message, dismissOnTap, timeout) {
     toastr.options.closeButton = false;
     toastr.options.tapToDismiss = dismissOnTap;
@@ -290,7 +291,7 @@ FLAIR.WEBRANKER.UTIL.TOAST.clear = function(immediate) {
 	toastr.remove();
 };
 
-//=================== FLAIR.WEBRANKER.UTIL.TOGGLE =============//
+// =================== FLAIR.WEBRANKER.UTIL.TOGGLE =============//
 FLAIR.WEBRANKER.UTIL.TOGGLE.constructionsList = function() {
     if (document.getElementById("show_all_constructions").hidden)
         document.getElementsByClassName("caret")[0].parentNode.className = "dropup";
@@ -333,11 +334,13 @@ FLAIR.WEBRANKER.UTIL.TOGGLE.customCorpusDialog = function(show) {
 	$("#modal_CustomCorpus").modal('hide');
 };
 
-//=================== FLAIR.WEBRANKER =============//
+// =================== FLAIR.WEBRANKER =============//
 FLAIR.WEBRANKER.CUSTOMVOCAB = function(server_pipeline) {
     // PRIVATE VARS
-    var wordList = "";		    // comma separated word list that was applied last
-    var inUse = false;		    // set to false when the default (academic) word list is used
+    var wordList = "";		    // comma separated word list that was applied
+								// last
+    var inUse = false;		    // set to false when the default (academic) word
+								// list is used
     var loadingFile = false;	    // set when loading a local file
     var pipeline = server_pipeline;
 
@@ -449,38 +452,79 @@ FLAIR.WEBRANKER.STATE = function() {
     // PRIVATE VARS
     var query = "";
     var language = FLAIR.WEBRANKER.CONSTANTS.DEFAULT_LANGUAGE;
-    var totalResults = FLAIR.WEBRANKER.CONSTANTS.DEFAULT_NUM_RESULTS;		// no of results to search for, updated with the result count returned by the server
+    var totalResults = FLAIR.WEBRANKER.CONSTANTS.DEFAULT_NUM_RESULTS;		// no
+																			// of
+																			// results
+																			// to
+																			// search
+																			// for,
+																			// updated
+																			// with
+																			// the
+																			// result
+																			// count
+																			// returned
+																			// by
+																			// the
+																			// server
 
-    var searchResults = [];			    // collection of all the search results returned by the server
-    var parsedDocs = [];			    // collection of all the parsed docs sent by the server
-    var displayedDocs = [];			    // collection of all the docs being displayed
-    var filteredDocs = [];			    // collection of the docs indices (in the parsed docs collection) that shouldn't be displayed
+    var searchResults = [];			    // collection of all the search results
+										// returned by the server
+    var parsedDocs = [];			    // collection of all the parsed docs
+										// sent by the server
+    var displayedDocs = [];			    // collection of all the docs being
+										// displayed
+    var filteredDocs = [];			    // collection of the docs indices (in
+										// the parsed docs collection) that
+										// shouldn't be displayed
 
-    var selection = -1;				    // index of the current selection in the displayed docs collection
+    var selection = -1;				    // index of the current selection in the
+										// displayed docs collection
 
-    var weightSettings_docLevel = [];		    // collection of weight data for the doc levels (A1-C2) and all constructions
-    var weightSettings_constructions = [];	    // collection of weight data for grammatical constructions (### redundant?)
-    var weightSettings_customVocabList = null;	    // weight data for the vocab list
+    var weightSettings_docLevel = [];		    // collection of weight data for
+												// the doc levels (A1-C2) and
+												// all constructions
+    var weightSettings_constructions = [];	    // collection of weight data for
+												// grammatical constructions
+												// (### redundant?)
+    var weightSettings_customVocabList = null;	    // weight data for the vocab
+													// list
 
-    var filteredConstructions = [];		    // collection of the grammatical constructions that are ignored when ranking
+    var filteredConstructions = [];		    // collection of the grammatical
+											// constructions that are ignored
+											// when ranking
 
     var bParam = 0;				    // used with the doc length slider
     var kParam = 1.7;				    // ### ?
     
-    var parsedVisData = "";			    // CSV string of the parsed docs' construction data, used for visualisation
+    var parsedVisData = "";			    // CSV string of the parsed docs'
+										// construction data, used for
+										// visualisation
     
-    var searchResultsFetched = false;		    // set to true after the search results are returned by the server
-    var parsedDataFetched = false;		    // set to true after all the parsed data has been received by the client
-    var busy = false;				    // set to true at the start of a search/upload op, reset at its end/cancellation
+    var searchResultsFetched = false;		    // set to true after the search
+												// results are returned by the
+												// server
+    var parsedDataFetched = false;		    // set to true after all the parsed
+											// data has been received by the
+											// client
+    var busy = false;				    // set to true at the start of a
+										// search/upload op, reset at its
+										// end/cancellation
     
-    var teacherMode = false;			    // when true, the imported settings are applied after each query is successfully parsed
+    var teacherMode = false;			    // when true, the imported settings
+											// are applied after each query is
+											// successfully parsed
     var urlQueryString = "";			    // url query string
-    var importedSettings = {};			    // key-value pairs of the query string
-    var applyingImportedSettings = false;	    // set to true when settings are applied
+    var importedSettings = {};			    // key-value pairs of the query
+											// string
+    var applyingImportedSettings = false;	    // set to true when settings are
+												// applied
     
     var highlightKeywords = false;
-    var customVocab = false;			    // set to true when a custom vocab is in use
-    var customCorpus = true;			    // set to true when parsing a cutom corpus
+    var customVocab = false;			    // set to true when a custom vocab
+											// is in use
+    var customCorpus = true;			    // set to true when parsing a cutom
+											// corpus
     
     // PRIVATE INTERFACE
     var createWeightSettingPrototype = function() {
@@ -714,10 +758,12 @@ FLAIR.WEBRANKER.STATE = function() {
 		insertHere = parseInt(curItem);
 
 	    var tag = allIndices[ind]["tag"]; // String
-	    // show several constructions on mouseover, ONLY if they fully overlap (e.g., complex sentence, direct question)
+	    // show several constructions on mouseover, ONLY if they fully overlap
+		// (e.g., complex sentence, direct question)
 	    if (tag.indexOf("<span") > -1)
 	    {
-		var toInsertBefore = ""; // String // to take care in more than 2 overlapping constructions
+		var toInsertBefore = ""; // String // to take care in more than 2
+									// overlapping constructions
 		if (prevStartInd === insertHere && prevEndInd === tmpEnd)
 		{
 		    tag = tag.substring(0, tag.indexOf("'>")) + ", " + prevConstruct + "'>";
@@ -802,7 +848,8 @@ FLAIR.WEBRANKER.STATE = function() {
 	else
 	    customVocab = true;
 	
-	// "Teacher mode" state persists for the entire session, so we don't reset it by default
+	// "Teacher mode" state persists for the entire session, so we don't reset
+	// it by default
 	if (full_reset === true)
 	{
 	    teacherMode = false;
@@ -896,7 +943,7 @@ FLAIR.WEBRANKER.STATE = function() {
 			    name_to_show = name_to_show.substring(0, name_to_show.indexOf("("));
 
 			// one more layer of constructs
-			var parent_name = g.parentNode; // div 
+			var parent_name = g.parentNode; // div
 			if (parent_name !== null)
 			    name_to_show = FLAIR.WEBRANKER.UTIL.generateConstructionName(parent_name, name_to_show);
 		    }
@@ -1026,18 +1073,18 @@ FLAIR.WEBRANKER.STATE = function() {
 
 	    for (var j = 0; j < weightSettings_constructions.length; j++)
 	    {
-		if (weightSettings_constructions[j]["name"].indexOf("LEVEL") > -1) 
-		{
-		    if (weightSettings_constructions[j]["weight"] === 0) 
-		    {
-			$("#" + weightSettings_constructions[j]["name"]).prop('checked', false);
-
-			if (doc["readabilityLevel"] === weightSettings_constructions[j]["name"]) 
-			    appropriateDoc = false;
-		    } 
-		    else if (weightSettings_constructions[j]["weight"] === 1)
-			$("#" + weightSettings_constructions[j]["name"]).prop('checked', true);
-		}
+			if (weightSettings_constructions[j]["name"].indexOf("LEVEL") > -1) 
+			{
+			    if (weightSettings_constructions[j]["weight"] === 0) 
+			    {
+					$("#" + weightSettings_constructions[j]["name"]).prop('checked', false);
+		
+					if (doc["readabilityLevel"] === weightSettings_constructions[j]["name"]) 
+					    appropriateDoc = false;
+			    } 
+			    else if (weightSettings_constructions[j]["weight"] === 1)
+			    	$("#" + weightSettings_constructions[j]["name"]).prop('checked', true);
+			}
 	    }
 
 	    doc["gramScore"] = 0.0;
@@ -1045,17 +1092,17 @@ FLAIR.WEBRANKER.STATE = function() {
 	    // check if the doc contains excluded constructions
 	    for (var t = 0; t < filteredConstructions.length; t++)
 	    {
-		var constr_ind = doc.constructions.indexOf(filteredConstructions[t]);
-		if (doc.frequencies[constr_ind] > 0)
-		    appropriateDoc = false;
+			var constr_ind = doc.constructions.indexOf(filteredConstructions[t]);
+			if (doc.frequencies[constr_ind] > 0)
+			    appropriateDoc = false;
 	    }
 	    
 	    if ($.inArray(k, filteredDocs) !== -1)
-		appropriateDoc = false;
+	    	appropriateDoc = false;
 	    
 	    // add data to object
 	    if (appropriateDoc)
-		displayedDocs.push(doc);
+	    	displayedDocs.push(doc);
 	}
 
 	// calculate tf-idf of the grammar "query"
@@ -1063,41 +1110,43 @@ FLAIR.WEBRANKER.STATE = function() {
 	for (var i in weightSettings_constructions) 
 	{
 	    var name = weightSettings_constructions[i]["name"];
-	    var count = 0; // number of docs with constructions[i] (this construction)
+	    var count = 0; // number of docs with constructions[i] (this
+						// construction)
 	    for (var j in displayedDocs)
 	    {
-		if (name.indexOf("LEVEL") > -1)
-		{
-		    var lev = displayedDocs[j]["readabilityLevel"];
-		    if (lev === name)
-			count++;
-		}
-		else
-		{
-		    var cs = displayedDocs[j]["constructions"];
-		    for (var k in cs)
-		    {
-			if (cs[k] === name) 
+			if (name.indexOf("LEVEL") > -1)
 			{
-			    if (displayedDocs[j]["frequencies"][k] > 0)
+			    var lev = displayedDocs[j]["readabilityLevel"];
+			    if (lev === name)
 				count++;
-
-			    break;
 			}
-		    }
-		}
+			else
+			{
+			    var cs = displayedDocs[j]["constructions"];
+			    for (var k in cs)
+			    {
+					if (cs[k] === name) 
+					{
+					    if (displayedDocs[j]["frequencies"][k] > 0)
+					    	count++;
+		
+					    break;
+					}
+			    }
+			}
 	    }
-	    // add df (document count) and idf (inverse document frequency) to each construction in the settings
+	    // add df (document count) and idf (inverse document frequency) to each
+		// construction in the settings
 	    weightSettings_constructions[i]["df"] = count;
 	    if (count !== 0)
-		weightSettings_constructions[i]["idf"] = Math.log((displayedDocs.length + 1) / count);
+	    	weightSettings_constructions[i]["idf"] = Math.log((displayedDocs.length + 1) / count);
 	    else
-		weightSettings_constructions[i]["idf"] = 0;
+	    	weightSettings_constructions[i]["idf"] = 0;
 	    
 	    for (var ws in weightSettings_docLevel)
 	    { 
-		if (weightSettings_docLevel[ws]["name"] === name)
-		    weightSettings_docLevel[ws]["df"] = count;
+	    	if (weightSettings_docLevel[ws]["name"] === name)
+	    		weightSettings_docLevel[ws]["df"] = count;
 	    }
 	}
 	
@@ -1107,7 +1156,7 @@ FLAIR.WEBRANKER.STATE = function() {
 	{
 	    avDocLen += displayedDocs[j]["docLength"];
 	    if (displayedDocs[j].totalKeywords > 0)
-		count++;
+	    	count++;
 	}
 	weightSettings_customVocabList["df"] = count;
 	if (count !== 0)
@@ -1120,7 +1169,7 @@ FLAIR.WEBRANKER.STATE = function() {
 	else
 	    avDocLen = 0;
 
-	//////// - end of tf, idf calculations
+	// ////// - end of tf, idf calculations
 
 
 	// calculate totalWeight for each doc: BM25
@@ -1129,24 +1178,24 @@ FLAIR.WEBRANKER.STATE = function() {
 	    var dTotal = 0.0;
 	    for (var constr in weightSettings_constructions)
 	    {
-		var name = weightSettings_constructions[constr]["name"];
-
-		if ((weightSettings_constructions[constr]["weight"] > 0 ||
-		     weightSettings_constructions[constr]["weight"] < 0) && weightSettings_constructions[constr]["df"] > 0)
-		{ 
-		    // cannot be NaN
-		    var dConstrInd = displayedDocs[d]["constructions"].indexOf(name);
-		    // if this construction is in this doc
-		    if (dConstrInd > -1 && displayedDocs[d]["frequencies"][dConstrInd] > 0)
-		    {
-			var tf = displayedDocs[d]["frequencies"][dConstrInd];
-			var idf = weightSettings_constructions[constr]["idf"];
-			var tfNorm = ((kParam + 1) * tf) / (tf + kParam * (1 - bParam + bParam * (displayedDocs[d]["docLength"] / avDocLen)));
-			var gramScore = tfNorm * idf;
-
-			dTotal += gramScore * weightSettings_constructions[constr]["weight"];
-		    }
-		}
+			var name = weightSettings_constructions[constr]["name"];
+	
+			if ((weightSettings_constructions[constr]["weight"] > 0 ||
+			     weightSettings_constructions[constr]["weight"] < 0) && weightSettings_constructions[constr]["df"] > 0)
+			{ 
+			    // cannot be NaN
+			    var dConstrInd = displayedDocs[d]["constructions"].indexOf(name);
+			    // if this construction is in this doc
+			    if (dConstrInd > -1 && displayedDocs[d]["frequencies"][dConstrInd] > 0)
+			    {
+					var tf = displayedDocs[d]["frequencies"][dConstrInd];
+					var idf = weightSettings_constructions[constr]["idf"];
+					var tfNorm = ((kParam + 1) * tf) / (tf + kParam * (1 - bParam + bParam * (displayedDocs[d]["docLength"] / avDocLen)));
+					var gramScore = tfNorm * idf;
+		
+					dTotal += gramScore * weightSettings_constructions[constr]["weight"];
+			    }
+			}
 	    }
 	    
 	    // apply vocab weight
@@ -1157,29 +1206,36 @@ FLAIR.WEBRANKER.STATE = function() {
 	    dTotal += gramScore * weightSettings_customVocabList["weight"];
             
 	    displayedDocs[d]["gramScore"] = dTotal; // grammar score
-	    displayedDocs[d]["totalWeight"] = displayedDocs[d]["gramScore"]; // total weight : TODO add rankWeight and textWeight
+	    displayedDocs[d]["totalWeight"] = displayedDocs[d]["gramScore"]; // total
+																			// weight
+																			// :
+																			// TODO
+																			// add
+																			// rankWeight
+																			// and
+																			// textWeight
 	}
-	//// - end of calculating the total weight
+	// // - end of calculating the total weight
 
 	if (weightSettings_docLevel.length < 4 && weightSettings_customVocabList.weight === 0)
 	{
 	    if (bParam === 0)
 	    {
-		displayedDocs.sort(function (a, b) {
-		    return parseInt(a.preRank) - parseInt(b.preRank);
-		});
+			displayedDocs.sort(function (a, b) {
+			    return parseInt(a.preRank) - parseInt(b.preRank);
+			});
 	    } 
 	    else
 	    {
-		displayedDocs.sort(function (a, b) {
-		    return parseInt(a.docLength) - parseInt(b.docLength);
-		});
+			displayedDocs.sort(function (a, b) {
+			    return parseInt(a.docLength) - parseInt(b.docLength);
+			});
 	    }
 	}
 	else
 	{
 	    displayedDocs.sort(function (a, b) {
-		return Number(b.totalWeight) - Number(a.totalWeight);
+	    	return Number(b.totalWeight) - Number(a.totalWeight);
 	    });
 	}
 
@@ -1188,20 +1244,21 @@ FLAIR.WEBRANKER.STATE = function() {
 	{
 	    if (weightSettings_constructions[s]["name"].startsWith("LEVEL"))
 	    {
-		if (document.getElementById(weightSettings_constructions[s]["name"]).checked)
-		    document.getElementById(weightSettings_constructions[s]["name"] + "-df").innerHTML = "(" + weightSettings_constructions[s]["df"] + " / " + displayedDocs.length + " results)";
-		else
-		    document.getElementById(weightSettings_constructions[s]["name"] + "-df").innerHTML = "";
-	    }
+			if (document.getElementById(weightSettings_constructions[s]["name"]).checked)
+			    document.getElementById(weightSettings_constructions[s]["name"] + "-df").innerHTML = "(" + weightSettings_constructions[s]["df"] + " / " + displayedDocs.length + " results)";
+			else
+			    document.getElementById(weightSettings_constructions[s]["name"] + "-df").innerHTML = "";
+		}
 	    else
-		document.getElementById(weightSettings_constructions[s]["name"] + "-df").innerHTML = "(" + weightSettings_constructions[s]["df"] + " / " + displayedDocs.length + ")";
+	    	document.getElementById(weightSettings_constructions[s]["name"] + "-df").innerHTML = "(" + weightSettings_constructions[s]["df"] + " / " + displayedDocs.length + ")";
 	}
 
 	var out = "";
 	var i;
 	for (i = 0; i < displayedDocs.length; i++)
 	{
-	    // show each object in a row of 3 cells: html / titles, urls and snippets / text
+	    // show each object in a row of 3 cells: html / titles, urls and
+		// snippets / text
 	    out += '<tr><td class="num_cell" style="font-size:x-large;">' +
 		    (i + 1) + '&nbsp;<span style="color:lightgrey;font-size:small" title="original position in the rank">(' + displayedDocs[i].preRank + ')</span><br>' +
 		    '</td><td  class="url_cell" style="width:40%;"><div><a href="' + displayedDocs[i].url + '" target="_blank"><b>' + displayedDocs[i].title + '</b></a></div>' +
@@ -1670,7 +1727,8 @@ FLAIR.WEBRANKER.VISUALISATION = function(delegate_isDocFiltered, delegate_isCons
 	updatingAxes = true;
 	
 	var element_id = axis_element.id;
-	// axis_name for the 4 default cases: "document", "sentences", "words", "score"
+	// axis_name for the 4 default cases: "document", "sentences", "words",
+	// "score"
 	// for others: e.g., whQuestions, etc.
 	var axis_name = element_id.substring(0, element_id.indexOf("-vis"));
 
@@ -2080,7 +2138,7 @@ FLAIR.WEBRANKER.INSTANCE = function() {
 	FLAIR.WEBRANKER.UTIL.TOAST.clear(false);
     };
     this.showVisualiser = function() {
-//	FLAIR.WEBRANKER.UTIL.resetSlider('all');
+// FLAIR.WEBRANKER.UTIL.resetSlider('all');
 	
 	if (state.isCustomCorpus() === false && state.getQuery() !== "") 
             $("#query_vis").html("\"" + state.getQuery() + "\" (" + state.getTotalResults() + " web pages)");

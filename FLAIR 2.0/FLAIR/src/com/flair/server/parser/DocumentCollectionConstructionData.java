@@ -5,7 +5,7 @@
  */
 package com.flair.server.parser;
 
-import com.flair.server.grammar.GrammaticalConstruction;
+import com.flair.shared.grammar.GrammaticalConstruction;
 
 
 /**

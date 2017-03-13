@@ -5,8 +5,8 @@
  */
 package com.flair.server.parser;
 
-import com.flair.server.grammar.GrammaticalConstruction;
-import com.flair.server.grammar.Language;
+import com.flair.shared.grammar.GrammaticalConstruction;
+import com.flair.shared.grammar.Language;
 
 /**
  * The interface all parsable documents must implement

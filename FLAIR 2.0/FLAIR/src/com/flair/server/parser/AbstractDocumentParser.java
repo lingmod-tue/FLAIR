@@ -5,7 +5,7 @@
  */
 package com.flair.server.parser;
 
-import com.flair.server.grammar.Language;
+import com.flair.shared.grammar.Language;
 
 /**
  * Represents an abstract document parser

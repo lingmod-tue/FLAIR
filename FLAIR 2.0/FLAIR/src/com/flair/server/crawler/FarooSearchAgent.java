@@ -5,8 +5,8 @@ package com.flair.server.crawler;
 
 import com.flair.server.crawler.impl.AbstractSearchAgentImplResult;
 import com.flair.server.crawler.impl.faroo.FarooSearch;
-import com.flair.server.grammar.Language;
 import com.flair.server.utilities.FLAIRLogger;
+import com.flair.shared.grammar.Language;
 
 import java.util.ArrayList;
 import java.util.List;

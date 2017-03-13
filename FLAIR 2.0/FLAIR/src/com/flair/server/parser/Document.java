@@ -7,8 +7,8 @@ package com.flair.server.parser;
 
 import java.util.StringTokenizer;
 
-import com.flair.server.grammar.GrammaticalConstruction;
-import com.flair.server.grammar.Language;
+import com.flair.shared.grammar.GrammaticalConstruction;
+import com.flair.shared.grammar.Language;
 
 /**
  * Represents a text document that's parsed by the NLP Parser

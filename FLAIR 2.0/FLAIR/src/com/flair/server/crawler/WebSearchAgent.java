@@ -3,7 +3,7 @@ package com.flair.server.crawler;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.flair.server.grammar.Language;
+import com.flair.shared.grammar.Language;
 
 /**
  * Abstract base class for a web search executor

@@ -3,17 +3,19 @@ package com.flair.client.localization;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.flair.shared.grammar.Language;
+
 /*
  * Manages localization state
  */
 public class LocalizationEngine
 {
-	private LocalizationLanguage			currentLang;
-	private final Set<LocalizedUI>			activeLocalizedViews;
+	private Language					currentLang;
+	private final Set<LocalizedUI>		activeLocalizedViews;
 	
 	public LocalizationEngine() 
 	{
-		this.currentLang = LocalizationLanguage.ENGLISH;
+		this.currentLang = Language.ENGLISH;
 		this.activeLocalizedViews = new HashSet<>();
 	}
 	
@@ -23,11 +25,11 @@ public class LocalizationEngine
 			itr.setLocalization(currentLang);
 	}
 	
-	public LocalizationLanguage getLanguage() {
+	public Language getLanguage() {
 		return currentLang;
 	}
 	
-	public void setLanguage(LocalizationLanguage lang) 
+	public void setLanguage(Language lang) 
 	{
 		if (lang != currentLang)
 		{

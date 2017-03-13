@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import com.flair.server.grammar.GrammaticalConstruction;
+import com.flair.shared.grammar.GrammaticalConstruction;
 
 /**
  * A collection of related documents represeting a corpus

@@ -5,7 +5,7 @@
  */
 package com.flair.server.parser;
 
-import com.flair.server.grammar.Language;
+import com.flair.shared.grammar.Language;
 
 /**
  * Omnibus factory generator for component classes

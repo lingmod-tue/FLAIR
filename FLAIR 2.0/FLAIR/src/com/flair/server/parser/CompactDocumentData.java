@@ -6,7 +6,7 @@
 package com.flair.server.parser;
 
 import com.flair.server.crawler.SearchResult;
-import com.flair.server.grammar.GrammaticalConstruction;
+import com.flair.shared.grammar.GrammaticalConstruction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,33 +57,16 @@ public final class CompactDocumentData
     private final ArrayList<String>			constructions;
     private final ArrayList<Double>			relFrequencies;
     private final ArrayList<Integer>			frequencies;
-    private final ArrayList<Double>			tfNorm;
     private final ArrayList<ConstructionOccurrence>	highlights;
-    private final ArrayList<Double>			tfIdf;
     private final ArrayList<KeywordOccurrence>		keywords;
     private final double				totalKeywords;	    // total hit count
     private final double				relFreqKeywords;
-    private final double				docLenTfIdf;
     private final double				docLength;
 
-    private final double			readabilityScore;
     private final String			readabilityLevel;
-    private final double			readabilityARI;
-    private final double			readabilityBennoehr;
 
-    private final double			textWeight;
-    private final double			rankWeight;
-    private final double			gramScore;
-    private final double			totalWeight;
-
-    private final int				numChars;
     private final int				numSents;
     private final int				numDeps;
-    private final int				numWords;
-
-    private final double			avWordLength;
-    private final double			avSentLength;
-    private final double			avTreeDepth;
 
     public CompactDocumentData(AbstractDocument source) 
     {
@@ -128,9 +111,7 @@ public final class CompactDocumentData
 	constructions = new ArrayList<>();
 	relFrequencies = new ArrayList<>();
 	frequencies = new ArrayList<>();
-	tfNorm = new ArrayList<>();
 	highlights = new ArrayList<>();
-	tfIdf = new ArrayList<>();
 	keywords = new ArrayList<>();
 
 	for (GrammaticalConstruction itr : GrammaticalConstruction.values())
@@ -141,9 +122,7 @@ public final class CompactDocumentData
 		constructions.add(itr.getFrontendID());
 		relFrequencies.add(data.getRelativeFrequency());
 		frequencies.add(data.getFrequency());
-		tfNorm.add(data.getWeightedFrequency());
-		tfIdf.add(data.getRelativeWeightedFrequency());
-
+		
 		for (com.flair.server.parser.ConstructionOccurrence occr : data.getOccurrences())
 		    highlights.add(new ConstructionOccurrence(occr.getStart(), occr.getEnd(), itr.getFrontendID()));
 	    }
@@ -165,21 +144,9 @@ public final class CompactDocumentData
 	else
 	    totalKeywords = relFreqKeywords = 0;
 
-	docLenTfIdf = source.getFancyLength();
 	docLength = source.getLength();
-	readabilityScore = source.getReadabilityScore();
 	readabilityLevel = source.getReadabilityLevel();
-
-	readabilityARI = readabilityBennoehr = textWeight = 0;
-	rankWeight = gramScore = totalWeight = 0;
-
-	numChars = source.getNumCharacters();
 	numSents = source.getNumSentences();
 	numDeps = source.getNumDependencies();
-	numWords = source.getNumWords();
-
-	avWordLength = source.getAvgWordLength();
-	avSentLength = source.getAvgSentenceLength();
-	avTreeDepth = source.getAvgTreeDepth();
     }
 }

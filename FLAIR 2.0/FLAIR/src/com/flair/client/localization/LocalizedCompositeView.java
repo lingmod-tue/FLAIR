@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.flair.shared.grammar.Language;
 import com.google.gwt.user.client.ui.Composite;
 
 /*
@@ -16,26 +17,26 @@ import com.google.gwt.user.client.ui.Composite;
  */
 public abstract class LocalizedCompositeView extends Composite implements LocalizedUI
 {
-	protected final LocalizationEngine								localeCore;
-	protected final Map<LocalizationLanguage, LocalizationData>		localeData;
-	protected final List<AbstractLocalizationWrapper>				localizedWidgets;
+	protected final LocalizationEngine							localeCore;
+	protected final Map<Language, LocalizationData>				localeData;
+	protected final List<AbstractLocalizationWrapper>			localizedWidgets;
 	
 	public LocalizedCompositeView(LocalizationEngine locale)
 	{
 		localeCore = locale;
-		localeData = new EnumMap<>(LocalizationLanguage.class);
+		localeData = new EnumMap<>(Language.class);
 		localizedWidgets = new ArrayList<>();
 	}
 	
 	@Override
-	protected final void onAttach()
+	protected void onAttach()
 	{
 		super.onAttach();
 		localeCore.registerLocalizedView(this);
 	}
 	
 	@Override
-	protected final void onDetach()
+	protected void onDetach()
 	{
 		super.onDetach();
 		localeCore.deregisterLocalizedView(this);
@@ -49,7 +50,7 @@ public abstract class LocalizedCompositeView extends Composite implements Locali
 			localeData.put(data.getLanguage(), data);
 	}
 	
-	protected final void deregisterLocale(LocalizationLanguage lang) {
+	protected final void deregisterLocale(Language lang) {
 		localeData.remove(lang);
 	}
 	
@@ -66,7 +67,7 @@ public abstract class LocalizedCompositeView extends Composite implements Locali
 	}
 	
 	@Override
-	public final LocalizationData getLocalizationData(LocalizationLanguage lang)
+	public final LocalizationData getLocalizationData(Language lang)
 	{
 		if (localeData.containsKey(lang) == false)
 			throw new RuntimeException("Locale " + lang + " missing for view " + this.getClass().getName());
@@ -75,7 +76,7 @@ public abstract class LocalizedCompositeView extends Composite implements Locali
 	}
 	
 	@Override
-	public void setLocalization(LocalizationLanguage lang)
+	public void setLocalization(Language lang)
 	{
 		LocalizationData ldata = getLocalizationData(lang);
 

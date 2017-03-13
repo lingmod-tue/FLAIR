@@ -3,12 +3,19 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
 	
+	<ui:style>
+	.brand-logo {
+		padding: 0px 0px 5px 0px;
+		height: 35px;
+	}
+	</ui:style>
+	
 	<g:HTMLPanel>
 		<!-- Main Navbar -->
-		<b:Navbar>
+		<b:Navbar position="FIXED_TOP">
 			<b:NavbarHeader>
 				<b:NavbarBrand>
-					<img class="logo" src="img/logo_2.png" alt="FLAIR" height="55px"/>
+					<img class="{style.brand-logo}" src="img/logo_2.png" alt="FLAIR"/>
 				</b:NavbarBrand>
 				<b:NavbarCollapseButton dataTarget="#navbar-collapse" />
 			</b:NavbarHeader>
@@ -31,9 +38,14 @@
 				</b:NavbarNav>
 			</b:NavbarCollapse>
 		</b:Navbar>
-	
+		
+		<!-- Workaround for the overlapping navbar -->
+		<g:HTML>
+			<br/><br/><br/>
+		</g:HTML>
+		
 		<!-- Main Panel -->
-		<g:SimplePanel ui:field="pnlMainUI" />
+		<g:SimplePanel ui:field="pnlMainUI"/>			
 
 		<!-- Throbber Modal -->
 		<b:Modal ui:field="mdlThrobberUI" closable="false" fade="false" dataBackdrop="STATIC" b:id="modalThrobber">

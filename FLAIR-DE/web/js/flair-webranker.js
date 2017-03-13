@@ -631,13 +631,13 @@ FLAIR.WEBRANKER.STATE = function() {
 	    // indexSt1 can be either of form start-end or just end
 	    if (indexSt1.indexOf("-") > -1) 
 	    {
-		indexEnd1 = indexSt1.substring(indexSt1.indexOf("-") + 1);
-		indexSt1 = indexSt1.substring(0, indexSt1.indexOf("-"));
+			indexEnd1 = indexSt1.substring(indexSt1.indexOf("-") + 1);
+			indexSt1 = indexSt1.substring(0, indexSt1.indexOf("-"));
 	    }
 	    if (indexSt2.indexOf("-") > -1) 
 	    {
-		indexEnd2 = indexSt2.substring(indexSt2.indexOf("-") + 1);
-		indexSt2 = indexSt2.substring(0, indexSt2.indexOf("-"));
+			indexEnd2 = indexSt2.substring(indexSt2.indexOf("-") + 1);
+			indexSt2 = indexSt2.substring(0, indexSt2.indexOf("-"));
 	    }
 
 	    s1 = parseInt(indexSt1); // int
@@ -646,41 +646,41 @@ FLAIR.WEBRANKER.STATE = function() {
 	    var sComp = s2 - s1; // int
 
 	    if (sComp !== 0)
-		return sComp;
+			return sComp;
 	    else 
 	    {
-		if (indexEnd1.length > 0) 
-		{
-		    if (indexEnd2.length > 0) 
-		    {
-			e1 = parseInt(indexEnd1); // int
-			e2 = parseInt(indexEnd2); // int
+			if (indexEnd1.length > 0) 
+			{
+				if (indexEnd2.length > 0) 
+				{
+					e1 = parseInt(indexEnd1); // int
+					e2 = parseInt(indexEnd2); // int
 
-			var l1 = Math.abs(e1 - s1); // int
-			var l2 = Math.abs(e2 - s2); // int
+					var l1 = Math.abs(e1 - s1); // int
+					var l2 = Math.abs(e2 - s2); // int
 
-			return (l1 - l2);
-		    } 
-		    else
-			return sComp;
-		} 
-		else if (indexEnd2.length > 0) 
-		{
-		    if (indexEnd1.length > 0) 
-		    {
-			e1 = parseInt(indexEnd1);
-			e2 = parseInt(indexEnd2);
+					return (l1 - l2);
+				} 
+				else
+					return sComp;
+			} 
+			else if (indexEnd2.length > 0) 
+			{
+				if (indexEnd1.length > 0) 
+				{
+					e1 = parseInt(indexEnd1);
+					e2 = parseInt(indexEnd2);
 
-			var l1 = Math.abs(e1 - s1); // int
-			var l2 = Math.abs(e2 - s2); // int
+					var l1 = Math.abs(e1 - s1); // int
+					var l2 = Math.abs(e2 - s2); // int
 
-			return (l1 - l2);
-		    }
-		    else
-			return sComp;
-		} 
-		else
-		    return sComp;
+					return (l1 - l2);
+				}
+				else
+					return sComp;
+			} 
+			else
+				return sComp;
 	    }
 	});
 
@@ -706,29 +706,29 @@ FLAIR.WEBRANKER.STATE = function() {
 	    // indexSt1 can be either of form start-end or just end
 	    if (curItem.indexOf("-") > -1)
 	    {
-		tmpStart = parseInt(curItem.substring(0, curItem.indexOf("-")));
-		tmpEnd = parseInt(curItem.substring(curItem.indexOf("-") + 1));
-		insertHere = tmpStart;
+			tmpStart = parseInt(curItem.substring(0, curItem.indexOf("-")));
+			tmpEnd = parseInt(curItem.substring(curItem.indexOf("-") + 1));
+			insertHere = tmpStart;
 	    }
 	    else
-		insertHere = parseInt(curItem);
+			insertHere = parseInt(curItem);
 
 	    var tag = allIndices[ind]["tag"]; // String
 	    // show several constructions on mouseover, ONLY if they fully overlap (e.g., complex sentence, direct question)
 	    if (tag.indexOf("<span") > -1)
 	    {
-		var toInsertBefore = ""; // String // to take care in more than 2 overlapping constructions
-		if (prevStartInd === insertHere && prevEndInd === tmpEnd)
-		{
-		    tag = tag.substring(0, tag.indexOf("'>")) + ", " + prevConstruct + "'>";
-		    insertHere += prevStartTag.length;
-		    toInsertBefore = prevStartTag;
-		}
+			var toInsertBefore = ""; // String // to take care in more than 2 overlapping constructions
+			if (prevStartInd === insertHere && prevEndInd === tmpEnd)
+			{
+				tag = tag.substring(0, tag.indexOf("'>")) + ", " + prevConstruct + "'>";
+				insertHere += prevStartTag.length;
+				toInsertBefore = prevStartTag;
+			}
 
-		prevStartInd = parseInt(curItem.substring(0, curItem.indexOf("-"))); // int
-		prevEndInd = parseInt(curItem.substring(curItem.indexOf("-") + 1)); // int
-		prevStartTag = toInsertBefore + tag;
-		prevConstruct = tag.substring(tag.indexOf("title='") + 7, tag.indexOf("'>"));
+			prevStartInd = parseInt(curItem.substring(0, curItem.indexOf("-"))); // int
+			prevEndInd = parseInt(curItem.substring(curItem.indexOf("-") + 1)); // int
+			prevStartTag = toInsertBefore + tag;
+			prevConstruct = tag.substring(tag.indexOf("title='") + 7, tag.indexOf("'>"));
 	    }
 
 	    docText = docText.substring(0, insertHere) + tag + docText.substring(insertHere);

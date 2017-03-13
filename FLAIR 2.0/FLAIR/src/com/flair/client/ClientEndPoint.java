@@ -58,4 +58,8 @@ public class ClientEndPoint
 	public LocalizationEngine getLocalization() {
 		return localeCore;
 	}
+
+	public MainViewport getViewport() {
+		return viewport;
+	}
 }

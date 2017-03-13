@@ -3,7 +3,7 @@
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/.
  
  */
-package com.flair.server.grammar;
+package com.flair.shared.grammar;
 
 import java.util.ArrayList;
 import java.util.List;

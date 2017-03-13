@@ -1,24 +1,27 @@
 package com.flair.client.views;
 
 import org.gwtbootstrap3.client.ui.AnchorButton;
+
 import org.gwtbootstrap3.client.ui.AnchorListItem;
 import org.gwtbootstrap3.client.ui.Modal;
 
 import com.flair.client.ClientEndPoint;
 import com.flair.client.localization.LocalizationEngine;
-import com.flair.client.localization.LocalizationLanguage;
 import com.flair.client.localization.LocalizedCompositeView;
 import com.flair.client.localization.SimpleLocalizedTextWidget;
+import com.flair.client.localization.SimpleLocale;
+import com.flair.shared.grammar.Language;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class MainViewport extends LocalizedCompositeView
 {
-	static final class MainViewportLocale extends SimpleViewLocale
+	static final class MainViewportLocale extends SimpleLocale
 	{
 		static final String		DESC_btnWebSearchUI = "btnWebSearchUI";
 		static final String		DESC_btnUploadUI = "btnUploadUI";
@@ -28,7 +31,7 @@ public class MainViewport extends LocalizedCompositeView
 		static final String		DESC_btnLangDeUI = "btnLangDeUI";
 
 		@Override
-		void init()
+		public void init()
 		{
 			// EN
 			en.put(DESC_btnWebSearchUI, "Web Search");
@@ -80,22 +83,22 @@ public class MainViewport extends LocalizedCompositeView
 	SimplePanel									pnlMainUI;
 	@UiField
 	AnchorListItem								btnWebSearchUI;
-	SimpleLocalizedTextWidget<AnchorListItem>			btnWebSearchLC;
+	SimpleLocalizedTextWidget<AnchorListItem>	btnWebSearchLC;
 	@UiField
 	AnchorListItem								btnUploadUI;
-	SimpleLocalizedTextWidget<AnchorListItem>			btnUploadLC;
+	SimpleLocalizedTextWidget<AnchorListItem>	btnUploadLC;
 	@UiField
 	AnchorListItem								btnAboutUI;
-	SimpleLocalizedTextWidget<AnchorListItem>			btnAboutLC;
+	SimpleLocalizedTextWidget<AnchorListItem>	btnAboutLC;
 	@UiField
 	AnchorButton								btnSwitchLangUI;
-	SimpleLocalizedTextWidget<AnchorButton>			btnSwitchLangLC;
+	SimpleLocalizedTextWidget<AnchorButton>		btnSwitchLangLC;
 	@UiField
 	AnchorListItem								btnLangEnUI;
-	SimpleLocalizedTextWidget<AnchorListItem>			btnLangEnLC;
+	SimpleLocalizedTextWidget<AnchorListItem>	btnLangEnLC;
 	@UiField
 	AnchorListItem								btnLangDeUI;
-	SimpleLocalizedTextWidget<AnchorListItem>			btnLangDeLC;
+	SimpleLocalizedTextWidget<AnchorListItem>	btnLangDeLC;
 	@UiField
 	Modal										mdlAboutEnUI;
 	@UiField
@@ -131,6 +134,8 @@ public class MainViewport extends LocalizedCompositeView
 		registerLocalizedWidget(btnSwitchLangLC);
 		registerLocalizedWidget(btnLangEnLC);
 		registerLocalizedWidget(btnLangDeLC);
+		
+		refreshLocalization();
 	}
 	
 	private void initHandlers()
@@ -140,11 +145,11 @@ public class MainViewport extends LocalizedCompositeView
 		});
 		
 		btnLangEnUI.addClickHandler(e -> {
-			localeCore.setLanguage(LocalizationLanguage.ENGLISH);
+			localeCore.setLanguage(Language.ENGLISH);
 		});
 		
 		btnLangDeUI.addClickHandler(e -> {
-			localeCore.setLanguage(LocalizationLanguage.GERMAN);
+			localeCore.setLanguage(Language.GERMAN);
 		});
 		
 		btnAboutUI.addClickHandler(e -> {
@@ -164,8 +169,6 @@ public class MainViewport extends LocalizedCompositeView
 	{
 		// workaround for the bug that prevents the modal from being closed when it's in the process of fading-in
 		mdlThrobberUI.setFade(false);
-		
-		refreshLocalization();
 	}
 	
 	@UiConstructor
@@ -177,6 +180,8 @@ public class MainViewport extends LocalizedCompositeView
 		initLocale();
 		initHandlers();
 		initUI();
+		
+		attachMainPanel(new WebSearchView(ClientEndPoint.get().getWebRanker()));
 	}
 	
 }

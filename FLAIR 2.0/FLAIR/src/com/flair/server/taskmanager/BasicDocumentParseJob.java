@@ -5,12 +5,12 @@
  */
 package com.flair.server.taskmanager;
 
-import com.flair.server.grammar.Language;
 import com.flair.server.parser.AbstractDocumentKeywordSearcherFactory;
 import com.flair.server.parser.AbstractDocumentSource;
 import com.flair.server.parser.AbstractParsingStrategyFactory;
 import com.flair.server.parser.DocumentCollection;
 import com.flair.server.parser.KeywordSearcherInput;
+import com.flair.shared.grammar.Language;
 
 import java.util.List;
 

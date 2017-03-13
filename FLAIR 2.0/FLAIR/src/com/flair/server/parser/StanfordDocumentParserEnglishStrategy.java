@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import com.flair.server.grammar.EnglishGrammaticalConstants;
-import com.flair.server.grammar.GrammaticalConstruction;
-import com.flair.server.grammar.Language;
+import com.flair.shared.grammar.GrammaticalConstruction;
+import com.flair.shared.grammar.Language;
 
 /**
  * Implementation of English language parsing logic for the Stanford parser

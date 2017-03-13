@@ -3,10 +3,10 @@
  */
 package com.flair.server.parser;
 
-import com.flair.server.grammar.Language;
 import com.flair.server.utilities.AbstractTextExtractor;
 import com.flair.server.utilities.TextExtractorFactory;
 import com.flair.server.utilities.TextExtractorType;
+import com.flair.shared.grammar.Language;
 
 import java.io.InputStream;
 

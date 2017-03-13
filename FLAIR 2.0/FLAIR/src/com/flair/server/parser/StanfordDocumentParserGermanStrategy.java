@@ -18,8 +18,8 @@ import java.util.regex.Pattern;
 
 import com.flair.server.grammar.GermanGrammaticalConstants;
 import com.flair.server.grammar.GermanGrammaticalTreePatterns;
-import com.flair.server.grammar.GrammaticalConstruction;
-import com.flair.server.grammar.Language;
+import com.flair.shared.grammar.GrammaticalConstruction;
+import com.flair.shared.grammar.Language;
 
 /**
  * Implementation of German language parsing logic for the Stanford parser

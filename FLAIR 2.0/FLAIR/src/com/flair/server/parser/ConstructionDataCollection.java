@@ -7,7 +7,7 @@ package com.flair.server.parser;
 
 import java.util.EnumMap;
 
-import com.flair.server.grammar.GrammaticalConstruction;
+import com.flair.shared.grammar.GrammaticalConstruction;
 
 /**
  * A table of construction data mapped to constructions

@@ -8,7 +8,7 @@ package com.flair.server.parser;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.flair.server.grammar.GrammaticalConstruction;
+import com.flair.shared.grammar.GrammaticalConstruction;
 
 /**
  * Represents basic properties of a construction for a specific document
