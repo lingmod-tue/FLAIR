@@ -6,9 +6,10 @@ import org.gwtbootstrap3.extras.select.client.ui.Select;
 
 import com.flair.client.ClientEndPoint;
 import com.flair.client.WebRankerCore;
-import com.flair.client.localization.LocalizedCompositeView;
+import com.flair.client.localization.LocalizedComposite;
 import com.flair.client.localization.SimpleLocalizedTextWidget;
 import com.flair.client.localization.SimpleLocalizedWidget;
+import com.flair.client.localization.locale.WebSearchViewLocale;
 import com.flair.client.localization.SimpleLocale;
 import com.flair.shared.grammar.Language;
 import com.google.gwt.core.client.GWT;
@@ -19,46 +20,8 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class WebSearchView extends LocalizedCompositeView
+public class WebSearchView extends LocalizedComposite
 {
-	static final class WebSearchViewLocale extends SimpleLocale
-	{
-		static final String		DESC_txtSearchBoxUI = "txtSearchBoxUI";
-		static final String		DESC_selResultCountItm10UI = "selResultCountItm10UI";
-		static final String		DESC_selResultCountItm20UI = "selResultCountItm20UI";
-		static final String		DESC_selResultCountItm30UI = "selResultCountItm30UI";
-		static final String		DESC_selResultCountItm40UI = "selResultCountItm40UI";
-		static final String		DESC_selResultCountItm50UI = "selResultCountItm50UI";
-		static final String		DESC_selResultLangItmEnUI = "selResultLangItmEnUI";
-		static final String		DESC_selResultLangItmDeUI = "selResultLangItmDeUI";
-		
-		@Override
-		public void init()
-		{
-			// EN
-			en.put(DESC_txtSearchBoxUI, "Enter a query");
-			en.put(DESC_selResultCountItm10UI, "10 Results");
-			en.put(DESC_selResultCountItm20UI, "20 Results");
-			en.put(DESC_selResultCountItm30UI, "30 Results");
-			en.put(DESC_selResultCountItm40UI, "40 Results");
-			en.put(DESC_selResultCountItm50UI, "50 Results");
-			en.put(DESC_selResultLangItmEnUI, "English");
-			en.put(DESC_selResultLangItmDeUI, "German");
-			
-			// DE
-			de.put(DESC_txtSearchBoxUI, "Suchbegriff eingeben");
-			de.put(DESC_selResultCountItm10UI, "10 Seiten");
-			de.put(DESC_selResultCountItm20UI, "20 Seiten");
-			de.put(DESC_selResultCountItm30UI, "30 Seiten");
-			de.put(DESC_selResultCountItm40UI, "40 Seiten");
-			de.put(DESC_selResultCountItm50UI, "50 Seiten");
-			de.put(DESC_selResultLangItmEnUI, "Englisch");
-			de.put(DESC_selResultLangItmDeUI, "Deutsch");
-		}
-		
-		private static final WebSearchViewLocale		INSTANCE = new WebSearchViewLocale();
-	}
-	
 	private static WebSearchViewUiBinder uiBinder = GWT.create(WebSearchViewUiBinder.class);
 
 	interface WebSearchViewUiBinder extends UiBinder<Widget, WebSearchView> {

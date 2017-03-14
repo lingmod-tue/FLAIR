@@ -12,8 +12,12 @@ import org.gwtbootstrap3.client.ui.PanelHeader;
 import org.gwtbootstrap3.client.ui.constants.PanelType;
 
 import com.flair.client.ClientEndPoint;
-import com.flair.client.localization.LocalizedCompositeView;
+import com.flair.client.localization.LocalizedComposite;
 import com.flair.client.localization.SimpleLocale;
+import com.flair.client.localization.locale.GrammaticalConstructionSliderPanelLocale;
+import com.flair.client.widgets.interfaces.CanReset;
+import com.flair.client.widgets.interfaces.GrammaticalConstructionContainer;
+import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -25,25 +29,8 @@ import com.google.gwt.user.client.ui.Widget;
 /*
  * Container panel for weight sliders 
  */
-public class GrammaticalConstructionSliderPanel extends LocalizedCompositeView implements HasWidgets, HasText, CanReset
+public class GrammaticalConstructionSliderPanel extends LocalizedComposite implements HasWidgets, HasText, CanReset, GrammaticalConstructionContainer
 {
-	static final class Locale extends SimpleLocale
-	{
-		static final String		DESC_resetTooltip = "resetTooltip";
-		
-		@Override
-		public void init()
-		{
-			// EN
-			en.put(DESC_resetTooltip, "reset");
-
-			// DE
-			de.put(DESC_resetTooltip, "zurücksetzen");
-		}
-		
-		private static final Locale		INSTANCE = new Locale();
-	}
-	
 	private static GrammaticalConstructionSliderPanelUiBinder uiBinder = GWT.create(GrammaticalConstructionSliderPanelUiBinder.class);
 
 	interface GrammaticalConstructionSliderPanelUiBinder extends UiBinder<Widget, GrammaticalConstructionSliderPanel>
@@ -67,8 +54,8 @@ public class GrammaticalConstructionSliderPanel extends LocalizedCompositeView i
 	
 	private void initLocale()
 	{
-		registerLocale(Locale.INSTANCE.en);
-		registerLocale(Locale.INSTANCE.de);
+		registerLocale(GrammaticalConstructionSliderPanelLocale.INSTANCE.en);
+		registerLocale(GrammaticalConstructionSliderPanelLocale.INSTANCE.de);
 		
 		refreshLocalization();
 	}	
@@ -96,7 +83,7 @@ public class GrammaticalConstructionSliderPanel extends LocalizedCompositeView i
 		super.setLocalization(lang);
 		
 		// update tooltip
-		btnResetUI.setTitle(getLocalizationData(lang).get(Locale.DESC_resetTooltip));
+		btnResetUI.setTitle(getLocalizationData(lang).get(GrammaticalConstructionSliderPanelLocale.DESC_resetTooltip));
 	}
 
 	@Override
@@ -145,5 +132,45 @@ public class GrammaticalConstructionSliderPanel extends LocalizedCompositeView i
 	@Override
 	public void setText(String text) {
 		btnHeaderTextUI.setText(text);
+	}
+
+	@Override
+	public boolean hasConstruction(GrammaticalConstruction val) {
+		return getWeightSlider(val) != null;
+	}
+	
+	private GrammaticalConstructionWeightSlider getAsSlider(Widget w, GrammaticalConstruction gram)
+	{
+		if (w instanceof GrammaticalConstructionWeightSlider)
+		{
+			GrammaticalConstructionWeightSlider slider = (GrammaticalConstructionWeightSlider)w;
+			if (slider.getGram() == gram)
+				return slider;
+		}
+		
+		return null;
+	}
+	
+	private GrammaticalConstructionWeightSlider lookupWeightSlider(Widget w, GrammaticalConstruction gram)
+	{
+		GrammaticalConstructionWeightSlider slider = getAsSlider(w, gram);
+		if (slider != null)
+			return slider;
+		else if (w instanceof HasWidgets)
+		{
+			for (Widget itr : (HasWidgets)w)
+			{
+				slider = getAsSlider(itr, gram);
+				if (slider != null)
+					return slider;
+			}
+		}
+		
+		return null;
+	}
+
+	@Override
+	public GrammaticalConstructionWeightSlider getWeightSlider(GrammaticalConstruction val) {
+		return lookupWeightSlider(pnlBodyUI, val);
 	}
 }

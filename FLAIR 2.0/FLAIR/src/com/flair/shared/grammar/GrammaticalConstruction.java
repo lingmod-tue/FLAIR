@@ -10,6 +10,7 @@ import java.util.List;
 
 /**
  * Represents a (generally) language-agnostic grammatical construction.
+ * IMPORTANT - ORDER-DEPENDENT! ADD NEW ITEMS TO THE END!
  * @author shadeMe
 */
 public enum GrammaticalConstruction
@@ -200,36 +201,36 @@ public enum GrammaticalConstruction
     ;
     
 
-    private final String		frontendID;	// identifier used in the front-end
+    private final String		id;	// unique ID
     
     GrammaticalConstruction(String id)
     {	
-	this.frontendID = id;	
-	GrammaticalConstructionHelper.registerFrontendID(id);
+	this.id = id;	
+	GrammaticalConstructionHelper.registerID(id);
     }
     
     @Override
     public String toString() {
-	return getFrontendID();
+	return getID();
     }
     
-    public String getFrontendID() {
-	return this.frontendID;
+    public String getID() {
+	return this.id;
     }
 }
 
 class GrammaticalConstructionHelper
 {
-    private static final List<String>	FRONTEND_IDS = new ArrayList<>();
+    private static final List<String>	UNIQUE_IDS = new ArrayList<>();
 
-    static void registerFrontendID(String id)
+    static void registerID(String id)
     {
-	for (String itr : FRONTEND_IDS)
+	for (String itr : UNIQUE_IDS)
 	{
 	    if (itr.equalsIgnoreCase(id))
 		throw new IllegalArgumentException("Grammatical construction ID already registered");
 	}
 	
-	FRONTEND_IDS.add(id);
+	UNIQUE_IDS.add(id);
     }
 }

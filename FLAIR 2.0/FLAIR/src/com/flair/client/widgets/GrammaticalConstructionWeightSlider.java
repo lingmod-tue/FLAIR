@@ -2,8 +2,10 @@ package com.flair.client.widgets;
 
 import org.gwtbootstrap3.client.ui.Badge;
 
-import com.flair.client.GrammaticalConstructionLocale;
 import com.flair.client.localization.SimpleLocale;
+import com.flair.client.localization.locale.GrammaticalConstructionWeightSliderLocale;
+import com.flair.client.localization.locale.GrammaticalConstructionLocale;
+import com.flair.client.widgets.interfaces.CanReset;
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
 import com.google.gwt.uibinder.client.UiConstructor;
@@ -16,29 +18,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  */
 public class GrammaticalConstructionWeightSlider extends GenericWeightSlider implements CanReset
 {
-	static final class Locale extends SimpleLocale
-	{
-		static final String		DESC_toggleTooltip = "toggleTooltip";
-		static final String		DESC_resultCountTooltip = "resultCountTooltip";
-		static final String		DESC_sliderTooltip = "sliderTooltip";
-		
-		@Override
-		public void init()
-		{
-			// EN
-			en.put(DESC_toggleTooltip, "uncheck to exclude texts with this construct");
-			en.put(DESC_resultCountTooltip, "results");
-			en.put(DESC_sliderTooltip, "move right to rank texts with this construct higher");
-			
-			// DE
-			de.put(DESC_toggleTooltip, "abwählen, um Texte mit dieser Konstruktion auszuschließen");
-			de.put(DESC_resultCountTooltip, "Ergebnisse");
-			de.put(DESC_sliderTooltip, "nach rechts bewegen, um Texte mit dieser Konstruktion höher zu bewerten");
-		}
-		
-		private static final Locale		INSTANCE = new Locale();
-	}
-	
 	private static final String					STYLENAME_BADGE = "construction-weight-slider-badge";
 	private static final String					STYLENAME_WIDGET = "construction-weight-slider";
 	
@@ -47,8 +26,8 @@ public class GrammaticalConstructionWeightSlider extends GenericWeightSlider imp
 	
 	private void initLocale()
 	{
-		registerLocale(Locale.INSTANCE.en);
-		registerLocale(Locale.INSTANCE.de);
+		registerLocale(GrammaticalConstructionWeightSliderLocale.INSTANCE.en);
+		registerLocale(GrammaticalConstructionWeightSliderLocale.INSTANCE.de);
 		
 		refreshLocalization();
 	}
@@ -103,9 +82,9 @@ public class GrammaticalConstructionWeightSlider extends GenericWeightSlider imp
 		else
 			setToggleText(GrammaticalConstructionLocale.get().getLocalizedName(gramConstruction, lang));
 		
-		toggle.setTitle(getLocalizationData(lang).get(Locale.DESC_toggleTooltip));
-		resultCount.setTitle(getLocalizationData(lang).get(Locale.DESC_resultCountTooltip));
-		slider.setTitle(getLocalizationData(lang).get(Locale.DESC_sliderTooltip));
+		toggle.setTitle(getLocalizationData(lang).get(GrammaticalConstructionWeightSliderLocale.DESC_toggleTooltip));
+		resultCount.setTitle(getLocalizationData(lang).get(GrammaticalConstructionWeightSliderLocale.DESC_resultCountTooltip));
+		slider.setTitle(getLocalizationData(lang).get(GrammaticalConstructionWeightSliderLocale.DESC_sliderTooltip));
 	}
 
 	

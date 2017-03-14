@@ -1,4 +1,6 @@
-package com.flair.client.localization;
+package com.flair.client.localization.interfaces;
+
+import com.flair.client.localization.LocalizationData;
 
 /*
  * Interface for localizable entities

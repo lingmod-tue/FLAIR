@@ -1,5 +1,6 @@
 package com.flair.client.localization;
 
+import com.flair.client.localization.interfaces.AbstractLocalizationWrapper;
 import com.google.gwt.user.client.ui.Widget;
 
 /*

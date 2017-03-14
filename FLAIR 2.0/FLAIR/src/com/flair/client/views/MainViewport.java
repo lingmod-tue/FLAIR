@@ -7,8 +7,9 @@ import org.gwtbootstrap3.client.ui.Modal;
 
 import com.flair.client.ClientEndPoint;
 import com.flair.client.localization.LocalizationEngine;
-import com.flair.client.localization.LocalizedCompositeView;
+import com.flair.client.localization.LocalizedComposite;
 import com.flair.client.localization.SimpleLocalizedTextWidget;
+import com.flair.client.localization.locale.MainViewportLocale;
 import com.flair.client.localization.SimpleLocale;
 import com.flair.shared.grammar.Language;
 import com.google.gwt.core.client.GWT;
@@ -19,40 +20,8 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
-public class MainViewport extends LocalizedCompositeView
+public class MainViewport extends LocalizedComposite
 {
-	static final class MainViewportLocale extends SimpleLocale
-	{
-		static final String		DESC_btnWebSearchUI = "btnWebSearchUI";
-		static final String		DESC_btnUploadUI = "btnUploadUI";
-		static final String		DESC_btnAboutUI = "btnAboutUI";
-		static final String		DESC_btnSwitchLangUI = "btnSwitchLangUI";
-		static final String		DESC_btnLangEnUI = "btnLangEnUI";
-		static final String		DESC_btnLangDeUI = "btnLangDeUI";
-
-		@Override
-		public void init()
-		{
-			// EN
-			en.put(DESC_btnWebSearchUI, "Web Search");
-			en.put(DESC_btnUploadUI, "Upload Corpus");
-			en.put(DESC_btnAboutUI, "About FLAIR");
-			en.put(DESC_btnSwitchLangUI, "Language");
-			en.put(DESC_btnLangEnUI, "English");
-			en.put(DESC_btnLangDeUI, "German");
-			
-			// DE
-			de.put(DESC_btnWebSearchUI, "Internet Suche");
-			de.put(DESC_btnUploadUI, "Text Hochladen");
-			de.put(DESC_btnAboutUI, "Über FLAIR");
-			de.put(DESC_btnSwitchLangUI, "Sprache");
-			de.put(DESC_btnLangEnUI, "Englisch");
-			de.put(DESC_btnLangDeUI, "Deutsch");
-		}
-		
-		private static final MainViewportLocale		INSTANCE = new MainViewportLocale();
-	}
-	
 	/*
 	 * Performs a modal operation that disables the UI during execution
 	 */
@@ -110,7 +79,7 @@ public class MainViewport extends LocalizedCompositeView
 		pnlMainUI.clear();
 	}
 	
-	private void attachMainPanel(LocalizedCompositeView view)
+	private void attachMainPanel(LocalizedComposite view)
 	{
 		clearMainPanel();
 		pnlMainUI.add(view);

@@ -1,5 +1,6 @@
 package com.flair.client.ranker;
 
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -9,6 +10,6 @@ import com.google.gwt.user.client.ui.Widget;
 public interface DocumentAnnotatorOutput
 {
 	public interface HighlightText {
-		public Widget			getHighlightedTextContainer();		// returns the 
+		public SafeHtml			getHighlightedText();		// returns text with the highlight markup
 	}
 }

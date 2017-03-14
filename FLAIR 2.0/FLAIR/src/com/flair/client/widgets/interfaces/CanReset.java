@@ -1,4 +1,4 @@
-package com.flair.client.widgets;
+package com.flair.client.widgets.interfaces;
 
 /*
  * Implemented by widgets that support being reset to a default state

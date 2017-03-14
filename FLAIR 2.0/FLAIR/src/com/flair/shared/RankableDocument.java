@@ -10,14 +10,14 @@ import com.flair.shared.grammar.GrammaticalConstruction;
  */
 public interface RankableDocument
 {
-    public interface ConstructionRange extends Comparable<ConstructionRange>
+    public interface ConstructionRange
     {
 		public int						getStart();
 		public int						getEnd();
 		public GrammaticalConstruction	getConstruction();
     }
     
-    public interface KeywordRange extends Comparable<KeywordRange>
+    public interface KeywordRange
     {
     	public int		getStart();
 		public int		getEnd();
@@ -42,6 +42,7 @@ public interface RankableDocument
     public double								getKeywordRelFreq();	// relative to the number of words in the doc
     public Iterable<KeywordRange>				getKeywordOccurrences();
     
+    public int									getRawTextLength();		// wrapper around getText().size()
     public double								getNumWords();			// also the "length" of the document
     public double								getNumSentences();
     public double								getNumDependencies();

@@ -3,6 +3,7 @@ package com.flair.client.localization;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.flair.client.localization.interfaces.LocalizedUI;
 import com.flair.shared.grammar.Language;
 
 /*

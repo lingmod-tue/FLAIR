@@ -6,22 +6,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.flair.client.localization.interfaces.AbstractLocalizationWrapper;
+import com.flair.client.localization.interfaces.LocalizedUI;
 import com.flair.shared.grammar.Language;
 import com.google.gwt.user.client.ui.Composite;
 
 /*
- * Abstract base class for all localized views
+ * Abstract base class for all localized composite widgets/views
  * Naming conventions for widgets: <name>{UI/LC} where:
  * 	UI - UiBinder widget instance
  * 	LC - Localization widget instance
  */
-public abstract class LocalizedCompositeView extends Composite implements LocalizedUI
+public abstract class LocalizedComposite extends Composite implements LocalizedUI
 {
 	protected final LocalizationEngine							localeCore;
 	protected final Map<Language, LocalizationData>				localeData;
 	protected final List<AbstractLocalizationWrapper>			localizedWidgets;
 	
-	public LocalizedCompositeView(LocalizationEngine locale)
+	public LocalizedComposite(LocalizationEngine locale)
 	{
 		localeCore = locale;
 		localeData = new EnumMap<>(Language.class);

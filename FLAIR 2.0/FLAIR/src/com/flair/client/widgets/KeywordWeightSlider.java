@@ -3,12 +3,10 @@ package com.flair.client.widgets;
 import org.gwtbootstrap3.client.ui.Anchor;
 import org.gwtbootstrap3.client.ui.constants.IconType;
 
-import com.flair.client.GrammaticalConstructionLocale;
-import com.flair.client.localization.SimpleLocale;
-import com.flair.client.widgets.GrammaticalConstructionWeightSlider.Locale;
+import com.flair.client.localization.locale.KeywordWeightSliderLocale;
+import com.flair.client.widgets.interfaces.CanReset;
 import com.flair.shared.grammar.Language;
 import com.google.gwt.uibinder.client.UiConstructor;
-import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -18,38 +16,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
  */
 public class KeywordWeightSlider extends GenericWeightSlider implements CanReset
 {
-	static final class Locale extends SimpleLocale
-	{
-		static final String		DESC_toggleDefault = "toggleDefault";
-		static final String		DESC_toggleCustom = "toggleCustom";
-		static final String		DESC_toggleTooltip = "toggleTooltip";
-		static final String		DESC_editTooltip = "editTooltip";
-		static final String		DESC_resetTooltip = "resetTooltip";
-		static final String		DESC_sliderTooltip = "sliderTooltip";
-		
-		@Override
-		public void init()
-		{
-			// EN
-			en.put(DESC_toggleDefault, "Academic Vocabulary");
-			en.put(DESC_toggleCustom, "Custom Vocabulary");
-			en.put(DESC_toggleTooltip, "check to highlight keywords");
-			en.put(DESC_editTooltip, "edit vocabulary");
-			en.put(DESC_resetTooltip, "use default academic vocabulary");
-			en.put(DESC_sliderTooltip, "move right to rank texts with this construct higher");
-			
-			// DE
-			de.put(DESC_toggleDefault, "Akademisch Vokabular");
-			de.put(DESC_toggleCustom, "Benutzerdefiniert Vokabular");
-			de.put(DESC_toggleTooltip, "auswählen, um Schlüsselwörter hervorzuheben");
-			de.put(DESC_editTooltip, "Vokabular bearbeiten");
-			de.put(DESC_resetTooltip, "Standardliste für benutzerdefiniertes Vokabular verwenden");
-			de.put(DESC_sliderTooltip, "nach rechts bewegen, um Texte mit dieser Konstruktion höher zu bewerten");
-		}
-		
-		private static final Locale		INSTANCE = new Locale();
-	}
-	
 	public interface ClickHandler {
 		public void handle(KeywordWeightSlider source);
 	}
@@ -64,8 +30,8 @@ public class KeywordWeightSlider extends GenericWeightSlider implements CanReset
 	
 	private void initLocale()
 	{
-		registerLocale(Locale.INSTANCE.en);
-		registerLocale(Locale.INSTANCE.de);
+		registerLocale(KeywordWeightSliderLocale.INSTANCE.en);
+		registerLocale(KeywordWeightSliderLocale.INSTANCE.de);
 		
 		refreshLocalization();
 	}
@@ -134,12 +100,12 @@ public class KeywordWeightSlider extends GenericWeightSlider implements CanReset
 		super.setLocalization(lang);
 		
 		// update components
-		setToggleText(getLocalizationData(lang).get(customVocab == false ? Locale.DESC_toggleDefault : Locale.DESC_toggleCustom));
-		toggle.setTitle(getLocalizationData(lang).get(Locale.DESC_toggleTooltip));
+		setToggleText(getLocalizationData(lang).get(customVocab == false ? KeywordWeightSliderLocale.DESC_toggleDefault : KeywordWeightSliderLocale.DESC_toggleCustom));
+		toggle.setTitle(getLocalizationData(lang).get(KeywordWeightSliderLocale.DESC_toggleTooltip));
 		
-		editKeywords.setTitle(getLocalizationData(lang).get(Locale.DESC_editTooltip));
-		resetKeywords.setTitle(getLocalizationData(lang).get(Locale.DESC_resetTooltip));
-		slider.setTitle(getLocalizationData(lang).get(Locale.DESC_sliderTooltip));
+		editKeywords.setTitle(getLocalizationData(lang).get(KeywordWeightSliderLocale.DESC_editTooltip));
+		resetKeywords.setTitle(getLocalizationData(lang).get(KeywordWeightSliderLocale.DESC_resetTooltip));
+		slider.setTitle(getLocalizationData(lang).get(KeywordWeightSliderLocale.DESC_sliderTooltip));
 	}
 
 	

@@ -1,4 +1,4 @@
-package com.flair.client;
+package com.flair.client.localization.locale;
 
 import com.flair.client.localization.LocalizationData;
 import com.flair.client.localization.SimpleLocale;

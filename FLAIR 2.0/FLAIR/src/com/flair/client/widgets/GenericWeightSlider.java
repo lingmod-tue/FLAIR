@@ -6,7 +6,7 @@ import org.gwtbootstrap3.extras.slider.client.ui.base.constants.HandleType;
 import org.gwtbootstrap3.extras.slider.client.ui.base.constants.TooltipType;
 
 import com.flair.client.ClientEndPoint;
-import com.flair.client.localization.LocalizedCompositeView;
+import com.flair.client.localization.LocalizedComposite;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -14,7 +14,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 /*
  * Base class for custom weight slider widgets
  */
-public abstract class GenericWeightSlider extends LocalizedCompositeView
+public abstract class GenericWeightSlider extends LocalizedComposite
 {
 	public interface ToggleHandler {
 		public void handle(GenericWeightSlider source, boolean newValue);
