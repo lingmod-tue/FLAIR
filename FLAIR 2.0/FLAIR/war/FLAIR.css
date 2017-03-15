@@ -1,7 +1,9 @@
 /*
  * Common styles
  */
-
+body {
+  font-family: 'Open Sans', sans-serif;
+}
 
 /*
  * Weight widget styles

@@ -5,8 +5,8 @@
  */
 package com.flair.shared.grammar;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Represents a (generally) language-agnostic grammatical construction.
@@ -200,37 +200,39 @@ public enum GrammaticalConstruction
     PRONOUNS_OBJECTIVE("pronounsObjective"), // /PRP + me, you, them...
     ;
     
-
-    private final String		id;	// unique ID
-    
-    GrammaticalConstruction(String id)
-    {	
-	this.id = id;	
-	GrammaticalConstructionHelper.registerID(id);
-    }
-    
-    @Override
-    public String toString() {
-	return getID();
-    }
-    
-    public String getID() {
-	return this.id;
-    }
-}
-
-class GrammaticalConstructionHelper
-{
-    private static final List<String>	UNIQUE_IDS = new ArrayList<>();
-
-    static void registerID(String id)
-    {
-	for (String itr : UNIQUE_IDS)
+	
+	static final class Helper
 	{
-	    if (itr.equalsIgnoreCase(id))
-		throw new IllegalArgumentException("Grammatical construction ID already registered");
+		private static final Map<String, GrammaticalConstruction>	UNIQUE_IDS = new HashMap<>();
+		
+		private static void registerID(String id, GrammaticalConstruction gram)
+	    {
+	    	if (UNIQUE_IDS.containsKey(id))
+	    		throw new RuntimeException("Grammatical construction ID already registered");
+	    	else
+	    		UNIQUE_IDS.put(id, gram);
+		}
 	}
 	
-	UNIQUE_IDS.add(id);
-    }
+    private final String		id;	// unique ID
+    
+	GrammaticalConstruction(String id)
+	{
+		this.id = id;
+		Helper.registerID(id, this);
+	}
+
+	@Override
+	public String toString() {
+		return getID();
+	}
+
+	public String getID() {
+		return this.id;
+	}
+	
+	public static GrammaticalConstruction lookup(String id) {
+		return Helper.UNIQUE_IDS.get(id);
+	}
 }
+

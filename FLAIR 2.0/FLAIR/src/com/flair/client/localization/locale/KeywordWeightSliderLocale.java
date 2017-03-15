@@ -1,6 +1,7 @@
 package com.flair.client.localization.locale;
 
 import com.flair.client.localization.SimpleLocale;
+import com.flair.shared.grammar.Language;
 
 public final class KeywordWeightSliderLocale extends SimpleLocale
 {
@@ -29,6 +30,10 @@ public final class KeywordWeightSliderLocale extends SimpleLocale
 		de.put(DESC_editTooltip, "Vokabular bearbeiten");
 		de.put(DESC_resetTooltip, "Standardliste für benutzerdefiniertes Vokabular verwenden");
 		de.put(DESC_sliderTooltip, "nach rechts bewegen, um Texte mit dieser Konstruktion höher zu bewerten");
+	}
+	
+	public String getLocalizedKeywordString(Language lang, boolean customKeyword) {
+		return getLocalizationData(lang).get(customKeyword ? DESC_toggleCustom : DESC_toggleDefault);
 	}
 	
 	public static final KeywordWeightSliderLocale		INSTANCE = new KeywordWeightSliderLocale();
