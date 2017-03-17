@@ -5,18 +5,18 @@
 	
 	<g:HTMLPanel ui:field="pnlRootUI">
 		<!-- Sätze -->
-		<flair:GrammaticalConstructionSliderPanel ui:field="pnlSaetzeUI" type="WARNING" text="sätze">
+		<flair:GrammaticalConstructionPanelItem ui:field="pnlSaetzeUI" text="sätze">
 			<!-- Fragen -->
-			<flair:GrammaticalConstructionSliderPanel ui:field="pnlFragenUI" type="INFO" text="fragen">
+			<flair:GrammaticalConstructionPanelItem ui:field="pnlFragenUI" text="fragen">
 				<flair:GrammaticalConstructionWeightSlider gram="QUESTIONS_DIRECT"/>
 				<g:HTML><hr/></g:HTML>
 				<flair:GrammaticalConstructionWeightSlider gram="QUESTIONS_WH"/>
 				<g:HTML><hr/></g:HTML>
 				<flair:GrammaticalConstructionWeightSlider gram="QUESTIONS_YESNO"/>
-			</flair:GrammaticalConstructionSliderPanel>
+			</flair:GrammaticalConstructionPanelItem>
 			
 			<!-- Satztypen -->
-			<flair:GrammaticalConstructionSliderPanel ui:field="pnlSatztypenUI" type="INFO" text="sentence types">
+			<flair:GrammaticalConstructionPanelItem ui:field="pnlSatztypenUI" text="sentence types">
 				<flair:GrammaticalConstructionWeightSlider gram="SENTENCE_SIMPLE"/>
 				<g:HTML><hr/></g:HTML>
 				<flair:GrammaticalConstructionWeightSlider gram="SENTENCE_COMPOUND"/>
@@ -24,33 +24,33 @@
 				<flair:GrammaticalConstructionWeightSlider gram="CLAUSE_SUBORDINATE"/>
 				<g:HTML><hr/></g:HTML>
 				<flair:GrammaticalConstructionWeightSlider gram="SENTENCE_INCOMPLETE"/>
-			</flair:GrammaticalConstructionSliderPanel>
+			</flair:GrammaticalConstructionPanelItem>
 			
 			<!-- Nebensatztypen -->
-			<flair:GrammaticalConstructionSliderPanel ui:field="pnlNebensatztypenUI" type="INFO" text="nebensatztypen">
+			<flair:GrammaticalConstructionPanelItem ui:field="pnlNebensatztypenUI" text="nebensatztypen">
 				<flair:GrammaticalConstructionWeightSlider gram="CLAUSE_RELATIVE"/>
 				<g:HTML><hr/></g:HTML>
 				<flair:GrammaticalConstructionWeightSlider gram="CLAUSE_ADVERBIAL"/>
 				<g:HTML><hr/></g:HTML>
 				<flair:GrammaticalConstructionWeightSlider gram="CLAUSE_DASS"/>
-			</flair:GrammaticalConstructionSliderPanel>
-		</flair:GrammaticalConstructionSliderPanel>
+			</flair:GrammaticalConstructionPanelItem>
+		</flair:GrammaticalConstructionPanelItem>
 		
 		<!-- Wortarten -->
-		<flair:GrammaticalConstructionSliderPanel ui:field="pnlWortartenUI" type="WARNING" text="wortarten">
+		<flair:GrammaticalConstructionPanelItem ui:field="pnlWortartenUI" text="wortarten">
 			<!-- Verben -->
-			<flair:GrammaticalConstructionSliderPanel ui:field="pnlVerbenUI" type="INFO" text="verben">
+			<flair:GrammaticalConstructionPanelItem ui:field="pnlVerbenUI" text="verben">
 				<!-- Verbtypen -->
-				<flair:GrammaticalConstructionSliderPanel ui:field="pnlVerbtypenUI" type="INFO" text="verbtypen">
+				<flair:GrammaticalConstructionPanelItem ui:field="pnlVerbtypenUI" text="verbtypen">
 					<flair:GrammaticalConstructionWeightSlider gram="VERBTYP_MAIN"/>
 					<g:HTML><hr/></g:HTML>
 					<flair:GrammaticalConstructionWeightSlider gram="VERBTYP_AUXILIARIES"/>
 					<g:HTML><hr/></g:HTML>
 					<flair:GrammaticalConstructionWeightSlider gram="VERBTYP_MODAL"/>
-				</flair:GrammaticalConstructionSliderPanel>			
+				</flair:GrammaticalConstructionPanelItem>			
 
 				<!-- Zeiten -->
-				<flair:GrammaticalConstructionSliderPanel ui:field="pnlZeitenUI" type="INFO" text="zeiten">
+				<flair:GrammaticalConstructionPanelItem ui:field="pnlZeitenUI" text="zeiten">
 					<flair:GrammaticalConstructionWeightSlider gram="TENSE_PRESENT_PERFECT_HABEN"/>
 					<g:HTML><hr/></g:HTML>
 					<flair:GrammaticalConstructionWeightSlider gram="TENSE_PRESENT_PERFECT_SEIN"/>
@@ -62,24 +62,24 @@
 					<flair:GrammaticalConstructionWeightSlider gram="TENSE_FUTURE_SIMPLE"/>
 					<g:HTML><hr/></g:HTML>
 					<flair:GrammaticalConstructionWeightSlider gram="TENSE_FUTURE_PERFECT"/>
-				</flair:GrammaticalConstructionSliderPanel>
+				</flair:GrammaticalConstructionPanelItem>
 				
 				<!-- Passiv -->
-				<flair:GrammaticalConstructionSliderPanel ui:field="pnlPassivUI" type="INFO" text="passiv">
+				<flair:GrammaticalConstructionPanelItem ui:field="pnlPassivUI" text="passiv">
 					<flair:GrammaticalConstructionWeightSlider gram="PASSIVE_VOICE_WERDEN"/>
 					<g:HTML><hr/></g:HTML>
 					<flair:GrammaticalConstructionWeightSlider gram="PASSIVE_VOICE_SEIN"/>
-				</flair:GrammaticalConstructionSliderPanel>
+				</flair:GrammaticalConstructionPanelItem>
 				
 				<!-- Satzklammer -->
-				<flair:GrammaticalConstructionSliderPanel ui:field="pnlSatzklammerUI" type="INFO" text="satzklammer">
+				<flair:GrammaticalConstructionPanelItem ui:field="pnlSatzklammerUI" text="satzklammer">
 					<flair:GrammaticalConstructionWeightSlider gram="VERB_BRACKETS"/>
 					<g:HTML><hr/></g:HTML>
 					<flair:GrammaticalConstructionWeightSlider gram="VERB_CLUSTER"/>
-				</flair:GrammaticalConstructionSliderPanel>
+				</flair:GrammaticalConstructionPanelItem>
 				
 				<!-- Verbformen -->
-				<flair:GrammaticalConstructionSliderPanel ui:field="pnlVerbformenUI" type="INFO" text="verbformen">
+				<flair:GrammaticalConstructionPanelItem ui:field="pnlVerbformenUI" text="verbformen">
 					<flair:GrammaticalConstructionWeightSlider gram="IMPERATIVES"/>
 					<g:HTML><hr/></g:HTML>
 					<flair:GrammaticalConstructionWeightSlider gram="VERBFORM_INFINITIVE"/>
@@ -87,38 +87,38 @@
 					<flair:GrammaticalConstructionWeightSlider gram="VERBFORM_TO_INFINITIVE"/>
 					<g:HTML><hr/></g:HTML>
 					<flair:GrammaticalConstructionWeightSlider gram="VERBFORM_PARTICIPLE"/>
-				</flair:GrammaticalConstructionSliderPanel>
-			</flair:GrammaticalConstructionSliderPanel>
+				</flair:GrammaticalConstructionPanelItem>
+			</flair:GrammaticalConstructionPanelItem>
 			
 			<!-- Negation -->
-			<flair:GrammaticalConstructionSliderPanel ui:field="pnlNegationUI" type="INFO" text="negation">
+			<flair:GrammaticalConstructionPanelItem ui:field="pnlNegationUI" text="negation">
 				<flair:GrammaticalConstructionWeightSlider gram="NEGATION_ALL"/>
 				<g:HTML><hr/></g:HTML>
 				<flair:GrammaticalConstructionWeightSlider gram="NEGATION_PARTIAL"/>
 				<g:HTML><hr/></g:HTML>
 				<flair:GrammaticalConstructionWeightSlider gram="NEGATION_NO_NOT_NEVER"/>
-			</flair:GrammaticalConstructionSliderPanel>
+			</flair:GrammaticalConstructionPanelItem>
 			
 			<!-- Artikel -->
-			<flair:GrammaticalConstructionSliderPanel ui:field="pnlArtikelUI" type="INFO" text="artikel">
+			<flair:GrammaticalConstructionPanelItem ui:field="pnlArtikelUI" text="artikel">
 				<flair:GrammaticalConstructionWeightSlider gram="ARTICLES"/>
 				<g:HTML><hr/></g:HTML>
 				<flair:GrammaticalConstructionWeightSlider gram="ARTICLE_A"/>
 				<g:HTML><hr/></g:HTML>
 				<flair:GrammaticalConstructionWeightSlider gram="ARTICLE_THE"/>
-			</flair:GrammaticalConstructionSliderPanel>
+			</flair:GrammaticalConstructionPanelItem>
 			
 			<!-- Indefinite Quantifizierer -->
-			<flair:GrammaticalConstructionSliderPanel ui:field="pnlIndefiniteQuantifiziererUI" type="INFO" text="indefinite quantifizierer">
+			<flair:GrammaticalConstructionPanelItem ui:field="pnlIndefiniteQuantifiziererUI" text="indefinite quantifizierer">
 				<flair:GrammaticalConstructionWeightSlider gram="DETERMINER_SOME"/>
 				<g:HTML><hr/></g:HTML>
 				<flair:GrammaticalConstructionWeightSlider gram="DETERMINER_ANY"/>
 				<g:HTML><hr/></g:HTML>
 				<flair:GrammaticalConstructionWeightSlider gram="DETERMINER_MANY"/>
-			</flair:GrammaticalConstructionSliderPanel>
+			</flair:GrammaticalConstructionPanelItem>
 			
 			<!-- Adjektive, Adverben und Zahlworte -->
-			<flair:GrammaticalConstructionSliderPanel ui:field="pnlAdjAdvZWUI" type="INFO" text="adjektive, adverben und zahlworte">
+			<flair:GrammaticalConstructionPanelItem ui:field="pnlAdjAdvZWUI" text="adjektive, adverben und zahlworte">
 				<flair:GrammaticalConstructionWeightSlider gram="ADJECTIVE_POSITIVE"/>
 				<g:HTML><hr/></g:HTML>
 				<flair:GrammaticalConstructionWeightSlider gram="ADVERB_POSITIVE"/>
@@ -126,10 +126,10 @@
 				<flair:GrammaticalConstructionWeightSlider gram="PARTICLE_PLUS_ADJ_ADV"/>
 				<g:HTML><hr/></g:HTML>
 				<flair:GrammaticalConstructionWeightSlider gram="CARDINALS"/>
-			</flair:GrammaticalConstructionSliderPanel>
+			</flair:GrammaticalConstructionPanelItem>
 			
 			<!-- Pronomen -->
-			<flair:GrammaticalConstructionSliderPanel ui:field="pnlPronomenUI" type="INFO" text="pronomen">
+			<flair:GrammaticalConstructionPanelItem ui:field="pnlPronomenUI" text="pronomen">
 				<flair:GrammaticalConstructionWeightSlider gram="PRONOUNS_PERSONAL"/>
 				<g:HTML><hr/></g:HTML>
 				<flair:GrammaticalConstructionWeightSlider gram="PRONOUNS_RELATIVE"/>
@@ -143,28 +143,28 @@
 				<flair:GrammaticalConstructionWeightSlider gram="PRONOUNS_INDEFINITE"/>
 				<g:HTML><hr/></g:HTML>
 				<flair:GrammaticalConstructionWeightSlider gram="PRONOUNS_INTERROGATIVE"/>
-			</flair:GrammaticalConstructionSliderPanel>
+			</flair:GrammaticalConstructionPanelItem>
 			
 			<!-- Präpositionen -->
-			<flair:GrammaticalConstructionSliderPanel ui:field="pnlPraepositionenUI" type="INFO" text="präpositionen">
+			<flair:GrammaticalConstructionPanelItem ui:field="pnlPraepositionenUI" text="präpositionen">
 				<flair:GrammaticalConstructionWeightSlider gram="PREPOSITIONS_SIMPLE"/>
 				<g:HTML><hr/></g:HTML>
 				<flair:GrammaticalConstructionWeightSlider gram="PREPOSITIONS_COMPLEX"/>
-			</flair:GrammaticalConstructionSliderPanel>
+			</flair:GrammaticalConstructionPanelItem>
 			
 			<!-- Nomen -->
-			<flair:GrammaticalConstructionSliderPanel ui:field="pnlNomenUI" type="INFO" text="nomen">
+			<flair:GrammaticalConstructionPanelItem ui:field="pnlNomenUI" text="nomen">
 				<!-- Nominalisierungen -->
-				<flair:GrammaticalConstructionSliderPanel ui:field="pnlNominalisierungenUI" type="INFO" text="nominalisierungen">
+				<flair:GrammaticalConstructionPanelItem ui:field="pnlNominalisierungenUI" text="nominalisierungen">
 					<flair:GrammaticalConstructionWeightSlider gram="NOUNS_ISMUS"/>
 					<g:HTML><hr/></g:HTML>
 					<flair:GrammaticalConstructionWeightSlider gram="NOUNS_TUR"/>
 					<g:HTML><hr/></g:HTML>
 					<flair:GrammaticalConstructionWeightSlider gram="NOUNS_UNG"/>
-				</flair:GrammaticalConstructionSliderPanel>
+				</flair:GrammaticalConstructionPanelItem>
 				
 				<!-- Attribute -->
-				<flair:GrammaticalConstructionSliderPanel ui:field="pnlAttributeUI" type="INFO" text="attribute">
+				<flair:GrammaticalConstructionPanelItem ui:field="pnlAttributeUI" text="attribute">
 					<flair:GrammaticalConstructionWeightSlider gram="ATTRIBUTES_PARTICIPLE_1"/>
 					<g:HTML><hr/></g:HTML>
 					<flair:GrammaticalConstructionWeightSlider gram="ATTRIBUTES_PARTICIPLE_2"/>
@@ -172,8 +172,8 @@
 					<flair:GrammaticalConstructionWeightSlider gram="ATTRIBUTES_ADJECTIVE"/>
 					<g:HTML><hr/></g:HTML>
 					<flair:GrammaticalConstructionWeightSlider gram="ATTRIBUTES_PREPOSITION"/>
-				</flair:GrammaticalConstructionSliderPanel>
-			</flair:GrammaticalConstructionSliderPanel>
-		</flair:GrammaticalConstructionSliderPanel>	
+				</flair:GrammaticalConstructionPanelItem>
+			</flair:GrammaticalConstructionPanelItem>
+		</flair:GrammaticalConstructionPanelItem>	
 	</g:HTMLPanel>
 </ui:UiBinder> 

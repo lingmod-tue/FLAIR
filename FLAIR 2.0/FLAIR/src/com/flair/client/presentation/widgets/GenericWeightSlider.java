@@ -1,15 +1,14 @@
 package com.flair.client.presentation.widgets;
 
-import org.gwtbootstrap3.client.ui.InlineCheckBox;
-import org.gwtbootstrap3.extras.slider.client.ui.Slider;
-import org.gwtbootstrap3.extras.slider.client.ui.base.constants.HandleType;
-import org.gwtbootstrap3.extras.slider.client.ui.base.constants.TooltipType;
-
 import com.flair.client.localization.LocalizedComposite;
 import com.flair.client.model.ClientEndPoint;
 import com.google.gwt.uibinder.client.UiConstructor;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+
+import gwt.material.design.client.constants.Color;
+import gwt.material.design.client.ui.MaterialCheckBox;
+import gwt.material.design.client.ui.MaterialRange;
 
 /*
  * Base class for custom weight slider widgets
@@ -28,15 +27,16 @@ public abstract class GenericWeightSlider extends LocalizedComposite
 	protected static final String		STYLENAME_WRAPPER = "generic-weight-slider-wrapper";
 	protected static final String		STYLENAME_SLIDER = "generic-weight-slider-slider";
 	
-	protected static final double		SLIDER_MIN_VAL = 0;
-	protected static final double		SLIDER_MAX_VAL = 5;
-	protected static final double		SLIDER_STEP = 1;
+	protected static final int		SLIDER_MIN_VAL = 0;
+	protected static final int		SLIDER_MAX_VAL = 5;
+	protected static final int		SLIDER_STEP = 1;
 	
-	protected final InlineCheckBox	toggle;
-	protected final Slider			slider;
-	protected final FlowPanel		sliderPanel;
-	private ToggleHandler			toggleHandler;
-	private WeightChangeHandler		weightHandler;
+	protected final MaterialCheckBox	toggle;
+	protected final MaterialRange 		slider;
+	protected final HorizontalPanel		togglePanel;
+	protected final FlowPanel			sliderPanel;
+	private ToggleHandler				toggleHandler;
+	private WeightChangeHandler			weightHandler;
 	
 	private void onToggle()
 	{
@@ -56,16 +56,15 @@ public abstract class GenericWeightSlider extends LocalizedComposite
 		weightHandler = null;
 		
 		// setup components
-		toggle.setText("Generic Weight Slider");
+		toggle.setValue(true);;
 		slider.setMin(SLIDER_MIN_VAL);
 		slider.setMax(SLIDER_MAX_VAL);
-		slider.setStep(SLIDER_STEP);
-		slider.setTooltip(TooltipType.HIDE);
-		slider.setHandle(HandleType.ROUND);
 		slider.setValue(SLIDER_MIN_VAL);
-		slider.addStyleName(STYLENAME_SLIDER);
 		
+		slider.addStyleName(STYLENAME_SLIDER);
 		sliderPanel.setStyleName(STYLENAME_WRAPPER);
+		togglePanel.setStyleName(STYLENAME_TOGGLE);
+		
 		if (hideSlider == false)
 			sliderPanel.add(slider);
 		
@@ -81,8 +80,9 @@ public abstract class GenericWeightSlider extends LocalizedComposite
 	public GenericWeightSlider() 
 	{
 		super(ClientEndPoint.get().getLocalization());
-		toggle = new InlineCheckBox();
-		slider = new Slider();
+		toggle = new MaterialCheckBox();
+		slider = new MaterialRange();
+		togglePanel = new HorizontalPanel();
 		sliderPanel = new FlowPanel();
 		
 		initCtor(false);
@@ -92,8 +92,9 @@ public abstract class GenericWeightSlider extends LocalizedComposite
 	public GenericWeightSlider(boolean hideSlider) 
 	{
 		super(ClientEndPoint.get().getLocalization());
-		toggle = new InlineCheckBox();
-		slider = new Slider();
+		toggle = new MaterialCheckBox();
+		slider = new MaterialRange();
+		togglePanel = new HorizontalPanel();
 		sliderPanel = new FlowPanel();
 		
 		initCtor(hideSlider);
@@ -121,11 +122,11 @@ public abstract class GenericWeightSlider extends LocalizedComposite
 		slider.setEnabled(val);
 	}
 	
-	public void toggleEnabled() {
-		slider.toggle();
+	public void toggleEnabled(boolean fireEvent) {
+		setEnabled(isEnabled() == false, fireEvent);
 	}
 	
-	public void setValue(double val, boolean fireEvent) {
+	public void setValue(int val, boolean fireEvent) {
 		slider.setValue(val, fireEvent);
 	}
 	

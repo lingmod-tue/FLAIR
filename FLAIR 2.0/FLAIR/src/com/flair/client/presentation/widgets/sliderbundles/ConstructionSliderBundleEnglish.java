@@ -2,7 +2,7 @@ package com.flair.client.presentation.widgets.sliderbundles;
 
 import com.flair.client.localization.SimpleLocalizedTextWidget;
 import com.flair.client.localization.locale.ConstructionSliderPackageEnglishLocale;
-import com.flair.client.presentation.widgets.GrammaticalConstructionSliderPanel;
+import com.flair.client.presentation.widgets.GrammaticalConstructionPanelItem;
 import com.flair.client.presentation.widgets.LanguageSpecificConstructionSliderBundle;
 import com.flair.shared.grammar.Language;
 import com.google.gwt.core.client.GWT;
@@ -26,78 +26,78 @@ public class ConstructionSliderBundleEnglish extends LanguageSpecificConstructio
 	HTMLPanel									pnlRootUI;
 	
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlSentencesUI; 
+	GrammaticalConstructionPanelItem			pnlSentencesUI; 
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlQuestionsUI;
+	GrammaticalConstructionPanelItem			pnlQuestionsUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlSentenceTypesUI;
+	GrammaticalConstructionPanelItem			pnlSentenceTypesUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlClauseTypesUI;
+	GrammaticalConstructionPanelItem			pnlClauseTypesUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlPartsOfSpeechUI;
+	GrammaticalConstructionPanelItem			pnlPartsOfSpeechUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlVerbsUI;
+	GrammaticalConstructionPanelItem			pnlVerbsUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlVerbFormsUI;
+	GrammaticalConstructionPanelItem			pnlVerbFormsUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlTensesUI;
+	GrammaticalConstructionPanelItem			pnlTensesUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlAspectUI;
+	GrammaticalConstructionPanelItem			pnlAspectUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlTimeUI;
+	GrammaticalConstructionPanelItem			pnlTimeUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlVoiceUI;
+	GrammaticalConstructionPanelItem			pnlVoiceUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlPhrasalUI;
+	GrammaticalConstructionPanelItem			pnlPhrasalUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlModalUI;
+	GrammaticalConstructionPanelItem			pnlModalUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlTransitiveUI;
+	GrammaticalConstructionPanelItem			pnlTransitiveUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlImperativeUI;
+	GrammaticalConstructionPanelItem			pnlImperativeUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlNegationUI;
+	GrammaticalConstructionPanelItem			pnlNegationUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlArticlesUI;
+	GrammaticalConstructionPanelItem			pnlArticlesUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlQuantifiersUI;
+	GrammaticalConstructionPanelItem			pnlQuantifiersUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlAdjectivesUI;
+	GrammaticalConstructionPanelItem			pnlAdjectivesUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlAdverbsUI;
+	GrammaticalConstructionPanelItem			pnlAdverbsUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlPronounsUI;
+	GrammaticalConstructionPanelItem			pnlPronounsUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlConjunctionsUI;
+	GrammaticalConstructionPanelItem			pnlConjunctionsUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlPrepositionsUI;
+	GrammaticalConstructionPanelItem			pnlPrepositionsUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlNounsUI;
+	GrammaticalConstructionPanelItem			pnlNounsUI;
 	
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlSentencesLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlQuestionsLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlSentenceTypesLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlClauseTypesLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlPartsOfSpeechLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlVerbsLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlVerbFormsLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlTensesLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlAspectLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlTimeLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlVoiceLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlPhrasalLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlModalLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlTransitiveLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlImperativeLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlNegationLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlArticlesLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlQuantifiersLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlAdjectivesLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlAdverbsLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlPronounsLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlConjunctionsLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlPrepositionsLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlNounsLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlSentencesLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlQuestionsLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlSentenceTypesLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlClauseTypesLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlPartsOfSpeechLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlVerbsLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlVerbFormsLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlTensesLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlAspectLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlTimeLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlVoiceLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlPhrasalLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlModalLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlTransitiveLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlImperativeLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlNegationLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlArticlesLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlQuantifiersLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlAdjectivesLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlAdverbsLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlPronounsLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlConjunctionsLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlPrepositionsLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlNounsLC;
 	
 	private void initLocale()
 	{

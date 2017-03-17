@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import com.flair.client.localization.LocalizationEngine;
 import com.flair.client.presentation.MainViewport;
+import com.flair.client.presentation.MatViewport;
 import com.google.gwt.user.client.ui.RootPanel;
 
 /*

@@ -1,17 +1,14 @@
 package com.flair.client.presentation.widgets;
 
-import org.gwtbootstrap3.client.ui.Badge;
-
-import com.flair.client.localization.SimpleLocale;
+import com.flair.client.localization.locale.GrammaticalConstructionLocale;
 import com.flair.client.localization.locale.GrammaticalConstructionWeightSliderLocale;
 import com.flair.client.presentation.interfaces.CanReset;
-import com.flair.client.localization.locale.GrammaticalConstructionLocale;
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
 import com.google.gwt.uibinder.client.UiConstructor;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.VerticalPanel;
+
+import gwt.material.design.client.ui.MaterialBadge;
 
 /*
  * Weight slider for grammatical constructions
@@ -21,7 +18,7 @@ public class GrammaticalConstructionWeightSlider extends GenericWeightSlider imp
 	private static final String					STYLENAME_BADGE = "construction-weight-slider-badge";
 	private static final String					STYLENAME_WIDGET = "construction-weight-slider";
 	
-	private final Badge							resultCount;
+	private final MaterialBadge					resultCount;
 	private GrammaticalConstruction				gramConstruction;
 	
 	private void initLocale()
@@ -36,20 +33,19 @@ public class GrammaticalConstructionWeightSlider extends GenericWeightSlider imp
 	public GrammaticalConstructionWeightSlider()
 	{
 		super();
-		resultCount = new Badge("50/50");
+		resultCount = new MaterialBadge("50/50");
 		gramConstruction = null;
 		
 		// setup components
 		resultCount.addStyleName(STYLENAME_BADGE);
 		
 		VerticalPanel container = new VerticalPanel();
-		FlowPanel toggleWrapper = new FlowPanel();
-		toggleWrapper.addStyleName(STYLENAME_TOGGLE);
-		toggleWrapper.add(toggle);
-		toggleWrapper.add(resultCount);
-		container.add(toggleWrapper);
-//		container.add(new HTML("<br/>"));
-		container.add(sliderPanel);
+//		togglePanel.add(toggle);
+//		togglePanel.add(resultCount);
+//		container.add(togglePanel);
+		container.add(toggle);
+		container.add(resultCount);
+		container.add(slider);
 		
 		initWidget(container);
 		setStyleName(STYLENAME_WIDGET);
@@ -83,8 +79,8 @@ public class GrammaticalConstructionWeightSlider extends GenericWeightSlider imp
 			setToggleText(GrammaticalConstructionLocale.get().getLocalizedName(gramConstruction, lang));
 		
 		toggle.setTitle(getLocalizationData(lang).get(GrammaticalConstructionWeightSliderLocale.DESC_toggleTooltip));
-		resultCount.setTitle(getLocalizationData(lang).get(GrammaticalConstructionWeightSliderLocale.DESC_resultCountTooltip));
-		slider.setTitle(getLocalizationData(lang).get(GrammaticalConstructionWeightSliderLocale.DESC_sliderTooltip));
+		resultCount.setTooltip(getLocalizationData(lang).get(GrammaticalConstructionWeightSliderLocale.DESC_resultCountTooltip));
+		slider.setTooltip(getLocalizationData(lang).get(GrammaticalConstructionWeightSliderLocale.DESC_sliderTooltip));
 	}
 
 	

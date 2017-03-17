@@ -47,9 +47,9 @@ public abstract class LanguageSpecificConstructionSliderBundle extends Localized
 		GrammaticalConstructionWeightSlider out = null;
 		for (Widget itr : rootContainer)
 		{
-			if (itr instanceof GrammaticalConstructionSliderPanel)
+			if (itr instanceof GrammaticalConstructionPanelItem)
 			{
-				GrammaticalConstructionSliderPanel panel = (GrammaticalConstructionSliderPanel)itr;
+				GrammaticalConstructionPanelItem panel = (GrammaticalConstructionPanelItem)itr;
 				if ((out = panel.getWeightSlider(val)) != null)
 					break;
 			}

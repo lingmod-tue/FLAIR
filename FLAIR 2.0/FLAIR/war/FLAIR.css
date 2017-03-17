@@ -1,60 +1,35 @@
 /*
  * Common styles
  */
-body {
-  font-family: 'Open Sans', sans-serif;
-}
 
 /*
  * Weight widget styles
  */
 .generic-weight-slider-toggle {
-	margin-bottom: 3px;
+
 }
 
 .generic-weight-slider-wrapper {
-	margin-top: 5px;
-	width: 100%;
+
 }
 
 .generic-weight-slider-slider {
-	float: left;
-    clear: left;
-    width: 80%;
-    margin-left: 15px;
-    margin-right: 15px;
-    background: transparent;
+
 }
 
 .construction-weight-slider-badge {
-    margin-left: 3px;
+	padding-right: 20px;
 }
 
 /*
  * Document length widget styles
  */
 .doc-length-slider-wrapper {
-	width: 100%;
 }
 
 .doc-length-slider-slider {
-	width: 200%;
 }
 
 .doc-length-slider {
 
 }
-
-/*
- * Hide scrollbars (Webkit only)
- */
-/* 
-html {
-    overflow: scroll;
-    overflow-x: hidden;
-}
-::-webkit-scrollbar {
-    width: 0px;
-    background: transparent;
-}
-*/

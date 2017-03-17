@@ -2,7 +2,7 @@ package com.flair.client.presentation.widgets.sliderbundles;
 
 import com.flair.client.localization.SimpleLocalizedTextWidget;
 import com.flair.client.localization.locale.ConstructionSliderPackageGermanLocale;
-import com.flair.client.presentation.widgets.GrammaticalConstructionSliderPanel;
+import com.flair.client.presentation.widgets.GrammaticalConstructionPanelItem;
 import com.flair.client.presentation.widgets.LanguageSpecificConstructionSliderBundle;
 import com.flair.shared.grammar.Language;
 import com.google.gwt.core.client.GWT;
@@ -26,67 +26,67 @@ public class ConstructionSliderBundleGerman extends LanguageSpecificConstruction
 	HTMLPanel		pnlRootUI;
 	
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlSaetzeUI;
+	GrammaticalConstructionPanelItem			pnlSaetzeUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlFragenUI;
+	GrammaticalConstructionPanelItem			pnlFragenUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlSatztypenUI;
+	GrammaticalConstructionPanelItem			pnlSatztypenUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlNebensatztypenUI;
+	GrammaticalConstructionPanelItem			pnlNebensatztypenUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlWortartenUI;
+	GrammaticalConstructionPanelItem			pnlWortartenUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlVerbenUI;
+	GrammaticalConstructionPanelItem			pnlVerbenUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlVerbtypenUI;
+	GrammaticalConstructionPanelItem			pnlVerbtypenUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlZeitenUI;
+	GrammaticalConstructionPanelItem			pnlZeitenUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlPassivUI;
+	GrammaticalConstructionPanelItem			pnlPassivUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlSatzklammerUI;
+	GrammaticalConstructionPanelItem			pnlSatzklammerUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlVerbformenUI;
+	GrammaticalConstructionPanelItem			pnlVerbformenUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlNegationUI;
+	GrammaticalConstructionPanelItem			pnlNegationUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlArtikelUI;
+	GrammaticalConstructionPanelItem			pnlArtikelUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlIndefiniteQuantifiziererUI;
+	GrammaticalConstructionPanelItem			pnlIndefiniteQuantifiziererUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlAdjAdvZWUI;
+	GrammaticalConstructionPanelItem			pnlAdjAdvZWUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlPronomenUI;
+	GrammaticalConstructionPanelItem			pnlPronomenUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlPraepositionenUI;
+	GrammaticalConstructionPanelItem			pnlPraepositionenUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlNomenUI;
+	GrammaticalConstructionPanelItem			pnlNomenUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlNominalisierungenUI;
+	GrammaticalConstructionPanelItem			pnlNominalisierungenUI;
 	@UiField
-	GrammaticalConstructionSliderPanel			pnlAttributeUI;
+	GrammaticalConstructionPanelItem			pnlAttributeUI;
 	
 	
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlSaetzeLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlFragenLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlSatztypenLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlNebensatztypenLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlWortartenLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlVerbenLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlVerbtypenLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlZeitenLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlPassivLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlSatzklammerLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlVerbformenLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlNegationLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlArtikelLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlIndefiniteQuantifiziererLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlAdjAdvZWLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlPronomenLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlPraepositionenLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlNomenLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlNominalisierungenLC;
-	SimpleLocalizedTextWidget<GrammaticalConstructionSliderPanel>			pnlAttributeLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlSaetzeLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlFragenLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlSatztypenLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlNebensatztypenLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlWortartenLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlVerbenLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlVerbtypenLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlZeitenLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlPassivLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlSatzklammerLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlVerbformenLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlNegationLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlArtikelLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlIndefiniteQuantifiziererLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlAdjAdvZWLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlPronomenLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlPraepositionenLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlNomenLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlNominalisierungenLC;
+	SimpleLocalizedTextWidget<GrammaticalConstructionPanelItem>			pnlAttributeLC;
 	
 	private void initLocale()
 	{

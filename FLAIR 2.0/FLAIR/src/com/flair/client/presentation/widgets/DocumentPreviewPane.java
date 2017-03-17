@@ -2,44 +2,41 @@ package com.flair.client.presentation.widgets;
 
 import java.util.List;
 
-import org.gwtbootstrap3.client.ui.Anchor;
-import org.gwtbootstrap3.client.ui.Container;
-import org.gwtbootstrap3.client.ui.Icon;
-import org.gwtbootstrap3.client.ui.PanelBody;
-import org.gwtbootstrap3.client.ui.PanelFooter;
-import org.gwtbootstrap3.client.ui.gwt.CellTable;
-import org.gwtbootstrap3.client.ui.html.Small;
-import org.gwtbootstrap3.client.ui.html.Strong;
-
 import com.flair.client.localization.LocalizationData;
 import com.flair.client.localization.LocalizedComposite;
-import com.flair.client.localization.SimpleLocalizedTextWidget;
-import com.flair.client.localization.SimpleLocalizedWidget;
+import com.flair.client.localization.SimpleLocalizedTextButtonWidget;
+import com.flair.client.localization.SimpleLocalizedTooltipWidget;
 import com.flair.client.localization.locale.DocumentPreviewPaneLocale;
 import com.flair.client.localization.locale.GrammaticalConstructionLocale;
 import com.flair.client.localization.locale.KeywordWeightSliderLocale;
 import com.flair.client.model.ClientEndPoint;
 import com.flair.client.presentation.interfaces.AbstractDocumentPreviewPane;
 import com.flair.client.presentation.interfaces.DocumentPreviewPaneInput;
-import com.flair.client.presentation.interfaces.DocumentPreviewPaneInput.UnRankable;
 import com.flair.client.presentation.interfaces.DocumentPreviewPaneInput.Rankable;
+import com.flair.client.presentation.interfaces.DocumentPreviewPaneInput.UnRankable;
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
-import com.flair.shared.parser.RankableDocument;
 import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
+
+import gwt.material.design.client.ui.MaterialChip;
+import gwt.material.design.client.ui.MaterialCollapsibleBody;
+import gwt.material.design.client.ui.MaterialIcon;
+import gwt.material.design.client.ui.MaterialLabel;
+import gwt.material.design.client.ui.MaterialLink;
+import gwt.material.design.client.ui.MaterialRow;
 
 public class DocumentPreviewPane extends LocalizedComposite implements AbstractDocumentPreviewPane
 {	
@@ -49,36 +46,33 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 	{
 	}
 
+	private static final double				PANEL_WIDTH = 450;
+	
 	@UiField
-	FlowPanel					pnlPlaceholderUI;
+	MaterialRow					pnlPreviewContainerUI;
 	@UiField
-	InlineLabel					lblPlaceholderTextUI;
+	MaterialLabel				lblDocTitleUI;
 	@UiField
-	Container					pnlPreviewContainerUI;
+	MaterialChip				lblDocLevelUI;
 	@UiField
-	Strong						lblDocTitleUI;
+	MaterialChip				lblDocNumSentencesUI;
 	@UiField
-	Strong						lblDocLevelUI;
-	@UiField
-	Small						lblDocNumSentencesUI;
-	@UiField
-	Small						lblDocNumWordsUI;
+	MaterialChip				lblDocNumWordsUI;
 	@UiField
 	FlowPanel					pnlWeightSelectionUI;
 	@UiField
-	Icon						icoHelpTextUI;
+	MaterialIcon				icoHelpTextUI;
 	@UiField
 	HTML						htmlDocTextPreviewUI;
 	@UiField
-	PanelFooter					pnlFooterUI;
+	MaterialRow					pnlFooterUI;
 	@UiField
-	Anchor						tglConstructionDetailsUI;
+	MaterialLink				tglConstructionDetailsUI;
 	@UiField
-	PanelBody					pnlConstructionDetailsUI;
-	
-	SimpleLocalizedTextWidget<InlineLabel>		lblPlaceholderTextLC;
-	SimpleLocalizedWidget<Icon>					icoHelpTextLC;
-	SimpleLocalizedTextWidget<Anchor>			tglConstructionDetailsLC;
+	MaterialCollapsibleBody		pnlConstructionDetailsUI;
+
+	SimpleLocalizedTooltipWidget<MaterialIcon>			icoHelpTextLC;
+	SimpleLocalizedTextButtonWidget<MaterialLink>		tglConstructionDetailsLC;
 	
 	State						state;
 	
@@ -311,8 +305,6 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 		public void resetUI()
 		{
 			// reset component visibility
-			setPlaceholderVisibility(false);
-			
 			pnlWeightSelectionUI.setVisible(true);
 			pnlFooterUI.setVisible(true);
 			
@@ -325,6 +317,9 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 		
 		public void reload(boolean fullReload)
 		{
+			if (type == null)
+				return;
+			
 			resetUI();
 			
 			switch (type)
@@ -393,24 +388,22 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 		}
 	}
 	
-	private void setPlaceholderVisibility(boolean visible)
-	{
-		pnlPlaceholderUI.setVisible(visible);
-		pnlPreviewContainerUI.setVisible(visible == false);
+	private void setPanelRight(double right) {
+		pnlPreviewContainerUI.setRight(right);
+	}
+	
+	private void setContainerVisible(boolean visible) {
+		setPanelRight(visible ? 0 : -PANEL_WIDTH);
 	}
 	
 	private void initLocale()
 	{
-		lblPlaceholderTextLC = new SimpleLocalizedTextWidget<>(lblPlaceholderTextUI, DocumentPreviewPaneLocale.DESC_lblPlaceholderText);
-		icoHelpTextLC = new SimpleLocalizedWidget<>(icoHelpTextUI, DocumentPreviewPaneLocale.DESC_icoHelpText, (w, s) -> {
-			w.setTitle(s);
-		});
-		tglConstructionDetailsLC = new SimpleLocalizedTextWidget<>(tglConstructionDetailsUI, DocumentPreviewPaneLocale.DESC_tglConstructionDetails);
+		icoHelpTextLC = new SimpleLocalizedTooltipWidget<>(icoHelpTextUI, DocumentPreviewPaneLocale.DESC_icoHelpText);
+		tglConstructionDetailsLC = new SimpleLocalizedTextButtonWidget<>(tglConstructionDetailsUI, DocumentPreviewPaneLocale.DESC_tglConstructionDetails);
 		
 		registerLocale(DocumentPreviewPaneLocale.INSTANCE.en);
 		registerLocale(DocumentPreviewPaneLocale.INSTANCE.de);
-		
-		registerLocalizedWidget(lblPlaceholderTextLC);
+
 		registerLocalizedWidget(icoHelpTextLC);
 		registerLocalizedWidget(tglConstructionDetailsLC);
 		
@@ -419,7 +412,7 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 	
 	private void initUI()
 	{
-		setPlaceholderVisibility(true);
+		hide();
 	}
 	
 	public DocumentPreviewPane()
@@ -442,19 +435,23 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 	}
 
 	@Override
-	public void show(Rankable input) {
+	public void preview(Rankable input) {
 		state.init(input);
 	}
 
 	@Override
-	public void show(UnRankable input) {
+	public void preview(UnRankable input) {
 		state.init(input);
+		
 	}
 	
 	@Override
-	public void hide()
-	{
-		// just hide the main panel
-		setPlaceholderVisibility(true);
+	public void show() {
+		setContainerVisible(true);
+	}
+	
+	@Override
+	public void hide() {
+		setContainerVisible(false);
 	}
 }

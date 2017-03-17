@@ -9,14 +9,11 @@
   <!-- Inherit the core Web Toolkit stuff.                        -->
   <inherits name='com.google.gwt.user.User'/>
 
-  <!-- <inherits name='com.google.gwt.user.theme.standard.Standard'/> -->
-  <!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->
-  <!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/>     -->
-
   <!-- Other module inherits                                      -->
-  <inherits name="org.gwtbootstrap3.GwtBootstrap3"/>
-  <inherits name="org.gwtbootstrap3.extras.select.Select"/>
-  <inherits name="org.gwtbootstrap3.extras.slider.Slider"/>
+  <inherits name="gwt.material.design.GwtMaterialWithJQuery" />
+  <inherits name="gwt.material.design.addins.GwtMaterialAddins" />
+  <inherits name="gwt.material.design.GwtMaterialDesignBasic" />
+  <inherits name="gwt.material.design.themes.ThemeBlue"/>
   
   <!-- Specify the app entry point class.                         -->
   <entry-point class='com.flair.client.FLAIR'/>

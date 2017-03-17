@@ -5,7 +5,9 @@ package com.flair.client.presentation.interfaces;
  */
 public interface AbstractDocumentPreviewPane
 {
-	public void			show(DocumentPreviewPaneInput.Rankable input);
-	public void			show(DocumentPreviewPaneInput.UnRankable input);
+	public void			preview(DocumentPreviewPaneInput.Rankable input);
+	public void			preview(DocumentPreviewPaneInput.UnRankable input);
+	
+	public void			show();
 	public void			hide();
 }

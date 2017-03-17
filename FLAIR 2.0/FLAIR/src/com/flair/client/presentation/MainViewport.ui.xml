@@ -1,69 +1,179 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
+	xmlns:m="urn:import:gwt.material.design.client.ui"
+	xmlns:m.html="urn:import:gwt.material.design.client.ui.html"
+	xmlns:flair="urn:import:com.flair.client.presentation.widgets"
+	xmlns:flair.pak="urn:import:com.flair.client.presentation.widgets.sliderbundles">
 	
 	<ui:style>
 	.brand-logo {
-		padding: 0px 0px 20px 0px;
-		height: 45px;
+		padding: 1px 1px 1px 1px;
 	}
 	
-	.lang-dropdown {
-		margin-right: 10px;
+	.panel-navSearch {
+		padding-top: 4px;
+	}
+	
+	.global-animation {
+		transition: 0.4s all;
+		-webkit-transition: 0.4s all;
+		-moz-transition: 0.4s all;
+	}
+	
+	.panel-constSettings {
+		border-right: 2px solid #e9e9e9;
 	}
 	</ui:style>
 	
-	<g:HTMLPanel>
-		<!-- Main Navbar -->
-		<b:Navbar position="FIXED_TOP">
-			<b:NavbarHeader>
-				<b:NavbarBrand>
-					<img class="{style.brand-logo}" src="img/logo_2.png" alt="FLAIR"/>
-				</b:NavbarBrand>
-				<b:NavbarCollapseButton dataTarget="#navbar-collapse" />
-			</b:NavbarHeader>
+	<m:MaterialPanel backgroundColor="WHITE">	
+		<m:MaterialHeader depth="996" layoutPosition="FIXED" width="100%">
+			<!-- Main Navbar -->
+			<m:MaterialNavBar ui:field="navMainUI" backgroundColor="ORANGE">
+				<m:MaterialLink ui:field="tglSettingsPaneUI" iconType="MENU" waves="LIGHT"
+					paddingLeft="7" />
+				<m:MaterialNavBrand ui:field="btnAboutUI" marginLeft="5" href="javascript:void" text="FLAIR"/>
+				
+				<m:MaterialNavSection ui:field="pnlNavMainUI" addStyleNames="{style.global-animation}" float="RIGHT">
+					<m:MaterialLink ui:field="btnWebSearchUI" iconType="SEARCH" textColor="WHITE" waves="LIGHT"/>
+					<m:MaterialLink ui:field="btnUploadUI" iconType="FILE_UPLOAD" textColor="WHITE" waves="LIGHT"/>
+					<m:MaterialLink ui:field="btnSwitchLangUI" activates="lang-selector" iconType="LANGUAGE" waves="LIGHT"/>
+					<m:MaterialLink ui:field="tglDocPreviewPaneUI" iconType="RECEIPT" waves="LIGHT"/>
+				</m:MaterialNavSection>
+				
+				<m:MaterialNavSection ui:field="pnlNavSearchUI" addStyleNames="{style.panel-navSearch} {style.global-animation}" float="RIGHT">
+					<m:MaterialIcon iconType="SEARCH" hideOn="HIDE_ON_SMALL_DOWN"/>
+					<m:MaterialTextBox ui:field="txtSearchBoxUI" width="300"/>
+					
+					<m:MaterialListBox ui:field="selResultLangUI" marginLeft="12" marginRight="12">
+						<m.html:Option ui:field="selResultLangItmEnUI" text="English" value="ENGLISH" />
+						<m.html:Option ui:field="selResultLangItmDeUI" text="German" value="GERMAN" />
+					</m:MaterialListBox>
+					
+					<m:MaterialListBox ui:field="selResultCountUI" marginLeft="12" marginRight="12">
+						<m.html:Option ui:field="selResultCountItm10UI" text="10 Results" value="10" />
+						<m.html:Option ui:field="selResultCountItm20UI" text="20 Results" value="20" />
+						<m.html:Option ui:field="selResultCountItm30UI" text="30 Results" value="30" />
+						<m.html:Option ui:field="selResultCountItm40UI" text="40 Results" value="40" />
+						<m.html:Option ui:field="selResultCountItm50UI" text="50 Results" value="50" />
+					</m:MaterialListBox>
+					
+					<m:MaterialLink ui:field="btnCloseSearchUI" iconType="CLOSE" marginLeft="20"/>
+				</m:MaterialNavSection>
+			</m:MaterialNavBar>		
+		</m:MaterialHeader>
+						
+		<!-- Language Dropdown -->
+		<m:MaterialDropDown activator="lang-selector" constrainWidth="true">
+			<m:MaterialLink ui:field="btnLangEnUI" waves="DEFAULT" text="English"/>
+			<m:MaterialLink ui:field="btnLangDeUI" waves="DEFAULT" text="German"/>
+		</m:MaterialDropDown>
 		
-			<b:NavbarCollapse b:id="navbar-collapse">
-				<b:NavbarNav>
-					<b:AnchorListItem ui:field="btnWebSearchUI">Web Search</b:AnchorListItem>
-					<b:AnchorListItem ui:field="btnUploadUI">Upload</b:AnchorListItem>
-					<b:AnchorListItem ui:field="btnAboutUI">About</b:AnchorListItem>	
-				</b:NavbarNav>
-		
-				<b:NavbarNav pull="RIGHT">
-					<b:ListDropDown addStyleNames="{style.lang-dropdown}">
-						<b:AnchorButton ui:field="btnSwitchLangUI" dataToggle="DROPDOWN">Language</b:AnchorButton>
-						<b:DropDownMenu>
-							<b:AnchorListItem ui:field="btnLangEnUI">English</b:AnchorListItem>
-							<b:AnchorListItem ui:field="btnLangDeUI">German</b:AnchorListItem>
-						</b:DropDownMenu>
-					</b:ListDropDown>
-				</b:NavbarNav>
-			</b:NavbarCollapse>
-		</b:Navbar>
-		
-		<!-- Workaround for the overlapping navbar -->
-		<g:HTML>
-			<br/><br/><br/>
-		</g:HTML>
-		
-		<!-- Main Panel -->
-		<g:SimplePanel ui:field="pnlMainUI"/>			
+		<!-- Settings Pane -->
+		<m:MaterialRow ui:field="pnlConstructionsSettingsUI" overflow="AUTO" layoutPosition="FIXED" depth="995" backgroundColor="WHITE" 
+			grid="l4 m4 s12" height="100%" padding="15" top="68" left="-400"
+			addStyleNames="{style.panel-constSettings} {style.global-animation}">
+			
+			<m:MaterialRow textAlign="CENTER" paddingBottom="20">
+				<!-- Result Count -->
+				<m:MaterialLabel ui:field="lblDocCountUI" text="Result Count"
+					marginBottom="20" marginTop="10"/>
+				
+				<!-- Visualize -->
+				<m:MaterialButton ui:field="btnVisualizeUI" text="Visualize"
+					textColor="WHITE" backgroundColor="ORANGE" size="LARGE"
+					waves="DEFAULT" iconType="MULTILINE_CHART" iconPosition="RIGHT" iconColor="WHITE"/>
+				<m.html:Br/><m.html:Br/>
+				<!-- Export Settings -->
+				<m:MaterialButton ui:field="btnExportSettingsUI" text="Share Search Setup"
+					textColor="BLACK" backgroundColor="WHITE" size="LARGE" type="FLAT"
+					waves="DEFAULT" iconType="SHARE" iconPosition="RIGHT" iconColor="BLUE"/>
+			</m:MaterialRow>
 
-		<!-- Throbber Modal -->
-		<b:Modal ui:field="mdlThrobberUI" closable="false" fade="false" dataBackdrop="STATIC" b:id="modalThrobber">
-			<g:HTML>
-				TADA!
-			</g:HTML>
-		</b:Modal>
+			<!-- Text Characteristics -->
+			<m:MaterialRow paddingBottom="5">	
+				<m:MaterialCard padding="20">
+					<m:MaterialCardTitle ui:field="lblTextCharacteristicsUI" text="Text Characteristics"
+						iconType="SUBJECT" iconPosition="RIGHT"/>
+						
+					<!-- Length -->
+					<m:MaterialRow>					
+						<m:MaterialLabel ui:field="lblTextLengthUI" text="Length:"/>
+						<flair:DocumentLengthSlider ui:field="sldDocLengthUI"/>
+					</m:MaterialRow>
+	
+					<!-- Level -->
+					<m:MaterialRow>
+						<m:MaterialLabel ui:field="lblTextLevelUI" text="Levels:"
+							marginBottom="5"/>
+						
+						<m:MaterialRow>
+							<m:MaterialColumn>
+								<m:MaterialCheckBox ui:field="chkTextLevelAUI" value="true" text="A1-A2"/>
+								<m:MaterialBadge ui:field="bdgTextLevelACountUI" text="50/50"/>
+								
+								<m:MaterialCheckBox ui:field="chkTextLevelBUI" value="true" text="B1-B2"/>
+								<m:MaterialBadge ui:field="bdgTextLevelBCountUI" text="50/50"/>
+								
+								<m:MaterialCheckBox ui:field="chkTextLevelCUI" value="true" text="C1-C2"/>
+								<m:MaterialBadge ui:field="bdgTextLevelCCountUI" text="50/50"/>
+							</m:MaterialColumn>
+							
+						</m:MaterialRow>
+					</m:MaterialRow>
+				</m:MaterialCard>				
+			</m:MaterialRow>	
+			
+			<m:MaterialRow paddingBottom="10" textAlign="CENTER">
+				<m:MaterialCard padding="20" marginBottom="20">
+					<!-- Keywords/Vocab -->
+					<flair:KeywordWeightSlider ui:field="sldKeywordsUI" />
+				</m:MaterialCard>		
+			</m:MaterialRow>	
+				
+			<m:MaterialRow depth="990" paddingBottom="20">
+				<m:MaterialRow textAlign="CENTER">
+					<m:MaterialButton ui:field="btnConstructionsListUI" text="List Of Constructions"
+						type="FLAT" waves="DEFAULT" backgroundColor="WHITE" textColor="BLUE"/>
+				</m:MaterialRow>
+				
+				<!-- Weight Sliders -->
+				<flair.pak:ConstructionSliderBundleEnglish/>
+				
+				<m:MaterialRow paddingTop="20" textAlign="CENTER">
+					<m:MaterialButton ui:field="btnResetAllUI" text="Reset All"
+						waves="LIGHT" backgroundColor="RED" textColor="WHITE" iconType="UNDO" iconPosition="RIGHT"/>
+				</m:MaterialRow>	
+			</m:MaterialRow>					
+		</m:MaterialRow>
 		
+		<!-- Results Pane-->
+		<m:MaterialContainer paddingTop="68" depth="700">
+            <m:MaterialRow layoutPosition="RELATIVE" grid="l12 m12 s12">
+                <m:MaterialPanel ui:field="pnlResultsListUI" backgroundColor="WHITE" layoutPosition="RELATIVE" grid="l12 m12 s12"
+                 	marginBottom="0" padding="5" addStyleNames="{style.global-animation}">
+                 	
+                    <m:MaterialRow ui:field="mainHeader" marginBottom="0" paddingLeft="40" addStyleNames="{style.global-animation}">
+                        <m:MaterialLink text="Name" grid="l5 m5 s6" textColor="GREY_DARKEN_1"/>
+                        <m:MaterialLink text="Shared by" grid="l4 m4 s6" textColor="GREY_DARKEN_1"/>
+                        <m:MaterialLink hideOn="HIDE_ON_SMALL_DOWN" text="Share date" grid="l3 m3" textColor="GREY_DARKEN_1"/>
+                    </m:MaterialRow>
+                    <m:MaterialCollapsible marginTop="20" padding="0"/>
+                </m:MaterialPanel>
+            </m:MaterialRow>
+        </m:MaterialContainer>	
+		
+		<!-- Preview Pane -->
+		<flair:DocumentPreviewPane ui:field="pnlDocPreviewUI"/>
+
 	    <!-- About Modals -->
-		<b:Modal ui:field="mdlAboutEnUI" closable="true" fade="true" dataBackdrop="STATIC" dataKeyboard="true" b:id="modalAboutEn">
-			<b:ModalHeader>
+		<m:MaterialModal ui:field="mdlAboutEnUI" dismissible="true">
+			<m:MaterialModalContent>
 				<g:HTML>
 					<center>
-						<h3 class="modal-title">About FLAIR </h3>
+						<h3 class="modal-title">
+							<img class="{style.brand-logo} modal-title" src="img/logo_2.png" alt="About FLAIR"/>
+						</h3>
 						<p>
 							<span style="color:darkorange">
 								<b>by</b>
@@ -92,11 +202,7 @@
 								<br/> Version 2.0
 						</p>
 					</center>
-				</g:HTML>				
-			</b:ModalHeader>	
-				
-			<b:ModalBody>
-				<g:HTML>
+					
 					<div style="text-align: center">
 						<p>FLAIR is an online tool for language teachers and learners that:
 						</p>
@@ -197,17 +303,20 @@
 								<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons
 									Attribution-NonCommercial-ShareAlike 4.0 International License</a>.
 				</g:HTML>				
-			</b:ModalBody>
+			</m:MaterialModalContent>
 			
-			<b:ModalFooter>
-				<b:Button type="PRIMARY" dataDismiss="MODAL">Close</b:Button>
-			</b:ModalFooter>
-		</b:Modal>	
-		<b:Modal ui:field="mdlAboutDeUI" closable="true" fade="true" dataBackdrop="STATIC" dataKeyboard="true" b:id="modalAboutDe">
-			<b:ModalHeader>
+			<m:MaterialModalFooter>
+				<m:MaterialButton ui:field="btnAboutEnCloseUI" text="Close" type="FLAT"/>
+			</m:MaterialModalFooter>
+		</m:MaterialModal>
+			
+		<m:MaterialModal ui:field="mdlAboutDeUI" dismissible="true">
+			<m:MaterialModalContent>
 				<g:HTML>
 					<center>
-					    <h3 class="modal-title">Über FLAIR </h3>
+					    <h3 class="modal-title">
+					    	<img class="{style.brand-logo} modal-title" src="img/logo_2.png" alt="Über FLAIR"/>
+					    </h3>
 					    <p><span style="color:darkorange"><b>von</b></span> <a href="http://sfs.uni-tuebingen.de/~mchnkina/" target="_blank">Maria Chinkina</a> <a href="mailto:maria.chinkina@uni-tuebingen.de?Subject=FLAIR%20tool" target="_top" title="Maria Chinkina kontaktieren"><span class="glyphicon glyphicon-envelope"></span></a> 
 					        &amp;
 					        <a href="http://sfs.uni-tuebingen.de/~mkannan/" target="_blank">Madeeswaran Kannan</a> <a href="mailto:mkannan@sfs.uni-tuebingen.de?Subject=FLAIR%20tool" target="_top" title="Madeeswaran Kannan kontaktieren"><span class="glyphicon glyphicon-envelope"></span></a> betreut von 
@@ -216,11 +325,7 @@
 					        <br/> Version 2.0
 					    </p>
 					</center>
-				</g:HTML>				
-			</b:ModalHeader>	
 				
-			<b:ModalBody>
-				<g:HTML>
 					<div style="text-align: center">
                             <p>FLAIR ist ein Online-Tool für Lerner und Lehrer von Sprachen. FLAIR:
                             </p>
@@ -252,12 +357,12 @@
                         <p><b>LIZENZ</b> </p>
                         <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><br/>FLAIR ist lizensiert unter einer <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de">Creative Commons Namensnennung - Nicht-kommerziell - Weitergabe unter gleichen Bedingungen 4.0 Internationalen Lizenz</a>.
 				</g:HTML>				
-			</b:ModalBody>
+			</m:MaterialModalContent>
 			
-			<b:ModalFooter>
-				<b:Button type="PRIMARY" dataDismiss="MODAL">Schliessen</b:Button>
-			</b:ModalFooter>
-		</b:Modal>
-	</g:HTMLPanel>
+			<m:MaterialModalFooter>
+				<m:MaterialButton ui:field="btnAboutDeCloseUI" text="Schliessen" type="FLAT"/>
+			</m:MaterialModalFooter>
+		</m:MaterialModal>
+	</m:MaterialPanel>
 	  
 </ui:UiBinder> 

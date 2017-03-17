@@ -1,9 +1,7 @@
 package com.flair.client.model;
 
-import com.flair.client.presentation.RankerView;
 import com.flair.shared.grammar.Language;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
 /*
@@ -11,7 +9,6 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class WebRankerCore
 {
-	private final RankerView		rankerView;
 	
 	private void init()
 	{
@@ -20,7 +17,6 @@ public class WebRankerCore
 	
 	public WebRankerCore()
 	{
-		rankerView = new RankerView();
 		
 		init();
 	}
