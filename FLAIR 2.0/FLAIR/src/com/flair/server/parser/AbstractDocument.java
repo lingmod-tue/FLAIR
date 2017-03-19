@@ -7,6 +7,7 @@ package com.flair.server.parser;
 
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
+import com.flair.shared.parser.DocumentReadabilityLevel;
 
 /**
  * The interface all parsable documents must implement
@@ -15,13 +16,13 @@ import com.flair.shared.grammar.Language;
 public interface AbstractDocument extends Comparable<AbstractDocument>
 {
     public AbstractDocumentSource			getDocumentSource();
-    public Language					getLanguage();
-    public String					getText();
-    public String					getDescription();
+    public Language							getLanguage();
+    public String							getText();
+    public String							getDescription();
     public DocumentConstructionData			getConstructionData(GrammaticalConstruction type);
     
     public double					getReadabilityScore();
-    public String					getReadabilityLevel();
+    public DocumentReadabilityLevel	getReadabilityLevel();
     
     public int						getNumCharacters();
     public int						getNumSentences();
@@ -47,7 +48,7 @@ public interface AbstractDocument extends Comparable<AbstractDocument>
     public void						setLength(int value);
     public double					getFancyLength();
     
-    public KeywordSearcherOutput			getKeywordData();
+    public KeywordSearcherOutput	getKeywordData();
     public void						setKeywordData(KeywordSearcherOutput data);
     
     public boolean					isParsed();

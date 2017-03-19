@@ -1,7 +1,7 @@
 package com.flair.client.model.interfaces;
 
 import com.flair.shared.grammar.GrammaticalConstruction;
-import com.flair.shared.parser.RankableDocument;
+import com.flair.shared.interop.RankableDocument;
 
 /*
  * Input for the DocumentAnnotator class

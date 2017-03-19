@@ -10,7 +10,7 @@ import com.flair.client.model.interfaces.AbstractDocumentAnnotator;
 import com.flair.client.model.interfaces.DocumentAnnotatorInput;
 import com.flair.client.model.interfaces.DocumentAnnotatorOutput;
 import com.flair.shared.grammar.GrammaticalConstruction;
-import com.flair.shared.parser.RankableDocument;
+import com.flair.shared.interop.RankableDocument;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 

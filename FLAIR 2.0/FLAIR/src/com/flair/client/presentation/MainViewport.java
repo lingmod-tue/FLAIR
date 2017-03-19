@@ -63,6 +63,8 @@ public class MainViewport extends LocalizedComposite
 	}
 	
 	@UiField
+	MaterialPanel								pnlRootUI;
+	@UiField
 	MaterialNavBar								navMainUI;
 	@UiField
 	MaterialNavSection							pnlNavMainUI;
@@ -180,6 +182,16 @@ public class MainViewport extends LocalizedComposite
 		}
 	}
 	
+	private void updateResultsListGrid()
+	{
+		if (settingsVisible && previewVisible)
+			pnlResultsListUI.setGrid("l4 m4 s12");
+		else if (settingsVisible ^ previewVisible)
+			pnlResultsListUI.setGrid("l8 m8 s12");
+		else
+			pnlResultsListUI.setGrid("l12 m12 s12");
+	}
+	
 	private void showSettingsPane(boolean visible)
 	{
 		if (visible == settingsVisible)
@@ -189,16 +201,16 @@ public class MainViewport extends LocalizedComposite
 		
 		if (settingsVisible)
 		{
-			pnlResultsListUI.setGrid("l9 m9 s12");
 			pnlResultsListUI.setLeft(SETTINGS_PANEL_WIDTH);
 			pnlConstructionsSettingsUI.setLeft(0);
 		}
 		else
 		{
-			pnlResultsListUI.setGrid("l12 m12 s12");
 			pnlResultsListUI.setLeft(0);
 			pnlConstructionsSettingsUI.setLeft(-SETTINGS_PANEL_WIDTH);
 		}
+		
+		updateResultsListGrid();
 	}
 	
 	private void showPreviewPane(boolean visible)
@@ -212,6 +224,13 @@ public class MainViewport extends LocalizedComposite
 			pnlDocPreviewUI.show();
 		else
 			pnlDocPreviewUI.hide();
+		
+		updateResultsListGrid();
+	}
+	
+	private void switchLanguage(Language lang)
+	{
+		localeCore.setLanguage(lang);
 	}
 	
 	private void invokeSearch()
@@ -263,11 +282,11 @@ public class MainViewport extends LocalizedComposite
 		});
 		
 		btnLangEnUI.addClickHandler(e -> {
-			localeCore.setLanguage(Language.ENGLISH);
+			switchLanguage(Language.ENGLISH);
 		});
 		
 		btnLangDeUI.addClickHandler(e -> {
-			localeCore.setLanguage(Language.GERMAN);
+			switchLanguage(Language.GERMAN);
 		});
 		
 		btnAboutUI.addClickHandler(e -> {

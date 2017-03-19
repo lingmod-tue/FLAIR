@@ -7,17 +7,11 @@ package com.flair.server.taskmanager;
 
 /**
  * The result of a task
+ * 
  * @author shadeMe
  */
-abstract class AbstractTaskResult
+interface AbstractTaskResult<R>
 {
-    private final TaskType		type;
-    
-    public AbstractTaskResult(TaskType type) {
-	this.type = type;
-    }
-    
-    public TaskType getType() {
-	return type;
-    }
+	public TaskType		getType();
+	public R			getResult();
 }

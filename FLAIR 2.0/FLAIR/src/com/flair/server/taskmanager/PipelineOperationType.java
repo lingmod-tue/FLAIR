@@ -11,6 +11,6 @@ package com.flair.server.taskmanager;
  */
 public enum PipelineOperationType
 {
-    WEB_SEARCH_CRAWL,
-    PARSE_DOCUMENTS
+    SEARCH_CRAWL_PARSE,
+    CUSTOM_PARSE
 }

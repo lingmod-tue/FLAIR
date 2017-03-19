@@ -1,8 +1,8 @@
 package com.flair.client.model.interfaces;
 
 import com.flair.shared.grammar.GrammaticalConstruction;
+import com.flair.shared.interop.RankableDocument;
 import com.flair.shared.parser.DocumentReadabilityLevel;
-import com.flair.shared.parser.RankableDocument;
 
 /*
  * Output data of the RankerLogic class

@@ -26,7 +26,7 @@
 	}
 	</ui:style>
 	
-	<m:MaterialPanel backgroundColor="WHITE">	
+	<m:MaterialPanel ui:field="pnlRootUI" backgroundColor="WHITE">	
 		<m:MaterialHeader depth="996" layoutPosition="FIXED" width="100%">
 			<!-- Main Navbar -->
 			<m:MaterialNavBar ui:field="navMainUI" backgroundColor="ORANGE">

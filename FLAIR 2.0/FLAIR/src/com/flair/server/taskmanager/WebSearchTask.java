@@ -12,60 +12,65 @@ import com.flair.server.utilities.FLAIRLogger;
 import java.util.List;
 
 /**
- * Fetchs search results for a given query
+ * Fetches search results for a given query
+ * 
  * @author shadeMe
  */
-class WebSearchTask extends AbstractTask
+class WebSearchTask extends AbstractTask<WebSearchTaskResult>
 {
-    private final WebSearchAgent	    input;
-    private final int			    numResults;
-    
-    public WebSearchTask(AbstractJob job, AbstractTaskContinuation continuation, WebSearchAgent source, int numResults)
-    {
-	super(job, TaskType.FETCH_SEARCHRESULTS, continuation);
-	this.input = source;
-	this.numResults = numResults;
-    }
-    
-    @Override
-    protected AbstractTaskResult performTask()
-    {
-	List<SearchResult> hits = input.getNext(numResults);
-	WebSearchTaskResult result = new WebSearchTaskResult(hits, input);
-	FLAIRLogger.get().trace("Web Search for '" + input.getQuery() + "' fetched " + hits.size() + " results");
-	return result;
-    }
+	static final class Executor extends AbstractTaskExecutor
+	{
+		private Executor() {
+			super(Constants.TEXTFETCHER_THREADPOOL_SIZE);
+		}
+
+		public void search(WebSearchTask task) {
+			queue(task);
+		}
+	}
+	
+	public static final Executor getExecutor() {
+		return new Executor();
+	}
+	
+	private final WebSearchAgent	input;
+	private final int				numResults;
+
+	public WebSearchTask(AbstractJob<?, ?> job,
+						WebSearchAgent source,
+						int numResults)
+	{
+		super(TaskType.WEB_SEARCH, job, new BasicTaskLinker<WebSearchTaskResult>(job));
+		this.input = source;
+		this.numResults = numResults;
+	}
+
+	@Override
+	protected WebSearchTaskResult performTask()
+	{
+		List<SearchResult> hits = input.getNext(numResults);
+		WebSearchTaskResult result = new WebSearchTaskResult(hits, input);
+		FLAIRLogger.get().trace("Web Search for '" + input.getQuery() + "' fetched " + hits.size() + " results");
+		return result;
+	}
 }
 
-class WebSearchTaskResult extends AbstractTaskResult
+class WebSearchTaskResult
 {
-    private final List<SearchResult>	    output;
-    private final WebSearchAgent	    agent;
-    
-    public WebSearchTaskResult(List<SearchResult> output, WebSearchAgent agent)
-    {
-	super(TaskType.FETCH_SEARCHRESULTS);
-	this.output = output;
-	this.agent = agent;
-    }
-    
-    public List<SearchResult> getOutput() {
-	return output;
-    }
-    
-    public WebSearchAgent getAgent() {
-	return agent;
-    }
-}
+	private final List<SearchResult>	output;
+	private final WebSearchAgent		agent;
 
+	public WebSearchTaskResult(List<SearchResult> output, WebSearchAgent agent)
+	{
+		this.output = output;
+		this.agent = agent;
+	}
 
-class WebSearchTaskExecutor extends AbstractTaskExecutor
-{
-    public WebSearchTaskExecutor() {
-	super(Constants.TEXTFETCHER_THREADPOOL_SIZE);
-    }
-    
-    public void search(WebSearchTask task) {
-	queue(task);
-    }
+	public List<SearchResult> getOutput() {
+		return output;
+	}
+
+	public WebSearchAgent getAgent() {
+		return agent;
+	}
 }

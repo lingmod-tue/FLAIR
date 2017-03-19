@@ -1,7 +1,7 @@
 package com.flair.client.presentation.interfaces;
 
 import com.flair.shared.grammar.GrammaticalConstruction;
-import com.flair.shared.parser.RankableDocument;
+import com.flair.shared.interop.RankableDocument;
 import com.google.gwt.safehtml.shared.SafeHtml;
 
 /*

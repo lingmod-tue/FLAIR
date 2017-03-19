@@ -1,14 +1,19 @@
-package com.flair.shared.parser;
+package com.flair.shared.interop;
 
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
 
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
+import com.flair.shared.parser.DocumentReadabilityLevel;
+import com.google.gwt.user.client.rpc.IsSerializable;
 
 /*
  * Represents a document that's rankable
  */
-public interface RankableDocument
+public interface RankableDocument extends IsSerializable
 {
     public interface ConstructionRange
     {
@@ -33,15 +38,15 @@ public interface RankableDocument
     public String								getSnippet();
     public String								getText();
     
-    public Set<GrammaticalConstruction>			getConstructions();		// constructions found in this document
+    public HashSet<GrammaticalConstruction>		getConstructions();		// constructions found in this document
     public boolean								hasConstruction(GrammaticalConstruction gram);
     public double								getConstructionFreq(GrammaticalConstruction gram);
     public double								getConstructionRelFreq(GrammaticalConstruction gram);
-    public Iterable<ConstructionRange>			getConstructionOccurrences(GrammaticalConstruction gram);
+    public ArrayList<? extends ConstructionRange>	getConstructionOccurrences(GrammaticalConstruction gram);
     
     public double								getKeywordCount();		// total number of hits
     public double								getKeywordRelFreq();	// relative to the number of words in the doc
-    public Iterable<KeywordRange>				getKeywordOccurrences();
+    public ArrayList<? extends KeywordRange>	getKeywordOccurrences();
     
     public int									getRawTextLength();		// wrapper around getText().size()
     public double								getNumWords();			// also the "length" of the document

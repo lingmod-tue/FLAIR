@@ -14,41 +14,42 @@ import com.flair.server.utilities.FLAIRLogger;
 
 /**
  * Basic implementation of a background task executor
+ * 
  * @author shadeMe
  */
 abstract class AbstractTaskExecutor
 {
-    private final ExecutorService	threadPool;
-    
-    public AbstractTaskExecutor(int numThreads) {
-	threadPool = Executors.newFixedThreadPool(numThreads);
-    }
-    
-    protected void queue(List<AbstractTask> tasks)
-    {
-	for (AbstractTask itr : tasks)
-	    threadPool.submit(itr.getFutureTask());
-    }
-    
-    protected void queue(AbstractTask task) {
-	threadPool.submit(task.getFutureTask());
-    }
-    
-    public void shutdown(boolean force) 
-    {
-	if (force)
-	    threadPool.shutdownNow();
-	else
-	{
-	    try
-	    {
-		threadPool.shutdown();
-		if (threadPool.awaitTermination(5, TimeUnit.MINUTES) == false)
-		    threadPool.shutdownNow();
-	    }
-	    catch (InterruptedException ex) {
-		FLAIRLogger.get().error(ex, "Couldn't shutdown task executor thread pool. Exception: " + ex.toString());
-	    }
+	private final ExecutorService threadPool;
+
+	public AbstractTaskExecutor(int numThreads) {
+		threadPool = Executors.newFixedThreadPool(numThreads);
 	}
-    }
+
+	protected void queue(List<AbstractTask<?>> tasks)
+	{
+		for (AbstractTask<?> itr : tasks)
+			threadPool.submit(itr.getFutureTask());
+	}
+
+	protected void queue(AbstractTask<?> task) {
+		threadPool.submit(task.getFutureTask());
+	}
+
+	public void shutdown(boolean force) 
+	{
+		if (force)
+			threadPool.shutdownNow();
+		else
+		{
+			try
+			{
+				threadPool.shutdown();
+				if (threadPool.awaitTermination(5, TimeUnit.MINUTES) == false)
+					threadPool.shutdownNow();
+			} catch (InterruptedException ex)
+			{
+				FLAIRLogger.get().error(ex, "Couldn't shutdown task executor thread pool. Exception: " + ex.toString());
+			}
+		}
+	}
 }

@@ -11,7 +11,7 @@ package com.flair.server.taskmanager;
  */
 public enum TaskType
 {
-    FETCH_SEARCHRESULTS,
-    FETCH_SEARCHRESULT_TEXT,
+    WEB_SEARCH,
+    WEB_CRAWL,
     PARSE_DOCUMENT,
 }

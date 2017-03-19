@@ -8,16 +8,13 @@ package com.flair.server.taskmanager;
 /**
  * Represents the interface of a (possibly executing) pipeline operation. A Future essentially.
  * @author shadeMe
- */
+ */	
 public interface AbstractPipelineOperation
 {
     public PipelineOperationType	getType();
     
-    public void				begin();
-    public boolean			isCancelled();
-    public void				cancel();
-    public boolean			isCompleted();	    // also returns true if the op was cancelled
-    public void				registerCompletionListener(AbstractPipelineOperationCompletionListener listener);
-    
-    public Object			getOutput();
+    public void						begin();
+    public boolean					isCancelled();
+    public void						cancel();
+    public boolean					isCompleted();	    // also returns true if the operation was cancelled
 }
