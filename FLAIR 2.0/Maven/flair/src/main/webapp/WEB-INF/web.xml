@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+              http://java.sun.com/xml/ns/javaee/web-app_3.1.xsd"
+	version="3.1" xmlns="http://java.sun.com/xml/ns/javaee">
+
+	<display-name>FLAIR 2.0</display-name>
+
+	<!-- Filters -->
+	<filter>
+		<filter-name>GzipFilter</filter-name>
+		<filter-class>com.flair.server.interop.GZIPFilter</filter-class>
+	</filter>
+<!-- 	<filter-mapping> -->
+<!-- 		<filter-name>GzipFilter</filter-name> -->
+<!-- 		<servlet-name>PullMessage</servlet-name> -->
+<!-- 	</filter-mapping> -->
+
+	<!-- Listeners -->
+	<listener>
+		<listener-class>com.flair.server.interop.BasicServletContextListener</listener-class>
+	</listener>
+
+	<!-- Servlets -->
+	<servlet>
+		<servlet-name>CustomCorpusServlet</servlet-name>
+		<servlet-class>com.flair.server.interop.CustomCorpusServlet</servlet-class>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>PullMessage</servlet-name>
+		<servlet-class>com.flair.server.interop.services.PullMessageEndpointServiceImpl</servlet-class>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>SessionManagement</servlet-name>
+		<servlet-class>com.flair.server.interop.services.SessionManagementServiceImpl</servlet-class>
+	</servlet>
+	
+	<servlet>
+		<servlet-name>WebRanker</servlet-name>
+		<servlet-class>com.flair.server.interop.services.WebRankerServiceImpl</servlet-class>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>CustomCorpusServlet</servlet-name>
+		<url-pattern>/flair/CustomCorpusServlet</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>	
+		<servlet-name>PullMessage</servlet-name>
+		<url-pattern>/flair/PullMessage</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>SessionManagement</servlet-name>
+		<url-pattern>/flair/SessionManagement</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>		
+		<servlet-name>WebRanker</servlet-name>
+		<url-pattern>/flair/WebRanker</url-pattern>
+	</servlet-mapping>
+
+	<!-- Session Config -->
+	<session-config>
+		<session-timeout>60</session-timeout>
+	</session-config>
+
+	<!-- Default page to serve -->
+	<welcome-file-list>
+		<welcome-file>FLAIR.html</welcome-file>
+	</welcome-file-list>
+
+</web-app>

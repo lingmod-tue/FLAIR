@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module rename-to="FLAIR">
+  <!-- Inherit our applications main module.                      -->
+  <inherits name='com.flair.FLAIR' />
+
+  <!-- Specify the path to any remote services.                   -->
+  <servlet path="/FLAIR/greet" class="com.flair.server.GreetingServiceImpl" />
+
+</module>

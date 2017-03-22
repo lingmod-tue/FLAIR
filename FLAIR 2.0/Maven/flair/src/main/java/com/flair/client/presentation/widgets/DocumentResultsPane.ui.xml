@@ -1,0 +1,30 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:m="urn:import:gwt.material.design.client.ui"
+	xmlns:m.html="urn:import:gwt.material.design.client.ui.html">
+		
+	<ui:style>
+	.global-animation {
+		transition: 0.4s all;
+		-webkit-transition: 0.4s all;
+		-moz-transition: 0.4s all;
+	}
+	</ui:style>
+	
+	<m:MaterialPanel ui:field="pnlRootUI" overflow="AUTO"  depth="700" backgroundColor="WHITE" 
+		grid="l6 m6 s12" height="100%" padding="15" top="68"
+		addStyleNames="{style.global-animation}" textAlign="CENTER">
+			
+		<m:MaterialTitle ui:field="lblTitleUI" marginBottom="20" title="Title" description="Description"/>
+		
+		<m:MaterialRow ui:field="pnlCompletedContainerUI" padding="10" marginBottom="10">
+			<m:MaterialLabel ui:field="lblCompletedPlaceholderUI" text="Completed Placeholder"/>
+		</m:MaterialRow>
+		
+		<m:MaterialRow ui:field="pnlInProgressContainerUI" padding="10" marginTop="10">
+			<m:MaterialLabel ui:field="lblInProgressPlaceholderUI" text="In-progress Placeholder"/>
+		</m:MaterialRow>
+		
+	</m:MaterialPanel>
+</ui:UiBinder> 
