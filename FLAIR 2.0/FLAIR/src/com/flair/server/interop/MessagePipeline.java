@@ -1,15 +1,15 @@
 package com.flair.server.interop;
 
+import java.util.ArrayDeque;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Queue;
 
-import org.eclipse.jetty.util.ArrayQueue;
-
-import com.flair.server.utilities.FLAIRLogger;
+import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.interop.AbstractMesageSender;
 import com.flair.shared.interop.AuthToken;
 import com.flair.shared.interop.MessagePipelineType;
+import com.flair.shared.interop.ServerAuthenticationToken;
 import com.flair.shared.interop.ServerMessage;
 
 /*
@@ -40,14 +40,14 @@ public class MessagePipeline
 	/*
 	 * Pull implementation of a message sender
 	 */
-	class PullMessageSender implements AbstractMesageSender, PullMessageEndpoint
+	class PullMessageSender implements AbstractMesageSender, PullMessageQueue
 	{
 		private final Queue<ServerMessage>		messageQueue;
 		private boolean							registered;
 		
 		public PullMessageSender() 
 		{
-			messageQueue = new ArrayQueue<>();
+			messageQueue = new ArrayDeque<>();
 			registered = false;
 		}
 		
@@ -83,13 +83,17 @@ public class MessagePipeline
 		{
 			if (messageQueue.isEmpty() == false)
 			{
-				FLAIRLogger.get().warn("PullMessageSender has pending messages at the time of shutdown. Message count: "
+				ServerLogger.get().warn("PullMessageSender has pending messages at the time of shutdown. Message count: "
 						+ messageQueue.size());
 			}
 			
 			messageQueue.clear();
 			
 			deregisterPullMessageSender(this);
+		}
+		
+		private synchronized boolean doIsOpen() {
+			return registered;
 		}
 
 		@Override
@@ -129,6 +133,11 @@ public class MessagePipeline
 		@Override
 		public void close() {
 			doClose();
+		}
+
+		@Override
+		public boolean isOpen() {
+			return doIsOpen();
 		}
 	}
 

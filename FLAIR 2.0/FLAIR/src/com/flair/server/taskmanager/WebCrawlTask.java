@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import com.flair.server.crawler.SearchResult;
-import com.flair.server.utilities.FLAIRLogger;
+import com.flair.server.utilities.ServerLogger;
 
 /**
  * Fetches a SearchResult's text
@@ -94,14 +94,14 @@ class WebCrawlTask extends AbstractTask<WebCrawlTaskResult>
 			fetchExecutor.submit(fetchWrapper).get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
 		} catch (TimeoutException ex)
 		{
-			FLAIRLogger.get().error("Fetch text timed out for URL: " + input.getDisplayURL());
+			ServerLogger.get().error("Fetch text timed out for URL: " + input.getDisplayURL());
 		} catch (Throwable ex)
 		{
-			FLAIRLogger.get().error(ex, "Fetch text encountered an exception for URL: " + input.getDisplayURL()
+			ServerLogger.get().error(ex, "Fetch text encountered an exception for URL: " + input.getDisplayURL()
 					+ ". Exception: " + ex.toString());
 		}
 
-		FLAIRLogger.get().trace("Search Result (" + input.getDisplayURL() + ") text fetched: " + result.wasSuccessful());
+		ServerLogger.get().trace("Search Result (" + input.getDisplayURL() + ") text fetched: " + result.wasSuccessful());
 		return result;
 	}
 }

@@ -6,16 +6,15 @@
 package com.flair.server.interop.session;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.flair.server.crawler.SearchResult;
 import com.flair.server.grammar.DefaultVocabularyList;
 import com.flair.server.interop.MessagePipeline;
-import com.flair.server.interop.RankableDocumentImpl;
-import com.flair.server.interop.RankableWebSearchResultImpl;
-import com.flair.server.interop.ServerAuthenticationToken;
 import com.flair.server.parser.AbstractDocument;
 import com.flair.server.parser.AbstractDocumentSource;
+import com.flair.server.parser.DocumentCollection;
 import com.flair.server.parser.DocumentConstructionData;
 import com.flair.server.parser.KeywordSearcherInput;
 import com.flair.server.parser.KeywordSearcherOutput;
@@ -27,11 +26,16 @@ import com.flair.server.taskmanager.CustomParseOperation;
 import com.flair.server.taskmanager.MasterJobPipeline;
 import com.flair.server.taskmanager.PipelineOperationType;
 import com.flair.server.taskmanager.SearchCrawlParseOperation;
-import com.flair.server.utilities.FLAIRLogger;
+import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
 import com.flair.shared.interop.AbstractMesageSender;
+import com.flair.shared.interop.RankableDocumentImpl;
+import com.flair.shared.interop.RankableWebSearchResultImpl;
+import com.flair.shared.interop.ServerAuthenticationToken;
 import com.flair.shared.interop.ServerMessage;
+import com.flair.shared.interop.UploadedDocument;
+import com.flair.shared.interop.UploadedDocumentImpl;
 import com.flair.shared.interop.ServerMessage.Type;
 
 /**
@@ -39,7 +43,7 @@ import com.flair.shared.interop.ServerMessage.Type;
  * 
  * @author shadeMe
  */
-class SessionState
+public class SessionState
 {
 	static final class OperationState
 	{
@@ -200,11 +204,50 @@ class SessionState
 		return out;
 	}
 	
+	private ArrayList<UploadedDocument> generateUploadedDocs(Iterable<AbstractDocumentSource> source)
+	{
+		ArrayList<UploadedDocument> out = new ArrayList<>();
+		
+		for (AbstractDocumentSource itr : source)
+		{
+			StreamDocumentSource sdr = (StreamDocumentSource)itr;
+			UploadedDocumentImpl u = new UploadedDocumentImpl();
+			String snippet = itr.getSourceText();
+			if (snippet.length() > 100)
+				snippet = snippet.substring(0, 100);
+			
+			u.setLanguage(itr.getLanguage());
+			u.setTitle(sdr.getName());
+			u.setSnippet(snippet);
+			u.setText(itr.getSourceText());
+			
+			out.add(u);
+		}
+		
+		return out;
+	}
+	
+	private synchronized void handleCorpusJobBegin(Iterable<AbstractDocumentSource> source)
+	{
+		if (hasOperation() == false)
+		{
+			ServerLogger.get().error("Invalid corpus job begin event");
+			return;
+		}
+		
+		ServerMessage msg = new ServerMessage(token);
+		ServerMessage.CustomCorpus d = new ServerMessage.CustomCorpus(generateUploadedDocs(source));
+		msg.setCustomCorpus(d);
+		msg.setType(ServerMessage.Type.CUSTOM_CORPUS);
+		
+		messagePipeline.send(msg);
+	}
+	
 	private synchronized void handleCrawlComplete(SearchResult sr)
 	{
 		if (hasOperation() == false)
 		{
-			FLAIRLogger.get().error("Invalid crawl complete event");
+			ServerLogger.get().error("Invalid crawl complete event");
 			return;
 		}
 		
@@ -220,7 +263,7 @@ class SessionState
 	{
 		if (hasOperation() == false)
 		{
-			FLAIRLogger.get().error("Invalid parse complete event for " + t);
+			ServerLogger.get().error("Invalid parse complete event for " + t);
 			return;
 		}
 		
@@ -239,11 +282,11 @@ class SessionState
 		messagePipeline.send(msg);
 	}
 	
-	private synchronized void handleJobComplete(ServerMessage.Type t)
+	private synchronized void handleJobComplete(ServerMessage.Type t, DocumentCollection docs)
 	{
 		if (hasOperation() == false)
 		{
-			FLAIRLogger.get().error("Invalid job complete event for " + t);
+			ServerLogger.get().error("Invalid job complete event for " + t);
 			return;
 		}
 		
@@ -267,7 +310,7 @@ class SessionState
 	
 	private void sendErrorResponse(String err)
 	{
-		FLAIRLogger.get().error(err);
+		ServerLogger.get().error(err);
 		
 		ServerMessage msg = new ServerMessage(token);
 		ServerMessage.Error d = new ServerMessage.Error(err);
@@ -279,7 +322,7 @@ class SessionState
 
 	public synchronized void handleCorpusUpload(List<CustomCorpusFile> corpus)
 	{
-		FLAIRLogger.get().info("Received custom corpus from client");
+		ServerLogger.get().info("Received custom corpus from client");
 
 		if (hasOperation())
 		{
@@ -309,11 +352,14 @@ class SessionState
 		currentOperation = new OperationState(op);
 		
 		// register event handlers and start the op
+		op.setJobBeginHandler(e -> {
+			handleCorpusJobBegin(e);;
+		});
 		op.setParseCompleteHandler(e -> {
 			handleParseComplete(ServerMessage.Type.CUSTOM_CORPUS, e);
 		});
 		op.setJobCompleteHandler(e -> {
-			handleJobComplete(ServerMessage.Type.CUSTOM_CORPUS);
+			handleJobComplete(ServerMessage.Type.CUSTOM_CORPUS, e);
 		});
 		
 		op.begin();
@@ -321,7 +367,7 @@ class SessionState
 	
 	public synchronized void searchCrawlParse(String query, Language lang, int numResults, List<String> keywords) 
 	{
-		FLAIRLogger.get().info("Begin Search-Crawl-Parse -> Query: " + query + ", Language: " + lang.toString() + ", Results: " + numResults);
+		ServerLogger.get().info("Begin Search-Crawl-Parse -> Query: " + query + ", Language: " + lang.toString() + ", Results: " + numResults);
 		
 		if (hasOperation())
 		{
@@ -345,7 +391,7 @@ class SessionState
 			handleParseComplete(ServerMessage.Type.SEARCH_CRAWL_PARSE, e);
 		});
 		op.setJobCompleteHandler(e -> {
-			handleJobComplete(ServerMessage.Type.SEARCH_CRAWL_PARSE);
+			handleJobComplete(ServerMessage.Type.SEARCH_CRAWL_PARSE, e);
 		});
 		
 		op.begin();
@@ -353,7 +399,7 @@ class SessionState
 
 	public synchronized void parseCustomCorpus(Language lang, List<String> keywords)
 	{
-		FLAIRLogger.get().info("Begin Custom Corpus Parsing -> Language: " + lang.toString());
+		ServerLogger.get().info("Begin Custom Corpus Parsing -> Language: " + lang.toString());
 		
 		if (hasOperation())
 		{
@@ -391,7 +437,7 @@ class SessionState
 	{
 		if (hasOperation())
 		{
-			FLAIRLogger.get().warn("Pipeline operation is still executing at the time of shutdown. Status: "
+			ServerLogger.get().warn("Pipeline operation is still executing at the time of shutdown. Status: "
 					+ currentOperation.get().toString());
 			
 			currentOperation.get().cancel();

@@ -1,7 +1,7 @@
 package com.flair.client.presentation.widgets;
 
+import com.flair.client.ClientEndPoint;
 import com.flair.client.localization.LocalizedComposite;
-import com.flair.client.model.ClientEndPoint;
 import com.flair.client.presentation.interfaces.CanReset;
 import com.flair.client.presentation.interfaces.GrammaticalConstructionContainer;
 import com.flair.shared.grammar.GrammaticalConstruction;
@@ -47,9 +47,9 @@ public abstract class LanguageSpecificConstructionSliderBundle extends Localized
 		GrammaticalConstructionWeightSlider out = null;
 		for (Widget itr : rootContainer)
 		{
-			if (itr instanceof GrammaticalConstructionPanelItem)
+			if (itr instanceof GrammaticalConstructionPanel)
 			{
-				GrammaticalConstructionPanelItem panel = (GrammaticalConstructionPanelItem)itr;
+				GrammaticalConstructionPanel panel = (GrammaticalConstructionPanel)itr;
 				if ((out = panel.getWeightSlider(val)) != null)
 					break;
 			}
@@ -67,6 +67,19 @@ public abstract class LanguageSpecificConstructionSliderBundle extends Localized
 			{
 				CanReset w = (CanReset)itr;
 				w.resetState(fireEvents);
+			}
+		}
+	}
+	
+	@Override
+	public void forEachWeightSlider(ForEachHandler handler)
+	{
+		for (Widget itr : rootContainer)
+		{
+			if (itr instanceof GrammaticalConstructionPanel)
+			{
+				GrammaticalConstructionPanel panel = (GrammaticalConstructionPanel)itr;
+				panel.forEachWeightSlider(handler);
 			}
 		}
 	}

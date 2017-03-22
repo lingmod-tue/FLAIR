@@ -8,6 +8,11 @@ import com.flair.shared.grammar.GrammaticalConstruction;
  */
 public interface GrammaticalConstructionContainer
 {
+	public interface ForEachHandler {
+		public void handle(GrammaticalConstructionWeightSlider slider);
+	}
+	
 	public boolean									hasConstruction(GrammaticalConstruction val);
 	public GrammaticalConstructionWeightSlider		getWeightSlider(GrammaticalConstruction val);	// returns null if absent
+	public void										forEachWeightSlider(ForEachHandler handler);
 }

@@ -1,7 +1,7 @@
 package com.flair.client.presentation.widgets;
 
+import com.flair.client.ClientEndPoint;
 import com.flair.client.localization.LocalizedComposite;
-import com.flair.client.model.ClientEndPoint;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -30,6 +30,14 @@ public abstract class GenericWeightSlider extends LocalizedComposite
 	protected static final int		SLIDER_MIN_VAL = 0;
 	protected static final int		SLIDER_MAX_VAL = 5;
 	protected static final int		SLIDER_STEP = 1;
+	
+	public static int getSliderMin() {
+		return SLIDER_MIN_VAL;
+	}
+	
+	public static int getSliderMax() {
+		return SLIDER_MAX_VAL;
+	}
 	
 	protected final MaterialCheckBox	toggle;
 	protected final MaterialRange 		slider;

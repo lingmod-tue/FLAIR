@@ -5,7 +5,7 @@ package com.flair.server.crawler.impl.faroo;
 
 import com.flair.server.crawler.impl.AbstractSearchAgentImpl;
 import com.flair.server.crawler.impl.AbstractSearchAgentImplResult;
-import com.flair.server.utilities.FLAIRLogger;
+import com.flair.server.utilities.ServerLogger;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.InputStream;
@@ -230,7 +230,7 @@ public class FarooSearch implements AbstractSearchAgentImpl
 	    return loadResults(resEntity.getContent());
         } 
 	catch (Throwable ex) {
-	    FLAIRLogger.get().error(ex, "Couldn't fetch search results from Faroo. Exception: " + ex.toString());
+	    ServerLogger.get().error(ex, "Couldn't fetch search results from Faroo. Exception: " + ex.toString());
 	}
 	
 	return new ArrayList<>();

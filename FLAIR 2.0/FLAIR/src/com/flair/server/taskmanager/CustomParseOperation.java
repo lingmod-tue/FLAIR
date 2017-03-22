@@ -1,10 +1,15 @@
 package com.flair.server.taskmanager;
 
 import com.flair.server.parser.AbstractDocument;
+import com.flair.server.parser.AbstractDocumentSource;
 import com.flair.server.parser.DocumentCollection;
 
 public interface CustomParseOperation extends AbstractPipelineOperation
 {
+	public interface JobBegin {
+		public void handle(Iterable<AbstractDocumentSource> sources);
+	}
+	
 	public interface ParseComplete {
 		public void handle(AbstractDocument result);
 	}
@@ -13,6 +18,7 @@ public interface CustomParseOperation extends AbstractPipelineOperation
 		public void handle(DocumentCollection result);
 	}
 
+	public void			setJobBeginHandler(JobBegin handler);
 	public void			setParseCompleteHandler(ParseComplete handler);
 	public void			setJobCompleteHandler(JobComplete handler);
 }
@@ -20,6 +26,8 @@ public interface CustomParseOperation extends AbstractPipelineOperation
 
 class CustomParseOperationImpl extends BasicPipelineOperation implements CustomParseOperation
 {
+	private ParseJobInput		input;
+	private JobBegin			jobB;
 	private ParseComplete		parseC;
 	private JobComplete			jobC;
 	
@@ -27,6 +35,8 @@ class CustomParseOperationImpl extends BasicPipelineOperation implements CustomP
 	{
 		super(new ParseJob(input), PipelineOperationType.CUSTOM_PARSE);
 
+		this.input = input;
+		jobB = null;
 		parseC = null;
 		jobC = null;
 	}
@@ -52,6 +62,10 @@ class CustomParseOperationImpl extends BasicPipelineOperation implements CustomP
 			}
 		});;
 		
+		// trigger the job begin event
+		if (jobB != null)
+			jobB.handle(input.sourceDocs);
+			
 		super.begin();
 	}
 
@@ -63,5 +77,10 @@ class CustomParseOperationImpl extends BasicPipelineOperation implements CustomP
 	@Override
 	public void setJobCompleteHandler(JobComplete handler) {
 		jobC = handler;
+	}
+
+	@Override
+	public void setJobBeginHandler(JobBegin handler) {
+		jobB = handler;
 	}
 }

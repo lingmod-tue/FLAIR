@@ -7,7 +7,7 @@ package com.flair.server.interop;
 
 import com.flair.server.interop.session.SessionManager;
 import com.flair.server.taskmanager.MasterJobPipeline;
-import com.flair.server.utilities.FLAIRLogger;
+import com.flair.server.utilities.ServerLogger;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
@@ -21,8 +21,8 @@ public class BasicServletContextListener implements ServletContextListener
 	@Override
 	public void contextInitialized(ServletContextEvent sce) 
 	{
-		FLAIRLogger.get().info("FLAIR Context initializing...");
-		FLAIRLogger.get().indent();
+		ServerLogger.get().info("FLAIR Context initializing...");
+		ServerLogger.get().indent();
 
 		MasterJobPipeline.get();
 		SessionManager.get();
@@ -30,25 +30,25 @@ public class BasicServletContextListener implements ServletContextListener
 		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 			@Override
 			public void uncaughtException(Thread thread, Throwable thrwbl) {
-				FLAIRLogger.get().error(thrwbl,
+				ServerLogger.get().error(thrwbl,
 						"Uncaught exception in thread " + thread.getName() + ": " + thrwbl.toString());
 			}
 		});
 
-		FLAIRLogger.get().exdent();
-		FLAIRLogger.get().info("FLAIR Context initialized!");
+		ServerLogger.get().exdent();
+		ServerLogger.get().info("FLAIR Context initialized!");
 	}
 
 	@Override
 	public void contextDestroyed(ServletContextEvent sce) 
 	{
-		FLAIRLogger.get().info("FLAIR Context deinitializing...");
-		FLAIRLogger.get().indent();
+		ServerLogger.get().info("FLAIR Context deinitializing...");
+		ServerLogger.get().indent();
 
 		MasterJobPipeline.dispose();
 		SessionManager.dispose();
 
-		FLAIRLogger.get().exdent();
-		FLAIRLogger.get().info("FLAIR Context deinitialized!");
+		ServerLogger.get().exdent();
+		ServerLogger.get().info("FLAIR Context deinitialized!");
 	}
 }

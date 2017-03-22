@@ -1,19 +1,15 @@
 package com.flair.shared.interop;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Set;
 
 import com.flair.shared.grammar.GrammaticalConstruction;
-import com.flair.shared.grammar.Language;
 import com.flair.shared.parser.DocumentReadabilityLevel;
-import com.google.gwt.user.client.rpc.IsSerializable;
 
 /*
  * Represents a document that's rankable
  */
-public interface RankableDocument extends IsSerializable
+public interface RankableDocument extends BasicDocumentTransferObject
 {
     public interface ConstructionRange
     {
@@ -29,14 +25,11 @@ public interface RankableDocument extends IsSerializable
 		public String	getKeyword();
     }
 
-    public Language								getLanguage();
     public int									getRank();			// original rank of the document (in its collection)
+    public void									setRank(int rank);
     
-    public String								getTitle();
     public String								getUrl();
     public String								getDisplayUrl();
-    public String								getSnippet();
-    public String								getText();
     
     public HashSet<GrammaticalConstruction>		getConstructions();		// constructions found in this document
     public boolean								hasConstruction(GrammaticalConstruction gram);

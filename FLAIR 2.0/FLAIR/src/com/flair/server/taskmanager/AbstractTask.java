@@ -8,7 +8,7 @@ package com.flair.server.taskmanager;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 
-import com.flair.server.utilities.FLAIRLogger;
+import com.flair.server.utilities.ServerLogger;
 
 /**
  * Represents a basic concurrent task
@@ -114,7 +114,7 @@ abstract class AbstractTask<R> implements Callable<R>
 			}
 		} catch (Throwable ex) 
 		{
-			FLAIRLogger.get().error(ex, "Uncaught exception in AbstractTask: " + ex.toString());
+			ServerLogger.get().error(ex, "Uncaught exception in AbstractTask: " + ex.toString());
 		} finally
 		{
 			parentJob.unregisterTask(this);

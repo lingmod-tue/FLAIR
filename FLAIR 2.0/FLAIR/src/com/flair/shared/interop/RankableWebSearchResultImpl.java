@@ -1,7 +1,6 @@
-package com.flair.server.interop;
+package com.flair.shared.interop;
 
 import com.flair.shared.grammar.Language;
-import com.flair.shared.interop.RankableWebSearchResult;
 
 /*
  * Serializable version of a web search result
@@ -84,5 +83,16 @@ public class RankableWebSearchResultImpl implements RankableWebSearchResult
 
 	public void setText(String text) {
 		this.text = text;
+	}
+	
+	@Override
+	public int hashCode() 
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((snippet == null) ? 0 : snippet.hashCode());
+		result = prime * result + ((text == null) ? 0 : text.hashCode());
+		result = prime * result + ((title == null) ? 0 : title.hashCode());
+		return result;
 	}
 }

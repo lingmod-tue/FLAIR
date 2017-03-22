@@ -124,20 +124,14 @@
 			<attribute name="javadoc_location" value="file:/C:/Users/shadeMe/.p2/pool/plugins/com.google.appengine.eclipse.sdkbundle_1.9.34/appengine-java-sdk-1.9.34/docs/javadoc/"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/shadeMe/Documents/FLAIR/SVN/FLAIR 2.0/FLAIR/war/WEB-INF/lib/flair/boilerpipe-1.2.0/boilerpipe-1.2.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/shadeMe/Documents/FLAIR/SVN/FLAIR 2.0/FLAIR/war/WEB-INF/lib/flair/boilerpipe-1.2.0/lib/nekohtml-1.9.13.jar"/>
-	<classpathentry kind="lib" path="C:/Users/shadeMe/Documents/FLAIR/SVN/FLAIR 2.0/FLAIR/war/WEB-INF/lib/flair/boilerpipe-1.2.0/lib/xerces-2.9.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/shadeMe/Documents/FLAIR/SVN/FLAIR 2.0/FLAIR/war/WEB-INF/lib/flair/stanford_nlp/stanford-corenlp-3.6.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/shadeMe/Documents/FLAIR/SVN/FLAIR 2.0/FLAIR/war/WEB-INF/lib/flair/stanford_nlp/stanford-corenlp-3.6.0-models.jar"/>
-	<classpathentry kind="lib" path="C:/Users/shadeMe/Documents/FLAIR/SVN/FLAIR 2.0/FLAIR/war/WEB-INF/lib/flair/stanford_nlp/stanford-german-2016-01-19-models.jar"/>
-	<classpathentry kind="lib" path="C:/Users/shadeMe/Documents/FLAIR/SVN/FLAIR 2.0/FLAIR/war/WEB-INF/lib/flair/stanford_nlp/stanford-srparser-2014-10-23-models.jar"/>
-	<classpathentry kind="lib" path="C:/Users/shadeMe/Documents/FLAIR/SVN/FLAIR 2.0/FLAIR/war/WEB-INF/lib/flair/stanford_nlp/stanford-tregex-3.6.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/shadeMe/Documents/FLAIR/SVN/FLAIR 2.0/FLAIR/war/WEB-INF/lib/flair/tika/tika-app-1.13.jar"/>
-	<classpathentry kind="lib" path="C:/Users/shadeMe/Documents/FLAIR/SVN/FLAIR 2.0/FLAIR/war/WEB-INF/lib/flair/gson-2.3.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/shadeMe/Documents/FLAIR/SVN/FLAIR 2.0/FLAIR/war/WEB-INF/lib/flair/javax.json-1.0.4.jar"/>
-	<classpathentry kind="lib" path="C:/Users/shadeMe/Documents/FLAIR/SVN/FLAIR 2.0/FLAIR/war/WEB-INF/lib/gwt-material-2.0-rc4.jar"/>
-	<classpathentry kind="lib" path="C:/Users/shadeMe/Documents/FLAIR/SVN/FLAIR 2.0/FLAIR/war/WEB-INF/lib/gwt-material-addins-2.0-rc4.jar"/>
-	<classpathentry kind="lib" path="C:/Users/shadeMe/Documents/FLAIR/SVN/FLAIR 2.0/FLAIR/war/WEB-INF/lib/gwt-material-themes-2.0-rc4.jar"/>
-	<classpathentry kind="lib" path="C:/Users/shadeMe/Documents/FLAIR/SVN/FLAIR 2.0/FLAIR/war/WEB-INF/lib/gwt-material-jquery-1.0-rc4.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/flair/stanford_nlp/stanford-corenlp-3.6.0.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/flair/stanford_nlp/stanford-corenlp-3.6.0-models.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/flair/stanford_nlp/stanford-german-2016-01-19-models.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/flair/stanford_nlp/stanford-srparser-2014-10-23-models.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/flair/stanford_nlp/stanford-tregex-3.6.0.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-material-2.0-rc4.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-material-addins-2.0-rc4.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-material-themes-2.0-rc4.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/gwt-material-jquery-1.0-rc4.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

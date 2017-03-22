@@ -160,7 +160,7 @@ public class DocumentRanker implements AbstractDocumentRanker
 		}
 
 		@Override
-		public Iterable<RankableDocument> getRankedDocuments() {
+		public Collection<RankableDocument> getRankedDocuments() {
 			return docs;
 		}
 

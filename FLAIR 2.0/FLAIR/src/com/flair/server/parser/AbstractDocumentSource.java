@@ -8,45 +8,43 @@ import com.flair.shared.grammar.Language;
 
 /**
  * Represents the source of a document object
+ * 
  * @author shadeMe
  */
 public abstract class AbstractDocumentSource implements Comparable<AbstractDocumentSource>
 {
-    private final Language	    language;
-    
-    public AbstractDocumentSource(Language lang) {
-	language = lang;
-    }
-    
-    protected final String preprocessText(String input)
-    {
-	// ensure that all EOL punctuation marks are periods
-	StringBuilder textWriter = new StringBuilder();
-	String[] sentences = input.split("\n");
-	for (String itr : sentences)
+	private final Language language;
+
+	public AbstractDocumentSource(Language lang)
 	{
-//	    if (itr.trim().isEmpty())
-//		continue;
-	    
-	    textWriter.append(itr);
-	    if (!(itr.endsWith(".") || 
-		  itr.endsWith("!") || 
-		  itr.endsWith("?") ||
-		  itr.endsWith("\""))) 
-	    {
-		textWriter.append(".\n");
-	    }
-	    else
-		textWriter.append("\n");
+		language = lang;
 	}
-	
-	return textWriter.toString();
-    }
-    
-    public final Language getLanguage() {
-	return language;
-    }
-    
-    abstract public String	    getSourceText();
-    abstract public String	    getDescription();
+
+	protected final String preprocessText(String input) 
+	{
+		// ensure that all EOL punctuation marks are periods
+		StringBuilder textWriter = new StringBuilder();
+		String[] sentences = input.split("\n");
+		for (String itr : sentences)
+		{
+			// if (itr.trim().isEmpty())
+			// continue;
+
+			textWriter.append(itr);
+			if (!(itr.endsWith(".") || itr.endsWith("!") || itr.endsWith("?") || itr.endsWith("\"")))
+				textWriter.append(".\n");
+			else
+				textWriter.append("\n");
+		}
+
+		return textWriter.toString();
+	}
+
+	public final Language getLanguage() {
+		return language;
+	}
+
+	abstract public String getSourceText();
+
+	abstract public String getDescription();
 }

@@ -1,0 +1,99 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:m="urn:import:gwt.material.design.client.ui"
+	xmlns:m.html="urn:import:gwt.material.design.client.ui.html"
+	xmlns:flair="urn:import:com.flair.client.presentation.widgets"
+	xmlns:flair.pak="urn:import:com.flair.client.presentation.widgets.sliderbundles">
+	
+	<ui:style>
+	.panel-constSettings {
+		border-right: 2px solid #e9e9e9;
+	}
+	
+	.global-animation {
+		transition: 0.4s all;
+		-webkit-transition: 0.4s all;
+		-moz-transition: 0.4s all;
+	}
+	</ui:style>
+	
+	<m:MaterialPanel layoutPosition="RELATIVE" grid="l12 m12 s12">
+		<m:MaterialRow ui:field="pnlSettingsContainerUI" overflow="AUTO" layoutPosition="FIXED" depth="995" backgroundColor="WHITE" 
+			grid="l4 m4 s12" height="100%" padding="15" top="68" left="-400"
+			addStyleNames="{style.panel-constSettings} {style.global-animation}">
+			
+			<m:MaterialRow textAlign="CENTER" paddingBottom="20">
+				<!-- Result Count -->
+				<m:MaterialLabel ui:field="lblDocCountUI" text="Result Count"
+					marginBottom="20" marginTop="10"/>
+				
+				<!-- Visualize -->
+				<m:MaterialButton ui:field="btnVisualizeUI" text="Visualize"
+					textColor="WHITE" backgroundColor="ORANGE" size="LARGE"
+					waves="DEFAULT" iconType="MULTILINE_CHART" iconPosition="RIGHT" iconColor="WHITE"/>
+				<m.html:Br/><m.html:Br/>
+				<!-- Export Settings -->
+				<m:MaterialButton ui:field="btnExportSettingsUI" text="Share Search Setup"
+					textColor="BLACK" backgroundColor="WHITE" size="LARGE" type="FLAT"
+					waves="DEFAULT" iconType="SHARE" iconPosition="RIGHT" iconColor="BLUE"/>
+			</m:MaterialRow>
+
+			<!-- Text Characteristics -->
+			<m:MaterialRow paddingBottom="5">	
+				<m:MaterialCard padding="20">
+					<m:MaterialCardTitle ui:field="lblTextCharacteristicsUI" text="Text Characteristics"
+						iconType="SUBJECT" iconPosition="RIGHT"/>
+						
+					<!-- Length -->
+					<m:MaterialRow>					
+						<m:MaterialLabel ui:field="lblTextLengthUI" text="Length:"/>
+						<flair:DocumentLengthSlider ui:field="sldDocLengthUI"/>
+					</m:MaterialRow>
+	
+					<!-- Level -->
+					<m:MaterialRow>
+						<m:MaterialLabel ui:field="lblTextLevelUI" text="Levels:"
+							marginBottom="5"/>
+						
+						<m:MaterialRow>
+							<m:MaterialColumn>
+								<m:MaterialCheckBox ui:field="chkTextLevelAUI" value="true" text="A1-A2"/>
+								<m:MaterialBadge ui:field="bdgTextLevelACountUI" text="50/50"/>
+								
+								<m:MaterialCheckBox ui:field="chkTextLevelBUI" value="true" text="B1-B2"/>
+								<m:MaterialBadge ui:field="bdgTextLevelBCountUI" text="50/50"/>
+								
+								<m:MaterialCheckBox ui:field="chkTextLevelCUI" value="true" text="C1-C2"/>
+								<m:MaterialBadge ui:field="bdgTextLevelCCountUI" text="50/50"/>
+							</m:MaterialColumn>					
+						</m:MaterialRow>
+					</m:MaterialRow>
+				</m:MaterialCard>				
+			</m:MaterialRow>	
+			
+			<m:MaterialRow paddingBottom="10" textAlign="CENTER">
+				<m:MaterialCard padding="20" marginBottom="20">
+					<!-- Keywords/Vocab -->
+					<flair:KeywordWeightSlider ui:field="sldKeywordsUI" />
+				</m:MaterialCard>		
+			</m:MaterialRow>	
+				
+			<m:MaterialRow depth="990" paddingBottom="20">
+				<m:MaterialRow textAlign="CENTER">
+					<m:MaterialButton ui:field="btnConstructionsListUI" text="List Of Constructions"
+						type="FLAT" waves="DEFAULT" backgroundColor="WHITE" textColor="BLUE"/>
+				</m:MaterialRow>
+				
+				<!-- Weight Sliders -->
+				<flair.pak:ConstructionSliderBundleEnglish ui:field="bdlEnglishSlidersUI"/>
+				<flair.pak:ConstructionSliderBundleGerman ui:field="bdlGermanSlidersUI"/>
+				
+				<m:MaterialRow paddingTop="20" textAlign="CENTER">
+					<m:MaterialButton ui:field="btnResetAllUI" text="Reset All"
+						waves="LIGHT" backgroundColor="RED" textColor="WHITE" iconType="UNDO" iconPosition="RIGHT"/>
+				</m:MaterialRow>	
+			</m:MaterialRow>					
+		</m:MaterialRow>	
+	</m:MaterialPanel>
+</ui:UiBinder> 

@@ -12,50 +12,51 @@ import java.io.InputStream;
 
 /**
  * Represents a document source that encapsulates an arbitrary InputStream
+ * 
  * @author shadeMe
  */
 public class StreamDocumentSource extends AbstractDocumentSource
 {
-    private final String		    sourceString;
-    private final String		    name;
-    
-    public StreamDocumentSource(InputStream source, String name, Language lang)
-    {
-	super(lang);
-	this.name = name;
-	
-	AbstractTextExtractor extractor = TextExtractorFactory.create(TextExtractorType.TIKA);
-	AbstractTextExtractor.Output output = extractor.extractText(new AbstractTextExtractor.Input(source, lang));
-	
-	if (output.success == false)
-	    throw new IllegalArgumentException("Cannot read from source stream");
-	else
-	    sourceString = preprocessText(output.extractedText);
-    }
-    
-    @Override
-    public String getSourceText() {
-	return sourceString;
-    }
+	private final String	sourceString;
+	private final String	name;
 
-    @Override
-    public String getDescription() {
-	return "Stream: " + name;
-    }
-    
-    @Override
-    public int compareTo(AbstractDocumentSource t) 
-    {
-	if (t instanceof StreamDocumentSource == false)
-	    throw new IllegalArgumentException("Incompatible source type");
-	
-	StreamDocumentSource rhs = (StreamDocumentSource)t;
-	
-	// compare source strings
-	return sourceString.compareTo(rhs.sourceString);
-    }
-    
-    public String getName() {
-	return name;
-    }
+	public StreamDocumentSource(InputStream source, String name, Language lang)
+	{
+		super(lang);
+		this.name = name;
+
+		AbstractTextExtractor extractor = TextExtractorFactory.create(TextExtractorType.TIKA);
+		AbstractTextExtractor.Output output = extractor.extractText(new AbstractTextExtractor.Input(source, lang));
+
+		if (output.success == false)
+			throw new IllegalArgumentException("Cannot read from source stream");
+		else
+			sourceString = preprocessText(output.extractedText);
+	}
+
+	@Override
+	public String getSourceText() {
+		return sourceString;
+	}
+
+	@Override
+	public String getDescription() {
+		return "Stream: " + name;
+	}
+
+	@Override
+	public int compareTo(AbstractDocumentSource t) 
+	{
+		if (t instanceof StreamDocumentSource == false)
+			throw new IllegalArgumentException("Incompatible source type");
+
+		StreamDocumentSource rhs = (StreamDocumentSource) t;
+
+		// compare source strings
+		return sourceString.compareTo(rhs.sourceString);
+	}
+
+	public String getName() {
+		return name;
+	}
 }

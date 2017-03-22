@@ -19,7 +19,7 @@ import com.flair.server.parser.AbstractDocumentSource;
 import com.flair.server.parser.AbstractParsingStrategy;
 import com.flair.server.parser.KeywordSearcherInput;
 import com.flair.server.parser.KeywordSearcherOutput;
-import com.flair.server.utilities.FLAIRLogger;
+import com.flair.server.utilities.ServerLogger;
 import com.flair.server.utilities.SimpleObjectPoolResource;
 
 /**
@@ -126,12 +126,12 @@ class DocumentParseTask extends AbstractTask<DocumentParseTaskResult>
 			output = wrapper.get();
 		} catch (TimeoutException ex)
 		{
-			FLAIRLogger.get().error("Document parsing task timed-out for " + input.toString());
+			ServerLogger.get().error("Document parsing task timed-out for " + input.toString());
 			output = null;
 			error = true;
 		} catch (Throwable ex)
 		{
-			FLAIRLogger.get().error(ex, "Document parsing task encountered an error. Exception: " + ex.toString());
+			ServerLogger.get().error(ex, "Document parsing task encountered an error. Exception: " + ex.toString());
 			output = null;
 			error = true;
 		} finally
@@ -142,7 +142,7 @@ class DocumentParseTask extends AbstractTask<DocumentParseTaskResult>
 
 		long endTime = System.currentTimeMillis();
 		if (false == error)
-			FLAIRLogger.get()
+			ServerLogger.get()
 					.trace("Document " + output.getDescription() + " parsed in " + (endTime - startTime) + " ms");
 
 		DocumentParseTaskResult result = new DocumentParseTaskResult(output);

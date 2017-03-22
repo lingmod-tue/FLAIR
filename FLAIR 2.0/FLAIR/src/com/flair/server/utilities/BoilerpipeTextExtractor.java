@@ -11,60 +11,60 @@ import org.xml.sax.InputSource;
 
 /**
  * Boilerpipe implementation of a text extractor
+ * 
  * @author shadeMe
  */
 class BoilerpipeTextExtractor extends AbstractTextExtractor
 {
-    public BoilerpipeTextExtractor() {
-	super(TextExtractorType.BOILERPIPE);
-    }
+	public BoilerpipeTextExtractor() {
+		super(TextExtractorType.BOILERPIPE);
+	}
 
-    @Override
-    public Output extractText(Input input)
-    {
-	boolean error = false;
-	String pageText = "";
-	
-	try
-        {
-	    // TODO: check for encoding!!!
-	    InputSource source = new InputSource();
-	    source.setEncoding("UTF-8");
-	    
-	    switch (input.sourceType)
-	    {
-		case URL:
-		   source.setByteStream(openURLStream(input.url, input.lang));
-		   break;
-		case STREAM:
-		   source.setByteStream(input.stream);
-		   break;
-	    }
-	
-	    pageText = DefaultExtractor.getInstance().getText(source);
-        } 
-	catch (Throwable ex)
+	@Override
+	public Output extractText(Input input) 
 	{
-            FLAIRLogger.get().error("Couldn't fetch text. Exception: " + ex.getMessage());
-	    error = true;
-        }
-	
-	// boilerpipe always assumes that the stream is text/html
-	return new Output(input, error == false, pageText, true);
-    }
-    
-    public static String parse(String html, boolean useArticleExtractor) 
-    {
-	// ### the default extractor seems to mostly return empty strings in this method, why? investigate
-	try 
+		boolean error = false;
+		String pageText = "";
+
+		try
+		{
+			// TODO: check for encoding!!!
+			InputSource source = new InputSource();
+			source.setEncoding("UTF-8");
+
+			switch (input.sourceType)
+			{
+			case URL:
+				source.setByteStream(openURLStream(input.url, input.lang));
+				break;
+			case STREAM:
+				source.setByteStream(input.stream);
+				break;
+			}
+
+			pageText = DefaultExtractor.getInstance().getText(source);
+		} catch (Throwable ex)
+		{
+			ServerLogger.get().error("Couldn't fetch text. Exception: " + ex.getMessage());
+			error = true;
+		}
+
+		// boilerpipe always assumes that the stream is text/html
+		return new Output(input, error == false, pageText, true);
+	}
+
+	public static String parse(String html, boolean useArticleExtractor) 
 	{
-	    if (useArticleExtractor)
-		return ArticleExtractor.getInstance().getText(html);
-	    else
-		return DefaultExtractor.getInstance().getText(html);
+		// ### the default extractor seems to mostly return empty strings in this method, why? investigate
+		try
+		{
+			if (useArticleExtractor)
+				return ArticleExtractor.getInstance().getText(html);
+			else
+				return DefaultExtractor.getInstance().getText(html);
+		} catch (Throwable ex)
+		{
+			return "";
+		}
 	}
-	catch (Throwable ex) {
-	    return "";
-	}
-    }
 }

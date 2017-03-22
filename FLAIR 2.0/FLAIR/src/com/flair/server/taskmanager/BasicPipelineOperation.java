@@ -1,6 +1,6 @@
 package com.flair.server.taskmanager;
 
-import com.flair.server.utilities.FLAIRLogger;
+import com.flair.server.utilities.ServerLogger;
 
 /*
  * Abstract operation that wraps around a generic job
@@ -31,7 +31,7 @@ abstract class BasicPipelineOperation implements AbstractPipelineOperation
 		if (isCompleted() == false)
 		{
 			job.cancel();
-			FLAIRLogger.get().info("Pipeline operation " + getType() + " was cancelled");
+			ServerLogger.get().info("Pipeline operation " + getType() + " was cancelled");
 		}
 	}
 
@@ -49,4 +49,9 @@ abstract class BasicPipelineOperation implements AbstractPipelineOperation
 	public PipelineOperationType getType() {
 		return type;
 	}
+	
+	@Override
+	public void waitForCompletion() {
+		job.waitForCompletion();
+	}	
 }

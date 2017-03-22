@@ -17,4 +17,5 @@ public interface AbstractPipelineOperation
     public boolean					isCancelled();
     public void						cancel();
     public boolean					isCompleted();	    // also returns true if the operation was cancelled
+    public void						waitForCompletion();
 }

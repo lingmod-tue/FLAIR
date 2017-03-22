@@ -1,5 +1,8 @@
 package com.flair.shared.interop;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 /*
@@ -64,18 +67,26 @@ public class ServerMessage implements IsSerializable
 	{
 		public enum Type
 		{
+			ERROR,				// currently unused
 			CRAWL_COMPLETE,
 			PARSE_COMPLETE,
 			JOB_COMPLETE
 		}
 		
+		public enum Error
+		{
+			NO_WEB_RESULTS
+		}
+		
 		Type						type;
+		Error						error;
 		RankableWebSearchResult		crawled;
 		RankableDocument			parsed;
 		
 		public SearchCrawlParse()
 		{
 			type = null;
+			error = null;
 			crawled = null;
 			parsed = null;
 		}
@@ -83,6 +94,7 @@ public class ServerMessage implements IsSerializable
 		public SearchCrawlParse(Type t)
 		{
 			type = t;
+			error = null;
 			crawled = null;
 			parsed = null;
 		}
@@ -90,6 +102,7 @@ public class ServerMessage implements IsSerializable
 		public SearchCrawlParse(RankableWebSearchResult r)
 		{
 			type = Type.CRAWL_COMPLETE;
+			error = null;
 			crawled = r;
 			parsed = null;
 		}
@@ -97,6 +110,7 @@ public class ServerMessage implements IsSerializable
 		public SearchCrawlParse(RankableDocument r)
 		{
 			type = Type.PARSE_COMPLETE;
+			error = null;
 			crawled = null;
 			parsed = r;
 		}
@@ -107,6 +121,14 @@ public class ServerMessage implements IsSerializable
 
 		public void setType(Type type) {
 			this.type = type;
+		}
+		
+		public Error getError() {
+			return error;
+		}
+
+		public void setError(Error error) {
+			this.error = error;
 		}
 
 		public RankableWebSearchResult getCrawled() {
@@ -130,22 +152,26 @@ public class ServerMessage implements IsSerializable
 	{		
 		public enum Type
 		{
+			UPLOAD_COMPLETE,
 			PARSE_COMPLETE,
 			JOB_COMPLETE
 		}
 		
 		Type						type;
+		ArrayList<UploadedDocument>	uploaded;
 		RankableDocument			parsed;
 		
 		public CustomCorpus()
 		{
 			type = null;
+			uploaded = null;
 			parsed = null;
 		}
 		
 		public CustomCorpus(Type t)
 		{
 			type = t;
+			uploaded = null;
 			parsed = null;
 		}
 		
@@ -153,6 +179,14 @@ public class ServerMessage implements IsSerializable
 		{
 			type = Type.PARSE_COMPLETE;
 			parsed = r;
+			uploaded = null;
+		}
+		
+		public CustomCorpus(Collection<UploadedDocument> u)
+		{
+			type = Type.PARSE_COMPLETE;
+			parsed = null;
+			uploaded = new ArrayList<>(u);
 		}
 
 		public Type getType() {
@@ -169,6 +203,14 @@ public class ServerMessage implements IsSerializable
 
 		public void setParsed(RankableDocument parsed) {
 			this.parsed = parsed;
+		}
+
+		public ArrayList<UploadedDocument> getUploaded() {
+			return uploaded;
+		}
+
+		public void setUploaded(ArrayList<UploadedDocument> uploaded) {
+			this.uploaded = uploaded;
 		}
 	}
 	

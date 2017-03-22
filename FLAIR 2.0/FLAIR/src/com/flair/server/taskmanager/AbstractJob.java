@@ -8,7 +8,7 @@ package com.flair.server.taskmanager;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.flair.server.utilities.FLAIRLogger;
+import com.flair.server.utilities.ServerLogger;
 
 /**
  * Represents an executable job, which is basically a collection of tasks
@@ -110,7 +110,7 @@ abstract class AbstractJob<R, E extends AbstractJobEvent<R>>
 				first.getFutureTask().get();
 			} catch (Throwable ex)
 			{
-				FLAIRLogger.get().error(ex, "Job encounted an exception while waiting. Exception: " + ex.toString());
+				ServerLogger.get().error(ex, "Job encounted an exception while waiting. Exception: " + ex.toString());
 			}
 		}
 	}

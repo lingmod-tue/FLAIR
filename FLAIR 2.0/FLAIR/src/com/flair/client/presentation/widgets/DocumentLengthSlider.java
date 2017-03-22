@@ -1,5 +1,6 @@
 package com.flair.client.presentation.widgets;
 
+import com.flair.client.presentation.interfaces.CanReset;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.FlowPanel;
 
@@ -8,7 +9,7 @@ import gwt.material.design.client.ui.MaterialRange;
 /*
  * Document length weight slider widget
  */
-public class DocumentLengthSlider extends Composite
+public class DocumentLengthSlider extends Composite implements CanReset
 {
 	public interface ChangeHandler {
 		public void handle(double newVal);
@@ -17,6 +18,14 @@ public class DocumentLengthSlider extends Composite
 	private static final int		SLIDER_MIN_VAL = 0;
 	private static final int		SLIDER_MAX_VAL = 5;
 	private static final int		SLIDER_STEP = 1;
+	
+	public static int getSliderMin() {
+		return SLIDER_MIN_VAL;
+	}
+	
+	public static int getSliderMax() {
+		return SLIDER_MAX_VAL;
+	}
 	
 	private static final String		STYLENAME_WRAPPER = "doc-length-slider-wrapper";
 	private static final String		STYLENAME_SLIDER = "doc-length-slider-slider";
@@ -54,5 +63,10 @@ public class DocumentLengthSlider extends Composite
 	
 	public void setChangeHandler(ChangeHandler handler) {
 		changeHandler = handler;
+	}
+
+	@Override
+	public void resetState(boolean fireEvents) {
+		setValue(SLIDER_MAX_VAL, fireEvents);
 	}
 }

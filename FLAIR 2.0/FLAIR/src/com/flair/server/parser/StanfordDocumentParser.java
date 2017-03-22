@@ -5,7 +5,7 @@
  */
 package com.flair.server.parser;
 
-import com.flair.server.utilities.FLAIRLogger;
+import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.grammar.Language;
 
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
@@ -76,7 +76,7 @@ class StanfordDocumentParser extends AbstractDocumentParser
 	if (isBusy())
 	{
 	    // this could be the case if the previous task timed-out
-	    FLAIRLogger.get().warn("Parser did complete its previous task. Resetting...");
+	    ServerLogger.get().warn("Parser did complete its previous task. Resetting...");
 	}
 	else if (BasicStanfordDocumentParserStrategy.class.isAssignableFrom(strategy.getClass()) == false)
 	    throw new IllegalArgumentException(strategy.getClass() + " is not subclass of " + BasicStanfordDocumentParserStrategy.class);

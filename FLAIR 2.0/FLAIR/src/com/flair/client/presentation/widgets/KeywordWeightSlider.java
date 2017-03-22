@@ -114,9 +114,9 @@ public class KeywordWeightSlider extends GenericWeightSlider implements CanReset
 
 	
 	@Override
-	public void resetState(boolean fireEvents) {
-		// just reset the toggle
+	public void resetState(boolean fireEvents) 
+	{
 		setEnabled(false, fireEvents);
-		setCustomVocab(false);
+		setValue(SLIDER_MIN_VAL, fireEvents);
 	}
 }

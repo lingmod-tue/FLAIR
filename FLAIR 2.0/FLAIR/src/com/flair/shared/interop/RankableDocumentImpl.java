@@ -1,4 +1,4 @@
-package com.flair.server.interop;
+package com.flair.shared.interop;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -6,7 +6,6 @@ import java.util.HashSet;
 
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
-import com.flair.shared.interop.RankableDocument;
 import com.flair.shared.parser.DocumentReadabilityLevel;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
@@ -166,6 +165,7 @@ public final class RankableDocumentImpl implements RankableDocument
 		return rank;
 	}
 
+	@Override
 	public void setRank(int rank) {
 		this.rank = rank;
 	}
@@ -350,5 +350,16 @@ public final class RankableDocumentImpl implements RankableDocument
 			return constOccurrences.get(gram);
 		else
 			return new ArrayList<>();
+	}
+
+	@Override
+	public int hashCode() 
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((snippet == null) ? 0 : snippet.hashCode());
+		result = prime * result + ((text == null) ? 0 : text.hashCode());
+		result = prime * result + ((title == null) ? 0 : title.hashCode());
+		return result;
 	}
 }

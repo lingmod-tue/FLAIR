@@ -16,10 +16,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
-import com.flair.server.interop.ServerAuthenticationToken;
-import com.flair.server.utilities.FLAIRLogger;
-import com.flair.shared.interop.AbstractMesageSender;
+import com.flair.server.interop.AuthTokenGenerator;
+import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.interop.AuthToken;
+import com.flair.shared.interop.ServerAuthenticationToken;
 
 /**
  * Tracks active sessions and its attributes
@@ -107,7 +107,7 @@ public class SessionManager
 			http2Token.clear();
 		} catch (Throwable ex)
 		{
-			FLAIRLogger.get().error(ex, "Exception encountered while closing sessions: " + ex.toString());
+			ServerLogger.get().error(ex, "Exception encountered while closing sessions: " + ex.toString());
 		}
 	}
 
@@ -139,22 +139,22 @@ public class SessionManager
 		data.release();
 		http2Token.remove(data.session);
 		
-		FLAIRLogger.get().info("Session token " + data.getToken().getUuid() + " released");
+		ServerLogger.get().info("Session token " + data.getToken().getUuid() + " released");
 	}
 	
-	public synchronized AuthToken addSession(HttpSession httpSession)
+	public synchronized ServerAuthenticationToken addSession(HttpSession httpSession)
 	{
-		ServerAuthenticationToken newTok = ServerAuthenticationToken.create(), old = http2Token.get(httpSession);
+		ServerAuthenticationToken newTok = AuthTokenGenerator.create(), old = http2Token.get(httpSession);
 		if (old != null)
 		{
 			newTok.setStatus(AuthToken.Status.INVALID_SESSION_EXISTS);
-			FLAIRLogger.get().error("Token already exists for session. Existing ID: " + old.getUuid());
+			ServerLogger.get().error("Token already exists for session. Existing ID: " + old.getUuid());
 		}
 		else
 		{
 			activeSessions.put(newTok, new BasicSessionData(newTok, httpSession));
 			http2Token.put(httpSession, newTok);
-			FLAIRLogger.get().info("New session token generated. ID: " + newTok.getUuid());
+			ServerLogger.get().info("New session token generated. ID: " + newTok.getUuid());
 		}
 		
 		return newTok;
@@ -203,10 +203,18 @@ public class SessionManager
 			// the previous session was released, re-add
 			activeSessions.put(tok, new BasicSessionData(tok, session));
 			http2Token.put(session, tok);
-			FLAIRLogger.get().info("Renewed session token. ID: " + tok.getUuid());
+			ServerLogger.get().info("Renewed session token. ID: " + tok.getUuid());
 		}
 		else
-			data.setHttpSession(session);		// update the cached session
+		{
+			HttpSession oldSession = data.getHttpSession();
+			if (oldSession != session)
+			{
+				data.setHttpSession(session);		// update the cached session
+				http2Token.remove(oldSession);
+				http2Token.put(session, tok);
+			}			
+		}
 	}
 	
 	private String getUploadFileName(Part part) 
@@ -245,7 +253,7 @@ public class SessionManager
 				orgName = orgName.substring(0, extIdx); // strip extension
 
 			files.add(new CustomCorpusFile(part.getInputStream(), orgName));
-			FLAIRLogger.get().info("Uploaded custom corpus file " + orgName);
+			ServerLogger.get().info("Uploaded custom corpus file " + orgName);
 		}
 		
 		data.getState().handleCorpusUpload(files);

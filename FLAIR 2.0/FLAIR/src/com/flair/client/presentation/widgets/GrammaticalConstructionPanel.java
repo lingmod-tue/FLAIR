@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import com.flair.client.presentation.interfaces.CanReset;
 import com.flair.client.presentation.interfaces.GrammaticalConstructionContainer;
+import com.flair.client.presentation.interfaces.GrammaticalConstructionContainer.ForEachHandler;
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasWidgets;
@@ -80,4 +81,13 @@ public class GrammaticalConstructionPanel extends Composite
 		return panel.remove(w);
 	}
 
+	@Override
+	public void forEachWeightSlider(ForEachHandler handler)
+	{
+		for (Widget itr : panel)
+		{
+			GrammaticalConstructionPanelItem itm = (GrammaticalConstructionPanelItem)itr;
+			itm.forEachWeightSlider(handler);
+		}
+	}
 }

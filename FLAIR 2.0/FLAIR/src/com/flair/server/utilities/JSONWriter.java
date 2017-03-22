@@ -44,7 +44,7 @@ public class JSONWriter
 	}
 	catch (IOException e)
 	{
-	    FLAIRLogger.get().error("Couldn't serialize object to JSON. Exception: " + e.getMessage());
+	    ServerLogger.get().error("Couldn't serialize object to JSON. Exception: " + e.getMessage());
 	    return false;
 	}
     }

@@ -10,4 +10,5 @@ public interface AbstractMesageSender
 	public void							open(AuthToken receiverToken);			// called before any messages are sent
 	public void							send(ServerMessage msg);
 	public void							close();								// called when the sender is no longer needed
+	public boolean						isOpen();
 }

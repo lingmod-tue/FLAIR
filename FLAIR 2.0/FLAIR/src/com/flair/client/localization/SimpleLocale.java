@@ -31,5 +31,9 @@ public abstract class SimpleLocale
 		}
 	}
 	
+	public String lookup(Language lang, String desc) {
+		return getLocalizationData(lang).get(desc);
+	}
+	
 	public abstract void				init();
 }

@@ -9,22 +9,23 @@ import java.util.List;
 import com.flair.shared.grammar.Language;
 
 /**
- * Wraper class for the default keywords for each language
+ * Wrapper class for the default keywords for each language
+ * 
  * @author shadeMe
  */
 public class DefaultVocabularyList
 {
-    public static List<String> get(Language lang)
-    {
-	switch (lang)
+	public static List<String> get(Language lang) 
 	{
-	    case ENGLISH:
-		return EnglishAcademicWordList.getKeywords();
-	    case GERMAN:
-		// ### TODO add one for german
-		return new ArrayList<>();
-	    default:
-		throw new IllegalArgumentException("Invalid language " + lang);
+		switch (lang)
+		{
+		case ENGLISH:
+			return EnglishAcademicWordList.getKeywords();
+		case GERMAN:
+			// ### TODO add one for german
+			return new ArrayList<>();
+		default:
+			throw new IllegalArgumentException("Invalid language " + lang);
+		}
 	}
-    }
 }

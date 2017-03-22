@@ -1,9 +1,6 @@
-package com.flair.server.interop;
+package com.flair.shared.interop;
 
 import java.io.Serializable;
-import java.util.UUID;
-
-import com.flair.shared.interop.AuthToken;
 
 /*
  * Authentication/identification token for client-server interop
@@ -18,7 +15,7 @@ public class ServerAuthenticationToken implements AuthToken, Serializable
 	private String				uuid;		// randomly generated
 	private AuthToken.Status	status;
 	
-	private ServerAuthenticationToken()
+	public ServerAuthenticationToken()
 	{
 		uuid = "";
 		status = AuthToken.Status.INVALID_SERVER_ERROR;
@@ -79,12 +76,8 @@ public class ServerAuthenticationToken implements AuthToken, Serializable
 		return true;
 	}
 	
-	public static ServerAuthenticationToken create()
-	{
-		ServerAuthenticationToken out = new ServerAuthenticationToken();
-		out.setUuid(UUID.randomUUID().toString());
-		out.setStatus(AuthToken.Status.VALID);
-		
-		return out;
+	@Override
+	public String toString() {
+		return uuid;
 	}
 }

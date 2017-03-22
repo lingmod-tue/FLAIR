@@ -8,6 +8,7 @@
 <module rename-to='flair'>
   <!-- Inherit the core Web Toolkit stuff.                        -->
   <inherits name='com.google.gwt.user.User'/>
+  <inherits name="com.google.gwt.logging.Logging"/>
 
   <!-- Other module inherits                                      -->
   <inherits name="gwt.material.design.GwtMaterialWithJQuery" />
@@ -24,4 +25,6 @@
 
   <!-- allow Super Dev Mode -->
   <add-linker name="xsiframe"/>
+  
+<!--   <set-property name="gwt.logging.popupLogHandler" value="DISABLED"/> -->
 </module>

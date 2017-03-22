@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.flair.client.ClientEndPoint;
 import com.flair.client.localization.LocalizedComposite;
 import com.flair.client.localization.locale.GrammaticalConstructionPanelItemLocale;
-import com.flair.client.model.ClientEndPoint;
 import com.flair.client.presentation.interfaces.CanReset;
 import com.flair.client.presentation.interfaces.GrammaticalConstructionContainer;
 import com.flair.shared.grammar.GrammaticalConstruction;
@@ -155,7 +155,7 @@ public class GrammaticalConstructionPanelItem extends LocalizedComposite impleme
 		if (w instanceof GrammaticalConstructionWeightSlider)
 		{
 			GrammaticalConstructionWeightSlider slider = (GrammaticalConstructionWeightSlider)w;
-			if (slider.getGram() == gram)
+			if (gram == null || slider.getGram() == gram)
 				return slider;
 		}
 		
@@ -171,7 +171,7 @@ public class GrammaticalConstructionPanelItem extends LocalizedComposite impleme
 		{
 			for (Widget itr : (HasWidgets)w)
 			{
-				slider = getAsSlider(itr, gram);
+				slider = lookupWeightSlider(itr, gram);
 				if (slider != null)
 					return slider;
 			}
@@ -179,9 +179,26 @@ public class GrammaticalConstructionPanelItem extends LocalizedComposite impleme
 		
 		return null;
 	}
+	
+	private void doForEachWeightSlider(Widget w, ForEachHandler h)
+	{
+		GrammaticalConstructionWeightSlider slider = getAsSlider(w, null);
+		if (slider != null)
+			h.handle(slider);
+		else if (w instanceof HasWidgets)
+		{
+			for (Widget itr : (HasWidgets)w)
+				doForEachWeightSlider(itr, h);
+		}
+	}
 
 	@Override
 	public GrammaticalConstructionWeightSlider getWeightSlider(GrammaticalConstruction val) {
 		return lookupWeightSlider(body, val);
+	}
+
+	@Override
+	public void forEachWeightSlider(ForEachHandler handler) {
+		doForEachWeightSlider(body, handler);
 	}
 }

@@ -81,5 +81,5 @@ class SearchCrawlParseOperationImpl extends BasicPipelineOperation implements Se
 	@Override
 	public void setJobCompleteHandler(JobComplete handler) {
 		jobC = handler;
-	}	
+	}
 }

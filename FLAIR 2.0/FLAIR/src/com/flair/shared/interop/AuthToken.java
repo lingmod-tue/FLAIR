@@ -1,14 +1,11 @@
 package com.flair.shared.interop;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
-
 /*
  * Token used to uniquely identify the client and transmit basic session state
  * Validated by the server for every request
  */
-public interface AuthToken extends IsSerializable
+public interface AuthToken
 {
-	// ### TODO does GWT need the concrete type to correctly serialize objects?
 	public enum Status
 	{
 		VALID,							// working state
@@ -17,4 +14,5 @@ public interface AuthToken extends IsSerializable
 	}
 	
 	public Status			getStatus();
+	public String			toString();
 }

@@ -2,6 +2,7 @@ package com.flair.client.presentation.widgets;
 
 import java.util.List;
 
+import com.flair.client.ClientEndPoint;
 import com.flair.client.localization.LocalizationData;
 import com.flair.client.localization.LocalizedComposite;
 import com.flair.client.localization.SimpleLocalizedTextButtonWidget;
@@ -9,7 +10,6 @@ import com.flair.client.localization.SimpleLocalizedTooltipWidget;
 import com.flair.client.localization.locale.DocumentPreviewPaneLocale;
 import com.flair.client.localization.locale.GrammaticalConstructionLocale;
 import com.flair.client.localization.locale.KeywordWeightSliderLocale;
-import com.flair.client.model.ClientEndPoint;
 import com.flair.client.presentation.interfaces.AbstractDocumentPreviewPane;
 import com.flair.client.presentation.interfaces.DocumentPreviewPaneInput;
 import com.flair.client.presentation.interfaces.DocumentPreviewPaneInput.Rankable;
@@ -51,6 +51,8 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 	@UiField
 	MaterialRow					pnlPreviewContainerUI;
 	@UiField
+	MaterialIcon				icoCloseUI;
+	@UiField
 	MaterialLabel				lblDocTitleUI;
 	@UiField
 	MaterialChip				lblDocLevelUI;
@@ -75,6 +77,7 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 	SimpleLocalizedTextButtonWidget<MaterialLink>		tglConstructionDetailsLC;
 	
 	State						state;
+	EventHandler				closingHandler;
 	
 	private enum TableType
 	{
@@ -410,6 +413,16 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 		refreshLocalization();
 	}
 	
+	private void initHandlers()
+	{
+		icoCloseUI.addClickHandler(e -> {
+			if (closingHandler != null)
+				closingHandler.handle();
+			
+			hide();
+		});
+	}
+	
 	private void initUI()
 	{
 		hide();
@@ -419,10 +432,12 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 	{
 		super(ClientEndPoint.get().getLocalization());
 		state = new State();
+		closingHandler = null;
 		
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		initLocale();
+		initHandlers();
 		initUI();
 	}
 	
@@ -453,5 +468,10 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 	@Override
 	public void hide() {
 		setContainerVisible(false);
+	}
+
+	@Override
+	public void setClosingEventHandler(EventHandler handler) {
+		closingHandler = handler;
 	}
 }

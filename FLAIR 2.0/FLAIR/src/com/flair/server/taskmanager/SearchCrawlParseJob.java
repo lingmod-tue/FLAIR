@@ -21,20 +21,22 @@ import com.flair.shared.grammar.Language;
  */
 final class SearchCrawlParseJob extends AbstractJob<SearchCrawlParseJobOutput, SearchCrawlParseJobEvent>
 {
-	private static final int 						MINIMUM_TOKEN_COUNT = 100; // in the page text
+	private static final int 						MINIMUM_TOKEN_COUNT = 100; 	// in the page text
+	private static final int 						MAX_CRAWLS = 100; 			// anymore and we time-out
 	
 	private final SearchCrawlParseJobInput			input;
 	private final SearchCrawlParseJobOutput			output;
 	private WebSearchAgent							searchAgent;
 	private int										numValidResults;
 	private int										numActiveCrawlTasks;
+	private int										numTotalCrawlsQueued;
 	
 	public SearchCrawlParseJob(SearchCrawlParseJobInput input)
 	{
 		this.input = input;
 		this.output = new SearchCrawlParseJobOutput();
 		this.searchAgent = null;
-		this.numValidResults = this.numActiveCrawlTasks = 0;
+		this.numValidResults = this.numActiveCrawlTasks = this.numTotalCrawlsQueued = 0;
 	}
 	
 	private void queueWebSearchTask(WebSearchAgent agent, int numResults)
@@ -92,6 +94,7 @@ final class SearchCrawlParseJob extends AbstractJob<SearchCrawlParseJobOutput, S
 				notifyListeners(new SearchCrawlParseJobEvent(result.getOutput().size()));
 				// queue crawl tasks for the results
 				queueWebCrawlTasks(result.getOutput());
+				numActiveCrawlTasks += result.getOutput().size();
 				
 				break;
 			}
@@ -115,9 +118,9 @@ final class SearchCrawlParseJob extends AbstractJob<SearchCrawlParseJobOutput, S
 					}					
 				}	
 				
-				// queue search tasks as long as we need/have results
+				// queue search tasks as long as we need/have results or have timed-out
 				// wait till the last crawl task is complete
-				if (numActiveCrawlTasks == 0)
+				if (numActiveCrawlTasks == 0 && numTotalCrawlsQueued < MAX_CRAWLS)
 				{
 					if (numValidResults < input.numResults && searchAgent.hasNoMoreResults() == false)
 					{

@@ -5,7 +5,7 @@
  */
 package com.flair.server.parser;
 
-import com.flair.server.utilities.FLAIRLogger;
+import com.flair.server.utilities.ServerLogger;
 
 /**
  * Keyword searcher that uses a basic substring search
@@ -62,7 +62,7 @@ public class NaiveSubstringKeywordSearcher implements AbstractDocumentKeywordSea
 	long endTime = System.currentTimeMillis();
 	if (input.isDebuggable())
 	{
-	    FLAIRLogger.get().trace("Naive keyword search for document " + source.getDescription() + " completed in " + (endTime - startTime) + " ms: Total hits=" + output.getTotalHitCount());
+	    ServerLogger.get().trace("Naive keyword search for document " + source.getDescription() + " completed in " + (endTime - startTime) + " ms: Total hits=" + output.getTotalHitCount());
 	}
 	
 	return output;

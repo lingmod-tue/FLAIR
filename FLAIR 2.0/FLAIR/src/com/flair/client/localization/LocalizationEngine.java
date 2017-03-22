@@ -3,6 +3,7 @@ package com.flair.client.localization;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.flair.client.ClientEndPoint;
 import com.flair.client.localization.interfaces.LocalizedUI;
 import com.flair.shared.grammar.Language;
 
@@ -45,5 +46,9 @@ public class LocalizationEngine
 	
 	public void deregisterLocalizedView(LocalizedUI view) {
 		activeLocalizedViews.remove(view);
+	}
+	
+	public static LocalizationEngine get() {
+		return ClientEndPoint.get().getLocalization();
 	}
 }

@@ -7,7 +7,7 @@ package com.flair.server.taskmanager;
 
 import com.flair.server.crawler.SearchResult;
 import com.flair.server.crawler.WebSearchAgent;
-import com.flair.server.utilities.FLAIRLogger;
+import com.flair.server.utilities.ServerLogger;
 
 import java.util.List;
 
@@ -50,7 +50,7 @@ class WebSearchTask extends AbstractTask<WebSearchTaskResult>
 	{
 		List<SearchResult> hits = input.getNext(numResults);
 		WebSearchTaskResult result = new WebSearchTaskResult(hits, input);
-		FLAIRLogger.get().trace("Web Search for '" + input.getQuery() + "' fetched " + hits.size() + " results");
+		ServerLogger.get().trace("Web Search for '" + input.getQuery() + "' fetched " + hits.size() + " results");
 		return result;
 	}
 }
