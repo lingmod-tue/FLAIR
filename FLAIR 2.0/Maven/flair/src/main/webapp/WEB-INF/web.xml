@@ -23,7 +23,7 @@
 
 	<!-- Servlets -->
 	<servlet>
-		<servlet-name>CustomCorpusServlet</servlet-name>
+		<servlet-name>CustomCorpus</servlet-name>
 		<servlet-class>com.flair.server.interop.CustomCorpusServlet</servlet-class>
 	</servlet>
 	
@@ -43,8 +43,8 @@
 	</servlet>
 	
 	<servlet-mapping>
-		<servlet-name>CustomCorpusServlet</servlet-name>
-		<url-pattern>/flair/CustomCorpusServlet</url-pattern>
+		<servlet-name>CustomCorpus</servlet-name>
+		<url-pattern>/flair/CustomCorpus</url-pattern>
 	</servlet-mapping>
 	
 	<servlet-mapping>	

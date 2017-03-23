@@ -104,7 +104,6 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 			animate(w, t, delay, duration, null);
 		}
 		
-		
 		private void hidePlaceholder(Widget w) {
 			animate(w, Transition.FADEOUTDOWN, 10, 500, () -> w.setVisible(false));
 		}
@@ -168,7 +167,7 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 			HasWidgets container = getContainer(type);
 			
 			if ((type == Type.IN_PROGRESS && item instanceof InProgressResultItem == false) ||
-				(type == Type.COMPLETED && item instanceof InProgressResultItem == false))
+				(type == Type.COMPLETED && item instanceof CompletedResultItem == false))
 			{
 				throw new RuntimeException("Item type mismatch");
 			}
@@ -190,7 +189,7 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 			HasWidgets container = getContainer(type);
 			
 			if ((type == Type.IN_PROGRESS && item instanceof InProgressResultItem == false) ||
-				(type == Type.COMPLETED && item instanceof InProgressResultItem == false))
+				(type == Type.COMPLETED && item instanceof CompletedResultItem == false))
 			{
 				throw new RuntimeException("Item type mismatch");
 			}

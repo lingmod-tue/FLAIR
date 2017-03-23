@@ -11,7 +11,6 @@ import com.flair.client.model.interfaces.DocumentRankerOutput.Rank;
 import com.flair.client.presentation.interfaces.AbstractRankerSettingsPane;
 import com.flair.client.presentation.widgets.sliderbundles.ConstructionSliderBundleEnglish;
 import com.flair.client.presentation.widgets.sliderbundles.ConstructionSliderBundleGerman;
-import com.flair.client.utilities.ClientLogger;
 import com.flair.shared.grammar.Language;
 import com.flair.shared.parser.DocumentReadabilityLevel;
 import com.google.gwt.core.client.GWT;

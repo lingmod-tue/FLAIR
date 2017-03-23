@@ -9,6 +9,8 @@ public interface AbstractWebRankerPresenter
 	public AbstractDocumentResultsPane			getDocumentResultsPane();
 	public AbstractDocumentPreviewPane			getDocumentPreviewPane();
 	
+	public CorpusUploadService					getCorpusUploadService();
+	public CustomKeywordService					getCustomKeywordsService();
 	public UserPromptService					getPromptService();
 	public NotificationService					getNotificationService();
 	

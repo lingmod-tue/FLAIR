@@ -24,6 +24,13 @@ public interface WebRankerServiceAsync
      * GWT-RPC service  asynchronous (client-side) interface
      * @see com.flair.shared.interop.services.WebRankerService
      */
+    void endCorpusUpload( com.flair.shared.interop.AuthToken token, AsyncCallback<Void> callback );
+
+
+    /**
+     * GWT-RPC service  asynchronous (client-side) interface
+     * @see com.flair.shared.interop.services.WebRankerService
+     */
     void cancelCurrentOperation( com.flair.shared.interop.AuthToken token, AsyncCallback<Void> callback );
 
 

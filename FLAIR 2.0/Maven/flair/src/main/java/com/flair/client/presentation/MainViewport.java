@@ -1,8 +1,6 @@
 package com.flair.client.presentation;
 
 
-import java.util.ArrayList;
-
 import com.flair.client.ClientEndPoint;
 import com.flair.client.localization.LocalizedComposite;
 import com.flair.client.localization.SimpleLocalizedListBoxOptionWidget;
@@ -14,8 +12,12 @@ import com.flair.client.presentation.interfaces.AbstractDocumentPreviewPane;
 import com.flair.client.presentation.interfaces.AbstractDocumentResultsPane;
 import com.flair.client.presentation.interfaces.AbstractRankerSettingsPane;
 import com.flair.client.presentation.interfaces.AbstractWebRankerPresenter;
+import com.flair.client.presentation.interfaces.CorpusUploadService;
+import com.flair.client.presentation.interfaces.CustomKeywordService;
 import com.flair.client.presentation.interfaces.NotificationService;
 import com.flair.client.presentation.interfaces.UserPromptService;
+import com.flair.client.presentation.widgets.CorpusFileUploader;
+import com.flair.client.presentation.widgets.CustomKeywordsEditor;
 import com.flair.client.presentation.widgets.DocumentPreviewPane;
 import com.flair.client.presentation.widgets.DocumentResultsPane;
 import com.flair.client.presentation.widgets.ModalPrompt;
@@ -170,6 +172,10 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	DocumentPreviewPane							pnlDocPreviewUI;
 	@UiField
 	ModalPrompt 								mdlPromptUI;
+	@UiField
+	CorpusFileUploader 							mdlCorpusUploadUI;
+	@UiField
+	CustomKeywordsEditor 						mdlCustomKeywordsUI;
 	
 	ToastNotifications							notificationService;
 	boolean										settingsVisible;
@@ -214,6 +220,10 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 				});
 			});
 		}
+	}
+	
+	private void showUploadModal() {
+		mdlCorpusUploadUI.show();
 	}
 	
 	private void updateResultsListGrid()
@@ -273,7 +283,7 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		Language searchLang = Language.fromString(selResultLangUI.getSelectedValue());
 		String query = txtSearchBoxUI.getText();
 		
-		ClientEndPoint.get().getWebRanker().performWebSearch(searchLang, query, resultCount, new ArrayList<>());
+		ClientEndPoint.get().getWebRanker().performWebSearch(searchLang, query, resultCount);
 	}
 	
 	private void initLocale()
@@ -315,6 +325,10 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	{
 		btnWebSearchUI.addClickHandler(e -> {
 			showSearchNav(true);
+		});
+		
+		btnUploadUI.addClickHandler(e -> {
+			showUploadModal();
 		});
 		
 		btnLangEnUI.addClickHandler(e -> {
@@ -369,11 +383,13 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		
 		tglDocPreviewPaneUI.addClickHandler(e -> {
 			showPreviewPane(previewVisible == false);
-		});
+		});		
+		
+		mdlCustomKeywordsUI.bindToSlider(pnlConstructionsSettingsUI.getKeywordSlider());
 	}
 	
 	private void initUI()
-	{
+	{		
 		showSearchNav(false);
 		showSettingsPane(false);
 		showPreviewPane(false);
@@ -387,7 +403,6 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		
 		notificationService = new ToastNotifications();
 		
-
 		initLocale();
 		initHandlers();
 		initUI();
@@ -492,5 +507,15 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	public void showDefaultPane(boolean visible) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public CorpusUploadService getCorpusUploadService() {
+		return mdlCorpusUploadUI;
+	}
+
+	@Override
+	public CustomKeywordService getCustomKeywordsService() {
+		return mdlCustomKeywordsUI;
 	}
 }

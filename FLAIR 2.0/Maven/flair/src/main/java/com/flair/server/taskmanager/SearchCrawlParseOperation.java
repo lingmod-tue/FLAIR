@@ -3,7 +3,6 @@ package com.flair.server.taskmanager;
 import com.flair.server.crawler.SearchResult;
 import com.flair.server.parser.AbstractDocument;
 import com.flair.server.parser.DocumentCollection;
-import com.flair.server.taskmanager.CustomParseOperation.ParseComplete;
 
 public interface SearchCrawlParseOperation extends AbstractPipelineOperation
 {

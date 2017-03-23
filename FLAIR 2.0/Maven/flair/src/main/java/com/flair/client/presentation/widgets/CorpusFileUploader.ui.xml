@@ -1,0 +1,39 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:m="urn:import:gwt.material.design.client.ui"
+	xmlns:m.html="urn:import:gwt.material.design.client.ui.html"
+	xmlns:ma="urn:import:gwt.material.design.addins.client"
+	xmlns:ma.fileuploader="urn:import:gwt.material.design.addins.client.fileuploader">
+	<ui:style>
+	.global-animation {
+		transition: 0.4s all;
+		-webkit-transition: 0.4s all;
+		-moz-transition: 0.4s all;
+	}
+	</ui:style>
+	
+	<m:MaterialModal ui:field="mdlUploadUI" dismissible="false" depth="10000">
+		<m:MaterialModalContent>
+			<m:MaterialPanel>
+				<m:MaterialIcon ui:field="icoCloseUI" iconType="CLOSE" float="RIGHT"/>
+				
+				<m:MaterialRow textAlign="CENTER">
+					<m:MaterialButton ui:field="btnStartUploadUI" textColor="WHITE" backgroundColor="ORANGE" marginBottom="20"
+						text="Start Upload"/>
+				
+					<ma.fileuploader:MaterialFileUploader ui:field="uplUploaderUI"
+						url="flair/CustomCorpus" maxFileSize="10" shadow="0">
+						
+						<ma.fileuploader:MaterialUploadLabel ui:field="lblUploadTextUI" 
+							title="Drag Files to Upload" description="And drop them here"/>
+							
+					</ma.fileuploader:MaterialFileUploader>
+					
+					<m:MaterialButton ui:field="btnEndUploadUI" textColor="WHITE" backgroundColor="ORANGE" marginTop="20"
+							text="Finish"/>
+				</m:MaterialRow>			
+			</m:MaterialPanel>
+		</m:MaterialModalContent>
+	</m:MaterialModal>
+</ui:UiBinder> 

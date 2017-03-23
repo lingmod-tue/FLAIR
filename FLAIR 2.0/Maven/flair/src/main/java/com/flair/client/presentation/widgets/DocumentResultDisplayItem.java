@@ -13,7 +13,6 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 
 import gwt.material.design.client.constants.Color;
-import gwt.material.design.client.constants.IconSize;
 import gwt.material.design.client.constants.IconType;
 import gwt.material.design.client.ui.MaterialCard;
 import gwt.material.design.client.ui.MaterialColumn;

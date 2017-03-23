@@ -1,8 +1,5 @@
 package com.flair.shared.utilities;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-
 /*
  * Base class for the client and server loggers
  */

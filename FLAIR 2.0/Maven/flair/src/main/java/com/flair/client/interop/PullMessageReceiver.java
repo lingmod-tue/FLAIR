@@ -104,7 +104,8 @@ class PullMessageReceiver implements AbstractMessageReceiver
 	{
 		if (handler != null)
 		{
-			ClientLogger.get().info("Pulled " + messages.length + " messages from the server");
+			if (messages.length != 0)
+				ClientLogger.get().info("Pulled " + messages.length + " messages from the server");
 			ClientLogger.get().indent();
 			for (ServerMessage itr : messages)
 			{

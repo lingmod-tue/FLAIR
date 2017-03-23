@@ -4,13 +4,11 @@ import java.util.Iterator;
 
 import com.flair.client.presentation.interfaces.CanReset;
 import com.flair.client.presentation.interfaces.GrammaticalConstructionContainer;
-import com.flair.client.presentation.interfaces.GrammaticalConstructionContainer.ForEachHandler;
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
 
-import gwt.material.design.client.constants.CollapsibleType;
 import gwt.material.design.client.ui.MaterialCollapsible;
 
 /*

@@ -92,6 +92,10 @@ public class MessagePipeline
 			deregisterPullMessageSender(this);
 		}
 		
+		private synchronized void doClear() {
+			messageQueue.clear();
+		}
+		
 		private synchronized boolean doIsOpen() {
 			return registered;
 		}
@@ -138,6 +142,11 @@ public class MessagePipeline
 		@Override
 		public boolean isOpen() {
 			return doIsOpen();
+		}
+
+		@Override
+		public void clearPendingMessages() {
+			doClear();
 		}
 	}
 

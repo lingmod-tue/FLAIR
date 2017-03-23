@@ -1,6 +1,5 @@
 package com.flair.client.localization.locale;
 
-import com.flair.client.localization.LocalizationData;
 import com.flair.client.localization.SimpleLocale;
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;

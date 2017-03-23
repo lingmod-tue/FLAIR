@@ -16,7 +16,7 @@
 		grid="l6 m6 s12" height="100%" padding="15" top="68"
 		addStyleNames="{style.global-animation}" textAlign="CENTER">
 			
-		<m:MaterialTitle ui:field="lblTitleUI" marginBottom="20" title="Title" description="Description"/>
+		<m:MaterialTitle ui:field="lblTitleUI" marginBottom="20" title="Title" description=""/>
 		
 		<m:MaterialRow ui:field="pnlCompletedContainerUI" padding="10" marginBottom="10">
 			<m:MaterialLabel ui:field="lblCompletedPlaceholderUI" text="Completed Placeholder"/>
@@ -25,6 +25,5 @@
 		<m:MaterialRow ui:field="pnlInProgressContainerUI" padding="10" marginTop="10">
 			<m:MaterialLabel ui:field="lblInProgressPlaceholderUI" text="In-progress Placeholder"/>
 		</m:MaterialRow>
-		
 	</m:MaterialPanel>
 </ui:UiBinder> 

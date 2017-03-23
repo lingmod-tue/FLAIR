@@ -142,17 +142,17 @@ public class ServerMessage implements IsSerializable
 		public String toString()
 		{
 			StringBuilder sb = new StringBuilder();
-			sb.append("SEARCH-CRAWL-PARSE: ").append(type);
+			sb.append("SEARCH-CRAWL-PARSE: ").append(type).append("\n");
 			if (type == Type.CRAWL_COMPLETE)
-				sb.append("Search Result: " + crawled.getTitle() + ", " + crawled.getDisplayUrl() + " | HASH=" + crawled.hashCode());
+				sb.append("Search Result: " + crawled.getTitle() + ", " + crawled.getDisplayUrl() + " | ID =" + crawled.getIdentifier());
 			else if (type == Type.PARSE_COMPLETE)
-				sb.append("Parsed Doc: " + parsed.getTitle() + ", " + parsed.getDisplayUrl() + " | HASH=" + parsed.hashCode());
+				sb.append("Parsed Doc: " + parsed.getTitle() + ", " + parsed.getDisplayUrl() + " | ID =" + parsed.getIdentifier());
 			return sb.toString();
 		}
 	}
 	
 	public static final class CustomCorpus implements IsSerializable
-	{		
+	{
 		public enum Type
 		{
 			UPLOAD_COMPLETE,
@@ -187,7 +187,7 @@ public class ServerMessage implements IsSerializable
 		
 		public CustomCorpus(Collection<UploadedDocument> u)
 		{
-			type = Type.PARSE_COMPLETE;
+			type = Type.UPLOAD_COMPLETE;
 			parsed = null;
 			uploaded = new ArrayList<>(u);
 		}
@@ -220,11 +220,11 @@ public class ServerMessage implements IsSerializable
 		public String toString()
 		{
 			StringBuilder sb = new StringBuilder();
-			sb.append("CUSTOM-CORPUS: ").append(type);
+			sb.append("CUSTOM-CORPUS: ").append(type).append("\n");
 			if (type == Type.UPLOAD_COMPLETE)
 				sb.append("Uploaded files: " + uploaded.size());
 			else if (type == Type.PARSE_COMPLETE)
-				sb.append("Parsed Doc: " + parsed.getTitle() + ", " + parsed.getDisplayUrl() + " | HASH=" + parsed.hashCode());
+				sb.append("Parsed Doc: " + parsed.getTitle() + " | ID =" + parsed.getIdentifier());
 			return sb.toString();
 		}
 	}

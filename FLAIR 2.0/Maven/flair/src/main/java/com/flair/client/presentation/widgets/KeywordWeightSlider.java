@@ -4,11 +4,8 @@ import com.flair.client.localization.locale.KeywordWeightSliderLocale;
 import com.flair.client.presentation.interfaces.CanReset;
 import com.flair.shared.grammar.Language;
 import com.google.gwt.uibinder.client.UiConstructor;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-import gwt.material.design.client.constants.ButtonSize;
 import gwt.material.design.client.constants.Color;
 import gwt.material.design.client.constants.IconType;
 import gwt.material.design.client.constants.WavesType;
@@ -117,6 +114,6 @@ public class KeywordWeightSlider extends GenericWeightSlider implements CanReset
 	public void resetState(boolean fireEvents) 
 	{
 		setEnabled(false, fireEvents);
-		setValue(SLIDER_MIN_VAL, fireEvents);
+		setWeight(SLIDER_MIN_VAL, fireEvents);
 	}
 }

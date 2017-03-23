@@ -6,7 +6,6 @@ import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 
-import gwt.material.design.client.constants.Color;
 import gwt.material.design.client.ui.MaterialCheckBox;
 import gwt.material.design.client.ui.MaterialRange;
 
@@ -48,6 +47,7 @@ public abstract class GenericWeightSlider extends LocalizedComposite
 	
 	private void onToggle()
 	{
+		slider.setEnabled(isEnabled());
 		if (toggleHandler != null)
 			toggleHandler.handle(this, isEnabled());
 	}
@@ -55,7 +55,7 @@ public abstract class GenericWeightSlider extends LocalizedComposite
 	private void onWeightChange()
 	{
 		if (weightHandler != null)
-			weightHandler.handle(this, getValue());
+			weightHandler.handle(this, getWeight());
 	}
 	
 	private void initCtor(boolean hideSlider)
@@ -120,8 +120,12 @@ public abstract class GenericWeightSlider extends LocalizedComposite
 		return toggle.getValue();
 	}
 	
-	public double getValue() {
+	public double getWeight() {
 		return slider.getValue();
+	}
+	
+	public boolean hasWeight() {
+		return slider.getValue() != SLIDER_MIN_VAL;
 	}
 	
 	public void setEnabled(boolean val, boolean fireEvent) 
@@ -134,7 +138,7 @@ public abstract class GenericWeightSlider extends LocalizedComposite
 		setEnabled(isEnabled() == false, fireEvent);
 	}
 	
-	public void setValue(int val, boolean fireEvent) {
+	public void setWeight(int val, boolean fireEvent) {
 		slider.setValue(val, fireEvent);
 	}
 	

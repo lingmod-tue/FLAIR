@@ -17,6 +17,9 @@ public interface DocumentRankerOutput
 		public double						getDocLevelDf(DocumentReadabilityLevel level);
 		public double						getConstructionDf(GrammaticalConstruction gram);
 		
+		public boolean						isConstructionWeighted(GrammaticalConstruction gram);
+		public boolean						isKeywordWeighted();
+		
 		public double						getConstructionWeight(GrammaticalConstruction gram);
 		public double						getKeywordWeight();
 	}

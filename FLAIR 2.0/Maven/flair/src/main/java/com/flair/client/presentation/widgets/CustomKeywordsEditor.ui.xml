@@ -1,0 +1,29 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:m="urn:import:gwt.material.design.client.ui"
+	xmlns:m.html="urn:import:gwt.material.design.client.ui.html">
+	
+	<ui:style>
+	
+	</ui:style>
+	
+	<m:MaterialModal ui:field="mdlKeywordEditorUI" dismissible="false">
+		<m:MaterialModalContent>
+			<m:MaterialRow textAlign="CENTER">
+				<m:MaterialTitle ui:field="lblTitleUI" 
+					title="Edit Custom Vocabulary" description=""/>
+			</m:MaterialRow>
+			
+			<m:MaterialRow>
+				<m:MaterialTextArea ui:field="txtKeywordsUI" 
+					label="Enter your keywords here, separated by commas or line breaks."/>
+			</m:MaterialRow>
+		</m:MaterialModalContent>
+		
+		<m:MaterialModalFooter>
+			<m:MaterialButton ui:field="btnApplyUI" type="FLAT" text="Apply"/>
+			<m:MaterialButton ui:field="btnCancelUI" type="FLAT" text="Cancel"/>
+		</m:MaterialModalFooter>
+	</m:MaterialModal>
+</ui:UiBinder> 

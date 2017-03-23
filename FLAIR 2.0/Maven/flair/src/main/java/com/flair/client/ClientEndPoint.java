@@ -5,13 +5,13 @@ import com.flair.client.localization.LocalizationEngine;
 import com.flair.client.model.DocumentAnnotator;
 import com.flair.client.model.DocumentRanker;
 import com.flair.client.model.WebRankerCore;
+import com.flair.client.model.interfaces.AbstractWebRankerCore;
 import com.flair.client.presentation.MainViewport;
+import com.flair.client.presentation.interfaces.AbstractWebRankerPresenter;
 import com.flair.client.utilities.ClientLogger;
 import com.flair.shared.interop.AbstractMessageReceiver;
 import com.flair.shared.interop.AuthToken;
-import com.flair.shared.interop.services.SessionManagementService;
 import com.flair.shared.interop.services.SessionManagementServiceAsync;
-import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -19,7 +19,7 @@ import com.google.gwt.user.client.ui.RootPanel;
 /*
  * Client-side state manager
  */
-public class ClientEndPoint 
+public class ClientEndPoint
 {
 	private static final ClientEndPoint			INSTANCE = new ClientEndPoint();
 	
@@ -36,7 +36,7 @@ public class ClientEndPoint
 	
 	private boolean							initialized;
 	
-	private ClientEndPoint() 
+	private ClientEndPoint()
 	{
 		clientToken = null;
 		viewport = null;
@@ -56,7 +56,7 @@ public class ClientEndPoint
 		
 		sessionService.beginSession(new AsyncCallback<AuthToken>() {
 			@Override
-			public void onSuccess(AuthToken result) 
+			public void onSuccess(AuthToken result)
 			{
 				clientToken = result;
 				
@@ -135,7 +135,7 @@ public class ClientEndPoint
 		return clientToken;
 	}
 	
-	public WebRankerCore getWebRanker() {
+	public AbstractWebRankerCore getWebRanker() {
 		return webranker;
 	}
 	
@@ -143,7 +143,7 @@ public class ClientEndPoint
 		return localeCore;
 	}
 
-	public MainViewport getViewport() {
+	public AbstractWebRankerPresenter getViewport() {
 		return viewport;
 	}
 	

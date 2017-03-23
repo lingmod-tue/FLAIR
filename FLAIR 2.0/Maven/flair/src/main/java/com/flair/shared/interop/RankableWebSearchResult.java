@@ -1,7 +1,5 @@
 package com.flair.shared.interop;
 
-import com.flair.shared.grammar.Language;
-
 /*
  * Represents a web search result that is rankable
  */

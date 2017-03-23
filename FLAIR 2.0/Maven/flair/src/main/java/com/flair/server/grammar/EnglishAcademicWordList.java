@@ -12,27 +12,29 @@ import com.flair.server.resources.ResourceLoader;
 
 /**
  * List of words that occur in the English Academic Corpus
+ *
  * @author shadeMe
  */
 public class EnglishAcademicWordList
 {
-    private static final List<String>				KEYWORDS = new ArrayList<>();
-    
-    public static List<String> getKeywords()
-    {
-	if (KEYWORDS.isEmpty())
+	private static final List<String> KEYWORDS = new ArrayList<>();
+
+	public static List<String> getKeywords()
 	{
-	    // load from disk
-	    InputStream stream = ResourceLoader.get("awl-english.txt");
-	    Scanner input = new Scanner(stream);
-	    while (input.hasNext())
-	    {
-		String line = input.nextLine().trim();
-		if (line.isEmpty() == false && KEYWORDS.contains(line) == false)
-		    KEYWORDS.add(line);
-	    }
+		if (KEYWORDS.isEmpty())
+		{
+			// load from disk
+			InputStream stream = ResourceLoader.get("awl-english.txt");
+			Scanner input = new Scanner(stream);
+			while (input.hasNext())
+			{
+				String line = input.nextLine().trim();
+				if (line.isEmpty() == false && KEYWORDS.contains(line) == false)
+					KEYWORDS.add(line);
+			}
+			input.close();
+		}
+
+		return KEYWORDS;
 	}
-	
-	return KEYWORDS;
-    }    
 }

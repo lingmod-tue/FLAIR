@@ -7,6 +7,7 @@ import com.flair.shared.grammar.Language;
  */
 public class UploadedDocumentImpl implements UploadedDocument
 {
+	int			identifier;
 	Language	language;
 	String		title;
 	String		snippet;
@@ -14,6 +15,7 @@ public class UploadedDocumentImpl implements UploadedDocument
 	
 	public UploadedDocumentImpl()
 	{
+		identifier = 0;
 		language = null;
 		title = snippet = text = "";
 	}
@@ -55,13 +57,11 @@ public class UploadedDocumentImpl implements UploadedDocument
 	}
 
 	@Override
-	public int hashCode() 
-	{
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((snippet == null) ? 0 : snippet.hashCode());
-		result = prime * result + ((text == null) ? 0 : text.hashCode());
-		result = prime * result + ((title == null) ? 0 : title.hashCode());
-		return result;
+	public int getIdentifier() {
+		return identifier;
+	}
+	
+	public void setIdentifier(int id) {
+		identifier = id;
 	}
 }

@@ -11,4 +11,5 @@ public interface AbstractMesageSender
 	public void							send(ServerMessage msg);
 	public void							close();								// called when the sender is no longer needed
 	public boolean						isOpen();
+	public void							clearPendingMessages();					// removes any unread messages in the message queue
 }

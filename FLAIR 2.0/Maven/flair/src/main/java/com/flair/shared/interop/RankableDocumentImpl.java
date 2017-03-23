@@ -108,6 +108,7 @@ public final class RankableDocumentImpl implements RankableDocument
 		}
 	}
 	
+	int									identifier;
 	Language							language;
 	int									rank;
 	
@@ -133,6 +134,7 @@ public final class RankableDocumentImpl implements RankableDocument
 	
 	public RankableDocumentImpl()
 	{
+		identifier = 0;
 		language = null;
 		rank = -1;
 		
@@ -353,13 +355,11 @@ public final class RankableDocumentImpl implements RankableDocument
 	}
 
 	@Override
-	public int hashCode() 
-	{
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((snippet == null) ? 0 : snippet.hashCode());
-		result = prime * result + ((text == null) ? 0 : text.hashCode());
-		result = prime * result + ((title == null) ? 0 : title.hashCode());
-		return result;
+	public int getIdentifier() {
+		return identifier;
+	}
+	
+	public void setIdentifier(int id) {
+		identifier = id;
 	}
 }

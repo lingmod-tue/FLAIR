@@ -12,6 +12,8 @@ public final class WebRankerCoreLocale extends SimpleLocale
 	public static final String		DESC_NoParsedDocs = "NoParsedDocs";
 	public static final String		DESC_MissingDoc = "MissingDoc";
 	public static final String		DESC_AnalysisComplete = "AnalysisComplete";
+	public static final String		DESC_KeywordTitle = "KeywordTitle";
+	public static final String		DESC_OpTimeout = "OpTimeout";
 
 	@Override
 	public void init()
@@ -25,6 +27,8 @@ public final class WebRankerCoreLocale extends SimpleLocale
 		en.put(DESC_NoParsedDocs, "None of the results/files could be analyzed.");
 		en.put(DESC_MissingDoc, "Some results/files couldn't be analyzed due to technical issues.");
 		en.put(DESC_AnalysisComplete, "Analysis complete.");
+		en.put(DESC_KeywordTitle, "keyword");
+		en.put(DESC_OpTimeout, "The operation timed-out");
 		
 		// DE
 		de.put(DESC_OpInProgessTitle, "Bestätigung");
@@ -35,6 +39,8 @@ public final class WebRankerCoreLocale extends SimpleLocale
 		de.put(DESC_NoParsedDocs, "Wir konnten keine der Webseiten/Dateien verarbeiten.");
 		de.put(DESC_MissingDoc, "Einige Webseiten/Dateien konnten nicht analysiert werden.");
 		de.put(DESC_AnalysisComplete, "Analyse abgeschlossen.");
+		de.put(DESC_KeywordTitle, "Schlüsselwort");
+		de.put(DESC_OpTimeout, "Der Vorgang wurde storniert, weil er zu lange gedauert hat");
 	}
 	
 	public static final WebRankerCoreLocale		INSTANCE = new WebRankerCoreLocale();

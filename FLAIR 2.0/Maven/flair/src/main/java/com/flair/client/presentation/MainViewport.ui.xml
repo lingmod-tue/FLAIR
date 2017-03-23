@@ -72,6 +72,9 @@
 			<m:MaterialLink ui:field="btnLangDeUI" waves="DEFAULT" text="German"/>
 		</m:MaterialDropDown>
 		
+		<!-- Corpus Upload Modal-->
+		<flair:CorpusFileUploader ui:field="mdlCorpusUploadUI"/>
+		
 		<!-- Settings Pane -->
 		<flair:RankerSettingsPane ui:field="pnlConstructionsSettingsUI"/>
 		
@@ -80,6 +83,9 @@
 		
 		<!-- Preview Pane -->
 		<flair:DocumentPreviewPane ui:field="pnlDocPreviewUI"/>
+		
+		<!-- Custom Keywords Editor Modal -->
+		<flair:CustomKeywordsEditor ui:field="mdlCustomKeywordsUI"/>
 		
 		<!-- Prompt Modal -->
 		<flair:ModalPrompt ui:field="mdlPromptUI"/>

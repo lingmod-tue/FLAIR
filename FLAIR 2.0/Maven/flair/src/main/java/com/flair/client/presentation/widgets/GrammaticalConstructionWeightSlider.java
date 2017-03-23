@@ -89,6 +89,6 @@ public class GrammaticalConstructionWeightSlider extends GenericWeightSlider imp
 	{
 		// enable toggle and reset weight
 		setEnabled(true, fireEvents);
-		setValue(SLIDER_MIN_VAL, fireEvents);
+		setWeight(SLIDER_MIN_VAL, fireEvents);
 	}
 }

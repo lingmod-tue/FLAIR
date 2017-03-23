@@ -84,10 +84,11 @@ abstract class AbstractJob<R, E extends AbstractJobEvent<R>>
 	{
 		if (listeners.isEmpty())
 			return;
-
-		// we use a separate thread for notification to prevent deadlocks (when
-		// a listener attempts to access the job object)
-		new NotifyThread<E>(listeners, event).start();
+		
+		// we execute the handlers in the calling thread's context
+		// ### TODO will this deadlock?
+		for (EventHandler<E> itr : listeners)
+			itr.handle(event);
 	}
 
 	protected final synchronized boolean isCompleted() {

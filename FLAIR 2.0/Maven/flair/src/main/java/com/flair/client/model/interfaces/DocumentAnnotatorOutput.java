@@ -1,8 +1,6 @@
 package com.flair.client.model.interfaces;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Widget;
 
 /*
  * Output of the DocumentAnnotator class

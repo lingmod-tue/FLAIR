@@ -7,6 +7,7 @@ import com.flair.shared.grammar.Language;
  */
 public class RankableWebSearchResultImpl implements RankableWebSearchResult
 {
+	int				identifier;
 	Language		language;
 	String			title;
 	String			url;
@@ -17,6 +18,7 @@ public class RankableWebSearchResultImpl implements RankableWebSearchResult
 
 	public RankableWebSearchResultImpl()
 	{
+		identifier = 0;
 		rank = -1;
 		language = null;
 		title = url = displayUrl = snippet = text = "";
@@ -86,13 +88,11 @@ public class RankableWebSearchResultImpl implements RankableWebSearchResult
 	}
 	
 	@Override
-	public int hashCode() 
-	{
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((snippet == null) ? 0 : snippet.hashCode());
-		result = prime * result + ((text == null) ? 0 : text.hashCode());
-		result = prime * result + ((title == null) ? 0 : title.hashCode());
-		return result;
+	public int getIdentifier() {
+		return identifier;
+	}
+	
+	public void setIdentifier(int id) {
+		identifier = id;
 	}
 }

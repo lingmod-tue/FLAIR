@@ -13,6 +13,7 @@ public interface BasicDocumentTransferObject extends IsSerializable
 	public String			getTitle();
 	public String			getSnippet();
 	public String			getText();
-	public int				hashCode();			// just hash the title, snippet and text to allow comparisons with other DTOs
-												// not the most fool-proof method but saves us from manually mapping doc sources to their parsed versions
+	
+	public int				getIdentifier();		// a unique ID that links multiple DTOs
+													// DTOs with the same ID are related (e.g., a web search result can be linked to a parsed document)
 }

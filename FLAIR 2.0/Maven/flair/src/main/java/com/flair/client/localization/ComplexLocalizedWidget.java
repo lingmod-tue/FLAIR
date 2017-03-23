@@ -2,7 +2,6 @@ package com.flair.client.localization;
 
 import java.util.Set;
 
-import com.flair.client.localization.SimpleLocalizedWidget.Updateable;
 import com.flair.client.localization.interfaces.AbstractLocalizationWrapper;
 import com.google.gwt.dev.util.collect.HashSet;
 import com.google.gwt.user.client.ui.Widget;

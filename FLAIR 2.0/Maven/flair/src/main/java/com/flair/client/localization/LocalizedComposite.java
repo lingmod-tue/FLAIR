@@ -2,7 +2,6 @@ package com.flair.client.localization;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -66,6 +65,10 @@ public abstract class LocalizedComposite extends Composite implements LocalizedU
 	
 	protected final void refreshLocalization() {
 		setLocalization(localeCore.getLanguage());
+	}
+	
+	protected final String getLocalizedString(String desc) {
+		return getLocalizationData(localeCore.getLanguage()).get(desc);
 	}
 	
 	@Override

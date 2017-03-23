@@ -15,24 +15,30 @@ public class WebRankerServiceImpl extends AbstractRemoteService implements WebRa
 							Language lang,
 							String query,
 							int numResults,
-							ArrayList<String> keywords) 
+							ArrayList<String> keywords)
 	{
 		ServerAuthenticationToken authToken = validateToken(token);
 		SessionManager.get().getSessionState(authToken).searchCrawlParse(query, lang, numResults, keywords);
 	}
 
 	@Override
-	public void beginCorpusUpload(AuthToken token, Language lang, ArrayList<String> keywords) 
+	public void beginCorpusUpload(AuthToken token, Language lang, ArrayList<String> keywords)
 	{
 		ServerAuthenticationToken authToken = validateToken(token);
-		SessionManager.get().getSessionState(authToken).parseCustomCorpus(lang, keywords);
+		SessionManager.get().getSessionState(authToken).beginCustomCorpusUpload(lang, keywords);
 	}
 
 	@Override
-	public void cancelCurrentOperation(AuthToken token) 
+	public void endCorpusUpload(AuthToken token)
+	{
+		ServerAuthenticationToken authToken = validateToken(token);
+		SessionManager.get().getSessionState(authToken).endCustomCorpusUpload();
+	}
+
+	@Override
+	public void cancelCurrentOperation(AuthToken token)
 	{
 		ServerAuthenticationToken authToken = validateToken(token);
 		SessionManager.get().getSessionState(authToken).cancelOperation();
 	}
-
 }

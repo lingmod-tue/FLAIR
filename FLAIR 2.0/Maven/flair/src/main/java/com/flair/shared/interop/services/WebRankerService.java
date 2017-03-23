@@ -18,11 +18,12 @@ public interface WebRankerService extends RemoteService
 									String query,
 									int numResults,
 									ArrayList<String> keywords);
-	
+
 	public void			beginCorpusUpload(AuthToken token,
 										Language lang,
-										ArrayList<String> keywords);
-	
+										ArrayList<String> keywords);		// signals the start of the upload operation and caches params
+	public void			endCorpusUpload(AuthToken token);					// signals the end of the uploading process, begins the parsing op
+
 	public void			cancelCurrentOperation(AuthToken token);
 }
 
