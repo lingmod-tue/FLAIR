@@ -1,6 +1,7 @@
 package com.flair.client.presentation.interfaces;
 
 import com.flair.shared.grammar.GrammaticalConstruction;
+import com.flair.shared.grammar.Language;
 import com.flair.shared.interop.RankableDocument;
 import com.google.gwt.safehtml.shared.SafeHtml;
 
@@ -11,7 +12,11 @@ public interface DocumentPreviewPaneInput
 {
 	public interface Rankable
 	{
+		public Language								getLanguage();			// language of the data set
+		public Iterable<GrammaticalConstruction>	getConstructions();		// language-specific grammatical constructions
+		
 		public RankableDocument						getDocument();
+		
 		public Iterable<GrammaticalConstruction>	getWeightedConstructions();
 		public boolean								isConstructionWeighted(GrammaticalConstruction gram);
 		public SafeHtml								getPreviewMarkup();

@@ -27,13 +27,17 @@ import gwt.material.design.client.ui.MaterialRow;
 
 public class RankerSettingsPane extends LocalizedComposite implements AbstractRankerSettingsPane
 {
+	public interface ShowHideHandler {
+		public void handle(boolean visible);
+	}
+	
 	private static RankerSettingsPaneUiBinder uiBinder = GWT.create(RankerSettingsPaneUiBinder.class);
 
 	interface RankerSettingsPaneUiBinder extends UiBinder<Widget, RankerSettingsPane>
 	{
 	}
 	
-	private static final double				PANEL_WIDTH = 400;
+	private static final int				PANEL_WIDTH = 400;
 	
 	@UiField
 	MaterialRow								pnlSettingsContainerUI;
@@ -45,7 +49,7 @@ public class RankerSettingsPane extends LocalizedComposite implements AbstractRa
 	MaterialButton							btnExportSettingsUI;
 	@UiField
 	MaterialCardTitle						lblTextCharacteristicsUI;
-	@UiField			
+	@UiField
 	MaterialLabel							lblTextLengthUI;
 	@UiField
 	DocumentLengthSlider					sldDocLengthUI;
@@ -82,7 +86,9 @@ public class RankerSettingsPane extends LocalizedComposite implements AbstractRa
 	SimpleLocalizedTextButtonWidget<MaterialButton>			btnConstructionsListLC;
 	SimpleLocalizedTextButtonWidget<MaterialButton>			btnResetAllLC;
 	
-	State			state;
+	State				state;
+	ShowHideHandler		showhideHandler;
+	boolean				visible;
 	
 	private final class State
 	{
@@ -157,7 +163,6 @@ public class RankerSettingsPane extends LocalizedComposite implements AbstractRa
 				int df = (int)rankData.getConstructionDf(s.getGram());
 				s.setResultCount(df, resultCount);
 			});
-			
 		}
 		
 		public void setSliderBundle(Language lang)
@@ -177,7 +182,7 @@ public class RankerSettingsPane extends LocalizedComposite implements AbstractRa
 			case GERMAN:
 				return bdlGermanSlidersUI;
 			default:
-				return null;			
+				return null;
 			}
 		}
 		
@@ -211,7 +216,9 @@ public class RankerSettingsPane extends LocalizedComposite implements AbstractRa
 		pnlSettingsContainerUI.setLeft(l);
 	}
 	
-	private void setContainerVisible(boolean visible) {
+	private void setContainerVisible(boolean visible)
+	{
+		this.visible = visible;
 		setPanelLeft(visible ? 0 : -PANEL_WIDTH);
 	}
 	
@@ -249,16 +256,6 @@ public class RankerSettingsPane extends LocalizedComposite implements AbstractRa
 		sldKeywordsUI.setWeightChangeHandler((w, v) -> state.onSettingChange());
 		sldKeywordsUI.setToggleHandler((w, v) -> state.onSettingChange());
 		
-		bdlEnglishSlidersUI.forEachWeightSlider(s -> {
-			s.setWeightChangeHandler((w, v) -> state.onSettingChange());
-			s.setToggleHandler((w, v) -> state.onSettingChange());
-		});
-		
-		bdlGermanSlidersUI.forEachWeightSlider(s -> {
-			s.setWeightChangeHandler((w, v) -> state.onSettingChange());
-			s.setToggleHandler((w, v) -> state.onSettingChange());
-		});
-		
 		btnResetAllUI.addClickHandler(e -> state.resetAll());
 		
 		chkTextLevelAUI.addValueChangeHandler(e -> state.onSettingChange());
@@ -268,7 +265,8 @@ public class RankerSettingsPane extends LocalizedComposite implements AbstractRa
 	
 	private void initUI()
 	{
-		state.resetUI();		
+		pnlSettingsContainerUI.setWidth(PANEL_WIDTH + "px");
+		state.resetUI();
 		hide();
 	}
 	
@@ -279,6 +277,8 @@ public class RankerSettingsPane extends LocalizedComposite implements AbstractRa
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		this.state = new State();
+		showhideHandler = null;
+		visible = false;
 		
 		initLocale();
 		initHandlers();
@@ -300,21 +300,45 @@ public class RankerSettingsPane extends LocalizedComposite implements AbstractRa
 
 	@Override
 	public void updateSettings(Rank rankData) {
-		state.init(rankData);	
+		state.init(rankData);
 	}
 
 	@Override
-	public void show() {
+	public void show()
+	{
 		setContainerVisible(true);
+		
+		if (showhideHandler != null)
+			showhideHandler.handle(visible);
+	}
+	
+	@Override
+	public void hide()
+	{
+		setContainerVisible(false);
+		
+		if (showhideHandler != null)
+			showhideHandler.handle(visible);
+	}
+
+	public void setShowHideEventHandler(ShowHideHandler handler) {
+		showhideHandler = handler;
 	}
 
 	@Override
-	public void hide() {
-		setContainerVisible(false);	
-	}
-
-	@Override
-	public void setSettingsChangedHandler(EventHandler handler) {
+	public void setSettingsChangedHandler(EventHandler handler)
+	{
+		// register the slider handlers here as the sliders themselves won't be available during the construction of the panel
+		bdlEnglishSlidersUI.forEachWeightSlider(s -> {
+			s.setWeightChangeHandler((w, v) -> state.onSettingChange());
+			s.setToggleHandler((w, v) -> state.onSettingChange());
+		});
+		
+		bdlGermanSlidersUI.forEachWeightSlider(s -> {
+			s.setWeightChangeHandler((w, v) -> state.onSettingChange());
+			s.setToggleHandler((w, v) -> state.onSettingChange());
+		});
+		
 		state.setChangeHandler(handler);
 	}
 
@@ -344,7 +368,7 @@ public class RankerSettingsPane extends LocalizedComposite implements AbstractRa
 	}
 
 	@Override
-	public boolean isDocLevelEnabled(DocumentReadabilityLevel level) 
+	public boolean isDocLevelEnabled(DocumentReadabilityLevel level)
 	{
 		switch (level)
 		{
@@ -359,5 +383,12 @@ public class RankerSettingsPane extends LocalizedComposite implements AbstractRa
 		}
 	}
 
+	public int getWidth() {
+		return PANEL_WIDTH;
+	}
 	
+	@Override
+	public boolean isVisible() {
+		return visible;
+	}
 }

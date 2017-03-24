@@ -7,17 +7,8 @@
 	<ui:style>
 	.docText-preview {
 		height: 400px;
-		width: 360px;
-	}
-	
-	@external side-nav, active;
-	body {
-		background-color: #e9e9e9;
-		overflow: auto !important;
-	}
-	
-	.side-nav li.active {
-		border-left: 4px solid #757575;
+		border: 2px solid #e9e9e9;
+		margin-bottom: 15px;
 	}
 	
 	.bordered {
@@ -33,9 +24,10 @@
 	
 	<m:MaterialPanel layoutPosition="RELATIVE" grid="l12 m12 s12">
 		<m:MaterialRow ui:field="pnlPreviewContainerUI" overflow="AUTO" layoutPosition="FIXED" grid="l4 m4 s12"
-			depth="995" padding="20" height="100%" top="68" right="-400"
-			addStyleNames="{style.bordered} {style.animation}" backgroundColor="WHITE" >
+			depth="995" padding="20" height="100%" width="450px" top="68" right="-450"
+			addStyleNames="{style.bordered} {style.animation}" backgroundColor="WHITE" shadow="2">
 			<m:MaterialRow textAlign="RIGHT">
+				<m:MaterialIcon ui:field="icoHelpTextUI" iconType="HELP" paddingRight="20"/>
 				<m:MaterialIcon ui:field="icoCloseUI" iconType="CLOSE"/>
 			</m:MaterialRow>		
 						
@@ -46,26 +38,19 @@
 				
 				<m:MaterialRow paddingTop="10">
 					<m:MaterialChip ui:field="lblDocLevelUI" text="A1-B1-C1"/>	
-					<m:MaterialChip ui:field="lblDocNumSentencesUI" text="Sentences"/>
+					<m:MaterialChip ui:field="lblDocNumSentencesUI" text="Sentences" marginLeft="10" marginRight="10"/>
 					<m:MaterialChip ui:field="lblDocNumWordsUI" text="Words"/>
 				</m:MaterialRow>
 			</m:MaterialRow>
 			
 			<!-- Preview Pane -->
-			<m:MaterialRow>
-				<m:MaterialIcon ui:field="icoHelpTextUI" float="RIGHT" iconType="HELP" padding="5"/>
-				
-				<g:ScrollPanel addStyleNames="{style.docText-preview}">
-					<g:HTML ui:field="htmlDocTextPreviewUI">
-						<br />
-					</g:HTML>
-				</g:ScrollPanel>
-				
+			<m:MaterialRow>				
+				<g:ScrollPanel ui:field="pnlDocTextPreviewUI" addStyleNames="{style.docText-preview}"/>				
 				<g:FlowPanel ui:field="pnlWeightSelectionUI"/>
 			</m:MaterialRow>
 			
 			<!-- Construction Details Pane -->
-			<m:MaterialRow ui:field="pnlFooterUI" marginTop="15">
+			<m:MaterialRow ui:field="pnlFooterUI" marginTop="15" paddingTop="20">
 				<m:MaterialCollapsible grid="s12 m12 l12">
 					<m:MaterialCollapsibleItem>
 						<m:MaterialCollapsibleHeader>

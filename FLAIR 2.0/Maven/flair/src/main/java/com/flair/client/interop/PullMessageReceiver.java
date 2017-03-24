@@ -19,18 +19,18 @@ class PullMessageReceiver implements AbstractMessageReceiver
 		final class Callback implements AsyncCallback<ServerMessage[]>
 		{
 			@Override
-			public void onFailure(Throwable caught) 
+			public void onFailure(Throwable caught)
 			{
 				ClientLogger.get().error(caught, "Couldn't fetch server messages");
-				callbackInProgess = false;	
+				callbackInProgess = false;
 			}
 
 			@Override
-			public void onSuccess(ServerMessage[] result) 
+			public void onSuccess(ServerMessage[] result)
 			{
-				receive(result);				
+				receive(result);
 				callbackInProgess = false;
-			}	
+			}
 		}
 
 		private boolean		callbackInProgess;
@@ -40,7 +40,7 @@ class PullMessageReceiver implements AbstractMessageReceiver
 		}
 		
 		@Override
-		public void run() 
+		public void run()
 		{
 			if (open == false)
 				return;
@@ -48,14 +48,14 @@ class PullMessageReceiver implements AbstractMessageReceiver
 			if (token == null)
 				throw new RuntimeException("Invalid session token for PollTimer");
 			
-			// fetch all queued messages from the server 
+			// fetch all queued messages from the server
 			// and pass them to the handler sequentially
 			if (callbackInProgess == false)
 				service.dequeueMessages(token, new Callback());
-		}	
+		}
 	}
 	
-	private static final int						TIMER_INTERVAL_MS = 2 * 1000;
+	private static final int						TIMER_INTERVAL_MS = 3 * 1000;
 	
 	private AuthToken								token;
 	private final PollTimer							timer;
@@ -67,7 +67,7 @@ class PullMessageReceiver implements AbstractMessageReceiver
 	{
 		super();
 		this.token = null;
-		this.timer = new PollTimer();	
+		this.timer = new PollTimer();
 		this.service = PullMessageEndpointServiceAsync.Util.getInstance();
 		this.handler = null;
 		this.open = false;
@@ -87,7 +87,7 @@ class PullMessageReceiver implements AbstractMessageReceiver
 
 
 	@Override
-	public void open(AuthToken receiverToken) 
+	public void open(AuthToken receiverToken)
 	{
 		if (open)
 			throw new RuntimeException("Receiver already open");
@@ -100,7 +100,7 @@ class PullMessageReceiver implements AbstractMessageReceiver
 
 
 	@Override
-	public void receive(ServerMessage[] messages) 
+	public void receive(ServerMessage[] messages)
 	{
 		if (handler != null)
 		{
@@ -118,7 +118,7 @@ class PullMessageReceiver implements AbstractMessageReceiver
 
 
 	@Override
-	public void close() 
+	public void close()
 	{
 		if (open == false)
 			throw new RuntimeException("Receiver not open");

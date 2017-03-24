@@ -10,7 +10,7 @@ public interface CorpusUploadService
 	}
 	
 	public interface UploadCompleteHandler {
-		public void handle();
+		public void handle(int numUploaded);
 	}
 	
 	public void			show();

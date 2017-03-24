@@ -1,11 +1,12 @@
 package com.flair.client.presentation.widgets;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.flair.client.ClientEndPoint;
 import com.flair.client.localization.LocalizedComposite;
-import com.flair.client.localization.SimpleLocalizedTextWidget;
 import com.flair.client.localization.locale.DocumentResultsPaneLocale;
 import com.flair.client.presentation.interfaces.AbstractDocumentResultsPane;
 import com.flair.client.presentation.interfaces.AbstractResultItem;
@@ -18,7 +19,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
 
-import gwt.material.design.client.ui.MaterialLabel;
+import gwt.material.design.client.ui.MaterialDivider;
 import gwt.material.design.client.ui.MaterialPanel;
 import gwt.material.design.client.ui.MaterialRow;
 import gwt.material.design.client.ui.MaterialTitle;
@@ -39,23 +40,20 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 	@UiField
 	MaterialTitle			lblTitleUI;
 	@UiField
-	MaterialRow				pnlCompletedContainerUI;
+	MaterialPanel			pnlCompletedContainerUI;
 	@UiField
-	MaterialLabel			lblCompletedPlaceholderUI;
+	MaterialPanel			pnlInProgressContainerUI;
 	@UiField
-	MaterialRow				pnlInProgressContainerUI;
+	MaterialDivider			divDividerUI;
 	@UiField
-	MaterialLabel			lblInProgressPlaceholderUI;
+	MaterialRow				pnlSpinnerUI;
 	
-	SimpleLocalizedTextWidget<MaterialLabel>		lblCompletedPlaceholderLC;
-	SimpleLocalizedTextWidget<MaterialLabel>		lblInProgressPlaceholderLC;
-
 	State					state;
 	
 	private static class DisplayItem
 	{
 		AbstractResultItem			parent;
-		DocumentResultDisplayItem	displayItem;	
+		DocumentResultDisplayItem	displayItem;
 		SelectHandler				selectHandler;
 		
 		DisplayItem(AbstractResultItem i, SelectHandler h)
@@ -104,36 +102,23 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 			animate(w, t, delay, duration, null);
 		}
 		
-		private void hidePlaceholder(Widget w) {
-			animate(w, Transition.FADEOUTDOWN, 10, 500, () -> w.setVisible(false));
-		}
-		
-		private void showPlaceholder(Widget w)
-		{
-			w.setVisible(true);
-			animate(w, Transition.FADEIN, 10, 500);
-		}
-		
 		private void addDisplayItem(DisplayItem item, HasWidgets container)
 		{
 			container.add(item.getWidget());
-			animate(item.getWidget(), Transition.FADEINRIGHT, 10, 600);
+			animate(item.getWidget(), Transition.FADEINRIGHT, 0, 1000);
 		}
 		
 		private void removeDisplayItem(DisplayItem item, HasWidgets container) {
-			animate(item.getWidget(), Transition.FADEOUTLEFT, 10, 600, () -> container.remove(item.getWidget()));
+			animate(item.getWidget(), Transition.FADEOUTUP, 0, 1000, () -> container.remove(item.getWidget()));
 		}
 		
-		private void clearAllDisplayItems(HasWidgets container, Widget placeholder)
+		private void validatePlaceholders()
 		{
-			animate((Widget)container, Transition.FLIPOUTX, 10, 500, () -> {
-				container.clear();
-				
-				animate((Widget)container, Transition.FLIPINX, 0, 500, () -> {
-					container.add(placeholder);
-					showPlaceholder(placeholder);
-				});
-			});
+			// show the divider when there are items of both kind
+			divDividerUI.setVisible(!inprogress.isEmpty() && !completed.isEmpty());
+			
+			// show the spinner when there are no results
+			pnlSpinnerUI.setVisible(inprogress.isEmpty() && completed.isEmpty());
 		}
 		
 		private Map<AbstractResultItem, DisplayItem> getMap(AbstractResultItem.Type type)
@@ -151,19 +136,10 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 			else
 				return pnlCompletedContainerUI;
 		}
-		
-		private Widget getPlaceholder(AbstractResultItem.Type type)
-		{
-			if (type == Type.IN_PROGRESS)
-				return lblInProgressPlaceholderUI;
-			else
-				return lblCompletedPlaceholderUI;
-		}
-		
+	
 		public void add(AbstractResultItem.Type type, AbstractResultItem item)
 		{
 			Map<AbstractResultItem, DisplayItem> map = getMap(type);
-			Widget placeholder = getPlaceholder(type);
 			HasWidgets container = getContainer(type);
 			
 			if ((type == Type.IN_PROGRESS && item instanceof InProgressResultItem == false) ||
@@ -177,15 +153,14 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 			
 			DisplayItem d = new DisplayItem(item, selectHandler);
 			map.put(item, d);
-			
-			hidePlaceholder(placeholder);
+				
 			addDisplayItem(d, container);
+			validatePlaceholders();
 		}
 		
 		public void remove(AbstractResultItem.Type type, AbstractResultItem item)
 		{
 			Map<AbstractResultItem, DisplayItem> map = getMap(type);
-			Widget placeholder = getPlaceholder(type);
 			HasWidgets container = getContainer(type);
 			
 			if ((type == Type.IN_PROGRESS && item instanceof InProgressResultItem == false) ||
@@ -201,21 +176,21 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 			map.remove(item);
 			
 			removeDisplayItem(d, container);
-			if (map.isEmpty())
-				showPlaceholder(placeholder);
+			validatePlaceholders();
 		}
 		
 		public void clearAll(AbstractResultItem.Type type)
 		{
 			Map<AbstractResultItem, DisplayItem> map = getMap(type);
-			Widget placeholder = getPlaceholder(type);
-			HasWidgets container = getContainer(type);
+			if (map.size() > 0)
+			{
+				// copy to buffer as the remove operation will modify the map
+				List<AbstractResultItem> buffer = new ArrayList<>(map.keySet());
+				for (AbstractResultItem itr : buffer)
+					remove(type, itr);
+			}
 			
-			if (map.isEmpty())
-				return;
-			
-			map.clear();
-			clearAllDisplayItems(container, placeholder);
+			validatePlaceholders();
 		}
 		
 		public void setSelectHandler(SelectHandler h) {
@@ -225,15 +200,9 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 	
 	private void initLocale()
 	{
-		lblCompletedPlaceholderLC = new SimpleLocalizedTextWidget<>(lblCompletedPlaceholderUI, DocumentResultsPaneLocale.DESC_lblCompletedPlaceholderUI);
-		lblInProgressPlaceholderLC = new SimpleLocalizedTextWidget<>(lblInProgressPlaceholderUI, DocumentResultsPaneLocale.DESC_lblInProgressPlaceholderUI);
-	
 		registerLocale(DocumentResultsPaneLocale.INSTANCE.en);
 		registerLocale(DocumentResultsPaneLocale.INSTANCE.de);
-		
-		registerLocalizedWidget(lblCompletedPlaceholderLC);
-		registerLocalizedWidget(lblInProgressPlaceholderLC);
-		
+	
 		refreshLocalization();
 	}
 

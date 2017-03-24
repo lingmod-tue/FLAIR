@@ -163,8 +163,6 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	@UiField
 	MaterialLink								tglSettingsPaneUI;
 	@UiField
-	MaterialLink								tglDocPreviewPaneUI;
-	@UiField
 	RankerSettingsPane							pnlConstructionsSettingsUI;
 	@UiField
 	DocumentResultsPane							pnlDocResultsUI;
@@ -176,12 +174,10 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	CorpusFileUploader 							mdlCorpusUploadUI;
 	@UiField
 	CustomKeywordsEditor 						mdlCustomKeywordsUI;
+	@UiField
+	MaterialPanel								pnlResultsContainerUI;
 	
 	ToastNotifications							notificationService;
-	boolean										settingsVisible;
-	boolean										previewVisible;
-	
-	private static final double					SETTINGS_PANEL_WIDTH = 400;
 	
 	private void showSearchNav(boolean visible)
 	{
@@ -198,7 +194,7 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		fadein.setInfinite(false);
 		
 		if (visible)
-		{	
+		{
 			fadeout.animate(pnlNavMainUI, () -> {
 				pnlNavMainUI.setVisible(false);
 				pnlNavSearchUI.setVisible(true);
@@ -228,49 +224,24 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	
 	private void updateResultsListGrid()
 	{
-//		if (settingsVisible && previewVisible)
-//			pnlResultsContainerUI.setGrid("l4 m4 s12");
-//		else if (settingsVisible ^ previewVisible)
-//			pnlResultsContainerUI.setGrid("l8 m8 s12");
-//		else
-//			pnlResultsContainerUI.setGrid("l12 m12 s12");
-	}
-	
-	private void showSettingsPane(boolean visible)
-	{
-		if (visible == settingsVisible)
+		if (true)
 			return;
-		
-		settingsVisible = visible;
+		boolean settingsVisible = pnlConstructionsSettingsUI.isVisible();
+		boolean previewVisible = pnlDocPreviewUI.isVisible();
 		
 		if (settingsVisible)
-		{
-//			pnlResultsContainerUI.setLeft(SETTINGS_PANEL_WIDTH);
-			pnlConstructionsSettingsUI.show();
-		}
+			pnlResultsContainerUI.setLeft(pnlConstructionsSettingsUI.getWidth());
 		else
-		{
-//			pnlResultsContainerUI.setLeft(0);
-			pnlConstructionsSettingsUI.hide();;
-		}
-		
-		updateResultsListGrid();
-	}
-	
-	private void showPreviewPane(boolean visible)
-	{
-		if (visible == previewVisible)
-			return;
-		
-		previewVisible = visible;
-		
-		if (previewVisible)
-			pnlDocPreviewUI.show();
+			pnlResultsContainerUI.setLeft(0);
+					
+		if (settingsVisible && previewVisible)
+			pnlResultsContainerUI.setGrid("l4 m4 s12");
+		else if (settingsVisible ^ previewVisible)
+			pnlResultsContainerUI.setGrid("l8 m8 s12");
 		else
-			pnlDocPreviewUI.hide();
-		
-		updateResultsListGrid();
+			pnlResultsContainerUI.setGrid("l12 m12 s12");
 	}
+
 	
 	private void switchLanguage(Language lang)
 	{
@@ -287,7 +258,7 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	}
 	
 	private void initLocale()
-	{	
+	{
 		btnWebSearchLC = new SimpleLocalizedTooltipWidget<>(btnWebSearchUI, MainViewportLocale.DESC_btnWebSearchUI);
 		btnUploadLC = new SimpleLocalizedTooltipWidget<>(btnUploadUI, MainViewportLocale.DESC_btnUploadUI);
 		btnSwitchLangLC = new SimpleLocalizedTooltipWidget<>(btnSwitchLangUI, MainViewportLocale.DESC_btnSwitchLangUI);
@@ -360,7 +331,7 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		});
 		
 		btnCloseSearchUI.addClickHandler(e-> {
-			showSearchNav(false);	
+			showSearchNav(false);
 			txtSearchBoxUI.setText("");
 		});
 		
@@ -374,29 +345,30 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 				showSearchNav(false);
 				txtSearchBoxUI.setText("");
 				break;
-			} 
+			}
 		});
 		
 		tglSettingsPaneUI.addClickHandler(e -> {
-			showSettingsPane(settingsVisible == false);
+			if (pnlConstructionsSettingsUI.isVisible())
+				pnlConstructionsSettingsUI.hide();
+			else
+				pnlConstructionsSettingsUI.show();
 		});
 		
-		tglDocPreviewPaneUI.addClickHandler(e -> {
-			showPreviewPane(previewVisible == false);
-		});		
+		pnlConstructionsSettingsUI.setShowHideEventHandler(v -> updateResultsListGrid());
+		pnlDocPreviewUI.setShowHideEventHandler(v -> updateResultsListGrid());
 		
 		mdlCustomKeywordsUI.bindToSlider(pnlConstructionsSettingsUI.getKeywordSlider());
 	}
 	
 	private void initUI()
-	{		
+	{
 		showSearchNav(false);
-		showSettingsPane(false);
-		showPreviewPane(false);
+		pnlDocPreviewUI.show();
 	}
 	
 	@UiConstructor
-	public MainViewport() 
+	public MainViewport()
 	{
 		super(ClientEndPoint.get().getLocalization());
 		initWidget(uiBinder.createAndBindUi(this));
@@ -414,7 +386,7 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		super.setLocalization(lang);
 	}
 	
-	public void showSplash() 
+	public void showSplash()
 	{
 		splSplashUI.show();
 		
@@ -426,7 +398,7 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		pulse.animate();
 	}
 	
-	public void hideSplash() 
+	public void hideSplash()
 	{
 		MaterialAnimation fadeout = new MaterialAnimation();
 		
@@ -436,7 +408,7 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		fadeout.setInfinite(false);
 		fadeout.animate(splSplashUI, () -> {
 			splSplashUI.hide();
-		});		
+		});
 	}
 	
 	public void setSplashTitle(String text) {
@@ -478,7 +450,7 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	}
 
 	@Override
-	public void showProgressBar(boolean visible, boolean indeterminate) 
+	public void showProgressBar(boolean visible, boolean indeterminate)
 	{
 		if (visible)
 			navMainUI.showProgress(indeterminate ? ProgressType.INDETERMINATE : ProgressType.DETERMINATE);
@@ -487,7 +459,7 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	}
 
 	@Override
-	public void setProgressBarValue(double val) 
+	public void setProgressBarValue(double val)
 	{
 		if (val < 0)
 			val = 0;

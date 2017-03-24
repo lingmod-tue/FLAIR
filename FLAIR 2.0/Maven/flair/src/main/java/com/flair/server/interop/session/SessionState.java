@@ -139,13 +139,14 @@ public class SessionState
 		if (hasOperation())
 			throw new RuntimeException("Previous state not cleared");
 
+		ServerLogger.get().info("Pipeline operation " + state.type + " has begun");
+		
 		currentOperation = state;
-
 		// clear the message queue just in case any old messages ended up there
 		messagePipeline.clearPendingMessages();
-		currentOperation.get().begin();
 		
-		ServerLogger.get().info("Pipeline operation " + currentOperation.type + " has begun");
+		// has to be the tail call as the begin operation can trigger the completion event if there are no queued tasks
+		currentOperation.get().begin();
 	}
 
 	private void endOperation(boolean cancel)
@@ -178,10 +179,12 @@ public class SessionState
 	private RankableDocumentImpl generateRankableDocument(AbstractDocument source)
 	{
 		RankableDocumentImpl out = new RankableDocumentImpl();
+		final int snippetMaxLen = 100;
 
 		if (source.isParsed() == false)
 			throw new IllegalStateException("Document not flagged as parsed");
 
+		out.setLanguage(source.getLanguage());
 		if (source.getDocumentSource() instanceof SearchResultDocumentSource)
 		{
 			SearchResultDocumentSource searchSource = (SearchResultDocumentSource) source.getDocumentSource();
@@ -201,8 +204,8 @@ public class SessionState
 			out.setTitle(localSource.getName());
 
 			String textSnip = source.getText();
-			if (textSnip.length() > 35)
-				out.setSnippet(textSnip.substring(0, 35) + "...");
+			if (textSnip.length() > snippetMaxLen)
+				out.setSnippet(textSnip.substring(0, snippetMaxLen) + "...");
 			else
 				out.setSnippet(textSnip);
 
@@ -495,7 +498,7 @@ public class SessionState
 																		cache.corpusData.keywords);
 		// register event handlers and start the op
 		op.setJobBeginHandler(e -> {
-			handleCorpusJobBegin(e);;
+			handleCorpusJobBegin(e);
 		});
 		op.setParseCompleteHandler(e -> {
 			handleParseComplete(ServerMessage.Type.CUSTOM_CORPUS, e);

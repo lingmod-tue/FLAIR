@@ -218,7 +218,7 @@ public class DocumentRanker implements AbstractDocumentRanker
 	{
 		for (GrammaticalConstruction itr : doc.getConstructions())
 		{
-			if (input.isConstructionEnabled(itr) == false)
+			if (input.hasConstructionSlider(itr) && input.isConstructionEnabled(itr) == false)
 				return true;
 		}
 

@@ -6,6 +6,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.flair.client.interop.FuncCallback;
 import com.flair.client.localization.LocalizationEngine;
@@ -32,6 +33,7 @@ import com.flair.client.presentation.interfaces.InProgressResultItem;
 import com.flair.client.presentation.interfaces.NotificationService;
 import com.flair.client.presentation.interfaces.UserPromptService;
 import com.flair.client.presentation.widgets.GenericWeightSlider;
+import com.flair.client.presentation.widgets.GrammaticalConstructionWeightSlider;
 import com.flair.client.utilities.ClientLogger;
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
@@ -62,7 +64,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 		public final OperationType	type;
 		public final Language		lang;
 		public final String			query;
-		public final int			numResults;
+		public int					numResults;
 
 		public OperationParams(Language l, String q, int num)
 		{
@@ -149,26 +151,30 @@ public class WebRankerCore implements AbstractWebRankerCore
 			params = p;
 			rankData = null;
 
+			// init and set up message pipeline
 			parsedDocs.clear();
 			inProgress.clear();
 			filteredDocs.clear();
 			receivedInprogress = 0;
 
-			results.setPanelTitle("\"" + params.query + "\"");
 			results.clearCompleted();
 			results.clearInProgress();
 			presenter.showCancelPane(true);
-			presenter.showProgressBar(true, true);
+			presenter.showProgressBar(true, false);
 
-			// init and set up message pipeline
 			settings.setSliderBundle(params.lang);
 			if (currentOp == OperationType.WEB_SEARCH)
+			{
 				messagePipeline.setHandler(m -> webSearchMessageReceiver(m));
+				results.setPanelTitle("\"" + params.query + "\"");
+			}
 			else
+			{
 				messagePipeline.setHandler(m -> customCorpusMessageReceiver(m));
+				results.setPanelTitle(getLocalizedString(WebRankerCoreLocale.DESC_CustomCorpusTitle));
+			}
 
 			messagePipeline.open(token);
-			
 			timeout.schedule(TIMEOUT_MS);
 		}
 
@@ -212,6 +218,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 		{
 			preview.hide();
 			rankData = ranker.rerank(new RankerInput());
+			settings.updateSettings(rankData);
 		}
 
 		boolean isDocFiltered(RankableDocument doc)
@@ -238,12 +245,12 @@ public class WebRankerCore implements AbstractWebRankerCore
 					results.addCompleted(new CompletedResultItemImpl(itr, i, itr.getRank()));
 					i++;
 				}
-			} else
-				for (RankableDocument itr : parsedDocs)
-				{
-					results.addCompleted(new CompletedResultItemImpl(itr, i, itr.getRank()));
-					i++;
-				}
+			}
+			else for (RankableDocument itr : parsedDocs)
+			{
+				results.addCompleted(new CompletedResultItemImpl(itr, i, itr.getRank()));
+				i++;
+			}
 		}
 
 		void addInProgressItem(InProgressResultItem item, BasicDocumentTransferObject dto)
@@ -283,19 +290,6 @@ public class WebRankerCore implements AbstractWebRankerCore
 			if (params.numResults != 0)
 				presenter.setProgressBarValue(parsedDocs.size() * 100 / params.numResults);
 
-			// rerank the parsed docs as their original ranks can be discontinuous
-			// sort the parsed docs by their original rank first and then rerank them
-			Collections.sort(parsedDocs, (a, b) -> {
-				return Integer.compare(a.getRank(), b.getRank());
-			});
-
-			int i = 1;
-			for (RankableDocument itr : parsedDocs)
-			{
-				itr.setRank(i);
-				i++;
-			}
-
 			// refresh the parsed results
 			if (parsedDocs.size() != params.numResults)
 			{
@@ -307,8 +301,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 		void finalizeOp()
 		{
 			if (inProgress.isEmpty() == false)
-				ClientLogger.get()
-				.error("Job completed with delinquent in-progress items. Count: " + inProgress.size());
+				ClientLogger.get().error("Job completed with delinquent in-progress items. Count: " + inProgress.size());
 
 			// check result counts
 			if (receivedInprogress == 0)
@@ -330,39 +323,49 @@ public class WebRankerCore implements AbstractWebRankerCore
 				notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_NoParsedDocs));
 				reset();
 				return;
-			} else if (parsedDocs.size() < params.numResults)
+			}
+			else if (parsedDocs.size() < params.numResults)
 				notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_MissingDoc));
 
 			// cleanup
 			currentOp = OperationType.NONE;
 			receivedInprogress = 0;
 			messagePipeline.close();
+			timeout.cancel();
 			inProgress.clear();
 			results.clearInProgress();
 			presenter.showCancelPane(false);
 			presenter.showProgressBar(false, false);
+			settings.show();
+			preview.hide();
+			
+			// rerank the parsed docs as their original ranks can be discontinuous
+			// sort the parsed docs by their original rank first and then rerank them
+			Collections.sort(parsedDocs, (a, b) -> {
+				return Integer.compare(a.getRank(), b.getRank());
+			});
+
+			int i = 1;
+			for (RankableDocument itr : parsedDocs)
+			{
+				itr.setRank(i);
+				i++;
+			}
 
 			// rerank and display
 			rerank();
 			refreshParsedResultsList();
 
-			notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_AnalysisComplete), 5000);
+			notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_AnalysisComplete));
 		}
 	}
 
 	private final class RankerInput implements DocumentRankerInput.Rank
 	{
-		private final List<GrammaticalConstruction> weightedConstructions;
+		private final Set<GrammaticalConstruction> langConstructions;
 
-		public RankerInput()
-		{
-			weightedConstructions = new ArrayList<>();
-
-			// populate from settings pane
-			settings.getSliderBundle().forEachWeightSlider(w -> {
-				if (w.isEnabled() && w.hasWeight())
-					weightedConstructions.add(w.getGram());
-			});
+		public RankerInput() {
+			langConstructions = GrammaticalConstruction.getConstructionsForLanguage(getLanguage());
 		}
 
 		@Override
@@ -372,7 +375,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 
 		@Override
 		public Iterable<GrammaticalConstruction> getConstructions() {
-			return weightedConstructions;
+			return langConstructions;
 		}
 
 		@Override
@@ -381,13 +384,23 @@ public class WebRankerCore implements AbstractWebRankerCore
 		}
 
 		@Override
-		public double getConstructionWeight(GrammaticalConstruction gram) {
-			return settings.getSliderBundle().getWeightSlider(gram).getWeight();
+		public double getConstructionWeight(GrammaticalConstruction gram)
+		{
+			GrammaticalConstructionWeightSlider slider = settings.getSliderBundle().getWeightSlider(gram);
+			if (slider != null)
+				return slider.getWeight();
+			else
+				return 0;
 		}
 
 		@Override
-		public boolean isConstructionEnabled(GrammaticalConstruction gram) {
-			return settings.getSliderBundle().getWeightSlider(gram).isEnabled();
+		public boolean isConstructionEnabled(GrammaticalConstruction gram)
+		{
+			GrammaticalConstructionWeightSlider slider = settings.getSliderBundle().getWeightSlider(gram);
+			if (slider != null)
+				return slider.isEnabled();
+			else
+				return false;
 		}
 
 		@Override
@@ -419,6 +432,11 @@ public class WebRankerCore implements AbstractWebRankerCore
 		public boolean isDocumentFiltered(RankableDocument doc) {
 			return state.isDocFiltered(doc);
 		}
+
+		@Override
+		public boolean hasConstructionSlider(GrammaticalConstruction gram) {
+			return settings.getSliderBundle().hasConstruction(gram);
+		}
 	}
 
 	final class PreviewRankableInput implements DocumentAnnotatorInput.HighlightText, DocumentPreviewPaneInput.Rankable
@@ -431,6 +449,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 		private final List<GrammaticalConstruction>		annotatedConstructions;
 		private final Map<GrammaticalConstruction, String>	annotationColors;
 		private DocumentAnnotatorOutput.HighlightText	annotation;
+		private final Set<GrammaticalConstruction> langConstructions;
 
 		PreviewRankableInput(RankableDocument d)
 		{
@@ -444,7 +463,8 @@ public class WebRankerCore implements AbstractWebRankerCore
 				if (w.isEnabled() && w.hasWeight())
 					annotatedConstructions.add(w.getGram());
 			});
-
+			
+			langConstructions = GrammaticalConstruction.getConstructionsForLanguage(getLanguage());
 			// setup colors
 			int availableColors = COLORS.length - 1;
 			for (int i = 0; i < annotatedConstructions.size(); i++)
@@ -528,6 +548,16 @@ public class WebRankerCore implements AbstractWebRankerCore
 		public double getKeywordWeight() {
 			return state.rankData.getKeywordWeight();
 		}
+
+		@Override
+		public Language getLanguage() {
+			return doc.getLanguage();
+		}
+
+		@Override
+		public Iterable<GrammaticalConstruction> getConstructions() {
+			return langConstructions;
+		}
 	}
 
 	final class PreviewUnrankableInput implements DocumentPreviewPaneInput.UnRankable
@@ -601,11 +631,16 @@ public class WebRankerCore implements AbstractWebRankerCore
 		settings.setSettingsChangedHandler(() -> onSettingsChanged());
 		results.setSelectHandler(e -> onSelectResultItem(e));
 		upload.setUploadBeginHandler(() -> onUploadBegin());
-		upload.setUploadCompleteHandler(() -> onUploadComplete());
+		upload.setUploadCompleteHandler(e -> onUploadComplete(e));
+		
+		// rerank once to reset the settings pane's UI
+		state.rerank();
 	}
 
-	private void onSettingsChanged() {
+	private void onSettingsChanged()
+	{
 		state.rerank();
+		state.refreshParsedResultsList();
 	}
 
 	private void onSelectResultItem(AbstractResultItem item)
@@ -654,9 +689,10 @@ public class WebRankerCore implements AbstractWebRankerCore
 		ClientLogger.get().info("Upload operation has begun...");
 	}
 
-	private void onUploadComplete()
+	private void onUploadComplete(int numUploaded)
 	{
 		// signal the end of the upload operation
+		state.params.numResults = numUploaded;
 		service.endCorpusUpload(token, FuncCallback.get(e -> {}));
 		ClientLogger.get().info("Upload operation has ended - Waiting for the server");
 	}
@@ -675,7 +711,11 @@ public class WebRankerCore implements AbstractWebRankerCore
 			String title = getLocalizedString(WebRankerCoreLocale.DESC_OpInProgessTitle);
 			String caption = getLocalizedString(WebRankerCoreLocale.DESC_OpInProgessCaption);
 
-			prompt.yesNo(title, caption, () -> newOp.exec(), () -> {});
+			prompt.yesNo(title, caption, () -> {
+				cancelCurrentOperation();
+				newOp.exec();
+			}, () -> {});
+			
 			return false;
 		}
 

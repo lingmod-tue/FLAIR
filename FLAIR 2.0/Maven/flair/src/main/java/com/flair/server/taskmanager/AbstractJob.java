@@ -31,7 +31,7 @@ abstract class AbstractJob<R, E extends AbstractJobEvent<R>>
 		private final List<EventHandler<E>> 	listeners;
 		private final E							event;
 
-		public NotifyThread(List<EventHandler<E>> listeners, E event) 
+		public NotifyThread(List<EventHandler<E>> listeners, E event)
 		{
 			this.listeners = new ArrayList<>(listeners);
 			this.event = event;
@@ -57,11 +57,16 @@ abstract class AbstractJob<R, E extends AbstractJobEvent<R>>
 		return started;
 	}
 
-	protected final synchronized void flagStarted() {
+	protected final synchronized void flagStarted()
+	{
 		started = true;
+		
+		// if there are no queued tasks, signal completion immediately
+		if (registeredTasks.isEmpty())
+			notifyListeners(createCompletionEvent());
 	}
 
-	protected final synchronized boolean isTaskRegistered(AbstractTask<?> task) 
+	protected final synchronized boolean isTaskRegistered(AbstractTask<?> task)
 	{
 		for (AbstractTask<?> itr : registeredTasks)
 		{
@@ -72,7 +77,7 @@ abstract class AbstractJob<R, E extends AbstractJobEvent<R>>
 		return false;
 	}
 
-	private final synchronized AbstractTask<?> getFirstTask() 
+	private final synchronized AbstractTask<?> getFirstTask()
 	{
 		if (registeredTasks.isEmpty())
 			return null;
@@ -80,7 +85,7 @@ abstract class AbstractJob<R, E extends AbstractJobEvent<R>>
 			return registeredTasks.get(0);
 	}
 
-	protected final synchronized void notifyListeners(E event) 
+	protected final synchronized void notifyListeners(E event)
 	{
 		if (listeners.isEmpty())
 			return;
@@ -95,7 +100,7 @@ abstract class AbstractJob<R, E extends AbstractJobEvent<R>>
 		return started == true && (cancelled == true || registeredTasks.isEmpty());
 	}
 
-	protected final void waitForCompletion() 
+	protected final void waitForCompletion()
 	{
 		if (isStarted() == false)
 			throw new IllegalStateException("Job has not started yet");
@@ -125,7 +130,7 @@ abstract class AbstractJob<R, E extends AbstractJobEvent<R>>
 			registeredTasks.add(task);
 	}
 
-	protected final synchronized void unregisterTask(AbstractTask<?> task) 
+	protected final synchronized void unregisterTask(AbstractTask<?> task)
 	{
 		if (isTaskRegistered(task))
 			registeredTasks.remove(task);
@@ -138,7 +143,7 @@ abstract class AbstractJob<R, E extends AbstractJobEvent<R>>
 		handleTaskCompletion(result);
 	}
 	
-	public final synchronized void cancel() 
+	public final synchronized void cancel()
 	{
 		if (isCompleted())
 			return;

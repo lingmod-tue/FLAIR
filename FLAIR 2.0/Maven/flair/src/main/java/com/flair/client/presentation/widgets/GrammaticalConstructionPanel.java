@@ -36,7 +36,7 @@ public class GrammaticalConstructionPanel extends Composite
 	}
 
 	@Override
-	public GrammaticalConstructionWeightSlider getWeightSlider(GrammaticalConstruction val) 
+	public GrammaticalConstructionWeightSlider getWeightSlider(GrammaticalConstruction val)
 	{
 		GrammaticalConstructionWeightSlider out = null;
 		for (Widget w: panel)
@@ -49,14 +49,14 @@ public class GrammaticalConstructionPanel extends Composite
 	}
 
 	@Override
-	public void resetState(boolean fireEvents) 
+	public void resetState(boolean fireEvents)
 	{
 		for (Widget w : panel)
 			((CanReset)w).resetState(fireEvents);
 	}
 
 	@Override
-	public void add(Widget w) 
+	public void add(Widget w)
 	{
 		if (w instanceof GrammaticalConstructionPanelItem == false)
 			throw new RuntimeException("Invalid panel item");

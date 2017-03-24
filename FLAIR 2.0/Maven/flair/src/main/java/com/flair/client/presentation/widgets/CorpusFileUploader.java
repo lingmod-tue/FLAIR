@@ -47,6 +47,7 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 	UploadCompleteHandler	completeHandler;
 
 	boolean					uploadInProgress;
+	int						numUploaded;
 
 	private void onBeginUpload()
 	{
@@ -70,9 +71,10 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 			throw new RuntimeException("Upload hasn't started yet");
 
 		if (completeHandler != null)
-			completeHandler.handle();
+			completeHandler.handle(numUploaded);
 		
 		uploadInProgress = false;
+		numUploaded = 0;
 
 		hide();
 		resetUI();
@@ -130,6 +132,8 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 		uplUploaderUI.addMaxFilesReachHandler(e -> {
 			onMaxFilesReached();
 		});
+		
+		uplUploaderUI.addSuccessHandler(e -> numUploaded++);
 	}
 
 	public CorpusFileUploader()

@@ -6,7 +6,6 @@ import com.flair.client.presentation.interfaces.CompletedResultItem;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
@@ -45,7 +44,10 @@ public class DocumentResultDisplayItem extends Composite
 	@UiField
 	MaterialLabel			lblSnippetUI;
 
-	@UiConstructor
+	public DocumentResultDisplayItem() {
+		initWidget(uiBinder.createAndBindUi(this));
+	}
+	
 	public DocumentResultDisplayItem(AbstractResultItem item, ClickHandler selectHandler)
 	{
 		initWidget(uiBinder.createAndBindUi(this));
@@ -93,6 +95,7 @@ public class DocumentResultDisplayItem extends Composite
 		}
 	}
 	
+	@Override
 	public Widget getWidget() {
 		return this;
 	}

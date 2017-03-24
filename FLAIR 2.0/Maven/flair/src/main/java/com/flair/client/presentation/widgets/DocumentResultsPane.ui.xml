@@ -2,7 +2,8 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:m="urn:import:gwt.material.design.client.ui"
-	xmlns:m.html="urn:import:gwt.material.design.client.ui.html">
+	xmlns:m.html="urn:import:gwt.material.design.client.ui.html"
+	xmlns:flair="urn:import:com.flair.client.presentation.widgets">
 		
 	<ui:style>
 	.global-animation {
@@ -12,18 +13,22 @@
 	}
 	</ui:style>
 	
-	<m:MaterialPanel ui:field="pnlRootUI" overflow="AUTO"  depth="700" backgroundColor="WHITE" 
-		grid="l6 m6 s12" height="100%" padding="15" top="68"
+	<m:MaterialPanel ui:field="pnlRootUI" depth="700" backgroundColor="WHITE" 
+		layoutPosition="RELATIVE" height="100%" padding="15" top="68"
 		addStyleNames="{style.global-animation}" textAlign="CENTER">
-			
-		<m:MaterialTitle ui:field="lblTitleUI" marginBottom="20" title="Title" description=""/>
+		<m:MaterialTitle ui:field="lblTitleUI" marginBottom="20" title="" description=""/>
 		
-		<m:MaterialRow ui:field="pnlCompletedContainerUI" padding="10" marginBottom="10">
-			<m:MaterialLabel ui:field="lblCompletedPlaceholderUI" text="Completed Placeholder"/>
+		<m:MaterialPanel ui:field="pnlCompletedContainerUI" padding="10" marginBottom="10"/>
+		
+		<m:MaterialDivider ui:field="divDividerUI" visible="false"/>
+		
+		<m:MaterialRow ui:field="pnlSpinnerUI" visible="false">
+			<m:MaterialPreLoader size="BIG" marginTop="5">
+				<m:MaterialSpinner color="BLUE_ONLY"/>
+			</m:MaterialPreLoader>
 		</m:MaterialRow>
 		
-		<m:MaterialRow ui:field="pnlInProgressContainerUI" padding="10" marginTop="10">
-			<m:MaterialLabel ui:field="lblInProgressPlaceholderUI" text="In-progress Placeholder"/>
-		</m:MaterialRow>
+		
+		<m:MaterialPanel ui:field="pnlInProgressContainerUI" padding="10" marginTop="20"/>
 	</m:MaterialPanel>
 </ui:UiBinder> 

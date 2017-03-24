@@ -41,7 +41,6 @@
 					<m:MaterialLink ui:field="btnWebSearchUI" iconType="SEARCH" textColor="WHITE" waves="LIGHT"/>
 					<m:MaterialLink ui:field="btnUploadUI" iconType="FILE_UPLOAD" textColor="WHITE" waves="LIGHT"/>
 					<m:MaterialLink ui:field="btnSwitchLangUI" activates="lang-selector" iconType="LANGUAGE" waves="LIGHT"/>
-					<m:MaterialLink ui:field="tglDocPreviewPaneUI" iconType="RECEIPT" waves="LIGHT"/>
 				</m:MaterialNavSection>
 				
 				<m:MaterialNavSection ui:field="pnlNavSearchUI" addStyleNames="{style.panel-navSearch} {style.global-animation}" float="RIGHT">
@@ -78,8 +77,12 @@
 		<!-- Settings Pane -->
 		<flair:RankerSettingsPane ui:field="pnlConstructionsSettingsUI"/>
 		
-		<!-- Results Pane-->
-		<flair:DocumentResultsPane ui:field="pnlDocResultsUI"/>
+		<m:MaterialPanel ui:field="pnlResultsContainerUI" backgroundColor="WHITE" layoutPosition="RELATIVE"
+			marginBottom="0" grid="l6 m6 s6" padding="20" addStyleNames="{style.global-animation}" visible="false">
+			<!-- Results Pane-->
+			<flair:DocumentResultsPane ui:field="pnlDocResultsUI"/>
+		</m:MaterialPanel>
+        
 		
 		<!-- Preview Pane -->
 		<flair:DocumentPreviewPane ui:field="pnlDocPreviewUI"/>

@@ -19,6 +19,7 @@ public interface DocumentRankerInput
 		
 		public double								getConstructionWeight(GrammaticalConstruction gram);	// returns the weight of the given construction
 		public boolean								isConstructionEnabled(GrammaticalConstruction gram);	// returns true if enabled
+		public boolean								hasConstructionSlider(GrammaticalConstruction gram);	// returns false if the construction has no corresponding slider in the interface
 		
 		public double								getKeywordWeight();
 		public boolean								isKeywordEnabled();

@@ -29,7 +29,7 @@ public class DocumentAnnotator implements AbstractDocumentAnnotator
 		
 		@Override
 		public SafeHtml getHighlightedText() {
-			return new SafeHtmlBuilder().appendEscapedLines(html).toSafeHtml();
+			return new SafeHtmlBuilder().appendHtmlConstant(html).toSafeHtml();
 		}
 		
 	}
@@ -75,7 +75,7 @@ public class DocumentAnnotator implements AbstractDocumentAnnotator
 			return sb.toString();
 		}
 		
-		public String getEndTag() 
+		public String getEndTag()
 		{
 			StringBuilder sb = new StringBuilder();
 			sb.append("</span>");
@@ -84,7 +84,7 @@ public class DocumentAnnotator implements AbstractDocumentAnnotator
 	}
 	
 	private static class OffsetData implements Comparable<OffsetData>
-	{	
+	{
 		public final int			offset;
 		public final List<Span>		startSpans;
 		public final List<Span>		endSpans;
@@ -241,7 +241,7 @@ public class DocumentAnnotator implements AbstractDocumentAnnotator
 		if (lastOffset < docText.length())
 			sb.append(docText.substring(lastOffset, docText.length()));
 		
-		return new HighlightTextOutput(sb.toString());
+		return new HighlightTextOutput(sb.toString().replace("\n", "<br/>"));
 	}
 	
 	private static final String			BRAT_ENTITY_PREFIX = "T";

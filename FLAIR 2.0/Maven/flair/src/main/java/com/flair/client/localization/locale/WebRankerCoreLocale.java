@@ -14,6 +14,7 @@ public final class WebRankerCoreLocale extends SimpleLocale
 	public static final String		DESC_AnalysisComplete = "AnalysisComplete";
 	public static final String		DESC_KeywordTitle = "KeywordTitle";
 	public static final String		DESC_OpTimeout = "OpTimeout";
+	public static final String		DESC_CustomCorpusTitle = "CustomCorpusTitle";
 
 	@Override
 	public void init()
@@ -29,6 +30,7 @@ public final class WebRankerCoreLocale extends SimpleLocale
 		en.put(DESC_AnalysisComplete, "Analysis complete.");
 		en.put(DESC_KeywordTitle, "keyword");
 		en.put(DESC_OpTimeout, "The operation timed-out");
+		en.put(DESC_CustomCorpusTitle, "Uploaded Files");
 		
 		// DE
 		de.put(DESC_OpInProgessTitle, "Bestätigung");
@@ -41,6 +43,7 @@ public final class WebRankerCoreLocale extends SimpleLocale
 		de.put(DESC_AnalysisComplete, "Analyse abgeschlossen.");
 		de.put(DESC_KeywordTitle, "Schlüsselwort");
 		de.put(DESC_OpTimeout, "Der Vorgang wurde storniert, weil er zu lange gedauert hat");
+		de.put(DESC_CustomCorpusTitle, "Hochgeladene Dateien");
 	}
 	
 	public static final WebRankerCoreLocale		INSTANCE = new WebRankerCoreLocale();

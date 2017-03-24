@@ -17,7 +17,7 @@ public abstract class LanguageSpecificConstructionSliderBundle extends Localized
 	private final Language		lang;
 	private HasWidgets			rootContainer;
 	
-	public LanguageSpecificConstructionSliderBundle(Language lang)	
+	public LanguageSpecificConstructionSliderBundle(Language lang)
 	{
 		super(ClientEndPoint.get().getLocalization());
 		this.lang = lang;
@@ -59,7 +59,7 @@ public abstract class LanguageSpecificConstructionSliderBundle extends Localized
 	}
 	
 	@Override
-	public void resetState(boolean fireEvents) 
+	public void resetState(boolean fireEvents)
 	{
 		for (Widget itr : rootContainer)
 		{

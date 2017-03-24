@@ -45,7 +45,7 @@ public class GrammaticalConstructionPanelItem extends LocalizedComposite impleme
 		registerLocale(GrammaticalConstructionPanelItemLocale.INSTANCE.de);
 		
 		refreshLocalization();
-	}	
+	}
 	
 	private void initHandlers()
 	{
@@ -98,7 +98,7 @@ public class GrammaticalConstructionPanelItem extends LocalizedComposite impleme
 	}
 
 	@Override
-	public void resetState(boolean fireEvents) 
+	public void resetState(boolean fireEvents)
 	{
 		// reset all appropriate (direct) children
 		for (Widget itr : children)
@@ -112,14 +112,14 @@ public class GrammaticalConstructionPanelItem extends LocalizedComposite impleme
 	}
 
 	@Override
-	public void add(Widget w) 
-	{		
+	public void add(Widget w)
+	{
 		children.add(w);
 		body.add(w);
 	}
 
 	@Override
-	public void clear() 
+	public void clear()
 	{
 		children.clear();
 		body.clear();
@@ -185,6 +185,16 @@ public class GrammaticalConstructionPanelItem extends LocalizedComposite impleme
 		GrammaticalConstructionWeightSlider slider = getAsSlider(w, null);
 		if (slider != null)
 			h.handle(slider);
+		else if (w instanceof GrammaticalConstructionPanel)
+		{
+			GrammaticalConstructionPanel panel = (GrammaticalConstructionPanel)w;
+			panel.forEachWeightSlider(h);
+		}
+		else if (w instanceof GrammaticalConstructionPanelItem)
+		{
+			GrammaticalConstructionPanelItem item = (GrammaticalConstructionPanelItem)w;
+			item.forEachWeightSlider(h);
+		}
 		else if (w instanceof HasWidgets)
 		{
 			for (Widget itr : (HasWidgets)w)

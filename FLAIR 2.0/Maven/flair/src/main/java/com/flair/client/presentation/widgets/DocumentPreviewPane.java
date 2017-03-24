@@ -28,6 +28,7 @@ import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
 import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.ListDataProvider;
 
@@ -36,17 +37,22 @@ import gwt.material.design.client.ui.MaterialCollapsibleBody;
 import gwt.material.design.client.ui.MaterialIcon;
 import gwt.material.design.client.ui.MaterialLabel;
 import gwt.material.design.client.ui.MaterialLink;
+import gwt.material.design.client.ui.MaterialLoader;
 import gwt.material.design.client.ui.MaterialRow;
 
 public class DocumentPreviewPane extends LocalizedComposite implements AbstractDocumentPreviewPane
-{	
+{
+	public interface ShowHideHandler {
+		public void handle(boolean visible);
+	}
+	
 	private static DocumentPreviewPaneUiBinder uiBinder = GWT.create(DocumentPreviewPaneUiBinder.class);
 
 	interface DocumentPreviewPaneUiBinder extends UiBinder<Widget, DocumentPreviewPane>
 	{
 	}
 
-	private static final double				PANEL_WIDTH = 450;
+	private static final int				PANEL_WIDTH = 450;
 	
 	@UiField
 	MaterialRow					pnlPreviewContainerUI;
@@ -65,7 +71,7 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 	@UiField
 	MaterialIcon				icoHelpTextUI;
 	@UiField
-	HTML						htmlDocTextPreviewUI;
+	ScrollPanel					pnlDocTextPreviewUI;
 	@UiField
 	MaterialRow					pnlFooterUI;
 	@UiField
@@ -77,7 +83,8 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 	SimpleLocalizedTextButtonWidget<MaterialLink>		tglConstructionDetailsLC;
 	
 	State						state;
-	EventHandler				closingHandler;
+	ShowHideHandler				showhideHandler;
+	boolean						visible;
 	
 	private enum TableType
 	{
@@ -132,7 +139,7 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 	
 	
 	private class State
-	{		
+	{
 		class Table
 		{
 			private static final int		PAGE_SIZE = 200;		// > no. of gram consts to disable pagination
@@ -156,7 +163,7 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 					dataProvider = new ListDataProvider<>();
 				dataProvider.addDataDisplay(table);
 				
-				ListHandler<TableData> sortHandler = new ListHandler<TableData>(dataProvider.getList());
+				ListHandler<TableData> sortHandler = new ListHandler<>(dataProvider.getList());
 				
 				switch (type)
 				{
@@ -165,7 +172,7 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 					
 					colFirst = new Column<TableData, SafeHtml>(new SafeHtmlCell()) {
 						@Override
-						public SafeHtml getValue(TableData item) 
+						public SafeHtml getValue(TableData item)
 						{
 							String text = item.getLocalizedName(localeCore.getLanguage());
 							String color = item.keyword ? rankable.getKeywordAnnotationColor() : rankable.getConstructionAnnotationColor(item.gram);
@@ -259,7 +266,7 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 		}
 		
 		private void genTableData(List<TableData> ws, List<TableData> cd)
-		{			
+		{
 			ws.clear();
 			cd.clear();
 			
@@ -271,7 +278,7 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 						rankable.getKeywordWeight(), 0));
 			}
 			
-			for (GrammaticalConstruction itr : GrammaticalConstruction.values())
+			for (GrammaticalConstruction itr : rankable.getConstructions())
 			{
 				TableData d = new TableData(itr,
 						(int)rankable.getDocument().getConstructionFreq(itr),
@@ -292,8 +299,10 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 			type = InputType.RANKABLE;
 			rankable = input;
 			unrankable = null;
-					
+			
+			MaterialLoader.showLoading(true, pnlPreviewContainerUI);
 			reload(true);
+			MaterialLoader.showLoading(false, pnlPreviewContainerUI);
 		}
 		
 		public void init(DocumentPreviewPaneInput.UnRankable input)
@@ -302,7 +311,9 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 			rankable = null;
 			unrankable = input;
 					
+			MaterialLoader.showLoading(true, pnlPreviewContainerUI);
 			reload(true);
+			MaterialLoader.showLoading(false, pnlPreviewContainerUI);
 		}
 		
 		public void resetUI()
@@ -315,7 +326,7 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 			lblDocLevelUI.setVisible(true);
 			lblDocNumSentencesUI.setVisible(true);
 			lblDocNumWordsUI.setVisible(true);
-			icoHelpTextUI.setVisible(true);		
+			icoHelpTextUI.setVisible(true);
 		}
 		
 		public void reload(boolean fullReload)
@@ -364,9 +375,11 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 					// set up the remaining fields
 					lblDocTitleUI.setText(rankable.getDocument().getTitle());
 					lblDocLevelUI.setText(rankable.getDocument().getReadabilityLevel().toString());
-					lblDocNumSentencesUI.setText(rankable.getDocument().getNumSentences() + ld.get(DocumentPreviewPaneLocale.DESC_lblDocNumSentences));
-					lblDocNumWordsUI.setText(rankable.getDocument().getNumWords() + ld.get(DocumentPreviewPaneLocale.DESC_lblDocNumWords));
-					htmlDocTextPreviewUI.setHTML(rankable.getPreviewMarkup());
+					lblDocNumSentencesUI.setText(rankable.getDocument().getNumSentences() + " " + ld.get(DocumentPreviewPaneLocale.DESC_lblDocNumSentences));
+					lblDocNumWordsUI.setText(rankable.getDocument().getNumWords() + " " + ld.get(DocumentPreviewPaneLocale.DESC_lblDocNumWords));
+					
+					pnlDocTextPreviewUI.clear();
+					pnlDocTextPreviewUI.add(new HTML(rankable.getPreviewMarkup()));
 					
 					break;
 				}
@@ -382,7 +395,8 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 					
 					// update the rest
 					lblDocTitleUI.setText(unrankable.getTitle());
-					htmlDocTextPreviewUI.setHTML(new SafeHtmlBuilder().appendEscapedLines(unrankable.getText()).toSafeHtml());
+					pnlDocTextPreviewUI.clear();
+					pnlDocTextPreviewUI.add(new HTML(new SafeHtmlBuilder().appendEscapedLines(unrankable.getText()).toSafeHtml()));
 					
 					break;
 				}
@@ -395,7 +409,9 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 		pnlPreviewContainerUI.setRight(right);
 	}
 	
-	private void setContainerVisible(boolean visible) {
+	private void setContainerVisible(boolean visible)
+	{
+		this.visible = visible;
 		setPanelRight(visible ? 0 : -PANEL_WIDTH);
 	}
 	
@@ -415,16 +431,12 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 	
 	private void initHandlers()
 	{
-		icoCloseUI.addClickHandler(e -> {
-			if (closingHandler != null)
-				closingHandler.handle();
-			
-			hide();
-		});
+		icoCloseUI.addClickHandler(e -> hide());
 	}
 	
 	private void initUI()
 	{
+		pnlPreviewContainerUI.setWidth(PANEL_WIDTH + "px");
 		hide();
 	}
 	
@@ -432,7 +444,8 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 	{
 		super(ClientEndPoint.get().getLocalization());
 		state = new State();
-		closingHandler = null;
+		showhideHandler = null;
+		visible = false;
 		
 		initWidget(uiBinder.createAndBindUi(this));
 		
@@ -461,17 +474,34 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 	}
 	
 	@Override
-	public void show() {
+	public void show()
+	{
 		setContainerVisible(true);
+		
+		if (showhideHandler != null)
+			showhideHandler.handle(visible);
 	}
 	
 	@Override
-	public void hide() {
+	public void hide()
+	{
 		setContainerVisible(false);
+		
+		if (showhideHandler != null)
+			showhideHandler.handle(visible);
 	}
 
+	public void setShowHideEventHandler(ShowHideHandler handler) {
+		showhideHandler = handler;
+	}
+	
 	@Override
-	public void setClosingEventHandler(EventHandler handler) {
-		closingHandler = handler;
+	public boolean isVisible() {
+		return visible;
+	}
+
+	
+	public int getWidth() {
+		return PANEL_WIDTH;
 	}
 }
