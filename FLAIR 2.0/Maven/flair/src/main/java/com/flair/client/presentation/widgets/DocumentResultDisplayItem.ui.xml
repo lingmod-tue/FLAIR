@@ -13,29 +13,41 @@
 	}
 	</ui:style>
 	
-	<m:MaterialCard ui:field="pnlCardUI" addStyleNames="{style.card}" hoverable="true">
-		<m:MaterialRow>
-			<m:MaterialColumn ui:field="colCompletedHeaderUI" grid="l1 m1 s3" textAlign="CENTER">
-				<m:MaterialLabel ui:field="lblNewRankUI" fontSize="3.0em" text="1"/>				
-				<m:MaterialIcon ui:field="icoRankOffsetUI" iconSize="SMALL" iconColor="GREY_LIGHTEN_2" iconType="KEYBOARD_ARROW_UP"/>
-			</m:MaterialColumn>
-			
-			<m:MaterialColumn ui:field="colInProgressHeaderUI" grid="l1 m1 s3" textAlign="CENTER">
-				<m:MaterialPreLoader size="BIG" marginTop="5">
-					<m:MaterialSpinner color="BLUE_ONLY"/>
-				</m:MaterialPreLoader>
-			</m:MaterialColumn>
-			
-			<m:MaterialColumn grid="l11 m11 s9" textAlign="LEFT">
-				<m:MaterialLink ui:field="btnTitleUI" iconColor="BLACK" fontSize="1.5em" 
-					text="My back hurts!"/>
+	<m:MaterialRow ui:field="pnlRootUI">
+		<!-- Padding HACK! I despise web-dev -->
+		<m:MaterialColumn grid="l3" hideOn="HIDE_ON_SMALL_DOWN">
+			<m:MaterialCard/>
+		</m:MaterialColumn>
+				
+		<m:MaterialColumn grid="l6">
+			<m:MaterialCard ui:field="pnlCardUI" addStyleNames="{style.card}" hoverable="true">
+				<m:MaterialRow>
+					<m:MaterialColumn ui:field="colCompletedHeaderUI" grid="l2 m2 s3" textAlign="CENTER">
+						<m:MaterialLabel ui:field="lblNewRankUI" fontSize="3.0em" text="1"/>				
+						<m:MaterialIcon ui:field="icoRankOffsetUI" iconSize="SMALL" iconColor="GREY_LIGHTEN_2" iconType="KEYBOARD_ARROW_UP"/>
+					</m:MaterialColumn>
 					
-				<m:MaterialLabel ui:field="lblURLUI" textColor="GREY_LIGHTEN_1" fontSize="0.8em" 
-					text="www.imsodonewiththis.com"/>
-			
-				<m:MaterialLabel ui:field="lblSnippetUI" paddingTop="10" 
-					text="Rabble Rabble Rabble"/>
-			</m:MaterialColumn>
-		</m:MaterialRow>
-	</m:MaterialCard>
+					<m:MaterialColumn ui:field="colInProgressHeaderUI" grid="l2 m2 s3" textAlign="CENTER">
+						<m:MaterialPreLoader size="BIG" marginTop="5" hideOn="HIDE_ON_SMALL_DOWN">
+							<m:MaterialSpinner color="BLUE_ONLY"/>
+						</m:MaterialPreLoader>
+						<m:MaterialPreLoader size="SMALL" marginTop="5" hideOn="HIDE_ON_MED_UP">
+							<m:MaterialSpinner color="BLUE_ONLY"/>
+						</m:MaterialPreLoader>
+					</m:MaterialColumn>
+					
+					<m:MaterialColumn grid="l10 m10 s9" textAlign="LEFT">
+						<m:MaterialLink ui:field="btnTitleUI" iconColor="BLACK" fontSize="1.5em" 
+							text="My back hurts!"/>
+							
+						<m:MaterialLabel ui:field="lblURLUI" textColor="GREY_LIGHTEN_1" fontSize="0.8em" 
+							text="www.imsodonewiththis.com"/>
+					
+						<m:MaterialLabel ui:field="lblSnippetUI" paddingTop="10" 
+							text="Rabble Rabble Rabble"/>
+					</m:MaterialColumn>
+				</m:MaterialRow>
+			</m:MaterialCard>
+		</m:MaterialColumn>
+	</m:MaterialRow>
 </ui:UiBinder> 

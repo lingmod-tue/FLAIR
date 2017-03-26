@@ -21,11 +21,11 @@ public class ParseJob extends AbstractJob<ParseJobOutput, ParseJobEvent>
 	public ParseJob(ParseJobInput input)
 	{
 		this.input = input;
-		this.output = new ParseJobOutput();
+		this.output = new ParseJobOutput(input.sourceLanguage);
 	}
 	
 	@Override
-	public void begin() 
+	public void begin()
 	{
 		if (isStarted())
 			throw new IllegalStateException("Job has already begun");
@@ -47,7 +47,7 @@ public class ParseJob extends AbstractJob<ParseJobOutput, ParseJobEvent>
 	}
 	
 	@Override
-	protected void handleTaskCompletion(AbstractTaskResult<?> completionResult) 
+	protected void handleTaskCompletion(AbstractTaskResult<?> completionResult)
 	{
 		switch (completionResult.getType())
 		{
@@ -70,14 +70,14 @@ public class ParseJob extends AbstractJob<ParseJobOutput, ParseJobEvent>
 	}
 
 	@Override
-	public ParseJobOutput getOutput() 
+	public ParseJobOutput getOutput()
 	{
 		waitForCompletion();
 		return output;
 	}
 
 	@Override
-	public String toString() 
+	public String toString()
 	{
 		if (isStarted() == false)
 			return "ParseJob has not started yet";
@@ -132,8 +132,8 @@ final class ParseJobOutput
 {
 	public final DocumentCollection		parsedDocs;
 	
-	public ParseJobOutput() {
-		this.parsedDocs = new DocumentCollection();
+	public ParseJobOutput(Language sourceLang) {
+		this.parsedDocs = new DocumentCollection(sourceLang);
 	}
 }
 

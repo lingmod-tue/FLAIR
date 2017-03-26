@@ -34,7 +34,7 @@ final class SearchCrawlParseJob extends AbstractJob<SearchCrawlParseJobOutput, S
 	public SearchCrawlParseJob(SearchCrawlParseJobInput input)
 	{
 		this.input = input;
-		this.output = new SearchCrawlParseJobOutput();
+		this.output = new SearchCrawlParseJobOutput(input.sourceLanguage);
 		this.searchAgent = null;
 		this.numValidResults = this.numActiveCrawlTasks = this.numTotalCrawlsQueued = 0;
 	}
@@ -70,7 +70,7 @@ final class SearchCrawlParseJob extends AbstractJob<SearchCrawlParseJobOutput, S
 	}
 
 	@Override
-	public void begin() 
+	public void begin()
 	{
 		if (isStarted())
 			throw new IllegalStateException("Job has already begun");
@@ -84,13 +84,13 @@ final class SearchCrawlParseJob extends AbstractJob<SearchCrawlParseJobOutput, S
 	}
 	
 	@Override
-	protected void handleTaskCompletion(AbstractTaskResult<?> completionResult) 
+	protected void handleTaskCompletion(AbstractTaskResult<?> completionResult)
 	{
 		switch (completionResult.getType())
 		{
 		case WEB_SEARCH:
 			{
-				WebSearchTaskResult result = (WebSearchTaskResult) completionResult.getResult();	
+				WebSearchTaskResult result = (WebSearchTaskResult) completionResult.getResult();
 				notifyListeners(new SearchCrawlParseJobEvent(result.getOutput().size()));
 				// queue crawl tasks for the results
 				queueWebCrawlTasks(result.getOutput());
@@ -105,7 +105,7 @@ final class SearchCrawlParseJob extends AbstractJob<SearchCrawlParseJobOutput, S
 				
 				if (result.wasSuccessful())
 				{
-					SearchResult sr = result.getOutput();					
+					SearchResult sr = result.getOutput();
 					// check token count and queue parse task if valid
 					StringTokenizer tokenizer = new StringTokenizer(sr.getPageText(), " ");
 					if (MINIMUM_TOKEN_COUNT >= tokenizer.countTokens())
@@ -115,8 +115,8 @@ final class SearchCrawlParseJob extends AbstractJob<SearchCrawlParseJobOutput, S
 						
 						output.searchResults.add(sr);
 						queueDocParseTask(sr);
-					}					
-				}	
+					}
+				}
 				
 				// queue search tasks as long as we need/have results or have timed-out
 				// wait till the last crawl task is complete
@@ -154,14 +154,14 @@ final class SearchCrawlParseJob extends AbstractJob<SearchCrawlParseJobOutput, S
 	}
 
 	@Override
-	public SearchCrawlParseJobOutput getOutput() 
+	public SearchCrawlParseJobOutput getOutput()
 	{
 		waitForCompletion();
 		return output;
 	}
 
 	@Override
-	public String toString() 
+	public String toString()
 	{
 		if (isStarted() == false)
 			return "SearchCrawlParseJob has not started yet";
@@ -227,10 +227,10 @@ final class SearchCrawlParseJobOutput
 	public final List<SearchResult> 	searchResults;
 	public final DocumentCollection		parsedDocs;
 	
-	public SearchCrawlParseJobOutput() 
+	public SearchCrawlParseJobOutput(Language sourceLang)
 	{
 		this.searchResults = new ArrayList<>();
-		this.parsedDocs = new DocumentCollection();
+		this.parsedDocs = new DocumentCollection(sourceLang);
 	}
 }
 

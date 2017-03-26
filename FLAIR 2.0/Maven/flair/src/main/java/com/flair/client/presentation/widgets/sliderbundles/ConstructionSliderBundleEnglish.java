@@ -26,7 +26,7 @@ public class ConstructionSliderBundleEnglish extends LanguageSpecificConstructio
 	HTMLPanel									pnlRootUI;
 	
 	@UiField
-	GrammaticalConstructionPanelItem			pnlSentencesUI; 
+	GrammaticalConstructionPanelItem			pnlSentencesUI;
 	@UiField
 	GrammaticalConstructionPanelItem			pnlQuestionsUI;
 	@UiField
@@ -162,7 +162,12 @@ public class ConstructionSliderBundleEnglish extends LanguageSpecificConstructio
 		super(Language.ENGLISH);
 		
 		initWidget(uiBinder.createAndBindUi(this));
-		setRootContainer(pnlRootUI);		
+		setRootContainer(pnlRootUI);
 		initLocale();
+	}
+	
+	@Override
+	public LanguageSpecificConstructionSliderBundle copySelf() {
+		return new ConstructionSliderBundleEnglish();
 	}
 }

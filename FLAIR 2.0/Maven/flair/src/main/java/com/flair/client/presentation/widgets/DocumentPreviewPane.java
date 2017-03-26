@@ -38,6 +38,7 @@ import gwt.material.design.client.ui.MaterialIcon;
 import gwt.material.design.client.ui.MaterialLabel;
 import gwt.material.design.client.ui.MaterialLink;
 import gwt.material.design.client.ui.MaterialLoader;
+import gwt.material.design.client.ui.MaterialPanel;
 import gwt.material.design.client.ui.MaterialRow;
 
 public class DocumentPreviewPane extends LocalizedComposite implements AbstractDocumentPreviewPane
@@ -54,6 +55,8 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 
 	private static final int				PANEL_WIDTH = 450;
 	
+	@UiField
+	MaterialPanel				pnlRootUI;
 	@UiField
 	MaterialRow					pnlPreviewContainerUI;
 	@UiField
@@ -300,9 +303,9 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 			rankable = input;
 			unrankable = null;
 			
-			MaterialLoader.showLoading(true, pnlPreviewContainerUI);
+			MaterialLoader.showLoading(true, pnlRootUI);
 			reload(true);
-			MaterialLoader.showLoading(false, pnlPreviewContainerUI);
+			MaterialLoader.showLoading(false, pnlRootUI);
 		}
 		
 		public void init(DocumentPreviewPaneInput.UnRankable input)
@@ -311,9 +314,9 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 			rankable = null;
 			unrankable = input;
 					
-			MaterialLoader.showLoading(true, pnlPreviewContainerUI);
+	//		MaterialLoader.showLoading(true, pnlPreviewContainerUI);
 			reload(true);
-			MaterialLoader.showLoading(false, pnlPreviewContainerUI);
+	//		MaterialLoader.showLoading(false, pnlPreviewContainerUI);
 		}
 		
 		public void resetUI()

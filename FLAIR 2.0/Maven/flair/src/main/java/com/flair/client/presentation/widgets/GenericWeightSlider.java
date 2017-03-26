@@ -85,7 +85,7 @@ public abstract class GenericWeightSlider extends LocalizedComposite
 	}
 	
 	@UiConstructor
-	public GenericWeightSlider() 
+	public GenericWeightSlider()
 	{
 		super(ClientEndPoint.get().getLocalization());
 		toggle = new MaterialCheckBox();
@@ -97,7 +97,7 @@ public abstract class GenericWeightSlider extends LocalizedComposite
 	}
 	
 	@UiConstructor
-	public GenericWeightSlider(boolean hideSlider) 
+	public GenericWeightSlider(boolean hideSlider)
 	{
 		super(ClientEndPoint.get().getLocalization());
 		toggle = new MaterialCheckBox();
@@ -120,7 +120,7 @@ public abstract class GenericWeightSlider extends LocalizedComposite
 		return toggle.getValue();
 	}
 	
-	public double getWeight() {
+	public int getWeight() {
 		return slider.getValue();
 	}
 	
@@ -128,7 +128,7 @@ public abstract class GenericWeightSlider extends LocalizedComposite
 		return slider.getValue() != SLIDER_MIN_VAL;
 	}
 	
-	public void setEnabled(boolean val, boolean fireEvent) 
+	public void setEnabled(boolean val, boolean fireEvent)
 	{
 		toggle.setValue(val, fireEvent);
 		slider.setEnabled(val);

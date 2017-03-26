@@ -63,10 +63,6 @@ public abstract class LocalizedComposite extends Composite implements LocalizedU
 		localizedWidgets.remove(widget);
 	}
 	
-	protected final void refreshLocalization() {
-		setLocalization(localeCore.getLanguage());
-	}
-	
 	protected final String getLocalizedString(String desc) {
 		return getLocalizationData(localeCore.getLanguage()).get(desc);
 	}
@@ -77,7 +73,7 @@ public abstract class LocalizedComposite extends Composite implements LocalizedU
 		if (localeData.containsKey(lang) == false)
 			throw new RuntimeException("Locale " + lang + " missing for view " + this.getClass().getName());
 		else
-			return localeData.get(lang);	
+			return localeData.get(lang);
 	}
 	
 	@Override
@@ -88,5 +84,9 @@ public abstract class LocalizedComposite extends Composite implements LocalizedU
 		// simple widget update pass
 		for (AbstractLocalizationWrapper itr : localizedWidgets)
 			itr.setLocale(ldata);
+	}
+	
+	public final void refreshLocalization() {
+		setLocalization(localeCore.getLanguage());
 	}
 }

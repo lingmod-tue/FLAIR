@@ -32,7 +32,7 @@ public enum GrammaticalConstruction
     
     PREPOSITIONS("prepositions", Language.ENGLISH, Language.GERMAN),
     PREPOSITIONS_SIMPLE("simplePrepositions", Language.ENGLISH, Language.GERMAN),
-    PREPOSITIONS_COMPLEX("complexPrepositions", Language.ENGLISH),
+    PREPOSITIONS_COMPLEX("complexPrepositions", Language.ENGLISH, Language.GERMAN),
     PREPOSITIONS_ADVANCED("advancedPrepositions", Language.ENGLISH, Language.GERMAN),
     
     // sentence structure
@@ -132,7 +132,7 @@ public enum GrammaticalConstruction
     VERBTYP_MODAL("modalVerbs", Language.GERMAN),
     
     VERBFORM_TO_INFINITIVE("toInfinitiveForms", Language.ENGLISH, Language.GERMAN),
-    VERBFORM_INFINITIVE("infinitiveForms"),// "I want toPrep do it."
+    VERBFORM_INFINITIVE("infinitiveForms", Language.GERMAN),// "I want toPrep do it."
     VERBFORM_PARTICIPLE("participleForms", Language.GERMAN),// "I want toPrep do it."
     VERBFORM_PARTICIPLE_1("participleForms1"),
     VERBFORM_PARTICIPLE_2("participleForms2"),
@@ -246,7 +246,7 @@ public enum GrammaticalConstruction
 		return Helper.UNIQUE_IDS.get(id);
 	}
 	
-	public static Set<GrammaticalConstruction> getConstructionsForLanguage(Language lang)
+	public static Set<GrammaticalConstruction> getForLanguage(Language lang)
 	{
 		HashSet<GrammaticalConstruction> out = new HashSet<>();
 		

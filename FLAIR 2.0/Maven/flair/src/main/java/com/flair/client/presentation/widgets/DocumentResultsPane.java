@@ -206,6 +206,11 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 		refreshLocalization();
 	}
 
+	private void initUI()
+	{
+		pnlRootUI.setVisible(false);
+	}
+	
 	public DocumentResultsPane()
 	{
 		super(ClientEndPoint.get().getLocalization());
@@ -214,6 +219,7 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 		state = new State();
 		
 		initLocale();
+		initUI();
 	}
 
 	@Override
@@ -259,6 +265,29 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 	@Override
 	public void setSelectHandler(SelectHandler handler) {
 		state.setSelectHandler(handler);
+	}
+
+	
+	@Override
+	public void show()
+	{
+		pnlRootUI.setVisible(true);
+		MaterialAnimation anim = new MaterialAnimation(pnlRootUI);
+		anim.setDelayMillis(0);
+		anim.setDurationMillis(1000);
+		anim.setTransition(Transition.FADEINDOWN);
+		anim.animate();
+	}
+	
+
+	@Override
+	public void hide()
+	{
+		MaterialAnimation anim = new MaterialAnimation(pnlRootUI);
+		anim.setDelayMillis(0);
+		anim.setDurationMillis(1000);
+		anim.setTransition(Transition.FADEOUTUP);
+		anim.animate(() -> pnlRootUI.setVisible(false));
 	}
 
 }

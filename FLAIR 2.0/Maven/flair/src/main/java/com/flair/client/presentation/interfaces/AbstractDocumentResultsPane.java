@@ -9,6 +9,9 @@ public interface AbstractDocumentResultsPane
 		public void handle(AbstractResultItem selection);
 	}
 	
+	public void			show();
+	public void			hide();
+	
 	public void			setPanelTitle(String title);
 	public void			setPanelSubtitle(String subtitle);
 	

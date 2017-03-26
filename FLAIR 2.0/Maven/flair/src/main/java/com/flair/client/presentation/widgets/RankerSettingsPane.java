@@ -328,15 +328,17 @@ public class RankerSettingsPane extends LocalizedComposite implements AbstractRa
 	@Override
 	public void setSettingsChangedHandler(EventHandler handler)
 	{
-		// register the slider handlers here as the sliders themselves won't be available during the construction of the panel
+		// update here as the sliders themselves aren't be available during the construction of the panel
 		bdlEnglishSlidersUI.forEachWeightSlider(s -> {
 			s.setWeightChangeHandler((w, v) -> state.onSettingChange());
 			s.setToggleHandler((w, v) -> state.onSettingChange());
+			s.refreshLocalization();
 		});
 		
 		bdlGermanSlidersUI.forEachWeightSlider(s -> {
 			s.setWeightChangeHandler((w, v) -> state.onSettingChange());
 			s.setToggleHandler((w, v) -> state.onSettingChange());
+			s.refreshLocalization();
 		});
 		
 		state.setChangeHandler(handler);

@@ -18,6 +18,7 @@ import gwt.material.design.client.ui.MaterialColumn;
 import gwt.material.design.client.ui.MaterialIcon;
 import gwt.material.design.client.ui.MaterialLabel;
 import gwt.material.design.client.ui.MaterialLink;
+import gwt.material.design.client.ui.MaterialRow;
 
 public class DocumentResultDisplayItem extends Composite
 {
@@ -27,6 +28,8 @@ public class DocumentResultDisplayItem extends Composite
 	{
 	}
 	
+	@UiField
+	MaterialRow				pnlRootUI;
 	@UiField
 	MaterialCard			pnlCardUI;
 	@UiField

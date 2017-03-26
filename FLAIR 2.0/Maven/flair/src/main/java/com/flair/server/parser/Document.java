@@ -43,7 +43,7 @@ class Document implements AbstractDocument
 		assert parent != null;
 
 		source = parent;
-		constructionData = new ConstructionDataCollection(new DocumentConstructionDataFactory(this));
+		constructionData = new ConstructionDataCollection(parent.getLanguage(), new DocumentConstructionDataFactory(this));
 
 		String pageText = source.getSourceText();
 		StringTokenizer tokenizer = new StringTokenizer(pageText, " ");
@@ -120,11 +120,12 @@ class Document implements AbstractDocument
 		return (DocumentConstructionData) constructionData.getData(type);
 	}
 
-	public void calculateFancyDocLength() {
+	public void calculateFancyDocLength()
+	{
 		double sumOfPowers = 0.0;
 		double squareRoot = 0.0;
 		// iterate through the construction data set and calc
-		for (GrammaticalConstruction itr : GrammaticalConstruction.values())
+		for (GrammaticalConstruction itr : getSupportedConstructions())
 		{
 			DocumentConstructionData data = getConstructionData(itr);
 			if (data.hasConstruction())
@@ -274,6 +275,11 @@ class Document implements AbstractDocument
 	@Override
 	public void setKeywordData(KeywordSearcherOutput data) {
 		keywordData = data;
+	}
+
+	@Override
+	public Iterable<GrammaticalConstruction> getSupportedConstructions() {
+		return GrammaticalConstruction.getForLanguage(getLanguage());
 	}
 }
 

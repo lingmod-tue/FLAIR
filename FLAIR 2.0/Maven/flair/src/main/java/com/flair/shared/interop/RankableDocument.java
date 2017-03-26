@@ -46,4 +46,5 @@ public interface RankableDocument extends BasicDocumentTransferObject
     public double								getNumSentences();
     public double								getNumDependencies();
     public DocumentReadabilityLevel				getReadabilityLevel();
+    public double								getReadablilityScore();
 }

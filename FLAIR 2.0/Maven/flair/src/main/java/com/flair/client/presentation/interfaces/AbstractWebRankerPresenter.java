@@ -13,6 +13,7 @@ public interface AbstractWebRankerPresenter
 	public CustomKeywordService					getCustomKeywordsService();
 	public UserPromptService					getPromptService();
 	public NotificationService					getNotificationService();
+	public VisualizerService					getVisualizerService();
 	
 	public void									showLoaderOverlay(boolean visible);		// over the entire viewport
 	public void									showProgressBar(boolean visible, boolean indeterminate);

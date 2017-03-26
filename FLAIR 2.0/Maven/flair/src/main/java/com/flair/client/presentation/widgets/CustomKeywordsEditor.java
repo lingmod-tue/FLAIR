@@ -53,13 +53,13 @@ public class CustomKeywordsEditor extends LocalizedComposite implements CustomKe
 		String text = txtKeywordsUI.getText();
 		String[] splits = text.replace("\n", ",").split(",");
 
-		if (splits.length == 0)
+		if (splits.length == 0 || (splits.length == 1 && splits[0].length() == 0))
 			MaterialToast.fireToast(getLocalizedString(CustomKeywordsEditorLocale.DESC_NotifyEmpty));
 		else
 		{
 			keywords.clear();
 			for (String itr : splits)
-				keywords.add(itr);
+				keywords.add(itr.trim());
 			slider.setCustomVocab(true);
 
 			MaterialToast.fireToast(getLocalizedString(CustomKeywordsEditorLocale.DESC_NotifySuccess));

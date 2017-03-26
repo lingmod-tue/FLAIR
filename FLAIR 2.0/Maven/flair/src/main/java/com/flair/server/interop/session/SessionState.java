@@ -214,7 +214,7 @@ public class SessionState
 
 		out.setText(source.getText());
 
-		for (GrammaticalConstruction itr : GrammaticalConstruction.values())
+		for (GrammaticalConstruction itr : source.getSupportedConstructions())
 		{
 			DocumentConstructionData data = source.getConstructionData(itr);
 			if (data.hasConstruction())
@@ -250,6 +250,7 @@ public class SessionState
 		out.setNumSentences(source.getNumSentences());
 		out.setNumDependencies(source.getNumDependencies());
 		out.setReadabilityLevel(source.getReadabilityLevel());
+		out.setReadabilityScore(source.getReadabilityScore());
 
 		return out;
 	}

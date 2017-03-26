@@ -86,6 +86,7 @@ public class ClientEndPoint
 												messagePipeline);
 					webranker.setAuthToken(clientToken);
 					webranker.setPresenter(viewport);
+					viewport.showDefaultPane(true);
 					
 					initialized = true;
 					break;

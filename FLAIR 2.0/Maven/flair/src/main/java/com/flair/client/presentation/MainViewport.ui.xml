@@ -15,6 +15,11 @@
 		padding-top: 4px;
 	}
 	
+	.panel-defaultPlaceholder {
+		margin-left: auto;
+		margin-right: auto;
+	}
+	
 	.global-animation {
 		transition: 0.4s all;
 		-webkit-transition: 0.4s all;
@@ -22,7 +27,7 @@
 	}	
 	</ui:style>
 	
-	<m:MaterialPanel ui:field="pnlRootUI" backgroundColor="WHITE">	
+	<m:MaterialPanel ui:field="pnlRootUI" backgroundColor="WHITE" overflow="HIDDEN">	
 		<m:MaterialSplashScreen ui:field="splSplashUI" backgroundColor="WHITE" depth="1000" textAlign="CENTER">
 			<g:HTML ui:field="htmlSplashLogoUI">
 				<img class="{style.brand-logo}" src="img/logo_2.png"/>
@@ -78,11 +83,10 @@
 		<flair:RankerSettingsPane ui:field="pnlConstructionsSettingsUI"/>
 		
 		<m:MaterialPanel ui:field="pnlResultsContainerUI" backgroundColor="WHITE" layoutPosition="RELATIVE"
-			marginBottom="0" grid="l6 m6 s6" padding="20" addStyleNames="{style.global-animation}" visible="false">
+			marginBottom="0" grid="l5 m5 s5" padding="20" addStyleNames="{style.global-animation}">
 			<!-- Results Pane-->
 			<flair:DocumentResultsPane ui:field="pnlDocResultsUI"/>
 		</m:MaterialPanel>
-        
 		
 		<!-- Preview Pane -->
 		<flair:DocumentPreviewPane ui:field="pnlDocPreviewUI"/>
@@ -90,8 +94,70 @@
 		<!-- Custom Keywords Editor Modal -->
 		<flair:CustomKeywordsEditor ui:field="mdlCustomKeywordsUI"/>
 		
+		<!-- Visualizer Modal -->
+		<flair:DocumentCollectionVisualizer ui:field="mdlVisualizerUI"/>
+		
 		<!-- Prompt Modal -->
 		<flair:ModalPrompt ui:field="mdlPromptUI"/>
+		
+		<!-- Default Pane -->
+		<m:MaterialRow ui:field="pnlDefaultPlaceholderUI" visible="false" 
+			marginTop="70" padding="20" grid="l12 m12 s12"
+			addStyleNames="{style.panel-defaultPlaceholder}">
+			<m:MaterialRow>
+				<m:MaterialColumn grid="l3" hideOn="HIDE_ON_SMALL_DOWN">
+					<m:MaterialCard/>
+				</m:MaterialColumn>
+				
+				<m:MaterialColumn grid="l6">
+					<m:MaterialCard backgroundColor="BLUE">
+						<m:MaterialCardContent textColor="WHITE">
+							<m:MaterialCardTitle ui:field="lblDefaultSearchTitleUI" text="Search" iconType="SEARCH"
+								iconPosition="RIGHT" />
+								
+							<m:MaterialLabel ui:field="lblDefaultSearchCaptionUI"
+								text="Click on the Search icon on top and type in a query. FLAIR will fetch the top results from the Bing Search Engine." />
+						</m:MaterialCardContent>
+					</m:MaterialCard>
+				</m:MaterialColumn>
+			</m:MaterialRow>
+
+			<m:MaterialRow>
+				<m:MaterialColumn grid="l3" hideOn="HIDE_ON_SMALL_DOWN">
+					<m:MaterialCard/>
+				</m:MaterialColumn>
+				
+				<m:MaterialColumn grid="l6">
+					<m:MaterialCard backgroundColor="ORANGE">
+						<m:MaterialCardContent textColor="WHITE">
+							<m:MaterialCardTitle ui:field="lblDefaultConfigTitleUI" text="Configure" iconType="SETTINGS"
+								iconPosition="RIGHT" />
+								
+							<m:MaterialLabel ui:field="lblDefaultConfigCaptionUI"
+								text="Configure the settings: text (complexity, length) and language (the passive, wh- questions, academic vocabulary, ...). You can export the settings to apply them to all further searches." />
+						</m:MaterialCardContent>
+					</m:MaterialCard>
+				</m:MaterialColumn>
+			</m:MaterialRow>
+			
+			<m:MaterialRow>
+				<m:MaterialColumn grid="l3" hideOn="HIDE_ON_SMALL_DOWN">
+					<m:MaterialCard/>
+				</m:MaterialColumn>
+				
+				<m:MaterialColumn grid="l6">
+					<m:MaterialCard backgroundColor="GREEN">
+						<m:MaterialCardContent textColor="WHITE">
+							<m:MaterialCardTitle ui:field="lblDefaultReadTitleUI" text="Read" iconType="CHROME_READER_MODE"
+								iconPosition="RIGHT" />
+								
+							<m:MaterialLabel ui:field="lblDefaultReadCaptionUI"
+								text="FLAIR will re-rank the documents according to the configured settings. Click on the link to open the page in a new tab or read the enhanced text in the right-side panel." />
+						</m:MaterialCardContent>
+					</m:MaterialCard>
+				</m:MaterialColumn>
+			</m:MaterialRow>			
+		</m:MaterialRow>
 
 	    <!-- About Modals -->
 		<m:MaterialModal ui:field="mdlAboutEnUI" dismissible="true">
@@ -235,8 +301,7 @@
 			<m:MaterialModalFooter>
 				<m:MaterialButton ui:field="btnAboutEnCloseUI" text="Close" type="FLAT"/>
 			</m:MaterialModalFooter>
-		</m:MaterialModal>
-			
+		</m:MaterialModal>		
 		<m:MaterialModal ui:field="mdlAboutDeUI" dismissible="true">
 			<m:MaterialModalContent>
 				<g:HTML>

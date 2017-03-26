@@ -8,25 +8,26 @@ package com.flair.server.parser;
 import java.util.EnumMap;
 
 import com.flair.shared.grammar.GrammaticalConstruction;
+import com.flair.shared.grammar.Language;
 
 /**
  * A table of construction data mapped to constructions
+ * 
  * @author shadeMe
  */
 class ConstructionDataCollection
 {
-    private final EnumMap<GrammaticalConstruction, AbstractConstructionData>    dataStore;
-    
-    public ConstructionDataCollection(AbstractConstructionDataFactory prototypeFactory)
-    {
-	dataStore = new EnumMap<>(GrammaticalConstruction.class);
-	
-	for (GrammaticalConstruction itr : GrammaticalConstruction.values())
-	    dataStore.put(itr, prototypeFactory.create(itr));
-    }
-    
-    public AbstractConstructionData getData(GrammaticalConstruction type)
-    {
-	return dataStore.get(type);
-    }
+	private final EnumMap<GrammaticalConstruction, AbstractConstructionData> dataStore;
+
+	public ConstructionDataCollection(Language lang, AbstractConstructionDataFactory prototypeFactory)
+	{
+		dataStore = new EnumMap<>(GrammaticalConstruction.class);
+
+		for (GrammaticalConstruction itr : GrammaticalConstruction.getForLanguage(lang))
+			dataStore.put(itr, prototypeFactory.create(itr));
+	}
+
+	public AbstractConstructionData getData(GrammaticalConstruction type) {
+		return dataStore.get(type);
+	}
 }

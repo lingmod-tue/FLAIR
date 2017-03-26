@@ -32,8 +32,10 @@ import com.flair.client.presentation.interfaces.DocumentPreviewPaneInput;
 import com.flair.client.presentation.interfaces.InProgressResultItem;
 import com.flair.client.presentation.interfaces.NotificationService;
 import com.flair.client.presentation.interfaces.UserPromptService;
+import com.flair.client.presentation.interfaces.VisualizerService;
 import com.flair.client.presentation.widgets.GenericWeightSlider;
 import com.flair.client.presentation.widgets.GrammaticalConstructionWeightSlider;
+import com.flair.client.presentation.widgets.LanguageSpecificConstructionSliderBundle;
 import com.flair.client.utilities.ClientLogger;
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
@@ -115,8 +117,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 		Map<Integer, InProgressData>	inProgress;			// DTO ids -> result items
 		int								receivedInprogress;
 		List<RankableDocument>			filteredDocs;
-
-		DocumentRankerOutput.Rank rankData; // cached after each reranking
+		DocumentRankerOutput.Rank 		rankData; 			// cached after each reranking
 
 		State()
 		{
@@ -134,12 +135,11 @@ public class WebRankerCore implements AbstractWebRankerCore
 				public void run()
 				{
 					if (hasOperation())
+					{
 						cancelCurrentOperation();
-					else
-						reset();
-					
-					notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_OpTimeout), 5000);
-					ClientLogger.get().error("The current operation timed-out!");
+						notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_OpTimeout), 5000);
+						ClientLogger.get().error("The current operation timed-out!");
+					}
 				}
 			};
 		}
@@ -159,14 +159,19 @@ public class WebRankerCore implements AbstractWebRankerCore
 
 			results.clearCompleted();
 			results.clearInProgress();
+			results.show();
+			
+			presenter.showDefaultPane(false);
 			presenter.showCancelPane(true);
-			presenter.showProgressBar(true, false);
+			presenter.showProgressBar(true, true);
+			settings.hide();
+			preview.hide();
 
 			settings.setSliderBundle(params.lang);
 			if (currentOp == OperationType.WEB_SEARCH)
 			{
 				messagePipeline.setHandler(m -> webSearchMessageReceiver(m));
-				results.setPanelTitle("\"" + params.query + "\"");
+				results.setPanelTitle("'" + params.query + "'");
 			}
 			else
 			{
@@ -190,16 +195,20 @@ public class WebRankerCore implements AbstractWebRankerCore
 
 			results.clearCompleted();
 			results.clearInProgress();
+			results.hide();
 
 			presenter.showLoaderOverlay(false);
 			presenter.showProgressBar(false, false);
 			presenter.showCancelPane(false);
 			presenter.showDefaultPane(true);
+			settings.hide();
+			preview.hide();
 
 			if (messagePipeline.isOpen())
 				messagePipeline.close();
 			
 			timeout.cancel();
+			rerank();				// to clear up the settings pane
 		}
 
 		boolean hasOperation() {
@@ -230,6 +239,14 @@ public class WebRankerCore implements AbstractWebRankerCore
 			}
 
 			return false;
+		}
+		
+		void filterDoc(RankableDocument doc) {
+			filteredDocs.add(doc);
+		}
+		
+		void clearFilteredDocs() {
+			filteredDocs.clear();
 		}
 
 		void refreshParsedResultsList()
@@ -287,8 +304,6 @@ public class WebRankerCore implements AbstractWebRankerCore
 			}
 
 			parsedDocs.add(doc);
-			if (params.numResults != 0)
-				presenter.setProgressBarValue(parsedDocs.size() * 100 / params.numResults);
 
 			// refresh the parsed results
 			if (parsedDocs.size() != params.numResults)
@@ -365,7 +380,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 		private final Set<GrammaticalConstruction> langConstructions;
 
 		public RankerInput() {
-			langConstructions = GrammaticalConstruction.getConstructionsForLanguage(getLanguage());
+			langConstructions = GrammaticalConstruction.getForLanguage(getLanguage());
 		}
 
 		@Override
@@ -464,7 +479,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 					annotatedConstructions.add(w.getGram());
 			});
 			
-			langConstructions = GrammaticalConstruction.getConstructionsForLanguage(getLanguage());
+			langConstructions = GrammaticalConstruction.getForLanguage(getLanguage());
 			// setup colors
 			int availableColors = COLORS.length - 1;
 			for (int i = 0; i < annotatedConstructions.size(); i++)
@@ -578,6 +593,35 @@ public class WebRankerCore implements AbstractWebRankerCore
 			return dto.getText();
 		}
 	}
+	
+	final class VisualizeInput implements VisualizerService.Input
+	{
+		private final Set<GrammaticalConstruction> langConstructions;
+
+		public VisualizeInput() {
+			langConstructions = GrammaticalConstruction.getForLanguage(state.lastUsedLang);
+		}
+		
+		@Override
+		public Iterable<GrammaticalConstruction> getConstructions() {
+			return langConstructions;
+		}
+
+		@Override
+		public Iterable<RankableDocument> getDocuments() {
+			return state.parsedDocs;
+		}
+
+		@Override
+		public LanguageSpecificConstructionSliderBundle getSliders() {
+			return settings.getSliderBundle();
+		}
+
+		@Override
+		public boolean isDocumentFiltered(RankableDocument doc) {
+			return state.isDocFiltered(doc);
+		}
+	}
 
 	private AuthToken						token;
 	private AbstractWebRankerPresenter		presenter;
@@ -591,6 +635,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 	private NotificationService				notification;
 	private CorpusUploadService				upload;
 	private CustomKeywordService			keywords;
+	private VisualizerService				visualizer;
 	private final WebRankerServiceAsync		service;
 	private State							state;
 
@@ -610,6 +655,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 		notification = null;
 		upload = null;
 		keywords = null;
+		visualizer = null;
 
 		service = WebRankerServiceAsync.Util.getInstance();
 		state = new State();
@@ -624,14 +670,36 @@ public class WebRankerCore implements AbstractWebRankerCore
 		notification = presenter.getNotificationService();
 		upload = presenter.getCorpusUploadService();
 		keywords = presenter.getCustomKeywordsService();
+		visualizer = presenter.getVisualizerService();
 
 		// settings.setExportSettingsHandler(null);
-		// settings.setVisualizeHandler(null);
+		settings.setVisualizeHandler(() -> {
+			if (state.hasOperation())
+				notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_VisualizeWait));
+			else
+			{
+				visualizer.visualize(new VisualizeInput());
+				visualizer.show();
+			}
+		});
 
 		settings.setSettingsChangedHandler(() -> onSettingsChanged());
 		results.setSelectHandler(e -> onSelectResultItem(e));
 		upload.setUploadBeginHandler(() -> onUploadBegin());
 		upload.setUploadCompleteHandler(e -> onUploadComplete(e));
+		visualizer.setApplyFilterHandler(d -> {
+			for (RankableDocument itr : d)
+				state.filterDoc(itr);
+			
+			onSettingsChanged();
+		});
+		visualizer.setResetFilterHandler(() -> {
+			state.clearFilteredDocs();
+			
+			// reset weights
+			settings.getSliderBundle().resetState(false);
+			onSettingsChanged();
+		});
 		
 		// rerank once to reset the settings pane's UI
 		state.rerank();

@@ -15,11 +15,12 @@ import com.flair.shared.parser.DocumentReadabilityLevel;
  */
 public interface AbstractDocument extends Comparable<AbstractDocument>
 {
-    public AbstractDocumentSource			getDocumentSource();
-    public Language							getLanguage();
-    public String							getText();
-    public String							getDescription();
-    public DocumentConstructionData			getConstructionData(GrammaticalConstruction type);
+    public AbstractDocumentSource				getDocumentSource();
+    public Language								getLanguage();
+    public String								getText();
+    public String								getDescription();
+    public Iterable<GrammaticalConstruction>	getSupportedConstructions();	// returns the constructions pertinent to the doc's language
+    public DocumentConstructionData				getConstructionData(GrammaticalConstruction type);
     
     public double					getReadabilityScore();
     public DocumentReadabilityLevel	getReadabilityLevel();
@@ -54,4 +55,3 @@ public interface AbstractDocument extends Comparable<AbstractDocument>
     public boolean					isParsed();
     public void						flagAsParsed();
 }
-

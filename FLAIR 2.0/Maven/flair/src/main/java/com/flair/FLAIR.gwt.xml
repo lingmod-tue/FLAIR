@@ -15,6 +15,7 @@
   <inherits name="gwt.material.design.addins.GwtMaterialAddins" />
   <inherits name="gwt.material.design.GwtMaterialDesignBasic" />
   <inherits name="gwt.material.design.themes.ThemeBlue"/>
+  <inherits name="com.github.gwtd3.D3" />
   
   <!-- Specify the app entry point class.                         -->
   <entry-point class='com.flair.client.FLAIR'/>
@@ -25,6 +26,4 @@
 
   <!-- allow Super Dev Mode -->
   <add-linker name="xsiframe"/>
-  
-<!--   <set-property name="gwt.logging.popupLogHandler" value="DISABLED"/> -->
 </module>

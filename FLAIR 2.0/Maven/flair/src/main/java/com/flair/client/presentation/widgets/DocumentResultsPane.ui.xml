@@ -13,8 +13,8 @@
 	}
 	</ui:style>
 	
-	<m:MaterialPanel ui:field="pnlRootUI" depth="700" backgroundColor="WHITE" 
-		layoutPosition="RELATIVE" height="100%" padding="15" top="68"
+	<m:MaterialPanel ui:field="pnlRootUI" depth="700" backgroundColor="WHITE" overflow="AUTO" 
+		grid="l6 m6 s12" height="100%" padding="15" top="68"
 		addStyleNames="{style.global-animation}" textAlign="CENTER">
 		<m:MaterialTitle ui:field="lblTitleUI" marginBottom="20" title="" description=""/>
 		
@@ -27,7 +27,6 @@
 				<m:MaterialSpinner color="BLUE_ONLY"/>
 			</m:MaterialPreLoader>
 		</m:MaterialRow>
-		
 		
 		<m:MaterialPanel ui:field="pnlInProgressContainerUI" padding="10" marginTop="20"/>
 	</m:MaterialPanel>

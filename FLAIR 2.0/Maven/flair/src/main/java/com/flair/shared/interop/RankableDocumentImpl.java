@@ -131,6 +131,7 @@ public final class RankableDocumentImpl implements RankableDocument
 	double							numSentences;
 	double							numDependencies;
 	DocumentReadabilityLevel 		readabilityLevel;
+	double							readabilityScore;
 	
 	public RankableDocumentImpl()
 	{
@@ -151,6 +152,7 @@ public final class RankableDocumentImpl implements RankableDocument
 		rawTextLength = 0;
 		numWords = numSentences = numDependencies = 0;
 		readabilityLevel = null;
+		readabilityScore = 0;
 	}
 
 	@Override
@@ -328,7 +330,7 @@ public final class RankableDocumentImpl implements RankableDocument
 	}
 
 	@Override
-	public double getConstructionFreq(GrammaticalConstruction gram) 
+	public double getConstructionFreq(GrammaticalConstruction gram)
 	{
 		if (hasConstruction(gram))
 			return frequencies.get(gram);
@@ -346,7 +348,7 @@ public final class RankableDocumentImpl implements RankableDocument
 	}
 
 	@Override
-	public ArrayList<? extends ConstructionRange> getConstructionOccurrences(GrammaticalConstruction gram) 
+	public ArrayList<? extends ConstructionRange> getConstructionOccurrences(GrammaticalConstruction gram)
 	{
 		if (hasConstruction(gram))
 			return constOccurrences.get(gram);
@@ -361,5 +363,14 @@ public final class RankableDocumentImpl implements RankableDocument
 	
 	public void setIdentifier(int id) {
 		identifier = id;
+	}
+
+	@Override
+	public double getReadablilityScore() {
+		return readabilityScore;
+	}
+	
+	public void setReadabilityScore(double val) {
+		readabilityScore = val;
 	}
 }

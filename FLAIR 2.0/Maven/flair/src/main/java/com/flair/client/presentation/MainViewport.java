@@ -5,6 +5,7 @@ import com.flair.client.ClientEndPoint;
 import com.flair.client.localization.LocalizedComposite;
 import com.flair.client.localization.SimpleLocalizedListBoxOptionWidget;
 import com.flair.client.localization.SimpleLocalizedTextButtonWidget;
+import com.flair.client.localization.SimpleLocalizedTextWidget;
 import com.flair.client.localization.SimpleLocalizedTooltipWidget;
 import com.flair.client.localization.SimpleLocalizedWidget;
 import com.flair.client.localization.locale.MainViewportLocale;
@@ -16,8 +17,10 @@ import com.flair.client.presentation.interfaces.CorpusUploadService;
 import com.flair.client.presentation.interfaces.CustomKeywordService;
 import com.flair.client.presentation.interfaces.NotificationService;
 import com.flair.client.presentation.interfaces.UserPromptService;
+import com.flair.client.presentation.interfaces.VisualizerService;
 import com.flair.client.presentation.widgets.CorpusFileUploader;
 import com.flair.client.presentation.widgets.CustomKeywordsEditor;
+import com.flair.client.presentation.widgets.DocumentCollectionVisualizer;
 import com.flair.client.presentation.widgets.DocumentPreviewPane;
 import com.flair.client.presentation.widgets.DocumentResultsPane;
 import com.flair.client.presentation.widgets.ModalPrompt;
@@ -33,6 +36,8 @@ import com.google.gwt.user.client.ui.Widget;
 
 import gwt.material.design.client.constants.ProgressType;
 import gwt.material.design.client.ui.MaterialButton;
+import gwt.material.design.client.ui.MaterialCardTitle;
+import gwt.material.design.client.ui.MaterialLabel;
 import gwt.material.design.client.ui.MaterialLink;
 import gwt.material.design.client.ui.MaterialListBox;
 import gwt.material.design.client.ui.MaterialLoader;
@@ -41,6 +46,7 @@ import gwt.material.design.client.ui.MaterialNavBar;
 import gwt.material.design.client.ui.MaterialNavBrand;
 import gwt.material.design.client.ui.MaterialNavSection;
 import gwt.material.design.client.ui.MaterialPanel;
+import gwt.material.design.client.ui.MaterialRow;
 import gwt.material.design.client.ui.MaterialSplashScreen;
 import gwt.material.design.client.ui.MaterialTextBox;
 import gwt.material.design.client.ui.MaterialTitle;
@@ -51,27 +57,6 @@ import gwt.material.design.client.ui.html.Option;
 
 public class MainViewport extends LocalizedComposite implements AbstractWebRankerPresenter
 {
-	/*
-	 * Performs a modal operation that disables the UI during execution
-	 */
-	class ModalOperation
-	{
-		private final Runnable	task;
-		
-		public ModalOperation(Runnable task) {
-			this.task = task;
-		}
-		
-		public void run()
-		{
-			MaterialLoader.showLoading(true);
-			{
-				task.run();
-			}
-			MaterialLoader.showLoading(false);
-		}
-	}
-	
 	static final class ToastNotifications implements NotificationService
 	{
 		private static final int			DEFAULT_TIMEOUT_MS = 3 * 1000;
@@ -176,8 +161,30 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	CustomKeywordsEditor 						mdlCustomKeywordsUI;
 	@UiField
 	MaterialPanel								pnlResultsContainerUI;
+	@UiField
+	DocumentCollectionVisualizer				mdlVisualizerUI;
+	@UiField
+	MaterialRow										pnlDefaultPlaceholderUI;
+	@UiField
+	MaterialCardTitle								lblDefaultSearchTitleUI;
+	SimpleLocalizedTextWidget<MaterialCardTitle>	lblDefaultSearchTitleLC;
+	@UiField
+	MaterialLabel									lblDefaultSearchCaptionUI;
+	SimpleLocalizedTextWidget<MaterialLabel>		lblDefaultSearchCaptionLC;
+	@UiField
+	MaterialCardTitle								lblDefaultConfigTitleUI;
+	SimpleLocalizedTextWidget<MaterialCardTitle>	lblDefaultConfigTitleLC;
+	@UiField
+	MaterialLabel									lblDefaultConfigCaptionUI;
+	SimpleLocalizedTextWidget<MaterialLabel>		lblDefaultConfigCaptionLC;
+	@UiField
+	MaterialCardTitle								lblDefaultReadTitleUI;
+	SimpleLocalizedTextWidget<MaterialCardTitle>	lblDefaultReadTitleLC;
+	@UiField
+	MaterialLabel									lblDefaultReadCaptionUI;
+	SimpleLocalizedTextWidget<MaterialLabel>		lblDefaultReadCaptionLC;
 	
-	ToastNotifications							notificationService;
+	ToastNotifications								notificationService;
 	
 	private void showSearchNav(boolean visible)
 	{
@@ -224,16 +231,9 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	
 	private void updateResultsListGrid()
 	{
-		if (true)
-			return;
 		boolean settingsVisible = pnlConstructionsSettingsUI.isVisible();
 		boolean previewVisible = pnlDocPreviewUI.isVisible();
-		
-		if (settingsVisible)
-			pnlResultsContainerUI.setLeft(pnlConstructionsSettingsUI.getWidth());
-		else
-			pnlResultsContainerUI.setLeft(0);
-					
+
 		if (settingsVisible && previewVisible)
 			pnlResultsContainerUI.setGrid("l4 m4 s12");
 		else if (settingsVisible ^ previewVisible)
@@ -273,6 +273,13 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		selResultLangItmEnLC = new SimpleLocalizedListBoxOptionWidget(selResultLangItmEnUI, MainViewportLocale.DESC_selResultLangItmEnUI);
 		selResultLangItmDeLC = new SimpleLocalizedListBoxOptionWidget(selResultLangItmDeUI, MainViewportLocale.DESC_selResultLangItmDeUI);
 		
+		lblDefaultSearchTitleLC = new SimpleLocalizedTextWidget<>(lblDefaultSearchTitleUI, MainViewportLocale.DESC_defSearchTitle);
+		lblDefaultSearchCaptionLC = new SimpleLocalizedTextWidget<>(lblDefaultSearchCaptionUI, MainViewportLocale.DESC_defSearchCaption);
+		lblDefaultConfigTitleLC = new SimpleLocalizedTextWidget<>(lblDefaultConfigTitleUI, MainViewportLocale.DESC_defConfigTitle);
+		lblDefaultConfigCaptionLC = new SimpleLocalizedTextWidget<>(lblDefaultConfigCaptionUI, MainViewportLocale.DESC_defConfigCaption);
+		lblDefaultReadTitleLC = new SimpleLocalizedTextWidget<>(lblDefaultReadTitleUI, MainViewportLocale.DESC_defReadTitle);
+		lblDefaultReadCaptionLC = new SimpleLocalizedTextWidget<>(lblDefaultReadCaptionUI, MainViewportLocale.DESC_defReadCaption);
+		
 		registerLocale(MainViewportLocale.INSTANCE.en);
 		registerLocale(MainViewportLocale.INSTANCE.de);
 		
@@ -288,6 +295,12 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		registerLocalizedWidget(selResultCountItm50LC);
 		registerLocalizedWidget(selResultLangItmEnLC);
 		registerLocalizedWidget(selResultLangItmDeLC);
+		registerLocalizedWidget(lblDefaultSearchTitleLC);
+		registerLocalizedWidget(lblDefaultSearchCaptionLC);
+		registerLocalizedWidget(lblDefaultConfigTitleLC);
+		registerLocalizedWidget(lblDefaultConfigCaptionLC);
+		registerLocalizedWidget(lblDefaultReadTitleLC);
+		registerLocalizedWidget(lblDefaultReadCaptionLC);
 		
 		refreshLocalization();
 	}
@@ -364,7 +377,6 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	private void initUI()
 	{
 		showSearchNav(false);
-		pnlDocPreviewUI.show();
 	}
 	
 	@UiConstructor
@@ -471,14 +483,29 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 
 	@Override
 	public void showCancelPane(boolean visible) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void showDefaultPane(boolean visible) {
-		// TODO Auto-generated method stub
+	public void showDefaultPane(boolean visible)
+	{
+		MaterialAnimation anim = new MaterialAnimation(pnlDefaultPlaceholderUI);
 		
+		anim.setDurationMillis(1000);
+		if (visible)
+		{
+			pnlDefaultPlaceholderUI.setVisible(true);
+			anim.setDelayMillis(10);
+			anim.setTransition(Transition.ZOOMINUP);
+			anim.animate();
+		}
+		else
+		{
+			pnlDefaultPlaceholderUI.setVisible(true);
+			anim.setDelayMillis(10);
+			anim.setTransition(Transition.ZOOMOUTUP);
+			anim.animate(() -> pnlDefaultPlaceholderUI.setVisible(false));
+		}
 	}
 
 	@Override
@@ -489,5 +516,10 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	@Override
 	public CustomKeywordService getCustomKeywordsService() {
 		return mdlCustomKeywordsUI;
+	}
+
+	@Override
+	public VisualizerService getVisualizerService() {
+		return mdlVisualizerUI;
 	}
 }

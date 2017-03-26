@@ -15,11 +15,16 @@ import gwt.material.design.client.ui.MaterialBadge;
  */
 public class GrammaticalConstructionWeightSlider extends GenericWeightSlider implements CanReset
 {
+	public interface ResetHandler {
+		public void handle(GrammaticalConstructionWeightSlider source, boolean fireEvents);
+	}
+	
 	private static final String					STYLENAME_BADGE = "construction-weight-slider-badge";
 	private static final String					STYLENAME_WIDGET = "construction-weight-slider";
 	
 	private final MaterialBadge					resultCount;
 	private GrammaticalConstruction				gramConstruction;
+	private ResetHandler						resetHandler;
 	
 	private void initLocale()
 	{
@@ -35,6 +40,7 @@ public class GrammaticalConstructionWeightSlider extends GenericWeightSlider imp
 		super();
 		resultCount = new MaterialBadge("50/50");
 		gramConstruction = null;
+		resetHandler = null;
 		
 		// setup components
 		resultCount.addStyleName(STYLENAME_BADGE);
@@ -66,6 +72,18 @@ public class GrammaticalConstructionWeightSlider extends GenericWeightSlider imp
 	public void setResultCount(Integer count, Integer total) {
 		resultCount.setText(count.toString() + "/" + total.toString());
 	}
+	
+	public void setResultCountVisible(boolean val) {
+		resultCount.setVisible(val);
+	}
+	
+	public boolean isResultCountVisible() {
+		return resultCount.isVisible();
+	}
+	
+	public void setResetHandler(ResetHandler resetHandler) {
+		this.resetHandler = resetHandler;
+	}
 
 	@Override
 	public void setLocalization(Language lang)
@@ -82,13 +100,18 @@ public class GrammaticalConstructionWeightSlider extends GenericWeightSlider imp
 		resultCount.setTooltip(getLocalizationData(lang).get(GrammaticalConstructionWeightSliderLocale.DESC_resultCountTooltip));
 		slider.setTooltip(getLocalizationData(lang).get(GrammaticalConstructionWeightSliderLocale.DESC_sliderTooltip));
 	}
-
 	
 	@Override
-	public void resetState(boolean fireEvents) 
+	public void resetState(boolean fireEvents)
 	{
-		// enable toggle and reset weight
-		setEnabled(true, fireEvents);
-		setWeight(SLIDER_MIN_VAL, fireEvents);
+		// use custom handler if available
+		if (resetHandler != null)
+			resetHandler.handle(this, fireEvents);
+		else
+		{
+			// enable toggle and reset weight
+			setEnabled(true, fireEvents);
+			setWeight(SLIDER_MIN_VAL, fireEvents);
+		}
 	}
 }

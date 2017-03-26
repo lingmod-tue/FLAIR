@@ -82,8 +82,9 @@ public class DocumentRanker implements AbstractDocumentRanker
 
 		private void incrementGramDf(RankableDocument doc)
 		{
-			for (GrammaticalConstruction itr : doc.getConstructions())
+			for (GrammaticalConstruction itr : doc.getConstructions()) {
 				gram.get(itr).df += 1;
+			}
 		}
 
 		private void incrementKeywordDf(RankableDocument doc)

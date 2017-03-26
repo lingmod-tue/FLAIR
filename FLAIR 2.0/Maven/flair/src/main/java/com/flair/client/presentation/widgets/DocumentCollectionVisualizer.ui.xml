@@ -1,0 +1,43 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:m="urn:import:gwt.material.design.client.ui"
+	xmlns:m.html="urn:import:gwt.material.design.client.ui.html">
+	
+	<ui:style>
+	
+	</ui:style>
+	
+	<m:MaterialModal ui:field="mdlVisualizerUI" dismissible="false">
+		<m:MaterialModalContent>
+			<m:MaterialRow textAlign="CENTER">
+				<m:MaterialTitle ui:field="lblTitleUI" 
+					title="Visualize" description="Select ranges by dragging the pointers up and down. Change the order of axes by dragging them left and right. Add or remove axes via checkboxes on the right."/>
+			</m:MaterialRow>
+			
+			<m:MaterialRow grid="l12 m12 s12">
+				<m:MaterialColumn grid="l8 m8 s8" layoutPosition="FIXED" overflow="HIDDEN"
+					height="400px" width="800px">
+					<g:FlowPanel ui:field="pnlSVGContainerUI"/>
+				</m:MaterialColumn>
+					
+				<m:MaterialColumn grid="l4 m4 s4" layoutPosition="FIXED" overflow="AUTO"
+					height="500px" width="100%">
+					<m:MaterialButton ui:field="btnResetUI" type="FLAT" textColor="RED" iconType="UNDO" iconPosition="RIGHT"
+						textAlign="CENTER" text="Reset"/>
+					<m:MaterialCheckBox ui:field="chkAxisWordsUI" value="true" text="# of words"/>
+					<m:MaterialCheckBox ui:field="chkAxisSentencesUI" value="true" text="# of sentences"/>
+					<m:MaterialCheckBox ui:field="chkAxisComplexityUI" value="true" text="complexity"/>
+					<m:MaterialCheckBox ui:field="chkAxisKeywordsUI" value="true" text="keywords"/>
+					
+					<m:MaterialRow ui:field="pnlToggleContainerUI"/>
+				</m:MaterialColumn>
+			</m:MaterialRow>
+		</m:MaterialModalContent>
+		
+		<m:MaterialModalFooter>
+			<m:MaterialButton ui:field="btnApplyUI" type="FLAT" text="Filter"/>
+			<m:MaterialButton ui:field="btnCancelUI" type="FLAT" text="Cancel"/>
+		</m:MaterialModalFooter>
+	</m:MaterialModal>
+</ui:UiBinder> 
