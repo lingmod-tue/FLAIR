@@ -1,16 +1,18 @@
 package com.flair.client.presentation.interfaces;
 
+import com.flair.shared.grammar.Language;
+
 /*
  * Uploads custom files to the server for analysis
  */
 public interface CorpusUploadService
 {
 	public interface UploadBeginHandler {
-		public void handle();
+		public void handle(Language lang);
 	}
 	
 	public interface UploadCompleteHandler {
-		public void handle(int numUploaded);
+		public void handle(int numUploaded, boolean success);
 	}
 	
 	public void			show();

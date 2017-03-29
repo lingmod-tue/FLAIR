@@ -29,10 +29,10 @@ public class WebRankerServiceImpl extends AbstractRemoteService implements WebRa
 	}
 
 	@Override
-	public void endCorpusUpload(AuthToken token)
+	public void endCorpusUpload(AuthToken token, boolean success)
 	{
 		ServerAuthenticationToken authToken = validateToken(token);
-		SessionManager.get().getSessionState(authToken).endCustomCorpusUpload();
+		SessionManager.get().getSessionState(authToken).endCustomCorpusUpload(success);
 	}
 
 	@Override

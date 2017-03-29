@@ -1,5 +1,7 @@
 package com.flair.client.presentation.widgets;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import com.flair.client.ClientEndPoint;
@@ -16,30 +18,29 @@ import com.flair.client.presentation.interfaces.DocumentPreviewPaneInput.Rankabl
 import com.flair.client.presentation.interfaces.DocumentPreviewPaneInput.UnRankable;
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
-import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.cellview.client.ColumnSortEvent.ListHandler;
-import com.google.gwt.user.cellview.client.TextColumn;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.ListDataProvider;
 
+import gwt.material.design.client.constants.Color;
+import gwt.material.design.client.data.SelectionType;
+import gwt.material.design.client.data.component.RowComponent;
 import gwt.material.design.client.ui.MaterialChip;
 import gwt.material.design.client.ui.MaterialCollapsibleBody;
 import gwt.material.design.client.ui.MaterialIcon;
 import gwt.material.design.client.ui.MaterialLabel;
 import gwt.material.design.client.ui.MaterialLink;
-import gwt.material.design.client.ui.MaterialLoader;
 import gwt.material.design.client.ui.MaterialPanel;
 import gwt.material.design.client.ui.MaterialRow;
+import gwt.material.design.client.ui.table.MaterialDataTable;
+import gwt.material.design.client.ui.table.cell.Column;
+import gwt.material.design.client.ui.table.cell.TextColumn;
+import gwt.material.design.client.ui.table.cell.WidgetColumn;
 
 public class DocumentPreviewPane extends LocalizedComposite implements AbstractDocumentPreviewPane
 {
@@ -151,44 +152,49 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 			private static final String		ALL_CONST_HEIGHT = "350px";
 			
 			TableType						type;
-			CellTable<TableData>			table;
-			ListDataProvider<TableData>		dataProvider;
-			Column<TableData,?>				colFirst;
+			MaterialDataTable<TableData>	table;
+			List<TableData>					dataProvider;
+			Column<TableData, ?>			colFirst;
 			TextColumn<TableData>			colSecond;
 			TextColumn<TableData>			colThird;
 			
-			Table(TableType type, ListDataProvider<TableData> data)
+			Table(TableType type, List<TableData> data)
 			{
 				this.type = type;
-				table = new CellTable<>(PAGE_SIZE);
+				table = new MaterialDataTable<>();
+				table.setUseCategories(false);
+				table.setUseRowExpansion(false);
+				table.setSelectionType(SelectionType.SINGLE);
 				dataProvider = data;
 				if (dataProvider == null)
-					dataProvider = new ListDataProvider<>();
-				dataProvider.addDataDisplay(table);
-				
-				ListHandler<TableData> sortHandler = new ListHandler<>(dataProvider.getList());
+					dataProvider = new ArrayList<>();
 				
 				switch (type)
 				{
 				case WEIGHT_SELECTION:
 					table.setHeight(WEIGHT_SEL_HEIGHT);
 					
-					colFirst = new Column<TableData, SafeHtml>(new SafeHtmlCell()) {
+					colFirst = new WidgetColumn<TableData, MaterialChip>() {
 						@Override
-						public SafeHtml getValue(TableData item)
+						public MaterialChip getValue(TableData d)
 						{
-							String text = item.getLocalizedName(localeCore.getLanguage());
-							String color = item.keyword ? rankable.getKeywordAnnotationColor() : rankable.getConstructionAnnotationColor(item.gram);
-							SafeHtmlBuilder sb = new SafeHtmlBuilder();
+							MaterialChip out = new MaterialChip();
+							Color wc = d.keyword ? rankable.getKeywordAnnotationColor() : rankable.getConstructionAnnotationColor(d.gram);
 							
-							sb.appendHtmlConstant("<span style='background-color:")
-							  .appendHtmlConstant(color)
-							  .appendHtmlConstant(";'>")
-							  .appendHtmlConstant(text)
-							  .appendHtmlConstant("</span>");
+							out.setText(d.getLocalizedName(localeCore.getLanguage()));
+							out.setLetter("C");
+							out.setLetterBackgroundColor(wc);
 							
-							return sb.toSafeHtml();
+							return out;
 						}
+						
+						@Override
+			            public Comparator<? super RowComponent<TableData>> getSortComparator() {
+			                return (o1, o2) -> {
+			                	TableData a = o1.getData(), b = o2.getData();
+			                	return a.getLocalizedName(localeCore.getLanguage()).compareToIgnoreCase(b.getLocalizedName(localeCore.getLanguage()));
+			                };
+			            }
 					};
 					
 					colThird = new TextColumn<TableData>() {
@@ -196,10 +202,15 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 						public String getValue(TableData item) {
 							return "(" + item.weight + ")";
 						}
+						
+						@Override
+			            public Comparator<? super RowComponent<TableData>> getSortComparator() {
+			                return (o1, o2) -> {
+			                	TableData a = o1.getData(), b = o2.getData();
+			                	return Double.compare(a.weight, b.weight);
+			                };
+			            }
 					};
-					sortHandler.setComparator(colThird, (a, b) -> {
-						return Double.compare(a.weight, b.weight);
-					});
 					
 					break;
 				case ALL_CONSTRUCTIONS:
@@ -210,6 +221,14 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 						public String getValue(TableData item) {
 							return item.getLocalizedName(localeCore.getLanguage());
 						}
+						
+						@Override
+			            public Comparator<? super RowComponent<TableData>> getSortComparator() {
+			                return (o1, o2) -> {
+			                	TableData a = o1.getData(), b = o2.getData();
+			                	return a.getLocalizedName(localeCore.getLanguage()).compareToIgnoreCase(b.getLocalizedName(localeCore.getLanguage()));
+			                };
+			            }
 					};
 					
 					colThird = new TextColumn<TableData>() {
@@ -217,32 +236,33 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 						public String getValue(TableData item) {
 							return "(" + item.relFreq + ")";
 						}
+						
+						@Override
+			            public Comparator<? super RowComponent<TableData>> getSortComparator() {
+			                return (o1, o2) -> {
+			                	TableData a = o1.getData(), b = o2.getData();
+			                	return Double.compare(a.relFreq, b.relFreq);
+			                };
+			            }
 					};
-					sortHandler.setComparator(colThird, (a, b) -> {
-						return Double.compare(a.relFreq, b.relFreq);
-					});
 					
 					break;
 				}
-				
-				colFirst.setSortable(true);
-				sortHandler.setComparator(colFirst, (a, b) -> {
-					return a.getLocalizedName(localeCore.getLanguage()).compareToIgnoreCase(b.getLocalizedName(localeCore.getLanguage()));
-				});
 				
 				colSecond = new TextColumn<TableData>() {
 					@Override
 					public String getValue(TableData item) {
 						return ((Integer)item.hits).toString();
 					}
+					
+					@Override
+		            public Comparator<? super RowComponent<TableData>> getSortComparator() {
+		                return (o1, o2) -> {
+		                	TableData a = o1.getData(), b = o2.getData();
+		                	return Integer.compare(a.hits, b.hits);
+		                };
+		            }
 				};
-				colSecond.setSortable(true);
-				sortHandler.setComparator(colSecond, (a, b) -> {
-					return Integer.compare(a.hits, b.hits);
-				});
-				
-				colThird.setSortable(true);
-				table.addColumnSortHandler(sortHandler);
 			}
 			
 			public void initColumns(String col1, String col2, String col3)
@@ -266,6 +286,17 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 			unrankable = null;
 			weightSelection = null;
 			constructionDetails = null;
+		}
+		
+		public void refreshTables()
+		{
+			weightSelection.table.setRowData(0, weightSelection.dataProvider);
+			constructionDetails.table.setRowData(0, constructionDetails.dataProvider);
+			
+			weightSelection.table.setRedraw(true);
+			weightSelection.table.refreshView();
+			constructionDetails.table.setRedraw(true);
+			constructionDetails.table.refreshView();
 		}
 		
 		private void genTableData(List<TableData> ws, List<TableData> cd)
@@ -292,9 +323,6 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 				if (rankable.isConstructionWeighted(itr))
 					ws.add(d);
 			}
-			
-			weightSelection.dataProvider.refresh();
-			constructionDetails.dataProvider.refresh();
 		}
 		
 		public void init(DocumentPreviewPaneInput.Rankable input)
@@ -303,9 +331,7 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 			rankable = input;
 			unrankable = null;
 			
-			MaterialLoader.showLoading(true, pnlRootUI);
 			reload(true);
-			MaterialLoader.showLoading(false, pnlRootUI);
 		}
 		
 		public void init(DocumentPreviewPaneInput.UnRankable input)
@@ -314,9 +340,7 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 			rankable = null;
 			unrankable = input;
 					
-	//		MaterialLoader.showLoading(true, pnlPreviewContainerUI);
 			reload(true);
-	//		MaterialLoader.showLoading(false, pnlPreviewContainerUI);
 		}
 		
 		public void resetUI()
@@ -352,15 +376,16 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 					pnlWeightSelectionUI.remove(weightSelection.table);
 					pnlConstructionDetailsUI.remove(constructionDetails.table);
 					
-					weightSelection.dataProvider.removeDataDisplay(weightSelection.table);
-					constructionDetails.dataProvider.removeDataDisplay(constructionDetails.table);
-					
 					if (fullReload)
-						genTableData(weightSelection.dataProvider.getList(), constructionDetails.dataProvider.getList());
+						genTableData(weightSelection.dataProvider, constructionDetails.dataProvider);
 					
 					// re-init tables
 					weightSelection = new Table(TableType.WEIGHT_SELECTION, weightSelection.dataProvider);
 					constructionDetails = new Table(TableType.ALL_CONSTRUCTIONS, constructionDetails.dataProvider);
+					
+					// add them to the pane
+					pnlWeightSelectionUI.add(weightSelection.table);
+					pnlConstructionDetailsUI.add(constructionDetails.table);
 					
 					LocalizationData ld = getLocalizationData(localeCore.getLanguage());
 					
@@ -370,10 +395,8 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 					constructionDetails.initColumns(ld.get(DocumentPreviewPaneLocale.DESC_tableColConstruction),
 							ld.get(DocumentPreviewPaneLocale.DESC_tableColHits),
 							ld.get(DocumentPreviewPaneLocale.DESC_tableColRelFreq));
-					
-					// add them to the pane
-					pnlWeightSelectionUI.add(weightSelection.table);
-					pnlConstructionDetailsUI.add(constructionDetails.table);
+
+					refreshTables();
 					
 					// set up the remaining fields
 					lblDocTitleUI.setText(rankable.getDocument().getTitle());
@@ -383,6 +406,7 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 					
 					pnlDocTextPreviewUI.clear();
 					pnlDocTextPreviewUI.add(new HTML(rankable.getPreviewMarkup()));
+					
 					
 					break;
 				}

@@ -1,14 +1,17 @@
 package com.flair.client.presentation.widgets;
 
+import com.flair.client.localization.LocalizationEngine;
+import com.flair.client.localization.LocalizedComposite;
+import com.flair.client.localization.locale.DocumentResultDisplayItemLocale;
 import com.flair.client.presentation.interfaces.AbstractResultItem;
 import com.flair.client.presentation.interfaces.AbstractResultItem.Type;
 import com.flair.client.presentation.interfaces.CompletedResultItem;
+import com.flair.shared.grammar.Language;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 
 import gwt.material.design.client.constants.Color;
@@ -20,7 +23,7 @@ import gwt.material.design.client.ui.MaterialLabel;
 import gwt.material.design.client.ui.MaterialLink;
 import gwt.material.design.client.ui.MaterialRow;
 
-public class DocumentResultDisplayItem extends Composite
+public class DocumentResultDisplayItem extends LocalizedComposite
 {
 	private static DocumentResultDisplayItemUiBinder uiBinder = GWT.create(DocumentResultDisplayItemUiBinder.class);
 
@@ -46,13 +49,20 @@ public class DocumentResultDisplayItem extends Composite
 	MaterialLabel			lblURLUI;
 	@UiField
 	MaterialLabel			lblSnippetUI;
-
-	public DocumentResultDisplayItem() {
-		initWidget(uiBinder.createAndBindUi(this));
+	
+	int						orgRank;
+	
+	private void initLocale()
+	{
+		registerLocale(DocumentResultDisplayItemLocale.INSTANCE.en);
+		registerLocale(DocumentResultDisplayItemLocale.INSTANCE.de);
+		
+		refreshLocalization();
 	}
 	
 	public DocumentResultDisplayItem(AbstractResultItem item, ClickHandler selectHandler)
 	{
+		super(LocalizationEngine.get());
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		btnTitleUI.setText(item.getTitle());
@@ -76,6 +86,7 @@ public class DocumentResultDisplayItem extends Composite
 		else
 		{
 			CompletedResultItem c = (CompletedResultItem)item;
+			orgRank = c.getOriginalRank();
 			lblNewRankUI.setText("" + c.getCurrentRank());
 
 			if (c.getCurrentRank() < c.getOriginalRank())
@@ -96,10 +107,21 @@ public class DocumentResultDisplayItem extends Composite
 			
 			colInProgressHeaderUI.setVisible(false);
 		}
+		
+		initLocale();
 	}
 	
 	@Override
 	public Widget getWidget() {
 		return this;
+	}
+	
+	@Override
+	public void setLocalization(Language lang)
+	{
+		super.setLocalization(lang);
+		
+		String orank = getLocalizedString(DocumentResultDisplayItemLocale.DESC_ItemOrgRank) + ": " + orgRank;
+		icoRankOffsetUI.setTooltip(orank);
 	}
 }

@@ -83,23 +83,4 @@ public abstract class LanguageSpecificConstructionSliderBundle extends Localized
 			}
 		}
 	}
-	
-	public abstract LanguageSpecificConstructionSliderBundle copySelf();
-	
-	public interface CloneHandler
-	{
-		public void handle(GrammaticalConstruction gram,
-						GrammaticalConstructionWeightSlider source,
-						GrammaticalConstructionWeightSlider dest);
-	}
-	
-	public LanguageSpecificConstructionSliderBundle cloneBundle(CloneHandler handler)
-	{
-		LanguageSpecificConstructionSliderBundle out = copySelf();
-		forEachWeightSlider(w -> {
-			GrammaticalConstructionWeightSlider newSlider = out.getWeightSlider(w.getGram());
-			handler.handle(w.getGram(), w, newSlider);
-		});
-		return out;
-	}
 }

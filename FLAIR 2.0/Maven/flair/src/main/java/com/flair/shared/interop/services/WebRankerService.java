@@ -22,7 +22,8 @@ public interface WebRankerService extends RemoteService
 	public void			beginCorpusUpload(AuthToken token,
 										Language lang,
 										ArrayList<String> keywords);		// signals the start of the upload operation and caches params
-	public void			endCorpusUpload(AuthToken token);					// signals the end of the uploading process, begins the parsing op
+	public void			endCorpusUpload(AuthToken token,
+										boolean success);					// signals the end of the uploading process, begins the parsing op if successful
 
 	public void			cancelCurrentOperation(AuthToken token);
 }

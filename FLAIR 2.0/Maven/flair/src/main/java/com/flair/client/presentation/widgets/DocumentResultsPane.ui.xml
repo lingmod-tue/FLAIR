@@ -13,12 +13,14 @@
 	}
 	</ui:style>
 	
-	<m:MaterialPanel ui:field="pnlRootUI" depth="700" backgroundColor="WHITE" overflow="AUTO" 
+	<m:MaterialPanel ui:field="pnlRootUI" depth="700" backgroundColor="WHITE" overflow="HIDDEN" 
 		grid="l6 m6 s12" height="100%" padding="15" top="68"
 		addStyleNames="{style.global-animation}" textAlign="CENTER">
-		<m:MaterialTitle ui:field="lblTitleUI" marginBottom="20" title="" description=""/>
+		<m:MaterialTitle ui:field="lblTitleUI" marginBottom="10" title="" description=""/>
+		<m:MaterialButton ui:field="btnCancelOpUI" marginBottom="20" type="FLAT" textColor="RED" iconType="CANCEL" iconPosition="RIGHT"
+			text="Cancel Analysis" visible="false"/>
 		
-		<m:MaterialPanel ui:field="pnlCompletedContainerUI" padding="10" marginBottom="10"/>
+		<m:MaterialPanel ui:field="pnlCompletedContainerUI" padding="10" marginBottom="10" overflow="HIDDEN"/>
 		
 		<m:MaterialDivider ui:field="divDividerUI" visible="false"/>
 		
@@ -28,6 +30,6 @@
 			</m:MaterialPreLoader>
 		</m:MaterialRow>
 		
-		<m:MaterialPanel ui:field="pnlInProgressContainerUI" padding="10" marginTop="20"/>
+		<m:MaterialPanel ui:field="pnlInProgressContainerUI" padding="10" marginTop="20" overflow="HIDDEN"/>
 	</m:MaterialPanel>
 </ui:UiBinder> 

@@ -29,7 +29,7 @@ public final class DocumentCollectionVisualizerLocale extends SimpleLocale
 	{
 		// EN
 		en.put(DESC_lblTitleUI, "Interactive Visualization");
-		en.put(DESC_lblTitleCaptionUI, "Select ranges by dragging the pointers up and down. Change the order of axes by dragging them left and right. Add or remove axes via checkboxes on the right.");
+		en.put(DESC_lblTitleCaptionUI, "Select ranges by dragging the pointers up and down. Change the order of axes by dragging them left and right. Add or remove axes via checkboxes below.");
 		en.put(DESC_btnResetUI, "Reset");
 		en.put(DESC_chkAxisWordsUI, "# of Words");
 		en.put(DESC_chkAxisSentencesUI, "# of Sentences");
@@ -50,7 +50,7 @@ public final class DocumentCollectionVisualizerLocale extends SimpleLocale
 		
 		// DE
 		de.put(DESC_lblTitleUI, "Interaktive Visualisierung");
-		de.put(DESC_lblTitleCaptionUI, "Bereiche auswählen durch Hoch- und Runterziehen des Zeigers. Reihenfolge der Achsen umtauschen durch Rechts- und Linksbewegen der Achsen. Achsen hinzufügen oder entfernen durch An- und Abwählen der Kontrollkästchen rechts.");
+		de.put(DESC_lblTitleCaptionUI, "Bereiche auswählen durch Hoch- und Runterziehen des Zeigers. Reihenfolge der Achsen umtauschen durch Rechts- und Linksbewegen der Achsen. Achsen hinzufügen oder entfernen durch An- und Abwählen der Kontrollkästchen unten.");
 		de.put(DESC_btnResetUI, "Zurücksetzen");
 		de.put(DESC_chkAxisWordsUI, "# von Wörter");
 		de.put(DESC_chkAxisSentencesUI, "# von Sätze");

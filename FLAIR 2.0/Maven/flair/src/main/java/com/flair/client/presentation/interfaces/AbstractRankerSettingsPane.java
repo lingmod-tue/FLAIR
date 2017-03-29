@@ -25,6 +25,7 @@ public interface AbstractRankerSettingsPane
 	public void											setSettingsChangedHandler(EventHandler handler);
 	public void											setVisualizeHandler(EventHandler handler);
 	public void											setExportSettingsHandler(EventHandler handler);
+	public void											setResetAllHandler(EventHandler handler);
 	
 	public LanguageSpecificConstructionSliderBundle		getSliderBundle();
 	public DocumentLengthSlider							getLengthSlider();

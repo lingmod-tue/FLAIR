@@ -58,7 +58,7 @@ public abstract class GenericWeightSlider extends LocalizedComposite
 			weightHandler.handle(this, getWeight());
 	}
 	
-	private void initCtor(boolean hideSlider)
+	private void initCtor()
 	{
 		toggleHandler = null;
 		weightHandler = null;
@@ -73,8 +73,7 @@ public abstract class GenericWeightSlider extends LocalizedComposite
 		sliderPanel.setStyleName(STYLENAME_WRAPPER);
 		togglePanel.setStyleName(STYLENAME_TOGGLE);
 		
-		if (hideSlider == false)
-			sliderPanel.add(slider);
+		sliderPanel.add(slider);
 		
 		toggle.addValueChangeHandler(e -> {
 			onToggle();
@@ -93,19 +92,7 @@ public abstract class GenericWeightSlider extends LocalizedComposite
 		togglePanel = new HorizontalPanel();
 		sliderPanel = new FlowPanel();
 		
-		initCtor(false);
-	}
-	
-	@UiConstructor
-	public GenericWeightSlider(boolean hideSlider)
-	{
-		super(ClientEndPoint.get().getLocalization());
-		toggle = new MaterialCheckBox();
-		slider = new MaterialRange();
-		togglePanel = new HorizontalPanel();
-		sliderPanel = new FlowPanel();
-		
-		initCtor(hideSlider);
+		initCtor();
 	}
 	
 	public final void setToggleHandler(ToggleHandler handler) {
@@ -147,14 +134,16 @@ public abstract class GenericWeightSlider extends LocalizedComposite
 	}
 
 	public boolean isSliderVisible() {
-		return slider.isAttached();
+		return slider.isVisible();
 	}
 	
 	public void setSliderVisible(boolean val)
 	{
-		if (isSliderVisible() && val == false)
+		slider.setVisible(val);
+		
+		if (isVisible() == false)
 			sliderPanel.remove(slider);
-		else if (isSliderVisible() == false && val)
+		else
 			sliderPanel.add(slider);
 	}
 }

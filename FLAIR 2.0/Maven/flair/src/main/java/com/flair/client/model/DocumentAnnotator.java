@@ -14,6 +14,9 @@ import com.flair.shared.interop.RankableDocument;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
+import gwt.material.design.client.base.helper.ColorHelper;
+import gwt.material.design.client.constants.Color;
+
 /*
  * Annotates a RankableDocument's text with its constructions
  */
@@ -56,11 +59,11 @@ public class DocumentAnnotator implements AbstractDocumentAnnotator
 		public final String		color;
 		public String			title;
 		
-		Span(int s, int e, String c)
+		Span(int s, int e, Color c)
 		{
 			start = s;
 			end = e;
-			color = c;
+			color = ColorHelper.setupComputedBackgroundColor(c);
 			title = "";
 		}
 		
@@ -127,7 +130,7 @@ public class DocumentAnnotator implements AbstractDocumentAnnotator
 			return "" + start + "-" + end;
 		}
 		
-		public void accumulate(int start, int end, String color, String title)
+		public void accumulate(int start, int end, Color color, String title)
 		{
 			// merge spans that have the same start and end indices
 			String key = genKey(start, end);
@@ -193,7 +196,7 @@ public class DocumentAnnotator implements AbstractDocumentAnnotator
 		
 		for (GrammaticalConstruction itr : input.getAnnotatedConstructions())
 		{
-			String color = input.getConstructionAnnotationColor(itr);
+			Color color = input.getConstructionAnnotationColor(itr);
 			String title = input.getConstructionTitle(itr);
 			for (RankableDocument.ConstructionRange range : input.getDocument().getConstructionOccurrences(itr))
 				out.accumulate(range.getStart(), range.getEnd(), color, title);
@@ -201,7 +204,7 @@ public class DocumentAnnotator implements AbstractDocumentAnnotator
 			
 		if (input.shouldAnnotateKeywords())
 		{
-			String color = input.getKeywordAnnotationColor();
+			Color color = input.getKeywordAnnotationColor();
 			String title = input.getKeywordTitle();
 			for (RankableDocument.KeywordRange range : input.getDocument().getKeywordOccurrences())
 				out.accumulate(range.getStart(), range.getEnd(), color, title);

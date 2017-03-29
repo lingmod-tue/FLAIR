@@ -165,9 +165,4 @@ public class ConstructionSliderBundleEnglish extends LanguageSpecificConstructio
 		setRootContainer(pnlRootUI);
 		initLocale();
 	}
-	
-	@Override
-	public LanguageSpecificConstructionSliderBundle copySelf() {
-		return new ConstructionSliderBundleEnglish();
-	}
 }

@@ -3,6 +3,7 @@ package com.flair.client.presentation.widgets;
 import com.flair.client.ClientEndPoint;
 import com.flair.client.localization.LocalizedComposite;
 import com.flair.client.localization.SimpleLocalizedTextButtonWidget;
+import com.flair.client.localization.SimpleLocalizedTextWidget;
 import com.flair.client.localization.locale.CorpusFileUploaderLocale;
 import com.flair.client.presentation.interfaces.CorpusUploadService;
 import com.flair.shared.grammar.Language;
@@ -14,9 +15,11 @@ import com.google.gwt.user.client.ui.Widget;
 import gwt.material.design.addins.client.fileuploader.MaterialFileUploader;
 import gwt.material.design.addins.client.fileuploader.MaterialUploadLabel;
 import gwt.material.design.addins.client.fileuploader.base.UploadFile;
+import gwt.material.design.addins.client.stepper.MaterialStep;
+import gwt.material.design.addins.client.stepper.MaterialStepper;
 import gwt.material.design.client.ui.MaterialButton;
-import gwt.material.design.client.ui.MaterialIcon;
 import gwt.material.design.client.ui.MaterialModal;
+import gwt.material.design.client.ui.MaterialRadioButton;
 import gwt.material.design.client.ui.MaterialToast;
 
 public class CorpusFileUploader extends LocalizedComposite implements CorpusUploadService
@@ -30,51 +33,74 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 	@UiField
 	MaterialModal			mdlUploadUI;
 	@UiField
-	MaterialIcon			icoCloseUI;
-	@UiField
 	MaterialFileUploader 	uplUploaderUI;
 	@UiField
 	MaterialUploadLabel		lblUploadTextUI;
 	@UiField
-	MaterialButton			btnStartUploadUI;
+	MaterialStepper			stprUploaderUI;
 	@UiField
-	MaterialButton			btnEndUploadUI;
+	MaterialStep			stpLangUI;
+	@UiField
+	MaterialRadioButton		rdoEnglishUI;
+	@UiField
+	MaterialRadioButton		rdoGermanUI;
+	@UiField
+	MaterialButton			btnToUploaderUI;
+	@UiField
+	MaterialButton			btnCancel1UI;
+	@UiField
+	MaterialStep			stpUploadUI;
+	@UiField
+	MaterialButton			btnFinishUI;
+	@UiField
+	MaterialButton			btnCancel2UI;
 	
-	SimpleLocalizedTextButtonWidget<MaterialButton>		btnStartUploadLC;
-	SimpleLocalizedTextButtonWidget<MaterialButton>		btnEndUploadLC;
+	SimpleLocalizedTextWidget<MaterialRadioButton>		rdoEnglishLC;
+	SimpleLocalizedTextWidget<MaterialRadioButton>		rdoGermanLC;
+	SimpleLocalizedTextButtonWidget<MaterialButton>		btnToUploaderLC;
+	SimpleLocalizedTextButtonWidget<MaterialButton>		btnCancel1LC;
+	SimpleLocalizedTextButtonWidget<MaterialButton>		btnFinishLC;
+	SimpleLocalizedTextButtonWidget<MaterialButton>		btnCancel2LC;
 
 	UploadBeginHandler		beginHandler;
 	UploadCompleteHandler	completeHandler;
 
 	boolean					uploadInProgress;
 	int						numUploaded;
+	int						numUploading;
+	Language				corpusLang;
 
-	private void onBeginUpload()
+	private void onBeginUpload(Language lang)
 	{
 		if (uploadInProgress)
 			throw new RuntimeException("Previous upload operation not complete");
 
 		if (beginHandler != null)
-			beginHandler.handle();
+			beginHandler.handle(lang);
 		
 		uploadInProgress = true;
-
-		btnStartUploadUI.setEnabled(false);
-		uplUploaderUI.setEnabled(true);
-		btnEndUploadUI.setEnabled(true);
-		icoCloseUI.setVisible(false);
+		corpusLang = lang;
+		numUploaded = numUploading = 0;
+		
+		stprUploaderUI.nextStep();
 	}
 
-	private void onEndUpload()
+	private void onEndUpload(boolean success)
 	{
-		if (uploadInProgress == false)
+		if (uploadInProgress == false && success)
 			throw new RuntimeException("Upload hasn't started yet");
+		else if (numUploading != 0)
+		{
+			MaterialToast.fireToast(getLocalizedString(CorpusFileUploaderLocale.DESC_UploadInProgress));
+			return;
+		}
 
 		if (completeHandler != null)
-			completeHandler.handle(numUploaded);
+			completeHandler.handle(numUploaded, success);
 		
 		uploadInProgress = false;
-		numUploaded = 0;
+		numUploaded = numUploading = 0;
+		corpusLang = Language.ENGLISH;
 
 		hide();
 		resetUI();
@@ -90,41 +116,47 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 	
 	private void resetUI()
 	{
-		btnStartUploadUI.setEnabled(true);
-		uplUploaderUI.setEnabled(false);
-		btnEndUploadUI.setEnabled(false);
-		icoCloseUI.setVisible(true);
+		stprUploaderUI.reset();
 	}
 
 	private void initLocale()
 	{
-		btnStartUploadLC = new SimpleLocalizedTextButtonWidget<>(btnStartUploadUI, CorpusFileUploaderLocale.DESC_StartButton);
-		btnEndUploadLC = new SimpleLocalizedTextButtonWidget<>(btnEndUploadUI, CorpusFileUploaderLocale.DESC_EndButton);
+		rdoEnglishLC = new SimpleLocalizedTextWidget<>(rdoEnglishUI, CorpusFileUploaderLocale.DESC_rdoEnglishUI);
+		rdoGermanLC = new SimpleLocalizedTextWidget<>(rdoGermanUI, CorpusFileUploaderLocale.DESC_rdoGermanUI);
+		btnToUploaderLC = new SimpleLocalizedTextButtonWidget<>(btnToUploaderUI, CorpusFileUploaderLocale.DESC_btnToUploaderUI);
+		btnCancel1LC = new SimpleLocalizedTextButtonWidget<>(btnCancel1UI, CorpusFileUploaderLocale.DESC_btnCancel1UI);
+		btnFinishLC = new SimpleLocalizedTextButtonWidget<>(btnFinishUI, CorpusFileUploaderLocale.DESC_btnFinishUI);
+		btnCancel2LC = new SimpleLocalizedTextButtonWidget<>(btnCancel2UI, CorpusFileUploaderLocale.DESC_btnCancel2UI);
 		
 		registerLocale(CorpusFileUploaderLocale.INSTANCE.en);
 		registerLocale(CorpusFileUploaderLocale.INSTANCE.de);
 		
-		registerLocalizedWidget(btnStartUploadLC);
-		registerLocalizedWidget(btnEndUploadLC);
+		registerLocalizedWidget(rdoEnglishLC);
+		registerLocalizedWidget(rdoGermanLC);
+		registerLocalizedWidget(btnToUploaderLC);
+		registerLocalizedWidget(btnCancel1LC);
+		registerLocalizedWidget(btnFinishLC);
+		registerLocalizedWidget(btnCancel2LC);
 
 		refreshLocalization();
 	}
 
 	private void initHandlers()
 	{
-		icoCloseUI.addClickHandler(e -> {
-			if (uploadInProgress == false)
-				hide();
+		btnToUploaderUI.addClickHandler(e -> {
+			Language lang = Language.ENGLISH;
+			if (rdoEnglishUI.getValue())
+				;//
+			else if (rdoGermanUI.getValue())
+				lang = Language.GERMAN;
+			
+			onBeginUpload(lang);
 		});
 		
-		btnStartUploadUI.addClickHandler(e -> {
-			onBeginUpload();
-		});
+		btnFinishUI.addClickHandler(e -> onEndUpload(true));
+		btnCancel1UI.addClickHandler(e -> onEndUpload(false));
+		btnCancel2UI.addClickHandler(e -> onEndUpload(false));
 		
-		btnEndUploadUI.addClickHandler(e -> {
-			onEndUpload();
-		});
-
 		uplUploaderUI.addErrorHandler(e -> {
 			onUploadError(e.getTarget());
 		});
@@ -133,6 +165,8 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 			onMaxFilesReached();
 		});
 		
+		uplUploaderUI.addSendingHandler(e -> numUploading++);
+		uplUploaderUI.addCompleteHandler(e -> numUploading--);
 		uplUploaderUI.addSuccessHandler(e -> numUploaded++);
 	}
 
@@ -155,8 +189,9 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 	{
 		super.setLocalization(lang);
 
-		lblUploadTextUI.setTitle(getLocalizedString(CorpusFileUploaderLocale.DESC_Title));
 		lblUploadTextUI.setDescription(getLocalizedString(CorpusFileUploaderLocale.DESC_Description));
+		stpLangUI.setTitle(getLocalizedString(CorpusFileUploaderLocale.DESC_stpLangUI));
+		stpUploadUI.setTitle(getLocalizedString(CorpusFileUploaderLocale.DESC_stpUploadUI));
 	}
 
 	@Override
@@ -169,7 +204,9 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 	}
 
 	@Override
-	public void hide() {
+	public void hide()
+	{
+		stprUploaderUI.reset();
 		mdlUploadUI.close();
 	}
 

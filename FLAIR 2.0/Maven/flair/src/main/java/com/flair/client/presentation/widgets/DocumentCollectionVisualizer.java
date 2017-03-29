@@ -1,6 +1,5 @@
 package com.flair.client.presentation.widgets;
 
-import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -16,6 +15,8 @@ import com.flair.client.localization.SimpleLocalizedTextWidget;
 import com.flair.client.localization.locale.DocumentCollectionVisualizerLocale;
 import com.flair.client.localization.locale.GrammaticalConstructionLocale;
 import com.flair.client.presentation.interfaces.VisualizerService;
+import com.flair.client.presentation.widgets.sliderbundles.ConstructionSliderBundleEnglish;
+import com.flair.client.presentation.widgets.sliderbundles.ConstructionSliderBundleGerman;
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
 import com.flair.shared.interop.RankableDocument;
@@ -38,24 +39,28 @@ import com.github.gwtd3.api.svg.Brush;
 import com.github.gwtd3.api.svg.Brush.BrushEvent;
 import com.github.gwtd3.api.svg.Line;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JsArrayMixed;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import gwt.material.design.addins.client.window.MaterialWindow;
 import gwt.material.design.client.ui.MaterialButton;
 import gwt.material.design.client.ui.MaterialCheckBox;
-import gwt.material.design.client.ui.MaterialModal;
+import gwt.material.design.client.ui.MaterialLabel;
 import gwt.material.design.client.ui.MaterialRow;
-import gwt.material.design.client.ui.MaterialTitle;
 import gwt.material.design.client.ui.MaterialToast;
+import gwt.material.design.client.ui.animate.MaterialAnimation;
 
 public class DocumentCollectionVisualizer extends LocalizedComposite implements VisualizerService
 {
+	private static final String			MOCK_TEST_DATA = "Result,existentialThere,thereIsAre,thereWasWere,advancedConjunctions,simpleConjunctions,prepositions,simplePrepositions,complexPrepositions,advancedPrepositions,subordinateClause,relativeClause,relativeClauseReduced,adverbialClause,simpleSentence,complexSentence,compoundSentence,incompleteSentence,directObject,indirectObject,pronouns,pronounsPossessive,pronounsReflexive,pronounsSubjective,someDet,anyDet,muchDet,manyDet,aLotOfDet,articles,theArticle,aArticle,anArticle,negAll,partialNegation,noNotNever,nt,not,directQuestions,indirectQuestions,yesNoQuestions,whQuestions,toBeQuestions,toDoQuestions,toHaveQuestions,modalQuestions,what,who,how,why,where,when,whose,whom,which,tagQuestions,conditionals,condReal,condUnreal,presentSimple,pastSimple,futureSimple,futurePerfect,simpleAspect,progressiveAspect,perfectAspect,perfProgAspect,presentTime,pastTime,futureTime,goingTo,usedTo,toInfinitiveForms,modals,simpleModals,advancedModals,can,must,need,may,could,might,ought,able,haveTo,irregularVerbs,regularVerbs,phrasalVerbs,imperatives,positiveAdj,comparativeAdjShort,superlativeAdjShort,comparativeAdjLong,superlativeAdjLong,positiveAdv,comparativeAdvShort,superlativeAdvShort,comparativeAdvLong,superlativeAdvLong,pluralRegular,pluralIrregular,ingNounForms,presentProgressive,presentPerfProg,pastProgressive,pastPerfProg,futureProgressive,futurePerfProg,shortVerbForms,longVerbForms,auxiliariesBeDoHave,copularVerbs,ingVerbForms,emphaticDo,pronounsPossessiveAbsolute,passiveVoice,presentPerfect,pastPerfect,pronounsObjective,Keywords,# of Sentences,# of Words,Complexity\n1,0.004209720627631076,0,0.0019135093761959434,0.011863758132414848,0.04975124378109453,0.0677382319173364,0.024875621890547265,0.0019135093761959434,0.04286261002678913,0.044393417527745886,0.007654037504783774,0.012246460007654038,0.016073478760045924,0.02525832376578645,0.044393417527745886,0.024492920015308076,0.08381171067738231,0.050133945656333716,0.0003827018752391887,0.09146574818216609,0.01454267125908917,0.005357826253348641,0.05702257941063911,0.002296211251435132,0.0003827018752391887,0.0003827018752391887,0.0003827018752391887,0,0.08725602755453502,0.05702257941063911,0.027554535017221583,0.0026789131266743206,0.01722158438576349,0.0003827018752391887,0.015690776884806735,0.006888633754305396,0.0057405281285878304,0.006505931879066207,0,0.001148105625717566,0.001148105625717566,0.001148105625717566,0.001148105625717566,0,0,0.0003827018752391887,0,0.0007654037504783774,0,0,0,0,0,0,0,0.004209720627631076,0.003827018752391887,0.0003827018752391887,0.028319938767699962,0.06812093379257558,0.001148105625717566,0,0.09758897818599312,0.005357826253348641,0.004975124378109453,0,0.030233448143895905,0.07654037504783773,0.001148105625717566,0.0003827018752391887,0,0.01990049751243781,0.018369690011481057,0.0030616150019135095,0.013777267508610792,0.0015308075009567547,0.001148105625717566,0,0.0003827018752391887,0.003444316877152698,0.0015308075009567547,0.0007654037504783774,0,0.0003827018752391887,0.0776884806735553,0.028319938767699962,0.009950248756218905,0.005357826253348641,0.04630692690394183,0.0015308075009567547,0.0007654037504783774,0,0.001148105625717566,0.09031764255644853,0.002296211251435132,0.001148105625717566,0,0,0.017604286261002678,0.002296211251435132,0.001148105625717566,0,0,0.005357826253348641,0,0,0,0.012246460007654038,0.011481056257175661,0.021814006888633754,0.01722158438576349,0.028319938767699962,0,0,0.004975124378109453,0.0019135093761959434,0.0030616150019135095,0.01454267125908917,0.001148105625717566,465,2613,6\n2,0.003480753480753481,0,0.0018427518427518428,0.01126126126126126,0.04954954954954955,0.07166257166257166,0.02108927108927109,0.003276003276003276,0.050573300573300575,0.03644553644553645,0.006347256347256347,0.014127764127764128,0.015356265356265357,0.02231777231777232,0.03644553644553645,0.033988533988533985,0.07800982800982802,0.057944307944307945,0.0014332514332514332,0.09561834561834562,0.019656019656019656,0.006552006552006552,0.05016380016380016,0.0010237510237510238,0.0014332514332514332,0,0.0004095004095004095,0,0.07534807534807535,0.04606879606879607,0.02661752661752662,0.0026617526617526617,0.018427518427518427,0.0012285012285012285,0.016994266994266993,0.0085995085995086,0.0036855036855036856,0.009009009009009009,0,0.0010237510237510238,0.0020475020475020475,0.0018427518427518428,0.0010237510237510238,0,0.00020475020475020476,0.0006142506142506142,0.000819000819000819,0.0004095004095004095,0,0,0,0,0,0.00020475020475020476,0,0.001638001638001638,0.0014332514332514332,0.00020475020475020476,0.03235053235053235,0.06306306306306306,0.0012285012285012285,0,0.09664209664209664,0.0028665028665028664,0.006142506142506142,0.00020475020475020476,0.0343980343980344,0.07022932022932023,0.0012285012285012285,0.00020475020475020476,0.00020475020475020476,0.017813267813267815,0.020065520065520065,0.0045045045045045045,0.013104013104013105,0.003071253071253071,0.0012285012285012285,0,0.00020475020475020476,0.0018427518427518428,0.0010237510237510238,0.000819000819000819,0,0.000819000819000819,0.07145782145782145,0.028255528255528257,0.009623259623259623,0.006961506961506962,0.053644553644553644,0.0036855036855036856,0.001638001638001638,0.00020475020475020476,0,0.0819000819000819,0.0020475020475020475,0.00020475020475020476,0.0004095004095004095,0.00020475020475020476,0.02293202293202293,0.0012285012285012285,0.0022522522522522522,0,0,0.0028665028665028664,0.00020475020475020476,0,0,0.012285012285012284,0.020065520065520065,0.01760851760851761,0.0171990171990172,0.022113022113022112,0.0006142506142506142,0.00020475020475020476,0.0045045045045045045,0.0020475020475020475,0.004095004095004095,0.019041769041769043,0.0042997542997543,834,4884,6";
+	
 	private static final Margin			MARGINS = new Margin(55, 5, 10, 10);
-	private static final int			WIDTH = 800;
-	private static final int			HEIGHT = 370;
+	private static final int			WIDTH = 990;
+	private static final int			HEIGHT = 600;
 	
 	enum DefaultDimension
 	{
@@ -74,7 +79,7 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 		OrdinalScale					x;
 		Map<String, LinearScale>		y;				// axis -> scale
 		Map<String, Brush>				brushes;		// axis -> brush
-		Map<String, Integer>			dragCoords;		// axis -> start X coord
+		Map<String, Coords>				dragCoords;		// axis -> X coord
 		Line							line;
 		Axis							axis;
 		Selection						background;
@@ -88,58 +93,6 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 		LanguageSpecificConstructionSliderBundle	toggles;
 		VisualizerService.ApplyFilterHandler		filterHandler;
 		VisualizerService.ResetFilterHandler		resetHandler;
-		
-		int getXPosition(String dim)
-		{
-			if (dragCoords.containsKey(dim))
-				return dragCoords.get(dim);
-			else
-				return x.apply(dim).asInt();
-		}
-		
-		Transition getTransition(Selection in) {
-			return in.transition().duration(500);
-		}
-		
-		String getPathString(Value val)
-		{
-			// returns the path for a given data point
-			Array<?> out = dimensions.map((t, e, i, a) -> {
-				String dim = e.asString();
-				return Array.fromDoubles(getXPosition(dim),
-							y.get(dim).apply(+val.getProperty(dim).asDouble()).asDouble());
-			});
-			
-			return line.generate(out);
-		}
-		
-		void onBrushStart()
-		{
-			D3Event d3e = D3.event();
-			d3e.stopPropagation();
-		}
-		
-		void onBrush()
-		{
-			// handles a brush event, toggling the display of foreground lines
-			Array<String> actives = dimensions.filter((t, e, i, a) -> {
-				String dim = e.asString();
-				return !brushes.get(dim).empty();
-			});
-			
-			Array<Array<Double>> extents = actives.map((t,e,i,a) -> {
-				String dim = e.asString();
-				return brushes.get(dim).extent();
-			});
-			
-			foreground.style("display", (c,d,x) -> {
-				return actives.every((t,e,i,a) -> {
-					String dim = e.asString();
-					double e1 = d.getProperty(dim).asDouble();
-					return extents.get(i).getNumber(0) <= e1 && e1 <= extents.get(i).getNumber(1);
-				}) ? null : "none";
-			});
-		}
 		
 		RankableDocument getDoc(int rank)
 		{
@@ -163,10 +116,8 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 				reload(false);
 		}
 		
-		String getConstructionDimesionId(GrammaticalConstruction gram)
-		{
-			// return the localized name of the construction
-			return GrammaticalConstructionLocale.get().getLocalizedName(gram, localeCore.getLanguage());
+		String getConstructionDimesionId(GrammaticalConstruction gram) {
+			return gram.getID();
 		}
 		
 		String getDefaultDimensionId(DefaultDimension dim)
@@ -191,12 +142,11 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 		String generateFrequencyTable()
 		{
 			// construct CSV string
-			StringWriter writer = new StringWriter();
+			StringBuilder writer = new StringBuilder();
 			
 			// the header first
 			// the dimensions need to be mapped to unique IDs/names as we need to look them up later
-			// we can use localized names as long as the interface language doesn't change
-			// between the generation of the table and its parsing (shouldn't happen anyway, since the modal will block the main UI)
+			// we can use localized names as long as the interface language doesn't change (and they don't contain commas)
 			writer.append(getDefaultDimensionId(DefaultDimension.RESULT)).append(",");
 			for (GrammaticalConstruction itr : input.getConstructions())
 					writer.append(getConstructionDimesionId(itr)).append(",");
@@ -231,10 +181,77 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 			return writer.toString();
 		}
 		
+		int getXPosition(String dim)
+		{
+			int out = 0;
+			if (dragCoords.containsKey(dim))
+				out = (int)dragCoords.get(dim).x();
+			else
+				out = x.apply(dim).asInt();
+			
+			return out;
+		}
+		
+		Transition getTransition(Selection in) {
+			return in.transition().duration(500);
+		}
+		
+		String getPathString(Value val)
+		{
+			// returns the path for a given data point
+			Array<?> out = dimensions.map((t, e, i, a) -> {
+				String dim = e.asString();
+				return Array.fromDoubles(getXPosition(dim),
+							y.get(dim).apply(+val.getProperty(dim).asDouble()).asDouble());
+			});
+			
+			String path = line.generate(out);
+			return path;
+		}
+		
+		void onBrushStart()
+		{
+			D3Event d3Event = D3.event();
+			d3Event.sourceEvent().stopPropagation();
+		}
+		
+		void onBrush()
+		{
+			// handles a brush event, toggling the display of foreground lines
+			Array<String> actives = dimensions.filter((t, e, i, a) -> {
+				String dim = e.asString();
+				return !brushes.get(dim).empty();
+			});
+			
+			Array<Array<Double>> extents = actives.map((t,e,i,a) -> {
+				String dim = e.asString();
+				return brushes.get(dim).extent();
+			});
+			
+			foreground.style("display", (c,d,x) -> {
+				return actives.every((t,e,i,a) -> {
+					String dim = e.asString();
+					double e1 = d.getProperty(dim).asDouble();
+					return extents.get(i).getNumber(0) <= e1 && e1 <= extents.get(i).getNumber(1);
+				}) ? "initial" : "none";
+			});
+		}
+		
 		void reload(boolean full)
 		{
-			// clear up previoius state
-			svg.selectAll("*").remove();
+			// clear up previous state
+			if (svg != null)
+				svg.selectAll("*").remove();
+			else
+			{
+				svg = D3.select(pnlSVGContainerUI.getElement())
+						.append("svg")
+						.attr("width", width + MARGINS.left + MARGINS.right)
+						.attr("height", height + MARGINS.top + MARGINS.bottom)
+						.append("g")
+						.attr("transform", "translate(" + MARGINS.left + "," + MARGINS.top + ")");
+			}
+			
 			group = null;
 			brushes.clear();
 			y.clear();
@@ -254,12 +271,14 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 					return false;
 				
 				// add scale
-				y.put(dim, D3.scale.linear()
-								.domain(Arrays.extent(cache, (d, idx) -> {
-									return +((Value)d).getProperty(dim).asDouble();
-								}))
-								.range(0, height));
+				JsArrayMixed extents = Arrays.extent(cache, (d, idx) -> {
+					DsvRow row = (DsvRow)d;
+					return +row.get(dim).asDouble();
+				});
 				
+				y.put(dim, D3.scale.linear()
+								.domain(extents)
+								.range(0, height));
 				
 				return true;
 			});
@@ -292,30 +311,46 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 							  .enter()
 							  .append("g")
 							  .attr("class", "dimension")
-							  .attr("transform", (c,d,i) -> { return "translate(" + x.apply(d) + ")"; })
+							  .attr("transform", (c,d,i) -> {
+								  int pos = getXPosition(d.asString());
+								  return "translate(" + pos + ")";
+							  })
 							  .call(D3.behavior().drag()
 									  			 .origin((c,d,i) -> {
-									  				 return Coords.create(x.apply(d).asInt(), 0);
+									  				 int startX = getXPosition(d.asString());
+									  				 return Coords.create(startX, 0);
 									  			 })
 									  			 .on(DragEventType.DRAGSTART, (c,d,i) -> {
 									  				String dim = d.asString();
 									  				
-									  				dragCoords.put(dim, x.apply(d).asInt());
+									  				int startX = getXPosition(dim);
+									  				dragCoords.put(dim, Coords.create(startX, 0));
 									  				background.attr("visibility", "hidden");
 									  				return null;
 									  			 })
 									  			 .on(DragEventType.DRAG, (c,d,i) -> {
 									  				String dim = d.asString();
+									  				Coords coords = dragCoords.get(dim);
 									  				
 									  				// update x coords and sort dimension based on position
-									  				dragCoords.remove(dim);
-									  				dragCoords.put(dim, Math.min(width,
-									  											Math.max(0, D3.event().getClientX())));
+									  				D3Event d3Event = D3.event();
+									  				int delta = (int) D3.eventAsDCoords().x();
+									  				int oldX = (int) coords.x();
+									  				int newX = Math.min(width, Math.max(0, oldX + delta));
+									  				coords.x(newX);
 									  				
 									  				foreground.attr("d", (c1,d1,i1) -> getPathString(d1));
-									  				Collections.sort(dimensions.asList(), (a, b) -> {
+									  				// sort the dimensions by position along the x-axis
+									  				// workaround for d3gwt's incomplete ArrayList API
+									  				List<String> buffer = new ArrayList<>();
+									  				for (Value itr : dimensions.asIterable())
+									  					buffer.add(itr.asString());
+									  					
+									  				Collections.sort(buffer, (a, b) -> {
 									  					return getXPosition(a) - getXPosition(b);
 									  				});
+									  				
+									  				dimensions = Array.fromIterable(buffer);
 									  				x.domain(dimensions);
 									  				
 									  				group.attr("transform", (c1,d1,i1) -> {
@@ -329,13 +364,13 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 									  				
 									  				dragCoords.remove(dim);
 									  				
-									  				getTransition(D3.select(c)).attr("transform", "translate(" + x.apply(dim) + ")");
+									  				getTransition(D3.select(c)).attr("transform", "translate(" + x.apply(dim).asInt() + ")");
 									  				getTransition(foreground).attr("d", (c1,d1,i1) -> getPathString(d1));
 									  				background.attr("d", (c1,d1,i1) -> getPathString(d1))
 									  						  .transition()
-									  						  .delay(500)
-									  						  .duration(0)
-									  						  .attr("visibility", "false");
+									  						  .delay(100)
+									  						  .duration(100)
+									  						  .attr("visibility", "visible");
 									  				
 									  				return null;
 									  			 }));
@@ -354,8 +389,19 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 				 .attr("y", -25)
 				 .attr("transform", "rotate(-20)")
 				 .text((c,d,i) -> {
-					 // use the same text as the dimension since they're already localized
-					 return d.asString();
+					 GrammaticalConstruction gram = GrammaticalConstruction.lookup(d.asString());
+					 if (gram != null)
+					 {
+						 // get the localized string and format it a bit
+						 String name = GrammaticalConstructionLocale.get().getLocalizedName(gram, localeCore.getLanguage());
+						 int delimiter = name.indexOf("(");
+						 if (delimiter == -1)
+							 return name;
+						 else
+							 return name.substring(0, delimiter);
+					 }
+					 else
+						 return d.asString();	// for the default dimensions, use the same text as it's already localized
 				 });
 			
 			// store brushes for each axis
@@ -370,7 +416,7 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 							 				  return null;
 							 			   })
 							 			   .on(BrushEvent.BRUSH, (cx,dx,ix) -> {
-							 				  onBrushStart();
+							 				  onBrush();
 							 				  return null;
 							 			   });
 					 
@@ -381,20 +427,6 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 				 .selectAll("rect")
 				 .attr("x", -8)
 				 .attr("width", 16);
-			
-			// ### TODO do we need this? doesn't seem to do anything
-			// don't highlight filtered documents
-			svg.selectAll(".foreground > path")
-			   .each((c,d,i) -> {
-				   if (false)
-				   {
-					   String resultDim = getDefaultDimensionId(DefaultDimension.RESULT);
-					   int rank = d.getProperty(resultDim).asInt();
-					   if (input.isDocumentFiltered(getDoc(rank)))
-						   c.getStyle().setDisplay(Display.NONE);
-				   }
-				   return null;
-			   });
 		}
 		
 		List<RankableDocument> getFilteredDocs()
@@ -416,30 +448,51 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 			return out;
 		}
 		
+		void resetSelectedAxes()
+		{
+			selectedAxes.clear();
+			
+			// add the default dimensions
+			toggleDefaultAxis(DefaultDimension.RESULT, true, false);
+			toggleDefaultAxis(DefaultDimension.NUM_WORDS, true, false);
+		}
+		
 		void doInit(Input i)
 		{
 			input = i;
 			
-			pnlSVGContainerUI.clear();
 			chkAxisWordsUI.setValue(true, false);
 			chkAxisSentencesUI.setValue(false, false);
 			chkAxisComplexityUI.setValue(false, false);
 			chkAxisKeywordsUI.setValue(false, false);
-			pnlToggleContainerUI.clear();
-			selectedAxes.clear();
 			
-			// create a new slider bundle and copy the weights
-			toggles = input.getSliders().cloneBundle((g,o,n) -> {
+			bdlEnglishSlidersUI.setVisible(false);
+			bdlGermanSlidersUI.setVisible(false);
+			
+			// setup sliders
+			switch (input.getSliders().getLanguage())
+			{
+			case ENGLISH:
+				toggles = bdlEnglishSlidersUI;
+				break;
+			case GERMAN:
+				toggles = bdlGermanSlidersUI;
+				break;
+			}
+			
+			toggles.setVisible(true);
+			toggles.forEachWeightSlider(n -> {
+				GrammaticalConstructionWeightSlider o = input.getSliders().getWeightSlider(n.getGram());
 				n.setEnabled(false, false);
 				n.setSliderVisible(false);
 				n.setResultCountVisible(false);
-				n.setWeight(o.getWeight(), false);
 				n.refreshLocalization();
+				n.setWeight(o.getWeight(), false);
 				
 				// toggle axis if the slider is weighted
 				if (o.hasWeight())
 				{
-					String dim = getConstructionDimesionId(g);
+					String dim = getConstructionDimesionId(n.getGram());
 					toggleAxis(dim, true, false);
 					n.setEnabled(true, false);
 				}
@@ -463,11 +516,7 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 				});
 			});
 			
-			// add the default dimensions
-			toggleDefaultAxis(DefaultDimension.RESULT, true, false);
-			toggleDefaultAxis(DefaultDimension.NUM_WORDS, true, false);
-			
-			pnlToggleContainerUI.add(toggles);
+			resetSelectedAxes();
 		}
 		
 		State()
@@ -486,12 +535,7 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 			background = foreground = null;
 			dimensions = null;
 			
-			svg = D3.select(pnlSVGContainerUI.getElement())
-					.append("svg")
-					.attr("width", width + MARGINS.left + MARGINS.right)
-					.attr("height", height + MARGINS.top + MARGINS.bottom)
-					.append("g")
-					.attr("transform", "translate(" + MARGINS.left + "," + MARGINS.top + ")");
+			svg = null;
 			group = null;
 			cache = null;
 			selectedAxes = new HashSet<>();
@@ -514,7 +558,7 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 			chkAxisKeywordsUI.setValue(false, false);
 			
 			toggles.resetState(false);
-			
+			resetSelectedAxes();
 			reload(false);
 			
 			if (resetHandler != null)
@@ -529,7 +573,7 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 				MaterialToast.fireToast(getLocalizedString(DocumentCollectionVisualizerLocale.DESC_NoFilteredDocs));
 			else
 			{
-				String msg = getLocalizedString(DocumentCollectionVisualizerLocale.DESC_NoFilteredDocs) + ": " + filtered.size();
+				String msg = getLocalizedString(DocumentCollectionVisualizerLocale.DESC_HasFilteredDocs	) + ": " + filtered.size();
 				MaterialToast.fireToast(msg);
 			}
 			
@@ -561,9 +605,9 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 	}
 
 	@UiField
-	MaterialModal				mdlVisualizerUI;
+	MaterialWindow				mdlVisualizerUI;
 	@UiField
-	MaterialTitle				lblTitleUI;
+	MaterialLabel				lblTitleUI;
 	@UiField
 	FlowPanel					pnlSVGContainerUI;
 	@UiField
@@ -579,40 +623,42 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 	@UiField
 	MaterialRow					pnlToggleContainerUI;
 	@UiField
-	MaterialButton				btnApplyUI;
+	ConstructionSliderBundleEnglish		bdlEnglishSlidersUI;
 	@UiField
-	MaterialButton				btnCancelUI;
+	ConstructionSliderBundleGerman		bdlGermanSlidersUI;
+	@UiField
+	MaterialButton				btnApplyUI;
 	
+	SimpleLocalizedTextWidget<MaterialLabel>			lblTitleLC;
 	SimpleLocalizedTextButtonWidget<MaterialButton>		btnResetLC;
 	SimpleLocalizedTextWidget<MaterialCheckBox>			chkAxisWordsLC;
 	SimpleLocalizedTextWidget<MaterialCheckBox>			chkAxisSentencesLC;
 	SimpleLocalizedTextWidget<MaterialCheckBox>			chkAxisComplexityLC;
 	SimpleLocalizedTextWidget<MaterialCheckBox>			chkAxisKeywordsLC;
 	SimpleLocalizedTextButtonWidget<MaterialButton>		btnApplyLC;
-	SimpleLocalizedTextButtonWidget<MaterialButton>		btnCancelLC;
 	
 	State	state;
 	
 	private void initLocale()
 	{
+		lblTitleLC = new SimpleLocalizedTextWidget<>(lblTitleUI, DocumentCollectionVisualizerLocale.DESC_lblTitleCaptionUI);
 		btnResetLC = new SimpleLocalizedTextButtonWidget<>(btnResetUI, DocumentCollectionVisualizerLocale.DESC_btnResetUI);
 		chkAxisWordsLC = new SimpleLocalizedTextWidget<>(chkAxisWordsUI, DocumentCollectionVisualizerLocale.DESC_chkAxisWordsUI);
 		chkAxisSentencesLC = new SimpleLocalizedTextWidget<>(chkAxisSentencesUI, DocumentCollectionVisualizerLocale.DESC_chkAxisSentencesUI);
 		chkAxisComplexityLC = new SimpleLocalizedTextWidget<>(chkAxisComplexityUI, DocumentCollectionVisualizerLocale.DESC_chkAxisComplexityUI);
 		chkAxisKeywordsLC = new SimpleLocalizedTextWidget<>(chkAxisKeywordsUI, DocumentCollectionVisualizerLocale.DESC_chkAxisKeywordsUI);
 		btnApplyLC = new SimpleLocalizedTextButtonWidget<>(btnApplyUI, DocumentCollectionVisualizerLocale.DESC_btnApplyUI);
-		btnCancelLC = new SimpleLocalizedTextButtonWidget<>(btnCancelUI, DocumentCollectionVisualizerLocale.DESC_btnCancelUI);
 
 		registerLocale(DocumentCollectionVisualizerLocale.INSTANCE.en);
 		registerLocale(DocumentCollectionVisualizerLocale.INSTANCE.de);
 		
+		registerLocalizedWidget(lblTitleLC);
 		registerLocalizedWidget(btnResetLC);
 		registerLocalizedWidget(chkAxisWordsLC);
 		registerLocalizedWidget(chkAxisSentencesLC);
 		registerLocalizedWidget(chkAxisComplexityLC);
 		registerLocalizedWidget(chkAxisKeywordsLC);
 		registerLocalizedWidget(btnApplyLC);
-		registerLocalizedWidget(btnCancelLC);
 	}
 	
 	private void initHandlers()
@@ -636,7 +682,24 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 			state.applyFilter();
 			hide();
 		});
-		btnCancelUI.addClickHandler(e -> hide());
+	}
+	
+	private void initUI()
+	{
+		MaterialAnimation open = new MaterialAnimation();
+		open.setTransition(gwt.material.design.client.ui.animate.Transition.FADEINDOWN);
+		open.setDelayMillis(0);
+		open.setDurationMillis(650);
+		mdlVisualizerUI.setOpenAnimation(open);
+		
+		MaterialAnimation close = new MaterialAnimation();
+		close.setTransition(gwt.material.design.client.ui.animate.Transition.FADEOUTUP);
+		close.setDelayMillis(0);
+		close.setDurationMillis(650);
+		mdlVisualizerUI.setCloseAnimation(close);
+		
+		// hide the maximize button
+		mdlVisualizerUI.getIconMaximize().setVisible(false);
 	}
 	
 	public DocumentCollectionVisualizer()
@@ -648,6 +711,7 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 		
 		initLocale();
 		initHandlers();
+		initUI();
 	}
 	
 	@Override
@@ -655,12 +719,13 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 	{
 		super.setLocalization(lang);
 		
-		lblTitleUI.setTitle(getLocalizedString(DocumentCollectionVisualizerLocale.DESC_lblTitleUI));
-		lblTitleUI.setDescription(getLocalizedString(DocumentCollectionVisualizerLocale.DESC_lblTitleCaptionUI));
+		mdlVisualizerUI.setTitle(getLocalizedString(DocumentCollectionVisualizerLocale.DESC_lblTitleUI));
 	}
 
 	@Override
-	public void show() {
+	public void show()
+	{
+		MaterialWindow.setOverlay(true);
 		mdlVisualizerUI.open();
 	}
 

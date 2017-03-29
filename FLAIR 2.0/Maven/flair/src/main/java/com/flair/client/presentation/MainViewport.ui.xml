@@ -3,7 +3,8 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:m="urn:import:gwt.material.design.client.ui"
 	xmlns:m.html="urn:import:gwt.material.design.client.ui.html"
-	xmlns:flair="urn:import:com.flair.client.presentation.widgets">
+	xmlns:flair="urn:import:com.flair.client.presentation.widgets"
+	xmlns:m.table='urn:import:gwt.material.design.client.ui.table'>
 	
 	<ui:style>
 	.brand-logo {
@@ -82,7 +83,7 @@
 		<!-- Settings Pane -->
 		<flair:RankerSettingsPane ui:field="pnlConstructionsSettingsUI"/>
 		
-		<m:MaterialPanel ui:field="pnlResultsContainerUI" backgroundColor="WHITE" layoutPosition="RELATIVE"
+		<m:MaterialPanel ui:field="pnlResultsContainerUI" backgroundColor="WHITE" layoutPosition="RELATIVE" overflow="HIDDEN"
 			marginBottom="0" grid="l5 m5 s5" padding="20" addStyleNames="{style.global-animation}">
 			<!-- Results Pane-->
 			<flair:DocumentResultsPane ui:field="pnlDocResultsUI"/>
@@ -99,6 +100,14 @@
 		
 		<!-- Prompt Modal -->
 		<flair:ModalPrompt ui:field="mdlPromptUI"/>
+		
+		<m.table:MaterialDataTable ui:field="table"
+                               shadow="1"
+                               height="calc(100vh - 131px)"
+                               useStickyHeader="false"
+                               useCategories="false"
+                               useRowExpansion="false"
+                               selectionType="SINGLE"/>
 		
 		<!-- Default Pane -->
 		<m:MaterialRow ui:field="pnlDefaultPlaceholderUI" visible="false" 

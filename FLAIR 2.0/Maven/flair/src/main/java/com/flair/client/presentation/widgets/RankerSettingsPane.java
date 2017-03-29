@@ -97,12 +97,13 @@ public class RankerSettingsPane extends LocalizedComposite implements AbstractRa
 		EventHandler				changeHandler;
 		EventHandler				visualizeHandler;
 		EventHandler				exportHandler;
+		EventHandler				resetHandler;
 		
 		State()
 		{
 			sliderLanguage = Language.ENGLISH;
 			rankData = null;
-			changeHandler = visualizeHandler = exportHandler = null;
+			changeHandler = visualizeHandler = exportHandler = resetHandler = null;
 		}
 		
 		private void onSettingChange()
@@ -121,6 +122,12 @@ public class RankerSettingsPane extends LocalizedComposite implements AbstractRa
 		{
 			if (exportHandler != null)
 				exportHandler.handle();
+		}
+		
+		private void onReset()
+		{
+			if (resetHandler != null)
+				resetHandler.handle();
 		}
 		
 		private void hideSliderBundles()
@@ -196,6 +203,7 @@ public class RankerSettingsPane extends LocalizedComposite implements AbstractRa
 			chkTextLevelBUI.setValue(true, false);
 			chkTextLevelCUI.setValue(true, false);
 			
+			onReset();
 			onSettingChange();
 		}
 		
@@ -209,6 +217,10 @@ public class RankerSettingsPane extends LocalizedComposite implements AbstractRa
 		
 		public void setExportHandler(EventHandler h) {
 			exportHandler = h;
+		}
+		
+		public void setResetHandler(EventHandler h) {
+			resetHandler = h;
 		}
 	}
 	
@@ -392,5 +404,10 @@ public class RankerSettingsPane extends LocalizedComposite implements AbstractRa
 	@Override
 	public boolean isVisible() {
 		return visible;
+	}
+
+	@Override
+	public void setResetAllHandler(EventHandler handler) {
+		state.setResetHandler(handler);
 	}
 }

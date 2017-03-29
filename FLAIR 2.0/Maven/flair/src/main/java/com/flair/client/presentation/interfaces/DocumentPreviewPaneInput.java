@@ -5,6 +5,8 @@ import com.flair.shared.grammar.Language;
 import com.flair.shared.interop.RankableDocument;
 import com.google.gwt.safehtml.shared.SafeHtml;
 
+import gwt.material.design.client.constants.Color;
+
 /*
  * Input for the document preview pane
  */
@@ -21,8 +23,8 @@ public interface DocumentPreviewPaneInput
 		public boolean								isConstructionWeighted(GrammaticalConstruction gram);
 		public SafeHtml								getPreviewMarkup();
 		
-		public String								getConstructionAnnotationColor(GrammaticalConstruction gram);
-		public String								getKeywordAnnotationColor();
+		public Color								getConstructionAnnotationColor(GrammaticalConstruction gram);
+		public Color								getKeywordAnnotationColor();
 		
 		public boolean								shouldShowKeywords();
 		public boolean								hasCustomKeywords();

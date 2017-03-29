@@ -16,6 +16,7 @@ import com.flair.client.presentation.interfaces.AbstractWebRankerPresenter;
 import com.flair.client.presentation.interfaces.CorpusUploadService;
 import com.flair.client.presentation.interfaces.CustomKeywordService;
 import com.flair.client.presentation.interfaces.NotificationService;
+import com.flair.client.presentation.interfaces.OperationCancelService;
 import com.flair.client.presentation.interfaces.UserPromptService;
 import com.flair.client.presentation.interfaces.VisualizerService;
 import com.flair.client.presentation.widgets.CorpusFileUploader;
@@ -483,7 +484,7 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 
 	@Override
 	public void showCancelPane(boolean visible) {
-		
+		pnlDocResultsUI.setCancelVisible(visible);
 	}
 
 	@Override
@@ -521,5 +522,10 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	@Override
 	public VisualizerService getVisualizerService() {
 		return mdlVisualizerUI;
+	}
+
+	@Override
+	public OperationCancelService getCancelService() {
+		return pnlDocResultsUI;
 	}
 }

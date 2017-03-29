@@ -454,20 +454,16 @@ public class SessionState
 			ServerLogger.get().info("Another operation is in progress - Discarding file");
 			return;
 		}
-		else if (cache.corpusData != null)
-		{
-			sendErrorResponse("Previous custom corpus parameters weren't cleared");
-			return;
-		}
-
+		
 		// cache params and await the upload servlet
+		// discard the previous cache, if any
 		cache.corpusData = new TemporaryCache.CustomCorpus(lang, keywords);
 		ServerLogger.get().info("Cached corpus parse parameters");
 	}
 
-	public synchronized void endCustomCorpusUpload()
+	public synchronized void endCustomCorpusUpload(boolean success)
 	{
-		ServerLogger.get().info("End custom corpus uploading");
+		ServerLogger.get().info("End custom corpus uploading | Success: " + success);
 		
 		if (hasOperation())
 		{
@@ -475,6 +471,13 @@ public class SessionState
 			return;
 		}
 
+		if (success == false)
+		{
+			// don't begin the parse op
+			cache.corpusData = null;
+			return;
+		}
+		
 		// begin parsing operation
 		List<AbstractDocumentSource> sources = new ArrayList<>();
 		try

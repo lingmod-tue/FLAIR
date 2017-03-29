@@ -7,18 +7,21 @@ import java.util.Map;
 
 import com.flair.client.ClientEndPoint;
 import com.flair.client.localization.LocalizedComposite;
+import com.flair.client.localization.SimpleLocalizedTextButtonWidget;
 import com.flair.client.localization.locale.DocumentResultsPaneLocale;
 import com.flair.client.presentation.interfaces.AbstractDocumentResultsPane;
 import com.flair.client.presentation.interfaces.AbstractResultItem;
 import com.flair.client.presentation.interfaces.AbstractResultItem.Type;
 import com.flair.client.presentation.interfaces.CompletedResultItem;
 import com.flair.client.presentation.interfaces.InProgressResultItem;
+import com.flair.client.presentation.interfaces.OperationCancelService;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
 
+import gwt.material.design.client.ui.MaterialButton;
 import gwt.material.design.client.ui.MaterialDivider;
 import gwt.material.design.client.ui.MaterialPanel;
 import gwt.material.design.client.ui.MaterialRow;
@@ -27,7 +30,7 @@ import gwt.material.design.client.ui.animate.MaterialAnimation;
 import gwt.material.design.client.ui.animate.Transition;
 import gwt.material.design.jquery.client.api.Functions.Func;
 
-public class DocumentResultsPane extends LocalizedComposite implements AbstractDocumentResultsPane
+public class DocumentResultsPane extends LocalizedComposite implements AbstractDocumentResultsPane, OperationCancelService
 {
 	private static DocumentResultsPaneUiBinder uiBinder = GWT.create(DocumentResultsPaneUiBinder.class);
 
@@ -40,6 +43,8 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 	@UiField
 	MaterialTitle			lblTitleUI;
 	@UiField
+	MaterialButton			btnCancelOpUI;
+	@UiField
 	MaterialPanel			pnlCompletedContainerUI;
 	@UiField
 	MaterialPanel			pnlInProgressContainerUI;
@@ -48,7 +53,10 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 	@UiField
 	MaterialRow				pnlSpinnerUI;
 	
+	SimpleLocalizedTextButtonWidget<MaterialButton>		btnCancelOpLC;
+	
 	State					state;
+	CancelHandler			cancelHandler;
 	
 	private static class DisplayItem
 	{
@@ -77,7 +85,7 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 		Map<AbstractResultItem, DisplayItem>		completed;
 		Map<AbstractResultItem, DisplayItem>		inprogress;
 		SelectHandler								selectHandler;
-		
+	
 		State()
 		{
 			completed = new HashMap<>();
@@ -200,10 +208,19 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 	
 	private void initLocale()
 	{
+		btnCancelOpLC = new SimpleLocalizedTextButtonWidget<>(btnCancelOpUI, DocumentResultsPaneLocale.DESC_btnCancelOpUI);
+		
 		registerLocale(DocumentResultsPaneLocale.INSTANCE.en);
 		registerLocale(DocumentResultsPaneLocale.INSTANCE.de);
+		
+		registerLocalizedWidget(btnCancelOpLC);
 	
 		refreshLocalization();
+	}
+	
+	private void initHandlers()
+	{
+		btnCancelOpUI.addClickHandler(e -> cancelOperation());
 	}
 
 	private void initUI()
@@ -217,8 +234,10 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		state = new State();
+		cancelHandler = null;
 		
 		initLocale();
+		initHandlers();
 		initUI();
 	}
 
@@ -290,4 +309,33 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 		anim.animate(() -> pnlRootUI.setVisible(false));
 	}
 
+	@Override
+	public void cancelOperation()
+	{
+		if (cancelHandler != null)
+			cancelHandler.handle();
+	}
+
+	@Override
+	public void setCancelHandler(CancelHandler handler) {
+		cancelHandler = handler;
+	}
+	
+	public void setCancelVisible(boolean visible)
+	{
+		MaterialAnimation anim = new MaterialAnimation(btnCancelOpUI);
+		anim.setDelayMillis(0);
+		anim.setDurationMillis(450);
+		if (visible)
+		{
+			anim.setTransition(Transition.ZOOMIN);
+			btnCancelOpUI.setVisible(true);
+			anim.animate();
+		}
+		else
+		{
+			anim.setTransition(Transition.ZOOMOUT);
+			anim.animate(() -> btnCancelOpUI.setVisible(false));
+		}
+	}
 }

@@ -3,6 +3,8 @@ package com.flair.client.model.interfaces;
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.interop.RankableDocument;
 
+import gwt.material.design.client.constants.Color;
+
 /*
  * Input for the DocumentAnnotator class
  */
@@ -13,11 +15,11 @@ public interface DocumentAnnotatorInput
 		public RankableDocument							getDocument();
 		
 		public Iterable<GrammaticalConstruction>		getAnnotatedConstructions();						// constructions that need to be annotated
-		public String									getConstructionAnnotationColor(GrammaticalConstruction gram);	// the color string for the construction
+		public Color									getConstructionAnnotationColor(GrammaticalConstruction gram);	// the color string for the construction
 		public String									getConstructionTitle(GrammaticalConstruction gram);	// the text to be displayed on mouse-over
 		
 		public boolean									shouldAnnotateKeywords();		// true if keywords are to be annotated
-		public String									getKeywordAnnotationColor();
+		public Color									getKeywordAnnotationColor();
 		public String									getKeywordTitle();
 	}
 	

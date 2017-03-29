@@ -31,6 +31,7 @@ import com.flair.client.presentation.interfaces.CustomKeywordService;
 import com.flair.client.presentation.interfaces.DocumentPreviewPaneInput;
 import com.flair.client.presentation.interfaces.InProgressResultItem;
 import com.flair.client.presentation.interfaces.NotificationService;
+import com.flair.client.presentation.interfaces.OperationCancelService;
 import com.flair.client.presentation.interfaces.UserPromptService;
 import com.flair.client.presentation.interfaces.VisualizerService;
 import com.flair.client.presentation.widgets.GenericWeightSlider;
@@ -50,6 +51,8 @@ import com.flair.shared.interop.services.WebRankerServiceAsync;
 import com.flair.shared.parser.DocumentReadabilityLevel;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.Timer;
+
+import gwt.material.design.client.constants.Color;
 
 /*
  * Web ranker module
@@ -109,6 +112,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 		}
 
 		Language			lastUsedLang;
+		OperationType		lastOp;
 		OperationType		currentOp;
 		OperationParams		params;
 		Timer				timeout;
@@ -122,7 +126,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 		State()
 		{
 			lastUsedLang = Language.ENGLISH;
-			currentOp = OperationType.NONE;
+			currentOp = lastOp = OperationType.NONE;
 			params = null;
 			parsedDocs = new ArrayList<>();
 			inProgress = new HashMap<>();
@@ -147,7 +151,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 		void begin(OperationParams p)
 		{
 			lastUsedLang = p.lang;
-			currentOp = p.type;
+			currentOp = lastOp = p.type;
 			params = p;
 			rankData = null;
 
@@ -203,6 +207,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 			presenter.showDefaultPane(true);
 			settings.hide();
 			preview.hide();
+			upload.hide();
 
 			if (messagePipeline.isOpen())
 				messagePipeline.close();
@@ -373,6 +378,12 @@ public class WebRankerCore implements AbstractWebRankerCore
 
 			notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_AnalysisComplete));
 		}
+		
+		void refreshLocalization(Language lang)
+		{
+			if (lastOp == OperationType.CUSTOM_CORPUS)
+				results.setPanelTitle(getLocalizedString(WebRankerCoreLocale.DESC_CustomCorpusTitle));
+		}
 	}
 
 	private final class RankerInput implements DocumentRankerInput.Rank
@@ -456,15 +467,24 @@ public class WebRankerCore implements AbstractWebRankerCore
 
 	final class PreviewRankableInput implements DocumentAnnotatorInput.HighlightText, DocumentPreviewPaneInput.Rankable
 	{
-		private final String[]		COLORS	= new String[] { "lightgreen", "lightblue", "lightpink",
-				"lightcyan", "lightsalmon", "lightgrey", "lightyellow" };
-		private static final String	COLOR_KEYWORDS	= "gold";
+		private final Color[]		COLORS	= new Color[]
+		{
+			Color.GREEN_LIGHTEN_3,
+			Color.LIGHT_BLUE_LIGHTEN_3,
+			Color.PINK_LIGHTEN_4,
+			Color.CYAN_LIGHTEN_3,
+			Color.DEEP_PURPLE_LIGHTEN_3,
+			Color.BROWN_LIGHTEN_2,
+			Color.RED_LIGHTEN_2
+		};
+		
+		private final Color			COLOR_KEYWORDS	= Color.AMBER;
 
-		private final RankableDocument					doc;
-		private final List<GrammaticalConstruction>		annotatedConstructions;
-		private final Map<GrammaticalConstruction, String>	annotationColors;
-		private DocumentAnnotatorOutput.HighlightText	annotation;
-		private final Set<GrammaticalConstruction> langConstructions;
+		private final RankableDocument						doc;
+		private final List<GrammaticalConstruction>			annotatedConstructions;
+		private final Map<GrammaticalConstruction, Color>	annotationColors;
+		private DocumentAnnotatorOutput.HighlightText		annotation;
+		private final Set<GrammaticalConstruction> 			langConstructions;
 
 		PreviewRankableInput(RankableDocument d)
 		{
@@ -484,9 +504,9 @@ public class WebRankerCore implements AbstractWebRankerCore
 			int availableColors = COLORS.length - 1;
 			for (int i = 0; i < annotatedConstructions.size(); i++)
 			{
-				String color;
-				if (availableColors >= 0)
-					color = COLORS[availableColors--];
+				Color color;
+				if (availableColors < COLORS.length)
+					color = COLORS[availableColors++];
 				else
 					color = COLORS[COLORS.length - 1];
 
@@ -505,7 +525,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 		}
 
 		@Override
-		public String getConstructionAnnotationColor(GrammaticalConstruction gram) {
+		public Color getConstructionAnnotationColor(GrammaticalConstruction gram) {
 			return annotationColors.get(gram);
 		}
 
@@ -520,7 +540,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 		}
 
 		@Override
-		public String getKeywordAnnotationColor() {
+		public Color getKeywordAnnotationColor() {
 			return COLOR_KEYWORDS;
 		}
 
@@ -636,6 +656,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 	private CorpusUploadService				upload;
 	private CustomKeywordService			keywords;
 	private VisualizerService				visualizer;
+	private OperationCancelService			cancel;
 	private final WebRankerServiceAsync		service;
 	private State							state;
 
@@ -656,6 +677,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 		upload = null;
 		keywords = null;
 		visualizer = null;
+		cancel = null;
 
 		service = WebRankerServiceAsync.Util.getInstance();
 		state = new State();
@@ -671,7 +693,8 @@ public class WebRankerCore implements AbstractWebRankerCore
 		upload = presenter.getCorpusUploadService();
 		keywords = presenter.getCustomKeywordsService();
 		visualizer = presenter.getVisualizerService();
-
+		cancel = presenter.getCancelService();
+		
 		// settings.setExportSettingsHandler(null);
 		settings.setVisualizeHandler(() -> {
 			if (state.hasOperation())
@@ -684,9 +707,10 @@ public class WebRankerCore implements AbstractWebRankerCore
 		});
 
 		settings.setSettingsChangedHandler(() -> onSettingsChanged());
+		settings.setResetAllHandler(() -> onSettingsReset());
 		results.setSelectHandler(e -> onSelectResultItem(e));
-		upload.setUploadBeginHandler(() -> onUploadBegin());
-		upload.setUploadCompleteHandler(e -> onUploadComplete(e));
+		upload.setUploadBeginHandler(e -> onUploadBegin(e));
+		upload.setUploadCompleteHandler((n,s) -> onUploadComplete(n, s));
 		visualizer.setApplyFilterHandler(d -> {
 			for (RankableDocument itr : d)
 				state.filterDoc(itr);
@@ -700,6 +724,9 @@ public class WebRankerCore implements AbstractWebRankerCore
 			settings.getSliderBundle().resetState(false);
 			onSettingsChanged();
 		});
+		cancel.setCancelHandler(() -> onCancelOp());
+		
+		LocalizationEngine.get().addLanguageChangeHandler(l -> state.refreshLocalization(l));
 		
 		// rerank once to reset the settings pane's UI
 		state.rerank();
@@ -711,6 +738,12 @@ public class WebRankerCore implements AbstractWebRankerCore
 		state.refreshParsedResultsList();
 	}
 
+	private void onSettingsReset()
+	{
+		// clear filtered documents
+		state.clearFilteredDocs();
+	}
+	
 	private void onSelectResultItem(AbstractResultItem item)
 	{
 		if (item.getType() == Type.COMPLETED)
@@ -734,15 +767,15 @@ public class WebRankerCore implements AbstractWebRankerCore
 		}
 	}
 
-	private void onUploadBegin()
+	private void onUploadBegin(Language corpusLang)
 	{
 		// begin operation and wait for the server
 		if (state.hasOperation())
 			throw new RuntimeException("Cannot start upload until the current operation is complete");
 		
-		OperationParams params = new OperationParams(state.lastUsedLang);
+		OperationParams params = new OperationParams(corpusLang);
 		presenter.showLoaderOverlay(true);
-		service.beginCorpusUpload(token, state.lastUsedLang, new ArrayList<>(keywords.getCustomKeywords()), FuncCallback.get(
+		service.beginCorpusUpload(token, corpusLang, new ArrayList<>(keywords.getCustomKeywords()), FuncCallback.get(
 				e -> {
 					state.begin(params);
 					presenter.showLoaderOverlay(false);
@@ -757,12 +790,26 @@ public class WebRankerCore implements AbstractWebRankerCore
 		ClientLogger.get().info("Upload operation has begun...");
 	}
 
-	private void onUploadComplete(int numUploaded)
+	private void onUploadComplete(int numUploaded, boolean success)
 	{
 		// signal the end of the upload operation
-		state.params.numResults = numUploaded;
-		service.endCorpusUpload(token, FuncCallback.get(e -> {}));
-		ClientLogger.get().info("Upload operation has ended - Waiting for the server");
+		if (success)
+		{
+			state.params.numResults = numUploaded;
+			service.endCorpusUpload(token, success, FuncCallback.get(e -> {}));
+			ClientLogger.get().info("Upload operation has ended - Waiting for the server");
+		}
+		else if (state.hasOperation())
+		{
+			state.reset();
+			ClientLogger.get().info("Upload operation was cancelled");
+		}
+	}
+	
+	private void onCancelOp()
+	{
+		if (state.hasOperation())
+			cancelCurrentOperation();
 	}
 
 	private String getLocalizedString(String desc)
