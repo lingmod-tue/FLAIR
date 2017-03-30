@@ -66,6 +66,7 @@ public class GrammaticalConstructionPanelItem extends LocalizedComposite impleme
 		children = new ArrayList<>();
 
 		// setup components
+		body.setPadding(10);
 		text.setIconPosition(IconPosition.LEFT);
 		text.setTextColor(Color.BLACK);
 		
@@ -94,7 +95,7 @@ public class GrammaticalConstructionPanelItem extends LocalizedComposite impleme
 		super.setLocalization(lang);
 		
 		// update tooltip
-		reset.setTitle(getLocalizationData(lang).get(GrammaticalConstructionPanelItemLocale.DESC_resetTooltip));
+		reset.setTooltip(getLocalizationData(lang).get(GrammaticalConstructionPanelItemLocale.DESC_resetTooltip));
 	}
 
 	@Override

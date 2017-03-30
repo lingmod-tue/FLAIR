@@ -71,6 +71,7 @@ public class DocumentResultDisplayItem extends LocalizedComposite
 		{
 			btnTitleUI.addClickHandler(e -> {
 				Window.open(item.getUrl(), "_blank", "");
+				e.stopPropagation();
 			});
 		
 			lblURLUI.setText(item.getDisplayUrl());
@@ -79,7 +80,7 @@ public class DocumentResultDisplayItem extends LocalizedComposite
 			lblURLUI.setVisible(false);
 		
 		lblSnippetUI.setText(item.getSnippet());
-		lblSnippetUI.addClickHandler(selectHandler);
+		pnlCardUI.addClickHandler(selectHandler);
 		
 		if (item.getType() == Type.IN_PROGRESS)
 			colCompletedHeaderUI.setVisible(false);
@@ -111,9 +112,9 @@ public class DocumentResultDisplayItem extends LocalizedComposite
 		initLocale();
 	}
 	
-	@Override
-	public Widget getWidget() {
-		return this;
+
+	public void setOpacity(double o) {
+		pnlCardUI.setOpacity(o);
 	}
 	
 	@Override

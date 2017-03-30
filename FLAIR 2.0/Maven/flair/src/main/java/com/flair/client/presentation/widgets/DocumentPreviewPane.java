@@ -1,7 +1,7 @@
 package com.flair.client.presentation.widgets;
 
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Collections;
 import java.util.List;
 
 import com.flair.client.ClientEndPoint;
@@ -16,9 +16,12 @@ import com.flair.client.presentation.interfaces.AbstractDocumentPreviewPane;
 import com.flair.client.presentation.interfaces.DocumentPreviewPaneInput;
 import com.flair.client.presentation.interfaces.DocumentPreviewPaneInput.Rankable;
 import com.flair.client.presentation.interfaces.DocumentPreviewPaneInput.UnRankable;
+import com.flair.client.presentation.interfaces.OverlayService;
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.FontWeight;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -28,19 +31,15 @@ import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import gwt.material.design.client.constants.Color;
-import gwt.material.design.client.data.SelectionType;
-import gwt.material.design.client.data.component.RowComponent;
+import gwt.material.design.client.constants.TextAlign;
+import gwt.material.design.client.ui.MaterialButton;
 import gwt.material.design.client.ui.MaterialChip;
-import gwt.material.design.client.ui.MaterialCollapsibleBody;
+import gwt.material.design.client.ui.MaterialColumn;
 import gwt.material.design.client.ui.MaterialIcon;
 import gwt.material.design.client.ui.MaterialLabel;
-import gwt.material.design.client.ui.MaterialLink;
 import gwt.material.design.client.ui.MaterialPanel;
 import gwt.material.design.client.ui.MaterialRow;
-import gwt.material.design.client.ui.table.MaterialDataTable;
-import gwt.material.design.client.ui.table.cell.Column;
-import gwt.material.design.client.ui.table.cell.TextColumn;
-import gwt.material.design.client.ui.table.cell.WidgetColumn;
+import gwt.material.design.client.ui.html.Br;
 
 public class DocumentPreviewPane extends LocalizedComposite implements AbstractDocumentPreviewPane
 {
@@ -71,20 +70,32 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 	@UiField
 	MaterialChip				lblDocNumWordsUI;
 	@UiField
-	FlowPanel					pnlWeightSelectionUI;
-	@UiField
 	MaterialIcon				icoHelpTextUI;
 	@UiField
 	ScrollPanel					pnlDocTextPreviewUI;
 	@UiField
-	MaterialRow					pnlFooterUI;
+	MaterialRow					pnlAllConstUI;
 	@UiField
-	MaterialLink				tglConstructionDetailsUI;
+	MaterialRow					pnlWeightSelectionUI;
 	@UiField
-	MaterialCollapsibleBody		pnlConstructionDetailsUI;
-
+	MaterialColumn			 	pnlWeightSelectionCol1UI;
+	@UiField
+	MaterialColumn			 	pnlWeightSelectionCol2UI;
+	@UiField
+	MaterialColumn			 	pnlWeightSelectionCol3UI;
+	@UiField
+	MaterialButton				btnShowAllConstUI;
+	@UiField
+	MaterialIcon				icoCloseModalUI;
+	@UiField
+	MaterialColumn			 	pnlAllConstCol1UI;
+	@UiField
+	MaterialColumn			 	pnlAllConstCol2UI;
+	@UiField
+	MaterialColumn			 	pnlAllConstCol3UI;
+	
 	SimpleLocalizedTooltipWidget<MaterialIcon>			icoHelpTextLC;
-	SimpleLocalizedTextButtonWidget<MaterialLink>		tglConstructionDetailsLC;
+	SimpleLocalizedTextButtonWidget<MaterialButton>		btnShowAllConstLC;
 	
 	State						state;
 	ShowHideHandler				showhideHandler;
@@ -94,6 +105,13 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 	{
 		WEIGHT_SELECTION,
 		ALL_CONSTRUCTIONS
+	}
+	
+	enum ColumnType
+	{
+		COLUMN_1,
+		COLUMN_2,
+		COLUMN_3
 	}
 	
 	private enum InputType
@@ -146,130 +164,238 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 	{
 		class Table
 		{
-			private static final int		PAGE_SIZE = 200;		// > no. of gram consts to disable pagination
+			TableType				type;
+			List<TableData>			dataProvider;
+			MaterialColumn			colFirst;
+			MaterialColumn			colSecond;
+			MaterialColumn			colThird;
 			
-			private static final String		WEIGHT_SEL_HEIGHT = "150px";
-			private static final String		ALL_CONST_HEIGHT = "350px";
-			
-			TableType						type;
-			MaterialDataTable<TableData>	table;
-			List<TableData>					dataProvider;
-			Column<TableData, ?>			colFirst;
-			TextColumn<TableData>			colSecond;
-			TextColumn<TableData>			colThird;
-			
-			Table(TableType type, List<TableData> data)
+			Table(TableType type)
 			{
 				this.type = type;
-				table = new MaterialDataTable<>();
-				table.setUseCategories(false);
-				table.setUseRowExpansion(false);
-				table.setSelectionType(SelectionType.SINGLE);
-				dataProvider = data;
-				if (dataProvider == null)
-					dataProvider = new ArrayList<>();
+				dataProvider = new ArrayList<>();
 				
 				switch (type)
 				{
 				case WEIGHT_SELECTION:
-					table.setHeight(WEIGHT_SEL_HEIGHT);
-					
-					colFirst = new WidgetColumn<TableData, MaterialChip>() {
-						@Override
-						public MaterialChip getValue(TableData d)
-						{
-							MaterialChip out = new MaterialChip();
-							Color wc = d.keyword ? rankable.getKeywordAnnotationColor() : rankable.getConstructionAnnotationColor(d.gram);
-							
-							out.setText(d.getLocalizedName(localeCore.getLanguage()));
-							out.setLetter("C");
-							out.setLetterBackgroundColor(wc);
-							
-							return out;
-						}
-						
-						@Override
-			            public Comparator<? super RowComponent<TableData>> getSortComparator() {
-			                return (o1, o2) -> {
-			                	TableData a = o1.getData(), b = o2.getData();
-			                	return a.getLocalizedName(localeCore.getLanguage()).compareToIgnoreCase(b.getLocalizedName(localeCore.getLanguage()));
-			                };
-			            }
-					};
-					
-					colThird = new TextColumn<TableData>() {
-						@Override
-						public String getValue(TableData item) {
-							return "(" + item.weight + ")";
-						}
-						
-						@Override
-			            public Comparator<? super RowComponent<TableData>> getSortComparator() {
-			                return (o1, o2) -> {
-			                	TableData a = o1.getData(), b = o2.getData();
-			                	return Double.compare(a.weight, b.weight);
-			                };
-			            }
-					};
+					colFirst = pnlWeightSelectionCol1UI;
+					colSecond = pnlWeightSelectionCol2UI;
+					colThird = pnlWeightSelectionCol3UI;
 					
 					break;
 				case ALL_CONSTRUCTIONS:
-					table.setHeight(ALL_CONST_HEIGHT);
-					
-					colFirst = new TextColumn<TableData>() {
-						@Override
-						public String getValue(TableData item) {
-							return item.getLocalizedName(localeCore.getLanguage());
-						}
-						
-						@Override
-			            public Comparator<? super RowComponent<TableData>> getSortComparator() {
-			                return (o1, o2) -> {
-			                	TableData a = o1.getData(), b = o2.getData();
-			                	return a.getLocalizedName(localeCore.getLanguage()).compareToIgnoreCase(b.getLocalizedName(localeCore.getLanguage()));
-			                };
-			            }
-					};
-					
-					colThird = new TextColumn<TableData>() {
-						@Override
-						public String getValue(TableData item) {
-							return "(" + item.relFreq + ")";
-						}
-						
-						@Override
-			            public Comparator<? super RowComponent<TableData>> getSortComparator() {
-			                return (o1, o2) -> {
-			                	TableData a = o1.getData(), b = o2.getData();
-			                	return Double.compare(a.relFreq, b.relFreq);
-			                };
-			            }
-					};
+					colFirst = pnlAllConstCol1UI;
+					colSecond = pnlAllConstCol2UI;
+					colThird = pnlAllConstCol3UI;
 					
 					break;
-				}
-				
-				colSecond = new TextColumn<TableData>() {
-					@Override
-					public String getValue(TableData item) {
-						return ((Integer)item.hits).toString();
-					}
-					
-					@Override
-		            public Comparator<? super RowComponent<TableData>> getSortComparator() {
-		                return (o1, o2) -> {
-		                	TableData a = o1.getData(), b = o2.getData();
-		                	return Integer.compare(a.hits, b.hits);
-		                };
-		            }
 				};
 			}
 			
-			public void initColumns(String col1, String col2, String col3)
+			private Widget generateColumnHeader(String name)
 			{
-				table.addColumn(colFirst, col1);
-				table.addColumn(colSecond, col2);
-				table.addColumn(colThird, col3);
+				MaterialLabel out = new MaterialLabel(name);
+				out.setFontWeight(FontWeight.BOLD);
+				out.setPaddingTop(10);
+				out.setPaddingBottom(10);
+				return out;
+			}
+			
+			private Widget generateColumnData(ColumnType col, TableData data)
+			{
+				Widget out = null;
+				
+				switch (col)
+				{
+					case COLUMN_1:
+					{
+						// construction name
+						if (type == TableType.WEIGHT_SELECTION)
+						{
+							String name = data.getLocalizedName(localeCore.getLanguage());
+							String tooltip = name;
+							if (name.length() > 25)
+								name = name.substring(0, 25) + "...";
+							MaterialChip chip = new MaterialChip(name);
+							chip.setLetter("");
+							chip.setLetterBackgroundColor(data.keyword ?
+									rankable.getKeywordAnnotationColor() : rankable.getConstructionAnnotationColor(data.gram));
+							chip.setBackgroundColor(Color.WHITE);
+							chip.setTruncate(true);
+							chip.setTooltip(tooltip);
+
+							FlowPanel container = new FlowPanel();
+							container.add(chip);
+							container.add(new Br());
+							out = container;
+						}
+						else
+						{
+							MaterialLabel name = new MaterialLabel(data.getLocalizedName(localeCore.getLanguage()));
+							name.setFontSize(1, Unit.EM);
+							out = name;
+						}
+					
+						break;
+					}
+					case COLUMN_2:
+					{
+						// freq
+						if (type == TableType.WEIGHT_SELECTION)
+						{
+							MaterialChip chip = new MaterialChip();
+							chip.setLetter("" + data.hits);
+							chip.setBackgroundColor(Color.WHITE);
+							FlowPanel container = new FlowPanel();
+							container.add(chip);
+							container.add(new Br());
+							out = container;
+						}
+						else
+						{
+							MaterialLabel freq = new MaterialLabel("" + data.hits);
+							freq.setFontSize(1, Unit.EM);
+							out = freq;
+						}
+					
+						break;
+					}
+					case COLUMN_3:
+					{
+						if (type == TableType.WEIGHT_SELECTION)
+						{
+							// weight
+							MaterialChip chip = new MaterialChip();
+							chip.setLetter("(" + data.weight + ")");
+							chip.setBackgroundColor(Color.WHITE);
+							FlowPanel container = new FlowPanel();
+							container.add(chip);
+							container.add(new Br());
+							out = container;
+						}
+						else
+						{
+							// rel freq
+							MaterialLabel relFreq = new MaterialLabel("(" + data.relFreq + ")");
+							relFreq.setFontSize(1, Unit.EM);
+							out = relFreq;
+						}
+						
+						break;
+					}
+				}
+				
+				return out;
+			}
+			
+			private void initColumns(String col1, String col2, String col3)
+			{
+				// hide columns if there are no weights to show
+				if (type == TableType.WEIGHT_SELECTION)
+				{
+					if (dataProvider.isEmpty())
+						return;
+				}
+				
+				colFirst.add(generateColumnHeader(col1));
+				colSecond.add(generateColumnHeader(col2));
+				colThird.add(generateColumnHeader(col3));
+			}
+			
+			public void generateData()
+			{
+				switch (type)
+				{
+				case WEIGHT_SELECTION:
+					{
+						if (rankable.shouldShowKeywords())
+						{
+							dataProvider.add(new TableData(rankable.hasCustomKeywords(),
+									(int)rankable.getDocument().getKeywordCount(),
+									rankable.getKeywordWeight(), 0));
+						}
+						
+						for (GrammaticalConstruction itr : rankable.getConstructions())
+						{
+							if (rankable.isConstructionWeighted(itr))
+							{
+								TableData d = new TableData(itr,
+										(int)rankable.getDocument().getConstructionFreq(itr),
+										rankable.getConstructionWeight(itr),
+										rankable.getDocument().getConstructionRelFreq(itr));
+								
+								dataProvider.add(d);
+							}
+						}
+						
+						break;
+					}
+				case ALL_CONSTRUCTIONS:
+					{
+						for (GrammaticalConstruction itr : rankable.getConstructions())
+						{
+							TableData d = new TableData(itr,
+									(int)rankable.getDocument().getConstructionFreq(itr),
+									rankable.getConstructionWeight(itr),
+									rankable.getDocument().getConstructionRelFreq(itr));
+							
+							dataProvider.add(d);
+						}
+						
+						break;
+					}
+				}
+				
+				// sort by construction name
+				Collections.sort(dataProvider, (a,b) -> {
+					return a.getLocalizedName(localeCore.getLanguage()).compareToIgnoreCase(b.getLocalizedName(localeCore.getLanguage()));
+				});
+			}
+			
+			public void updateViewData()
+			{
+				// add data to the containers
+				for (TableData itr : dataProvider)
+				{
+					colFirst.add(generateColumnData(ColumnType.COLUMN_1, itr));
+					colSecond.add(generateColumnData(ColumnType.COLUMN_2, itr));
+					colThird.add(generateColumnData(ColumnType.COLUMN_3, itr));
+				}
+			}
+			
+			public void clear(boolean allData)
+			{
+				if (allData)
+					dataProvider.clear();
+				
+				colFirst.clear();
+				colSecond.clear();
+				colThird.clear();
+			}
+			
+			public void reload(boolean full)
+			{
+				clear(full);
+				if (full)
+					generateData();
+				
+				LocalizationData ld = getLocalizationData(localeCore.getLanguage());
+				
+				switch (type)
+				{
+				case WEIGHT_SELECTION:
+					initColumns(ld.get(DocumentPreviewPaneLocale.DESC_tableColConstruction),
+							ld.get(DocumentPreviewPaneLocale.DESC_tableColHits),
+							ld.get(DocumentPreviewPaneLocale.DESC_tableColWeight));
+					break;
+				case ALL_CONSTRUCTIONS:
+					initColumns(ld.get(DocumentPreviewPaneLocale.DESC_tableColConstruction),
+							ld.get(DocumentPreviewPaneLocale.DESC_tableColHits),
+							ld.get(DocumentPreviewPaneLocale.DESC_tableColRelFreq));
+					break;
+				}
+				
+				updateViewData();
 			}
 		}
 		
@@ -286,43 +412,6 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 			unrankable = null;
 			weightSelection = null;
 			constructionDetails = null;
-		}
-		
-		public void refreshTables()
-		{
-			weightSelection.table.setRowData(0, weightSelection.dataProvider);
-			constructionDetails.table.setRowData(0, constructionDetails.dataProvider);
-			
-			weightSelection.table.setRedraw(true);
-			weightSelection.table.refreshView();
-			constructionDetails.table.setRedraw(true);
-			constructionDetails.table.refreshView();
-		}
-		
-		private void genTableData(List<TableData> ws, List<TableData> cd)
-		{
-			ws.clear();
-			cd.clear();
-			
-			// update data
-			if (rankable.shouldShowKeywords())
-			{
-				ws.add(new TableData(rankable.hasCustomKeywords(),
-						(int)rankable.getDocument().getKeywordCount(),
-						rankable.getKeywordWeight(), 0));
-			}
-			
-			for (GrammaticalConstruction itr : rankable.getConstructions())
-			{
-				TableData d = new TableData(itr,
-						(int)rankable.getDocument().getConstructionFreq(itr),
-						rankable.getConstructionWeight(itr),
-						rankable.getDocument().getConstructionRelFreq(itr));
-				
-				cd.add(d);
-				if (rankable.isConstructionWeighted(itr))
-					ws.add(d);
-			}
 		}
 		
 		public void init(DocumentPreviewPaneInput.Rankable input)
@@ -347,7 +436,7 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 		{
 			// reset component visibility
 			pnlWeightSelectionUI.setVisible(true);
-			pnlFooterUI.setVisible(true);
+			btnShowAllConstUI.setVisible(true);
 			
 			lblDocTitleUI.setVisible(true);
 			lblDocLevelUI.setVisible(true);
@@ -363,42 +452,22 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 			
 			resetUI();
 			
+			// deferred init until the columns are fully initialized
+			if (weightSelection == null)
+				weightSelection = new Table(TableType.WEIGHT_SELECTION);
+			if (constructionDetails == null)
+				constructionDetails = new Table(TableType.ALL_CONSTRUCTIONS);
+			
 			switch (type)
 			{
 			case RANKABLE:
 				{
-					if (weightSelection == null)
-						weightSelection = new Table(TableType.WEIGHT_SELECTION, null);
-					if (constructionDetails == null)
-						constructionDetails = new Table(TableType.ALL_CONSTRUCTIONS, null);
-					
-					// remove current tables from the pane
-					pnlWeightSelectionUI.remove(weightSelection.table);
-					pnlConstructionDetailsUI.remove(constructionDetails.table);
-					
-					if (fullReload)
-						genTableData(weightSelection.dataProvider, constructionDetails.dataProvider);
-					
-					// re-init tables
-					weightSelection = new Table(TableType.WEIGHT_SELECTION, weightSelection.dataProvider);
-					constructionDetails = new Table(TableType.ALL_CONSTRUCTIONS, constructionDetails.dataProvider);
-					
-					// add them to the pane
-					pnlWeightSelectionUI.add(weightSelection.table);
-					pnlConstructionDetailsUI.add(constructionDetails.table);
-					
-					LocalizationData ld = getLocalizationData(localeCore.getLanguage());
-					
-					weightSelection.initColumns(ld.get(DocumentPreviewPaneLocale.DESC_tableColConstruction),
-							ld.get(DocumentPreviewPaneLocale.DESC_tableColHits),
-							ld.get(DocumentPreviewPaneLocale.DESC_tableColWeight));
-					constructionDetails.initColumns(ld.get(DocumentPreviewPaneLocale.DESC_tableColConstruction),
-							ld.get(DocumentPreviewPaneLocale.DESC_tableColHits),
-							ld.get(DocumentPreviewPaneLocale.DESC_tableColRelFreq));
-
-					refreshTables();
+					// set up the tables
+					weightSelection.reload(fullReload);
+					constructionDetails.reload(fullReload);
 					
 					// set up the remaining fields
+					LocalizationData ld = getLocalizationData(localeCore.getLanguage());
 					lblDocTitleUI.setText(rankable.getDocument().getTitle());
 					lblDocLevelUI.setText(rankable.getDocument().getReadabilityLevel().toString());
 					lblDocNumSentencesUI.setText(rankable.getDocument().getNumSentences() + " " + ld.get(DocumentPreviewPaneLocale.DESC_lblDocNumSentences));
@@ -407,14 +476,13 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 					pnlDocTextPreviewUI.clear();
 					pnlDocTextPreviewUI.add(new HTML(rankable.getPreviewMarkup()));
 					
-					
 					break;
 				}
 			case UNRANKABLE:
 				{
 					// hide unused widgets
 					pnlWeightSelectionUI.setVisible(false);
-					pnlFooterUI.setVisible(false);
+					btnShowAllConstUI.setVisible(false);
 					lblDocLevelUI.setVisible(false);
 					lblDocNumSentencesUI.setVisible(false);
 					lblDocNumWordsUI.setVisible(false);
@@ -445,13 +513,13 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 	private void initLocale()
 	{
 		icoHelpTextLC = new SimpleLocalizedTooltipWidget<>(icoHelpTextUI, DocumentPreviewPaneLocale.DESC_icoHelpText);
-		tglConstructionDetailsLC = new SimpleLocalizedTextButtonWidget<>(tglConstructionDetailsUI, DocumentPreviewPaneLocale.DESC_tglConstructionDetails);
+		btnShowAllConstLC = new SimpleLocalizedTextButtonWidget<>(btnShowAllConstUI, DocumentPreviewPaneLocale.DESC_btnShowAllConst);
 		
 		registerLocale(DocumentPreviewPaneLocale.INSTANCE.en);
 		registerLocale(DocumentPreviewPaneLocale.INSTANCE.de);
 
 		registerLocalizedWidget(icoHelpTextLC);
-		registerLocalizedWidget(tglConstructionDetailsLC);
+		registerLocalizedWidget(btnShowAllConstLC);
 		
 		refreshLocalization();
 	}
@@ -459,6 +527,15 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 	private void initHandlers()
 	{
 		icoCloseUI.addClickHandler(e -> hide());
+		icoCloseModalUI.addClickHandler(e -> ClientEndPoint.get().getViewport().getOverlayService().hide());
+		btnShowAllConstUI.addClickHandler(e -> {
+			OverlayService overlay = ClientEndPoint.get().getViewport().getOverlayService();
+			overlay.getOverlay().setTextAlign(TextAlign.CENTER);
+			overlay.getOverlay().setBackgroundColor(Color.ORANGE_ACCENT_1);
+			overlay.getOverlay().setTextColor(Color.BLACK);
+			
+			overlay.show(btnShowAllConstUI, pnlAllConstUI);
+		});
 	}
 	
 	private void initUI()

@@ -16,6 +16,7 @@ public final class WebRankerCoreLocale extends SimpleLocale
 	public static final String		DESC_OpTimeout = "OpTimeout";
 	public static final String		DESC_CustomCorpusTitle = "CustomCorpusTitle";
 	public static final String		DESC_VisualizeWait = "VisualizeWait";
+	public static final String		DESC_NoResultsForFilter = "NoResultsForFilter";
 
 	@Override
 	public void init()
@@ -33,6 +34,7 @@ public final class WebRankerCoreLocale extends SimpleLocale
 		en.put(DESC_OpTimeout, "The operation timed-out");
 		en.put(DESC_CustomCorpusTitle, "Uploaded Files");
 		en.put(DESC_VisualizeWait, "Please wait until the analysis is complete.");
+		en.put(DESC_NoResultsForFilter, "No results for the current settings");
 		
 		// DE
 		de.put(DESC_OpInProgessTitle, "Bestätigung");
@@ -47,6 +49,7 @@ public final class WebRankerCoreLocale extends SimpleLocale
 		de.put(DESC_OpTimeout, "Der Vorgang wurde storniert, weil er zu lange gedauert hat");
 		de.put(DESC_CustomCorpusTitle, "Hochgeladene Dateien");
 		de.put(DESC_VisualizeWait, "Bitte warten Sie, bis die bereits angefangene Analyse abschliesst");
+		de.put(DESC_NoResultsForFilter, "Keine Ergebnisse für die aktuellen Sucheinstellungen");
 	}
 	
 	public static final WebRankerCoreLocale		INSTANCE = new WebRankerCoreLocale();

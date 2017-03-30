@@ -21,7 +21,7 @@
 				
 		<m:MaterialColumn grid="l6">			
 			<m:MaterialCard ui:field="pnlCardUI" addStyleNames="{style.card}" hoverable="true">
-				<m:MaterialContainer waves="DEFAULT">
+				<m:MaterialContainer waves="LIGHT">
 					<m:MaterialRow>	
 						<m:MaterialColumn ui:field="colCompletedHeaderUI" grid="l2 m2 s3" textAlign="CENTER">
 							<m:MaterialLabel ui:field="lblNewRankUI" fontSize="3.0em" text="1"/>				

@@ -306,19 +306,19 @@ public class DocumentRanker implements AbstractDocumentRanker
 		if (hasGramScore.b)
 		{
 			Collections.sort(out.docs, (a, b) -> {
-				return (int)(scores.scores.get(a).s - scores.scores.get(b).s);
+				return -Double.compare(scores.scores.get(a).s, scores.scores.get(b).s);
 			});
 		}
 		else if (lengthParam != 0)
 		{
 			Collections.sort(out.docs, (a, b) -> {
-				return (int)(a.getNumWords() - b.getNumWords());
+				return -Integer.compare((int)a.getNumWords(), (int)b.getNumWords());
 			});
 		}
 		else
 		{
 			Collections.sort(out.docs, (a, b) -> {
-				return a.getRank() - b.getRank();
+				return Integer.compare(a.getRank(), b.getRank());
 			});
 		}
 

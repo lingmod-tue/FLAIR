@@ -117,6 +117,7 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 	private void resetUI()
 	{
 		stprUploaderUI.reset();
+		uplUploaderUI.getUploadPreview().setVisible(false);
 	}
 
 	private void initLocale()
@@ -200,13 +201,16 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 		if (ClientEndPoint.get().getWebRanker().isOperationInProgress())
 			MaterialToast.fireToast(getLocalizedString(CorpusFileUploaderLocale.DESC_OpInProgress));
 		else
+		{
 			mdlUploadUI.open();
+			uplUploaderUI.getUploadPreview().setVisible(true);
+		}
 	}
 
 	@Override
 	public void hide()
 	{
-		stprUploaderUI.reset();
+		resetUI();
 		mdlUploadUI.close();
 	}
 

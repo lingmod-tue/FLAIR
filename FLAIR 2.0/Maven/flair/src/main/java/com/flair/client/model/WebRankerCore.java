@@ -163,6 +163,8 @@ public class WebRankerCore implements AbstractWebRankerCore
 
 			results.clearCompleted();
 			results.clearInProgress();
+			results.setPanelTitle("");
+			results.setPanelSubtitle("");
 			results.show();
 			
 			presenter.showDefaultPane(false);
@@ -199,6 +201,8 @@ public class WebRankerCore implements AbstractWebRankerCore
 
 			results.clearCompleted();
 			results.clearInProgress();
+			results.setPanelTitle("");
+			results.setPanelSubtitle("");
 			results.hide();
 
 			presenter.showLoaderOverlay(false);
@@ -253,26 +257,46 @@ public class WebRankerCore implements AbstractWebRankerCore
 		void clearFilteredDocs() {
 			filteredDocs.clear();
 		}
+		
+		void updateResultsTitle()
+		{
+			if (lastOp == OperationType.CUSTOM_CORPUS)
+				results.setPanelTitle(getLocalizedString(WebRankerCoreLocale.DESC_CustomCorpusTitle));
+			
+			results.setPanelSubtitle("");
+			if (currentOp == OperationType.NONE)
+			{
+				if ((rankData != null && rankData.getRankedDocuments().isEmpty()) ||
+					parsedDocs.isEmpty())
+				{
+					results.setPanelSubtitle(getLocalizedString(WebRankerCoreLocale.DESC_NoResultsForFilter));
+				}
+			}
+		}
 
 		void refreshParsedResultsList()
 		{
 			results.clearCompleted();
-
+			
 			// add from ranked data, if available
-			int i = 1;
+			int i = 1, added = 0;
 			if (rankData != null)
 			{
 				for (RankableDocument itr : rankData.getRankedDocuments())
 				{
 					results.addCompleted(new CompletedResultItemImpl(itr, i, itr.getRank()));
 					i++;
+					added++;
 				}
 			}
 			else for (RankableDocument itr : parsedDocs)
 			{
 				results.addCompleted(new CompletedResultItemImpl(itr, i, itr.getRank()));
 				i++;
+				added++;
 			}
+			
+			updateResultsTitle();
 		}
 
 		void addInProgressItem(InProgressResultItem item, BasicDocumentTransferObject dto)
@@ -379,10 +403,8 @@ public class WebRankerCore implements AbstractWebRankerCore
 			notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_AnalysisComplete));
 		}
 		
-		void refreshLocalization(Language lang)
-		{
-			if (lastOp == OperationType.CUSTOM_CORPUS)
-				results.setPanelTitle(getLocalizedString(WebRankerCoreLocale.DESC_CustomCorpusTitle));
+		void refreshLocalization(Language lang) {
+			updateResultsTitle();
 		}
 	}
 
@@ -501,7 +523,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 			
 			langConstructions = GrammaticalConstruction.getForLanguage(getLanguage());
 			// setup colors
-			int availableColors = COLORS.length - 1;
+			int availableColors = 0;
 			for (int i = 0; i < annotatedConstructions.size(); i++)
 			{
 				Color color;

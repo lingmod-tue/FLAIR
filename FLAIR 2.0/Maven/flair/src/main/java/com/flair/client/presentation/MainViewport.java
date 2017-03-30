@@ -17,6 +17,7 @@ import com.flair.client.presentation.interfaces.CorpusUploadService;
 import com.flair.client.presentation.interfaces.CustomKeywordService;
 import com.flair.client.presentation.interfaces.NotificationService;
 import com.flair.client.presentation.interfaces.OperationCancelService;
+import com.flair.client.presentation.interfaces.OverlayService;
 import com.flair.client.presentation.interfaces.UserPromptService;
 import com.flair.client.presentation.interfaces.VisualizerService;
 import com.flair.client.presentation.widgets.CorpusFileUploader;
@@ -35,6 +36,8 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 
+import gwt.material.design.addins.client.overlay.MaterialOverlay;
+import gwt.material.design.client.base.MaterialWidget;
 import gwt.material.design.client.constants.ProgressType;
 import gwt.material.design.client.ui.MaterialButton;
 import gwt.material.design.client.ui.MaterialCardTitle;
@@ -69,6 +72,33 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		@Override
 		public void notify(String text, int timeout) {
 			MaterialToast.fireToast(text, timeout);
+		}
+	}
+	
+	static final class BasicOverlay implements OverlayService
+	{
+		private final MaterialOverlay			overlay;
+		
+		public BasicOverlay(MaterialOverlay o) {
+			overlay = o;
+		}
+
+		@Override
+		public MaterialWidget getOverlay() {
+			return overlay;
+		}
+
+		@Override
+		public void show(MaterialWidget source, Widget content)
+		{
+			overlay.clear();
+			overlay.add(content);
+			overlay.open(source);
+		}
+
+		@Override
+		public void hide() {
+			overlay.close();
 		}
 	}
 	
@@ -184,8 +214,11 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	@UiField
 	MaterialLabel									lblDefaultReadCaptionUI;
 	SimpleLocalizedTextWidget<MaterialLabel>		lblDefaultReadCaptionLC;
+	@UiField
+	MaterialOverlay									mdlOverlayUI;
 	
 	ToastNotifications								notificationService;
+	BasicOverlay									overlayService;
 	
 	private void showSearchNav(boolean visible)
 	{
@@ -387,6 +420,7 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		initWidget(uiBinder.createAndBindUi(this));
 		
 		notificationService = new ToastNotifications();
+		overlayService = new BasicOverlay(mdlOverlayUI);
 		
 		initLocale();
 		initHandlers();
@@ -406,7 +440,7 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		MaterialAnimation pulse = new MaterialAnimation(htmlSplashLogoUI);
 		pulse.setTransition(Transition.PULSE);
 		pulse.setDelayMillis(10);
-		pulse.setDurationMillis(20);
+		pulse.setDurationMillis(2000);
 		pulse.setInfinite(true);
 		pulse.animate();
 	}
@@ -415,9 +449,9 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	{
 		MaterialAnimation fadeout = new MaterialAnimation();
 		
-		fadeout.setTransition(Transition.FLIPOUTX);
-		fadeout.setDelayMillis(30);
-		fadeout.setDurationMillis(10);
+		fadeout.setTransition(Transition.SLIDEOUTDOWN);
+		fadeout.setDelayMillis(2000);
+		fadeout.setDurationMillis(1000);
 		fadeout.setInfinite(false);
 		fadeout.animate(splSplashUI, () -> {
 			splSplashUI.hide();
@@ -527,5 +561,10 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	@Override
 	public OperationCancelService getCancelService() {
 		return pnlDocResultsUI;
+	}
+
+	@Override
+	public OverlayService getOverlayService() {
+		return overlayService;
 	}
 }

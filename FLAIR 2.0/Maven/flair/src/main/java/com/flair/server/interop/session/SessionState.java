@@ -210,6 +210,7 @@ public class SessionState
 				out.setSnippet(textSnip);
 
 			out.setIdentifier(localSource.getId());		// use the id generated earlier
+			out.setRank(localSource.getId());			// in the same order the files were uploaded to the server
 		}
 
 		out.setText(source.getText());

@@ -9,6 +9,8 @@ import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import gwt.material.design.client.ui.MaterialBadge;
+import gwt.material.design.client.ui.MaterialColumn;
+import gwt.material.design.client.ui.MaterialRow;
 
 /*
  * Weight slider for grammatical constructions
@@ -18,9 +20,6 @@ public class GrammaticalConstructionWeightSlider extends GenericWeightSlider imp
 	public interface ResetHandler {
 		public void handle(GrammaticalConstructionWeightSlider source, boolean fireEvents);
 	}
-	
-	private static final String					STYLENAME_BADGE = "construction-weight-slider-badge";
-	private static final String					STYLENAME_WIDGET = "construction-weight-slider";
 	
 	private final MaterialBadge					resultCount;
 	private GrammaticalConstruction				gramConstruction;
@@ -43,19 +42,20 @@ public class GrammaticalConstructionWeightSlider extends GenericWeightSlider imp
 		resetHandler = null;
 		
 		// setup components
-		resultCount.addStyleName(STYLENAME_BADGE);
+		resultCount.setRight(35);
 		
+		MaterialRow firstRow = new MaterialRow();
+		MaterialColumn pnlToggle = new MaterialColumn();
+		MaterialColumn pnlBadge = new MaterialColumn();
+		pnlToggle.add(toggle);
+		pnlBadge.add(resultCount);
+		firstRow.add(pnlToggle);
+		firstRow.add(pnlBadge);
 		VerticalPanel container = new VerticalPanel();
-//		togglePanel.add(toggle);
-//		togglePanel.add(resultCount);
-//		container.add(togglePanel);
-		container.add(toggle);
-		container.add(resultCount);
+		container.add(firstRow);
 		container.add(slider);
 		
 		initWidget(container);
-		setStyleName(STYLENAME_WIDGET);
-		
 		initLocale();
 	}
 	

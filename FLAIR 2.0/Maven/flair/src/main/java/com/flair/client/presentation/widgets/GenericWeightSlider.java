@@ -3,8 +3,6 @@ package com.flair.client.presentation.widgets;
 import com.flair.client.ClientEndPoint;
 import com.flair.client.localization.LocalizedComposite;
 import com.google.gwt.uibinder.client.UiConstructor;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 
 import gwt.material.design.client.ui.MaterialCheckBox;
 import gwt.material.design.client.ui.MaterialRange;
@@ -21,11 +19,7 @@ public abstract class GenericWeightSlider extends LocalizedComposite
 	public interface WeightChangeHandler {
 		public void handle(GenericWeightSlider source, double newValue);
 	}
-	
-	protected static final String		STYLENAME_TOGGLE = "generic-weight-slider-toggle";
-	protected static final String		STYLENAME_WRAPPER = "generic-weight-slider-wrapper";
-	protected static final String		STYLENAME_SLIDER = "generic-weight-slider-slider";
-	
+		
 	protected static final int		SLIDER_MIN_VAL = 0;
 	protected static final int		SLIDER_MAX_VAL = 5;
 	protected static final int		SLIDER_STEP = 1;
@@ -40,8 +34,6 @@ public abstract class GenericWeightSlider extends LocalizedComposite
 	
 	protected final MaterialCheckBox	toggle;
 	protected final MaterialRange 		slider;
-	protected final HorizontalPanel		togglePanel;
-	protected final FlowPanel			sliderPanel;
 	private ToggleHandler				toggleHandler;
 	private WeightChangeHandler			weightHandler;
 	
@@ -68,12 +60,7 @@ public abstract class GenericWeightSlider extends LocalizedComposite
 		slider.setMin(SLIDER_MIN_VAL);
 		slider.setMax(SLIDER_MAX_VAL);
 		slider.setValue(SLIDER_MIN_VAL);
-		
-		slider.addStyleName(STYLENAME_SLIDER);
-		sliderPanel.setStyleName(STYLENAME_WRAPPER);
-		togglePanel.setStyleName(STYLENAME_TOGGLE);
-		
-		sliderPanel.add(slider);
+		slider.setPadding(3);
 		
 		toggle.addValueChangeHandler(e -> {
 			onToggle();
@@ -89,8 +76,6 @@ public abstract class GenericWeightSlider extends LocalizedComposite
 		super(ClientEndPoint.get().getLocalization());
 		toggle = new MaterialCheckBox();
 		slider = new MaterialRange();
-		togglePanel = new HorizontalPanel();
-		sliderPanel = new FlowPanel();
 		
 		initCtor();
 	}
@@ -137,13 +122,7 @@ public abstract class GenericWeightSlider extends LocalizedComposite
 		return slider.isVisible();
 	}
 	
-	public void setSliderVisible(boolean val)
-	{
+	public void setSliderVisible(boolean val) {
 		slider.setVisible(val);
-		
-		if (isVisible() == false)
-			sliderPanel.remove(slider);
-		else
-			sliderPanel.add(slider);
 	}
 }

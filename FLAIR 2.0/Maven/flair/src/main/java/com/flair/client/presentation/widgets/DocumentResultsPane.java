@@ -73,10 +73,9 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 					selectHandler.handle(parent);
 			});
 		}
-	
 		
 		Widget getWidget() {
-			return displayItem.getWidget();
+			return displayItem;
 		}
 	}
 	
@@ -113,11 +112,11 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 		private void addDisplayItem(DisplayItem item, HasWidgets container)
 		{
 			container.add(item.getWidget());
-			animate(item.getWidget(), Transition.FADEINRIGHT, 0, 1000);
+			animate(item.getWidget(), Transition.FADEINRIGHT, 0, 850);
 		}
 		
 		private void removeDisplayItem(DisplayItem item, HasWidgets container) {
-			animate(item.getWidget(), Transition.FADEOUTUP, 0, 1000, () -> container.remove(item.getWidget()));
+			animate(item.getWidget(), Transition.FADEOUTUP, 0, 850, () -> container.remove(item.getWidget()));
 		}
 		
 		private void validatePlaceholders()

@@ -4,6 +4,7 @@ import com.flair.client.localization.locale.KeywordWeightSliderLocale;
 import com.flair.client.presentation.interfaces.CanReset;
 import com.flair.shared.grammar.Language;
 import com.google.gwt.uibinder.client.UiConstructor;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 import gwt.material.design.client.constants.Color;
@@ -19,8 +20,6 @@ public class KeywordWeightSlider extends GenericWeightSlider implements CanReset
 	public interface ClickHandler {
 		public void handle(KeywordWeightSlider source);
 	}
-	
-	private static final String		STYLENAME_WIDGET = "construction-weight-slider";
 	
 	private final MaterialIcon		editKeywords;
 	private final MaterialIcon 		resetKeywords;
@@ -44,7 +43,9 @@ public class KeywordWeightSlider extends GenericWeightSlider implements CanReset
 		editHandler = resetHandler = null;
 		customVocab = false;
 		
-		// setup components		
+		// setup components
+		setEnabled(false, false);
+		
 		editKeywords.setWaves(WavesType.DEFAULT);
 		editKeywords.setCircle(true);
 		editKeywords.setIconColor(Color.BLUE);
@@ -64,16 +65,15 @@ public class KeywordWeightSlider extends GenericWeightSlider implements CanReset
 		});
 		
 		VerticalPanel container = new VerticalPanel();
+		HorizontalPanel togglePanel = new HorizontalPanel();
 		togglePanel.add(toggle);
 		togglePanel.add(editKeywords);
 		togglePanel.add(resetKeywords);
 		
 		container.add(togglePanel);
-		container.add(sliderPanel);
+		container.add(slider);
 		
 		initWidget(container);
-		setStyleName(STYLENAME_WIDGET);
-		
 		initLocale();
 	}
 	
@@ -111,7 +111,7 @@ public class KeywordWeightSlider extends GenericWeightSlider implements CanReset
 
 	
 	@Override
-	public void resetState(boolean fireEvents) 
+	public void resetState(boolean fireEvents)
 	{
 		setEnabled(false, fireEvents);
 		setWeight(SLIDER_MIN_VAL, fireEvents);

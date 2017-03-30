@@ -1,15 +1,15 @@
 package com.flair.client.localization;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import com.flair.client.localization.interfaces.AbstractLocalizationWrapper;
-import com.google.gwt.dev.util.collect.HashSet;
 import com.google.gwt.user.client.ui.Widget;
 
 /*
  * Localization wrapper around GWT widgets with multiple localizable fields
  */
-public class ComplexLocalizedWidget<T> implements AbstractLocalizationWrapper 
+public class ComplexLocalizedWidget<T> implements AbstractLocalizationWrapper
 {
 	public interface Updateable<T>
 	{
