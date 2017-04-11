@@ -9,6 +9,7 @@ import com.flair.client.ClientEndPoint;
 import com.flair.client.localization.LocalizedComposite;
 import com.flair.client.localization.SimpleLocalizedTextButtonWidget;
 import com.flair.client.localization.locale.DocumentResultsPaneLocale;
+import com.flair.client.presentation.GlobalWidgetAnimator;
 import com.flair.client.presentation.interfaces.AbstractDocumentResultsPane;
 import com.flair.client.presentation.interfaces.AbstractResultItem;
 import com.flair.client.presentation.interfaces.AbstractResultItem.Type;
@@ -289,23 +290,16 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 	@Override
 	public void show()
 	{
-		pnlRootUI.setVisible(true);
-		MaterialAnimation anim = new MaterialAnimation(pnlRootUI);
-		anim.setDelayMillis(0);
-		anim.setDurationMillis(1000);
-		anim.setTransition(Transition.FADEINDOWN);
-		anim.animate();
+		GlobalWidgetAnimator.get().animateWithStart(pnlRootUI,
+				Transition.FADEINDOWN, 0, 1000, () -> pnlRootUI.setVisible(true));
 	}
 	
 
 	@Override
 	public void hide()
 	{
-		MaterialAnimation anim = new MaterialAnimation(pnlRootUI);
-		anim.setDelayMillis(0);
-		anim.setDurationMillis(1000);
-		anim.setTransition(Transition.FADEOUTUP);
-		anim.animate(() -> pnlRootUI.setVisible(false));
+		GlobalWidgetAnimator.get().animateWithStop(pnlRootUI,
+				Transition.FADEOUTUP, 0, 1000, () -> pnlRootUI.setVisible(false));
 	}
 
 	@Override
@@ -322,19 +316,15 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 	
 	public void setCancelVisible(boolean visible)
 	{
-		MaterialAnimation anim = new MaterialAnimation(btnCancelOpUI);
-		anim.setDelayMillis(0);
-		anim.setDurationMillis(450);
 		if (visible)
 		{
-			anim.setTransition(Transition.ZOOMIN);
-			btnCancelOpUI.setVisible(true);
-			anim.animate();
+			GlobalWidgetAnimator.get().animateWithStart(btnCancelOpUI,
+					Transition.ZOOMIN, 0, 450, () -> btnCancelOpUI.setVisible(true));
 		}
 		else
 		{
-			anim.setTransition(Transition.ZOOMOUT);
-			anim.animate(() -> btnCancelOpUI.setVisible(false));
+			GlobalWidgetAnimator.get().animateWithStop(btnCancelOpUI,
+					Transition.ZOOMOUT, 0, 450, () -> btnCancelOpUI.setVisible(false));
 		}
 	}
 }

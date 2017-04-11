@@ -11,13 +11,12 @@ import gwt.material.design.client.ui.MaterialRange;
  */
 public class DocumentLengthSlider extends Composite implements CanReset
 {
-	public interface ChangeHandler {
-		public void handle(double newVal);
+	public interface WeightChangeHandler {
+		public void handle(int newVal);
 	}
 	
 	private static final int		SLIDER_MIN_VAL = 0;
 	private static final int		SLIDER_MAX_VAL = 5;
-	private static final int		SLIDER_STEP = 1;
 	
 	public static int getSliderMin() {
 		return SLIDER_MIN_VAL;
@@ -27,46 +26,39 @@ public class DocumentLengthSlider extends Composite implements CanReset
 		return SLIDER_MAX_VAL;
 	}
 	
-	private static final String		STYLENAME_WRAPPER = "doc-length-slider-wrapper";
-	private static final String		STYLENAME_SLIDER = "doc-length-slider-slider";
-	private static final String		STYLENAME_WIDGET = "doc-length-slider";
-	
 	private final MaterialRange		slider;
-	private ChangeHandler			changeHandler;
+	private WeightChangeHandler		changeHandler;
 	
 	public DocumentLengthSlider()
 	{
 		changeHandler = null;
 		slider = new MaterialRange(SLIDER_MIN_VAL, SLIDER_MAX_VAL, SLIDER_MAX_VAL);
-		slider.addStyleName(STYLENAME_SLIDER);
 		
 		FlowPanel container = new FlowPanel();
-		container.setStyleName(STYLENAME_WRAPPER);
 		container.add(slider);
 		
 		initWidget(container);
-		setStyleName(STYLENAME_WIDGET);
 		
 		slider.addValueChangeHandler(e -> {
 			if (changeHandler != null)
-				changeHandler.handle(getValue());
+				changeHandler.handle(getWeight());
 		});
 	}
 
-	public double getValue() {
+	public int getWeight() {
 		return slider.getValue();
 	}
 	
-	public void setValue(int val, boolean fireEvent) {
+	public void setWeight(int val, boolean fireEvent) {
 		slider.setValue(val, fireEvent);
 	}
 	
-	public void setChangeHandler(ChangeHandler handler) {
+	public void setWeightChangeHandler(WeightChangeHandler handler) {
 		changeHandler = handler;
 	}
 
 	@Override
 	public void resetState(boolean fireEvents) {
-		setValue(SLIDER_MAX_VAL, fireEvents);
+		setWeight(SLIDER_MAX_VAL, fireEvents);
 	}
 }

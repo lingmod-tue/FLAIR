@@ -5,6 +5,7 @@ import com.flair.client.presentation.widgets.DocumentLengthSlider;
 import com.flair.client.presentation.widgets.KeywordWeightSlider;
 import com.flair.client.presentation.widgets.LanguageSpecificConstructionSliderBundle;
 import com.flair.shared.grammar.Language;
+import com.flair.shared.interop.ConstructionSettingsProfile;
 import com.flair.shared.parser.DocumentReadabilityLevel;
 
 /*
@@ -32,5 +33,6 @@ public interface AbstractRankerSettingsPane
 	public KeywordWeightSlider							getKeywordSlider();
 	
 	public boolean										isDocLevelEnabled(DocumentReadabilityLevel level);
+	public void											applySettingsProfile(ConstructionSettingsProfile profile, boolean fireEvents);
 	
 }

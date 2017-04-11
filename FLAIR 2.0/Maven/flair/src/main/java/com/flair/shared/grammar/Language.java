@@ -5,17 +5,13 @@
  */
 package com.flair.shared.grammar;
 
-import com.google.gson.annotations.SerializedName;
-
 /**
  * Represents the languages FLAIR supports
  * @author shadeMe
  */
 public enum Language
 {
-    @SerializedName("ENGLISH")
     ENGLISH,
-    @SerializedName("GERMAN")
     GERMAN,
     ;
     

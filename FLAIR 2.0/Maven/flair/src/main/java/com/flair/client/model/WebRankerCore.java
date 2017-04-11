@@ -19,6 +19,7 @@ import com.flair.client.model.interfaces.DocumentAnnotatorInput;
 import com.flair.client.model.interfaces.DocumentAnnotatorOutput;
 import com.flair.client.model.interfaces.DocumentRankerInput;
 import com.flair.client.model.interfaces.DocumentRankerOutput;
+import com.flair.client.model.interfaces.SettingsExportService;
 import com.flair.client.presentation.interfaces.AbstractDocumentPreviewPane;
 import com.flair.client.presentation.interfaces.AbstractDocumentResultsPane;
 import com.flair.client.presentation.interfaces.AbstractRankerSettingsPane;
@@ -43,14 +44,18 @@ import com.flair.shared.grammar.Language;
 import com.flair.shared.interop.AbstractMessageReceiver;
 import com.flair.shared.interop.AuthToken;
 import com.flair.shared.interop.BasicDocumentTransferObject;
+import com.flair.shared.interop.ConstructionSettingsProfile;
+import com.flair.shared.interop.ConstructionSettingsProfileImpl;
 import com.flair.shared.interop.RankableDocument;
 import com.flair.shared.interop.RankableWebSearchResult;
 import com.flair.shared.interop.ServerMessage;
 import com.flair.shared.interop.UploadedDocument;
 import com.flair.shared.interop.services.WebRankerServiceAsync;
 import com.flair.shared.parser.DocumentReadabilityLevel;
+import com.google.gwt.http.client.URL;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 
 import gwt.material.design.client.constants.Color;
 
@@ -117,6 +122,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 		OperationParams		params;
 		Timer				timeout;
 
+		ConstructionSettingsProfile		importedSettings;	// from the URL
 		List<RankableDocument>			parsedDocs;			// main data store
 		Map<Integer, InProgressData>	inProgress;			// DTO ids -> result items
 		int								receivedInprogress;
@@ -146,6 +152,8 @@ public class WebRankerCore implements AbstractWebRankerCore
 					}
 				}
 			};
+			
+			importedSettings = null;
 		}
 
 		void begin(OperationParams p)
@@ -230,6 +238,10 @@ public class WebRankerCore implements AbstractWebRankerCore
 
 		boolean isCorpusUpload() {
 			return currentOp == OperationType.CUSTOM_CORPUS;
+		}
+		
+		void setImportedSettings(ConstructionSettingsProfile profile) {
+			importedSettings = profile;
 		}
 
 		void rerank()
@@ -341,6 +353,19 @@ public class WebRankerCore implements AbstractWebRankerCore
 				refreshParsedResultsList();
 			}
 		}
+		
+		void applyImportedSettings()
+		{
+			if (importedSettings != null)
+			{
+				// apply any relevant settings
+				if (importedSettings.getLanguage() == lastUsedLang)
+				{
+					settings.applySettingsProfile(importedSettings, false);
+					notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_AppliedImportedSettings));
+				}
+			}
+		}
 
 		void finalizeOp()
 		{
@@ -395,8 +420,9 @@ public class WebRankerCore implements AbstractWebRankerCore
 				itr.setRank(i);
 				i++;
 			}
-
-			// rerank and display
+			
+			// apply custom settings, if any, rerank and display
+			applyImportedSettings();
 			rerank();
 			refreshParsedResultsList();
 
@@ -463,7 +489,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 
 		@Override
 		public double getDocLengthWeight() {
-			return settings.getLengthSlider().getValue();
+			return settings.getLengthSlider().getWeight();
 		}
 
 		@Override
@@ -664,12 +690,145 @@ public class WebRankerCore implements AbstractWebRankerCore
 			return state.isDocFiltered(doc);
 		}
 	}
+	
+	final class SettingsUrlExporter implements SettingsExportService
+	{
+		private final String			PARAM_SIGIL = "encodedSettings";
+		private final String			PARAM_LANGUAGE = "lang";
+		private final String			PARAM_DOCLEVEL_A = "docLevelA";
+		private final String			PARAM_DOCLEVEL_B = "docLevelB";
+		private final String			PARAM_DOCLEVEL_C = "docLevelC";
+		private final String			PARAM_KEYWORDS = "keywords";
+		
+		private final String			PARAM_VAL_SEPARATOR = "_";
+		
+		private String generateParamVal(boolean enabled, int weight) {
+			return enabled + PARAM_VAL_SEPARATOR + weight;
+		}
+		
+		private boolean isWeightEnabled(String paramVal)
+		{
+			int idx = paramVal.indexOf(PARAM_VAL_SEPARATOR);
+			if (idx == -1)
+				return false;
+			else
+				return paramVal.substring(0, idx).equalsIgnoreCase("1") ? true : false;
+		}
+		
+		private int getWeight(String paramVal)
+		{
+			int idx = paramVal.indexOf(PARAM_VAL_SEPARATOR);
+			if (idx == -1)
+				return 0;
+			else
+				return Integer.parseInt(paramVal.substring(idx + 1, paramVal.length()));
+		}
+		
+		private String getConstructionTag(GrammaticalConstruction gram) {
+			return gram.getID();
+		}
+		
+		private void buildUrl(StringBuilder sb, String param, String value) {
+			sb.append(param).append("=").append(value).append("&");
+		}
+		
+		@Override
+		public ConstructionSettingsProfile importSettings()
+		{
+			ConstructionSettingsProfileImpl out = null;
+			
+			// check for the export sigil
+			if (Window.Location.getParameter(PARAM_SIGIL) != null)
+			{
+				String ls = Window.Location.getParameter(PARAM_LANGUAGE);
+				if (ls != null)
+				{
+					Language l = Language.fromString(ls);
+					out = new ConstructionSettingsProfileImpl();
+					
+					out.setLanguage(l);
+					
+					String lvla = Window.Location.getParameter(PARAM_DOCLEVEL_A),
+							lvlb = Window.Location.getParameter(PARAM_DOCLEVEL_B),
+							lvlc = Window.Location.getParameter(PARAM_DOCLEVEL_C),
+							kw = Window.Location.getParameter(PARAM_KEYWORDS);
+					
+					if (lvla != null)
+						out.setDocLevelEnabled(DocumentReadabilityLevel.LEVEL_A, lvla.equalsIgnoreCase("1") ? true : false);
+				
+					if (lvlb != null)
+						out.setDocLevelEnabled(DocumentReadabilityLevel.LEVEL_B, lvlb.equalsIgnoreCase("1") ? true : false);
+				
+					if (lvlc != null)
+						out.setDocLevelEnabled(DocumentReadabilityLevel.LEVEL_C, lvlc.equalsIgnoreCase("1") ? true : false);
+				
+					if (kw != null)
+					{
+						boolean enabled = isWeightEnabled(kw);
+						int weight = getWeight(kw);
+						
+						out.getKeywords().setEnabled(enabled);
+						out.getKeywords().setWeight(weight);
+					}
+					
+					// run through all of the lang's grams
+					for (GrammaticalConstruction itr : GrammaticalConstruction.getForLanguage(l))
+					{
+						String g = Window.Location.getParameter(getConstructionTag(itr));
+						if (g != null)
+							out.setGramData(itr, isWeightEnabled(g), getWeight(g));
+					}
+				}
+			}
+			
+			return out;
+		}
+
+		@Override
+		public String exportSettings(ConstructionSettingsProfile settings)
+		{
+			StringBuilder sb = new StringBuilder();
+			
+			// append the base URL
+			sb.append(Window.Location.getHost())
+			  .append(Window.Location.getPath())
+			  .append("?");
+			
+			// append sigil, language, doc levels and keyword settings
+			buildUrl(sb, PARAM_SIGIL, "1");
+			
+			buildUrl(sb, PARAM_LANGUAGE, settings.getLanguage().toString());
+			buildUrl(sb, PARAM_DOCLEVEL_A, "" + settings.isDocLevelEnabled(DocumentReadabilityLevel.LEVEL_A));
+			buildUrl(sb, PARAM_DOCLEVEL_B, "" + settings.isDocLevelEnabled(DocumentReadabilityLevel.LEVEL_B));
+			buildUrl(sb, PARAM_DOCLEVEL_C, "" + settings.isDocLevelEnabled(DocumentReadabilityLevel.LEVEL_C));
+			buildUrl(sb, PARAM_KEYWORDS, generateParamVal(settings.isKeywordsEnabled(), settings.getKeywordsWeight()));
+			
+			// append all of the language's gram constructions that have non-default values (either disabled or have non-zero weights)
+			for (GrammaticalConstruction itr : GrammaticalConstruction.getForLanguage(settings.getLanguage()))
+			{
+				if (settings.hasConstruction(itr))
+				{
+					boolean enabled = settings.isConstructionEnabled(itr);
+					int weight = settings.getConstructionWeight(itr);
+					
+					if (enabled == false || weight != 0)
+						buildUrl(sb, getConstructionTag(itr), generateParamVal(enabled, weight));
+				}
+			}
+
+			// remove the trailing ampersand and encode the URL
+			String out = sb.toString();
+			return URL.encode(out.substring(0, out.length() - 1));
+		}
+		
+	}
 
 	private AuthToken						token;
 	private AbstractWebRankerPresenter		presenter;
 	private final AbstractDocumentRanker	ranker;
 	private final AbstractDocumentAnnotator	annotator;
 	private final AbstractMessageReceiver	messagePipeline;
+	private final SettingsExportService		exporter;
 	private AbstractRankerSettingsPane		settings;
 	private AbstractDocumentResultsPane		results;
 	private AbstractDocumentPreviewPane		preview;
@@ -690,6 +849,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 		ranker = r;
 		annotator = a;
 		messagePipeline = m;
+		exporter = new SettingsUrlExporter();
 
 		settings = null;
 		results = null;
@@ -717,7 +877,9 @@ public class WebRankerCore implements AbstractWebRankerCore
 		visualizer = presenter.getVisualizerService();
 		cancel = presenter.getCancelService();
 		
-		// settings.setExportSettingsHandler(null);
+		settings.setExportSettingsHandler(() -> {
+			
+		});
 		settings.setVisualizeHandler(() -> {
 			if (state.hasOperation())
 				notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_VisualizeWait));

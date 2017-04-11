@@ -17,6 +17,8 @@ public final class WebRankerCoreLocale extends SimpleLocale
 	public static final String		DESC_CustomCorpusTitle = "CustomCorpusTitle";
 	public static final String		DESC_VisualizeWait = "VisualizeWait";
 	public static final String		DESC_NoResultsForFilter = "NoResultsForFilter";
+	public static final String		DESC_ImportedSettings = "ImportedSettings";
+	public static final String		DESC_AppliedImportedSettings = "AppliedImportedSettings";
 
 	@Override
 	public void init()
@@ -35,6 +37,8 @@ public final class WebRankerCoreLocale extends SimpleLocale
 		en.put(DESC_CustomCorpusTitle, "Uploaded Files");
 		en.put(DESC_VisualizeWait, "Please wait until the analysis is complete.");
 		en.put(DESC_NoResultsForFilter, "No results for the current settings");
+		en.put(DESC_ImportedSettings, "FLAIR will automatically apply your custom settings");
+		en.put(DESC_AppliedImportedSettings, "Applied custom settings");
 		
 		// DE
 		de.put(DESC_OpInProgessTitle, "Bestätigung");
@@ -50,6 +54,8 @@ public final class WebRankerCoreLocale extends SimpleLocale
 		de.put(DESC_CustomCorpusTitle, "Hochgeladene Dateien");
 		de.put(DESC_VisualizeWait, "Bitte warten Sie, bis die bereits angefangene Analyse abschliesst");
 		de.put(DESC_NoResultsForFilter, "Keine Ergebnisse für die aktuellen Sucheinstellungen");
+		de.put(DESC_ImportedSettings, "FLAIR wird Ihre benutzerdefinierten Einstellungen automatisch übernehmen");
+		de.put(DESC_AppliedImportedSettings, "Benutzerdefinierte Einstellungen wurden übernommen");
 	}
 	
 	public static final WebRankerCoreLocale		INSTANCE = new WebRankerCoreLocale();

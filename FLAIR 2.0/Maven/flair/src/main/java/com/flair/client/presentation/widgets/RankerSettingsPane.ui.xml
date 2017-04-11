@@ -85,7 +85,7 @@
 			<m:MaterialRow depth="990" paddingBottom="20">
 				<m:MaterialRow textAlign="CENTER">
 					<m:MaterialButton ui:field="btnConstructionsListUI" text="List Of Constructions"
-						type="FLAT" waves="DEFAULT" backgroundColor="WHITE" textColor="BLUE"/>
+						type="FLAT" waves="DEFAULT" backgroundColor="WHITE" textColor="BLUE" visible="false"/>
 				</m:MaterialRow>
 				
 				<!-- Weight Sliders -->

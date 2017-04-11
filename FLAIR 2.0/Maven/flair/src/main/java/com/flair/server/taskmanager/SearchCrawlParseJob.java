@@ -108,7 +108,7 @@ final class SearchCrawlParseJob extends AbstractJob<SearchCrawlParseJobOutput, S
 					SearchResult sr = result.getOutput();
 					// check token count and queue parse task if valid
 					StringTokenizer tokenizer = new StringTokenizer(sr.getPageText(), " ");
-					if (MINIMUM_TOKEN_COUNT >= tokenizer.countTokens())
+					if (MINIMUM_TOKEN_COUNT < tokenizer.countTokens())
 					{
 						notifyListeners(new SearchCrawlParseJobEvent(sr));
 						numValidResults++;

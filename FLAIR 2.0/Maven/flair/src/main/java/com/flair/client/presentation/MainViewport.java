@@ -427,35 +427,31 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		initUI();
 	}
 	
-	@Override
-	public void setLocalization(Language lang)
+	public void showSplash(boolean visible)
 	{
-		super.setLocalization(lang);
-	}
-	
-	public void showSplash()
-	{
-		splSplashUI.show();
-		
-		MaterialAnimation pulse = new MaterialAnimation(htmlSplashLogoUI);
-		pulse.setTransition(Transition.PULSE);
-		pulse.setDelayMillis(10);
-		pulse.setDurationMillis(2000);
-		pulse.setInfinite(true);
-		pulse.animate();
-	}
-	
-	public void hideSplash()
-	{
-		MaterialAnimation fadeout = new MaterialAnimation();
-		
-		fadeout.setTransition(Transition.SLIDEOUTDOWN);
-		fadeout.setDelayMillis(2000);
-		fadeout.setDurationMillis(1000);
-		fadeout.setInfinite(false);
-		fadeout.animate(splSplashUI, () -> {
-			splSplashUI.hide();
-		});
+		if (visible)
+		{
+			splSplashUI.show();
+			
+			MaterialAnimation pulse = new MaterialAnimation(htmlSplashLogoUI);
+			pulse.setTransition(Transition.PULSE);
+			pulse.setDelayMillis(10);
+			pulse.setDurationMillis(2000);
+			pulse.setInfinite(true);
+			pulse.animate();
+		}
+		else
+		{
+			MaterialAnimation fadeout = new MaterialAnimation();
+			
+			fadeout.setTransition(Transition.SLIDEOUTDOWN);
+			fadeout.setDelayMillis(2000);
+			fadeout.setDurationMillis(1000);
+			fadeout.setInfinite(false);
+			fadeout.animate(splSplashUI, () -> {
+				splSplashUI.hide();
+			});
+		}
 	}
 	
 	public void setSplashTitle(String text) {
@@ -524,22 +520,17 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	@Override
 	public void showDefaultPane(boolean visible)
 	{
-		MaterialAnimation anim = new MaterialAnimation(pnlDefaultPlaceholderUI);
-		
-		anim.setDurationMillis(1000);
 		if (visible)
 		{
-			pnlDefaultPlaceholderUI.setVisible(true);
-			anim.setDelayMillis(10);
-			anim.setTransition(Transition.ZOOMINUP);
-			anim.animate();
+			GlobalWidgetAnimator.get().animateWithStart(pnlDefaultPlaceholderUI,
+					Transition.ZOOMINUP, 10, 800, () -> pnlDefaultPlaceholderUI.setVisible(true));
 		}
 		else
 		{
-			pnlDefaultPlaceholderUI.setVisible(true);
-			anim.setDelayMillis(10);
-			anim.setTransition(Transition.ZOOMOUTUP);
-			anim.animate(() -> pnlDefaultPlaceholderUI.setVisible(false));
+			GlobalWidgetAnimator.get().animateWithStartStop(pnlDefaultPlaceholderUI,
+					Transition.ZOOMOUTUP, 10, 800,
+					() -> pnlDefaultPlaceholderUI.setVisible(true),
+					() -> pnlDefaultPlaceholderUI.setVisible(false));
 		}
 	}
 

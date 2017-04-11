@@ -11,7 +11,9 @@ import com.flair.client.model.interfaces.DocumentRankerOutput.Rank;
 import com.flair.client.presentation.interfaces.AbstractRankerSettingsPane;
 import com.flair.client.presentation.widgets.sliderbundles.ConstructionSliderBundleEnglish;
 import com.flair.client.presentation.widgets.sliderbundles.ConstructionSliderBundleGerman;
+import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
+import com.flair.shared.interop.ConstructionSettingsProfile;
 import com.flair.shared.parser.DocumentReadabilityLevel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -263,7 +265,7 @@ public class RankerSettingsPane extends LocalizedComposite implements AbstractRa
 		btnVisualizeUI.addClickHandler(e -> state.onVisualize());
 		btnExportSettingsUI.addClickHandler(e -> state.onExport());
 		
-		sldDocLengthUI.setChangeHandler((v) -> state.onSettingChange());
+		sldDocLengthUI.setWeightChangeHandler((v) -> state.onSettingChange());
 		
 		sldKeywordsUI.setWeightChangeHandler((w, v) -> state.onSettingChange());
 		sldKeywordsUI.setToggleHandler((w, v) -> state.onSettingChange());
@@ -409,5 +411,30 @@ public class RankerSettingsPane extends LocalizedComposite implements AbstractRa
 	@Override
 	public void setResetAllHandler(EventHandler handler) {
 		state.setResetHandler(handler);
+	}
+
+	@Override
+	public void applySettingsProfile(ConstructionSettingsProfile profile, boolean fireEvents)
+	{
+		chkTextLevelAUI.setValue(profile.isDocLevelEnabled(DocumentReadabilityLevel.LEVEL_A), false);
+		chkTextLevelBUI.setValue(profile.isDocLevelEnabled(DocumentReadabilityLevel.LEVEL_B), false);
+		chkTextLevelCUI.setValue(profile.isDocLevelEnabled(DocumentReadabilityLevel.LEVEL_C), false);
+		
+		sldDocLengthUI.setWeight(profile.getDocLengthWeight(), false);
+		sldKeywordsUI.setEnabled(profile.isKeywordsEnabled(), false);
+		sldKeywordsUI.setWeight(profile.getKeywordsWeight(), false);
+		
+		for (GrammaticalConstruction itr : GrammaticalConstruction.getForLanguage(getSliderBundle().getLanguage()))
+		{
+			GrammaticalConstructionWeightSlider slider = getSliderBundle().getWeightSlider(itr);
+			if (slider != null && profile.hasConstruction(itr))
+			{
+				slider.setWeight(profile.getConstructionWeight(itr), false);
+				slider.setEnabled(profile.isConstructionEnabled(itr), false);
+			}
+		}
+		
+		if (fireEvents)
+			state.onSettingChange();
 	}
 }

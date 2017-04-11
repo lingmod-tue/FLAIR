@@ -52,7 +52,7 @@ public class ClientEndPoint
 	{
 		viewport.setSplashTitle("");
 		viewport.setSplashSubtitle("");
-		viewport.showSplash();
+		viewport.showSplash(true);
 		
 		sessionService.beginSession(new AsyncCallback<AuthToken>() {
 			@Override
@@ -74,7 +74,7 @@ public class ClientEndPoint
 					break;
 				case VALID:
 					ClientLogger.get().info("Session token assigned. ID: " + clientToken);
-					viewport.hideSplash();
+					viewport.showSplash(false);
 					
 					Window.addWindowClosingHandler(e -> {
 						deinit();

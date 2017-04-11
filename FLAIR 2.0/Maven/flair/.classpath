@@ -33,16 +33,16 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/shadeMe/Documents/FLAIR/SVN/lib/stanford_nlp/stanford-corenlp-3.6.0.jar"/>
-	<classpathentry kind="lib" path="C:/Users/shadeMe/Documents/FLAIR/SVN/lib/stanford_nlp/stanford-corenlp-3.6.0-models.jar"/>
-	<classpathentry kind="lib" path="C:/Users/shadeMe/Documents/FLAIR/SVN/lib/stanford_nlp/stanford-german-2016-01-19-models.jar"/>
-	<classpathentry kind="lib" path="C:/Users/shadeMe/Documents/FLAIR/SVN/lib/stanford_nlp/stanford-srparser-2014-10-23-models.jar"/>
-	<classpathentry kind="lib" path="C:/Users/shadeMe/Documents/FLAIR/SVN/lib/stanford_nlp/stanford-tregex-3.6.0.jar"/>
 	<classpathentry kind="src" output="target/flair-2.0/WEB-INF/classes" path="target/generated-sources/gwt">
 		<attributes>
 			<attribute name="optional" value="true"/>
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/stanford-corenlp-3.6.0.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/stanford-corenlp-3.6.0-models.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/stanford-german-2016-01-19-models.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/stanford-srparser-2014-10-23-models.jar"/>
+	<classpathentry kind="lib" path="src/main/webapp/WEB-INF/lib/stanford-tregex-3.6.0.jar"/>
 	<classpathentry kind="output" path="target/flair-2.0/WEB-INF/classes"/>
 </classpath>
