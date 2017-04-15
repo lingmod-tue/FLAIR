@@ -98,6 +98,9 @@
 		<!-- Visualizer Modal -->
 		<flair:DocumentCollectionVisualizer ui:field="mdlVisualizerUI"/>
 		
+		<!-- Url Exporter Modal -->
+		<flair:SettingsExporter ui:field="mdlExporterUI"/>
+		
 		<!-- Prompt Modal -->
 		<flair:ModalPrompt ui:field="mdlPromptUI"/>
 	

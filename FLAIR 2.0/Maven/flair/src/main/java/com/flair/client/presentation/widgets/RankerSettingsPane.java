@@ -14,6 +14,7 @@ import com.flair.client.presentation.widgets.sliderbundles.ConstructionSliderBun
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
 import com.flair.shared.interop.ConstructionSettingsProfile;
+import com.flair.shared.interop.ConstructionSettingsProfileImpl;
 import com.flair.shared.parser.DocumentReadabilityLevel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -436,5 +437,27 @@ public class RankerSettingsPane extends LocalizedComposite implements AbstractRa
 		
 		if (fireEvents)
 			state.onSettingChange();
+	}
+
+	@Override
+	public ConstructionSettingsProfile generateSettingsProfile()
+	{
+		ConstructionSettingsProfileImpl out = new ConstructionSettingsProfileImpl();
+		
+		out.setLanguage(getSliderBundle().getLanguage());
+		out.setDocLengthWeight(sldDocLengthUI.getWeight());
+		out.setKeywordsData(sldKeywordsUI.isEnabled(), sldKeywordsUI.getWeight());
+		out.setDocLevelEnabled(DocumentReadabilityLevel.LEVEL_A, chkTextLevelAUI.getValue());
+		out.setDocLevelEnabled(DocumentReadabilityLevel.LEVEL_B, chkTextLevelBUI.getValue());
+		out.setDocLevelEnabled(DocumentReadabilityLevel.LEVEL_C, chkTextLevelCUI.getValue());
+		
+		for (GrammaticalConstruction itr : GrammaticalConstruction.getForLanguage(getSliderBundle().getLanguage()))
+		{
+			GrammaticalConstructionWeightSlider slider = getSliderBundle().getWeightSlider(itr);
+			if (slider != null)
+				out.setGramData(itr, slider.isEnabled(), slider.getWeight());
+		}
+		
+		return out;
 	}
 }

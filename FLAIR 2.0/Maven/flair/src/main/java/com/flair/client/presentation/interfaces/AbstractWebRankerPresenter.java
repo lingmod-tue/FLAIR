@@ -16,6 +16,7 @@ public interface AbstractWebRankerPresenter
 	public VisualizerService					getVisualizerService();
 	public OperationCancelService				getCancelService();
 	public OverlayService						getOverlayService();
+	public SettingsUrlExporterView				getSettingsUrlExporterView();
 	
 	public void									showLoaderOverlay(boolean visible);		// over the entire viewport
 	public void									showProgressBar(boolean visible, boolean indeterminate);

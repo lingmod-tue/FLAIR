@@ -6,6 +6,7 @@ package com.flair.server.utilities;
 
 import java.io.IOException;
 import java.io.InputStream;
+
 import org.apache.tika.Tika;
 import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
@@ -30,7 +31,7 @@ class TikaTextExtractor extends AbstractTextExtractor
 	}
 
 	@Override
-	public Output extractText(Input input) 
+	public Output extractText(Input input)
 	{
 		boolean error = false;
 		String pageText = "";
@@ -82,14 +83,14 @@ class TikaTextExtractor extends AbstractTextExtractor
 			stream.close();
 		} catch (Throwable ex)
 		{
-			ServerLogger.get().error("Couldn't fetch text. Exception: " + ex.getMessage());
+			ServerLogger.get().error(ex, "Couldn't extract text. Exception: " + ex.toString());
 			error = true;
 		}
 
 		return new Output(input, error == false, pageText, isHtml);
 	}
 
-	public static boolean isContentHTMLPlainText(String url, Language lang) throws IOException 
+	public static boolean isContentHTMLPlainText(String url, Language lang) throws IOException
 	{
 		Tika pipeline = new Tika();
 		MediaType type;

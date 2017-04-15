@@ -33,6 +33,7 @@ import com.flair.client.presentation.interfaces.DocumentPreviewPaneInput;
 import com.flair.client.presentation.interfaces.InProgressResultItem;
 import com.flair.client.presentation.interfaces.NotificationService;
 import com.flair.client.presentation.interfaces.OperationCancelService;
+import com.flair.client.presentation.interfaces.SettingsUrlExporterView;
 import com.flair.client.presentation.interfaces.UserPromptService;
 import com.flair.client.presentation.interfaces.VisualizerService;
 import com.flair.client.presentation.widgets.GenericWeightSlider;
@@ -712,7 +713,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 			if (idx == -1)
 				return false;
 			else
-				return paramVal.substring(0, idx).equalsIgnoreCase("1") ? true : false;
+				return paramVal.substring(0, idx).equalsIgnoreCase("true") ? true : false;
 		}
 		
 		private int getWeight(String paramVal)
@@ -754,13 +755,13 @@ public class WebRankerCore implements AbstractWebRankerCore
 							kw = Window.Location.getParameter(PARAM_KEYWORDS);
 					
 					if (lvla != null)
-						out.setDocLevelEnabled(DocumentReadabilityLevel.LEVEL_A, lvla.equalsIgnoreCase("1") ? true : false);
+						out.setDocLevelEnabled(DocumentReadabilityLevel.LEVEL_A, lvla.equalsIgnoreCase("true") ? true : false);
 				
 					if (lvlb != null)
-						out.setDocLevelEnabled(DocumentReadabilityLevel.LEVEL_B, lvlb.equalsIgnoreCase("1") ? true : false);
+						out.setDocLevelEnabled(DocumentReadabilityLevel.LEVEL_B, lvlb.equalsIgnoreCase("true") ? true : false);
 				
 					if (lvlc != null)
-						out.setDocLevelEnabled(DocumentReadabilityLevel.LEVEL_C, lvlc.equalsIgnoreCase("1") ? true : false);
+						out.setDocLevelEnabled(DocumentReadabilityLevel.LEVEL_C, lvlc.equalsIgnoreCase("true") ? true : false);
 				
 					if (kw != null)
 					{
@@ -838,6 +839,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 	private CustomKeywordService			keywords;
 	private VisualizerService				visualizer;
 	private OperationCancelService			cancel;
+	private SettingsUrlExporterView			urlExport;
 	private final WebRankerServiceAsync		service;
 	private State							state;
 
@@ -860,6 +862,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 		keywords = null;
 		visualizer = null;
 		cancel = null;
+		urlExport = null;
 
 		service = WebRankerServiceAsync.Util.getInstance();
 		state = new State();
@@ -876,9 +879,11 @@ public class WebRankerCore implements AbstractWebRankerCore
 		keywords = presenter.getCustomKeywordsService();
 		visualizer = presenter.getVisualizerService();
 		cancel = presenter.getCancelService();
+		urlExport = presenter.getSettingsUrlExporterView();
 		
 		settings.setExportSettingsHandler(() -> {
-			
+			String url = exporter.exportSettings(settings.generateSettingsProfile());
+			urlExport.show(url);
 		});
 		settings.setVisualizeHandler(() -> {
 			if (state.hasOperation())
@@ -1068,22 +1073,23 @@ public class WebRankerCore implements AbstractWebRankerCore
 	}
 
 	@Override
-	public void setAuthToken(AuthToken token)
+	public void init(AuthToken token, AbstractWebRankerPresenter presenter)
 	{
 		if (this.token != null)
 			throw new RuntimeException("Token already set");
-
+		
 		this.token = token;
-	}
-
-	@Override
-	public void setPresenter(AbstractWebRankerPresenter presenter)
-	{
-		if (this.presenter != null)
-			throw new RuntimeException("Presenter already set");
-
 		this.presenter = presenter;
+		
 		bindToPresenter(this.presenter);
+		
+		// load custom settings from url
+		ConstructionSettingsProfile imported = exporter.importSettings();
+		if (imported != null)
+		{
+			state.setImportedSettings(imported);
+			notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_ImportedSettings));
+		}
 	}
 
 	@Override

@@ -33,6 +33,8 @@ public interface AbstractRankerSettingsPane
 	public KeywordWeightSlider							getKeywordSlider();
 	
 	public boolean										isDocLevelEnabled(DocumentReadabilityLevel level);
+	
+	public ConstructionSettingsProfile					generateSettingsProfile();
 	public void											applySettingsProfile(ConstructionSettingsProfile profile, boolean fireEvents);
 	
 }

@@ -155,4 +155,13 @@ public class ConstructionSettingsProfileImpl implements ConstructionSettingsProf
 		grams.remove(gram);
 		grams.put(gram, d);
 	}
+	
+	public void setKeywordsData(boolean enabled, int weight)
+	{
+		WeightData d = new WeightData();
+		d.enabled = enabled;
+		d.weight = weight;
+
+		keywords = d;
+	}
 }

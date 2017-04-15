@@ -18,6 +18,7 @@ import com.flair.client.presentation.interfaces.CustomKeywordService;
 import com.flair.client.presentation.interfaces.NotificationService;
 import com.flair.client.presentation.interfaces.OperationCancelService;
 import com.flair.client.presentation.interfaces.OverlayService;
+import com.flair.client.presentation.interfaces.SettingsUrlExporterView;
 import com.flair.client.presentation.interfaces.UserPromptService;
 import com.flair.client.presentation.interfaces.VisualizerService;
 import com.flair.client.presentation.widgets.CorpusFileUploader;
@@ -27,6 +28,7 @@ import com.flair.client.presentation.widgets.DocumentPreviewPane;
 import com.flair.client.presentation.widgets.DocumentResultsPane;
 import com.flair.client.presentation.widgets.ModalPrompt;
 import com.flair.client.presentation.widgets.RankerSettingsPane;
+import com.flair.client.presentation.widgets.SettingsExporter;
 import com.flair.shared.grammar.Language;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -216,6 +218,8 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	SimpleLocalizedTextWidget<MaterialLabel>		lblDefaultReadCaptionLC;
 	@UiField
 	MaterialOverlay									mdlOverlayUI;
+	@UiField
+	SettingsExporter								mdlExporterUI;
 	
 	ToastNotifications								notificationService;
 	BasicOverlay									overlayService;
@@ -557,5 +561,10 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	@Override
 	public OverlayService getOverlayService() {
 		return overlayService;
+	}
+
+	@Override
+	public SettingsUrlExporterView getSettingsUrlExporterView() {
+		return mdlExporterUI;
 	}
 }

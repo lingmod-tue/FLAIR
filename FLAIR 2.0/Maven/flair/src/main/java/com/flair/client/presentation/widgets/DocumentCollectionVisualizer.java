@@ -467,6 +467,8 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 			bdlEnglishSlidersUI.setVisible(false);
 			bdlGermanSlidersUI.setVisible(false);
 			
+			resetSelectedAxes();
+			
 			// setup sliders
 			switch (input.getSliders().getLanguage())
 			{
@@ -513,8 +515,6 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 					w.setEnabled(false, e);
 				});
 			});
-			
-			resetSelectedAxes();
 		}
 		
 		State()

@@ -1,5 +1,6 @@
 package com.flair.client;
 
+import com.flair.client.interop.FuncCallback;
 import com.flair.client.interop.MessageReceiverFactory;
 import com.flair.client.localization.LocalizationEngine;
 import com.flair.client.model.DocumentAnnotator;
@@ -13,7 +14,6 @@ import com.flair.shared.interop.AbstractMessageReceiver;
 import com.flair.shared.interop.AuthToken;
 import com.flair.shared.interop.services.SessionManagementServiceAsync;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
 
 /*
@@ -54,12 +54,9 @@ public class ClientEndPoint
 		viewport.setSplashSubtitle("");
 		viewport.showSplash(true);
 		
-		sessionService.beginSession(new AsyncCallback<AuthToken>() {
-			@Override
-			public void onSuccess(AuthToken result)
-			{
-				clientToken = result;
-				
+		sessionService.beginSession(
+			FuncCallback.get(r -> {
+				clientToken = r;
 				switch (clientToken.getStatus())
 				{
 				case INVALID_SERVER_ERROR:
@@ -84,20 +81,18 @@ public class ClientEndPoint
 					webranker = new WebRankerCore(new DocumentRanker(),
 												new DocumentAnnotator(),
 												messagePipeline);
-					webranker.setAuthToken(clientToken);
-					webranker.setPresenter(viewport);
+					webranker.init(clientToken, viewport);
 					viewport.showDefaultPane(true);
 					
 					initialized = true;
 					break;
 				}
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				ClientLogger.get().error(caught, "Couldn't perform handshake with server");
-			}
-		});
+		}, c -> {
+			ClientLogger.get().error(c, "Couldn't perform handshake with server");
+
+			viewport.setSplashTitle("Oh dear!");
+			viewport.setSplashSubtitle("Something went wrong on our end. Please try again later.");
+		}));
 	}
 	
 	public void init()
@@ -114,17 +109,9 @@ public class ClientEndPoint
 	
 	public void deinit()
 	{
-		sessionService.endSession(clientToken, new AsyncCallback<Void>() {
-			@Override
-			public void onFailure(Throwable caught) {
-				ClientLogger.get().error(caught, "Couldn't deinitialize server session");
-			}
-
-			@Override
-			public void onSuccess(Void result) {
-				;//
-			}
-		});
+		sessionService.endSession(clientToken, FuncCallback.get(v -> {}, c -> {
+			ClientLogger.get().error(c, "Couldn't deinitialize server session");
+		}));
 		
 		if (messagePipeline.isOpen())
 			messagePipeline.close();

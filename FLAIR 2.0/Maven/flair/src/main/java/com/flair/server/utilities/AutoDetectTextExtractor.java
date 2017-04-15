@@ -17,7 +17,7 @@ class AutoDetectTextExtractor extends AbstractTextExtractor
 	}
 
 	@Override
-	public AbstractTextExtractor.Output extractText(AbstractTextExtractor.Input input) 
+	public AbstractTextExtractor.Output extractText(AbstractTextExtractor.Input input)
 	{
 		try
 		{
@@ -33,7 +33,7 @@ class AutoDetectTextExtractor extends AbstractTextExtractor
 			}
 		} catch (Throwable ex)
 		{
-			ServerLogger.get().error("Couldn't fetch text. Exception: " + ex.getMessage());
+			ServerLogger.get().error(ex, "Couldn't extract text. Exception: " + ex.toString());
 			return new AbstractTextExtractor.Output(input, true, "", false);
 		}
 	}

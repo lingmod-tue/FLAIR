@@ -9,9 +9,7 @@ import com.flair.shared.interop.AuthToken;
  */
 public interface AbstractWebRankerCore
 {
-	public void						setAuthToken(AuthToken token);
-	public void						setPresenter(AbstractWebRankerPresenter presenter);
-
+	public void						init(AuthToken token, AbstractWebRankerPresenter presenter);
 	public void						performWebSearch(Language lang,
 													String query,
 													int numResults);
