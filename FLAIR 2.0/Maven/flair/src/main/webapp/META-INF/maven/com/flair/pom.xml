@@ -160,12 +160,18 @@
 							<goal>test</goal>
 							<goal>generateAsync</goal>
 						</goals>
+						
+						<configuration>
+							<compileReport>true</compileReport>
+							<failOnError>true</failOnError>
+							<printJavaCommandOnError>true</printJavaCommandOnError>
+						</configuration>
 					</execution>
 				</executions>
 				<!-- Plugin configuration. There are many available options, see gwt-maven-plugin 
 					documentation at codehaus.org -->
 				<configuration>
-					<superdevmode>false</superdevmode>
+					<superDevMode>false</superDevMode>
 
 					<runTarget>FLAIR.html</runTarget>
 					<modules>

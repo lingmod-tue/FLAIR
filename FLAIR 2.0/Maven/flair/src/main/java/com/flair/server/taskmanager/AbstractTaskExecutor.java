@@ -34,22 +34,26 @@ abstract class AbstractTaskExecutor
 	protected void queue(AbstractTask<?> task) {
 		threadPool.submit(task.getFutureTask());
 	}
-
-	public void shutdown(boolean force) 
+	
+	protected static void shutdown(ExecutorService pool, boolean force)
 	{
 		if (force)
-			threadPool.shutdownNow();
+			pool.shutdownNow();
 		else
 		{
 			try
 			{
-				threadPool.shutdown();
-				if (threadPool.awaitTermination(5, TimeUnit.MINUTES) == false)
-					threadPool.shutdownNow();
+				pool.shutdown();
+				if (pool.awaitTermination(5, TimeUnit.MINUTES) == false)
+					pool.shutdownNow();
 			} catch (InterruptedException ex)
 			{
 				ServerLogger.get().error(ex, "Couldn't shutdown task executor thread pool. Exception: " + ex.toString());
 			}
 		}
+	}
+
+	public void shutdown(boolean force) {
+		shutdown(threadPool, force);
 	}
 }

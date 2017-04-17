@@ -15,12 +15,11 @@ public abstract class AbstractDocumentSource implements Comparable<AbstractDocum
 {
 	private final Language language;
 
-	public AbstractDocumentSource(Language lang)
-	{
+	public AbstractDocumentSource(Language lang) {
 		language = lang;
 	}
 
-	protected final String preprocessText(String input) 
+	protected final String preprocessText(String input)
 	{
 		// ensure that all EOL punctuation marks are periods
 		StringBuilder textWriter = new StringBuilder();

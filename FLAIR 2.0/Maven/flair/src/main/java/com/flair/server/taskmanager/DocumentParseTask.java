@@ -39,10 +39,16 @@ class DocumentParseTask extends AbstractTask<DocumentParseTaskResult>
 			auxThreadPool = Executors.newFixedThreadPool(Constants.PARSER_THREADPOOL_SIZE);
 		}
 
-		public void parse(DocumentParseTask task) 
+		public void parse(DocumentParseTask task)
 		{
 			task.setParseExecutor(auxThreadPool);
 			queue(task);
+		}
+		
+		@Override
+		public void shutdown(boolean force) {
+			super.shutdown(force);
+			shutdown(auxThreadPool, force);
 		}
 	}
 	
@@ -69,7 +75,7 @@ class DocumentParseTask extends AbstractTask<DocumentParseTaskResult>
 		}
 
 		@Override
-		public AbstractDocument call() 
+		public AbstractDocument call()
 		{
 			AbstractDocument output = parser.parse(input, strategy);
 			if (output.isParsed() == false)

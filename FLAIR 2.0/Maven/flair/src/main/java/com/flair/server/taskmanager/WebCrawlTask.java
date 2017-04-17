@@ -33,10 +33,16 @@ class WebCrawlTask extends AbstractTask<WebCrawlTaskResult>
 			auxThreadPool = Executors.newFixedThreadPool(Constants.TEXTFETCHER_THREADPOOL_SIZE);
 		}
 
-		public void crawl(WebCrawlTask task) 
+		public void crawl(WebCrawlTask task)
 		{
 			task.setFetchExecutor(auxThreadPool);
 			queue(task);
+		}
+		
+		@Override
+		public void shutdown(boolean force) {
+			super.shutdown(force);
+			shutdown(auxThreadPool, force);
 		}
 	}
 
@@ -47,7 +53,7 @@ class WebCrawlTask extends AbstractTask<WebCrawlTaskResult>
 	private final SearchResult			input;
 	private ExecutorService				fetchExecutor;
 
-	private static final int 			TIMEOUT_SECONDS = 10;
+	private static final int 			TIMEOUT_SECONDS = 30;
 
 	final class FetchRunnable implements Callable<Boolean>
 	{
@@ -58,7 +64,7 @@ class WebCrawlTask extends AbstractTask<WebCrawlTaskResult>
 		}
 
 		@Override
-		public Boolean call() 
+		public Boolean call()
 		{
 			if (source.isTextFetched() == false)
 				return input.fetchPageText(false);

@@ -26,25 +26,6 @@ abstract class AbstractJob<R, E extends AbstractJobEvent<R>>
 	private boolean						cancelled;
 	private boolean						started;
 
-	private static final class NotifyThread<E> extends Thread
-	{
-		private final List<EventHandler<E>> 	listeners;
-		private final E							event;
-
-		public NotifyThread(List<EventHandler<E>> listeners, E event)
-		{
-			this.listeners = new ArrayList<>(listeners);
-			this.event = event;
-		}
-
-		@Override
-		public void run()
-		{
-			for (EventHandler<E> itr : listeners)
-				itr.handle(event);
-		}
-	}
-
 	public AbstractJob()
 	{
 		registeredTasks = new ArrayList<>();
