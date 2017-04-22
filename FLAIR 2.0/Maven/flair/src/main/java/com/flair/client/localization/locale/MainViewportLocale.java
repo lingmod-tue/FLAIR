@@ -10,6 +10,7 @@ public final class MainViewportLocale extends SimpleLocale
 	public static final String		DESC_btnSwitchLangUI = "btnSwitchLangUI";
 	public static final String		DESC_btnLangEnUI = "btnLangEnUI";
 	public static final String		DESC_btnLangDeUI = "btnLangDeUI";
+	public static final String		DESC_btnCloseWebSearchUI = "btnCloseWebSearchUI";
 	
 	public static final String		DESC_txtSearchBoxUI = "txtSearchBoxUI";
 	public static final String		DESC_selResultCountItm10UI = "selResultCountItm10UI";
@@ -37,6 +38,7 @@ public final class MainViewportLocale extends SimpleLocale
 		en.put(DESC_btnSwitchLangUI, "Switch Interface Language");
 		en.put(DESC_btnLangEnUI, "English");
 		en.put(DESC_btnLangDeUI, "German");
+		en.put(DESC_btnCloseWebSearchUI, "Cancel");
 		en.put(DESC_txtSearchBoxUI, "Enter a query");
 		en.put(DESC_selResultCountItm10UI, "10 Results");
 		en.put(DESC_selResultCountItm20UI, "20 Results");
@@ -46,7 +48,7 @@ public final class MainViewportLocale extends SimpleLocale
 		en.put(DESC_selResultLangItmEnUI, "English");
 		en.put(DESC_selResultLangItmDeUI, "German");
 		en.put(DESC_defSearchTitle, "Search");
-		en.put(DESC_defSearchCaption, "Click on the Search icon on top and type in a query. FLAIR will fetch the top results from the Bing Search Engine.");
+		en.put(DESC_defSearchCaption, "Click on the Search icon below and type in a query. FLAIR will fetch the top results from the Bing Search Engine.");
 		en.put(DESC_defConfigTitle, "Configure");
 		en.put(DESC_defConfigCaption, "Configure the settings: text (complexity, length) and language (the passive, wh- questions, academic vocabulary, ...). You can export the settings to apply them to all further searches.");
 		en.put(DESC_defReadTitle, "Read");
@@ -60,6 +62,7 @@ public final class MainViewportLocale extends SimpleLocale
 		de.put(DESC_btnSwitchLangUI, "Anzeigesprache wechseln");
 		de.put(DESC_btnLangEnUI, "Englisch");
 		de.put(DESC_btnLangDeUI, "Deutsch");
+		de.put(DESC_btnCloseWebSearchUI, "Abbrechen");
 		de.put(DESC_txtSearchBoxUI, "Suchbegriff eingeben");
 		de.put(DESC_selResultCountItm10UI, "10 Seiten");
 		de.put(DESC_selResultCountItm20UI, "20 Seiten");
@@ -69,7 +72,7 @@ public final class MainViewportLocale extends SimpleLocale
 		de.put(DESC_selResultLangItmEnUI, "Englisch");
 		de.put(DESC_selResultLangItmDeUI, "Deutsch");
 		de.put(DESC_defSearchTitle, "Suchen");
-		de.put(DESC_defSearchCaption, "Klicken Sie auf das Suchsymbol oben und geben Sie eine Suchanfrage ein. FLAIR wird die obersten Ergebnisse von der Suchmaschine Bing abrufen.");
+		de.put(DESC_defSearchCaption, "Klicken Sie auf das Suchsymbol unten und geben Sie eine Suchanfrage ein. FLAIR wird die obersten Ergebnisse von der Suchmaschine Bing abrufen.");
 		de.put(DESC_defConfigTitle, "Konfigurieren");
 		de.put(DESC_defConfigCaption, "Konfgurieren Sie die Einstellungen: Text (Länge, Schwierigkeitsgrad) und Grammatik (Passiv, Wh-Fragen, akademisches Vokabular, ...). Sie können die Einstellungen auch exportieren, um sie auf spätere Suchen anzuwenden.");
 		de.put(DESC_defReadTitle, "Lesen");

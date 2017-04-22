@@ -10,4 +10,5 @@ public interface AbstractDocumentPreviewPane
 	
 	public void			show();
 	public void			hide();
+	public boolean		isVisible();
 }

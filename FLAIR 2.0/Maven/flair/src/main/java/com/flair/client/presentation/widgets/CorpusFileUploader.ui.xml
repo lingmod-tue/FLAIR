@@ -43,8 +43,7 @@
 							grid="l4" marginTop="12" type="FLAT" waves="DEFAULT" />
 					</ma:stepper.MaterialStep>
 				</ma.stepper:MaterialStepper>
-			</m:MaterialPanel>
-				
+			</m:MaterialPanel>				
 		</m:MaterialModalContent>
 	</m:MaterialModal>
 </ui:UiBinder> 

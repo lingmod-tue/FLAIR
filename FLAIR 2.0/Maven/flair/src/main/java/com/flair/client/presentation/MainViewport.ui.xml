@@ -29,7 +29,7 @@
 	</ui:style>
 	
 	<m:MaterialPanel ui:field="pnlRootUI" backgroundColor="WHITE" overflow="HIDDEN">		
-		<m:MaterialSplashScreen ui:field="splSplashUI" backgroundColor="WHITE" depth="1000" textAlign="CENTER">
+		<m:MaterialSplashScreen ui:field="splSplashUI" backgroundColor="WHITE" depth="5000" textAlign="CENTER">
 			<g:HTML ui:field="htmlSplashLogoUI">
 				<img class="{style.brand-logo}" src="img/logo_2.png"/>
 			</g:HTML>
@@ -39,43 +39,62 @@
 		<m:MaterialHeader depth="996" layoutPosition="FIXED" width="100%">
 			<!-- Main Navbar -->
 			<m:MaterialNavBar ui:field="navMainUI" backgroundColor="ORANGE">
-				<m:MaterialLink ui:field="tglSettingsPaneUI" iconType="MENU" waves="LIGHT"
-					paddingLeft="7" />
+				<m:MaterialLink ui:field="tglSettingsPaneUI" iconType="MENU" waves="LIGHT" paddingLeft="7" />
 				<m:MaterialNavBrand ui:field="btnAboutUI" marginLeft="5" href="javascript:void(0)" text="FLAIR"/>
 				
-				<m:MaterialNavSection ui:field="pnlNavMainUI" addStyleNames="{style.global-animation}" float="RIGHT">
-					<m:MaterialLink ui:field="btnWebSearchUI" iconType="SEARCH" textColor="WHITE" waves="LIGHT"/>
-					<m:MaterialLink ui:field="btnUploadUI" iconType="FILE_UPLOAD" textColor="WHITE" waves="LIGHT"/>
-					<m:MaterialLink ui:field="btnSwitchLangUI" activates="lang-selector" iconType="LANGUAGE" waves="LIGHT"/>
-				</m:MaterialNavSection>
-				
-				<m:MaterialNavSection ui:field="pnlNavSearchUI" addStyleNames="{style.panel-navSearch} {style.global-animation}" float="RIGHT">
-					<m:MaterialIcon iconType="SEARCH" hideOn="HIDE_ON_SMALL_DOWN"/>
-					<m:MaterialTextBox ui:field="txtSearchBoxUI" width="300"/>
-					
-					<m:MaterialListBox ui:field="selResultLangUI" marginLeft="12" marginRight="12">
-						<m.html:Option ui:field="selResultLangItmEnUI" text="English" value="ENGLISH" />
-						<m.html:Option ui:field="selResultLangItmDeUI" text="German" value="GERMAN" />
-					</m:MaterialListBox>
-					
-					<m:MaterialListBox ui:field="selResultCountUI" marginLeft="12" marginRight="12">
-						<m.html:Option ui:field="selResultCountItm10UI" text="10 Results" value="10" />
-						<m.html:Option ui:field="selResultCountItm20UI" text="20 Results" value="20" />
-						<m.html:Option ui:field="selResultCountItm30UI" text="30 Results" value="30" />
-						<m.html:Option ui:field="selResultCountItm40UI" text="40 Results" value="40" />
-						<m.html:Option ui:field="selResultCountItm50UI" text="50 Results" value="50" />
-					</m:MaterialListBox>
-					
-					<m:MaterialLink ui:field="btnCloseSearchUI" iconType="CLOSE" marginLeft="20"/>
-				</m:MaterialNavSection>
+				<m:MaterialLink ui:field="btnSwitchLangUI" activates="lang-selector" iconType="LANGUAGE" waves="LIGHT" float="RIGHT"/>
 			</m:MaterialNavBar>		
 		</m:MaterialHeader>
 						
-		<!-- Language Dropdown -->
+		<!-- UI Language Dropdown -->
 		<m:MaterialDropDown activator="lang-selector" constrainWidth="true">
 			<m:MaterialLink ui:field="btnLangEnUI" waves="DEFAULT" text="English"/>
 			<m:MaterialLink ui:field="btnLangDeUI" waves="DEFAULT" text="German"/>
 		</m:MaterialDropDown>
+		
+		<!-- Main FAB -->
+		<m:MaterialFAB axis="VERTICAL" depth="998">
+			<m:MaterialButton ui:field="btnWebSearchUI"
+				type="FLOATING" iconType="SEARCH" size="LARGE" backgroundColor="ORANGE" waves="LIGHT"/>
+			<m:MaterialFABList>
+				<m:MaterialAnchorButton ui:field="btnUploadUI" 
+					type="FLOATING" waves="LIGHT" backgroundColor="BLUE" iconType="FILE_UPLOAD"/>
+			</m:MaterialFABList>
+		</m:MaterialFAB>
+				
+		<!-- Web Search Modal -->
+		<m:MaterialModal ui:field="mdlWebSearchUI" type="BOTTOM_SHEET" dismissible="true">
+			<m:MaterialModalContent>
+				<!-- Minimum absolute height to prevent the result count dropdown from clipping -->
+				<m:MaterialRow height="170px">
+					<m:MaterialColumn grid="l6 m6 s12">
+						<m:MaterialTextBox ui:field="txtSearchBoxUI" iconType="SEARCH"/>					
+					</m:MaterialColumn>
+					
+					<m:MaterialColumn grid="l3 m3 s12">
+						<m:MaterialListBox ui:field="selResultLangUI">
+							<m.html:Option ui:field="selResultLangItmEnUI" text="English" value="ENGLISH" />
+							<m.html:Option ui:field="selResultLangItmDeUI" text="German" value="GERMAN" />
+						</m:MaterialListBox>
+					</m:MaterialColumn>
+					
+					<m:MaterialColumn grid="l3 m3 s12">
+						<m:MaterialListBox ui:field="selResultCountUI" >
+							<m.html:Option ui:field="selResultCountItm10UI" text="10" value="10" />
+							<m.html:Option ui:field="selResultCountItm20UI" text="20" value="20" />
+							<m.html:Option ui:field="selResultCountItm30UI" text="30" value="30" />
+							<m.html:Option ui:field="selResultCountItm40UI" text="40" value="40" />
+							<m.html:Option ui:field="selResultCountItm50UI" text="50" value="50" />
+						</m:MaterialListBox>
+					</m:MaterialColumn>
+				</m:MaterialRow>				
+			
+				<m:MaterialModalFooter>
+					<m:MaterialButton ui:field="btnDoWebSearchUI" text="Search" backgroundColor="ORANGE" textColor="WHITE" waves="DEFAULT" />
+					<m:MaterialButton ui:field="btnCloseWebSearchUI" text="Cancel" type="FLAT" waves="DEFAULT" />
+				</m:MaterialModalFooter>			
+			</m:MaterialModalContent>
+		</m:MaterialModal>
 		
 		<!-- Corpus Upload Modal-->
 		<flair:CorpusFileUploader ui:field="mdlCorpusUploadUI"/>
@@ -112,11 +131,11 @@
 			marginTop="70" padding="20" grid="l12 m12 s12"
 			addStyleNames="{style.panel-defaultPlaceholder}">
 			<m:MaterialRow>
-				<m:MaterialColumn grid="l3" hideOn="HIDE_ON_SMALL_DOWN">
+				<m:MaterialColumn grid="l3 m3" hideOn="HIDE_ON_SMALL_DOWN">
 					<m:MaterialCard/>
 				</m:MaterialColumn>
 				
-				<m:MaterialColumn grid="l6">
+				<m:MaterialColumn grid="l6 m6 s12">
 					<m:MaterialCard backgroundColor="BLUE">
 						<m:MaterialCardContent textColor="WHITE">
 							<m:MaterialCardTitle ui:field="lblDefaultSearchTitleUI" text="Search" iconType="SEARCH"
@@ -127,14 +146,18 @@
 						</m:MaterialCardContent>
 					</m:MaterialCard>
 				</m:MaterialColumn>
+				
+				<m:MaterialColumn grid="l3 m3" hideOn="HIDE_ON_SMALL_DOWN">
+					<m:MaterialCard/>
+				</m:MaterialColumn>
 			</m:MaterialRow>
 
 			<m:MaterialRow>
-				<m:MaterialColumn grid="l3" hideOn="HIDE_ON_SMALL_DOWN">
+				<m:MaterialColumn grid="l3 m3" hideOn="HIDE_ON_SMALL_DOWN">
 					<m:MaterialCard/>
 				</m:MaterialColumn>
 				
-				<m:MaterialColumn grid="l6">
+				<m:MaterialColumn grid="l6 m6 s12">
 					<m:MaterialCard backgroundColor="ORANGE">
 						<m:MaterialCardContent textColor="WHITE">
 							<m:MaterialCardTitle ui:field="lblDefaultConfigTitleUI" text="Configure" iconType="SETTINGS"
@@ -145,14 +168,18 @@
 						</m:MaterialCardContent>
 					</m:MaterialCard>
 				</m:MaterialColumn>
+				
+				<m:MaterialColumn grid="l3 m3" hideOn="HIDE_ON_SMALL_DOWN">
+					<m:MaterialCard/>
+				</m:MaterialColumn>
 			</m:MaterialRow>
 			
 			<m:MaterialRow>
-				<m:MaterialColumn grid="l3" hideOn="HIDE_ON_SMALL_DOWN">
+				<m:MaterialColumn grid="l3 m3" hideOn="HIDE_ON_SMALL_DOWN">
 					<m:MaterialCard/>
 				</m:MaterialColumn>
 				
-				<m:MaterialColumn grid="l6">
+				<m:MaterialColumn grid="l6 m6 s12">
 					<m:MaterialCard backgroundColor="GREEN">
 						<m:MaterialCardContent textColor="WHITE">
 							<m:MaterialCardTitle ui:field="lblDefaultReadTitleUI" text="Read" iconType="CHROME_READER_MODE"
@@ -162,6 +189,10 @@
 								text="FLAIR will re-rank the documents according to the configured settings. Click on the link to open the page in a new tab or read the enhanced text in the right-side panel." />
 						</m:MaterialCardContent>
 					</m:MaterialCard>
+				</m:MaterialColumn>
+				
+				<m:MaterialColumn grid="l3 m3" hideOn="HIDE_ON_SMALL_DOWN">
+					<m:MaterialCard/>
 				</m:MaterialColumn>
 			</m:MaterialRow>			
 		</m:MaterialRow>
@@ -206,7 +237,7 @@
 					<div style="text-align: center">
 						<p>FLAIR is an online tool for language teachers and learners that:
 						</p>
-						<ul style="text-align: left">
+						<ul>
 							<li>searches the web for a topic of interest </li>
 							<li>analyzes the results for grammatical constructions and
 								readability levels </li>
@@ -328,7 +359,7 @@
 					<div style="text-align: center">
                             <p>FLAIR ist ein Online-Tool für Lerner und Lehrer von Sprachen. FLAIR:
                             </p>
-                            <ul   style="text-align: left">
+                            <ul>
                                 <li>durchsucht das Web nach einem gewünschten Thema</li>
                                 <li>analysiert die Suchergebnisse auf Grammatikkonstruktionen und Schwierigkeitsgrade</li>
                                 <li>bewertet die Ergebnisse nach Ihren (pädagogischen oder lern-spezifischen) Bedürfnissen, die Sie in den Einstellungen festlegt haben</li>

@@ -434,6 +434,8 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 		
 		public void resetUI()
 		{
+			pnlDocTextPreviewUI.clear();
+			
 			// reset component visibility
 			pnlWeightSelectionUI.setVisible(true);
 			btnShowAllConstUI.setVisible(true);
@@ -473,8 +475,8 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 					lblDocNumSentencesUI.setText(rankable.getDocument().getNumSentences() + " " + ld.get(DocumentPreviewPaneLocale.DESC_lblDocNumSentences));
 					lblDocNumWordsUI.setText(rankable.getDocument().getNumWords() + " " + ld.get(DocumentPreviewPaneLocale.DESC_lblDocNumWords));
 					
-					pnlDocTextPreviewUI.clear();
 					pnlDocTextPreviewUI.add(new HTML(rankable.getPreviewMarkup()));
+					pnlDocTextPreviewUI.scrollToTop();
 					
 					break;
 				}
@@ -490,8 +492,8 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 					
 					// update the rest
 					lblDocTitleUI.setText(unrankable.getTitle());
-					pnlDocTextPreviewUI.clear();
 					pnlDocTextPreviewUI.add(new HTML(new SafeHtmlBuilder().appendEscapedLines(unrankable.getText()).toSafeHtml()));
+					pnlDocTextPreviewUI.scrollToTop();
 					
 					break;
 				}

@@ -14,6 +14,7 @@ import com.flair.server.parser.AbstractParsingStrategyFactory;
 import com.flair.server.parser.DocumentCollection;
 import com.flair.server.parser.KeywordSearcherInput;
 import com.flair.server.parser.SearchResultDocumentSource;
+import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.grammar.Language;
 
 /*
@@ -52,8 +53,10 @@ final class SearchCrawlParseJob extends AbstractJob<SearchCrawlParseJobOutput, S
 		{
 			WebCrawlTask newTask = new WebCrawlTask(this, itr);
 			registerTask(newTask);
-			input.webCrawlExecutor.crawl(newTask);
 			numActiveCrawlTasks++;
+			numTotalCrawlsQueued++;
+			
+			input.webCrawlExecutor.crawl(newTask);
 		}
 	}
 	
@@ -94,7 +97,6 @@ final class SearchCrawlParseJob extends AbstractJob<SearchCrawlParseJobOutput, S
 				notifyListeners(new SearchCrawlParseJobEvent(result.getOutput().size()));
 				// queue crawl tasks for the results
 				queueWebCrawlTasks(result.getOutput());
-				numActiveCrawlTasks += result.getOutput().size();
 				
 				break;
 			}
@@ -108,7 +110,8 @@ final class SearchCrawlParseJob extends AbstractJob<SearchCrawlParseJobOutput, S
 					SearchResult sr = result.getOutput();
 					// check token count and queue parse task if valid
 					StringTokenizer tokenizer = new StringTokenizer(sr.getPageText(), " ");
-					if (MINIMUM_TOKEN_COUNT < tokenizer.countTokens())
+					int tokCount = tokenizer.countTokens();
+					if (tokCount > MINIMUM_TOKEN_COUNT)
 					{
 						notifyListeners(new SearchCrawlParseJobEvent(sr));
 						numValidResults++;
@@ -116,6 +119,8 @@ final class SearchCrawlParseJob extends AbstractJob<SearchCrawlParseJobOutput, S
 						output.searchResults.add(sr);
 						queueDocParseTask(sr);
 					}
+					else
+						ServerLogger.get().trace(sr.toString() + " - Discarded for low token count (" + tokCount + ")");
 				}
 				
 				// queue search tasks as long as we need/have results or have timed-out

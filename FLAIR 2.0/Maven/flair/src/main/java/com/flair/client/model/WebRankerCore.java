@@ -129,6 +129,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 		int								receivedInprogress;
 		List<RankableDocument>			filteredDocs;
 		DocumentRankerOutput.Rank 		rankData; 			// cached after each reranking
+		AbstractResultItem				lastSelection;
 
 		State()
 		{
@@ -155,6 +156,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 			};
 			
 			importedSettings = null;
+			lastSelection = null;
 		}
 
 		void begin(OperationParams p)
@@ -163,6 +165,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 			currentOp = lastOp = p.type;
 			params = p;
 			rankData = null;
+			lastSelection = null;
 
 			// init and set up message pipeline
 			parsedDocs.clear();
@@ -179,7 +182,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 			presenter.showDefaultPane(false);
 			presenter.showCancelPane(true);
 			presenter.showProgressBar(true, true);
-			settings.hide();
+			settings.show();
 			preview.hide();
 
 			settings.setSliderBundle(params.lang);
@@ -203,6 +206,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 			currentOp = OperationType.NONE;
 			params = null;
 			rankData = null;
+			lastSelection = null;
 
 			parsedDocs.clear();
 			inProgress.clear();
@@ -247,9 +251,37 @@ public class WebRankerCore implements AbstractWebRankerCore
 
 		void rerank()
 		{
-			preview.hide();
 			rankData = ranker.rerank(new RankerInput());
+			
+			// update both panes
 			settings.updateSettings(rankData);
+			if (lastSelection != null && preview.isVisible())
+				previewResult(lastSelection);
+		}
+		
+		void previewResult(AbstractResultItem item)
+		{
+			if (item.getType() == Type.COMPLETED)
+			{
+				// annotate the doc and preview it
+				CompletedResultItemImpl citem = (CompletedResultItemImpl)item;
+				RankableDocument doc = citem.getDoc();
+				PreviewRankableInput data = new PreviewRankableInput(doc);
+				data.annotation = annotator.hightlightText(data);
+
+				preview.show();
+				preview.preview(data);
+			}
+			else
+			{
+				// preview the title and text
+				InProgressResultItemImpl citem = (InProgressResultItemImpl)item;
+
+				preview.show();
+				preview.preview(new PreviewUnrankableInput(citem.getDTO()));
+			}
+			
+			lastSelection = item;
 		}
 
 		boolean isDocFiltered(RankableDocument doc)
@@ -292,21 +324,19 @@ public class WebRankerCore implements AbstractWebRankerCore
 			results.clearCompleted();
 			
 			// add from ranked data, if available
-			int i = 1, added = 0;
+			int i = 1;
 			if (rankData != null)
 			{
 				for (RankableDocument itr : rankData.getRankedDocuments())
 				{
 					results.addCompleted(new CompletedResultItemImpl(itr, i, itr.getRank()));
 					i++;
-					added++;
 				}
 			}
 			else for (RankableDocument itr : parsedDocs)
 			{
 				results.addCompleted(new CompletedResultItemImpl(itr, i, itr.getRank()));
 				i++;
-				added++;
 			}
 			
 			updateResultsTitle();
@@ -407,7 +437,6 @@ public class WebRankerCore implements AbstractWebRankerCore
 			presenter.showCancelPane(false);
 			presenter.showProgressBar(false, false);
 			settings.show();
-			preview.hide();
 			
 			// rerank the parsed docs as their original ranks can be discontinuous
 			// sort the parsed docs by their original rank first and then rerank them
@@ -933,27 +962,8 @@ public class WebRankerCore implements AbstractWebRankerCore
 		state.clearFilteredDocs();
 	}
 	
-	private void onSelectResultItem(AbstractResultItem item)
-	{
-		if (item.getType() == Type.COMPLETED)
-		{
-			// annotate the doc and preview it
-			CompletedResultItemImpl citem = (CompletedResultItemImpl)item;
-			RankableDocument doc = citem.getDoc();
-			PreviewRankableInput data = new PreviewRankableInput(doc);
-			data.annotation = annotator.hightlightText(data);
-
-			preview.show();
-			preview.preview(data);
-		}
-		else
-		{
-			// preview the title and text
-			InProgressResultItemImpl citem = (InProgressResultItemImpl)item;
-
-			preview.show();
-			preview.preview(new PreviewUnrankableInput(citem.getDTO()));
-		}
+	private void onSelectResultItem(AbstractResultItem item) {
+		state.previewResult(item);
 	}
 
 	private void onUploadBegin(Language corpusLang)

@@ -46,6 +46,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import gwt.material.design.addins.client.splitpanel.MaterialSplitPanel;
 import gwt.material.design.addins.client.window.MaterialWindow;
 import gwt.material.design.client.ui.MaterialButton;
 import gwt.material.design.client.ui.MaterialCheckBox;
@@ -605,6 +606,8 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 	@UiField
 	MaterialWindow				mdlVisualizerUI;
 	@UiField
+	MaterialSplitPanel			pnlSplitContainer;
+	@UiField
 	MaterialLabel				lblTitleUI;
 	@UiField
 	FlowPanel					pnlSVGContainerUI;
@@ -725,6 +728,8 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 	{
 		MaterialWindow.setOverlay(true);
 		mdlVisualizerUI.open();
+		// ### TODO invalidate the split panel to force re-layout
+		// workaround for the bug where the layout is all buggered up when the client area is resized when th window was closed
 	}
 
 	@Override

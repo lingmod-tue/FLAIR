@@ -15,11 +15,11 @@
 	
 	<m:MaterialRow ui:field="pnlRootUI">
 		<!-- Padding HACK! I despise web-dev -->
-		<m:MaterialColumn grid="l3" hideOn="HIDE_ON_SMALL_DOWN">
+		<m:MaterialColumn grid="l3 m3" hideOn="HIDE_ON_SMALL_DOWN">
 			<m:MaterialCard/>
 		</m:MaterialColumn>
 				
-		<m:MaterialColumn grid="l6">			
+		<m:MaterialColumn grid="l6 m6 s12">			
 			<m:MaterialCard ui:field="pnlCardUI" addStyleNames="{style.card}" hoverable="true">
 				<m:MaterialContainer waves="LIGHT">
 					<m:MaterialRow>	
@@ -50,6 +50,10 @@
 					</m:MaterialRow>	
 				</m:MaterialContainer>			
 			</m:MaterialCard>
+		</m:MaterialColumn>
+		
+		<m:MaterialColumn grid="l3 m3" hideOn="HIDE_ON_SMALL_DOWN">
+			<m:MaterialCard/>
 		</m:MaterialColumn>
 	</m:MaterialRow>
 </ui:UiBinder> 

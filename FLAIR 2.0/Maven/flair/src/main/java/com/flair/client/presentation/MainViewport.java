@@ -40,7 +40,9 @@ import com.google.gwt.user.client.ui.Widget;
 
 import gwt.material.design.addins.client.overlay.MaterialOverlay;
 import gwt.material.design.client.base.MaterialWidget;
+import gwt.material.design.client.constants.Position;
 import gwt.material.design.client.constants.ProgressType;
+import gwt.material.design.client.ui.MaterialAnchorButton;
 import gwt.material.design.client.ui.MaterialButton;
 import gwt.material.design.client.ui.MaterialCardTitle;
 import gwt.material.design.client.ui.MaterialLabel;
@@ -50,7 +52,6 @@ import gwt.material.design.client.ui.MaterialLoader;
 import gwt.material.design.client.ui.MaterialModal;
 import gwt.material.design.client.ui.MaterialNavBar;
 import gwt.material.design.client.ui.MaterialNavBrand;
-import gwt.material.design.client.ui.MaterialNavSection;
 import gwt.material.design.client.ui.MaterialPanel;
 import gwt.material.design.client.ui.MaterialRow;
 import gwt.material.design.client.ui.MaterialSplashScreen;
@@ -120,20 +121,17 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	@UiField
 	MaterialNavBar								navMainUI;
 	@UiField
-	MaterialNavSection							pnlNavMainUI;
+	MaterialButton								btnWebSearchUI;
+	SimpleLocalizedWidget<MaterialButton>		btnWebSearchLC;
 	@UiField
-	MaterialNavSection							pnlNavSearchUI;
-	@UiField
-	MaterialLink								btnWebSearchUI;
-	SimpleLocalizedWidget<MaterialLink>			btnWebSearchLC;
-	@UiField
-	MaterialLink								btnUploadUI;
-	SimpleLocalizedWidget<MaterialLink>			btnUploadLC;
+	MaterialAnchorButton						btnUploadUI;
+	SimpleLocalizedWidget<MaterialAnchorButton>	btnUploadLC;
 	@UiField
 	MaterialLink								btnSwitchLangUI;
 	SimpleLocalizedWidget<MaterialLink>			btnSwitchLangLC;
 	@UiField
 	MaterialNavBrand							btnAboutUI;
+	SimpleLocalizedWidget<MaterialNavBrand>		btnAboutLC;
 	@UiField
 	MaterialLink								btnLangEnUI;
 	SimpleLocalizedWidget<MaterialLink>			btnLangEnLC;
@@ -148,9 +146,11 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	MaterialModal								mdlAboutDeUI;
 	@UiField
 	MaterialButton								btnAboutDeCloseUI;
-	
+	@UiField
+	MaterialModal								mdlWebSearchUI;
 	@UiField
 	MaterialTextBox								txtSearchBoxUI;
+	SimpleLocalizedWidget<MaterialTextBox>		txtSearchBoxLC;
 	@UiField
 	MaterialListBox								selResultCountUI;
 	@UiField
@@ -177,7 +177,11 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	Option										selResultLangItmDeUI;
 	SimpleLocalizedListBoxOptionWidget			selResultLangItmDeLC;
 	@UiField
-	MaterialLink								btnCloseSearchUI;
+	MaterialButton								btnDoWebSearchUI;
+	SimpleLocalizedTextButtonWidget<MaterialButton> btnDoWebSearchLC;
+	@UiField
+	MaterialButton								btnCloseWebSearchUI;
+	SimpleLocalizedTextButtonWidget<MaterialButton> btnCloseWebSearchLC;
 	@UiField
 	MaterialLink								tglSettingsPaneUI;
 	@UiField
@@ -224,43 +228,15 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	ToastNotifications								notificationService;
 	BasicOverlay									overlayService;
 	
-	private void showSearchNav(boolean visible)
+	private void showSearchModal(boolean visible)
 	{
-		MaterialAnimation fadeout = new MaterialAnimation(), fadein = new MaterialAnimation();
-		
-		fadeout.setTransition(Transition.FADEOUTLEFT);
-		fadeout.setDelayMillis(10);
-		fadeout.setDurationMillis(250);
-		fadeout.setInfinite(false);
-		
-		fadein.setTransition(Transition.FADEINRIGHT);
-		fadein.setDelayMillis(10);
-		fadein.setDurationMillis(250);
-		fadein.setInfinite(false);
-		
 		if (visible)
 		{
-			fadeout.animate(pnlNavMainUI, () -> {
-				pnlNavMainUI.setVisible(false);
-				pnlNavSearchUI.setVisible(true);
-				
-				fadein.animate(pnlNavSearchUI, () -> {
-					pnlNavSearchUI.setVisible(true);
-					txtSearchBoxUI.setFocus(true);
-				});
-			});
+			mdlWebSearchUI.open();
+			txtSearchBoxUI.setFocus(true);
 		}
 		else
-		{
-			fadeout.animate(pnlNavSearchUI, () -> {
-				pnlNavSearchUI.setVisible(false);
-				pnlNavMainUI.setVisible(true);
-				
-				fadein.animate(pnlNavMainUI, () -> {
-					pnlNavMainUI.setVisible(true);
-				});
-			});
-		}
+			mdlWebSearchUI.close();
 	}
 	
 	private void showUploadModal() {
@@ -281,8 +257,7 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	}
 
 	
-	private void switchLanguage(Language lang)
-	{
+	private void switchLanguage(Language lang) {
 		localeCore.setLanguage(lang);
 	}
 	
@@ -292,17 +267,23 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		Language searchLang = Language.fromString(selResultLangUI.getSelectedValue());
 		String query = txtSearchBoxUI.getText();
 		
+		showSearchModal(false);
 		ClientEndPoint.get().getWebRanker().performWebSearch(searchLang, query, resultCount);
 	}
 	
 	private void initLocale()
 	{
+		btnAboutLC = new SimpleLocalizedTooltipWidget<>(btnAboutUI, MainViewportLocale.DESC_btnAboutUI);
 		btnWebSearchLC = new SimpleLocalizedTooltipWidget<>(btnWebSearchUI, MainViewportLocale.DESC_btnWebSearchUI);
 		btnUploadLC = new SimpleLocalizedTooltipWidget<>(btnUploadUI, MainViewportLocale.DESC_btnUploadUI);
 		btnSwitchLangLC = new SimpleLocalizedTooltipWidget<>(btnSwitchLangUI, MainViewportLocale.DESC_btnSwitchLangUI);
 		btnLangEnLC = new SimpleLocalizedTextButtonWidget<>(btnLangEnUI, MainViewportLocale.DESC_btnLangEnUI);
 		btnLangDeLC = new SimpleLocalizedTextButtonWidget<>(btnLangDeUI, MainViewportLocale.DESC_btnLangDeUI);
-	
+		
+		btnDoWebSearchLC = new SimpleLocalizedTextButtonWidget<>(btnDoWebSearchUI, MainViewportLocale.DESC_defSearchTitle);
+		btnCloseWebSearchLC = new SimpleLocalizedTextButtonWidget<>(btnCloseWebSearchUI, MainViewportLocale.DESC_btnCloseWebSearchUI);
+		
+		txtSearchBoxLC = new SimpleLocalizedWidget<>(txtSearchBoxUI, MainViewportLocale.DESC_txtSearchBoxUI, (w,t) -> w.setLabel(t));
 		selResultCountItm10LC = new SimpleLocalizedListBoxOptionWidget(selResultCountItm10UI, MainViewportLocale.DESC_selResultCountItm10UI);
 		selResultCountItm20LC = new SimpleLocalizedListBoxOptionWidget(selResultCountItm20UI, MainViewportLocale.DESC_selResultCountItm20UI);
 		selResultCountItm30LC = new SimpleLocalizedListBoxOptionWidget(selResultCountItm30UI, MainViewportLocale.DESC_selResultCountItm30UI);
@@ -321,11 +302,15 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		registerLocale(MainViewportLocale.INSTANCE.en);
 		registerLocale(MainViewportLocale.INSTANCE.de);
 		
+		registerLocalizedWidget(btnAboutLC);
 		registerLocalizedWidget(btnWebSearchLC);
 		registerLocalizedWidget(btnUploadLC);
 		registerLocalizedWidget(btnSwitchLangLC);
 		registerLocalizedWidget(btnLangEnLC);
 		registerLocalizedWidget(btnLangDeLC);
+		registerLocalizedWidget(btnDoWebSearchLC);
+		registerLocalizedWidget(btnCloseWebSearchLC);
+		registerLocalizedWidget(txtSearchBoxLC);
 		registerLocalizedWidget(selResultCountItm10LC);
 		registerLocalizedWidget(selResultCountItm20LC);
 		registerLocalizedWidget(selResultCountItm30LC);
@@ -346,7 +331,7 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	private void initHandlers()
 	{
 		btnWebSearchUI.addClickHandler(e -> {
-			showSearchNav(true);
+			showSearchModal(true);
 		});
 		
 		btnUploadUI.addClickHandler(e -> {
@@ -381,9 +366,12 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 			mdlAboutDeUI.close();
 		});
 		
-		btnCloseSearchUI.addClickHandler(e-> {
-			showSearchNav(false);
-			txtSearchBoxUI.setText("");
+		btnDoWebSearchUI.addClickHandler(e-> {
+			invokeSearch();
+		});
+		
+		btnCloseWebSearchUI.addClickHandler(e-> {
+			showSearchModal(false);
 		});
 		
 		txtSearchBoxUI.addKeyDownHandler(e -> {
@@ -393,8 +381,7 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 				invokeSearch();
 				break;
 			case KeyCodes.KEY_ESCAPE:
-				showSearchNav(false);
-				txtSearchBoxUI.setText("");
+				showSearchModal(false);
 				break;
 			}
 		});
@@ -414,9 +401,11 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	
 	private void initUI()
 	{
-		showSearchNav(false);
+		btnWebSearchUI.setTooltipPosition(Position.LEFT);
+		btnUploadUI.setTooltipPosition(Position.LEFT);
+		btnSwitchLangUI.setTooltipPosition(Position.LEFT);
 	}
-	
+		
 	@UiConstructor
 	public MainViewport()
 	{

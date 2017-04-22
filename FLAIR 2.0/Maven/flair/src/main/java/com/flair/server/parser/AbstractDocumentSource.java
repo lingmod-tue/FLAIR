@@ -24,11 +24,15 @@ public abstract class AbstractDocumentSource implements Comparable<AbstractDocum
 		// ensure that all EOL punctuation marks are periods
 		StringBuilder textWriter = new StringBuilder();
 		String[] sentences = input.split("\n");
+		
 		for (String itr : sentences)
 		{
-			// if (itr.trim().isEmpty())
-			// continue;
-
+			if (itr.trim().isEmpty())
+			{
+				textWriter.append("\n");
+				continue;
+			}
+			
 			textWriter.append(itr);
 			if (!(itr.endsWith(".") || itr.endsWith("!") || itr.endsWith("?") || itr.endsWith("\"")))
 				textWriter.append(".\n");
