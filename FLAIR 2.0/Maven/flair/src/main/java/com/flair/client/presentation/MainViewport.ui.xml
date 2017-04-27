@@ -53,7 +53,7 @@
 		</m:MaterialDropDown>
 		
 		<!-- Main FAB -->
-		<m:MaterialFAB axis="VERTICAL" depth="998">
+		<m:MaterialFAB ui:field="fabMainActionsUI" axis="VERTICAL" depth="998">
 			<m:MaterialButton ui:field="btnWebSearchUI"
 				type="FLOATING" iconType="SEARCH" size="LARGE" backgroundColor="ORANGE" waves="LIGHT"/>
 			<m:MaterialFABList>

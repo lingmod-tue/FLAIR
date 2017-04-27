@@ -1,8 +1,6 @@
 package com.flair.client.presentation.widgets;
 
-import com.flair.client.ClientEndPoint;
-import com.flair.client.localization.LocalizedComposite;
-import com.google.gwt.uibinder.client.UiConstructor;
+import com.flair.client.presentation.interfaces.AbstractWeightSlider;
 
 import gwt.material.design.client.ui.MaterialCheckBox;
 import gwt.material.design.client.ui.MaterialRange;
@@ -10,16 +8,8 @@ import gwt.material.design.client.ui.MaterialRange;
 /*
  * Base class for custom weight slider widgets
  */
-public abstract class GenericWeightSlider extends LocalizedComposite
+public class GenericWeightSlider implements AbstractWeightSlider
 {
-	public interface ToggleHandler {
-		public void handle(GenericWeightSlider source, boolean newValue);
-	}
-	
-	public interface WeightChangeHandler {
-		public void handle(GenericWeightSlider source, double newValue);
-	}
-		
 	protected static final int		SLIDER_MIN_VAL = 0;
 	protected static final int		SLIDER_MAX_VAL = 5;
 	protected static final int		SLIDER_STEP = 1;
@@ -32,8 +22,9 @@ public abstract class GenericWeightSlider extends LocalizedComposite
 		return SLIDER_MAX_VAL;
 	}
 	
-	protected final MaterialCheckBox	toggle;
-	protected final MaterialRange 		slider;
+	private final AbstractWeightSlider	parent;
+	protected MaterialCheckBox			toggle;
+	protected MaterialRange 			slider;
 	private ToggleHandler				toggleHandler;
 	private WeightChangeHandler			weightHandler;
 	
@@ -41,26 +32,28 @@ public abstract class GenericWeightSlider extends LocalizedComposite
 	{
 		slider.setEnabled(isEnabled());
 		if (toggleHandler != null)
-			toggleHandler.handle(this, isEnabled());
+			toggleHandler.handle(parent, isEnabled());
 	}
 	
 	private void onWeightChange()
 	{
 		if (weightHandler != null)
-			weightHandler.handle(this, getWeight());
+			weightHandler.handle(parent, getWeight());
 	}
-	
-	private void initCtor()
+		
+	public GenericWeightSlider(AbstractWeightSlider p, MaterialCheckBox t, MaterialRange r)
 	{
+		parent = p;
+		toggle = t;
+		slider = r;
 		toggleHandler = null;
 		weightHandler = null;
 		
 		// setup components
-		toggle.setValue(true);;
+		toggle.setValue(true);
 		slider.setMin(SLIDER_MIN_VAL);
 		slider.setMax(SLIDER_MAX_VAL);
 		slider.setValue(SLIDER_MIN_VAL);
-		slider.setPadding(3);
 		
 		toggle.addValueChangeHandler(e -> {
 			onToggle();
@@ -70,58 +63,59 @@ public abstract class GenericWeightSlider extends LocalizedComposite
 		});
 	}
 	
-	@UiConstructor
-	public GenericWeightSlider()
-	{
-		super(ClientEndPoint.get().getLocalization());
-		toggle = new MaterialCheckBox();
-		slider = new MaterialRange();
-		
-		initCtor();
-	}
-	
-	public final void setToggleHandler(ToggleHandler handler) {
+	@Override
+	public void setToggleHandler(ToggleHandler handler) {
 		toggleHandler = handler;
 	}
 	
-	public final void setWeightChangeHandler(WeightChangeHandler handler) {
+	@Override
+	public void setWeightChangeHandler(WeightChangeHandler handler) {
 		weightHandler = handler;
 	}
 	
+	@Override
 	public boolean isEnabled() {
 		return toggle.getValue();
 	}
 	
+	@Override
 	public int getWeight() {
 		return slider.getValue();
 	}
 	
+	@Override
 	public boolean hasWeight() {
 		return slider.getValue() != SLIDER_MIN_VAL;
 	}
 	
+	@Override
 	public void setEnabled(boolean val, boolean fireEvent)
 	{
 		toggle.setValue(val, fireEvent);
 		slider.setEnabled(val);
 	}
 	
+	@Override
 	public void toggleEnabled(boolean fireEvent) {
 		setEnabled(isEnabled() == false, fireEvent);
 	}
 	
+	@Override
 	public void setWeight(int val, boolean fireEvent) {
 		slider.setValue(val, fireEvent);
 	}
 	
+	@Override
 	public void setToggleText(String val) {
 		toggle.setText(val);
 	}
 
+	@Override
 	public boolean isSliderVisible() {
 		return slider.isVisible();
 	}
 	
+	@Override
 	public void setSliderVisible(boolean val) {
 		slider.setVisible(val);
 	}

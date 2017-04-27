@@ -397,6 +397,10 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 				
 				updateViewData();
 			}
+			
+			public boolean hasData() {
+				return dataProvider.isEmpty() == false;
+			}
 		}
 		
 		InputType								type;
@@ -444,7 +448,7 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 			lblDocLevelUI.setVisible(true);
 			lblDocNumSentencesUI.setVisible(true);
 			lblDocNumWordsUI.setVisible(true);
-			icoHelpTextUI.setVisible(true);
+			icoHelpTextUI.setVisible(false);
 		}
 		
 		public void reload(boolean fullReload)
@@ -477,6 +481,9 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 					
 					pnlDocTextPreviewUI.add(new HTML(rankable.getPreviewMarkup()));
 					pnlDocTextPreviewUI.scrollToTop();
+					
+					if (weightSelection.hasData())
+						icoHelpTextUI.setVisible(true);
 					
 					break;
 				}

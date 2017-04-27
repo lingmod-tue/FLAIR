@@ -66,7 +66,7 @@ public class GrammaticalConstructionPanelItem extends LocalizedComposite impleme
 		children = new ArrayList<>();
 
 		// setup components
-		body.setPadding(10);
+		body.setPadding(15);
 		text.setIconPosition(IconPosition.LEFT);
 		text.setTextColor(Color.BLACK);
 		

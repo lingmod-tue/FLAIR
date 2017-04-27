@@ -16,6 +16,7 @@ import com.flair.client.presentation.interfaces.AbstractResultItem.Type;
 import com.flair.client.presentation.interfaces.CompletedResultItem;
 import com.flair.client.presentation.interfaces.InProgressResultItem;
 import com.flair.client.presentation.interfaces.OperationCancelService;
+import com.flair.client.utilities.GwtUtil;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -113,11 +114,18 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 		private void addDisplayItem(DisplayItem item, HasWidgets container)
 		{
 			container.add(item.getWidget());
-			animate(item.getWidget(), Transition.FADEINRIGHT, 0, 850);
+			// only animate if its inside of the viewport
+			if (GwtUtil.isScrolledIntoView(item.getWidget(), false))
+				animate(item.getWidget(), Transition.ZOOMIN, 0, 600);
 		}
 		
-		private void removeDisplayItem(DisplayItem item, HasWidgets container) {
-			animate(item.getWidget(), Transition.FADEOUTUP, 0, 850, () -> container.remove(item.getWidget()));
+		private void removeDisplayItem(DisplayItem item, HasWidgets container)
+		{
+			// immediately remove if not inside viewport
+			if (GwtUtil.isScrolledIntoView(item.getWidget(), false) == false)
+				container.remove(item.getWidget());
+			else
+				animate(item.getWidget(), Transition.ZOOMOUT, 0, 600, () -> container.remove(item.getWidget()));
 		}
 		
 		private void validatePlaceholders()

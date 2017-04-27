@@ -5,15 +5,21 @@
 	xmlns:m.html="urn:import:gwt.material.design.client.ui.html">
 	<ui:style>
 	.card {
-		margin-top: 10px;
-		margin-left: 10px;
-		margin-right: 10px;
+		margin-top: 2px;
+		margin-left: 7px;
+		margin-right: 7px;
+		margin-bottom: 2px;
 		
-		padding: 10px;
+		padding: 6px;
+	}
+	
+	.card-container {
+		margin-top: 3px !important;
+		margin-bottom: 3px !important;
 	}
 	</ui:style>
 	
-	<m:MaterialRow ui:field="pnlRootUI">
+	<m:MaterialRow ui:field="pnlRootUI" addStyleNames="{style.card-container}">
 		<!-- Padding HACK! I despise web-dev -->
 		<m:MaterialColumn grid="l3 m3" hideOn="HIDE_ON_SMALL_DOWN">
 			<m:MaterialCard/>
@@ -22,9 +28,9 @@
 		<m:MaterialColumn grid="l6 m6 s12">			
 			<m:MaterialCard ui:field="pnlCardUI" addStyleNames="{style.card}" hoverable="true">
 				<m:MaterialContainer waves="LIGHT">
-					<m:MaterialRow>	
+					<m:MaterialRow addStyleNames="{style.card-container}">	
 						<m:MaterialColumn ui:field="colCompletedHeaderUI" grid="l2 m2 s3" textAlign="CENTER">
-							<m:MaterialLabel ui:field="lblNewRankUI" fontSize="3.0em" text="1"/>				
+							<m:MaterialLabel ui:field="lblNewRankUI" fontSize="2.5em" text="1"/>				
 							<m:MaterialIcon ui:field="icoRankOffsetUI" iconSize="SMALL" iconColor="GREY_LIGHTEN_2" iconType="KEYBOARD_ARROW_UP"/>
 						</m:MaterialColumn>
 						
@@ -38,13 +44,13 @@
 						</m:MaterialColumn>
 						
 						<m:MaterialColumn grid="l10 m10 s9" textAlign="LEFT">
-							<m:MaterialLink ui:field="btnTitleUI" iconColor="BLACK" fontSize="1.5em" 
+							<m:MaterialLink ui:field="btnTitleUI" iconColor="BLACK" fontSize="1.2em" 
 								text="My back hurts!"/>
 								
 							<m:MaterialLabel ui:field="lblURLUI" textColor="GREY_LIGHTEN_1" fontSize="0.8em" 
 								text="www.imsodonewiththis.com"/>
 						
-							<m:MaterialLabel ui:field="lblSnippetUI" paddingTop="10" 
+							<m:MaterialLabel ui:field="lblSnippetUI" paddingTop="10" fontSize="0.9em" 
 								text="Rabble Rabble Rabble"/>
 						</m:MaterialColumn>
 					</m:MaterialRow>	

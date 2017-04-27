@@ -1,31 +1,49 @@
 package com.flair.client.presentation.widgets;
 
+import com.flair.client.ClientEndPoint;
+import com.flair.client.localization.LocalizedComposite;
 import com.flair.client.localization.locale.KeywordWeightSliderLocale;
+import com.flair.client.presentation.interfaces.AbstractWeightSlider;
 import com.flair.client.presentation.interfaces.CanReset;
 import com.flair.shared.grammar.Language;
-import com.google.gwt.uibinder.client.UiConstructor;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Widget;
 
-import gwt.material.design.client.constants.Color;
-import gwt.material.design.client.constants.IconType;
-import gwt.material.design.client.constants.WavesType;
+import gwt.material.design.client.ui.MaterialCheckBox;
 import gwt.material.design.client.ui.MaterialIcon;
+import gwt.material.design.client.ui.MaterialRange;
 
 /*
  * Weight slider for keywords
  */
-public class KeywordWeightSlider extends GenericWeightSlider implements CanReset
+public class KeywordWeightSlider extends LocalizedComposite implements AbstractWeightSlider, CanReset
 {
+	private static KeywordWeightSliderUiBinder uiBinder = GWT.create(KeywordWeightSliderUiBinder.class);
+
+	interface KeywordWeightSliderUiBinder extends UiBinder<Widget, KeywordWeightSlider>
+	{
+	}
+	
+	
 	public interface ClickHandler {
 		public void handle(KeywordWeightSlider source);
 	}
+			
+	@UiField
+	MaterialCheckBox		chkToggleUI;
+	@UiField
+	MaterialRange			sldWeightUI;
+	@UiField
+	MaterialIcon			btnEditKeywordsUI;
+	@UiField
+	MaterialIcon 			btnResetKeywordsUI;
 	
-	private final MaterialIcon		editKeywords;
-	private final MaterialIcon 		resetKeywords;
-	private ClickHandler			editHandler;
-	private ClickHandler			resetHandler;
-	private boolean					customVocab;
+	GenericWeightSlider		base;
+	ClickHandler			editHandler;
+	ClickHandler			resetHandler;
+	boolean					customVocab;
 	
 	private void initLocale()
 	{
@@ -35,45 +53,25 @@ public class KeywordWeightSlider extends GenericWeightSlider implements CanReset
 		refreshLocalization();
 	}
 	
-	@UiConstructor
 	public KeywordWeightSlider()
 	{
-		editKeywords = new MaterialIcon(IconType.MODE_EDIT);
-		resetKeywords = new MaterialIcon(IconType.UNDO);
+		super(ClientEndPoint.get().getLocalization());
+		initWidget(uiBinder.createAndBindUi(this));
+		
+		base = new GenericWeightSlider(this, chkToggleUI, sldWeightUI);
 		editHandler = resetHandler = null;
 		customVocab = false;
 		
-		// setup components
-		setEnabled(false, false);
-		
-		editKeywords.setWaves(WavesType.DEFAULT);
-		editKeywords.setCircle(true);
-		editKeywords.setIconColor(Color.BLUE);
-
-		resetKeywords.setWaves(WavesType.DEFAULT);
-		resetKeywords.setCircle(true);
-		resetKeywords.setIconColor(Color.BLUE);
-		
-		editKeywords.addClickHandler(e -> {
+		btnEditKeywordsUI.addClickHandler(e -> {
 			if (editHandler != null)
 				editHandler.handle(this);
 		});
 
-		resetKeywords.addClickHandler(e -> {
+		btnResetKeywordsUI.addClickHandler(e -> {
 			if (resetHandler != null)
 				resetHandler.handle(this);
 		});
 		
-		VerticalPanel container = new VerticalPanel();
-		HorizontalPanel togglePanel = new HorizontalPanel();
-		togglePanel.add(toggle);
-		togglePanel.add(editKeywords);
-		togglePanel.add(resetKeywords);
-		
-		container.add(togglePanel);
-		container.add(slider);
-		
-		initWidget(container);
 		initLocale();
 	}
 	
@@ -102,11 +100,11 @@ public class KeywordWeightSlider extends GenericWeightSlider implements CanReset
 		
 		// update components
 		setToggleText(getLocalizationData(lang).get(customVocab == false ? KeywordWeightSliderLocale.DESC_toggleDefault : KeywordWeightSliderLocale.DESC_toggleCustom));
-		toggle.setTitle(getLocalizationData(lang).get(KeywordWeightSliderLocale.DESC_toggleTooltip));
+		chkToggleUI.setTitle(getLocalizationData(lang).get(KeywordWeightSliderLocale.DESC_toggleTooltip));
 		
-		editKeywords.setTooltip(getLocalizationData(lang).get(KeywordWeightSliderLocale.DESC_editTooltip));
-		resetKeywords.setTooltip(getLocalizationData(lang).get(KeywordWeightSliderLocale.DESC_resetTooltip));
-		slider.setTooltip(getLocalizationData(lang).get(KeywordWeightSliderLocale.DESC_sliderTooltip));
+		btnEditKeywordsUI.setTooltip(getLocalizationData(lang).get(KeywordWeightSliderLocale.DESC_editTooltip));
+		btnResetKeywordsUI.setTooltip(getLocalizationData(lang).get(KeywordWeightSliderLocale.DESC_resetTooltip));
+		sldWeightUI.setTooltip(getLocalizationData(lang).get(KeywordWeightSliderLocale.DESC_sliderTooltip));
 	}
 
 	
@@ -114,6 +112,61 @@ public class KeywordWeightSlider extends GenericWeightSlider implements CanReset
 	public void resetState(boolean fireEvents)
 	{
 		setEnabled(false, fireEvents);
-		setWeight(SLIDER_MIN_VAL, fireEvents);
+		setWeight(GenericWeightSlider.getSliderMin(), fireEvents);
+	}
+
+	@Override
+	public void setToggleHandler(ToggleHandler handler) {
+		base.setToggleHandler(handler);
+	}
+
+	@Override
+	public void setWeightChangeHandler(WeightChangeHandler handler) {
+		base.setWeightChangeHandler(handler);
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return base.isEnabled();
+	}
+
+	@Override
+	public void setEnabled(boolean val, boolean fireEvent) {
+		base.setEnabled(val, fireEvent);
+	}
+
+	@Override
+	public void toggleEnabled(boolean fireEvent) {
+		base.toggleEnabled(fireEvent);
+	}
+
+	@Override
+	public int getWeight() {
+		return base.getWeight();
+	}
+
+	@Override
+	public boolean hasWeight() {
+		return base.hasWeight();
+	}
+
+	@Override
+	public void setWeight(int val, boolean fireEvent) {
+		base.setWeight(val, fireEvent);
+	}
+
+	@Override
+	public void setToggleText(String val) {
+		base.setToggleText(val);
+	}
+
+	@Override
+	public boolean isSliderVisible() {
+		return base.isSliderVisible();
+	}
+
+	@Override
+	public void setSliderVisible(boolean val) {
+		base.setSliderVisible(val);
 	}
 }

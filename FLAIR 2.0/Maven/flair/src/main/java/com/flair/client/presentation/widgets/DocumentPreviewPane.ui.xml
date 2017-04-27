@@ -26,10 +26,9 @@
 		<m:MaterialRow ui:field="pnlPreviewContainerUI" overflow="AUTO" layoutPosition="FIXED" grid="l4 m4 s12"
 			depth="995" padding="20" height="100%" width="450px" top="65" right="-450"
 			addStyleNames="{style.bordered} {style.animation}" backgroundColor="WHITE" shadow="5">
-			<m:MaterialRow textAlign="RIGHT">
-				<m:MaterialIcon ui:field="icoHelpTextUI" iconType="HELP" paddingRight="20"/>
+			<m:MaterialRow textAlign="RIGHT" margin="2" padding="2">
 				<m:MaterialIcon ui:field="icoCloseUI" iconType="CLOSE"/>
-			</m:MaterialRow>		
+			</m:MaterialRow>
 						
 			<!-- Header Info -->
 			<m:MaterialRow textAlign="CENTER">
@@ -46,7 +45,10 @@
 			<!-- Preview Pane -->
 			<m:MaterialRow marginBottom="20">				
 				<g:ScrollPanel ui:field="pnlDocTextPreviewUI" addStyleNames="{style.docText-preview}"/>		
-						
+					
+				<m:MaterialRow textAlign="RIGHT" margin="2" padding="2">
+					<m:MaterialIcon ui:field="icoHelpTextUI" iconType="HELP"/>
+				</m:MaterialRow>				
 				<m:MaterialRow ui:field="pnlWeightSelectionUI" padding="0">
 					<m:MaterialColumn ui:field="pnlWeightSelectionCol1UI" padding="0" textAlign="LEFT"/>
 					<m:MaterialColumn ui:field="pnlWeightSelectionCol2UI" textAlign="LEFT"/>

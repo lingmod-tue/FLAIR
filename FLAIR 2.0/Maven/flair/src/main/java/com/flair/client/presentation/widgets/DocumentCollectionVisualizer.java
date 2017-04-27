@@ -506,9 +506,9 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 					// set/reset the weights of the original sliders
 					GrammaticalConstructionWeightSlider old = input.getSliders().getWeightSlider(slider.getGram());
 					if (e)
-						old.setWeight(slider.getSliderMax(), true);
+						old.setWeight(GenericWeightSlider.getSliderMax(), true);
 					else
-						old.setWeight(slider.getSliderMin(), true);
+						old.setWeight(GenericWeightSlider.getSliderMin(), true);
 				});
 				
 				n.setResetHandler((w,e) -> {

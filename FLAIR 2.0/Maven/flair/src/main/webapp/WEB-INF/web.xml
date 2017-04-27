@@ -11,10 +11,12 @@
 		<filter-name>GzipFilter</filter-name>
 		<filter-class>com.flair.server.interop.GZIPFilter</filter-class>
 	</filter>
-	<filter-mapping>
-		<filter-name>GzipFilter</filter-name>
-		<servlet-name>PullMessage</servlet-name>
-	</filter-mapping>
+	
+	<!-- Disabled as some browsers (IE, Edge) don't seem to be able to decode GZIP'd packets -->
+<!-- 	<filter-mapping> -->
+<!-- 		<filter-name>GzipFilter</filter-name> -->
+<!-- 		<servlet-name>PullMessage</servlet-name> -->
+<!-- 	</filter-mapping> -->
 
 	<!-- Listeners -->
 	<listener>

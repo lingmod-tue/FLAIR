@@ -67,7 +67,7 @@ public class ClientEndPoint
 				case INVALID_SESSION_EXISTS:
 					ClientLogger.get().error("Previous session is still open");
 					viewport.setSplashTitle("Oh dear!");
-					viewport.setSplashSubtitle("It seems like you already have a FLAIR window open. We currently support only one window per user. Apologies!");
+					viewport.setSplashSubtitle("It seems like you already have a FLAIR window open - Please close it before reloading this page. We currently support only one window per user. Apologies!");
 					break;
 				case VALID:
 					ClientLogger.get().info("Session token assigned. ID: " + clientToken);

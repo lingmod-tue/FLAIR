@@ -29,6 +29,7 @@ import com.flair.client.presentation.widgets.DocumentResultsPane;
 import com.flair.client.presentation.widgets.ModalPrompt;
 import com.flair.client.presentation.widgets.RankerSettingsPane;
 import com.flair.client.presentation.widgets.SettingsExporter;
+import com.flair.client.utilities.GwtUtil;
 import com.flair.shared.grammar.Language;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -40,11 +41,13 @@ import com.google.gwt.user.client.ui.Widget;
 
 import gwt.material.design.addins.client.overlay.MaterialOverlay;
 import gwt.material.design.client.base.MaterialWidget;
+import gwt.material.design.client.constants.FABType;
 import gwt.material.design.client.constants.Position;
 import gwt.material.design.client.constants.ProgressType;
 import gwt.material.design.client.ui.MaterialAnchorButton;
 import gwt.material.design.client.ui.MaterialButton;
 import gwt.material.design.client.ui.MaterialCardTitle;
+import gwt.material.design.client.ui.MaterialFAB;
 import gwt.material.design.client.ui.MaterialLabel;
 import gwt.material.design.client.ui.MaterialLink;
 import gwt.material.design.client.ui.MaterialListBox;
@@ -120,6 +123,8 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	HTML										htmlSplashLogoUI;
 	@UiField
 	MaterialNavBar								navMainUI;
+	@UiField
+	MaterialFAB									fabMainActionsUI;
 	@UiField
 	MaterialButton								btnWebSearchUI;
 	SimpleLocalizedWidget<MaterialButton>		btnWebSearchLC;
@@ -255,7 +260,6 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		else
 			pnlResultsContainerUI.setGrid("l12 m12 s12");
 	}
-
 	
 	private void switchLanguage(Language lang) {
 		localeCore.setLanguage(lang);
@@ -331,11 +335,13 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	private void initHandlers()
 	{
 		btnWebSearchUI.addClickHandler(e -> {
-			showSearchModal(true);
+			if (fabMainActionsUI.isOpen())
+				showSearchModal(true);
 		});
 		
 		btnUploadUI.addClickHandler(e -> {
-			showUploadModal();
+			if (fabMainActionsUI.isOpen())
+				showUploadModal();
 		});
 		
 		btnLangEnUI.addClickHandler(e -> {
@@ -404,6 +410,10 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		btnWebSearchUI.setTooltipPosition(Position.LEFT);
 		btnUploadUI.setTooltipPosition(Position.LEFT);
 		btnSwitchLangUI.setTooltipPosition(Position.LEFT);
+		
+		// disable hovering on the FAB when on mobile devices
+		if (GwtUtil.isTouch())
+			fabMainActionsUI.setType(FABType.CLICK_ONLY);
 	}
 		
 	@UiConstructor
@@ -438,8 +448,8 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 			MaterialAnimation fadeout = new MaterialAnimation();
 			
 			fadeout.setTransition(Transition.SLIDEOUTDOWN);
-			fadeout.setDelayMillis(2000);
-			fadeout.setDurationMillis(1000);
+			fadeout.setDelayMillis(1500);
+			fadeout.setDurationMillis(850);
 			fadeout.setInfinite(false);
 			fadeout.animate(splSplashUI, () -> {
 				splSplashUI.hide();

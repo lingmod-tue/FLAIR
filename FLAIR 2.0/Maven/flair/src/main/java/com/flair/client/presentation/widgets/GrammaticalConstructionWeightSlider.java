@@ -1,29 +1,48 @@
 package com.flair.client.presentation.widgets;
 
+import com.flair.client.ClientEndPoint;
+import com.flair.client.localization.LocalizedComposite;
 import com.flair.client.localization.locale.GrammaticalConstructionLocale;
 import com.flair.client.localization.locale.GrammaticalConstructionWeightSliderLocale;
+import com.flair.client.presentation.interfaces.AbstractWeightSlider;
 import com.flair.client.presentation.interfaces.CanReset;
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
-import com.google.gwt.uibinder.client.UiConstructor;
-import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Widget;
 
 import gwt.material.design.client.ui.MaterialBadge;
-import gwt.material.design.client.ui.MaterialColumn;
-import gwt.material.design.client.ui.MaterialRow;
+import gwt.material.design.client.ui.MaterialCheckBox;
+import gwt.material.design.client.ui.MaterialRange;
 
 /*
  * Weight slider for grammatical constructions
  */
-public class GrammaticalConstructionWeightSlider extends GenericWeightSlider implements CanReset
+public class GrammaticalConstructionWeightSlider extends LocalizedComposite implements AbstractWeightSlider, CanReset
 {
+	private static GrammaticalConstructionWeightSliderUiBinder uiBinder = GWT.create(GrammaticalConstructionWeightSliderUiBinder.class);
+
+	interface GrammaticalConstructionWeightSliderUiBinder extends UiBinder<Widget, GrammaticalConstructionWeightSlider>
+	{
+	}
+	
+	
 	public interface ResetHandler {
 		public void handle(GrammaticalConstructionWeightSlider source, boolean fireEvents);
 	}
 	
-	private final MaterialBadge					resultCount;
-	private GrammaticalConstruction				gramConstruction;
-	private ResetHandler						resetHandler;
+	@UiField
+	MaterialCheckBox				chkToggleUI;
+	@UiField
+	MaterialRange					sldWeightUI;
+	@UiField
+	MaterialBadge					bdgResultCountUI;
+	
+	GenericWeightSlider				base;
+	private GrammaticalConstruction	gramConstruction;
+	private ResetHandler			resetHandler;
 	
 	private void initLocale()
 	{
@@ -33,29 +52,15 @@ public class GrammaticalConstructionWeightSlider extends GenericWeightSlider imp
 		refreshLocalization();
 	}
 	
-	@UiConstructor
 	public GrammaticalConstructionWeightSlider()
 	{
-		super();
-		resultCount = new MaterialBadge("50/50");
+		super(ClientEndPoint.get().getLocalization());
+		initWidget(uiBinder.createAndBindUi(this));
+		
+		base = new GenericWeightSlider(this, chkToggleUI, sldWeightUI);
 		gramConstruction = null;
 		resetHandler = null;
-		
-		// setup components
-		resultCount.setRight(35);
-		
-		MaterialRow firstRow = new MaterialRow();
-		MaterialColumn pnlToggle = new MaterialColumn();
-		MaterialColumn pnlBadge = new MaterialColumn();
-		pnlToggle.add(toggle);
-		pnlBadge.add(resultCount);
-		firstRow.add(pnlToggle);
-		firstRow.add(pnlBadge);
-		VerticalPanel container = new VerticalPanel();
-		container.add(firstRow);
-		container.add(slider);
-		
-		initWidget(container);
+
 		initLocale();
 	}
 	
@@ -70,15 +75,15 @@ public class GrammaticalConstructionWeightSlider extends GenericWeightSlider imp
 	}
 	
 	public void setResultCount(Integer count, Integer total) {
-		resultCount.setText(count.toString() + "/" + total.toString());
+		bdgResultCountUI.setText(count.toString() + "/" + total.toString());
 	}
 	
 	public void setResultCountVisible(boolean val) {
-		resultCount.setVisible(val);
+		bdgResultCountUI.setVisible(val);
 	}
 	
 	public boolean isResultCountVisible() {
-		return resultCount.isVisible();
+		return bdgResultCountUI.isVisible();
 	}
 	
 	public void setResetHandler(ResetHandler resetHandler) {
@@ -96,9 +101,9 @@ public class GrammaticalConstructionWeightSlider extends GenericWeightSlider imp
 		else
 			setToggleText(GrammaticalConstructionLocale.get().getLocalizedName(gramConstruction, lang));
 		
-		toggle.setTitle(getLocalizationData(lang).get(GrammaticalConstructionWeightSliderLocale.DESC_toggleTooltip));
-		resultCount.setTooltip(getLocalizationData(lang).get(GrammaticalConstructionWeightSliderLocale.DESC_resultCountTooltip));
-		slider.setTooltip(getLocalizationData(lang).get(GrammaticalConstructionWeightSliderLocale.DESC_sliderTooltip));
+		chkToggleUI.setTitle(getLocalizationData(lang).get(GrammaticalConstructionWeightSliderLocale.DESC_toggleTooltip));
+		bdgResultCountUI.setTooltip(getLocalizationData(lang).get(GrammaticalConstructionWeightSliderLocale.DESC_resultCountTooltip));
+		sldWeightUI.setTooltip(getLocalizationData(lang).get(GrammaticalConstructionWeightSliderLocale.DESC_sliderTooltip));
 	}
 	
 	@Override
@@ -111,7 +116,62 @@ public class GrammaticalConstructionWeightSlider extends GenericWeightSlider imp
 		{
 			// enable toggle and reset weight
 			setEnabled(true, fireEvents);
-			setWeight(SLIDER_MIN_VAL, fireEvents);
+			setWeight(GenericWeightSlider.getSliderMin(), fireEvents);
 		}
+	}
+	
+	@Override
+	public void setToggleHandler(ToggleHandler handler) {
+		base.setToggleHandler(handler);
+	}
+
+	@Override
+	public void setWeightChangeHandler(WeightChangeHandler handler) {
+		base.setWeightChangeHandler(handler);
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return base.isEnabled();
+	}
+
+	@Override
+	public void setEnabled(boolean val, boolean fireEvent) {
+		base.setEnabled(val, fireEvent);
+	}
+
+	@Override
+	public void toggleEnabled(boolean fireEvent) {
+		base.toggleEnabled(fireEvent);
+	}
+
+	@Override
+	public int getWeight() {
+		return base.getWeight();
+	}
+
+	@Override
+	public boolean hasWeight() {
+		return base.hasWeight();
+	}
+
+	@Override
+	public void setWeight(int val, boolean fireEvent) {
+		base.setWeight(val, fireEvent);
+	}
+
+	@Override
+	public void setToggleText(String val) {
+		base.setToggleText(val);
+	}
+
+	@Override
+	public boolean isSliderVisible() {
+		return base.isSliderVisible();
+	}
+
+	@Override
+	public void setSliderVisible(boolean val) {
+		base.setSliderVisible(val);
 	}
 }
