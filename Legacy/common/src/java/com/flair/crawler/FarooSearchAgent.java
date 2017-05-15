@@ -18,6 +18,7 @@ public class FarooSearchAgent extends CachingSearchAgent
 {
     private static final String		API_KEY = "";
     private static final int		RESULTS_PER_PAGE = 10;
+    private static final int		MAX_API_REQUESTS	= 2;
     
     public static enum Source
     {
@@ -28,7 +29,7 @@ public class FarooSearchAgent extends CachingSearchAgent
     
     public FarooSearchAgent(Language lang, String query)
     {
-	super(lang, query);
+	super(lang, query, MAX_API_REQUESTS);
 	this.pipeline = new FarooSearch();
 	
 	switch (lang)

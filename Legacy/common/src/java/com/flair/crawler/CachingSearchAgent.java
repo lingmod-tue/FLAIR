@@ -20,16 +20,21 @@ abstract class CachingSearchAgent extends WebSearchAgent
     protected final ArrayList<SearchResult>	cachedResults;
     protected boolean				noMoreResults;
     protected final ArrayList<SearchResult>	fetchedResults;	    // collection of all the results fetched by the agent
-    
-    public CachingSearchAgent(Language lang, String query)
+    protected final int						maxRequests;		// max number of times the search API can be invoked
+    private int								numRequests;
+
+    public CachingSearchAgent(Language lang, String query, int maxRequests)
     {
-	super(lang, query);
-	this.nextPage = 1;
-	this.nextRank = 0;
-	this.cachedResults = new ArrayList<>();
-	this.noMoreResults = false;
-	this.fetchedResults = new ArrayList<>();
+            super(lang, query);
+            this.nextPage = 1;
+            this.nextRank = 0;
+            this.cachedResults = new ArrayList<>();
+            this.noMoreResults = false;
+            this.fetchedResults = new ArrayList<>();
+            this.maxRequests = maxRequests;
+            this.numRequests = 0;
     }
+
     
     @Override
     public final List<SearchResult> getNext(int numResults)
@@ -83,8 +88,15 @@ abstract class CachingSearchAgent extends WebSearchAgent
     {
 	if (noMoreResults == true)
 	    return;
-	
-	List<? extends AbstractSearchAgentImplResult> apiResults = invokeSearchApi();
+	else if (numRequests >= maxRequests)
+        {
+                FLAIRLogger.get().info("Max search requests reached for query '" + query + "'");
+                noMoreResults = true;
+                return;
+        }
+
+        List<? extends AbstractSearchAgentImplResult> apiResults = invokeSearchApi();
+        numRequests++;
 	if (apiResults.isEmpty())
 	{
 	    FLAIRLogger.get().info("No more results for query '" + query + "'");

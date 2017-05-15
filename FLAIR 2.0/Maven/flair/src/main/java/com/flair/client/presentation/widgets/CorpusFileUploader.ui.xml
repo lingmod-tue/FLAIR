@@ -9,7 +9,8 @@
 		dismissible="false">
 		<m:MaterialModalContent>
 			<m:MaterialPanel height="300px" width="100%">
-				<ma.stepper:MaterialStepper ui:field="stprUploaderUI" axis="HORIZONTAL" shadow="0" stepSkippingAllowed="false">
+				<ma.stepper:MaterialStepper ui:field="stprUploaderUI" shadow="0"
+					stepSkippingAllowed="false" detectOrientation="true">
 					<ma:stepper.MaterialStep ui:field="stpLangUI"
 						step="1" title="Choose Language">
 						<m:MaterialRadioButton ui:field="rdoEnglishUI" value="true"

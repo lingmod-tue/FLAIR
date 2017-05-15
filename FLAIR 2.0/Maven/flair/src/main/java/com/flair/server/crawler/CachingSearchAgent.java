@@ -3,12 +3,12 @@
  */
 package com.flair.server.crawler;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.flair.server.crawler.impl.AbstractSearchAgentImplResult;
 import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.grammar.Language;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Implementation of WebSearchAgent that caches search results
@@ -21,9 +21,11 @@ abstract class CachingSearchAgent extends WebSearchAgent
 	protected int							nextRank;
 	protected final ArrayList<SearchResult>	cachedResults;
 	protected boolean						noMoreResults;
-	protected final ArrayList<SearchResult>	fetchedResults;	// collection of all the results fetched by the agent
+	protected final ArrayList<SearchResult>	fetchedResults;		// collection of all the results fetched by the agent
+	protected final int						maxRequests;		// max number of times the search API can be invoked
+	private int								numRequests;
 
-	public CachingSearchAgent(Language lang, String query)
+	public CachingSearchAgent(Language lang, String query, int maxRequests)
 	{
 		super(lang, query);
 		this.nextPage = 1;
@@ -31,6 +33,8 @@ abstract class CachingSearchAgent extends WebSearchAgent
 		this.cachedResults = new ArrayList<>();
 		this.noMoreResults = false;
 		this.fetchedResults = new ArrayList<>();
+		this.maxRequests = maxRequests;
+		this.numRequests = 0;
 	}
 
 	@Override
@@ -47,7 +51,7 @@ abstract class CachingSearchAgent extends WebSearchAgent
 		return output;
 	}
 
-	protected final int consumeCache(List<SearchResult> dest, int numToConsume) 
+	protected final int consumeCache(List<SearchResult> dest, int numToConsume)
 	{
 		List<SearchResult> toRemove = new ArrayList<>();
 		int numLeft = numToConsume;
@@ -69,7 +73,7 @@ abstract class CachingSearchAgent extends WebSearchAgent
 		return numToConsume - numLeft;
 	}
 
-	protected final boolean isURLDuplicate(String url) 
+	protected final boolean isURLDuplicate(String url)
 	{
 		for (SearchResult itr : fetchedResults)
 		{
@@ -80,12 +84,20 @@ abstract class CachingSearchAgent extends WebSearchAgent
 		return false;
 	}
 
-	protected final void cacheNextPage() 
+	protected final void cacheNextPage()
 	{
 		if (noMoreResults == true)
 			return;
-
+		else if (numRequests >= maxRequests)
+		{
+			ServerLogger.get().info("Max search requests reached for query '" + query + "'");
+			noMoreResults = true;
+			return;
+		}
+		
 		List<? extends AbstractSearchAgentImplResult> apiResults = invokeSearchApi();
+		numRequests++;
+		
 		if (apiResults.isEmpty())
 		{
 			ServerLogger.get().info("No more results for query '" + query + "'");

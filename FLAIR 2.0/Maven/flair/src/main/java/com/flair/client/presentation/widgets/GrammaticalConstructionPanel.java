@@ -9,6 +9,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasWidgets;
 import com.google.gwt.user.client.ui.Widget;
 
+import gwt.material.design.client.constants.CollapsibleType;
 import gwt.material.design.client.ui.MaterialCollapsible;
 
 /*
@@ -28,6 +29,10 @@ public class GrammaticalConstructionPanel extends Composite
 
 	public void setAccordion(boolean val) {
 		panel.setAccordion(val);
+	}
+	
+	public void setPopout(boolean val) {
+		panel.setType(val ? CollapsibleType.POPOUT : CollapsibleType.FLAT);
 	}
 
 	@Override

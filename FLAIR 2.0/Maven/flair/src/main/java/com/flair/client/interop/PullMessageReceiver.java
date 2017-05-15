@@ -1,8 +1,10 @@
 package com.flair.client.interop;
 
+import com.flair.client.ClientEndPoint;
 import com.flair.client.utilities.ClientLogger;
 import com.flair.shared.interop.AbstractMessageReceiver;
 import com.flair.shared.interop.AuthToken;
+import com.flair.shared.interop.InvalidAuthTokenException;
 import com.flair.shared.interop.MessagePipelineType;
 import com.flair.shared.interop.ServerMessage;
 import com.flair.shared.interop.services.PullMessageEndpointServiceAsync;
@@ -23,6 +25,12 @@ class PullMessageReceiver implements AbstractMessageReceiver
 			{
 				ClientLogger.get().error(caught, "Couldn't fetch server messages");
 				callbackInProgess = false;
+				
+				if (caught instanceof InvalidAuthTokenException)
+				{
+					ClientEndPoint.get().fatalServerError();
+					close();
+				}
 			}
 
 			@Override

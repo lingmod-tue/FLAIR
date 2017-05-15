@@ -138,4 +138,11 @@ public class ClientEndPoint
 	public AbstractMessageReceiver getMessagePipeline() {
 		return messagePipeline;
 	}
+
+	public void fatalServerError()
+	{
+		viewport.setSplashTitle("Oh dear!");
+		viewport.setSplashSubtitle("Your current browser session has expired. Please reload the page or try again later.");
+		viewport.showSplash(true);
+	}
 }

@@ -47,9 +47,9 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 	@UiField
 	MaterialButton			btnCancelOpUI;
 	@UiField
-	MaterialPanel			pnlCompletedContainerUI;
+	MaterialRow				pnlCompletedContainerUI;
 	@UiField
-	MaterialPanel			pnlInProgressContainerUI;
+	MaterialRow				pnlInProgressContainerUI;
 	@UiField
 	MaterialDivider			divDividerUI;
 	@UiField

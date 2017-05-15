@@ -8,6 +8,8 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public class GwtUtil
 {
+	private static int			SMALL_SCREEN_WIDTH = 450;
+	
 	public static boolean isScrolledIntoView(Widget widget, boolean noClip)
 	{
 	    if (widget != null)
@@ -25,6 +27,10 @@ public class GwtUtil
 	    }
 	    
 	    return false;
+	}
+	
+	public static boolean isSmallScreen() {
+		return Window.getClientWidth() < SMALL_SCREEN_WIDTH;
 	}
 	
 	public static native boolean isTouch() /*-{

@@ -3,97 +3,99 @@
  */
 package com.flair.server.crawler;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.flair.server.crawler.impl.AbstractSearchAgentImplResult;
 import com.flair.server.crawler.impl.faroo.FarooSearch;
 import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.grammar.Language;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * Implementation of the Faroo search engine 
+ * Implementation of the Faroo search engine
+ * 
  * @author shadeMe
  */
 public class FarooSearchAgent extends CachingSearchAgent
 {
-    private static final String		API_KEY = "";
-    private static final int		RESULTS_PER_PAGE = 10;
-    
-    public static enum Source
-    {
-	WEB, NEWS, TOPICS, TRENDS
-    }
-    
-    private final FarooSearch		pipeline;
-    
-    public FarooSearchAgent(Language lang, String query)
-    {
-	super(lang, query);
-	this.pipeline = new FarooSearch();
-	
-	switch (lang)
+	private static final String API_KEY = "";
+
+	private static final int	RESULTS_PER_PAGE	= 10;
+	private static final int	MAX_API_REQUESTS	= 2;
+
+	public static enum Source
 	{
-	    case ENGLISH:
-		pipeline.setLang(FarooSearch.Language.ENGLISH);
-		break;
-	    case GERMAN:
-		pipeline.setLang(FarooSearch.Language.GERMAN);
-		break;
-	    default:
-		throw new IllegalArgumentException("Unsupported language " + lang);
+		WEB, NEWS, TOPICS, TRENDS
 	}
 
-	pipeline.setApiKey(API_KEY);
-	pipeline.setQuery(query);
-	pipeline.setPerPage(RESULTS_PER_PAGE);
-    }
-    
-    public boolean isTrending() {
-	return pipeline.isTrending();
-    }
+	private final FarooSearch pipeline;
 
-    public void setTrending(boolean trending) {
-	pipeline.setTrending(trending);
-    }
-    
-    public void setSearchSource(Source source)
-    {
-	switch (source)
+	public FarooSearchAgent(Language lang, String query)
 	{
-	    case WEB:
-		pipeline.setSource(FarooSearch.SearchSource.WEB);
-		break;
-	    case NEWS:
-		pipeline.setSource(FarooSearch.SearchSource.NEWS);
-		break;
-	    case TOPICS:
-		pipeline.setSource(FarooSearch.SearchSource.TOPICS);
-		break;
-	    case TRENDS:
-		pipeline.setSource(FarooSearch.SearchSource.TRENDS);
-		break;
+		super(lang, query, MAX_API_REQUESTS);
+		this.pipeline = new FarooSearch();
+
+		switch (lang)
+		{
+		case ENGLISH:
+			pipeline.setLang(FarooSearch.Language.ENGLISH);
+			break;
+		case GERMAN:
+			pipeline.setLang(FarooSearch.Language.GERMAN);
+			break;
+		default:
+			throw new IllegalArgumentException("Unsupported language " + lang);
+		}
+
+		pipeline.setApiKey(API_KEY);
+		pipeline.setQuery(query);
+		pipeline.setPerPage(RESULTS_PER_PAGE);
 	}
-    }
-    
-    @Override
-    protected List<? extends AbstractSearchAgentImplResult> invokeSearchApi()
-    {
-	List<? extends AbstractSearchAgentImplResult> azureResults = new ArrayList<>();
-	if (noMoreResults == false)
+
+	public boolean isTrending() {
+		return pipeline.isTrending();
+	}
+
+	public void setTrending(boolean trending) {
+		pipeline.setTrending(trending);
+	}
+
+	public void setSearchSource(Source source)
 	{
-	    try 
-	    {
-		pipeline.setPage(nextPage);
-		azureResults = pipeline.performSearch();
-	    }
-	    catch (Throwable e) 
-	    {
-		ServerLogger.get().error("Faroo search API encountered a fatal error. Exception: " + e.getMessage());
-		noMoreResults = true;
-	    }
+		switch (source)
+		{
+		case WEB:
+			pipeline.setSource(FarooSearch.SearchSource.WEB);
+			break;
+		case NEWS:
+			pipeline.setSource(FarooSearch.SearchSource.NEWS);
+			break;
+		case TOPICS:
+			pipeline.setSource(FarooSearch.SearchSource.TOPICS);
+			break;
+		case TRENDS:
+			pipeline.setSource(FarooSearch.SearchSource.TRENDS);
+			break;
+		}
 	}
-	
-	return azureResults;
-    }
+
+	@Override
+	protected List<? extends AbstractSearchAgentImplResult> invokeSearchApi()
+	{
+		List<? extends AbstractSearchAgentImplResult> azureResults = new ArrayList<>();
+		if (noMoreResults == false)
+		{
+			try
+			{
+				pipeline.setPage(nextPage);
+				azureResults = pipeline.performSearch();
+			} catch (Throwable e)
+			{
+				ServerLogger.get().error("Faroo search API encountered a fatal error. Exception: " + e.getMessage());
+				noMoreResults = true;
+			}
+		}
+
+		return azureResults;
+	}
 }

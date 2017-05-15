@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.flair.client.ClientEndPoint;
 import com.flair.client.interop.FuncCallback;
 import com.flair.client.localization.LocalizationEngine;
 import com.flair.client.localization.locale.GrammaticalConstructionLocale;
@@ -40,6 +41,7 @@ import com.flair.client.presentation.widgets.GenericWeightSlider;
 import com.flair.client.presentation.widgets.GrammaticalConstructionWeightSlider;
 import com.flair.client.presentation.widgets.LanguageSpecificConstructionSliderBundle;
 import com.flair.client.utilities.ClientLogger;
+import com.flair.client.utilities.GwtUtil;
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
 import com.flair.shared.interop.AbstractMessageReceiver;
@@ -47,6 +49,7 @@ import com.flair.shared.interop.AuthToken;
 import com.flair.shared.interop.BasicDocumentTransferObject;
 import com.flair.shared.interop.ConstructionSettingsProfile;
 import com.flair.shared.interop.ConstructionSettingsProfileImpl;
+import com.flair.shared.interop.InvalidAuthTokenException;
 import com.flair.shared.interop.RankableDocument;
 import com.flair.shared.interop.RankableWebSearchResult;
 import com.flair.shared.interop.ServerMessage;
@@ -182,7 +185,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 			presenter.showDefaultPane(false);
 			presenter.showCancelPane(true);
 			presenter.showProgressBar(true, true);
-			settings.show();
+			settings.hide();
 			preview.hide();
 
 			settings.setSliderBundle(params.lang);
@@ -436,7 +439,9 @@ public class WebRankerCore implements AbstractWebRankerCore
 			results.clearInProgress();
 			presenter.showCancelPane(false);
 			presenter.showProgressBar(false, false);
-			settings.show();
+			
+			if (GwtUtil.isSmallScreen() == false)
+				settings.show();
 			
 			// rerank the parsed docs as their original ranks can be discontinuous
 			// sort the parsed docs by their original rank first and then rerank them
@@ -729,6 +734,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 		private final String			PARAM_DOCLEVEL_B = "docLevelB";
 		private final String			PARAM_DOCLEVEL_C = "docLevelC";
 		private final String			PARAM_KEYWORDS = "keywords";
+		private final String			PARAM_DOCLENGTH = "docLength";
 		
 		private final String			PARAM_VAL_SEPARATOR = "_";
 		
@@ -781,7 +787,8 @@ public class WebRankerCore implements AbstractWebRankerCore
 					String lvla = Window.Location.getParameter(PARAM_DOCLEVEL_A),
 							lvlb = Window.Location.getParameter(PARAM_DOCLEVEL_B),
 							lvlc = Window.Location.getParameter(PARAM_DOCLEVEL_C),
-							kw = Window.Location.getParameter(PARAM_KEYWORDS);
+							kw = Window.Location.getParameter(PARAM_KEYWORDS),
+							docl = Window.Location.getParameter(PARAM_DOCLENGTH);
 					
 					if (lvla != null)
 						out.setDocLevelEnabled(DocumentReadabilityLevel.LEVEL_A, lvla.equalsIgnoreCase("true") ? true : false);
@@ -800,6 +807,9 @@ public class WebRankerCore implements AbstractWebRankerCore
 						out.getKeywords().setEnabled(enabled);
 						out.getKeywords().setWeight(weight);
 					}
+					
+					if (docl != null)
+						out.setDocLengthWeight(Integer.parseInt(docl));
 					
 					// run through all of the lang's grams
 					for (GrammaticalConstruction itr : GrammaticalConstruction.getForLanguage(l))
@@ -828,6 +838,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 			buildUrl(sb, PARAM_SIGIL, "1");
 			
 			buildUrl(sb, PARAM_LANGUAGE, settings.getLanguage().toString());
+			buildUrl(sb, PARAM_DOCLENGTH, "" + settings.getDocLengthWeight());
 			buildUrl(sb, PARAM_DOCLEVEL_A, "" + settings.isDocLevelEnabled(DocumentReadabilityLevel.LEVEL_A));
 			buildUrl(sb, PARAM_DOCLEVEL_B, "" + settings.isDocLevelEnabled(DocumentReadabilityLevel.LEVEL_B));
 			buildUrl(sb, PARAM_DOCLEVEL_C, "" + settings.isDocLevelEnabled(DocumentReadabilityLevel.LEVEL_C));
@@ -919,6 +930,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 				notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_VisualizeWait));
 			else
 			{
+				preview.hide();
 				visualizer.visualize(new VisualizeInput());
 				visualizer.show();
 			}
@@ -983,6 +995,9 @@ public class WebRankerCore implements AbstractWebRankerCore
 					ClientLogger.get().error(e, "Couldn't begin corpus upload operation");
 					notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_ServerError));
 					presenter.showLoaderOverlay(false);
+					
+					if (e instanceof InvalidAuthTokenException)
+						ClientEndPoint.get().fatalServerError();
 				}));
 
 
@@ -1119,6 +1134,9 @@ public class WebRankerCore implements AbstractWebRankerCore
 					ClientLogger.get().error(e, "Couldn't begin web search operation");
 					notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_ServerError));
 					presenter.showLoaderOverlay(false);
+					
+					if (e instanceof InvalidAuthTokenException)
+						ClientEndPoint.get().fatalServerError();
 				}));
 	}
 

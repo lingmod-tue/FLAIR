@@ -1,13 +1,13 @@
 package com.flair.server.crawler;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.flair.server.crawler.impl.AbstractSearchAgentImplResult;
 import com.flair.server.crawler.impl.azure.AzureWebSearch;
 import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.grammar.Language;
 import com.google.gwt.core.shared.GWT;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Implementation of the Bing Search engine
@@ -16,15 +16,17 @@ import java.util.List;
  */
 class BingSearchAgent extends CachingSearchAgent
 {
-	private static final String	API_KEY_DEBUG		= "4932f9145e034032b51e2e0a9579fdc1";
-	private static final String	API_KEY				= "f163d542b4534b38986b91653237490b";
-	private static final int	RESULTS_PER_PAGE	= 50;		// larger numbers will reduce the number of search transactions but will increase the response size
+	private static final String		API_KEY_DEBUG		= "4932f9145e034032b51e2e0a9579fdc1";
+	private static final String		API_KEY				= "f163d542b4534b38986b91653237490b";
+	
+	private static final int		RESULTS_PER_PAGE	= 100;		// larger numbers will reduce the number of search transactions but will increase the response size
+	private static final int		MAX_API_REQUESTS	= 2;
 
 	private final AzureWebSearch pipeline;
 
 	public BingSearchAgent(Language lang, String query)
 	{
-		super(lang, query);
+		super(lang, query, MAX_API_REQUESTS);
 		this.pipeline = new AzureWebSearch();
 
 		String qPrefix = "";
@@ -56,7 +58,7 @@ class BingSearchAgent extends CachingSearchAgent
 	}
 
 	@Override
-	protected List<? extends AbstractSearchAgentImplResult> invokeSearchApi() 
+	protected List<? extends AbstractSearchAgentImplResult> invokeSearchApi()
 	{
 		List<? extends AbstractSearchAgentImplResult> azureResults = new ArrayList<>();
 		if (noMoreResults == false)

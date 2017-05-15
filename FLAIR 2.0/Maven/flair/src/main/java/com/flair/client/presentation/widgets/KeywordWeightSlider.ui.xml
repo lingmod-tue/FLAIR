@@ -11,8 +11,8 @@
 			</m:MaterialColumn>
 			
 			<m:MaterialColumn textAlign="RIGHT">
-				<m:MaterialIcon ui:field="btnEditKeywordsUI" iconType="MODE_EDIT" waves="DEFAULT" circle="true" iconColor="BLUE" marginRight="10"/>
-				<m:MaterialIcon ui:field="btnResetKeywordsUI" iconType="UNDO" waves="DEFAULT" circle="true" iconColor="BLUE" marginLeft="10"/>
+				<m:MaterialIcon ui:field="btnEditKeywordsUI" iconType="MODE_EDIT" waves="DEFAULT" circle="true" iconColor="BLUE" marginRight="5"/>
+				<m:MaterialIcon ui:field="btnResetKeywordsUI" iconType="UNDO" waves="DEFAULT" circle="true" iconColor="BLUE" marginLeft="5"/>
 			</m:MaterialColumn>
 		</m:MaterialRow>
 		

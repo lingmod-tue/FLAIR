@@ -53,6 +53,11 @@ public class KeywordWeightSlider extends LocalizedComposite implements AbstractW
 		refreshLocalization();
 	}
 	
+	private void initUI()
+	{
+		setEnabled(false, false);
+	}
+	
 	public KeywordWeightSlider()
 	{
 		super(ClientEndPoint.get().getLocalization());
@@ -73,6 +78,7 @@ public class KeywordWeightSlider extends LocalizedComposite implements AbstractW
 		});
 		
 		initLocale();
+		initUI();
 	}
 	
 	public boolean hasCustomVocab() {
@@ -104,10 +110,9 @@ public class KeywordWeightSlider extends LocalizedComposite implements AbstractW
 		
 		btnEditKeywordsUI.setTooltip(getLocalizationData(lang).get(KeywordWeightSliderLocale.DESC_editTooltip));
 		btnResetKeywordsUI.setTooltip(getLocalizationData(lang).get(KeywordWeightSliderLocale.DESC_resetTooltip));
-		sldWeightUI.setTooltip(getLocalizationData(lang).get(KeywordWeightSliderLocale.DESC_sliderTooltip));
+		sldWeightUI.setTitle(getLocalizationData(lang).get(KeywordWeightSliderLocale.DESC_sliderTooltip));
 	}
 
-	
 	@Override
 	public void resetState(boolean fireEvents)
 	{

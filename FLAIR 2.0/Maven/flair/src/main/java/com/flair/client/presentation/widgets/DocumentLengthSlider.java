@@ -29,6 +29,11 @@ public class DocumentLengthSlider extends Composite implements CanReset
 	private final MaterialRange		slider;
 	private WeightChangeHandler		changeHandler;
 	
+	private void initUI()
+	{
+		setWeight(SLIDER_MIN_VAL, false);
+	}
+	
 	public DocumentLengthSlider()
 	{
 		changeHandler = null;
@@ -43,6 +48,8 @@ public class DocumentLengthSlider extends Composite implements CanReset
 			if (changeHandler != null)
 				changeHandler.handle(getWeight());
 		});
+		
+		initUI();
 	}
 
 	public int getWeight() {
@@ -59,6 +66,6 @@ public class DocumentLengthSlider extends Composite implements CanReset
 
 	@Override
 	public void resetState(boolean fireEvents) {
-		setWeight(SLIDER_MAX_VAL, fireEvents);
+		setWeight(SLIDER_MIN_VAL, fireEvents);
 	}
 }

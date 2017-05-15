@@ -19,6 +19,7 @@ import javax.servlet.http.Part;
 import com.flair.server.interop.AuthTokenGenerator;
 import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.interop.AuthToken;
+import com.flair.shared.interop.InvalidAuthTokenException;
 import com.flair.shared.interop.ServerAuthenticationToken;
 
 /**
@@ -30,7 +31,7 @@ public class SessionManager
 {
 	private static SessionManager SINGLETON = null;
 
-	public static SessionManager get() 
+	public static SessionManager get()
 	{
 		if (SINGLETON == null)
 		{
@@ -44,7 +45,7 @@ public class SessionManager
 		return SINGLETON;
 	}
 
-	public static void dispose() 
+	public static void dispose()
 	{
 		if (SINGLETON != null)
 		{
@@ -120,7 +121,7 @@ public class SessionManager
 			return null;
 	}
 
-	private BasicSessionData getSessionData(HttpSession httpSession) 
+	private BasicSessionData getSessionData(HttpSession httpSession)
 	{
 		ServerAuthenticationToken tok = http2Token.get(httpSession);
 		if (tok != null)
@@ -163,10 +164,8 @@ public class SessionManager
 
 	public synchronized void removeSession(HttpSession oldSession)
 	{
-		if (http2Token.containsKey(oldSession) == false)
-			throw new IllegalArgumentException("Session is not tracked");
-
-		invalidateAndRemove(http2Token.get(oldSession));
+		if (http2Token.containsKey(oldSession))
+			invalidateAndRemove(http2Token.get(oldSession));
 	}
 	
 	public synchronized void removeSession(ServerAuthenticationToken tok)
@@ -200,7 +199,14 @@ public class SessionManager
 		BasicSessionData data = getSessionData(tok);
 		if (data == null)
 		{
-			// the previous session was released, re-add
+			// the previous session was released
+			if (getSessionData(session) != null)
+			{
+				// there's another instance of the client using the same/current session
+				// invalidate this instance of the client
+				throw new InvalidAuthTokenException();
+			}
+			
 			activeSessions.put(tok, new BasicSessionData(tok, session));
 			http2Token.put(session, tok);
 			ServerLogger.get().info("Renewed session token. ID: " + tok.getUuid());
@@ -213,11 +219,11 @@ public class SessionManager
 				data.setHttpSession(session);		// update the cached session
 				http2Token.remove(oldSession);
 				http2Token.put(session, tok);
-			}			
+			}
 		}
 	}
 	
-	private String getUploadFileName(Part part) 
+	private String getUploadFileName(Part part)
 	{
 		String contentDisp = part.getHeader("content-disposition");
 		String[] tokens = contentDisp.split(";");

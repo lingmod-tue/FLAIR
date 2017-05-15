@@ -39,27 +39,28 @@
 		<m:MaterialHeader depth="996" layoutPosition="FIXED" width="100%">
 			<!-- Main Navbar -->
 			<m:MaterialNavBar ui:field="navMainUI" backgroundColor="ORANGE">
-				<m:MaterialLink ui:field="tglSettingsPaneUI" iconType="MENU" waves="LIGHT" paddingLeft="7" />
+				<m:MaterialLink ui:field="tglSettingsPaneUI" iconType="SETTINGS" waves="LIGHT" paddingLeft="7" />
 				<m:MaterialNavBrand ui:field="btnAboutUI" marginLeft="5" href="javascript:void(0)" text="FLAIR"/>
 				
-				<m:MaterialLink ui:field="btnSwitchLangUI" activates="lang-selector" iconType="LANGUAGE" waves="LIGHT" float="RIGHT"/>
+				<m:MaterialLink ui:field="btnSwitchLangUI" activates="lang-selector" iconType="LANGUAGE" waves="LIGHT" float="RIGHT" paddingLeft="10"/>
 			</m:MaterialNavBar>		
 		</m:MaterialHeader>
 						
 		<!-- UI Language Dropdown -->
-		<m:MaterialDropDown activator="lang-selector" constrainWidth="true">
+		<m:MaterialDropDown activator="lang-selector" constrainWidth="true" marginTop="65">
 			<m:MaterialLink ui:field="btnLangEnUI" waves="DEFAULT" text="English"/>
 			<m:MaterialLink ui:field="btnLangDeUI" waves="DEFAULT" text="German"/>
 		</m:MaterialDropDown>
 		
 		<!-- Main FAB -->
-		<m:MaterialFAB ui:field="fabMainActionsUI" axis="VERTICAL" depth="998">
+		<m:MaterialFAB axis="VERTICAL" depth="998" type="CLICK_ONLY">
 			<m:MaterialButton ui:field="btnWebSearchUI"
 				type="FLOATING" iconType="SEARCH" size="LARGE" backgroundColor="ORANGE" waves="LIGHT"/>
-			<m:MaterialFABList>
-				<m:MaterialAnchorButton ui:field="btnUploadUI" 
+		</m:MaterialFAB>
+		
+		<m:MaterialFAB axis="VERTICAL" depth="998" type="CLICK_ONLY" marginBottom="75">
+			<m:MaterialAnchorButton ui:field="btnUploadUI" size="LARGE"
 					type="FLOATING" waves="LIGHT" backgroundColor="BLUE" iconType="FILE_UPLOAD"/>
-			</m:MaterialFABList>
 		</m:MaterialFAB>
 				
 		<!-- Web Search Modal -->
@@ -143,6 +144,29 @@
 								
 							<m:MaterialLabel ui:field="lblDefaultSearchCaptionUI"
 								text="Click on the Search icon on top and type in a query. FLAIR will fetch the top results from the Bing Search Engine." />
+								
+							<m:MaterialRow>
+								<m:MaterialColumn grid="l6 m6 s12">
+									<m:MaterialTextBox ui:field="txtSearchBoxUI1" iconType="SEARCH"/>					
+								</m:MaterialColumn>
+								
+								<m:MaterialColumn grid="l3 m3 s12">
+									<m:MaterialListBox ui:field="selResultLangUI1">
+										<m.html:Option ui:field="selResultLangItmEnUI1" text="English" value="ENGLISH" />
+										<m.html:Option ui:field="selResultLangItmDeUI1" text="German" value="GERMAN" />
+									</m:MaterialListBox>
+								</m:MaterialColumn>
+								
+								<m:MaterialColumn grid="l3 m3 s12">
+									<m:MaterialListBox ui:field="selResultCountUI1" >
+										<m.html:Option ui:field="selResultCountItm10UI1" text="10" value="10" />
+										<m.html:Option ui:field="selResultCountItm20UI1" text="20" value="20" />
+										<m.html:Option ui:field="selResultCountItm30UI1" text="30" value="30" />
+										<m.html:Option ui:field="selResultCountItm40UI1" text="40" value="40" />
+										<m.html:Option ui:field="selResultCountItm50UI1" text="50" value="50" />
+									</m:MaterialListBox>
+								</m:MaterialColumn>
+							</m:MaterialRow>
 						</m:MaterialCardContent>
 					</m:MaterialCard>
 				</m:MaterialColumn>
@@ -182,7 +206,7 @@
 				<m:MaterialColumn grid="l6 m6 s12">
 					<m:MaterialCard backgroundColor="GREEN">
 						<m:MaterialCardContent textColor="WHITE">
-							<m:MaterialCardTitle ui:field="lblDefaultReadTitleUI" text="Read" iconType="CHROME_READER_MODE"
+							<m:MaterialCardTitle ui:field="lblDefaultReadTitleUI" text="Read"
 								iconPosition="RIGHT" />
 								
 							<m:MaterialLabel ui:field="lblDefaultReadCaptionUI"

@@ -11,7 +11,7 @@
 			</m:MaterialColumn>
 			
 			<m:MaterialColumn paddingTop="2">
-				<m:MaterialBadge ui:field="bdgResultCountUI" right="35" text="10/10"/>
+				<m:MaterialBadge ui:field="bdgResultCountUI" right="45" text="10/10"/>
 			</m:MaterialColumn>
 		</m:MaterialRow>
 		

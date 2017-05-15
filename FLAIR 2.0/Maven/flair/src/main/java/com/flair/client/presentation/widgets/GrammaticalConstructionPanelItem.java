@@ -95,7 +95,7 @@ public class GrammaticalConstructionPanelItem extends LocalizedComposite impleme
 		super.setLocalization(lang);
 		
 		// update tooltip
-		reset.setTooltip(getLocalizationData(lang).get(GrammaticalConstructionPanelItemLocale.DESC_resetTooltip));
+		reset.setTitle(getLocalizationData(lang).get(GrammaticalConstructionPanelItemLocale.DESC_resetTooltip));
 	}
 
 	@Override

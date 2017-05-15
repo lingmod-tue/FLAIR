@@ -102,8 +102,8 @@ public class GrammaticalConstructionWeightSlider extends LocalizedComposite impl
 			setToggleText(GrammaticalConstructionLocale.get().getLocalizedName(gramConstruction, lang));
 		
 		chkToggleUI.setTitle(getLocalizationData(lang).get(GrammaticalConstructionWeightSliderLocale.DESC_toggleTooltip));
-		bdgResultCountUI.setTooltip(getLocalizationData(lang).get(GrammaticalConstructionWeightSliderLocale.DESC_resultCountTooltip));
-		sldWeightUI.setTooltip(getLocalizationData(lang).get(GrammaticalConstructionWeightSliderLocale.DESC_sliderTooltip));
+		bdgResultCountUI.setTitle(getLocalizationData(lang).get(GrammaticalConstructionWeightSliderLocale.DESC_resultCountTooltip));
+		sldWeightUI.setTitle(getLocalizationData(lang).get(GrammaticalConstructionWeightSliderLocale.DESC_sliderTooltip));
 	}
 	
 	@Override

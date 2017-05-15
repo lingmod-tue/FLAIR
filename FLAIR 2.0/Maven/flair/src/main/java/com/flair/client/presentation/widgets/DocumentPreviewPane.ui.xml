@@ -26,16 +26,14 @@
 		<m:MaterialRow ui:field="pnlPreviewContainerUI" overflow="AUTO" layoutPosition="FIXED" grid="l4 m4 s12"
 			depth="995" padding="20" height="100%" width="450px" top="65" right="-450"
 			addStyleNames="{style.bordered} {style.animation}" backgroundColor="WHITE" shadow="5">
-			<m:MaterialRow textAlign="RIGHT" margin="2" padding="2">
-				<m:MaterialIcon ui:field="icoCloseUI" iconType="CLOSE"/>
-			</m:MaterialRow>
 						
 			<!-- Header Info -->
-			<m:MaterialRow textAlign="CENTER">
+			<m:MaterialRow textAlign="LEFT" marginBottom="5">
+				<m:MaterialIcon ui:field="icoCloseUI" iconType="CLOSE" float="RIGHT" paddingTop="3"/>
 				<m:MaterialLabel ui:field="lblDocTitleUI" fontSize="1.4em" 
-							textColor="GREY_DARKEN_1" text="Document Title"/>
-				
-				<m:MaterialRow paddingTop="10">
+							textColor="GREY_DARKEN_1" text="Document Title" truncate="true"/>
+							
+				<m:MaterialRow marginTop="15" marginBottom="10">
 					<m:MaterialChip ui:field="lblDocLevelUI" text="A1-B1-C1"/>	
 					<m:MaterialChip ui:field="lblDocNumSentencesUI" text="Sentences" marginLeft="10" marginRight="10"/>
 					<m:MaterialChip ui:field="lblDocNumWordsUI" text="Words"/>
@@ -46,7 +44,7 @@
 			<m:MaterialRow marginBottom="20">				
 				<g:ScrollPanel ui:field="pnlDocTextPreviewUI" addStyleNames="{style.docText-preview}"/>		
 					
-				<m:MaterialRow textAlign="RIGHT" margin="2" padding="2">
+				<m:MaterialRow textAlign="RIGHT" margin="2" padding="0">
 					<m:MaterialIcon ui:field="icoHelpTextUI" iconType="HELP"/>
 				</m:MaterialRow>				
 				<m:MaterialRow ui:field="pnlWeightSelectionUI" padding="0">

@@ -29,7 +29,6 @@ import com.flair.client.presentation.widgets.DocumentResultsPane;
 import com.flair.client.presentation.widgets.ModalPrompt;
 import com.flair.client.presentation.widgets.RankerSettingsPane;
 import com.flair.client.presentation.widgets.SettingsExporter;
-import com.flair.client.utilities.GwtUtil;
 import com.flair.shared.grammar.Language;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyCodes;
@@ -41,13 +40,11 @@ import com.google.gwt.user.client.ui.Widget;
 
 import gwt.material.design.addins.client.overlay.MaterialOverlay;
 import gwt.material.design.client.base.MaterialWidget;
-import gwt.material.design.client.constants.FABType;
 import gwt.material.design.client.constants.Position;
 import gwt.material.design.client.constants.ProgressType;
 import gwt.material.design.client.ui.MaterialAnchorButton;
 import gwt.material.design.client.ui.MaterialButton;
 import gwt.material.design.client.ui.MaterialCardTitle;
-import gwt.material.design.client.ui.MaterialFAB;
 import gwt.material.design.client.ui.MaterialLabel;
 import gwt.material.design.client.ui.MaterialLink;
 import gwt.material.design.client.ui.MaterialListBox;
@@ -123,8 +120,6 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	HTML										htmlSplashLogoUI;
 	@UiField
 	MaterialNavBar								navMainUI;
-	@UiField
-	MaterialFAB									fabMainActionsUI;
 	@UiField
 	MaterialButton								btnWebSearchUI;
 	SimpleLocalizedWidget<MaterialButton>		btnWebSearchLC;
@@ -233,6 +228,14 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	ToastNotifications								notificationService;
 	BasicOverlay									overlayService;
 	
+	private void toggleSettingsPane()
+	{
+		if (pnlConstructionsSettingsUI.isVisible())
+			pnlConstructionsSettingsUI.hide();
+		else
+			pnlConstructionsSettingsUI.show();
+	}
+	
 	private void showSearchModal(boolean visible)
 	{
 		if (visible)
@@ -335,13 +338,11 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	private void initHandlers()
 	{
 		btnWebSearchUI.addClickHandler(e -> {
-			if (fabMainActionsUI.isOpen())
-				showSearchModal(true);
+			showSearchModal(true);
 		});
 		
 		btnUploadUI.addClickHandler(e -> {
-			if (fabMainActionsUI.isOpen())
-				showUploadModal();
+			showUploadModal();
 		});
 		
 		btnLangEnUI.addClickHandler(e -> {
@@ -392,12 +393,10 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 			}
 		});
 		
-		tglSettingsPaneUI.addClickHandler(e -> {
-			if (pnlConstructionsSettingsUI.isVisible())
-				pnlConstructionsSettingsUI.hide();
-			else
-				pnlConstructionsSettingsUI.show();
-		});
+		tglSettingsPaneUI.addClickHandler(e -> toggleSettingsPane());
+		
+		lblDefaultSearchTitleUI.addClickHandler(e -> showSearchModal(true));
+		lblDefaultConfigTitleUI.addClickHandler(e -> toggleSettingsPane());
 		
 		pnlConstructionsSettingsUI.setShowHideEventHandler(v -> updateResultsListGrid());
 		pnlDocPreviewUI.setShowHideEventHandler(v -> updateResultsListGrid());
@@ -411,9 +410,20 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		btnUploadUI.setTooltipPosition(Position.LEFT);
 		btnSwitchLangUI.setTooltipPosition(Position.LEFT);
 		
-		// disable hovering on the FAB when on mobile devices
-		if (GwtUtil.isTouch())
-			fabMainActionsUI.setType(FABType.CLICK_ONLY);
+		// animate FABs slightly
+		MaterialAnimation pulseSearch = new MaterialAnimation();
+		pulseSearch.setTransition(Transition.PULSE);
+		pulseSearch.setDelayMillis(10);
+		pulseSearch.setDurationMillis(3000);
+		pulseSearch.setInfinite(true);
+		pulseSearch.animate(btnWebSearchUI);
+		
+		MaterialAnimation pulseUpload = new MaterialAnimation();
+		pulseUpload.setTransition(Transition.PULSE);
+		pulseUpload.setDelayMillis(3000);
+		pulseUpload.setDurationMillis(3000);
+		pulseUpload.setInfinite(true);
+		pulseUpload.animate(btnUploadUI);
 	}
 		
 	@UiConstructor

@@ -158,6 +158,14 @@
 		<outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes</outputDirectory>
 
 		<plugins>
+			<plugin>
+				<artifactId>maven-war-plugin</artifactId>
+				
+				<configuration>
+					<recompressZippedFiles>false</recompressZippedFiles>
+				</configuration>
+			</plugin>
+		
 			<!-- Mojo's Maven Plugin for GWT -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
