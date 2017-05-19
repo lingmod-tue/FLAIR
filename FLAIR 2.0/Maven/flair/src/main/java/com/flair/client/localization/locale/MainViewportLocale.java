@@ -25,8 +25,8 @@ public final class MainViewportLocale extends SimpleLocale
 	public static final String		DESC_defSearchCaption = "defSearchCaption";
 	public static final String		DESC_defConfigTitle = "defConfigTitle";
 	public static final String		DESC_defConfigCaption = "defConfigCaption";
-	public static final String		DESC_defReadTitle = "defReadTitle";
-	public static final String		DESC_defReadCaption = "defReadCaption";
+	public static final String		DESC_defUploadTitle = "defUploadTitle";
+	public static final String		DESC_defUploadCaption = "defUploadCaption";
 
 	@Override
 	public void init()
@@ -50,9 +50,9 @@ public final class MainViewportLocale extends SimpleLocale
 		en.put(DESC_defSearchTitle, "Search");
 		en.put(DESC_defSearchCaption, "Click on the Search icon below and type in a query. FLAIR will fetch the top results from the Bing Search Engine.");
 		en.put(DESC_defConfigTitle, "Configure");
-		en.put(DESC_defConfigCaption, "Configure the settings: text (complexity, length) and language (the passive, wh- questions, academic vocabulary, ...). You can export the settings to apply them to all further searches.");
-		en.put(DESC_defReadTitle, "Read");
-		en.put(DESC_defReadCaption, "FLAIR will re-rank the documents according to the configured settings. Click on the link to open the page in a new tab or read the enhanced text in the right-side panel.");
+		en.put(DESC_defConfigCaption, "Configure the settings: text (complexity, length) and language (the passive, wh- questions, academic vocabulary, ...). You can export the settings to apply them to all further searches. FLAIR will re-rank the documents according to the configured settings. Click on the link to open the page in a new tab or read the enhanced text in the right-side panel.");
+		en.put(DESC_defUploadTitle, "Upload");
+		en.put(DESC_defUploadCaption, "Upload custom documents and corpora. FLAIR will analyse and rank their content according to your settings.");
 		
 		
 		// DE
@@ -74,9 +74,9 @@ public final class MainViewportLocale extends SimpleLocale
 		de.put(DESC_defSearchTitle, "Suchen");
 		de.put(DESC_defSearchCaption, "Klicken Sie auf das Suchsymbol unten und geben Sie eine Suchanfrage ein. FLAIR wird die obersten Ergebnisse von der Suchmaschine Bing abrufen.");
 		de.put(DESC_defConfigTitle, "Konfigurieren");
-		de.put(DESC_defConfigCaption, "Konfgurieren Sie die Einstellungen: Text (Länge, Schwierigkeitsgrad) und Grammatik (Passiv, Wh-Fragen, akademisches Vokabular, ...). Sie können die Einstellungen auch exportieren, um sie auf spätere Suchen anzuwenden.");
-		de.put(DESC_defReadTitle, "Lesen");
-		de.put(DESC_defReadCaption, "FLAIR bewertet die Suchergebnisse neu entsprechend Ihren Einstellungen. Klicken Sie auf den Link, um die Seite in einem neuen Tab zu öffnen, oder lesen Sie den extrahierten erweiterten Text im Textfeld auf der rechten Seite.");
+		de.put(DESC_defConfigCaption, "Konfgurieren Sie die Einstellungen: Text (Länge, Schwierigkeitsgrad) und Grammatik (Passiv, Wh-Fragen, akademisches Vokabular, ...). Sie können die Einstellungen auch exportieren, um sie auf spätere Suchen anzuwenden. FLAIR bewertet die Suchergebnisse neu entsprechend Ihren Einstellungen. Klicken Sie auf den Link, um die Seite in einem neuen Tab zu öffnen, oder lesen Sie den extrahierten erweiterten Text im Textfeld auf der rechten Seite.");
+		de.put(DESC_defUploadTitle, "Hochladen");
+		de.put(DESC_defUploadCaption, "Laden Sie Ihre Dateien hoch. FLAIR wird sie analysieren und entsprechend Ihren Einstellungen bewerten.");
 		
 	}
 	

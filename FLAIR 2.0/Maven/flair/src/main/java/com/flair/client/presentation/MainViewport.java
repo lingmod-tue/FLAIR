@@ -215,11 +215,11 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	MaterialLabel									lblDefaultConfigCaptionUI;
 	SimpleLocalizedTextWidget<MaterialLabel>		lblDefaultConfigCaptionLC;
 	@UiField
-	MaterialCardTitle								lblDefaultReadTitleUI;
-	SimpleLocalizedTextWidget<MaterialCardTitle>	lblDefaultReadTitleLC;
+	MaterialCardTitle								lblDefaultUploadTitleUI;
+	SimpleLocalizedTextWidget<MaterialCardTitle>	lblDefaultUploadTitleLC;
 	@UiField
-	MaterialLabel									lblDefaultReadCaptionUI;
-	SimpleLocalizedTextWidget<MaterialLabel>		lblDefaultReadCaptionLC;
+	MaterialLabel									lblDefaultUploadCaptionUI;
+	SimpleLocalizedTextWidget<MaterialLabel>		lblDefaultUploadCaptionLC;
 	@UiField
 	MaterialOverlay									mdlOverlayUI;
 	@UiField
@@ -303,8 +303,8 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		lblDefaultSearchCaptionLC = new SimpleLocalizedTextWidget<>(lblDefaultSearchCaptionUI, MainViewportLocale.DESC_defSearchCaption);
 		lblDefaultConfigTitleLC = new SimpleLocalizedTextWidget<>(lblDefaultConfigTitleUI, MainViewportLocale.DESC_defConfigTitle);
 		lblDefaultConfigCaptionLC = new SimpleLocalizedTextWidget<>(lblDefaultConfigCaptionUI, MainViewportLocale.DESC_defConfigCaption);
-		lblDefaultReadTitleLC = new SimpleLocalizedTextWidget<>(lblDefaultReadTitleUI, MainViewportLocale.DESC_defReadTitle);
-		lblDefaultReadCaptionLC = new SimpleLocalizedTextWidget<>(lblDefaultReadCaptionUI, MainViewportLocale.DESC_defReadCaption);
+		lblDefaultUploadTitleLC = new SimpleLocalizedTextWidget<>(lblDefaultUploadTitleUI, MainViewportLocale.DESC_defUploadTitle);
+		lblDefaultUploadCaptionLC = new SimpleLocalizedTextWidget<>(lblDefaultUploadCaptionUI, MainViewportLocale.DESC_defUploadCaption);
 		
 		registerLocale(MainViewportLocale.INSTANCE.en);
 		registerLocale(MainViewportLocale.INSTANCE.de);
@@ -329,8 +329,8 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		registerLocalizedWidget(lblDefaultSearchCaptionLC);
 		registerLocalizedWidget(lblDefaultConfigTitleLC);
 		registerLocalizedWidget(lblDefaultConfigCaptionLC);
-		registerLocalizedWidget(lblDefaultReadTitleLC);
-		registerLocalizedWidget(lblDefaultReadCaptionLC);
+		registerLocalizedWidget(lblDefaultUploadTitleLC);
+		registerLocalizedWidget(lblDefaultUploadCaptionLC);
 		
 		refreshLocalization();
 	}
@@ -397,6 +397,7 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		
 		lblDefaultSearchTitleUI.addClickHandler(e -> showSearchModal(true));
 		lblDefaultConfigTitleUI.addClickHandler(e -> toggleSettingsPane());
+		lblDefaultUploadTitleUI.addClickHandler(e -> showUploadModal());
 		
 		pnlConstructionsSettingsUI.setShowHideEventHandler(v -> updateResultsListGrid());
 		pnlDocPreviewUI.setShowHideEventHandler(v -> updateResultsListGrid());

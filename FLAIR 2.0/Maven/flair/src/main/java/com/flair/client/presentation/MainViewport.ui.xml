@@ -137,36 +137,13 @@
 				</m:MaterialColumn>
 				
 				<m:MaterialColumn grid="l6 m6 s12">
-					<m:MaterialCard backgroundColor="BLUE">
+					<m:MaterialCard backgroundColor="ORANGE">
 						<m:MaterialCardContent textColor="WHITE">
 							<m:MaterialCardTitle ui:field="lblDefaultSearchTitleUI" text="Search" iconType="SEARCH"
 								iconPosition="RIGHT" />
 								
 							<m:MaterialLabel ui:field="lblDefaultSearchCaptionUI"
-								text="Click on the Search icon on top and type in a query. FLAIR will fetch the top results from the Bing Search Engine." />
-								
-							<m:MaterialRow>
-								<m:MaterialColumn grid="l6 m6 s12">
-									<m:MaterialTextBox ui:field="txtSearchBoxUI1" iconType="SEARCH"/>					
-								</m:MaterialColumn>
-								
-								<m:MaterialColumn grid="l3 m3 s12">
-									<m:MaterialListBox ui:field="selResultLangUI1">
-										<m.html:Option ui:field="selResultLangItmEnUI1" text="English" value="ENGLISH" />
-										<m.html:Option ui:field="selResultLangItmDeUI1" text="German" value="GERMAN" />
-									</m:MaterialListBox>
-								</m:MaterialColumn>
-								
-								<m:MaterialColumn grid="l3 m3 s12">
-									<m:MaterialListBox ui:field="selResultCountUI1" >
-										<m.html:Option ui:field="selResultCountItm10UI1" text="10" value="10" />
-										<m.html:Option ui:field="selResultCountItm20UI1" text="20" value="20" />
-										<m.html:Option ui:field="selResultCountItm30UI1" text="30" value="30" />
-										<m.html:Option ui:field="selResultCountItm40UI1" text="40" value="40" />
-										<m.html:Option ui:field="selResultCountItm50UI1" text="50" value="50" />
-									</m:MaterialListBox>
-								</m:MaterialColumn>
-							</m:MaterialRow>
+								text="Click on the Search icon and type in a query. FLAIR will fetch the top results from the Bing Search Engine." />								
 						</m:MaterialCardContent>
 					</m:MaterialCard>
 				</m:MaterialColumn>
@@ -182,7 +159,7 @@
 				</m:MaterialColumn>
 				
 				<m:MaterialColumn grid="l6 m6 s12">
-					<m:MaterialCard backgroundColor="ORANGE">
+					<m:MaterialCard backgroundColor="GREEN">
 						<m:MaterialCardContent textColor="WHITE">
 							<m:MaterialCardTitle ui:field="lblDefaultConfigTitleUI" text="Configure" iconType="SETTINGS"
 								iconPosition="RIGHT" />
@@ -204,13 +181,13 @@
 				</m:MaterialColumn>
 				
 				<m:MaterialColumn grid="l6 m6 s12">
-					<m:MaterialCard backgroundColor="GREEN">
+					<m:MaterialCard backgroundColor="BLUE">
 						<m:MaterialCardContent textColor="WHITE">
-							<m:MaterialCardTitle ui:field="lblDefaultReadTitleUI" text="Read"
-								iconPosition="RIGHT" />
+							<m:MaterialCardTitle ui:field="lblDefaultUploadTitleUI" text="Upload"
+								iconPosition="RIGHT" iconType="FILE_UPLOAD"/>
 								
-							<m:MaterialLabel ui:field="lblDefaultReadCaptionUI"
-								text="FLAIR will re-rank the documents according to the configured settings. Click on the link to open the page in a new tab or read the enhanced text in the right-side panel." />
+							<m:MaterialLabel ui:field="lblDefaultUploadCaptionUI"
+								text="Upload your documents and have FLAIR analyse them" />
 						</m:MaterialCardContent>
 					</m:MaterialCard>
 				</m:MaterialColumn>
@@ -327,20 +304,17 @@
 									Back-end:
 									<a href="http://datamarket.azure.com/dataset/bing/search"
 										target="_blank">Microsoft Bing API</a>
-									(
-									<a href="https://github.com/peculater/azure-bing-search-java"
-										target="_blank">Java implementation</a>
-									),
-									<a href="https://github.com/kohlschutter/boilerpipe" target="_blank">Boilerpipe</a>
+									,
+									<a href="https://tika.apache.org/" target="_blank">Apache Tika</a>
 									,
 									<a href="http://stanfordnlp.github.io/CoreNLP/" target="_blank">Stanford
 										CoreNLP</a>
 								</li>
 								<li>
 									Front-end:
-									<a href="http://getbootstrap.com" target="_blank">Bootstrap</a>
+									<a href="http://www.gwtproject.org/" target="_blank">Google Web Toolkit</a>
 									,
-									<a href="http://glyphicons.com/" target="_blank">Glyphicons</a>
+									<a href="https://gwtmaterialdesign.github.io/gwt-material-demo/" target="_blank">GWT Material</a>
 									,
 									<a href="https://d3js.org" target="_blank">d3</a>
 								</li>
@@ -368,48 +342,126 @@
 			<m:MaterialModalContent>
 				<g:HTML>
 					<center>
-					    <h3 class="modal-title">
-					    	<img class="{style.brand-logo} modal-title" src="img/logo_2.png" alt="Über FLAIR"/>
-					    </h3>
-					    <p><span style="color:darkorange"><b>von</b></span> <a href="http://sfs.uni-tuebingen.de/~mchnkina/" target="_blank">Maria Chinkina</a> <a href="mailto:maria.chinkina@uni-tuebingen.de?Subject=FLAIR%20tool" target="_top" title="Maria Chinkina kontaktieren"><span class="glyphicon glyphicon-envelope"></span></a> 
-					        &amp;
-					        <a href="http://sfs.uni-tuebingen.de/~mkannan/" target="_blank">Madeeswaran Kannan</a> <a href="mailto:mkannan@sfs.uni-tuebingen.de?Subject=FLAIR%20tool" target="_top" title="Madeeswaran Kannan kontaktieren"><span class="glyphicon glyphicon-envelope"></span></a> betreut von 
-					        <a href="http://sfs.uni-tuebingen.de/~dm/" target="_blank">Prof. Dr. Detmar Meurers</a> 
-					        <br/> <span style="color:darkorange">@</span> Universität Tübingen, Deutschland <span style="color:darkorange">|</span> 2015-2017
-					        <br/> Version 2.0
-					    </p>
+						<h3 class="modal-title">
+							<img class="{style.brand-logo} modal-title" src="img/logo_2.png"
+								alt="Über FLAIR" />
+						</h3>
+						<p>
+							<span style="color:darkorange">
+								<b>von</b>
+							</span>
+							<a href="http://sfs.uni-tuebingen.de/~mchnkina/" target="_blank">Maria
+								Chinkina</a>
+							<a href="mailto:maria.chinkina@uni-tuebingen.de?Subject=FLAIR%20tool"
+								target="_top" title="Maria Chinkina kontaktieren">
+								<span class="glyphicon glyphicon-envelope"></span>
+							</a>
+							&amp;
+							<a href="http://sfs.uni-tuebingen.de/~mkannan/" target="_blank">Madeeswaran
+								Kannan</a>
+							<a href="mailto:mkannan@sfs.uni-tuebingen.de?Subject=FLAIR%20tool"
+								target="_top" title="Madeeswaran Kannan kontaktieren">
+								<span class="glyphicon glyphicon-envelope"></span>
+							</a>
+							betreut von
+							<a href="http://sfs.uni-tuebingen.de/~dm/" target="_blank">Prof. Dr. Detmar
+								Meurers</a>
+							<br />
+							<span style="color:darkorange">@</span>
+							Universität Tübingen, Deutschland
+							<span style="color:darkorange">|</span>
+							2015-2017
+							<br />
+							Version 2.0
+						</p>
 					</center>
 				
 					<div style="text-align: center">
-                            <p>FLAIR ist ein Online-Tool für Lerner und Lehrer von Sprachen. FLAIR:
-                            </p>
-                            <ul>
-                                <li>durchsucht das Web nach einem gewünschten Thema</li>
-                                <li>analysiert die Suchergebnisse auf Grammatikkonstruktionen und Schwierigkeitsgrade</li>
-                                <li>bewertet die Ergebnisse nach Ihren (pädagogischen oder lern-spezifischen) Bedürfnissen, die Sie in den Einstellungen festlegt haben</li>
-                            </ul>
-                        </div>
-
-                        <p><b>ARTIKEL:</b></p>
-                        <ul>
-                            <li><a href="http://sfs.uni-tuebingen.de/~mchnkina/downloads/Chinkina_Maria_thesis_2015.pdf" target="_blank">MA-Arbeit von Maria Chinkina</a></li>
-                            <li><a href="http://sfs.uni-tuebingen.de/~mchnkina/downloads/Chinkina_Meurers_BEA_2016.pdf" target="_blank">BEA-Artikel</a> (Maria Chinkina, Detmar Meurers)</li>
-                            <li><a href="http://sfs.uni-tuebingen.de/~mchnkina/downloads/Chinkina_Kannan_Meurers_ACL_2016.pdf" target="_blank">Systembeschreibung</a> (Maria Chinkina, Madeeswaran Kannan, Detmar Meurers)</li>
-                        </ul>
-                        <br/>
-                        <p><b>ZUSÄTZLICHES MATERIAL:</b></p>
-                        <ul>
-                            <li><a href="http://sfs.uni-tuebingen.de/~mchnkina/downloads/FLAIR_Evaluation.pdf" target="_blank">Evaluation des FLAIR-Algorithmus</a> (81 grammatische Konstruktionen für Englisch: Precision, Recall, F1)</li>
-                      </ul>
-                        <br/>
-                        <p><b>DRITT-WERKZEUGE</b></p>
-                        <ul>
-                            <li>Back-end: <a href="http://datamarket.azure.com/dataset/bing/search" target="_blank">Microsoft Bing API</a> (<a href="https://github.com/peculater/azure-bing-search-java" target="_blank">Java implementation</a>), <a href="https://github.com/kohlschutter/boilerpipe" target="_blank">Boilerpipe</a>, <a href="http://stanfordnlp.github.io/CoreNLP/" target="_blank">Stanford CoreNLP</a></li>
-                            <li>Front-end: <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>, <a href="http://glyphicons.com/" target="_blank">Glyphicons</a>, <a href="https://d3js.org" target="_blank">d3</a></li>
-                        </ul>
-                        <br/>
-                        <p><b>LIZENZ</b> </p>
-                        <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a><br/>FLAIR ist lizensiert unter einer <a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de">Creative Commons Namensnennung - Nicht-kommerziell - Weitergabe unter gleichen Bedingungen 4.0 Internationalen Lizenz</a>.
+						<p>FLAIR ist ein Online-Tool für Lerner und Lehrer von Sprachen.
+							FLAIR:
+						</p>
+						<ul>
+							<li>durchsucht das Web nach einem gewünschten Thema</li>
+							<li>analysiert die Suchergebnisse auf Grammatikkonstruktionen und
+								Schwierigkeitsgrade</li>
+							<li>bewertet die Ergebnisse nach Ihren (pädagogischen oder
+								lern-spezifischen) Bedürfnissen, die Sie in den Einstellungen
+								festlegt haben</li>
+						</ul>
+					</div>
+				
+					<p>
+						<b>ARTIKEL:</b>
+					</p>
+					<ul>
+						<li>
+							<a
+								href="http://sfs.uni-tuebingen.de/~mchnkina/downloads/Chinkina_Maria_thesis_2015.pdf"
+								target="_blank">MA-Arbeit von Maria Chinkina</a>
+						</li>
+						<li>
+							<a
+								href="http://sfs.uni-tuebingen.de/~mchnkina/downloads/Chinkina_Meurers_BEA_2016.pdf"
+								target="_blank">BEA-Artikel</a>
+							(Maria Chinkina, Detmar Meurers)
+						</li>
+						<li>
+							<a
+								href="http://sfs.uni-tuebingen.de/~mchnkina/downloads/Chinkina_Kannan_Meurers_ACL_2016.pdf"
+								target="_blank">Systembeschreibung</a>
+							(Maria Chinkina, Madeeswaran Kannan, Detmar Meurers)
+						</li>
+					</ul>
+					<br />
+					<p>
+						<b>ZUSÄTZLICHES MATERIAL:</b>
+					</p>
+					<ul>
+						<li>
+							<a
+								href="http://sfs.uni-tuebingen.de/~mchnkina/downloads/FLAIR_Evaluation.pdf"
+								target="_blank">Evaluation des FLAIR-Algorithmus</a>
+							(81 grammatische Konstruktionen für Englisch: Precision, Recall, F1)
+						</li>
+					</ul>
+					<br />
+					<p>
+						<b>DRITT-WERKZEUGE</b>
+					</p>
+					<ul>
+						<li>
+							Back-end:
+							<a href="http://datamarket.azure.com/dataset/bing/search"
+								target="_blank">Microsoft Bing API</a>
+							,
+							<a href="https://tika.apache.org/" target="_blank">Apache Tika</a>
+							,
+							<a href="http://stanfordnlp.github.io/CoreNLP/" target="_blank">Stanford
+								CoreNLP</a>
+						</li>
+						<li>
+							Front-end:
+							<a href="http://www.gwtproject.org/" target="_blank">Google Web Toolkit</a>
+							,
+							<a href="https://gwtmaterialdesign.github.io/gwt-material-demo/" target="_blank">GWT Material</a>
+							,
+							<a href="https://d3js.org" target="_blank">d3</a>
+						</li>
+					</ul>
+					<br />
+					<p>
+						<b>LIZENZ</b>
+					</p>
+					<a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de">
+						<img alt="Creative Commons License" style="border-width:0"
+							src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+					</a>
+					<br />
+					FLAIR ist lizensiert unter einer
+					<a rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de">Creative Commons Namensnennung -
+						Nicht-kommerziell - Weitergabe unter gleichen Bedingungen 4.0
+						Internationalen Lizenz</a>
+					.
 				</g:HTML>				
 			</m:MaterialModalContent>
 			

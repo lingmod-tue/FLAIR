@@ -11,19 +11,22 @@
 			<m:MaterialPanel height="300px" width="100%">
 				<ma.stepper:MaterialStepper ui:field="stprUploaderUI" shadow="0"
 					stepSkippingAllowed="false" detectOrientation="true">
+					
 					<ma:stepper.MaterialStep ui:field="stpLangUI"
 						step="1" title="Choose Language">
 						<m:MaterialRadioButton ui:field="rdoEnglishUI" value="true"
 							name="lang" text="English" />
 						<m.html:Br/><m.html:Br/>
 						<m:MaterialRadioButton ui:field="rdoGermanUI"
-							name="lang" text="German" />
-						<m.html:Br/><m.html:Br/>
-						<m:MaterialButton ui:field="btnToUploaderUI" text="Next"
-							grid="l4" marginTop="12" marginLeft="10" backgroundColor="ORANGE" textColor="WHITE"
-							waves="DEFAULT" />
-						<m:MaterialButton ui:field="btnCancel1UI" text="Cancel"
-							grid="l4" marginTop="12" type="FLAT" waves="DEFAULT" />
+							name="lang" text="German" />							
+
+						<m:MaterialRow marginTop="50" marginBottom="3">
+							<m:MaterialButton ui:field="btnToUploaderUI" text="Next"
+								backgroundColor="ORANGE" textColor="WHITE"
+								waves="DEFAULT" />
+							<m:MaterialButton ui:field="btnCancel1UI" text="Cancel"
+								type="FLAT" waves="DEFAULT" />
+						</m:MaterialRow>						
 					</ma:stepper.MaterialStep>
 	
 					<ma:stepper.MaterialStep ui:field="stpUploadUI"
@@ -37,11 +40,13 @@
 								description="Click here or drag-and-drop files" />
 						</ma.fileuploader:MaterialFileUploader>
 	
-						<m:MaterialButton ui:field="btnFinishUI" text="Finish"
-							grid="l4" marginTop="12" marginLeft="10" backgroundColor="ORANGE" textColor="WHITE"
-							waves="DEFAULT" />
-						<m:MaterialButton ui:field="btnCancel2UI" text="Cancel"
-							grid="l4" marginTop="12" type="FLAT" waves="DEFAULT" />
+						<m:MaterialRow marginTop="20" marginBottom="3">
+							<m:MaterialButton ui:field="btnFinishUI" text="Finish"
+								backgroundColor="ORANGE" textColor="WHITE"
+								waves="DEFAULT" />
+							<m:MaterialButton ui:field="btnCancel2UI" text="Cancel"
+								type="FLAT" waves="DEFAULT" />
+						</m:MaterialRow>
 					</ma:stepper.MaterialStep>
 				</ma.stepper:MaterialStepper>
 			</m:MaterialPanel>				
