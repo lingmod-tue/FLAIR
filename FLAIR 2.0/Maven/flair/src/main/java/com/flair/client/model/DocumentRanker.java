@@ -153,11 +153,13 @@ public class DocumentRanker implements AbstractDocumentRanker
 	{
 		public final List<RankableDocument>		docs;
 		public final RankerWeights				weights;
+		public int								numFiltered;
 
 		RankOperationOutput(List<RankableDocument> d, RankerWeights w)
 		{
 			docs = d;
 			weights = w;
+			numFiltered = 0;
 		}
 
 		@Override
@@ -209,6 +211,12 @@ public class DocumentRanker implements AbstractDocumentRanker
 		public boolean isKeywordWeighted() {
 			return weights.keywords.weight != 0;
 		}
+
+		
+		@Override
+		public int getNumFilteredDocuments() {
+			return numFiltered;
+		}
 	}
 
 	private static final double			LENGTH_PARAM_MULTIPLIER = 10;		// ### what's this?
@@ -238,12 +246,13 @@ public class DocumentRanker implements AbstractDocumentRanker
 		// perform filtering
 		for (RankableDocument itr : input.getDocuments())
 		{
-			if (input.isDocumentFiltered(itr))
+			if (input.isDocumentFiltered(itr) ||
+				weights.isDocLevelFiltered(itr) ||
+				isDocConstructionFiltered(input, itr))
+			{
+				out.numFiltered++;
 				continue;
-			else if (weights.isDocLevelFiltered(itr))
-				continue;
-			else if (isDocConstructionFiltered(input, itr))
-				continue;
+			}
 
 			out.docs.add(itr);
 		}

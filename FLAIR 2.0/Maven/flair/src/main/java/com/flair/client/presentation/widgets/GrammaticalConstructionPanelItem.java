@@ -31,6 +31,8 @@ import gwt.material.design.client.ui.MaterialLink;
  */
 public class GrammaticalConstructionPanelItem extends LocalizedComposite implements HasWidgets, HasText, CanReset, GrammaticalConstructionContainer
 {
+	private static final int					MAX_LABEL_LENGTH = 25;
+	
 	private final MaterialCollapsibleItem		item;
 	private final MaterialCollapsibleHeader		header;
 	private final MaterialCollapsibleBody		body;
@@ -142,7 +144,14 @@ public class GrammaticalConstructionPanelItem extends LocalizedComposite impleme
 	}
 
 	@Override
-	public void setText(String text) {
+	public void setText(String text)
+	{
+		if (text.length() > MAX_LABEL_LENGTH)
+		{
+			this.text.setTitle(text);
+			text = text.substring(0, MAX_LABEL_LENGTH - 4) + "...";
+		}
+		
 		this.text.setText(text);
 	}
 

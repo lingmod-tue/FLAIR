@@ -67,8 +67,13 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 
 	boolean					uploadInProgress;
 	int						numUploaded;
-	int						numUploading;
 	Language				corpusLang;
+	
+	// hack to work around the incomplete Dropzone API MaterialFileUploader provides
+	private native boolean hasPendingUploads(MaterialFileUploader u) /*-{
+		var dropzone = u.@gwt.material.design.addins.client.fileuploader.MaterialFileUploader::uploader;
+		return dropzone.getUploadingFiles().length !== 0 || dropzone.getQueuedFiles().length !== 0;
+	}-*/;
 
 	private void onBeginUpload(Language lang)
 	{
@@ -80,7 +85,7 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 		
 		uploadInProgress = true;
 		corpusLang = lang;
-		numUploaded = numUploading = 0;
+		numUploaded = 0;
 		
 		stprUploaderUI.nextStep();
 	}
@@ -89,7 +94,7 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 	{
 		if (uploadInProgress == false && success)
 			throw new RuntimeException("Upload hasn't started yet");
-		else if (numUploading != 0)
+		else if (hasPendingUploads(uplUploaderUI))
 		{
 			MaterialToast.fireToast(getLocalizedString(CorpusFileUploaderLocale.DESC_UploadInProgress));
 			return;
@@ -99,7 +104,7 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 			completeHandler.handle(numUploaded, success);
 		
 		uploadInProgress = false;
-		numUploaded = numUploading = 0;
+		numUploaded = 0;
 		corpusLang = Language.ENGLISH;
 
 		hide();
@@ -158,16 +163,8 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 		btnCancel1UI.addClickHandler(e -> onEndUpload(false));
 		btnCancel2UI.addClickHandler(e -> onEndUpload(false));
 		
-		uplUploaderUI.addErrorHandler(e -> {
-			onUploadError(e.getTarget());
-		});
-
-		uplUploaderUI.addMaxFilesReachHandler(e -> {
-			onMaxFilesReached();
-		});
-		
-		uplUploaderUI.addSendingHandler(e -> numUploading++);
-		uplUploaderUI.addCompleteHandler(e -> numUploading--);
+		uplUploaderUI.addErrorHandler(e -> onUploadError(e.getTarget()));
+		uplUploaderUI.addMaxFilesReachHandler(e -> onMaxFilesReached());
 		uplUploaderUI.addSuccessHandler(e -> numUploaded++);
 	}
 

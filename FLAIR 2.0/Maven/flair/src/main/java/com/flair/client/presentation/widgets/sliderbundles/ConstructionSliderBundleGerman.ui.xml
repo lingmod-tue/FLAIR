@@ -7,7 +7,7 @@
 		<flair:GrammaticalConstructionPanel accordion="true">
 			<!-- Sätze -->
 			<flair:GrammaticalConstructionPanelItem ui:field="pnlSaetzeUI" text="sätze" iconType="EXPAND_MORE">
-				<flair:GrammaticalConstructionPanel accordion="true" popout="true">
+				<flair:GrammaticalConstructionPanel accordion="true" popout="false">
 					<!-- Fragen -->
 					<flair:GrammaticalConstructionPanelItem ui:field="pnlFragenUI" text="fragen" iconType="EXPAND_MORE">
 						<flair:GrammaticalConstructionWeightSlider gram="QUESTIONS_DIRECT"/>
@@ -41,10 +41,10 @@
 		
 			<!-- Wortarten -->
 			<flair:GrammaticalConstructionPanelItem ui:field="pnlWortartenUI" text="wortarten" iconType="EXPAND_MORE">
-				<flair:GrammaticalConstructionPanel accordion="true" popout="true">
+				<flair:GrammaticalConstructionPanel accordion="true" popout="false">
 					<!-- Verben -->
 					<flair:GrammaticalConstructionPanelItem ui:field="pnlVerbenUI" text="verben" iconType="EXPAND_MORE">
-						<flair:GrammaticalConstructionPanel accordion="true" popout="true">
+						<flair:GrammaticalConstructionPanel accordion="true" popout="false">
 							<!-- Verbtypen -->
 							<flair:GrammaticalConstructionPanelItem ui:field="pnlVerbtypenUI" text="verbtypen" iconType="EXPAND_MORE">
 								<flair:GrammaticalConstructionWeightSlider gram="VERBTYP_MAIN"/>
@@ -159,8 +159,8 @@
 					</flair:GrammaticalConstructionPanelItem>
 					
 					<!-- Nomen -->
-					<flair:GrammaticalConstructionPanelItem ui:field="pnlNomenUI" text="nomen">
-						<flair:GrammaticalConstructionPanel accordion="true" popout="true">
+					<flair:GrammaticalConstructionPanelItem ui:field="pnlNomenUI" text="nomen" iconType="EXPAND_MORE">
+						<flair:GrammaticalConstructionPanel accordion="true" popout="false">
 							<!-- Nominalisierungen -->
 							<flair:GrammaticalConstructionPanelItem ui:field="pnlNominalisierungenUI" text="nominalisierungen" iconType="EXPAND_MORE">
 								<flair:GrammaticalConstructionWeightSlider gram="NOUNS_ISMUS"/>

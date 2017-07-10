@@ -98,8 +98,8 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 		{
 			MaterialAnimation anim = new MaterialAnimation(w);
 			anim.setTransition(t);
-			anim.setDelayMillis(delay);
-			anim.setDurationMillis(duration);
+			anim.setDelay(delay);
+			anim.setDuration(duration);
 			
 			if (callback != null)
 				anim.animate(callback);

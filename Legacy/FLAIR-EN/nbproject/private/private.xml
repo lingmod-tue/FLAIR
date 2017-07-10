@@ -7,7 +7,9 @@
             <file>file:/C:/Users/shadeMe/Documents/FLAIR/SVN/Legacy/common/src/java/com/flair/crawler/CachingSearchAgent.java</file>
             <file>file:/C:/Users/shadeMe/Documents/FLAIR/SVN/Legacy/common/src/java/com/flair/testing/WebCrawlerTest.java</file>
             <file>file:/C:/Users/shadeMe/Documents/FLAIR/SVN/Legacy/common/src/java/com/flair/taskmanager/BasicWebSearchAndCrawlJob.java</file>
+            <file>file:/C:/Users/shadeMe/Documents/FLAIR/SVN/Legacy/common/src/java/com/flair/taskmanager/AbstractTaskExecutor.java</file>
             <file>file:/C:/Users/shadeMe/Documents/FLAIR/SVN/Legacy/common/src/java/com/flair/taskmanager/MasterJobPipeline.java</file>
+            <file>file:/C:/Users/shadeMe/Documents/FLAIR/SVN/Legacy/common/src/java/com/flair/server/BasicServletContextListener.java</file>
             <file>file:/C:/Users/shadeMe/Documents/FLAIR/SVN/Legacy/common/src/java/com/flair/crawler/BingSearchAgent.java</file>
         </group>
     </open-files>

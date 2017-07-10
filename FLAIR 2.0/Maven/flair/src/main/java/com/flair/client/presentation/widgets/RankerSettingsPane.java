@@ -161,8 +161,9 @@ public class RankerSettingsPane extends LocalizedComposite implements AbstractRa
 			int levelA = (int)rankData.getDocLevelDf(DocumentReadabilityLevel.LEVEL_A);
 			int levelB = (int)rankData.getDocLevelDf(DocumentReadabilityLevel.LEVEL_B);
 			int levelC = (int)rankData.getDocLevelDf(DocumentReadabilityLevel.LEVEL_C);
-					
-			lblDocCountUI.setText(resultCount + " " + ld.get(RankerSettingsPaneLocale.DESC_lblDocCountUI));
+			
+			lblDocCountUI.setText(resultCount + " " + ld.get(RankerSettingsPaneLocale.DESC_lblDocCountUI) +
+								" (" + rankData.getNumFilteredDocuments() + " " + ld.get(RankerSettingsPaneLocale.DESC_lblDocCountFilterUI) + ")");
 			
 			bdgTextLevelACountUI.setText(levelA + " / " + resultCount);
 			bdgTextLevelBCountUI.setText(levelB + " / " + resultCount);

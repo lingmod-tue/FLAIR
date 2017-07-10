@@ -21,14 +21,14 @@ public class GrammaticalConstructionLocale extends SimpleLocale
 		super();
 	}
 	
-	private void putString(Language lang, GrammaticalConstruction gram, String name, String path) 
+	private void putString(Language lang, GrammaticalConstruction gram, String name, String path)
 	{
 		getLocalizationData(lang).put(gram.toString(), name);
 		getLocalizationData(lang).put(gram.toString() + DESC_PATH_SUFFIX, path);
 	}
 	
 	@Override
-	public void init() 
+	public void init()
 	{
 		for (GrammaticalConstruction itr : GrammaticalConstruction.values())
 		{
@@ -268,7 +268,7 @@ public class GrammaticalConstructionLocale extends SimpleLocale
 				break;
 			case NOUNS_ISMUS:
 				putString(Language.ENGLISH, itr, "NOUNS_ISMUS", "NOUNS_ISMUS");
-				putString(Language.GERMAN, itr, ";-ismus Nominalisierungen (Naturalismus, Pluralismus, etc.)", "nomen > nominalisierungen > -ismus");
+				putString(Language.GERMAN, itr, "-ismus Nominalisierungen (Naturalismus, Pluralismus, etc.)", "nomen > nominalisierungen > -ismus");
 				break;
 			case NOUNS_TUR:
 				putString(Language.ENGLISH, itr, "NOUNS_TUR", "NOUNS_TUR");

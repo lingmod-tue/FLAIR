@@ -543,6 +543,12 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 			resetHandler = null;
 		}
 		
+		public void resetSvg()
+		{
+			if (svg != null)
+				svg.selectAll("*").remove();
+		}
+		
 		public void init(Input i)
 		{
 			doInit(i);
@@ -689,14 +695,14 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 	{
 		MaterialAnimation open = new MaterialAnimation();
 		open.setTransition(gwt.material.design.client.ui.animate.Transition.FADEINDOWN);
-		open.setDelayMillis(0);
-		open.setDurationMillis(500);
+		open.setDelay(0);
+		open.setDuration(500);
 		mdlVisualizerUI.setOpenAnimation(open);
 		
 		MaterialAnimation close = new MaterialAnimation();
 		close.setTransition(gwt.material.design.client.ui.animate.Transition.FADEOUTUP);
-		close.setDelayMillis(10);
-		close.setDurationMillis(500);
+		close.setDelay(10);
+		close.setDuration(500);
 		mdlVisualizerUI.setCloseAnimation(close);
 		
 		// hide the maximize button
@@ -733,8 +739,10 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 	}
 
 	@Override
-	public void hide() {
+	public void hide()
+	{
 		mdlVisualizerUI.close();
+		state.resetSvg();
 	}
 
 	@Override

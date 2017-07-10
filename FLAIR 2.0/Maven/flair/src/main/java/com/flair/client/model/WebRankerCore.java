@@ -201,7 +201,10 @@ public class WebRankerCore implements AbstractWebRankerCore
 			}
 
 			messagePipeline.open(token);
-			timeout.schedule(TIMEOUT_MS);
+			
+			// no timeout for the upload op as the corpus uploader manages its own state (that needs cleanup)
+			if (isWebSearch())
+				timeout.schedule(TIMEOUT_MS);
 		}
 
 		void reset()

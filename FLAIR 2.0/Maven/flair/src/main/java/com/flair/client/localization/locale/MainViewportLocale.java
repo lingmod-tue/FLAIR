@@ -56,27 +56,27 @@ public final class MainViewportLocale extends SimpleLocale
 		
 		
 		// DE
-		de.put(DESC_btnWebSearchUI, "Internet Suche");
-		de.put(DESC_btnUploadUI, "Text Hochladen");
+		de.put(DESC_btnWebSearchUI, "Internetsuche");
+		de.put(DESC_btnUploadUI, "Text hochladen");
 		de.put(DESC_btnAboutUI, "Über FLAIR");
 		de.put(DESC_btnSwitchLangUI, "Anzeigesprache wechseln");
 		de.put(DESC_btnLangEnUI, "Englisch");
 		de.put(DESC_btnLangDeUI, "Deutsch");
 		de.put(DESC_btnCloseWebSearchUI, "Abbrechen");
 		de.put(DESC_txtSearchBoxUI, "Suchbegriff eingeben");
-		de.put(DESC_selResultCountItm10UI, "10 Seiten");
-		de.put(DESC_selResultCountItm20UI, "20 Seiten");
-		de.put(DESC_selResultCountItm30UI, "30 Seiten");
-		de.put(DESC_selResultCountItm40UI, "40 Seiten");
-		de.put(DESC_selResultCountItm50UI, "50 Seiten");
+		de.put(DESC_selResultCountItm10UI, "10 Ergebnisse");
+		de.put(DESC_selResultCountItm20UI, "20 Ergebnisse");
+		de.put(DESC_selResultCountItm30UI, "30 Ergebnisse");
+		de.put(DESC_selResultCountItm40UI, "40 Ergebnisse");
+		de.put(DESC_selResultCountItm50UI, "50 Ergebnisse");
 		de.put(DESC_selResultLangItmEnUI, "Englisch");
 		de.put(DESC_selResultLangItmDeUI, "Deutsch");
 		de.put(DESC_defSearchTitle, "Suchen");
-		de.put(DESC_defSearchCaption, "Klicken Sie auf das Suchsymbol unten und geben Sie eine Suchanfrage ein. FLAIR wird die obersten Ergebnisse von der Suchmaschine Bing abrufen.");
+		de.put(DESC_defSearchCaption, "Klicken Sie auf das Suchsymbol unten und geben Sie eine Suchanfrage ein. FLAIR wird die obersten Ergebnisse von der Bing Suchmaschine abrufen.");
 		de.put(DESC_defConfigTitle, "Konfigurieren");
-		de.put(DESC_defConfigCaption, "Konfgurieren Sie die Einstellungen: Text (Länge, Schwierigkeitsgrad) und Grammatik (Passiv, Wh-Fragen, akademisches Vokabular, ...). Sie können die Einstellungen auch exportieren, um sie auf spätere Suchen anzuwenden. FLAIR bewertet die Suchergebnisse neu entsprechend Ihren Einstellungen. Klicken Sie auf den Link, um die Seite in einem neuen Tab zu öffnen, oder lesen Sie den extrahierten erweiterten Text im Textfeld auf der rechten Seite.");
+		de.put(DESC_defConfigCaption, "Konfgurieren Sie die Einstellungen: Text (Länge, Schwierigkeitsgrad) und Grammatik (Passiv, W-Fragen, akademisches Vokabular, ...). Sie können die Einstellungen auch exportieren, um sie auf spätere Suchen anzuwenden. FLAIR bewertet die Suchergebnisse entsprechend Ihrer Einstellungen neu. Klicken Sie auf den Link, um die Seite in einem neuen Tab zu öffnen, oder lesen Sie den extrahierten, erweiterten Text im Textfeld auf der rechten Seite.");
 		de.put(DESC_defUploadTitle, "Hochladen");
-		de.put(DESC_defUploadCaption, "Laden Sie Ihre Dateien hoch. FLAIR wird sie analysieren und entsprechend Ihren Einstellungen bewerten.");
+		de.put(DESC_defUploadCaption, "Laden Sie Ihre Dateien hoch. FLAIR wird sie analysieren und Ihren Einstellungen entsprechend bewerten.");
 		
 	}
 	

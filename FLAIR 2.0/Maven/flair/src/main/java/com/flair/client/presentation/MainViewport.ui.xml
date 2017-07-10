@@ -4,7 +4,8 @@
 	xmlns:m="urn:import:gwt.material.design.client.ui"
 	xmlns:m.html="urn:import:gwt.material.design.client.ui.html"
 	xmlns:flair="urn:import:com.flair.client.presentation.widgets"
-	xmlns:m.overlay="urn:import:gwt.material.design.addins.client.overlay">
+	xmlns:m.overlay="urn:import:gwt.material.design.addins.client.overlay"
+	xmlns:m.morph="urn:import:gwt.material.design.addins.client.iconmorph">
 	
 	<ui:style>
 	.brand-logo {
@@ -39,7 +40,12 @@
 		<m:MaterialHeader depth="996" layoutPosition="FIXED" width="100%">
 			<!-- Main Navbar -->
 			<m:MaterialNavBar ui:field="navMainUI" backgroundColor="ORANGE">
-				<m:MaterialLink ui:field="tglSettingsPaneUI" iconType="SETTINGS" waves="LIGHT" paddingLeft="7" />
+				<m:MaterialLink ui:field="tglSettingsPaneUI" waves="LIGHT" paddingLeft="10" paddingRight="5">
+					<m.morph:MaterialIconMorph ui:field="icoSettingsMorphUI" iconSize="SMALL" marginBottom="50" marginRight="5">						
+    					<m:MaterialIcon iconType="ARROW_BACK"/>
+    					<m:MaterialIcon iconType="SETTINGS"/>
+					</m.morph:MaterialIconMorph>
+				</m:MaterialLink>
 				<m:MaterialNavBrand ui:field="btnAboutUI" marginLeft="5" href="javascript:void(0)" text="FLAIR"/>
 				
 				<m:MaterialLink ui:field="btnSwitchLangUI" activates="lang-selector" iconType="LANGUAGE" waves="LIGHT" float="RIGHT" paddingLeft="10"/>
@@ -53,12 +59,12 @@
 		</m:MaterialDropDown>
 		
 		<!-- Main FAB -->
-		<m:MaterialFAB axis="VERTICAL" depth="998" type="CLICK_ONLY">
+		<m:MaterialFAB axis="VERTICAL" depth="998" type="CLICK_ONLY" marginBottom="75">
 			<m:MaterialButton ui:field="btnWebSearchUI"
 				type="FLOATING" iconType="SEARCH" size="LARGE" backgroundColor="ORANGE" waves="LIGHT"/>
 		</m:MaterialFAB>
 		
-		<m:MaterialFAB axis="VERTICAL" depth="998" type="CLICK_ONLY" marginBottom="75">
+		<m:MaterialFAB axis="VERTICAL" depth="998" type="CLICK_ONLY" >
 			<m:MaterialAnchorButton ui:field="btnUploadUI" size="LARGE"
 					type="FLOATING" waves="LIGHT" backgroundColor="BLUE" iconType="FILE_UPLOAD"/>
 		</m:MaterialFAB>
@@ -238,13 +244,15 @@
 					<div style="text-align: center">
 						<p>FLAIR is an online tool for language teachers and learners that:
 						</p>
-						<ul>
-							<li>searches the web for a topic of interest </li>
-							<li>analyzes the results for grammatical constructions and
-								readability levels </li>
-							<li>re-ranks the results according to your (pedagogical or
-								learning) needs specified in the settings</li>
-						</ul>	
+						<div style="text-align: left">
+							<ul>
+								<li>searches the web for a topic of interest </li>
+								<li>analyzes the results for grammatical constructions and
+									readability levels </li>
+								<li>re-ranks the results according to your (pedagogical or
+									learning) needs specified in the settings</li>
+							</ul>	
+						</div>
 					</div>
 		
 					<p>
@@ -380,18 +388,20 @@
 						<p>FLAIR ist ein Online-Tool für Lerner und Lehrer von Sprachen.
 							FLAIR:
 						</p>
-						<ul>
-							<li>durchsucht das Web nach einem gewünschten Thema</li>
-							<li>analysiert die Suchergebnisse auf Grammatikkonstruktionen und
-								Schwierigkeitsgrade</li>
-							<li>bewertet die Ergebnisse nach Ihren (pädagogischen oder
-								lern-spezifischen) Bedürfnissen, die Sie in den Einstellungen
-								festlegt haben</li>
-						</ul>
+						<div style="text-align: left">
+							<ul>
+								<li>durchsucht das Web nach einem gewünschten Thema</li>
+								<li>analysiert die Suchergebnisse auf Grammatikkonstruktionen und
+									Schwierigkeitsgrade</li>
+								<li>bewertet die Ergebnisse nach Ihren (pädagogischen oder
+									lern-spezifischen) Bedürfnissen, die Sie in den Einstellungen
+									festlegt haben</li>
+							</ul>
+						</div>
 					</div>
 				
 					<p>
-						<b>ARTIKEL:</b>
+						<b>VERÖFFENTLICHUNGEN:</b>
 					</p>
 					<ul>
 						<li>

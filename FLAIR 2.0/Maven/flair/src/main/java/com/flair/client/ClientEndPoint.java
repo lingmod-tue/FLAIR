@@ -73,7 +73,7 @@ public class ClientEndPoint
 					ClientLogger.get().info("Session token assigned. ID: " + clientToken);
 					viewport.showSplash(false);
 					
-					Window.addWindowClosingHandler(e -> {
+					Window.addCloseHandler(e -> {
 						deinit();
 					});
 					

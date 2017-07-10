@@ -7,7 +7,7 @@
 		<flair:GrammaticalConstructionPanel accordion="true">			
 			<!-- Sentences -->
 			<flair:GrammaticalConstructionPanelItem ui:field="pnlSentencesUI" text="sentences" iconType="EXPAND_MORE">
-				<flair:GrammaticalConstructionPanel accordion="true" popout="true">
+				<flair:GrammaticalConstructionPanel accordion="true" popout="false">
 					<!-- Questions -->
 					<flair:GrammaticalConstructionPanelItem ui:field="pnlQuestionsUI" text="questions" iconType="EXPAND_MORE">
 						<flair:GrammaticalConstructionWeightSlider gram="QUESTIONS_DIRECT"/>
@@ -55,10 +55,10 @@
 			
 			<!-- Parts of Speech -->
 			<flair:GrammaticalConstructionPanelItem ui:field="pnlPartsOfSpeechUI" text="parts of speech" iconType="EXPAND_MORE">
-				<flair:GrammaticalConstructionPanel accordion="true" popout="true">
+				<flair:GrammaticalConstructionPanel accordion="true" popout="false">
 					<!-- Verbs -->
 					<flair:GrammaticalConstructionPanelItem ui:field="pnlVerbsUI" text="verbs" iconType="EXPAND_MORE">
-						<flair:GrammaticalConstructionPanel accordion="true" popout="true">
+						<flair:GrammaticalConstructionPanel accordion="true" popout="false">
 							<!-- Verb Forms -->
 							<flair:GrammaticalConstructionPanelItem ui:field="pnlVerbFormsUI" text="verb forms" iconType="EXPAND_MORE">
 								<flair:GrammaticalConstructionWeightSlider gram="VERBFORM_SHORT"/>

@@ -11,9 +11,11 @@ import com.flair.shared.parser.DocumentReadabilityLevel;
  */
 public interface DocumentRankerOutput
 {
-	public interface Rank 
+	public interface Rank
 	{
 		public Collection<RankableDocument>	getRankedDocuments();	// sorted and filtered according to input weights
+		public int							getNumFilteredDocuments();
+		
 		public double						getDocLevelDf(DocumentReadabilityLevel level);
 		public double						getConstructionDf(GrammaticalConstruction gram);
 		

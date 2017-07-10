@@ -62,7 +62,7 @@ public class GlobalWidgetAnimator
 	{
 		AnimationEventQueue q = getQueue(w);
 		MaterialAnimation anim = new MaterialAnimation(w);
-		anim.transition(transition).delayMillis(delay).durationMillis(duration);
+		anim.transition(transition).delay(delay).duration(duration);
 		q.enqueue(anim, begin, end);
 	}
 	

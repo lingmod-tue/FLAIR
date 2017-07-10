@@ -6,6 +6,7 @@ import com.flair.client.localization.SimpleLocale;
 public final class RankerSettingsPaneLocale extends SimpleLocale
 {
 	public static final String		DESC_lblDocCountUI = "lblDocCountUI";
+	public static final String		DESC_lblDocCountFilterUI = "lblDocCountFilterUI";
 	public static final String		DESC_btnVisualizeUI = "btnVisualizeUI";
 	public static final String		DESC_btnExportSettingsUI = "btnExportSettingsUI";
 	public static final String		DESC_lblTextCharacteristicsUI = "lblTextCharacteristicsUI";
@@ -19,6 +20,7 @@ public final class RankerSettingsPaneLocale extends SimpleLocale
 	{
 		// EN
 		en.put(DESC_lblDocCountUI, "Results");
+		en.put(DESC_lblDocCountFilterUI, "Filtered");
 		en.put(DESC_btnVisualizeUI, "Visualize");
 		en.put(DESC_btnExportSettingsUI, "Share Search Setup");
 		en.put(DESC_lblTextCharacteristicsUI, "Text Characteristics:");
@@ -29,6 +31,7 @@ public final class RankerSettingsPaneLocale extends SimpleLocale
 		
 		// DE
 		de.put(DESC_lblDocCountUI, "Ergebnisse");
+		de.put(DESC_lblDocCountFilterUI, "Gefiltert");
 		de.put(DESC_btnVisualizeUI, "Visualisieren");
 		de.put(DESC_btnExportSettingsUI, "Sucheinstellungen Exportieren");
 		de.put(DESC_lblTextCharacteristicsUI, "Eigenschaften der Texte:");

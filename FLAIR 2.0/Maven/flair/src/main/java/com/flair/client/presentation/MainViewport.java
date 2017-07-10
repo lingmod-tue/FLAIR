@@ -38,6 +38,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 
+import gwt.material.design.addins.client.iconmorph.MaterialIconMorph;
 import gwt.material.design.addins.client.overlay.MaterialOverlay;
 import gwt.material.design.client.base.MaterialWidget;
 import gwt.material.design.client.constants.Position;
@@ -185,6 +186,8 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	@UiField
 	MaterialLink								tglSettingsPaneUI;
 	@UiField
+	MaterialIconMorph							icoSettingsMorphUI;
+	@UiField
 	RankerSettingsPane							pnlConstructionsSettingsUI;
 	@UiField
 	DocumentResultsPane							pnlDocResultsUI;
@@ -231,9 +234,15 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	private void toggleSettingsPane()
 	{
 		if (pnlConstructionsSettingsUI.isVisible())
+		{
 			pnlConstructionsSettingsUI.hide();
+			icoSettingsMorphUI.getElement().removeClassName("morphed");
+		}
 		else
+		{
 			pnlConstructionsSettingsUI.show();
+			icoSettingsMorphUI.getElement().addClassName("morphed");
+		}
 	}
 	
 	private void showSearchModal(boolean visible)
@@ -264,8 +273,24 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 			pnlResultsContainerUI.setGrid("l12 m12 s12");
 	}
 	
-	private void switchLanguage(Language lang) {
+	private void switchLanguage(Language lang)
+	{
 		localeCore.setLanguage(lang);
+		
+		// switch the default search language as well
+		switch (lang)
+		{
+		case ENGLISH:
+			selResultLangUI.setValue(selResultLangItmEnUI.getValue());
+			break;
+		case GERMAN:
+			selResultLangUI.setValue(selResultLangItmDeUI.getValue());
+			break;
+		}
+		
+		// ### need to do this to force update the strings in the search modal's listboxes
+		// the language listbox is taken care of above, so just select the default result count
+		selResultCountUI.setValue(selResultCountItm10UI.getValue());
 	}
 	
 	private void invokeSearch()
@@ -399,7 +424,10 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		lblDefaultConfigTitleUI.addClickHandler(e -> toggleSettingsPane());
 		lblDefaultUploadTitleUI.addClickHandler(e -> showUploadModal());
 		
-		pnlConstructionsSettingsUI.setShowHideEventHandler(v -> updateResultsListGrid());
+		pnlConstructionsSettingsUI.setShowHideEventHandler(v -> {
+			updateResultsListGrid();
+			icoSettingsMorphUI.getElement().removeClassName("morphed");
+		});
 		pnlDocPreviewUI.setShowHideEventHandler(v -> updateResultsListGrid());
 		
 		mdlCustomKeywordsUI.bindToSlider(pnlConstructionsSettingsUI.getKeywordSlider());
@@ -407,22 +435,27 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	
 	private void initUI()
 	{
+		selResultLangUI.setMultipleSelect(false);
+		
 		btnWebSearchUI.setTooltipPosition(Position.LEFT);
 		btnUploadUI.setTooltipPosition(Position.LEFT);
 		btnSwitchLangUI.setTooltipPosition(Position.LEFT);
 		
+		// disable the settings toggle icon morph's default behaviour (this ought to be a part of the API)
+		icoSettingsMorphUI.getElement().removeAttribute("onclick");
+		
 		// animate FABs slightly
 		MaterialAnimation pulseSearch = new MaterialAnimation();
 		pulseSearch.setTransition(Transition.PULSE);
-		pulseSearch.setDelayMillis(10);
-		pulseSearch.setDurationMillis(3000);
+		pulseSearch.setDelay(10);
+		pulseSearch.setDuration(3000);
 		pulseSearch.setInfinite(true);
 		pulseSearch.animate(btnWebSearchUI);
 		
 		MaterialAnimation pulseUpload = new MaterialAnimation();
 		pulseUpload.setTransition(Transition.PULSE);
-		pulseUpload.setDelayMillis(3000);
-		pulseUpload.setDurationMillis(3000);
+		pulseUpload.setDelay(3000);
+		pulseUpload.setDuration(3000);
 		pulseUpload.setInfinite(true);
 		pulseUpload.animate(btnUploadUI);
 	}
@@ -449,8 +482,8 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 			
 			MaterialAnimation pulse = new MaterialAnimation(htmlSplashLogoUI);
 			pulse.setTransition(Transition.PULSE);
-			pulse.setDelayMillis(10);
-			pulse.setDurationMillis(2000);
+			pulse.setDelay(10);
+			pulse.setDuration(2000);
 			pulse.setInfinite(true);
 			pulse.animate();
 		}
@@ -459,8 +492,8 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 			MaterialAnimation fadeout = new MaterialAnimation();
 			
 			fadeout.setTransition(Transition.SLIDEOUTDOWN);
-			fadeout.setDelayMillis(1500);
-			fadeout.setDurationMillis(850);
+			fadeout.setDelay(1500);
+			fadeout.setDuration(850);
 			fadeout.setInfinite(false);
 			fadeout.animate(splSplashUI, () -> {
 				splSplashUI.hide();
