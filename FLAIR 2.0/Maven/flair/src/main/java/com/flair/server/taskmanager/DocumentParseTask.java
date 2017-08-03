@@ -132,7 +132,7 @@ class DocumentParseTask extends AbstractTask<DocumentParseTaskResult>
 			output = wrapper.get();
 		} catch (TimeoutException ex)
 		{
-			ServerLogger.get().error("Document parsing task timed-out for " + input.toString());
+			ServerLogger.get().error("Document parsing task timed-out for " + input.getDescription());
 			output = null;
 			error = true;
 		} catch (Throwable ex)

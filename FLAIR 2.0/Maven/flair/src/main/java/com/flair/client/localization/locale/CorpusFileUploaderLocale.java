@@ -10,7 +10,6 @@ public final class CorpusFileUploaderLocale extends SimpleLocale
 	public static final String		DESC_WaitTitle = "WaitTitle";
 	public static final String		DESC_WaitDescription = "WaitDescription";
 	public static final String		DESC_MaxFiles = "MaxFiles";
-	public static final String		DESC_OpInProgress = "OpInProgress";
 	public static final String		DESC_stpLangUI = "stpLangUI";
 	public static final String		DESC_rdoEnglishUI = "rdoEnglishUI";
 	public static final String		DESC_rdoGermanUI = "rdoGermanUI";
@@ -31,7 +30,6 @@ public final class CorpusFileUploaderLocale extends SimpleLocale
 		en.put(DESC_WaitTitle, "Please Wait");
 		en.put(DESC_WaitDescription, "Your files are being uploaded");
 		en.put(DESC_MaxFiles, "You have uploaded too many files at a time");
-		en.put(DESC_OpInProgress, "Please wait until the current operation is complete");
 		en.put(DESC_stpLangUI, "Choose Language");
 		en.put(DESC_rdoEnglishUI, "English");
 		en.put(DESC_rdoGermanUI, "German");
@@ -49,7 +47,6 @@ public final class CorpusFileUploaderLocale extends SimpleLocale
 		de.put(DESC_WaitTitle, "Bitte Warten");
 		de.put(DESC_WaitDescription, "Die Dateien werden hochgeladen");
 		de.put(DESC_MaxFiles, "Sie dürfen nicht so viele Dateien auf einmal hochladen");
-		de.put(DESC_OpInProgress, "Bitte warten Sie, bis die bereits angefangene Analyse abschliesst");
 		de.put(DESC_stpLangUI, "Textsprache Wählen");
 		de.put(DESC_rdoEnglishUI, "Englisch");
 		de.put(DESC_rdoGermanUI, "Deutsch");

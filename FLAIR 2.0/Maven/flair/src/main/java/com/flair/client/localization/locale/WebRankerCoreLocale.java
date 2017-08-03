@@ -4,8 +4,6 @@ import com.flair.client.localization.SimpleLocale;
 
 public final class WebRankerCoreLocale extends SimpleLocale
 {
-	public static final String		DESC_OpInProgessTitle = "OpInProgessTitle";
-	public static final String		DESC_OpInProgessCaption = "OpInProgessCaption";
 	public static final String		DESC_ServerError = "ServerError";
 	public static final String		DESC_NoSearchResults = "NoSearchResults";
 	public static final String		DESC_MissingSearchResult = "MissingSearchResult";
@@ -19,13 +17,14 @@ public final class WebRankerCoreLocale extends SimpleLocale
 	public static final String		DESC_NoResultsForFilter = "NoResultsForFilter";
 	public static final String		DESC_ImportedSettings = "ImportedSettings";
 	public static final String		DESC_AppliedImportedSettings = "AppliedImportedSettings";
+	public static final String		DESC_CompareResultsTitle = "CompareResultsTitle";
+	public static final String		DESC_AddToCompareSel = "AddToCompareSel";
 
 	@Override
 	public void init()
 	{
 		// EN
-		en.put(DESC_OpInProgessTitle, "Confirmation");
-		en.put(DESC_OpInProgessCaption, "A previous operation is in progress. Are you sure you want to continue? This will cancel the currently executing operation.");
+		
 		en.put(DESC_ServerError, "Blimey! Something went wrong on our end. Please try again later.");
 		en.put(DESC_NoSearchResults, "Sorry, our search engine didn't return any results for your query.");
 		en.put(DESC_MissingSearchResult, "Some results couldn't be analyzed due to connectivity issues.");
@@ -35,14 +34,14 @@ public final class WebRankerCoreLocale extends SimpleLocale
 		en.put(DESC_KeywordTitle, "keyword");
 		en.put(DESC_OpTimeout, "The operation timed-out");
 		en.put(DESC_CustomCorpusTitle, "Uploaded Files");
-		en.put(DESC_VisualizeWait, "Please wait until the analysis is complete.");
+		en.put(DESC_VisualizeWait, "Please wait until the current analysis is complete.");
 		en.put(DESC_NoResultsForFilter, "No results for the current settings");
 		en.put(DESC_ImportedSettings, "FLAIR will automatically apply your custom settings");
 		en.put(DESC_AppliedImportedSettings, "Applied custom settings");
+		en.put(DESC_CompareResultsTitle, "Compare");
+		en.put(DESC_AddToCompareSel, "Selected for comparison");
 		
 		// DE
-		de.put(DESC_OpInProgessTitle, "Bestätigung");
-		de.put(DESC_OpInProgessCaption, "Ein vorheriger Vorgang läuft noch. Möchten Sie wirklich fortsetzen? Der andere Vorgang wird storniert.");
 		de.put(DESC_ServerError, "Schade! Wir sind auf einen schweren Fehler gestoßen. Bitte versuchen Sie es später.");
 		de.put(DESC_NoSearchResults, "Keine Ergebnisse für den Suchbegriff.");
 		de.put(DESC_MissingSearchResult, "Einige Webseiten konnten aufgrund von Konnektivitätsproblemen nicht analysiert werden.");
@@ -56,6 +55,8 @@ public final class WebRankerCoreLocale extends SimpleLocale
 		de.put(DESC_NoResultsForFilter, "Keine Ergebnisse für die aktuellen Sucheinstellungen");
 		de.put(DESC_ImportedSettings, "FLAIR wird Ihre benutzerdefinierten Einstellungen automatisch übernehmen");
 		de.put(DESC_AppliedImportedSettings, "Benutzerdefinierte Einstellungen wurden übernommen");
+		de.put(DESC_CompareResultsTitle, "Vergleichen");
+		de.put(DESC_AddToCompareSel, "Zum Vergleichen ausgewählt");
 	}
 	
 	public static final WebRankerCoreLocale		INSTANCE = new WebRankerCoreLocale();

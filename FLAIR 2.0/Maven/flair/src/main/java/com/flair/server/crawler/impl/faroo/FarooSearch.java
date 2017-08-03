@@ -3,21 +3,23 @@
  */
 package com.flair.server.crawler.impl.faroo;
 
-import com.flair.server.crawler.impl.AbstractSearchAgentImpl;
-import com.flair.server.crawler.impl.AbstractSearchAgentImplResult;
-import com.flair.server.utilities.ServerLogger;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
+
+import com.flair.server.crawler.impl.AbstractSearchAgentImpl;
+import com.flair.server.crawler.impl.AbstractSearchAgentImplResult;
+import com.flair.server.utilities.ServerLogger;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  * Web search impelementation of the FAROO search API
@@ -49,13 +51,13 @@ public class FarooSearch implements AbstractSearchAgentImpl
 		}
 	}
 
-	public static enum Language
+	public static enum SearchLanguage
 	{
 		ENGLISH("en"), GERMAN("de"), CHINESE("zh");
 
 		private final String name;
 
-		private Language(String name) {
+		private SearchLanguage(String name) {
 			this.name = name;
 		}
 
@@ -65,7 +67,7 @@ public class FarooSearch implements AbstractSearchAgentImpl
 		}
 	}
 
-	private final Gson deserializer;
+	private final Gson 		deserializer;
 
 	private HttpResponse	responsePost;
 	private HttpEntity		resEntity;
@@ -74,7 +76,7 @@ public class FarooSearch implements AbstractSearchAgentImpl
 	private String			apiKey;
 	private int				perPage;
 	private int				skip;
-	private Language		lang;
+	private SearchLanguage	lang;
 	private SearchSource	source;
 
 	public FarooSearch()
@@ -85,7 +87,7 @@ public class FarooSearch implements AbstractSearchAgentImpl
 		perPage = RESULTS_PER_PAGE;
 		skip = 0;
 
-		lang = Language.ENGLISH;
+		lang = SearchLanguage.ENGLISH;
 		source = SearchSource.WEB;
 	}
 
@@ -93,17 +95,17 @@ public class FarooSearch implements AbstractSearchAgentImpl
 		return query.isEmpty();
 	}
 
-	public void setTrending(boolean trending) 
+	public void setTrending(boolean trending)
 	{
 		if (trending)
 			query = "";
 	}
 
-	public Language getLang() {
+	public SearchLanguage getLang() {
 		return lang;
 	}
 
-	public void setLang(Language lang) {
+	public void setLang(SearchLanguage lang) {
 		this.lang = lang;
 	}
 
@@ -143,7 +145,7 @@ public class FarooSearch implements AbstractSearchAgentImpl
 		return skip;
 	}
 
-	public void setSkip(int skip) 
+	public void setSkip(int skip)
 	{
 		this.skip = skip;
 		if (this.skip < 0)
@@ -158,7 +160,7 @@ public class FarooSearch implements AbstractSearchAgentImpl
 		setSkip(getPerPage() * (page - 1));
 	}
 
-	private String getUrlQuery() 
+	private String getUrlQuery()
 	{
 		StringBuilder sb = new StringBuilder();
 		sb.append("q=");
@@ -184,7 +186,7 @@ public class FarooSearch implements AbstractSearchAgentImpl
 		return sb.toString();
 	}
 
-	private List<FarooSearchResult> loadResults(InputStream stream) 
+	private List<FarooSearchResult> loadResults(InputStream stream)
 	{
 		List<FarooSearchResult> results = new ArrayList<>();
 		FarooSearchResponse response = deserializer.fromJson(new InputStreamReader(stream), FarooSearchResponse.class);
@@ -201,7 +203,7 @@ public class FarooSearch implements AbstractSearchAgentImpl
 	}
 
 	@Override
-	public List<? extends AbstractSearchAgentImplResult> performSearch() 
+	public List<? extends AbstractSearchAgentImplResult> performSearch()
 	{
 		try
 		{

@@ -12,6 +12,7 @@ import com.flair.client.model.interfaces.AbstractDocumentRanker;
 import com.flair.client.model.interfaces.DocumentRankerInput;
 import com.flair.client.model.interfaces.DocumentRankerOutput;
 import com.flair.shared.grammar.GrammaticalConstruction;
+import com.flair.shared.grammar.Language;
 import com.flair.shared.interop.RankableDocument;
 import com.flair.shared.parser.DocumentReadabilityLevel;
 
@@ -151,12 +152,14 @@ public class DocumentRanker implements AbstractDocumentRanker
 
 	private static class RankOperationOutput implements DocumentRankerOutput.Rank
 	{
+		public final Language					lang;
 		public final List<RankableDocument>		docs;
 		public final RankerWeights				weights;
 		public int								numFiltered;
 
-		RankOperationOutput(List<RankableDocument> d, RankerWeights w)
+		RankOperationOutput(Language l, List<RankableDocument> d, RankerWeights w)
 		{
+			lang = l;
 			docs = d;
 			weights = w;
 			numFiltered = 0;
@@ -184,12 +187,18 @@ public class DocumentRanker implements AbstractDocumentRanker
 		}
 
 		@Override
-		public double getConstructionDf(GrammaticalConstruction gram) {
-			return weights.gram.get(gram).df;
+		public double getConstructionDf(GrammaticalConstruction gram)
+		{
+			WeightData w = weights.getConstructionWeight(gram);
+			if (w == null)
+				return 0;
+			else
+				return w.df;
 		}
 
 		@Override
-		public double getConstructionWeight(GrammaticalConstruction gram) {
+		public double getConstructionWeight(GrammaticalConstruction gram)
+		{
 			WeightData w = weights.getConstructionWeight(gram);
 			if (w == null)
 				return 0;
@@ -211,11 +220,16 @@ public class DocumentRanker implements AbstractDocumentRanker
 		public boolean isKeywordWeighted() {
 			return weights.keywords.weight != 0;
 		}
-
 		
 		@Override
 		public int getNumFilteredDocuments() {
 			return numFiltered;
+		}
+
+		
+		@Override
+		public Language getLanguage() {
+			return lang;
 		}
 	}
 
@@ -238,7 +252,7 @@ public class DocumentRanker implements AbstractDocumentRanker
 	public DocumentRankerOutput.Rank rerank(DocumentRankerInput.Rank input)
 	{
 		RankerWeights weights = new RankerWeights(input);
-		RankOperationOutput out = new RankOperationOutput(new ArrayList<>(), weights);
+		RankOperationOutput out = new RankOperationOutput(input.getLanguage(), new ArrayList<>(), weights);
 
 		double lengthParam = input.getDocLengthWeight() / LENGTH_PARAM_MULTIPLIER;
 		double avDocLenAccum = -1;

@@ -17,4 +17,9 @@ public interface AbstractResultItem
 	public String			getUrl();
 	public String			getDisplayUrl();
 	public String			getSnippet();
+	
+	public void				selectItem();
+	
+	public boolean			hasOverflowMenu();
+	public void				addToCompare();
 }

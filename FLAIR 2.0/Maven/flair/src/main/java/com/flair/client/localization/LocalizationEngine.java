@@ -1,32 +1,32 @@
 package com.flair.client.localization;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import com.flair.client.ClientEndPoint;
 import com.flair.client.localization.interfaces.LocalizedUI;
 import com.flair.shared.grammar.Language;
+import com.flair.shared.utilities.GenericEventSource;
 
 /*
  * Manages localization state
  */
 public class LocalizationEngine
 {
-	public interface LanguageChangeHandler {
-		public void handle(Language newLang);
+	public static class LanguageChanged
+	{
+		public Language newLang;
 	}
 	
-	private Language							currentLang;
-	private final Set<LocalizedUI>				activeLocalizedViews;
-	private final List<LanguageChangeHandler>	langChangeListeners;
+	private Language									currentLang;
+	private final Set<LocalizedUI>						activeLocalizedViews;
+	private final GenericEventSource<LanguageChanged>	langChangeListeners;
 	
 	public LocalizationEngine()
 	{
 		this.currentLang = Language.ENGLISH;
 		this.activeLocalizedViews = new HashSet<>();
-		this.langChangeListeners = new ArrayList<>();
+		this.langChangeListeners = new GenericEventSource<>();
 	}
 	
 	private void refreshActiveViews()
@@ -35,10 +35,11 @@ public class LocalizationEngine
 			itr.setLocalization(currentLang);
 	}
 	
-	private void notifyListeners()
+	private void notifyLanguageChange()
 	{
-		for (LanguageChangeHandler itr : langChangeListeners)
-			itr.handle(currentLang);
+		LanguageChanged e = new LanguageChanged();
+		e.newLang = currentLang;
+		langChangeListeners.raiseEvent(e);
 	}
 	
 	public Language getLanguage() {
@@ -51,7 +52,7 @@ public class LocalizationEngine
 		{
 			currentLang = lang;
 			refreshActiveViews();
-			notifyListeners();
+			notifyLanguageChange();
 		}
 	}
 	
@@ -63,8 +64,8 @@ public class LocalizationEngine
 		activeLocalizedViews.remove(view);
 	}
 	
-	public void addLanguageChangeHandler(LanguageChangeHandler handler) {
-		langChangeListeners.add(handler);
+	public void addLanguageChangeHandler(GenericEventSource.EventHandler<LanguageChanged> handler) {
+		langChangeListeners.addHandler(handler);
 	}
 	
 	public static LocalizationEngine get() {

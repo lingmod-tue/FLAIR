@@ -2,13 +2,14 @@ package com.flair.client.presentation.widgets;
 
 import com.flair.client.localization.LocalizationEngine;
 import com.flair.client.localization.LocalizedComposite;
+import com.flair.client.localization.SimpleLocalizedTextButtonWidget;
 import com.flair.client.localization.locale.DocumentResultDisplayItemLocale;
 import com.flair.client.presentation.interfaces.AbstractResultItem;
 import com.flair.client.presentation.interfaces.AbstractResultItem.Type;
 import com.flair.client.presentation.interfaces.CompletedResultItem;
 import com.flair.shared.grammar.Language;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.dom.client.Document;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.Window;
@@ -18,6 +19,7 @@ import gwt.material.design.client.constants.Color;
 import gwt.material.design.client.constants.IconType;
 import gwt.material.design.client.ui.MaterialCard;
 import gwt.material.design.client.ui.MaterialColumn;
+import gwt.material.design.client.ui.MaterialDropDown;
 import gwt.material.design.client.ui.MaterialIcon;
 import gwt.material.design.client.ui.MaterialLabel;
 import gwt.material.design.client.ui.MaterialLink;
@@ -44,23 +46,37 @@ public class DocumentResultDisplayItem extends LocalizedComposite
 	@UiField
 	MaterialColumn			colInProgressHeaderUI;
 	@UiField
+	MaterialColumn			colTextUI;
+	@UiField
 	MaterialLink			btnTitleUI;
 	@UiField
 	MaterialLabel			lblURLUI;
 	@UiField
 	MaterialLabel			lblSnippetUI;
+	@UiField
+	MaterialLink			btnOverflowUI;
+	@UiField
+	MaterialDropDown		pnlMenuUI;
+	@UiField
+	MaterialLink			btnAddToCompareUI;
+	
+	SimpleLocalizedTextButtonWidget<MaterialLink>		btnAddToCompareLC;
 	
 	int						orgRank;
 	
 	private void initLocale()
 	{
+		btnAddToCompareLC = new SimpleLocalizedTextButtonWidget<>(btnAddToCompareUI, DocumentResultDisplayItemLocale.DESC_btnAddToCompareUI);
+		
 		registerLocale(DocumentResultDisplayItemLocale.INSTANCE.en);
 		registerLocale(DocumentResultDisplayItemLocale.INSTANCE.de);
+		
+		registerLocalizedWidget(btnAddToCompareLC);
 		
 		refreshLocalization();
 	}
 	
-	public DocumentResultDisplayItem(AbstractResultItem item, ClickHandler selectHandler)
+	public DocumentResultDisplayItem(AbstractResultItem item)
 	{
 		super(LocalizationEngine.get());
 		initWidget(uiBinder.createAndBindUi(this));
@@ -80,7 +96,14 @@ public class DocumentResultDisplayItem extends LocalizedComposite
 			lblURLUI.setVisible(false);
 		
 		lblSnippetUI.setText(item.getSnippet());
-		pnlCardUI.addClickHandler(selectHandler);
+		colTextUI.addClickHandler(e -> item.selectItem());
+		
+		String guid = Document.get().createUniqueId();
+		btnOverflowUI.setActivates(guid.toString());
+		pnlMenuUI.setActivator(guid.toString());
+		
+//		btnOverflowUI.setVisible(item.hasOverflowMenu());
+		btnAddToCompareUI.addClickHandler(e -> item.addToCompare());
 		
 		if (item.getType() == Type.IN_PROGRESS)
 			colCompletedHeaderUI.setVisible(false);

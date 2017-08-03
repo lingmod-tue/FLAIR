@@ -5,10 +5,6 @@ package com.flair.client.presentation.interfaces;
  */
 public interface AbstractDocumentResultsPane
 {
-	public interface SelectHandler {
-		public void handle(AbstractResultItem selection);
-	}
-	
 	public void			show();
 	public void			hide();
 	
@@ -23,6 +19,4 @@ public interface AbstractDocumentResultsPane
 	
 	public void			clearCompleted();
 	public void			clearInProgress();
-	
-	public void			setSelectHandler(SelectHandler handler);
 }

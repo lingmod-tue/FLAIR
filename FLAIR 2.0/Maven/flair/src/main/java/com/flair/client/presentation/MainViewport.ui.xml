@@ -53,7 +53,7 @@
 		</m:MaterialHeader>
 						
 		<!-- UI Language Dropdown -->
-		<m:MaterialDropDown activator="lang-selector" constrainWidth="true" marginTop="65">
+		<m:MaterialDropDown activator="lang-selector" constrainWidth="true" belowOrigin="true">
 			<m:MaterialLink ui:field="btnLangEnUI" waves="DEFAULT" text="English"/>
 			<m:MaterialLink ui:field="btnLangDeUI" waves="DEFAULT" text="German"/>
 		</m:MaterialDropDown>
@@ -68,9 +68,12 @@
 			<m:MaterialAnchorButton ui:field="btnUploadUI" size="LARGE"
 					type="FLOATING" waves="LIGHT" backgroundColor="BLUE" iconType="FILE_UPLOAD"/>
 		</m:MaterialFAB>
+		
+		<!-- Comparer Modal -->
+		<flair:DocumentComparer ui:field="mdlComparerUI"/>
 				
 		<!-- Web Search Modal -->
-		<m:MaterialModal ui:field="mdlWebSearchUI" type="BOTTOM_SHEET" dismissible="true">
+		<m:MaterialModal ui:field="mdlWebSearchUI" type="BOTTOM_SHEET" dismissible="false">
 			<m:MaterialModalContent>
 				<!-- Minimum absolute height to prevent the result count dropdown from clipping -->
 				<m:MaterialRow height="170px">
@@ -241,20 +244,19 @@
 						</p>
 					</center>
 					
-					<div style="text-align: center">
+					<div style="text-align: left">
 						<p>FLAIR is an online tool for language teachers and learners that:
 						</p>
-						<div style="text-align: left">
-							<ul>
-								<li>searches the web for a topic of interest </li>
-								<li>analyzes the results for grammatical constructions and
-									readability levels </li>
-								<li>re-ranks the results according to your (pedagogical or
-									learning) needs specified in the settings</li>
-							</ul>	
-						</div>
+						<!-- No idea why the bullets don't show up (probably due to some CSS bollocks) - We'll fake it instead -->
+						<ul>
+							<li>●  searches the web for a topic of interest </li>
+							<li>●  analyzes the results for grammatical constructions and
+								readability levels </li>
+							<li>●  re-ranks the results according to your (pedagogical or
+								learning) needs specified in the settings</li>
+						</ul>	
 					</div>
-		
+					<br/>
 					<p>
 						<b>PAPERS:</b>
 					</p>
@@ -305,7 +307,7 @@
 						</ul>
 						<br/>
 							<p>
-								<b>Third-party tools:</b>
+								<b>THIRD-PARTY TOOLS:</b>
 							</p>
 							<ul>
 								<li>
@@ -384,22 +386,20 @@
 						</p>
 					</center>
 				
-					<div style="text-align: center">
+					<div style="text-align: left">
 						<p>FLAIR ist ein Online-Tool für Lerner und Lehrer von Sprachen.
 							FLAIR:
 						</p>
-						<div style="text-align: left">
-							<ul>
-								<li>durchsucht das Web nach einem gewünschten Thema</li>
-								<li>analysiert die Suchergebnisse auf Grammatikkonstruktionen und
-									Schwierigkeitsgrade</li>
-								<li>bewertet die Ergebnisse nach Ihren (pädagogischen oder
-									lern-spezifischen) Bedürfnissen, die Sie in den Einstellungen
-									festlegt haben</li>
-							</ul>
-						</div>
+						<ul>
+							<li>●  durchsucht das Web nach einem gewünschten Thema</li>
+							<li>●  analysiert die Suchergebnisse auf Grammatikkonstruktionen und
+								Schwierigkeitsgrade</li>
+							<li>●  bewertet die Ergebnisse nach Ihren (pädagogischen oder
+								lern-spezifischen) Bedürfnissen, die Sie in den Einstellungen
+								festlegt haben</li>
+						</ul>
 					</div>
-				
+					<br/>
 					<p>
 						<b>VERÖFFENTLICHUNGEN:</b>
 					</p>
@@ -436,7 +436,7 @@
 					</ul>
 					<br />
 					<p>
-						<b>DRITT-WERKZEUGE</b>
+						<b>DRITT-WERKZEUGE:</b>
 					</p>
 					<ul>
 						<li>

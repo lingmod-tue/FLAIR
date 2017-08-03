@@ -38,10 +38,10 @@ public class FarooSearchAgent extends CachingSearchAgent
 		switch (lang)
 		{
 		case ENGLISH:
-			pipeline.setLang(FarooSearch.Language.ENGLISH);
+			pipeline.setLang(FarooSearch.SearchLanguage.ENGLISH);
 			break;
 		case GERMAN:
-			pipeline.setLang(FarooSearch.Language.GERMAN);
+			pipeline.setLang(FarooSearch.SearchLanguage.GERMAN);
 			break;
 		default:
 			throw new IllegalArgumentException("Unsupported language " + lang);

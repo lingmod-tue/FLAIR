@@ -100,7 +100,7 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 			return;
 		}
 
-		if (completeHandler != null)
+		if (uploadInProgress && completeHandler != null)
 			completeHandler.handle(numUploaded, success);
 		
 		uploadInProgress = false;
@@ -196,12 +196,10 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 	public void show()
 	{
 		if (ClientEndPoint.get().getWebRanker().isOperationInProgress())
-			MaterialToast.fireToast(getLocalizedString(CorpusFileUploaderLocale.DESC_OpInProgress));
-		else
-		{
-			mdlUploadUI.open();
-			uplUploaderUI.getUploadPreview().setVisible(true);
-		}
+			throw new RuntimeException("Invalid atomic operation invokation");
+		
+		mdlUploadUI.open();
+		uplUploaderUI.getUploadPreview().setVisible(true);
 	}
 
 	@Override

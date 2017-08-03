@@ -21,7 +21,7 @@
 	</ui:style>
 	
 	<m:MaterialRow ui:field="pnlRootUI" addStyleNames="{style.card-container}">				
-		<m:MaterialCard ui:field="pnlCardUI" addStyleNames="{style.card}" hoverable="true">
+		<m:MaterialCard ui:field="pnlCardUI" addStyleNames="{style.card}" hoverable="true" waves="ORANGE">
 			<m:MaterialContainer addStyleNames="{style.card-container}">
 				<m:MaterialRow addStyleNames="{style.card-container}">	
 					<m:MaterialColumn ui:field="colCompletedHeaderUI" grid="l2 m2 s3" textAlign="CENTER">
@@ -38,7 +38,7 @@
 						</m:MaterialPreLoader>
 					</m:MaterialColumn>
 					
-					<m:MaterialColumn grid="l10 m10 s9" textAlign="LEFT">
+					<m:MaterialColumn ui:field="colTextUI" grid="l9 m9 s8" textAlign="LEFT">
 						<m:MaterialLink ui:field="btnTitleUI" iconColor="BLACK" fontSize="1.2em" 
 							text="My back hurts!" truncate="true"/>
 							
@@ -48,8 +48,18 @@
 						<m:MaterialLabel ui:field="lblSnippetUI" paddingTop="10" fontSize="0.9em" 
 							text="Rabble Rabble Rabble"/>
 					</m:MaterialColumn>
+					
+					<m:MaterialColumn grid="l1 m1 s1" textAlign="RIGHT">
+						<m:MaterialLink ui:field="btnOverflowUI" iconType="MORE_VERT" 
+							textColor="GREY" waves="DEFAULT" circle="true" activates="dummy"/>
+					</m:MaterialColumn>		
 				</m:MaterialRow>	
 			</m:MaterialContainer>			
 		</m:MaterialCard>
+		
+		<m:MaterialDropDown ui:field="pnlMenuUI" activator="dummy" constrainWidth="false">
+			<m:MaterialLink ui:field="btnAddToCompareUI" fontSize="0.9em"
+				iconType="PLAYLIST_ADD" text="Add to Selection"/>
+		</m:MaterialDropDown>
 	</m:MaterialRow>
 </ui:UiBinder> 

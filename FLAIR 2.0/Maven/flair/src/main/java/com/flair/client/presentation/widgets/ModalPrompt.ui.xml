@@ -9,8 +9,9 @@
 	</ui:style>
 	
 	<m:MaterialModal ui:field="mdlPromptUI" type="BOTTOM_SHEET" dismissible="false">
-		<m:MaterialModalContent>
-			<m:MaterialTitle ui:field="lblTextUI" title="Title" description="Description"/>
+		<m:MaterialModalContent marginTop="13">
+			<m:MaterialTitle ui:field="lblTextUI" title="Title" description="Description"
+				marginTop="13"/>
 		</m:MaterialModalContent>
 		
 		<m:MaterialModalFooter>

@@ -64,16 +64,11 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 	{
 		AbstractResultItem			parent;
 		DocumentResultDisplayItem	displayItem;
-		SelectHandler				selectHandler;
 		
-		DisplayItem(AbstractResultItem i, SelectHandler h)
+		DisplayItem(AbstractResultItem i)
 		{
 			parent = i;
-			selectHandler = h;
-			displayItem = new DocumentResultDisplayItem(parent, e -> {
-				if (selectHandler != null)
-					selectHandler.handle(parent);
-			});
+			displayItem = new DocumentResultDisplayItem(parent);
 		}
 		
 		Widget getWidget() {
@@ -85,13 +80,11 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 	{
 		Map<AbstractResultItem, DisplayItem>		completed;
 		Map<AbstractResultItem, DisplayItem>		inprogress;
-		SelectHandler								selectHandler;
 	
 		State()
 		{
 			completed = new HashMap<>();
 			inprogress = new HashMap<>();
-			selectHandler = null;
 		}
 		
 		private void animate(Widget w, Transition t, int delay, int duration, Func callback)
@@ -167,7 +160,7 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 			if (map.containsKey(item))
 				throw new RuntimeException("Item already exists");
 			
-			DisplayItem d = new DisplayItem(item, selectHandler);
+			DisplayItem d = new DisplayItem(item);
 			map.put(item, d);
 				
 			addDisplayItem(d, container);
@@ -208,10 +201,7 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 			
 			validatePlaceholders();
 		}
-		
-		public void setSelectHandler(SelectHandler h) {
-			selectHandler = h;
-		}
+
 	}
 	
 	private void initLocale()
@@ -288,12 +278,6 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 	public void clearInProgress() {
 		state.clearAll(Type.IN_PROGRESS);
 	}
-
-	@Override
-	public void setSelectHandler(SelectHandler handler) {
-		state.setSelectHandler(handler);
-	}
-
 	
 	@Override
 	public void show()
@@ -302,7 +286,6 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 				Transition.FADEINDOWN, 0, 1000, () -> pnlRootUI.setVisible(true));
 	}
 	
-
 	@Override
 	public void hide()
 	{

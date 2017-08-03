@@ -15,6 +15,7 @@ import com.flair.client.presentation.interfaces.AbstractRankerSettingsPane;
 import com.flair.client.presentation.interfaces.AbstractWebRankerPresenter;
 import com.flair.client.presentation.interfaces.CorpusUploadService;
 import com.flair.client.presentation.interfaces.CustomKeywordService;
+import com.flair.client.presentation.interfaces.DocumentCompareService;
 import com.flair.client.presentation.interfaces.NotificationService;
 import com.flair.client.presentation.interfaces.OperationCancelService;
 import com.flair.client.presentation.interfaces.OverlayService;
@@ -24,6 +25,7 @@ import com.flair.client.presentation.interfaces.VisualizerService;
 import com.flair.client.presentation.widgets.CorpusFileUploader;
 import com.flair.client.presentation.widgets.CustomKeywordsEditor;
 import com.flair.client.presentation.widgets.DocumentCollectionVisualizer;
+import com.flair.client.presentation.widgets.DocumentComparer;
 import com.flair.client.presentation.widgets.DocumentPreviewPane;
 import com.flair.client.presentation.widgets.DocumentResultsPane;
 import com.flair.client.presentation.widgets.ModalPrompt;
@@ -227,9 +229,27 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	MaterialOverlay									mdlOverlayUI;
 	@UiField
 	SettingsExporter								mdlExporterUI;
-	
+	@UiField
+	DocumentComparer								mdlComparerUI;
 	ToastNotifications								notificationService;
 	BasicOverlay									overlayService;
+	
+	private void invokeAtomicOperation(Runnable handler)
+	{
+		if (ClientEndPoint.get().getWebRanker().isOperationInProgress())
+		{
+			// prompt the user if they want to cancel the currently running operation
+			String title = getLocalizedString(MainViewportLocale.DESC_OpInProgessTitle);
+			String caption = getLocalizedString(MainViewportLocale.DESC_OpInProgessCaption);
+
+			mdlPromptUI.yesNo(title, caption, () -> {
+				ClientEndPoint.get().getWebRanker().cancelCurrentOperation();
+				handler.run();
+			}, () -> {});
+		}
+		else
+			handler.run();
+	}
 	
 	private void toggleSettingsPane()
 	{
@@ -257,7 +277,7 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	}
 	
 	private void showUploadModal() {
-		mdlCorpusUploadUI.show();
+		invokeAtomicOperation(() -> mdlCorpusUploadUI.show());
 	}
 	
 	private void updateResultsListGrid()
@@ -300,7 +320,7 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		String query = txtSearchBoxUI.getText();
 		
 		showSearchModal(false);
-		ClientEndPoint.get().getWebRanker().performWebSearch(searchLang, query, resultCount);
+		invokeAtomicOperation(() -> ClientEndPoint.get().getWebRanker().performWebSearch(searchLang, query, resultCount));
 	}
 	
 	private void initLocale()
@@ -426,11 +446,16 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		
 		pnlConstructionsSettingsUI.setShowHideEventHandler(v -> {
 			updateResultsListGrid();
-			icoSettingsMorphUI.getElement().removeClassName("morphed");
+			if (v)
+				icoSettingsMorphUI.getElement().addClassName("morphed");
+			else
+				icoSettingsMorphUI.getElement().removeClassName("morphed");
 		});
 		pnlDocPreviewUI.setShowHideEventHandler(v -> updateResultsListGrid());
 		
 		mdlCustomKeywordsUI.bindToSlider(pnlConstructionsSettingsUI.getKeywordSlider());
+	
+		
 	}
 	
 	private void initUI()
@@ -609,5 +634,10 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	@Override
 	public SettingsUrlExporterView getSettingsUrlExporterView() {
 		return mdlExporterUI;
+	}
+
+	@Override
+	public DocumentCompareService getDocumentCompareService() {
+		return mdlComparerUI;
 	}
 }

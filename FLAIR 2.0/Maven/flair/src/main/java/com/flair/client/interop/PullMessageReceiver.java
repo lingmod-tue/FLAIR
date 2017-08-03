@@ -137,7 +137,11 @@ class PullMessageReceiver implements AbstractMessageReceiver
 	}
 
 	@Override
-	public void setHandler(MessageHandler handler) {
+	public void setHandler(MessageHandler handler)
+	{
+		if (open)
+			throw new RuntimeException("Attempting to change handler when the pipeline is open");
+		
 		this.handler = handler;
 	}
 

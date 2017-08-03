@@ -3,6 +3,7 @@ package com.flair.client.model.interfaces;
 import java.util.Collection;
 
 import com.flair.shared.grammar.GrammaticalConstruction;
+import com.flair.shared.grammar.Language;
 import com.flair.shared.interop.RankableDocument;
 import com.flair.shared.parser.DocumentReadabilityLevel;
 
@@ -13,6 +14,8 @@ public interface DocumentRankerOutput
 {
 	public interface Rank
 	{
+		public Language						getLanguage();
+		
 		public Collection<RankableDocument>	getRankedDocuments();	// sorted and filtered according to input weights
 		public int							getNumFilteredDocuments();
 		
