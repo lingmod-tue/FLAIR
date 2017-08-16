@@ -3,8 +3,9 @@ package com.flair.client.presentation.widgets;
 import com.flair.client.ClientEndPoint;
 import com.flair.client.localization.LocalizedComposite;
 import com.flair.client.localization.SimpleLocalizedTextButtonWidget;
-import com.flair.client.localization.SimpleLocalizedTextWidget;
+import com.flair.client.localization.SimpleLocalizedWidget;
 import com.flair.client.localization.locale.CorpusFileUploaderLocale;
+import com.flair.client.localization.locale.LanguageLocale;
 import com.flair.client.presentation.interfaces.CorpusUploadService;
 import com.flair.shared.grammar.Language;
 import com.google.gwt.core.client.GWT;
@@ -55,8 +56,8 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 	@UiField
 	MaterialButton			btnCancel2UI;
 	
-	SimpleLocalizedTextWidget<MaterialRadioButton>		rdoEnglishLC;
-	SimpleLocalizedTextWidget<MaterialRadioButton>		rdoGermanLC;
+	SimpleLocalizedWidget<MaterialRadioButton>		rdoEnglishLC;
+	SimpleLocalizedWidget<MaterialRadioButton>		rdoGermanLC;
 	SimpleLocalizedTextButtonWidget<MaterialButton>		btnToUploaderLC;
 	SimpleLocalizedTextButtonWidget<MaterialButton>		btnCancel1LC;
 	SimpleLocalizedTextButtonWidget<MaterialButton>		btnFinishLC;
@@ -127,8 +128,12 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 
 	private void initLocale()
 	{
-		rdoEnglishLC = new SimpleLocalizedTextWidget<>(rdoEnglishUI, CorpusFileUploaderLocale.DESC_rdoEnglishUI);
-		rdoGermanLC = new SimpleLocalizedTextWidget<>(rdoGermanUI, CorpusFileUploaderLocale.DESC_rdoGermanUI);
+		rdoEnglishLC = new SimpleLocalizedWidget<>(rdoEnglishUI, "", (w, s, d) -> {
+			w.setText(LanguageLocale.get().getLocalizedName(Language.ENGLISH, d.getLanguage()));
+		});
+		rdoGermanLC = new SimpleLocalizedWidget<>(rdoGermanUI, "", (w, s, d) -> {
+			w.setText(LanguageLocale.get().getLocalizedName(Language.GERMAN, d.getLanguage()));
+		});
 		btnToUploaderLC = new SimpleLocalizedTextButtonWidget<>(btnToUploaderUI, CorpusFileUploaderLocale.DESC_btnToUploaderUI);
 		btnCancel1LC = new SimpleLocalizedTextButtonWidget<>(btnCancel1UI, CorpusFileUploaderLocale.DESC_btnCancel1UI);
 		btnFinishLC = new SimpleLocalizedTextButtonWidget<>(btnFinishUI, CorpusFileUploaderLocale.DESC_btnFinishUI);

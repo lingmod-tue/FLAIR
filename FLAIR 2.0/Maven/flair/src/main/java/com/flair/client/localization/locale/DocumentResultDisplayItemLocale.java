@@ -12,11 +12,11 @@ public final class DocumentResultDisplayItemLocale extends SimpleLocale
 	{
 		// EN
 		en.put(DESC_ItemOrgRank, "Original Rank");
-		en.put(DESC_btnAddToCompareUI, "Add to selection");
+		en.put(DESC_btnAddToCompareUI, "Compare");
 
 		// DE
 		de.put(DESC_ItemOrgRank, "Origineller Rang");
-		de.put(DESC_btnAddToCompareUI, "Auswählen");
+		de.put(DESC_btnAddToCompareUI, "Vergleichen");
 	}
 	
 	public static final DocumentResultDisplayItemLocale		INSTANCE = new DocumentResultDisplayItemLocale();

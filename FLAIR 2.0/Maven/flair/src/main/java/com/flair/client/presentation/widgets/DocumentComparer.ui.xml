@@ -3,7 +3,8 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:m="urn:import:gwt.material.design.client.ui"
 	xmlns:m.html="urn:import:gwt.material.design.client.ui.html"
-	xmlns:m.subheader="urn:import:gwt.material.design.addins.client.subheader">
+	xmlns:m.subheader="urn:import:gwt.material.design.addins.client.subheader"
+	xmlns:m.emptystate="urn:import:gwt.material.design.addins.client.emptystate">
 	
 	<ui:style>
 	.global-animation {
@@ -28,7 +29,8 @@
 				</m:MaterialRow>
 				
 				<m:MaterialRow grid="l8 m8 s12" textAlign="CENTER" marginBottom="0">
-					<m:MaterialLabel ui:field="lblPlaceholderUI" text="No selection" fontSize="1.4em" marginBottom="15" visible="false"/>	
+					<m.emptystate:MaterialEmptyState ui:field="lblPlaceholderUI" iconType="COMPARE_ARROWS"
+						title="Empty Clipboard" description="" marginBottom="15" visible="false"/>
 				</m:MaterialRow>
 				
 				<m:MaterialRow ui:field="pnlListContainerUI" grid="l8 m8 s12" marginBottom="15"> 

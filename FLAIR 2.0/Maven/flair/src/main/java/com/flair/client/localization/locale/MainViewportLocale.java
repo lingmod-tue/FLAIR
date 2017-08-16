@@ -7,10 +7,10 @@ public final class MainViewportLocale extends SimpleLocale
 	public static final String		DESC_btnWebSearchUI = "btnWebSearchUI";
 	public static final String		DESC_btnUploadUI = "btnUploadUI";
 	public static final String		DESC_btnAboutUI = "btnAboutUI";
+	public static final String		DESC_btnHistoryUI = "btnHistoryUI";
 	public static final String		DESC_btnSwitchLangUI = "btnSwitchLangUI";
-	public static final String		DESC_btnLangEnUI = "btnLangEnUI";
-	public static final String		DESC_btnLangDeUI = "btnLangDeUI";
 	public static final String		DESC_btnCloseWebSearchUI = "btnCloseWebSearchUI";
+	public static final String		DESC_icoSettingsMorphUI = "icoSettingsMorphUI";
 	
 	public static final String		DESC_txtSearchBoxUI = "txtSearchBoxUI";
 	public static final String		DESC_selResultCountItm10UI = "selResultCountItm10UI";
@@ -18,8 +18,6 @@ public final class MainViewportLocale extends SimpleLocale
 	public static final String		DESC_selResultCountItm30UI = "selResultCountItm30UI";
 	public static final String		DESC_selResultCountItm40UI = "selResultCountItm40UI";
 	public static final String		DESC_selResultCountItm50UI = "selResultCountItm50UI";
-	public static final String		DESC_selResultLangItmEnUI = "selResultLangItmEnUI";
-	public static final String		DESC_selResultLangItmDeUI = "selResultLangItmDeUI";
 	
 	public static final String		DESC_defSearchTitle = "defSearchTitle";
 	public static final String		DESC_defSearchCaption = "defSearchCaption";
@@ -38,18 +36,16 @@ public final class MainViewportLocale extends SimpleLocale
 		en.put(DESC_btnWebSearchUI, "Web Search");
 		en.put(DESC_btnUploadUI, "Upload Corpus");
 		en.put(DESC_btnAboutUI, "About FLAIR");
+		en.put(DESC_btnHistoryUI, "Recent Analyses");
 		en.put(DESC_btnSwitchLangUI, "Switch Interface Language");
-		en.put(DESC_btnLangEnUI, "English");
-		en.put(DESC_btnLangDeUI, "German");
 		en.put(DESC_btnCloseWebSearchUI, "Cancel");
+		en.put(DESC_icoSettingsMorphUI, "Settings");
 		en.put(DESC_txtSearchBoxUI, "Enter a query");
 		en.put(DESC_selResultCountItm10UI, "10 Results");
 		en.put(DESC_selResultCountItm20UI, "20 Results");
 		en.put(DESC_selResultCountItm30UI, "30 Results");
 		en.put(DESC_selResultCountItm40UI, "40 Results");
 		en.put(DESC_selResultCountItm50UI, "50 Results");
-		en.put(DESC_selResultLangItmEnUI, "English");
-		en.put(DESC_selResultLangItmDeUI, "German");
 		en.put(DESC_defSearchTitle, "Search");
 		en.put(DESC_defSearchCaption, "Click on the Search icon below and type in a query. FLAIR will fetch the top results from the Bing Search Engine.");
 		en.put(DESC_defConfigTitle, "Configure");
@@ -64,18 +60,16 @@ public final class MainViewportLocale extends SimpleLocale
 		de.put(DESC_btnWebSearchUI, "Internetsuche");
 		de.put(DESC_btnUploadUI, "Text hochladen");
 		de.put(DESC_btnAboutUI, "Über FLAIR");
+		de.put(DESC_btnHistoryUI, "Neuanalysen");
 		de.put(DESC_btnSwitchLangUI, "Anzeigesprache wechseln");
-		de.put(DESC_btnLangEnUI, "Englisch");
-		de.put(DESC_btnLangDeUI, "Deutsch");
 		de.put(DESC_btnCloseWebSearchUI, "Abbrechen");
+		de.put(DESC_icoSettingsMorphUI, "Einstellungen");
 		de.put(DESC_txtSearchBoxUI, "Suchbegriff eingeben");
 		de.put(DESC_selResultCountItm10UI, "10 Ergebnisse");
 		de.put(DESC_selResultCountItm20UI, "20 Ergebnisse");
 		de.put(DESC_selResultCountItm30UI, "30 Ergebnisse");
 		de.put(DESC_selResultCountItm40UI, "40 Ergebnisse");
 		de.put(DESC_selResultCountItm50UI, "50 Ergebnisse");
-		de.put(DESC_selResultLangItmEnUI, "Englisch");
-		de.put(DESC_selResultLangItmDeUI, "Deutsch");
 		de.put(DESC_defSearchTitle, "Suchen");
 		de.put(DESC_defSearchCaption, "Klicken Sie auf das Suchsymbol unten und geben Sie eine Suchanfrage ein. FLAIR wird die obersten Ergebnisse von der Bing Suchmaschine abrufen.");
 		de.put(DESC_defConfigTitle, "Konfigurieren");

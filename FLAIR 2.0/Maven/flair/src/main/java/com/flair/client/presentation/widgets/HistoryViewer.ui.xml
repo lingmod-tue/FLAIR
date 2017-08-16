@@ -1,0 +1,44 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:m="urn:import:gwt.material.design.client.ui"
+	xmlns:m.html="urn:import:gwt.material.design.client.ui.html"
+	xmlns:m.subheader="urn:import:gwt.material.design.addins.client.subheader"
+	xmlns:m.emptystate="urn:import:gwt.material.design.addins.client.emptystate">
+	
+	<ui:style>
+	</ui:style>
+	
+	<m:MaterialModal ui:field="mdlRootUI" dismissible="false" type="BOTTOM_SHEET">
+		<m:MaterialModalContent>								
+			<m:MaterialRow grid="l8 m8 s12" marginBottom="10">
+				<m:MaterialLabel ui:field="lblTitleUI" text="Analysis History" fontSize="1.15em" float="LEFT"/>
+				<m:MaterialIcon ui:field="btnCloseUI" iconType="CLOSE" float="RIGHT"/>	
+			</m:MaterialRow>
+			
+			<m:MaterialRow grid="l8 m8 s12" textAlign="CENTER" marginBottom="0">
+				<m.emptystate:MaterialEmptyState ui:field="lblPlaceholderUI" iconType="HISTORY"
+					title="No History" description="" marginBottom="15" visible="false"/>
+			</m:MaterialRow>
+			
+			<m:MaterialRow ui:field="pnlListContainerUI" grid="l8 m8 s12" marginBottom="15"> 
+				<m.subheader:MaterialSubHeaderContainer shadow="1" height="280px" type="PINNED">
+					<m.subheader:MaterialSubHeader ui:field="lblSelCountUI" text=" "/>
+					<m:MaterialCollection>
+						<m:MaterialCollectionItem>
+							<m:MaterialLabel text=" "/>
+							<m:MaterialLabel text=" "/>
+						</m:MaterialCollectionItem>
+						
+						<m:MaterialCollectionItem>
+							<m:MaterialLabel text=" "/>
+							<m:MaterialLabel text=" "/>
+						</m:MaterialCollectionItem>
+					</m:MaterialCollection>
+					
+					<m:MaterialCollection ui:field="pnlSelectionUI"/>									
+				</m.subheader:MaterialSubHeaderContainer>						
+			</m:MaterialRow>	
+		</m:MaterialModalContent>			
+	</m:MaterialModal>			
+</ui:UiBinder> 

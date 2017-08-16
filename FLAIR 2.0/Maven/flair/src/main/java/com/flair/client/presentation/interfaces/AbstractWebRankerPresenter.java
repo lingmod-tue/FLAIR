@@ -18,10 +18,10 @@ public interface AbstractWebRankerPresenter
 	public OverlayService						getOverlayService();
 	public SettingsUrlExporterView				getSettingsUrlExporterView();
 	public DocumentCompareService				getDocumentCompareService();
+	public HistoryViewerService					getHistoryViewerService();
 	
 	public void									showLoaderOverlay(boolean visible);		// over the entire viewport
-	public void									showProgressBar(boolean visible, boolean indeterminate);
-	public void									setProgressBarValue(double val);		// 0-100
+	public void									showProgressBar(boolean visible);
 	
 	public void									showCancelPane(boolean visible);
 	public void									showDefaultPane(boolean visible);

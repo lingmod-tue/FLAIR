@@ -16,8 +16,8 @@ import com.google.gwt.core.shared.GWT;
  */
 class BingSearchAgent extends CachingSearchAgent
 {
-	private static final String		API_KEY_DEBUG		= "4932f9145e034032b51e2e0a9579fdc1";
-	private static final String		API_KEY				= "f163d542b4534b38986b91653237490b";
+	private static final String		TRAIL_API_KEY_DEBUG		= "4932f9145e034032b51e2e0a9579fdc1";
+	private static final String		PROD_API_KEY			= "***REMOVED***";		// Detmar/Maria's
 	
 	private static final int		RESULTS_PER_PAGE	= 100;		// larger numbers will reduce the number of search transactions but will increase the response size
 	private static final int		MAX_API_REQUESTS	= 2;
@@ -48,9 +48,12 @@ class BingSearchAgent extends CachingSearchAgent
 		}
 
 		if (GWT.isProdMode())
-			pipeline.setApiKey(API_KEY);
+			pipeline.setApiKey(PROD_API_KEY);
 		else
-			pipeline.setApiKey(API_KEY_DEBUG);
+		{
+			pipeline.setApiKey(TRAIL_API_KEY_DEBUG);
+			ServerLogger.get().info("Using DEBUG key");
+		}
 		
 		pipeline.setQuery(qPrefix + query + qPostfix);
 		pipeline.setPerPage(RESULTS_PER_PAGE);

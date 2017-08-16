@@ -27,7 +27,7 @@ public class MessageReceiverFactory
 		case PULL:
 			return new PullMessageReceiver();
 		case PUSH:
-			throw new IllegalArgumentException("Receiver type " + type + " not implemented");
+			throw new RuntimeException("Receiver type " + type + " not implemented");
 		default:
 			return null;
 		}

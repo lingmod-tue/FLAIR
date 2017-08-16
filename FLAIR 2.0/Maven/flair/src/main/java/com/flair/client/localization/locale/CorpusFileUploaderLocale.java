@@ -11,8 +11,6 @@ public final class CorpusFileUploaderLocale extends SimpleLocale
 	public static final String		DESC_WaitDescription = "WaitDescription";
 	public static final String		DESC_MaxFiles = "MaxFiles";
 	public static final String		DESC_stpLangUI = "stpLangUI";
-	public static final String		DESC_rdoEnglishUI = "rdoEnglishUI";
-	public static final String		DESC_rdoGermanUI = "rdoGermanUI";
 	public static final String		DESC_btnToUploaderUI = "btnToUploaderUI";
 	public static final String		DESC_btnCancel1UI = "btnCancel1UI";
 	public static final String		DESC_stpUploadUI = "stpUploadUI";
@@ -31,8 +29,6 @@ public final class CorpusFileUploaderLocale extends SimpleLocale
 		en.put(DESC_WaitDescription, "Your files are being uploaded");
 		en.put(DESC_MaxFiles, "You have uploaded too many files at a time");
 		en.put(DESC_stpLangUI, "Choose Language");
-		en.put(DESC_rdoEnglishUI, "English");
-		en.put(DESC_rdoGermanUI, "German");
 		en.put(DESC_btnToUploaderUI, "Next");
 		en.put(DESC_btnCancel1UI, "Cancel");
 		en.put(DESC_stpUploadUI, "Upload");
@@ -48,8 +44,6 @@ public final class CorpusFileUploaderLocale extends SimpleLocale
 		de.put(DESC_WaitDescription, "Die Dateien werden hochgeladen");
 		de.put(DESC_MaxFiles, "Sie dürfen nicht so viele Dateien auf einmal hochladen");
 		de.put(DESC_stpLangUI, "Textsprache Wählen");
-		de.put(DESC_rdoEnglishUI, "Englisch");
-		de.put(DESC_rdoGermanUI, "Deutsch");
 		de.put(DESC_btnToUploaderUI, "Weiter");
 		de.put(DESC_btnCancel1UI, "Abbrechen");
 		de.put(DESC_stpUploadUI, "Hochladen");

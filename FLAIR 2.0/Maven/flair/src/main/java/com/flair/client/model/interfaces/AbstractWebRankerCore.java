@@ -1,5 +1,7 @@
 package com.flair.client.model.interfaces;
 
+
+
 import com.flair.client.presentation.interfaces.AbstractWebRankerPresenter;
 import com.flair.shared.grammar.Language;
 import com.flair.shared.interop.AuthToken;
@@ -22,7 +24,8 @@ public interface AbstractWebRankerCore
 		WEB_SEARCH,
 		CUSTOM_CORPUS,
 		// Non-transient
-		COMPARE
+		COMPARE,			// compare documents
+		RESTORE				// restore a previous operation
 		;
 		
 		public static boolean isTransient(OperationType t)

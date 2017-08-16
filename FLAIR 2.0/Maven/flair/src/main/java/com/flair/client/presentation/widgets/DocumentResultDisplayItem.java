@@ -102,7 +102,7 @@ public class DocumentResultDisplayItem extends LocalizedComposite
 		btnOverflowUI.setActivates(guid.toString());
 		pnlMenuUI.setActivator(guid.toString());
 		
-//		btnOverflowUI.setVisible(item.hasOverflowMenu());
+		btnOverflowUI.setVisible(item.hasOverflowMenu());
 		btnAddToCompareUI.addClickHandler(e -> item.addToCompare());
 		
 		if (item.getType() == Type.IN_PROGRESS)

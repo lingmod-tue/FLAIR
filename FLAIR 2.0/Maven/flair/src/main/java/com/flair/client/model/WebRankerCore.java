@@ -23,6 +23,7 @@ import com.flair.client.model.interfaces.DocumentAnnotatorOutput;
 import com.flair.client.model.interfaces.DocumentRankerInput;
 import com.flair.client.model.interfaces.DocumentRankerOutput;
 import com.flair.client.model.interfaces.SettingsExportService;
+import com.flair.client.model.interfaces.WebRankerAnalysis;
 import com.flair.client.presentation.interfaces.AbstractDocumentPreviewPane;
 import com.flair.client.presentation.interfaces.AbstractDocumentResultsPane;
 import com.flair.client.presentation.interfaces.AbstractRankerSettingsPane;
@@ -34,6 +35,7 @@ import com.flair.client.presentation.interfaces.CorpusUploadService;
 import com.flair.client.presentation.interfaces.CustomKeywordService;
 import com.flair.client.presentation.interfaces.DocumentCompareService;
 import com.flair.client.presentation.interfaces.DocumentPreviewPaneInput;
+import com.flair.client.presentation.interfaces.HistoryViewerService;
 import com.flair.client.presentation.interfaces.InProgressResultItem;
 import com.flair.client.presentation.interfaces.NotificationService;
 import com.flair.client.presentation.interfaces.OperationCancelService;
@@ -61,6 +63,7 @@ import com.flair.shared.interop.services.WebRankerServiceAsync;
 import com.flair.shared.parser.DocumentReadabilityLevel;
 import com.flair.shared.utilities.GenericEventSource;
 import com.flair.shared.utilities.GenericEventSource.EventHandler;
+import com.google.gwt.core.client.Duration;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.Timer;
@@ -80,7 +83,7 @@ import gwt.material.design.client.constants.Color;
  */
 public class WebRankerCore implements AbstractWebRankerCore
 {
-	private class ProcessData
+	private abstract class ProcessData implements WebRankerAnalysis
 	{
 		final OperationType				type;
 		final Language					lang;
@@ -102,6 +105,21 @@ public class WebRankerCore implements AbstractWebRankerCore
 		void setKeywords(List<String> kw) {
 			keywords = new ArrayList<>(kw);
 		}
+
+		@Override
+		public OperationType getType() {
+			return type;
+		}
+		
+		@Override
+		public Language getLanguage() {
+			return lang;
+		}
+		
+		@Override
+		public List<RankableDocument> getParsedDocs() {
+			return parsedDocs;
+		}
 	}
 		
 	private final class WebSearchProcessData extends ProcessData
@@ -117,6 +135,12 @@ public class WebRankerCore implements AbstractWebRankerCore
 			numResults = r;
 			searchResults = new ArrayList<>();
 		}
+
+		
+		@Override
+		public String getName() {
+			return "'" + query + "'";
+		}
 	}
 	
 	private final class CorpusUploadProcessData extends ProcessData
@@ -127,6 +151,20 @@ public class WebRankerCore implements AbstractWebRankerCore
 		{
 			super(OperationType.CUSTOM_CORPUS, l);
 			uploadedDocs = new ArrayList<>();
+		}
+
+		@Override
+		public String getName()
+		{
+			if (uploadedDocs.isEmpty())
+				return "";
+			
+			StringBuilder sb = new StringBuilder();
+			for (UploadedDocument itr : uploadedDocs)
+				sb.append(itr.getTitle()).append(", ");
+			
+			String out = sb.toString();
+			return out.substring(0, out.length() - 2);
 		}
 	}
 	
@@ -276,6 +314,11 @@ public class WebRankerCore implements AbstractWebRankerCore
 				parsedDocs.add(wrap);
 				i++;
 			}
+		}
+
+		@Override
+		public String getName() {
+			return "";
 		}
 	}
 	
@@ -1082,7 +1125,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 			
 			presenter.showDefaultPane(false);
 			presenter.showCancelPane(true);
-			presenter.showProgressBar(true, true);
+			presenter.showProgressBar(true);
 			settings.hide();
 			preview.hide();
 
@@ -1106,7 +1149,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 			{
 				results.clearInProgress();
 				presenter.showCancelPane(false);
-				presenter.showProgressBar(false, false);
+				presenter.showProgressBar(false);
 				
 				if (GwtUtil.isSmallScreen() == false)
 					settings.show();
@@ -1134,7 +1177,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 				results.hide();
 
 				presenter.showLoaderOverlay(false);
-				presenter.showProgressBar(false, false);
+				presenter.showProgressBar(false);
 				presenter.showCancelPane(false);
 				presenter.showDefaultPane(true);
 				settings.hide();
@@ -1146,7 +1189,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 				messagePipeline.close();
 			
 			data.complete = true;
-			data.invalid = success;
+			data.invalid = success == false;
 			timeout.cancel();
 			completionHandler.handle(data, success);
 			
@@ -1193,6 +1236,21 @@ public class WebRankerCore implements AbstractWebRankerCore
 		
 		ProcessData pop() {
 			return stack.pop();
+		}
+	
+		List<ProcessData> asList()
+		{
+			List<ProcessData> out = new ArrayList<>();
+			for (ProcessData itr : stack)
+			{
+				if (OperationType.isTransient(itr.getType()) == false)
+					continue;
+				else if (itr.complete == false || itr.invalid)
+					continue;
+				
+				out.add(itr);
+			}
+			return out;
 		}
 	}
 	
@@ -1334,6 +1392,55 @@ public class WebRankerCore implements AbstractWebRankerCore
 		
 	}
 
+	private final class WebSearchCooldownTimer
+	{
+		private static final int			COOLDOWN_MS = 5 * 60 * 1000;
+		private static final int			MAX_QUERIES = 15;				// no of allowed queries before the cooldown is triggered
+		
+		private final Timer		cooldownTimer;
+		private int				elapsedQueries;
+		private Duration		lastResetTimestamp;
+		
+		public WebSearchCooldownTimer()
+		{
+			cooldownTimer = new Timer() {
+				@Override
+				public void run()
+				{
+					// reset elapsed queries
+					elapsedQueries = 0;
+					lastResetTimestamp = new Duration();
+				}
+			};
+			
+			elapsedQueries = 0;
+			lastResetTimestamp = new Duration();
+		}
+		
+		boolean tryBeginOperation()
+		{
+			if (elapsedQueries >= MAX_QUERIES)
+				return false;
+			
+			elapsedQueries++;
+			return true;
+		}
+		
+		void start() {
+			cooldownTimer.scheduleRepeating(COOLDOWN_MS);
+		}
+		
+		void stop() {
+			cooldownTimer.cancel();
+		}
+	
+		long getNextResetTime()
+		{
+			long delta = COOLDOWN_MS - lastResetTimestamp.elapsedMillis();
+			return delta > 0 ? delta : 0;
+		}
+	}
+	
 	private AuthToken						token;
 	private AbstractWebRankerPresenter		presenter;
 	private final AbstractDocumentRanker	ranker;
@@ -1351,11 +1458,13 @@ public class WebRankerCore implements AbstractWebRankerCore
 	private OperationCancelService			cancel;
 	private SettingsUrlExporterView			urlExport;
 	private DocumentCompareService			comparer;
+	private HistoryViewerService			history;
 	private final WebRankerServiceAsync		service;
 	private final RankPreviewModule			rankPreviewModule;
 	private final TransientProcessManager	transientProcessManager;
 	private final ProcessHistory			processHistory;
 	private ConstructionSettingsProfile		importedSettings;
+	private final WebSearchCooldownTimer	searchCooldown;
 	
 	private final GenericEventSource<BeginOperation>	eventBeginProc;
 	private final GenericEventSource<EndOperation>		eventEndProc;
@@ -1381,11 +1490,13 @@ public class WebRankerCore implements AbstractWebRankerCore
 		cancel = null;
 		urlExport = null;
 		comparer = null;
+		history = null;
 		
 		service = WebRankerServiceAsync.Util.getInstance();
 		rankPreviewModule = new RankPreviewModule();
 		transientProcessManager = new TransientProcessManager();
 		processHistory = new ProcessHistory();
+		searchCooldown = new WebSearchCooldownTimer();
 		
 		importedSettings = null;
 		
@@ -1406,6 +1517,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 		cancel = presenter.getCancelService();
 		urlExport = presenter.getSettingsUrlExporterView();
 		comparer = presenter.getDocumentCompareService();
+		history = presenter.getHistoryViewerService();
 		
 		settings.setExportSettingsHandler(() -> {
 			String url = exporter.exportSettings(settings.generateSettingsProfile());
@@ -1413,7 +1525,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 		});
 		settings.setVisualizeHandler(() -> {
 			if (transientProcessManager.isBusy())
-				notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_VisualizeWait));
+				notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_WaitTillCompletion));
 			else
 				rankPreviewModule.visualize();
 		});
@@ -1436,12 +1548,37 @@ public class WebRankerCore implements AbstractWebRankerCore
 			onSettingsChanged();
 		});
 		cancel.setCancelHandler(() -> onCancelOp());
+		
 		comparer.setCompareHandler((l, d) -> onCompare(l, d));
 		comparer.bindToWebRankerCore(this);
+		history.setFetchAnalysesHandler(() -> {
+			return processHistory.asList();
+		});
+		history.setRestoreAnalysisHandler(p -> onRestoreProcess(p));
+		
 		LocalizationEngine.get().addLanguageChangeHandler(l -> rankPreviewModule.refreshLocalization(l.newLang));
 	
 		// reset the settings pane
 		rankPreviewModule.rerank();
+		
+		searchCooldown.start();
+	}
+	
+	private void onRestoreProcess(WebRankerAnalysis p)
+	{
+		if (p instanceof ProcessData == false)
+			throw new RuntimeException("Invalid analysis process");
+		
+		doProcessHousekeeping();
+		
+		// the process ought to be on the stack, so just update the ranker
+		ProcessData proc = (ProcessData)p;
+		rankPreviewModule.set(proc);
+		rankPreviewModule.rerank();
+		rankPreviewModule.refreshResults();
+		preview.hide();
+		
+		eventEndProc.raiseEvent(new EndOperation(OperationType.RESTORE, proc.lang, true));
 	}
 	
 	private void onCompare(Language lang, List<RankableDocument> docs)
@@ -1450,7 +1587,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 			return;
 		else if (transientProcessManager.isBusy())
 		{
-			notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_VisualizeWait));
+			notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_WaitTillCompletion));
 			return;
 		}
 		
@@ -1472,9 +1609,9 @@ public class WebRankerCore implements AbstractWebRankerCore
 		if (isOperationInProgress())
 			throw new RuntimeException("Invalid atomic operation invokation");
 		
-		// cleanup the previous compare process, if any
+		// cleanup the previous non-transient processes, if any
 		ProcessData proc = processHistory.poll();
-		if (proc != null && proc.type == OperationType.COMPARE)
+		if (proc != null && OperationType.isTransient(proc.type) == false)
 		{
 			processHistory.pop();
 		}
@@ -1613,6 +1750,11 @@ public class WebRankerCore implements AbstractWebRankerCore
 			notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_NoSearchResults));
 			return;
 		}
+		else if (searchCooldown.tryBeginOperation() == false)
+		{
+			notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_SearchCooldown));
+			return;
+		}
 		
 		doProcessHousekeeping();
 		
@@ -1622,6 +1764,9 @@ public class WebRankerCore implements AbstractWebRankerCore
 		presenter.showLoaderOverlay(true);
 		service.beginWebSearch(token, lang, query, numResults, new ArrayList<>(keywords.getCustomKeywords()),
 				FuncCallback.get(e -> {
+					// ### hide the loader overlay before the process starts
+					// ### otherwise, the progress bar doesn't show
+					presenter.showLoaderOverlay(false);
 					processHistory.push(proc);
 					transientProcessManager.begin(proc,
 							(p,s) -> onTransientProcessEnd(p, s),
@@ -1635,7 +1780,6 @@ public class WebRankerCore implements AbstractWebRankerCore
 							});
 					
 					onTransientProcessBegin(proc);
-					presenter.showLoaderOverlay(false);
 				}, e -> {
 					ClientLogger.get().error(e, "Couldn't begin web search operation");
 					notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_ServerError));

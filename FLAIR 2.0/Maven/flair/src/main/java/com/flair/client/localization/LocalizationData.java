@@ -8,7 +8,7 @@ import com.flair.shared.grammar.Language;
 /*
  * Simple key-value data store that maps a descriptor to its localized string
  */
-public class LocalizationData 
+public class LocalizationData
 {
 	private final Language					lang;
 	private final Map<String, String>		store;
@@ -21,7 +21,9 @@ public class LocalizationData
 	
 	public void put(String desc, String val)
 	{
-		if (store.containsKey(desc))
+		if (desc.isEmpty())
+			throw new RuntimeException("Empty descriptor");
+		else if (store.containsKey(desc))
 			throw new RuntimeException("Descriptor already registered");
 		else
 			store.put(desc, val);

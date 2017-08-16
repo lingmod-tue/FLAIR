@@ -21,7 +21,7 @@
 	</ui:style>
 	
 	<m:MaterialRow ui:field="pnlRootUI" addStyleNames="{style.card-container}">				
-		<m:MaterialCard ui:field="pnlCardUI" addStyleNames="{style.card}" hoverable="true" waves="ORANGE">
+		<m:MaterialCard ui:field="pnlCardUI" addStyleNames="{style.card}" hoverable="true">
 			<m:MaterialContainer addStyleNames="{style.card-container}">
 				<m:MaterialRow addStyleNames="{style.card-container}">	
 					<m:MaterialColumn ui:field="colCompletedHeaderUI" grid="l2 m2 s3" textAlign="CENTER">
@@ -57,9 +57,8 @@
 			</m:MaterialContainer>			
 		</m:MaterialCard>
 		
-		<m:MaterialDropDown ui:field="pnlMenuUI" activator="dummy" constrainWidth="false">
-			<m:MaterialLink ui:field="btnAddToCompareUI" fontSize="0.9em"
-				iconType="PLAYLIST_ADD" text="Add to Selection"/>
+		<m:MaterialDropDown ui:field="pnlMenuUI" activator="dummy" constrainWidth="true">
+			<m:MaterialLink ui:field="btnAddToCompareUI" text="Add to Selection"/>
 		</m:MaterialDropDown>
 	</m:MaterialRow>
 </ui:UiBinder> 

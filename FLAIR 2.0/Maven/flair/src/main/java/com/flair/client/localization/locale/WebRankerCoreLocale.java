@@ -13,12 +13,13 @@ public final class WebRankerCoreLocale extends SimpleLocale
 	public static final String		DESC_KeywordTitle = "KeywordTitle";
 	public static final String		DESC_OpTimeout = "OpTimeout";
 	public static final String		DESC_CustomCorpusTitle = "CustomCorpusTitle";
-	public static final String		DESC_VisualizeWait = "VisualizeWait";
+	public static final String		DESC_WaitTillCompletion = "WaitTillCompletion";
 	public static final String		DESC_NoResultsForFilter = "NoResultsForFilter";
 	public static final String		DESC_ImportedSettings = "ImportedSettings";
 	public static final String		DESC_AppliedImportedSettings = "AppliedImportedSettings";
 	public static final String		DESC_CompareResultsTitle = "CompareResultsTitle";
 	public static final String		DESC_AddToCompareSel = "AddToCompareSel";
+	public static final String		DESC_SearchCooldown = "SearchCooldown";
 
 	@Override
 	public void init()
@@ -34,12 +35,13 @@ public final class WebRankerCoreLocale extends SimpleLocale
 		en.put(DESC_KeywordTitle, "keyword");
 		en.put(DESC_OpTimeout, "The operation timed-out");
 		en.put(DESC_CustomCorpusTitle, "Uploaded Files");
-		en.put(DESC_VisualizeWait, "Please wait until the current analysis is complete.");
+		en.put(DESC_WaitTillCompletion, "Please wait until the current analysis is complete.");
 		en.put(DESC_NoResultsForFilter, "No results for the current settings");
 		en.put(DESC_ImportedSettings, "FLAIR will automatically apply your custom settings");
 		en.put(DESC_AppliedImportedSettings, "Applied custom settings");
 		en.put(DESC_CompareResultsTitle, "Compare");
 		en.put(DESC_AddToCompareSel, "Selected for comparison");
+		en.put(DESC_SearchCooldown, "Please wait for a few minutes before starting a new search");
 		
 		// DE
 		de.put(DESC_ServerError, "Schade! Wir sind auf einen schweren Fehler gestoßen. Bitte versuchen Sie es später.");
@@ -51,12 +53,13 @@ public final class WebRankerCoreLocale extends SimpleLocale
 		de.put(DESC_KeywordTitle, "Schlüsselwort");
 		de.put(DESC_OpTimeout, "Der Vorgang wurde storniert, weil er zu lange gedauert hat");
 		de.put(DESC_CustomCorpusTitle, "Hochgeladene Dateien");
-		de.put(DESC_VisualizeWait, "Bitte warten Sie, bis die bereits angefangene Analyse abschliesst");
+		de.put(DESC_WaitTillCompletion, "Bitte warten Sie, bis die bereits angefangene Analyse abschliesst");
 		de.put(DESC_NoResultsForFilter, "Keine Ergebnisse für die aktuellen Sucheinstellungen");
 		de.put(DESC_ImportedSettings, "FLAIR wird Ihre benutzerdefinierten Einstellungen automatisch übernehmen");
 		de.put(DESC_AppliedImportedSettings, "Benutzerdefinierte Einstellungen wurden übernommen");
 		de.put(DESC_CompareResultsTitle, "Vergleichen");
 		de.put(DESC_AddToCompareSel, "Zum Vergleichen ausgewählt");
+		de.put(DESC_SearchCooldown, "Bitte warten Sie wenigere Minuten, bevor Sie eine neue Websuche tätigen");
 	}
 	
 	public static final WebRankerCoreLocale		INSTANCE = new WebRankerCoreLocale();

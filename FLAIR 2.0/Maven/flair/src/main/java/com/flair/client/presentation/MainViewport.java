@@ -8,6 +8,7 @@ import com.flair.client.localization.SimpleLocalizedTextButtonWidget;
 import com.flair.client.localization.SimpleLocalizedTextWidget;
 import com.flair.client.localization.SimpleLocalizedTooltipWidget;
 import com.flair.client.localization.SimpleLocalizedWidget;
+import com.flair.client.localization.locale.LanguageLocale;
 import com.flair.client.localization.locale.MainViewportLocale;
 import com.flair.client.presentation.interfaces.AbstractDocumentPreviewPane;
 import com.flair.client.presentation.interfaces.AbstractDocumentResultsPane;
@@ -16,6 +17,7 @@ import com.flair.client.presentation.interfaces.AbstractWebRankerPresenter;
 import com.flair.client.presentation.interfaces.CorpusUploadService;
 import com.flair.client.presentation.interfaces.CustomKeywordService;
 import com.flair.client.presentation.interfaces.DocumentCompareService;
+import com.flair.client.presentation.interfaces.HistoryViewerService;
 import com.flair.client.presentation.interfaces.NotificationService;
 import com.flair.client.presentation.interfaces.OperationCancelService;
 import com.flair.client.presentation.interfaces.OverlayService;
@@ -28,6 +30,7 @@ import com.flair.client.presentation.widgets.DocumentCollectionVisualizer;
 import com.flair.client.presentation.widgets.DocumentComparer;
 import com.flair.client.presentation.widgets.DocumentPreviewPane;
 import com.flair.client.presentation.widgets.DocumentResultsPane;
+import com.flair.client.presentation.widgets.HistoryViewer;
 import com.flair.client.presentation.widgets.ModalPrompt;
 import com.flair.client.presentation.widgets.RankerSettingsPane;
 import com.flair.client.presentation.widgets.SettingsExporter;
@@ -44,7 +47,6 @@ import gwt.material.design.addins.client.iconmorph.MaterialIconMorph;
 import gwt.material.design.addins.client.overlay.MaterialOverlay;
 import gwt.material.design.client.base.MaterialWidget;
 import gwt.material.design.client.constants.Position;
-import gwt.material.design.client.constants.ProgressType;
 import gwt.material.design.client.ui.MaterialAnchorButton;
 import gwt.material.design.client.ui.MaterialButton;
 import gwt.material.design.client.ui.MaterialCardTitle;
@@ -130,6 +132,9 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	MaterialAnchorButton						btnUploadUI;
 	SimpleLocalizedWidget<MaterialAnchorButton>	btnUploadLC;
 	@UiField
+	MaterialLink								btnHistoryUI;
+	SimpleLocalizedWidget<MaterialLink>			btnHistoryLC;
+	@UiField
 	MaterialLink								btnSwitchLangUI;
 	SimpleLocalizedWidget<MaterialLink>			btnSwitchLangLC;
 	@UiField
@@ -175,10 +180,10 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	MaterialListBox								selResultLangUI;
 	@UiField
 	Option										selResultLangItmEnUI;
-	SimpleLocalizedListBoxOptionWidget			selResultLangItmEnLC;
+	SimpleLocalizedWidget<Option>				selResultLangItmEnLC;
 	@UiField
 	Option										selResultLangItmDeUI;
-	SimpleLocalizedListBoxOptionWidget			selResultLangItmDeLC;
+	SimpleLocalizedWidget<Option>				selResultLangItmDeLC;
 	@UiField
 	MaterialButton								btnDoWebSearchUI;
 	SimpleLocalizedTextButtonWidget<MaterialButton> btnDoWebSearchLC;
@@ -189,6 +194,7 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	MaterialLink								tglSettingsPaneUI;
 	@UiField
 	MaterialIconMorph							icoSettingsMorphUI;
+	SimpleLocalizedTooltipWidget<MaterialIconMorph>	icoSettingsMorphLC;
 	@UiField
 	RankerSettingsPane							pnlConstructionsSettingsUI;
 	@UiField
@@ -231,6 +237,8 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	SettingsExporter								mdlExporterUI;
 	@UiField
 	DocumentComparer								mdlComparerUI;
+	@UiField
+	HistoryViewer									mdlHistoryUI;
 	ToastNotifications								notificationService;
 	BasicOverlay									overlayService;
 	
@@ -328,9 +336,15 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		btnAboutLC = new SimpleLocalizedTooltipWidget<>(btnAboutUI, MainViewportLocale.DESC_btnAboutUI);
 		btnWebSearchLC = new SimpleLocalizedTooltipWidget<>(btnWebSearchUI, MainViewportLocale.DESC_btnWebSearchUI);
 		btnUploadLC = new SimpleLocalizedTooltipWidget<>(btnUploadUI, MainViewportLocale.DESC_btnUploadUI);
+		btnHistoryLC = new SimpleLocalizedTooltipWidget<>(btnHistoryUI, MainViewportLocale.DESC_btnHistoryUI);
 		btnSwitchLangLC = new SimpleLocalizedTooltipWidget<>(btnSwitchLangUI, MainViewportLocale.DESC_btnSwitchLangUI);
-		btnLangEnLC = new SimpleLocalizedTextButtonWidget<>(btnLangEnUI, MainViewportLocale.DESC_btnLangEnUI);
-		btnLangDeLC = new SimpleLocalizedTextButtonWidget<>(btnLangDeUI, MainViewportLocale.DESC_btnLangDeUI);
+		btnLangEnLC = new SimpleLocalizedWidget<>(btnLangEnUI, "", (w, s, d) -> {
+			w.setText(LanguageLocale.get().getLocalizedName(Language.ENGLISH, d.getLanguage()));
+		});
+		btnLangDeLC = new SimpleLocalizedWidget<>(btnLangDeUI, "", (w, s, d) -> {
+			w.setText(LanguageLocale.get().getLocalizedName(Language.GERMAN, d.getLanguage()));
+		});
+		icoSettingsMorphLC = new SimpleLocalizedTooltipWidget<>(icoSettingsMorphUI, MainViewportLocale.DESC_icoSettingsMorphUI);
 		
 		btnDoWebSearchLC = new SimpleLocalizedTextButtonWidget<>(btnDoWebSearchUI, MainViewportLocale.DESC_defSearchTitle);
 		btnCloseWebSearchLC = new SimpleLocalizedTextButtonWidget<>(btnCloseWebSearchUI, MainViewportLocale.DESC_btnCloseWebSearchUI);
@@ -341,8 +355,12 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		selResultCountItm30LC = new SimpleLocalizedListBoxOptionWidget(selResultCountItm30UI, MainViewportLocale.DESC_selResultCountItm30UI);
 		selResultCountItm40LC = new SimpleLocalizedListBoxOptionWidget(selResultCountItm40UI, MainViewportLocale.DESC_selResultCountItm40UI);
 		selResultCountItm50LC = new SimpleLocalizedListBoxOptionWidget(selResultCountItm50UI, MainViewportLocale.DESC_selResultCountItm50UI);
-		selResultLangItmEnLC = new SimpleLocalizedListBoxOptionWidget(selResultLangItmEnUI, MainViewportLocale.DESC_selResultLangItmEnUI);
-		selResultLangItmDeLC = new SimpleLocalizedListBoxOptionWidget(selResultLangItmDeUI, MainViewportLocale.DESC_selResultLangItmDeUI);
+		selResultLangItmEnLC = new SimpleLocalizedWidget<>(selResultLangItmEnUI, "", (w, s, d) -> {
+			w.setText(LanguageLocale.get().getLocalizedName(Language.ENGLISH, d.getLanguage()));
+		});
+		selResultLangItmDeLC = new SimpleLocalizedWidget<>(selResultLangItmDeUI, "", (w, s, d) -> {
+			w.setText(LanguageLocale.get().getLocalizedName(Language.GERMAN, d.getLanguage()));
+		});
 		
 		lblDefaultSearchTitleLC = new SimpleLocalizedTextWidget<>(lblDefaultSearchTitleUI, MainViewportLocale.DESC_defSearchTitle);
 		lblDefaultSearchCaptionLC = new SimpleLocalizedTextWidget<>(lblDefaultSearchCaptionUI, MainViewportLocale.DESC_defSearchCaption);
@@ -357,11 +375,13 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		registerLocalizedWidget(btnAboutLC);
 		registerLocalizedWidget(btnWebSearchLC);
 		registerLocalizedWidget(btnUploadLC);
+		registerLocalizedWidget(btnHistoryLC);
 		registerLocalizedWidget(btnSwitchLangLC);
 		registerLocalizedWidget(btnLangEnLC);
 		registerLocalizedWidget(btnLangDeLC);
 		registerLocalizedWidget(btnDoWebSearchLC);
 		registerLocalizedWidget(btnCloseWebSearchLC);
+//		registerLocalizedWidget(icoSettingsMorphLC);
 		registerLocalizedWidget(txtSearchBoxLC);
 		registerLocalizedWidget(selResultCountItm10LC);
 		registerLocalizedWidget(selResultCountItm20LC);
@@ -388,6 +408,10 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		
 		btnUploadUI.addClickHandler(e -> {
 			showUploadModal();
+		});
+		
+		btnHistoryUI.addClickHandler(e -> {
+			mdlHistoryUI.show();
 		});
 		
 		btnLangEnUI.addClickHandler(e -> {
@@ -454,8 +478,6 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		pnlDocPreviewUI.setShowHideEventHandler(v -> updateResultsListGrid());
 		
 		mdlCustomKeywordsUI.bindToSlider(pnlConstructionsSettingsUI.getKeywordSlider());
-	
-		
 	}
 	
 	private void initUI()
@@ -533,6 +555,7 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	public void setSplashSubtitle(String text) {
 		lblSplashStatus.setDescription(text);
 	}
+	
 
 	@Override
 	public AbstractRankerSettingsPane getRankerSettingsPane() {
@@ -565,25 +588,10 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	}
 
 	@Override
-	public void showProgressBar(boolean visible, boolean indeterminate)
-	{
-		if (visible)
-			navMainUI.showProgress(indeterminate ? ProgressType.INDETERMINATE : ProgressType.DETERMINATE);
-		else
-			navMainUI.hideProgress();
+	public void showProgressBar(boolean visible) {
+		MaterialLoader.showProgress(visible);
 	}
-
-	@Override
-	public void setProgressBarValue(double val)
-	{
-		if (val < 0)
-			val = 0;
-		else if (val > 100)
-			val = 100;
-		
-		navMainUI.setPercent(val);
-	}
-
+	
 	@Override
 	public void showCancelPane(boolean visible) {
 		pnlDocResultsUI.setCancelVisible(visible);
@@ -639,5 +647,11 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	@Override
 	public DocumentCompareService getDocumentCompareService() {
 		return mdlComparerUI;
+	}
+
+	
+	@Override
+	public HistoryViewerService getHistoryViewerService() {
+		return mdlHistoryUI;
 	}
 }

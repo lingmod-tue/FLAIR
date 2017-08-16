@@ -222,7 +222,7 @@ public class DocumentAnnotator implements AbstractDocumentAnnotator
 		List<OffsetData> offsets = annotations.calcOffsets();
 		
 		if (offsets.isEmpty())
-			return new HighlightTextOutput(docText);
+			return new HighlightTextOutput(docText.replace("\n", "<br/>"));
 		
 		// ### we're assuming that spans don't overlap
 		// ### meaning this shouldn't happen: <span1>...<span2>...</span1>...</span2>

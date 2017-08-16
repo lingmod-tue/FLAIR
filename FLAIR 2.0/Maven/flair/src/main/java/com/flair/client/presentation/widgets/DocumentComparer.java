@@ -9,6 +9,7 @@ import com.flair.client.localization.LocalizedComposite;
 import com.flair.client.localization.SimpleLocalizedTextButtonWidget;
 import com.flair.client.localization.SimpleLocalizedTextWidget;
 import com.flair.client.localization.SimpleLocalizedTooltipWidget;
+import com.flair.client.localization.SimpleLocalizedWidget;
 import com.flair.client.localization.locale.DocumentComparerLocale;
 import com.flair.client.model.interfaces.AbstractWebRankerCore;
 import com.flair.client.presentation.interfaces.DocumentCompareService;
@@ -21,6 +22,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
 
+import gwt.material.design.addins.client.emptystate.MaterialEmptyState;
 import gwt.material.design.addins.client.subheader.MaterialSubHeader;
 import gwt.material.design.client.constants.Color;
 import gwt.material.design.client.constants.IconType;
@@ -60,7 +62,7 @@ public class DocumentComparer extends LocalizedComposite implements DocumentComp
 	@UiField
 	MaterialCollection		pnlSelectionUI;
 	@UiField
-	MaterialLabel			lblPlaceholderUI;
+	MaterialEmptyState		lblPlaceholderUI;
 	@UiField
 	MaterialButton			btnCompareUI;
 	@UiField
@@ -74,7 +76,7 @@ public class DocumentComparer extends LocalizedComposite implements DocumentComp
 	SimpleLocalizedTooltipWidget<MaterialIcon>			btnClearSelectionLC;
 	SimpleLocalizedTextButtonWidget<MaterialButton>		btnCompareLC;
 	SimpleLocalizedTextButtonWidget<MaterialButton>		btnCancelLC;
-	SimpleLocalizedTextWidget<MaterialLabel>			lblPlaceholderLC;
+	SimpleLocalizedWidget<MaterialEmptyState>			lblPlaceholderLC;
 	SimpleLocalizedTooltipWidget<MaterialButton>		btnFabContentLC;
 	
 	Language										activeLang;
@@ -152,7 +154,7 @@ public class DocumentComparer extends LocalizedComposite implements DocumentComp
 		btnClearSelectionLC = new SimpleLocalizedTooltipWidget<>(btnClearSelectionUI, DocumentComparerLocale.DESC_btnClearSelectionUI);
 		btnCompareLC = new SimpleLocalizedTextButtonWidget<>(btnCompareUI, DocumentComparerLocale.DESC_btnCompareUI);
 		btnCancelLC = new SimpleLocalizedTextButtonWidget<>(btnCancelUI, DocumentComparerLocale.DESC_btnCancelUI);
-		lblPlaceholderLC = new SimpleLocalizedTextWidget<>(lblPlaceholderUI, DocumentComparerLocale.DESC_NotifyEmpty);
+		lblPlaceholderLC = new SimpleLocalizedWidget<>(lblPlaceholderUI, DocumentComparerLocale.DESC_NotifyEmpty, (w,s) -> w.setTitle(s));
 		btnFabContentLC = new SimpleLocalizedTooltipWidget<>(btnFabContentUI, DocumentComparerLocale.DESC_lblTitleUI);
 		
 		registerLocale(DocumentComparerLocale.INSTANCE.en);
@@ -175,6 +177,7 @@ public class DocumentComparer extends LocalizedComposite implements DocumentComp
 		btnClearSelectionUI.addClickHandler(e -> {
 			clearSelection(activeLang);
 			reloadUI();
+			hide();
 		});
 		
 		btnFabContentUI.addClickHandler(e -> show());
@@ -183,6 +186,13 @@ public class DocumentComparer extends LocalizedComposite implements DocumentComp
 	private void initUI()
 	{
 		btnFabContentUI.setTooltipPosition(Position.TOP);
+		
+		MaterialAnimation pulse = new MaterialAnimation();
+		pulse.setTransition(Transition.PULSE);
+		pulse.setDelay(10);
+		pulse.setDuration(2000);
+		pulse.setInfinite(true);
+		pulse.animate(btnFabContentUI);
 	}
 
 	public DocumentComparer()
@@ -199,13 +209,6 @@ public class DocumentComparer extends LocalizedComposite implements DocumentComp
 		initLocale();
 		initHandlers();
 		initUI();
-		
-		MaterialAnimation pulse = new MaterialAnimation();
-		pulse.setTransition(Transition.PULSE);
-		pulse.setDelay(10);
-		pulse.setDuration(2000);
-		pulse.setInfinite(true);
-		pulse.animate(btnFabContentUI);
 	}
 
 	private boolean docEquality(RankableDocument a, RankableDocument b)
@@ -213,7 +216,7 @@ public class DocumentComparer extends LocalizedComposite implements DocumentComp
 		if (a.getDisplayUrl().length() != 0 && b.getDisplayUrl().length() != 0)
 			return a.getDisplayUrl().equalsIgnoreCase(b.getDisplayUrl());
 		else
-			return a.getTitle().equalsIgnoreCase(b.getTitle());
+			return a.getTitle().equalsIgnoreCase(b.getTitle()) && a.getSnippet().equalsIgnoreCase(b.getSnippet());
 	}
 	
 	private void onSelectionChange(Language lang, int selCount) {
