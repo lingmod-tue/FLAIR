@@ -13,10 +13,10 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClientBuilder;
 
 import com.flair.server.crawler.impl.AbstractSearchAgentImpl;
 import com.flair.server.crawler.impl.AbstractSearchAgentImplResult;
+import com.flair.server.utilities.HttpClientFactory;
 import com.flair.server.utilities.ServerLogger;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -214,7 +214,7 @@ public class FarooSearch implements AbstractSearchAgentImpl
 			URI uri = new URI(FAROOSEARCH_SCHEME, FAROOSEARCH_HOSTNAME, FAROOSEARCH_PATH, full_query, null);
 
 			HttpGet get = new HttpGet(uri);
-			HttpClient client = HttpClientBuilder.create().build();
+			HttpClient client = HttpClientFactory.get().create();
 			responsePost = client.execute(get);
 			resEntity = responsePost.getEntity();
 

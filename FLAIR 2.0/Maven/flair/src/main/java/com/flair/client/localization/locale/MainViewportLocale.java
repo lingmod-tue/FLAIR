@@ -12,13 +12,6 @@ public final class MainViewportLocale extends SimpleLocale
 	public static final String		DESC_btnCloseWebSearchUI = "btnCloseWebSearchUI";
 	public static final String		DESC_icoSettingsMorphUI = "icoSettingsMorphUI";
 	
-	public static final String		DESC_txtSearchBoxUI = "txtSearchBoxUI";
-	public static final String		DESC_selResultCountItm10UI = "selResultCountItm10UI";
-	public static final String		DESC_selResultCountItm20UI = "selResultCountItm20UI";
-	public static final String		DESC_selResultCountItm30UI = "selResultCountItm30UI";
-	public static final String		DESC_selResultCountItm40UI = "selResultCountItm40UI";
-	public static final String		DESC_selResultCountItm50UI = "selResultCountItm50UI";
-	
 	public static final String		DESC_defSearchTitle = "defSearchTitle";
 	public static final String		DESC_defSearchCaption = "defSearchCaption";
 	public static final String		DESC_defConfigTitle = "defConfigTitle";
@@ -40,12 +33,7 @@ public final class MainViewportLocale extends SimpleLocale
 		en.put(DESC_btnSwitchLangUI, "Switch Interface Language");
 		en.put(DESC_btnCloseWebSearchUI, "Cancel");
 		en.put(DESC_icoSettingsMorphUI, "Settings");
-		en.put(DESC_txtSearchBoxUI, "Enter a query");
-		en.put(DESC_selResultCountItm10UI, "10 Results");
-		en.put(DESC_selResultCountItm20UI, "20 Results");
-		en.put(DESC_selResultCountItm30UI, "30 Results");
-		en.put(DESC_selResultCountItm40UI, "40 Results");
-		en.put(DESC_selResultCountItm50UI, "50 Results");
+		
 		en.put(DESC_defSearchTitle, "Search");
 		en.put(DESC_defSearchCaption, "Click on the Search icon below and type in a query. FLAIR will fetch the top results from the Bing Search Engine.");
 		en.put(DESC_defConfigTitle, "Configure");
@@ -64,12 +52,7 @@ public final class MainViewportLocale extends SimpleLocale
 		de.put(DESC_btnSwitchLangUI, "Anzeigesprache wechseln");
 		de.put(DESC_btnCloseWebSearchUI, "Abbrechen");
 		de.put(DESC_icoSettingsMorphUI, "Einstellungen");
-		de.put(DESC_txtSearchBoxUI, "Suchbegriff eingeben");
-		de.put(DESC_selResultCountItm10UI, "10 Ergebnisse");
-		de.put(DESC_selResultCountItm20UI, "20 Ergebnisse");
-		de.put(DESC_selResultCountItm30UI, "30 Ergebnisse");
-		de.put(DESC_selResultCountItm40UI, "40 Ergebnisse");
-		de.put(DESC_selResultCountItm50UI, "50 Ergebnisse");
+		
 		de.put(DESC_defSearchTitle, "Suchen");
 		de.put(DESC_defSearchCaption, "Klicken Sie auf das Suchsymbol unten und geben Sie eine Suchanfrage ein. FLAIR wird die obersten Ergebnisse von der Bing Suchmaschine abrufen.");
 		de.put(DESC_defConfigTitle, "Konfigurieren");

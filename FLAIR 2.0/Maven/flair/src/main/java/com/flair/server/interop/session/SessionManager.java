@@ -8,6 +8,7 @@ package com.flair.server.interop.session;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 
@@ -82,19 +83,13 @@ public class SessionManager
 		public HttpSession getHttpSession() {
 			return session;
 		}
-		
-		public void setHttpSession(HttpSession val) {
-			session = val;
-		}
 	}
 
 	private final HashMap<ServerAuthenticationToken, BasicSessionData>		activeSessions;
-	private final HashMap<HttpSession, ServerAuthenticationToken>			http2Token;
 
 	private SessionManager()
 	{
 		activeSessions = new HashMap<>();
-		http2Token = new HashMap<>();
 	}
 
 	private synchronized void releaseSessions()
@@ -105,58 +100,46 @@ public class SessionManager
 				itr.release();
 			
 			activeSessions.clear();
-			http2Token.clear();
 		} catch (Throwable ex)
 		{
 			ServerLogger.get().error(ex, "Exception encountered while closing sessions: " + ex.toString());
 		}
 	}
 
-	private HttpSession getHttpSession(ServerAuthenticationToken token)
-	{
-		BasicSessionData data = activeSessions.get(token);
-		if (data != null)
-			return data.getHttpSession();
-		else
-			return null;
-	}
-
-	private BasicSessionData getSessionData(HttpSession httpSession)
-	{
-		ServerAuthenticationToken tok = http2Token.get(httpSession);
-		if (tok != null)
-			return activeSessions.get(tok);
-		else
-			return null;
-	}
-	
 	private BasicSessionData getSessionData(ServerAuthenticationToken tok) {
 		return activeSessions.get(tok);
+	}
+	
+	private BasicSessionData getSessionData(String tokUuid)
+	{
+		for (ServerAuthenticationToken itr : activeSessions.keySet())
+		{
+			if (tokUuid.equals(itr.getUuid()))
+				return activeSessions.get(itr);
+		}
+		
+		return null;
 	}
 
 	private void invalidateAndRemove(ServerAuthenticationToken tok)
 	{
 		BasicSessionData data = getSessionData(tok);
-		data.release();
-		http2Token.remove(data.session);
+		if (data == null)		// can be null if the session was previously invalidated
+			return;
 		
+		data.release();
+		activeSessions.remove(tok);
 		ServerLogger.get().info("Session token " + data.getToken().getUuid() + " released");
 	}
 	
 	public synchronized ServerAuthenticationToken addSession(HttpSession httpSession)
 	{
-		ServerAuthenticationToken newTok = AuthTokenGenerator.create(), old = http2Token.get(httpSession);
-		if (old != null)
-		{
-			newTok.setStatus(AuthToken.Status.INVALID_SESSION_EXISTS);
-			ServerLogger.get().error("Token already exists for session. Existing ID: " + old.getUuid());
-		}
-		else
-		{
-			activeSessions.put(newTok, new BasicSessionData(newTok, httpSession));
-			http2Token.put(httpSession, newTok);
-			ServerLogger.get().info("New session token generated. ID: " + newTok.getUuid());
-		}
+		ServerAuthenticationToken newTok = AuthTokenGenerator.create();
+		ServerLogger.get().info("New session token generated. ID: " + newTok.getUuid());
+		
+		// bind the token to the session
+		httpSession.setAttribute(newTok.toString(), newTok);
+		activeSessions.put(newTok, new BasicSessionData(newTok, httpSession));
 		
 		return newTok;
 	}
@@ -164,15 +147,16 @@ public class SessionManager
 
 	public synchronized void removeSession(HttpSession oldSession)
 	{
-		if (http2Token.containsKey(oldSession))
-			invalidateAndRemove(http2Token.get(oldSession));
+		// invalidete all associated clients
+		Enumeration<String> boundUuids = oldSession.getAttributeNames();
+		while (boundUuids.hasMoreElements())
+		{
+			ServerAuthenticationToken tok = (ServerAuthenticationToken)oldSession.getAttribute(boundUuids.nextElement());
+			invalidateAndRemove(tok);
+		}
 	}
 	
-	public synchronized void removeSession(ServerAuthenticationToken tok)
-	{
-		if (activeSessions.containsKey(tok) == false)
-			throw new IllegalArgumentException("Session token is not tracked. ID: " + tok.getUuid());
-		
+	public synchronized void removeSession(ServerAuthenticationToken tok) {
 		invalidateAndRemove(tok);
 	}
 	
@@ -185,40 +169,29 @@ public class SessionManager
 			return null;
 	}
 	
-	public synchronized SessionState getSessionState(HttpSession session)
-	{
-		BasicSessionData data = getSessionData(session);
-		if (data != null)
-			return data.getState();
-		else
-			return null;
-	}
-	
 	public synchronized void validateToken(ServerAuthenticationToken tok, HttpSession session)
 	{
 		BasicSessionData data = getSessionData(tok);
 		if (data == null)
 		{
-			// the previous session was released
-			if (getSessionData(session) != null)
-			{
-				// there's another instance of the client using the same/current session
-				// invalidate this instance of the client
-				throw new InvalidAuthTokenException();
-			}
-			
-			activeSessions.put(tok, new BasicSessionData(tok, session));
-			http2Token.put(session, tok);
-			ServerLogger.get().info("Renewed session token. ID: " + tok.getUuid());
+			// the http session was released, invalidate this instance of the client
+			ServerLogger.get().error("Invalid client session token. ID: " + tok.getUuid());
+			throw new InvalidAuthTokenException();
+		}
+		else if (session == null || session.isNew())
+		{
+			// server session is not valid
+			ServerLogger.get().error("Invalid server session for token. ID: " + tok.getUuid());
+			throw new InvalidAuthTokenException();
 		}
 		else
 		{
 			HttpSession oldSession = data.getHttpSession();
 			if (oldSession != session)
 			{
-				data.setHttpSession(session);		// update the cached session
-				http2Token.remove(oldSession);
-				http2Token.put(session, tok);
+				// should never happen!
+				ServerLogger.get().error("Server session mismatch for token. ID: " + tok.getUuid());
+				throw new InvalidAuthTokenException();
 			}
 		}
 	}
@@ -242,12 +215,15 @@ public class SessionManager
 		if (parentHttpSession == null)
 			throw new IllegalStateException("Invalid HTTP Session");
 
-		BasicSessionData data = getSessionData(parentHttpSession);
+		String clientUuid = request.getParameter(AuthToken.class.getSimpleName());
+		if (clientUuid == null)
+			throw new IllegalArgumentException("Request doesn't specify client identifier");
+			
+		BasicSessionData data = getSessionData(clientUuid);
 		if (data == null)
-			throw new IllegalStateException("HTTP session is not tracked");
+			throw new IllegalStateException("Invalid client identifier for corpus upload request");
 
 		List<CustomCorpusFile> files = new ArrayList<>();
-		
 		for (Part part : request.getParts())
 		{
 			String orgName = getUploadFileName(part);

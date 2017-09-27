@@ -8,11 +8,12 @@ public interface AuthToken
 {
 	public enum Status
 	{
-		VALID,							// working state
-		INVALID_SESSION_EXISTS,			// another session exists for the client
+		VALID,							// working statex
 		INVALID_SERVER_ERROR			// internal server error
 	}
 	
 	public Status			getStatus();
+	
+	@Override
 	public String			toString();
 }

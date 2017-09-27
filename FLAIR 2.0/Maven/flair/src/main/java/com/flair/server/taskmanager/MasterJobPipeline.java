@@ -86,7 +86,7 @@ public final class MasterJobPipeline
 		docParseExecutor.shutdown(false);
 	}
 
-	private AbstractParsingStrategyFactory getStrategyForLanguage(Language lang) 
+	private AbstractParsingStrategyFactory getStrategyForLanguage(Language lang)
 	{
 		switch (lang)
 		{
@@ -139,7 +139,7 @@ public final class MasterJobPipeline
 																getStrategyForLanguage(lang),
 																naiveSubstringSearcher,
 																keywords);
-		SearchCrawlParseOperationImpl newOp = new SearchCrawlParseOperationImpl(jobParams);		
+		SearchCrawlParseOperationImpl newOp = new SearchCrawlParseOperationImpl(jobParams);
 		return newOp;
 	}
 

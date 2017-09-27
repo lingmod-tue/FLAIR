@@ -7,7 +7,6 @@ import com.flair.server.crawler.impl.AbstractSearchAgentImplResult;
 import com.flair.server.crawler.impl.azure.AzureWebSearch;
 import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.grammar.Language;
-import com.google.gwt.core.shared.GWT;
 
 /**
  * Implementation of the Bing Search engine
@@ -16,7 +15,6 @@ import com.google.gwt.core.shared.GWT;
  */
 class BingSearchAgent extends CachingSearchAgent
 {
-	private static final String		TRAIL_API_KEY_DEBUG		= "4932f9145e034032b51e2e0a9579fdc1";
 	private static final String		PROD_API_KEY			= "***REMOVED***";		// Detmar/Maria's
 	
 	private static final int		RESULTS_PER_PAGE	= 100;		// larger numbers will reduce the number of search transactions but will increase the response size
@@ -47,13 +45,7 @@ class BingSearchAgent extends CachingSearchAgent
 			throw new IllegalArgumentException("Unsupported language " + lang);
 		}
 
-		if (GWT.isProdMode())
-			pipeline.setApiKey(PROD_API_KEY);
-		else
-		{
-			pipeline.setApiKey(TRAIL_API_KEY_DEBUG);
-			ServerLogger.get().info("Using DEBUG key");
-		}
+		pipeline.setApiKey(PROD_API_KEY);
 		
 		pipeline.setQuery(qPrefix + query + qPostfix);
 		pipeline.setPerPage(RESULTS_PER_PAGE);

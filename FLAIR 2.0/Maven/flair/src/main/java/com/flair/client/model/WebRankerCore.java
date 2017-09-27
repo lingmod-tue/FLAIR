@@ -42,6 +42,7 @@ import com.flair.client.presentation.interfaces.OperationCancelService;
 import com.flair.client.presentation.interfaces.SettingsUrlExporterView;
 import com.flair.client.presentation.interfaces.UserPromptService;
 import com.flair.client.presentation.interfaces.VisualizerService;
+import com.flair.client.presentation.interfaces.WebSearchService;
 import com.flair.client.presentation.widgets.GenericWeightSlider;
 import com.flair.client.presentation.widgets.GrammaticalConstructionWeightSlider;
 import com.flair.client.presentation.widgets.LanguageSpecificConstructionSliderBundle;
@@ -1450,6 +1451,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 	private AbstractRankerSettingsPane		settings;
 	private AbstractDocumentResultsPane		results;
 	private AbstractDocumentPreviewPane		preview;
+	private WebSearchService				search;
 	private UserPromptService				prompt;
 	private NotificationService				notification;
 	private CorpusUploadService				upload;
@@ -1484,6 +1486,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 		preview = null;
 		prompt = null;
 		notification = null;
+		search = null;
 		upload = null;
 		keywords = null;
 		visualizer = null;
@@ -1511,6 +1514,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 		preview = presenter.getDocumentPreviewPane();
 		prompt = presenter.getPromptService();
 		notification = presenter.getNotificationService();
+		search = presenter.getWebSearchService();
 		upload = presenter.getCorpusUploadService();
 		keywords = presenter.getCustomKeywordsService();
 		visualizer = presenter.getVisualizerService();
@@ -1532,6 +1536,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 
 		settings.setSettingsChangedHandler(() -> onSettingsChanged());
 		settings.setResetAllHandler(() -> onSettingsReset());
+		search.setSearchHandler((l, q, n) -> onWebSearch(l, q, n));
 		upload.setUploadBeginHandler(e -> onUploadBegin(e));
 		upload.setUploadCompleteHandler((n,s) -> onUploadComplete(n, s));
 		visualizer.setApplyFilterHandler(d -> {
@@ -1656,6 +1661,53 @@ public class WebRankerCore implements AbstractWebRankerCore
 		eventEndProc.raiseEvent(new EndOperation(d.type, d.lang, success));
 	}
 	
+	private void onWebSearch(Language lang, String query, int numResults)
+	{
+		if (query.length() == 0)
+		{
+			notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_NoSearchResults));
+			return;
+		}
+		else if (searchCooldown.tryBeginOperation() == false)
+		{
+			notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_SearchCooldown));
+			return;
+		}
+		
+		doProcessHousekeeping();
+		
+		WebSearchProcessData proc = new WebSearchProcessData(lang, query, numResults);
+		proc.setKeywords(keywords.getCustomKeywords());
+
+		presenter.showLoaderOverlay(true);
+		service.beginWebSearch(token, lang, query, numResults, new ArrayList<>(keywords.getCustomKeywords()),
+				FuncCallback.get(e -> {
+					// ### hide the loader overlay before the process starts
+					// ### otherwise, the progress bar doesn't show
+					presenter.showLoaderOverlay(false);
+					processHistory.push(proc);
+					transientProcessManager.begin(proc,
+							(p,s) -> onTransientProcessEnd(p, s),
+							(p, d) -> {
+								// refresh the parsed results
+								if (p.parsedDocs.size() != ((WebSearchProcessData)p).numResults)
+								{
+									rankPreviewModule.rerank();
+									rankPreviewModule.refreshResults();
+								}
+							});
+					
+					onTransientProcessBegin(proc);
+				}, e -> {
+					ClientLogger.get().error(e, "Couldn't begin web search operation");
+					notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_ServerError));
+					presenter.showLoaderOverlay(false);
+					
+					if (e instanceof InvalidAuthTokenException)
+						ClientEndPoint.get().fatalServerError();
+				}));
+	}
+	
 	private void onUploadBegin(Language corpusLang)
 	{
 		// begin operation and wait for the server
@@ -1740,54 +1792,6 @@ public class WebRankerCore implements AbstractWebRankerCore
 		importedSettings = exporter.importSettings();
 		if (importedSettings != null)
 			notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_ImportedSettings));
-	}
-
-	@Override
-	public void performWebSearch(Language lang, String query, int numResults)
-	{
-		if (query.length() == 0)
-		{
-			notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_NoSearchResults));
-			return;
-		}
-		else if (searchCooldown.tryBeginOperation() == false)
-		{
-			notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_SearchCooldown));
-			return;
-		}
-		
-		doProcessHousekeeping();
-		
-		WebSearchProcessData proc = new WebSearchProcessData(lang, query, numResults);
-		proc.setKeywords(keywords.getCustomKeywords());
-
-		presenter.showLoaderOverlay(true);
-		service.beginWebSearch(token, lang, query, numResults, new ArrayList<>(keywords.getCustomKeywords()),
-				FuncCallback.get(e -> {
-					// ### hide the loader overlay before the process starts
-					// ### otherwise, the progress bar doesn't show
-					presenter.showLoaderOverlay(false);
-					processHistory.push(proc);
-					transientProcessManager.begin(proc,
-							(p,s) -> onTransientProcessEnd(p, s),
-							(p, d) -> {
-								// refresh the parsed results
-								if (p.parsedDocs.size() != ((WebSearchProcessData)p).numResults)
-								{
-									rankPreviewModule.rerank();
-									rankPreviewModule.refreshResults();
-								}
-							});
-					
-					onTransientProcessBegin(proc);
-				}, e -> {
-					ClientLogger.get().error(e, "Couldn't begin web search operation");
-					notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_ServerError));
-					presenter.showLoaderOverlay(false);
-					
-					if (e instanceof InvalidAuthTokenException)
-						ClientEndPoint.get().fatalServerError();
-				}));
 	}
 
 	@Override

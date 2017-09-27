@@ -4,6 +4,7 @@
 package com.flair.server.interop;
 
 import java.io.IOException;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
@@ -83,14 +84,4 @@ public class CustomCorpusServlet extends HttpServlet
 			throws ServletException, IOException {
 		processRequest(request, response);
 	}
-
-	/**
-	 * Returns a short description of the servlet.
-	 *
-	 * @return a String containing servlet description
-	 */
-	@Override
-	public String getServletInfo() {
-		return "Short description";
-	}// </editor-fold>
 }

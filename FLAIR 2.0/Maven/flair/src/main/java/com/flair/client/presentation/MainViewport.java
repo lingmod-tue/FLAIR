@@ -3,8 +3,6 @@ package com.flair.client.presentation;
 
 import com.flair.client.ClientEndPoint;
 import com.flair.client.localization.LocalizedComposite;
-import com.flair.client.localization.SimpleLocalizedListBoxOptionWidget;
-import com.flair.client.localization.SimpleLocalizedTextButtonWidget;
 import com.flair.client.localization.SimpleLocalizedTextWidget;
 import com.flair.client.localization.SimpleLocalizedTooltipWidget;
 import com.flair.client.localization.SimpleLocalizedWidget;
@@ -24,6 +22,7 @@ import com.flair.client.presentation.interfaces.OverlayService;
 import com.flair.client.presentation.interfaces.SettingsUrlExporterView;
 import com.flair.client.presentation.interfaces.UserPromptService;
 import com.flair.client.presentation.interfaces.VisualizerService;
+import com.flair.client.presentation.interfaces.WebSearchService;
 import com.flair.client.presentation.widgets.CorpusFileUploader;
 import com.flair.client.presentation.widgets.CustomKeywordsEditor;
 import com.flair.client.presentation.widgets.DocumentCollectionVisualizer;
@@ -34,9 +33,10 @@ import com.flair.client.presentation.widgets.HistoryViewer;
 import com.flair.client.presentation.widgets.ModalPrompt;
 import com.flair.client.presentation.widgets.RankerSettingsPane;
 import com.flair.client.presentation.widgets.SettingsExporter;
+import com.flair.client.presentation.widgets.WebSearchModal;
+import com.flair.client.utilities.GlobalWidgetAnimator;
 import com.flair.shared.grammar.Language;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.uibinder.client.UiField;
@@ -52,7 +52,6 @@ import gwt.material.design.client.ui.MaterialButton;
 import gwt.material.design.client.ui.MaterialCardTitle;
 import gwt.material.design.client.ui.MaterialLabel;
 import gwt.material.design.client.ui.MaterialLink;
-import gwt.material.design.client.ui.MaterialListBox;
 import gwt.material.design.client.ui.MaterialLoader;
 import gwt.material.design.client.ui.MaterialModal;
 import gwt.material.design.client.ui.MaterialNavBar;
@@ -60,12 +59,10 @@ import gwt.material.design.client.ui.MaterialNavBrand;
 import gwt.material.design.client.ui.MaterialPanel;
 import gwt.material.design.client.ui.MaterialRow;
 import gwt.material.design.client.ui.MaterialSplashScreen;
-import gwt.material.design.client.ui.MaterialTextBox;
 import gwt.material.design.client.ui.MaterialTitle;
 import gwt.material.design.client.ui.MaterialToast;
 import gwt.material.design.client.ui.animate.MaterialAnimation;
 import gwt.material.design.client.ui.animate.Transition;
-import gwt.material.design.client.ui.html.Option;
 
 public class MainViewport extends LocalizedComposite implements AbstractWebRankerPresenter
 {
@@ -155,41 +152,7 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	@UiField
 	MaterialButton								btnAboutDeCloseUI;
 	@UiField
-	MaterialModal								mdlWebSearchUI;
-	@UiField
-	MaterialTextBox								txtSearchBoxUI;
-	SimpleLocalizedWidget<MaterialTextBox>		txtSearchBoxLC;
-	@UiField
-	MaterialListBox								selResultCountUI;
-	@UiField
-	Option										selResultCountItm10UI;
-	SimpleLocalizedListBoxOptionWidget			selResultCountItm10LC;
-	@UiField
-	Option										selResultCountItm20UI;
-	SimpleLocalizedListBoxOptionWidget			selResultCountItm20LC;
-	@UiField
-	Option										selResultCountItm30UI;
-	SimpleLocalizedListBoxOptionWidget			selResultCountItm30LC;
-	@UiField
-	Option										selResultCountItm40UI;
-	SimpleLocalizedListBoxOptionWidget			selResultCountItm40LC;
-	@UiField
-	Option										selResultCountItm50UI;
-	SimpleLocalizedListBoxOptionWidget			selResultCountItm50LC;
-	@UiField
-	MaterialListBox								selResultLangUI;
-	@UiField
-	Option										selResultLangItmEnUI;
-	SimpleLocalizedWidget<Option>				selResultLangItmEnLC;
-	@UiField
-	Option										selResultLangItmDeUI;
-	SimpleLocalizedWidget<Option>				selResultLangItmDeLC;
-	@UiField
-	MaterialButton								btnDoWebSearchUI;
-	SimpleLocalizedTextButtonWidget<MaterialButton> btnDoWebSearchLC;
-	@UiField
-	MaterialButton								btnCloseWebSearchUI;
-	SimpleLocalizedTextButtonWidget<MaterialButton> btnCloseWebSearchLC;
+	WebSearchModal								mdlWebSearchUI;
 	@UiField
 	MaterialLink								tglSettingsPaneUI;
 	@UiField
@@ -272,20 +235,13 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 			icoSettingsMorphUI.getElement().addClassName("morphed");
 		}
 	}
-	
-	private void showSearchModal(boolean visible)
-	{
-		if (visible)
-		{
-			mdlWebSearchUI.open();
-			txtSearchBoxUI.setFocus(true);
-		}
-		else
-			mdlWebSearchUI.close();
-	}
-	
+		
 	private void showUploadModal() {
 		invokeAtomicOperation(() -> mdlCorpusUploadUI.show());
+	}
+	
+	private void showSearchModal() {
+		invokeAtomicOperation(() -> mdlWebSearchUI.show());
 	}
 	
 	private void updateResultsListGrid()
@@ -301,34 +257,8 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 			pnlResultsContainerUI.setGrid("l12 m12 s12");
 	}
 	
-	private void switchLanguage(Language lang)
-	{
+	private void switchLanguage(Language lang) {
 		localeCore.setLanguage(lang);
-		
-		// switch the default search language as well
-		switch (lang)
-		{
-		case ENGLISH:
-			selResultLangUI.setValue(selResultLangItmEnUI.getValue());
-			break;
-		case GERMAN:
-			selResultLangUI.setValue(selResultLangItmDeUI.getValue());
-			break;
-		}
-		
-		// ### need to do this to force update the strings in the search modal's listboxes
-		// the language listbox is taken care of above, so just select the default result count
-		selResultCountUI.setValue(selResultCountItm10UI.getValue());
-	}
-	
-	private void invokeSearch()
-	{
-		int resultCount = Integer.parseInt(selResultCountUI.getSelectedValue());
-		Language searchLang = Language.fromString(selResultLangUI.getSelectedValue());
-		String query = txtSearchBoxUI.getText();
-		
-		showSearchModal(false);
-		invokeAtomicOperation(() -> ClientEndPoint.get().getWebRanker().performWebSearch(searchLang, query, resultCount));
 	}
 	
 	private void initLocale()
@@ -345,22 +275,6 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 			w.setText(LanguageLocale.get().getLocalizedName(Language.GERMAN, d.getLanguage()));
 		});
 		icoSettingsMorphLC = new SimpleLocalizedTooltipWidget<>(icoSettingsMorphUI, MainViewportLocale.DESC_icoSettingsMorphUI);
-		
-		btnDoWebSearchLC = new SimpleLocalizedTextButtonWidget<>(btnDoWebSearchUI, MainViewportLocale.DESC_defSearchTitle);
-		btnCloseWebSearchLC = new SimpleLocalizedTextButtonWidget<>(btnCloseWebSearchUI, MainViewportLocale.DESC_btnCloseWebSearchUI);
-		
-		txtSearchBoxLC = new SimpleLocalizedWidget<>(txtSearchBoxUI, MainViewportLocale.DESC_txtSearchBoxUI, (w,t) -> w.setLabel(t));
-		selResultCountItm10LC = new SimpleLocalizedListBoxOptionWidget(selResultCountItm10UI, MainViewportLocale.DESC_selResultCountItm10UI);
-		selResultCountItm20LC = new SimpleLocalizedListBoxOptionWidget(selResultCountItm20UI, MainViewportLocale.DESC_selResultCountItm20UI);
-		selResultCountItm30LC = new SimpleLocalizedListBoxOptionWidget(selResultCountItm30UI, MainViewportLocale.DESC_selResultCountItm30UI);
-		selResultCountItm40LC = new SimpleLocalizedListBoxOptionWidget(selResultCountItm40UI, MainViewportLocale.DESC_selResultCountItm40UI);
-		selResultCountItm50LC = new SimpleLocalizedListBoxOptionWidget(selResultCountItm50UI, MainViewportLocale.DESC_selResultCountItm50UI);
-		selResultLangItmEnLC = new SimpleLocalizedWidget<>(selResultLangItmEnUI, "", (w, s, d) -> {
-			w.setText(LanguageLocale.get().getLocalizedName(Language.ENGLISH, d.getLanguage()));
-		});
-		selResultLangItmDeLC = new SimpleLocalizedWidget<>(selResultLangItmDeUI, "", (w, s, d) -> {
-			w.setText(LanguageLocale.get().getLocalizedName(Language.GERMAN, d.getLanguage()));
-		});
 		
 		lblDefaultSearchTitleLC = new SimpleLocalizedTextWidget<>(lblDefaultSearchTitleUI, MainViewportLocale.DESC_defSearchTitle);
 		lblDefaultSearchCaptionLC = new SimpleLocalizedTextWidget<>(lblDefaultSearchCaptionUI, MainViewportLocale.DESC_defSearchCaption);
@@ -379,17 +293,8 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		registerLocalizedWidget(btnSwitchLangLC);
 		registerLocalizedWidget(btnLangEnLC);
 		registerLocalizedWidget(btnLangDeLC);
-		registerLocalizedWidget(btnDoWebSearchLC);
-		registerLocalizedWidget(btnCloseWebSearchLC);
 //		registerLocalizedWidget(icoSettingsMorphLC);
-		registerLocalizedWidget(txtSearchBoxLC);
-		registerLocalizedWidget(selResultCountItm10LC);
-		registerLocalizedWidget(selResultCountItm20LC);
-		registerLocalizedWidget(selResultCountItm30LC);
-		registerLocalizedWidget(selResultCountItm40LC);
-		registerLocalizedWidget(selResultCountItm50LC);
-		registerLocalizedWidget(selResultLangItmEnLC);
-		registerLocalizedWidget(selResultLangItmDeLC);
+		
 		registerLocalizedWidget(lblDefaultSearchTitleLC);
 		registerLocalizedWidget(lblDefaultSearchCaptionLC);
 		registerLocalizedWidget(lblDefaultConfigTitleLC);
@@ -402,17 +307,9 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	
 	private void initHandlers()
 	{
-		btnWebSearchUI.addClickHandler(e -> {
-			showSearchModal(true);
-		});
-		
-		btnUploadUI.addClickHandler(e -> {
-			showUploadModal();
-		});
-		
-		btnHistoryUI.addClickHandler(e -> {
-			mdlHistoryUI.show();
-		});
+		btnWebSearchUI.addClickHandler(e -> showSearchModal());
+		btnUploadUI.addClickHandler(e -> showUploadModal());
+		btnHistoryUI.addClickHandler(e -> mdlHistoryUI.show());
 		
 		btnLangEnUI.addClickHandler(e -> {
 			switchLanguage(Language.ENGLISH);
@@ -442,29 +339,9 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 			mdlAboutDeUI.close();
 		});
 		
-		btnDoWebSearchUI.addClickHandler(e-> {
-			invokeSearch();
-		});
-		
-		btnCloseWebSearchUI.addClickHandler(e-> {
-			showSearchModal(false);
-		});
-		
-		txtSearchBoxUI.addKeyDownHandler(e -> {
-			switch (e.getNativeKeyCode())
-			{
-			case KeyCodes.KEY_ENTER:
-				invokeSearch();
-				break;
-			case KeyCodes.KEY_ESCAPE:
-				showSearchModal(false);
-				break;
-			}
-		});
-		
 		tglSettingsPaneUI.addClickHandler(e -> toggleSettingsPane());
 		
-		lblDefaultSearchTitleUI.addClickHandler(e -> showSearchModal(true));
+		lblDefaultSearchTitleUI.addClickHandler(e -> showSearchModal());
 		lblDefaultConfigTitleUI.addClickHandler(e -> toggleSettingsPane());
 		lblDefaultUploadTitleUI.addClickHandler(e -> showUploadModal());
 		
@@ -482,8 +359,6 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	
 	private void initUI()
 	{
-		selResultLangUI.setMultipleSelect(false);
-		
 		btnWebSearchUI.setTooltipPosition(Position.LEFT);
 		btnUploadUI.setTooltipPosition(Position.LEFT);
 		btnSwitchLangUI.setTooltipPosition(Position.LEFT);
@@ -653,5 +528,11 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	@Override
 	public HistoryViewerService getHistoryViewerService() {
 		return mdlHistoryUI;
+	}
+
+	
+	@Override
+	public WebSearchService getWebSearchService() {
+		return mdlWebSearchUI;
 	}
 }

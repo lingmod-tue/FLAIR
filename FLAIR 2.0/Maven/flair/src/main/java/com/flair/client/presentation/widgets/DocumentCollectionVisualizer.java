@@ -57,6 +57,22 @@ import gwt.material.design.client.ui.animate.MaterialAnimation;
 
 public class DocumentCollectionVisualizer extends LocalizedComposite implements VisualizerService
 {
+	final static class Margin
+	{
+		int		top;
+		int		bottom;
+		int		left;
+		int		right;
+		
+		Margin(int t, int b, int l, int r)
+		{
+			top = t;
+			bottom = b;
+			left = l;
+			right = r;
+		}
+	}
+	
 	private static final Margin			MARGINS = new Margin(55, 5, 10, 10);
 	private static final int			WIDTH = 990;
 	private static final int			HEIGHT = 660;
@@ -69,7 +85,7 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 		COMPLEXITY,
 		KEYWORDS,
 	}
-	
+		
 	final class State
 	{
 		Input							input;
@@ -136,6 +152,17 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 			default:
 				return "";
 			}
+		}
+		
+		DefaultDimension getDefaultDimensionFromId(String id)
+		{
+			for (DefaultDimension itr : DefaultDimension.values())
+			{
+				if (id.equals(getDefaultDimensionId(itr)))
+					return itr;
+			}
+			
+			return null;
 		}
 		
 		String generateFrequencyTable()
@@ -264,12 +291,12 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 			// extract the list of dimensions and create a scale for each
 			dimensions = D3.keys(cache.get(0)).filter((t, e, i, a) -> {
 				String dim = e.asString();
+				DefaultDimension def = getDefaultDimensionFromId(e.asString());
 				
 				// skip if the dimension isn't selected
 				if (selectedAxes.contains(dim) == false)
 					return false;
 				
-				// add scale
 				JsArrayMixed extents = Arrays.extent(cache, (d, idx) -> {
 					DsvRow row = (DsvRow)d;
 					return +row.get(dim).asDouble();
@@ -278,7 +305,7 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 				y.put(dim, D3.scale.linear()
 								.domain(extents)
 								.range(0, height));
-				
+								
 				return true;
 			});
 			
@@ -378,7 +405,27 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 			group.append("g")
 				 .attr("class", "axis")
 				 .each((c,d,i) -> {
-					 D3.select(c).call(axis.scale(y.get(d.asString())));
+					 D3.select(c).call(axis
+							 			.scale(y.get(d.asString()))
+							 			.tickFormat((c1, d1, i1) -> {
+							 				DefaultDimension def = getDefaultDimensionFromId(d.asString());
+							 				// add names to the result axis
+							 				if (def == DefaultDimension.RESULT)
+							 				{
+							 					// skip interpolated ticks
+							 					if (d1.asDouble() % 1 != 0)
+							 						return "";
+							 					
+							 					final int MAX_TITLE_LENGTH = 15;
+							 					String title = getDoc(d1.asInt()).getTitle();
+							 					if (title.length() > MAX_TITLE_LENGTH)
+							 						return title.substring(0, MAX_TITLE_LENGTH) + "...";
+							 					else
+							 						return title;
+							 				}
+							 				else
+							 					return d1.asString();
+							 			}));
 					 return null;
 				 })
 				 .append("text")
@@ -402,7 +449,7 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 					 else
 						 return d.asString();	// for the default dimensions, use the same text as it's already localized
 				 });
-			
+								
 			// store brushes for each axis
 			group.append("g")
 				 .attr("class", "brush")
@@ -760,20 +807,4 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 		state.setResetHandler(handler);
 	}
 
-}
-
-final class Margin
-{
-	int		top;
-	int		bottom;
-	int		left;
-	int		right;
-	
-	Margin(int t, int b, int l, int r)
-	{
-		top = t;
-		bottom = b;
-		left = l;
-		right = r;
-	}
 }

@@ -14,10 +14,10 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.HttpClientBuilder;
 
 import com.flair.server.crawler.impl.AbstractSearchAgentImpl;
 import com.flair.server.crawler.impl.AbstractSearchAgentImplResult;
+import com.flair.server.utilities.HttpClientFactory;
 import com.flair.server.utilities.ServerLogger;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -113,7 +113,7 @@ public class AzureWebSearch implements AbstractSearchAgentImpl
 		return results;
 	}
 
-	private String getUrlQuery() 
+	private String getUrlQuery()
 	{
 		StringBuilder sb = new StringBuilder();
 		sb.append("q=");
@@ -136,7 +136,7 @@ public class AzureWebSearch implements AbstractSearchAgentImpl
 		return sb.toString();
 	}
 
-	private void loadResults(InputStream stream) 
+	private void loadResults(InputStream stream)
 	{
 		results.clear();
 		AzureWebSearchResponse response = deserializer.fromJson(new InputStreamReader(stream),
@@ -157,7 +157,7 @@ public class AzureWebSearch implements AbstractSearchAgentImpl
 		}
 	}
 
-	private void doQuery() 
+	private void doQuery()
 	{
 		try
 		{
@@ -172,7 +172,7 @@ public class AzureWebSearch implements AbstractSearchAgentImpl
 			get.addHeader("Accept", "application/json");
 			get.addHeader("Ocp-Apim-Subscription-Key", getApiKey());
 
-			HttpClient client = HttpClientBuilder.create().build();
+			HttpClient client = HttpClientFactory.get().create();
 			responsePost = client.execute(get);
 			resEntity = responsePost.getEntity();
 
@@ -184,7 +184,7 @@ public class AzureWebSearch implements AbstractSearchAgentImpl
 	}
 
 	@Override
-	public List<? extends AbstractSearchAgentImplResult> performSearch() 
+	public List<? extends AbstractSearchAgentImplResult> performSearch()
 	{
 		doQuery();
 		return getResults();

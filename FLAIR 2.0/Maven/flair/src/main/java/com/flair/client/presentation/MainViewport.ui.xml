@@ -76,38 +76,7 @@
 		<flair:DocumentComparer ui:field="mdlComparerUI"/>
 				
 		<!-- Web Search Modal -->
-		<m:MaterialModal ui:field="mdlWebSearchUI" type="BOTTOM_SHEET" dismissible="false">
-			<m:MaterialModalContent>
-				<!-- Minimum absolute height to prevent the result count dropdown from clipping -->
-				<m:MaterialRow height="170px">
-					<m:MaterialColumn grid="l6 m6 s12">
-						<m:MaterialTextBox ui:field="txtSearchBoxUI" iconType="SEARCH"/>					
-					</m:MaterialColumn>
-					
-					<m:MaterialColumn grid="l3 m3 s12">
-						<m:MaterialListBox ui:field="selResultLangUI">
-							<m.html:Option ui:field="selResultLangItmEnUI" text="English" value="ENGLISH" />
-							<m.html:Option ui:field="selResultLangItmDeUI" text="German" value="GERMAN" />
-						</m:MaterialListBox>
-					</m:MaterialColumn>
-					
-					<m:MaterialColumn grid="l3 m3 s12">
-						<m:MaterialListBox ui:field="selResultCountUI" >
-							<m.html:Option ui:field="selResultCountItm10UI" text="10" value="10" />
-							<m.html:Option ui:field="selResultCountItm20UI" text="20" value="20" />
-							<m.html:Option ui:field="selResultCountItm30UI" text="30" value="30" />
-							<m.html:Option ui:field="selResultCountItm40UI" text="40" value="40" />
-							<m.html:Option ui:field="selResultCountItm50UI" text="50" value="50" />
-						</m:MaterialListBox>
-					</m:MaterialColumn>
-				</m:MaterialRow>				
-			
-				<m:MaterialModalFooter>
-					<m:MaterialButton ui:field="btnDoWebSearchUI" text="Search" backgroundColor="ORANGE" textColor="WHITE" waves="DEFAULT" />
-					<m:MaterialButton ui:field="btnCloseWebSearchUI" text="Cancel" type="FLAT" waves="DEFAULT" />
-				</m:MaterialModalFooter>			
-			</m:MaterialModalContent>
-		</m:MaterialModal>
+		<flair:WebSearchModal ui:field="mdlWebSearchUI"/>
 		
 		<!-- Corpus Upload Modal-->
 		<flair:CorpusFileUploader ui:field="mdlCorpusUploadUI"/>

@@ -68,9 +68,6 @@ public interface AbstractWebRankerCore
 	}
 	
 	public void						init(AuthToken token, AbstractWebRankerPresenter presenter);
-	public void						performWebSearch(Language lang,
-													String query,
-													int numResults);
 
 	public void						cancelCurrentOperation();
 	public boolean					isOperationInProgress();

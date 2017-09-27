@@ -64,11 +64,6 @@ public class ClientEndPoint
 					viewport.setSplashTitle("Oh dear!");
 					viewport.setSplashSubtitle("Something went wrong on our end. Please try again later.");
 					break;
-				case INVALID_SESSION_EXISTS:
-					ClientLogger.get().error("Previous session is still open");
-					viewport.setSplashTitle("Oh dear!");
-					viewport.setSplashSubtitle("It seems like you already have a FLAIR window open - Please close it before reloading this page. We currently support only one window per user. Apologies!");
-					break;
 				case VALID:
 					ClientLogger.get().info("Session token assigned. ID: " + clientToken);
 					viewport.showSplash(false);

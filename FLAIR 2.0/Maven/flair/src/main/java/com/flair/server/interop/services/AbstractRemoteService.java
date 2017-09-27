@@ -1,6 +1,7 @@
 package com.flair.server.interop.services;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import com.flair.server.interop.session.SessionManager;
 import com.flair.shared.interop.AuthToken;
@@ -17,7 +18,8 @@ public abstract class AbstractRemoteService extends RemoteServiceServlet
 		HttpServletRequest request = this.getThreadLocalRequest();
 		ServerAuthenticationToken authTok = (ServerAuthenticationToken)token;
 		
-		SessionManager.get().validateToken(authTok, request.getSession(true));
+		HttpSession session = request.getSession(false);
+		SessionManager.get().validateToken(authTok, session);
 		return authTok;
 	}
 }

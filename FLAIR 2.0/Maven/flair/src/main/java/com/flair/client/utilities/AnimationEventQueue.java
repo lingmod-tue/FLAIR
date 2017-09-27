@@ -1,4 +1,4 @@
-package com.flair.client.presentation;
+package com.flair.client.utilities;
 
 import java.util.ArrayDeque;
 import java.util.Queue;

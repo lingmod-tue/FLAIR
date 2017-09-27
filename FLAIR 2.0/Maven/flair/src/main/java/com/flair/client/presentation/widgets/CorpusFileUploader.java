@@ -8,6 +8,7 @@ import com.flair.client.localization.locale.CorpusFileUploaderLocale;
 import com.flair.client.localization.locale.LanguageLocale;
 import com.flair.client.presentation.interfaces.CorpusUploadService;
 import com.flair.shared.grammar.Language;
+import com.flair.shared.interop.AuthToken;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -69,15 +70,33 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 	boolean					uploadInProgress;
 	int						numUploaded;
 	Language				corpusLang;
+	boolean					initialized;
 	
 	// hack to work around the incomplete Dropzone API MaterialFileUploader provides
 	private native boolean hasPendingUploads(MaterialFileUploader u) /*-{
 		var dropzone = u.@gwt.material.design.addins.client.fileuploader.MaterialFileUploader::uploader;
 		return dropzone.getUploadingFiles().length !== 0 || dropzone.getQueuedFiles().length !== 0;
 	}-*/;
+	
+	private native void setupDropzone(AuthToken t, MaterialFileUploader u) /*-{
+		var dropzone = u.@gwt.material.design.addins.client.fileuploader.MaterialFileUploader::uploader;
+		var uuid = t.toString();
+	
+		// tag uploaded files with the client token's uuid
+		dropzone.on('sending', function(file, xhr, formData){
+            formData.append('AuthToken', uuid);
+        });
+	}-*/;
 
 	private void onBeginUpload(Language lang)
 	{
+		// deferred init to ensure that we have a valid token
+		if (initialized == false)
+		{
+			initialized = true;
+			setupDropzone(ClientEndPoint.get().getClientToken(), uplUploaderUI);
+		}
+		
 		if (uploadInProgress)
 			throw new RuntimeException("Previous upload operation not complete");
 
@@ -177,10 +196,11 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 	{
 		super(ClientEndPoint.get().getLocalization());
 		initWidget(uiBinder.createAndBindUi(this));
-
+				
 		beginHandler = null;
 		completeHandler = null;
 		uploadInProgress = false;
+		initialized = false;
 
 		initLocale();
 		initHandlers();
