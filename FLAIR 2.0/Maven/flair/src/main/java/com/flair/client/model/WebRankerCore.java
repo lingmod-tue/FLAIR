@@ -74,13 +74,6 @@ import gwt.material.design.client.constants.Color;
 
 /*
  * Web ranker module
- * 
- * 
-				// apply custom settings, if any, rerank and display
-				applyImportedSettings();
-				rerank();
-				refreshParsedResultsList();
-
  */
 public class WebRankerCore implements AbstractWebRankerCore
 {
