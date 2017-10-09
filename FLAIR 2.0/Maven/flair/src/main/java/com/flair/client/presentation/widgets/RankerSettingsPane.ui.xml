@@ -41,15 +41,12 @@
 
 			<!-- Text Characteristics -->
 			<m:MaterialRow marginBottom="5" paddingBottom="5">	
-				<m:MaterialCard padding="15">
+				<m:MaterialCard padding="15" marginBottom="3">
 					<m:MaterialCardTitle ui:field="lblTextCharacteristicsUI" text="Text Characteristics"
 						iconType="SUBJECT" iconPosition="RIGHT"/>
 						
 					<!-- Length -->
-					<m:MaterialRow marginBottom="5">					
-						<m:MaterialLabel ui:field="lblTextLengthUI" text="Length:"/>
-						<flair:DocumentLengthSlider ui:field="sldDocLengthUI"/>
-					</m:MaterialRow>
+					<flair:DocumentLengthConfigPane ui:field="pnlDocLengthUI" useSlider="false"/>
 	
 					<!-- Level -->
 					<m:MaterialRow marginBottom="5">
@@ -75,28 +72,33 @@
 				</m:MaterialCard>				
 			</m:MaterialRow>	
 			
-			<m:MaterialRow marginBottom="5" textAlign="CENTER">
-				<m:MaterialCard padding="20">
+			<m:MaterialRow marginBottom="5" paddingBottom="5">
+				<m:MaterialCard padding="15" marginBottom="3">
+					<m:MaterialCardTitle ui:field="lblConstructionsUI" text="Constructions"
+						iconType="CHECK_CIRCLE" iconPosition="RIGHT"/>
+													
+					<!-- Weight Sliders -->
+					<flair.pak:ConstructionSliderBundleEnglish ui:field="bdlEnglishSlidersUI"/>
+					<flair.pak:ConstructionSliderBundleGerman ui:field="bdlGermanSlidersUI"/>
+				</m:MaterialCard>
+			</m:MaterialRow>
+				
+			<m:MaterialRow marginBottom="5" paddingBottom="5">
+				<m:MaterialCard padding="15" marginBottom="3">
+					<m:MaterialCardTitle ui:field="lblLanguageUseUI" text="Language Use"
+						iconType="CHROME_READER_MODE" iconPosition="RIGHT"/>
+					
 					<!-- Keywords/Vocab -->
 					<flair:KeywordWeightSlider ui:field="sldKeywordsUI" />
 				</m:MaterialCard>		
 			</m:MaterialRow>	
-				
-			<m:MaterialRow depth="990" paddingBottom="20">
-				<m:MaterialRow textAlign="CENTER" visible="false">
-					<m:MaterialButton ui:field="btnConstructionsListUI" text="List Of Constructions"
-						type="FLAT" waves="DEFAULT" backgroundColor="WHITE" textColor="BLUE"/>
-				</m:MaterialRow>
-				
-				<!-- Weight Sliders -->
-				<flair.pak:ConstructionSliderBundleEnglish ui:field="bdlEnglishSlidersUI"/>
-				<flair.pak:ConstructionSliderBundleGerman ui:field="bdlGermanSlidersUI"/>
-				
-				<m:MaterialRow paddingTop="20" paddingBottom="15" textAlign="CENTER">
-					<m:MaterialButton ui:field="btnResetAllUI" text="Reset All"
-						waves="LIGHT" backgroundColor="RED" textColor="WHITE" iconType="UNDO" iconPosition="RIGHT"/>
-				</m:MaterialRow>	
-			</m:MaterialRow>					
+			
+			<m:MaterialRow paddingTop="20" paddingBottom="15" textAlign="CENTER">
+				<m:MaterialButton ui:field="btnResetAllUI" text="Reset All"
+					waves="LIGHT" backgroundColor="RED" textColor="WHITE" iconType="UNDO" iconPosition="RIGHT"/>
+			</m:MaterialRow>	
+			
+			<m:MaterialRow marginBottom="20"/>			
 		</m:MaterialRow>	
 	</m:MaterialPanel>
 </ui:UiBinder> 

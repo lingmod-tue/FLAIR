@@ -1,11 +1,12 @@
 package com.flair.client.presentation.widgets;
 
 import com.flair.client.ClientEndPoint;
+import com.flair.client.localization.CommonLocalizationTags;
 import com.flair.client.localization.LocalizedComposite;
-import com.flair.client.localization.SimpleLocalizedTextButtonWidget;
-import com.flair.client.localization.SimpleLocalizedWidget;
-import com.flair.client.localization.locale.CorpusFileUploaderLocale;
-import com.flair.client.localization.locale.LanguageLocale;
+import com.flair.client.localization.LocalizedFieldType;
+import com.flair.client.localization.annotations.LocalizedCommonField;
+import com.flair.client.localization.annotations.LocalizedField;
+import com.flair.client.localization.interfaces.LocalizationBinder;
 import com.flair.client.presentation.interfaces.CorpusUploadService;
 import com.flair.shared.grammar.Language;
 import com.flair.shared.interop.AuthToken;
@@ -31,38 +32,50 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 	interface CorpusFileUploaderUiBinder extends UiBinder<Widget, CorpusFileUploader>
 	{
 	}
+	
+	private static CorpusFileUploaderLocalizationBinder localeBinder = GWT.create(CorpusFileUploaderLocalizationBinder.class);
+	interface CorpusFileUploaderLocalizationBinder extends LocalizationBinder<CorpusFileUploader> {}
+	
+	static enum LocalizationTags
+	{
+		UPLOAD_INPROGRESS,
+		UPLOAD_FAILED,
+		MAX_FILE_LIMIT
+	}
 
 	@UiField
 	MaterialModal			mdlUploadUI;
 	@UiField
 	MaterialFileUploader 	uplUploaderUI;
 	@UiField
+	@LocalizedField(type=LocalizedFieldType.DESCRIPTION)
 	MaterialUploadLabel		lblUploadTextUI;
 	@UiField
 	MaterialStepper			stprUploaderUI;
 	@UiField
+	@LocalizedField(type=LocalizedFieldType.TITLE)
 	MaterialStep			stpLangUI;
 	@UiField
+	@LocalizedCommonField(tag=CommonLocalizationTags.LANGUAGE_ENGLISH)
 	MaterialRadioButton		rdoEnglishUI;
 	@UiField
+	@LocalizedCommonField(tag=CommonLocalizationTags.LANGUAGE_GERMAN)
 	MaterialRadioButton		rdoGermanUI;
 	@UiField
+	@LocalizedCommonField(tag=CommonLocalizationTags.NEXT)
 	MaterialButton			btnToUploaderUI;
 	@UiField
+	@LocalizedCommonField(tag=CommonLocalizationTags.CANCEL)
 	MaterialButton			btnCancel1UI;
 	@UiField
+	@LocalizedCommonField(tag=CommonLocalizationTags.UPLOAD)
 	MaterialStep			stpUploadUI;
 	@UiField
+	@LocalizedCommonField(tag=CommonLocalizationTags.FINISH)
 	MaterialButton			btnFinishUI;
 	@UiField
+	@LocalizedCommonField(tag=CommonLocalizationTags.CANCEL)
 	MaterialButton			btnCancel2UI;
-	
-	SimpleLocalizedWidget<MaterialRadioButton>		rdoEnglishLC;
-	SimpleLocalizedWidget<MaterialRadioButton>		rdoGermanLC;
-	SimpleLocalizedTextButtonWidget<MaterialButton>		btnToUploaderLC;
-	SimpleLocalizedTextButtonWidget<MaterialButton>		btnCancel1LC;
-	SimpleLocalizedTextButtonWidget<MaterialButton>		btnFinishLC;
-	SimpleLocalizedTextButtonWidget<MaterialButton>		btnCancel2LC;
 
 	UploadBeginHandler		beginHandler;
 	UploadCompleteHandler	completeHandler;
@@ -116,7 +129,7 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 			throw new RuntimeException("Upload hasn't started yet");
 		else if (hasPendingUploads(uplUploaderUI))
 		{
-			MaterialToast.fireToast(getLocalizedString(CorpusFileUploaderLocale.DESC_UploadInProgress));
+			MaterialToast.fireToast(getLocalizedString(LocalizationTags.UPLOAD_INPROGRESS.toString()));
 			return;
 		}
 
@@ -132,11 +145,11 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 	}
 
 	private void onUploadError(UploadFile file) {
-		MaterialToast.fireToast(getLocalizedString(CorpusFileUploaderLocale.DESC_UploadFailed) + ": " + file.getName());
+		MaterialToast.fireToast(getLocalizedString(LocalizationTags.UPLOAD_FAILED.toString()) + ": " + file.getName());
 	}
 
 	private void onMaxFilesReached() {
-		MaterialToast.fireToast(getLocalizedString(CorpusFileUploaderLocale.DESC_MaxFiles));
+		MaterialToast.fireToast(getLocalizedString(LocalizationTags.MAX_FILE_LIMIT.toString()));
 	}
 	
 	private void resetUI()
@@ -145,31 +158,6 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 		uplUploaderUI.getUploadPreview().setVisible(false);
 	}
 
-	private void initLocale()
-	{
-		rdoEnglishLC = new SimpleLocalizedWidget<>(rdoEnglishUI, "", (w, s, d) -> {
-			w.setText(LanguageLocale.get().getLocalizedName(Language.ENGLISH, d.getLanguage()));
-		});
-		rdoGermanLC = new SimpleLocalizedWidget<>(rdoGermanUI, "", (w, s, d) -> {
-			w.setText(LanguageLocale.get().getLocalizedName(Language.GERMAN, d.getLanguage()));
-		});
-		btnToUploaderLC = new SimpleLocalizedTextButtonWidget<>(btnToUploaderUI, CorpusFileUploaderLocale.DESC_btnToUploaderUI);
-		btnCancel1LC = new SimpleLocalizedTextButtonWidget<>(btnCancel1UI, CorpusFileUploaderLocale.DESC_btnCancel1UI);
-		btnFinishLC = new SimpleLocalizedTextButtonWidget<>(btnFinishUI, CorpusFileUploaderLocale.DESC_btnFinishUI);
-		btnCancel2LC = new SimpleLocalizedTextButtonWidget<>(btnCancel2UI, CorpusFileUploaderLocale.DESC_btnCancel2UI);
-		
-		registerLocale(CorpusFileUploaderLocale.INSTANCE.en);
-		registerLocale(CorpusFileUploaderLocale.INSTANCE.de);
-		
-		registerLocalizedWidget(rdoEnglishLC);
-		registerLocalizedWidget(rdoGermanLC);
-		registerLocalizedWidget(btnToUploaderLC);
-		registerLocalizedWidget(btnCancel1LC);
-		registerLocalizedWidget(btnFinishLC);
-		registerLocalizedWidget(btnCancel2LC);
-
-		refreshLocalization();
-	}
 
 	private void initHandlers()
 	{
@@ -194,27 +182,16 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 
 	public CorpusFileUploader()
 	{
-		super(ClientEndPoint.get().getLocalization());
 		initWidget(uiBinder.createAndBindUi(this));
-				
+		initLocale(localeBinder.bind(this));
+		
 		beginHandler = null;
 		completeHandler = null;
 		uploadInProgress = false;
 		initialized = false;
 
-		initLocale();
 		initHandlers();
 		resetUI();
-	}
-
-	@Override
-	public void setLocalization(Language lang)
-	{
-		super.setLocalization(lang);
-
-		lblUploadTextUI.setDescription(getLocalizedString(CorpusFileUploaderLocale.DESC_Description));
-		stpLangUI.setTitle(getLocalizedString(CorpusFileUploaderLocale.DESC_stpLangUI));
-		stpUploadUI.setTitle(getLocalizedString(CorpusFileUploaderLocale.DESC_stpUploadUI));
 	}
 
 	@Override

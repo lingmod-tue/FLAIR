@@ -5,13 +5,13 @@ import java.util.Collections;
 import java.util.List;
 
 import com.flair.client.ClientEndPoint;
-import com.flair.client.localization.LocalizationData;
+import com.flair.client.localization.CommonLocalizationTags;
+import com.flair.client.localization.DefaultLocalizationProviders;
+import com.flair.client.localization.GrammaticalConstructionLocalizationProvider;
 import com.flair.client.localization.LocalizedComposite;
-import com.flair.client.localization.SimpleLocalizedTextButtonWidget;
-import com.flair.client.localization.SimpleLocalizedTooltipWidget;
-import com.flair.client.localization.locale.DocumentPreviewPaneLocale;
-import com.flair.client.localization.locale.GrammaticalConstructionLocale;
-import com.flair.client.localization.locale.KeywordWeightSliderLocale;
+import com.flair.client.localization.LocalizedFieldType;
+import com.flair.client.localization.annotations.LocalizedField;
+import com.flair.client.localization.interfaces.LocalizationBinder;
 import com.flair.client.presentation.interfaces.AbstractDocumentPreviewPane;
 import com.flair.client.presentation.interfaces.DocumentPreviewPaneInput;
 import com.flair.client.presentation.interfaces.DocumentPreviewPaneInput.Rankable;
@@ -53,6 +53,19 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 	{
 	}
 
+	private static DocumentPreviewPaneLocalizationBinder localeBinder = GWT.create(DocumentPreviewPaneLocalizationBinder.class);
+	interface DocumentPreviewPaneLocalizationBinder extends LocalizationBinder<DocumentPreviewPane> {}
+	
+	static enum LocalizationTags
+	{
+		NUM_WORDS,
+		NUM_SENTENCES,
+		COLUMN_CONSTRUCTION,
+		COLUMN_WEIGHT,
+		COLUMN_HITS,
+		COLUMN_RELFREQ,
+	}
+	
 	private static final int				PANEL_WIDTH = 450;
 	
 	@UiField
@@ -70,6 +83,7 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 	@UiField
 	MaterialChip				lblDocNumWordsUI;
 	@UiField
+	@LocalizedField(type=LocalizedFieldType.TOOLTIP)
 	MaterialIcon				icoHelpTextUI;
 	@UiField
 	ScrollPanel					pnlDocTextPreviewUI;
@@ -84,6 +98,7 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 	@UiField
 	MaterialColumn			 	pnlWeightSelectionCol3UI;
 	@UiField
+	@LocalizedField(type=LocalizedFieldType.BUTTON)
 	MaterialButton				btnShowAllConstUI;
 	@UiField
 	MaterialIcon				icoCloseModalUI;
@@ -93,10 +108,7 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 	MaterialColumn			 	pnlAllConstCol2UI;
 	@UiField
 	MaterialColumn			 	pnlAllConstCol3UI;
-	
-	SimpleLocalizedTooltipWidget<MaterialIcon>			icoHelpTextLC;
-	SimpleLocalizedTextButtonWidget<MaterialButton>		btnShowAllConstLC;
-	
+
 	State						state;
 	ShowHideHandler				showhideHandler;
 	boolean						visible;
@@ -153,12 +165,15 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 		public String getLocalizedName(Language lang)
 		{
 			if (keyword)
-				return KeywordWeightSliderLocale.INSTANCE.getLocalizedKeywordString(lang, customKeyword);
+			{
+				return DefaultLocalizationProviders.COMMON.get()
+						.getLocalizedString(customKeyword ? CommonLocalizationTags.KEYWORDS.toString() :
+							CommonLocalizationTags.ACADEMIC_VOCAB.toString(), lang);
+			}
 			else
-				return GrammaticalConstructionLocale.get().getLocalizedPath(gram, lang);
+				return GrammaticalConstructionLocalizationProvider.getPath(gram, lang);
 		}
 	}
-	
 	
 	private class State
 	{
@@ -212,7 +227,7 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 						// construction name
 						if (type == TableType.WEIGHT_SELECTION)
 						{
-							String name = data.getLocalizedName(localeCore.getLanguage());
+							String name = data.getLocalizedName(getCurrentLocale());
 							String tooltip = name;
 							if (name.length() > 25)
 								name = name.substring(0, 25) + "...";
@@ -231,7 +246,7 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 						}
 						else
 						{
-							MaterialLabel name = new MaterialLabel(data.getLocalizedName(localeCore.getLanguage()));
+							MaterialLabel name = new MaterialLabel(data.getLocalizedName(getCurrentLocale()));
 							name.setFontSize(1, Unit.EM);
 							out = name;
 						}
@@ -348,7 +363,7 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 				
 				// sort by construction name
 				Collections.sort(dataProvider, (a,b) -> {
-					return a.getLocalizedName(localeCore.getLanguage()).compareToIgnoreCase(b.getLocalizedName(localeCore.getLanguage()));
+					return a.getLocalizedName(getCurrentLocale()).compareToIgnoreCase(b.getLocalizedName(getCurrentLocale()));
 				});
 			}
 			
@@ -379,19 +394,17 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 				if (full)
 					generateData();
 				
-				LocalizationData ld = getLocalizationData(localeCore.getLanguage());
-				
 				switch (type)
 				{
 				case WEIGHT_SELECTION:
-					initColumns(ld.get(DocumentPreviewPaneLocale.DESC_tableColConstruction),
-							ld.get(DocumentPreviewPaneLocale.DESC_tableColHits),
-							ld.get(DocumentPreviewPaneLocale.DESC_tableColWeight));
+					initColumns(getLocalizedString(LocalizationTags.COLUMN_CONSTRUCTION.toString()),
+							getLocalizedString(LocalizationTags.COLUMN_HITS.toString()),
+							getLocalizedString(LocalizationTags.COLUMN_WEIGHT.toString()));
 					break;
 				case ALL_CONSTRUCTIONS:
-					initColumns(ld.get(DocumentPreviewPaneLocale.DESC_tableColConstruction),
-							ld.get(DocumentPreviewPaneLocale.DESC_tableColHits),
-							ld.get(DocumentPreviewPaneLocale.DESC_tableColRelFreq));
+					initColumns(getLocalizedString(LocalizationTags.COLUMN_CONSTRUCTION.toString()),
+							getLocalizedString(LocalizationTags.COLUMN_HITS.toString()),
+							getLocalizedString(LocalizationTags.COLUMN_RELFREQ.toString()));
 					break;
 				}
 				
@@ -473,11 +486,10 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 					constructionDetails.reload(fullReload);
 					
 					// set up the remaining fields
-					LocalizationData ld = getLocalizationData(localeCore.getLanguage());
 					lblDocTitleUI.setText(rankable.getDocument().getTitle());
 					lblDocLevelUI.setText(rankable.getDocument().getReadabilityLevel().toString());
-					lblDocNumSentencesUI.setText(rankable.getDocument().getNumSentences() + " " + ld.get(DocumentPreviewPaneLocale.DESC_lblDocNumSentences));
-					lblDocNumWordsUI.setText(rankable.getDocument().getNumWords() + " " + ld.get(DocumentPreviewPaneLocale.DESC_lblDocNumWords));
+					lblDocNumSentencesUI.setText(rankable.getDocument().getNumSentences() + " " + getLocalizedString(LocalizationTags.NUM_SENTENCES.toString()));
+					lblDocNumWordsUI.setText(rankable.getDocument().getNumWords() + " " + getLocalizedString(LocalizationTags.NUM_WORDS.toString()));
 					
 					pnlDocTextPreviewUI.add(new HTML(rankable.getPreviewMarkup()));
 					pnlDocTextPreviewUI.scrollToTop();
@@ -519,20 +531,6 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 		setPanelRight(visible ? 0 : -PANEL_WIDTH);
 	}
 	
-	private void initLocale()
-	{
-		icoHelpTextLC = new SimpleLocalizedTooltipWidget<>(icoHelpTextUI, DocumentPreviewPaneLocale.DESC_icoHelpText);
-		btnShowAllConstLC = new SimpleLocalizedTextButtonWidget<>(btnShowAllConstUI, DocumentPreviewPaneLocale.DESC_btnShowAllConst);
-		
-		registerLocale(DocumentPreviewPaneLocale.INSTANCE.en);
-		registerLocale(DocumentPreviewPaneLocale.INSTANCE.de);
-
-		registerLocalizedWidget(icoHelpTextLC);
-		registerLocalizedWidget(btnShowAllConstLC);
-		
-		refreshLocalization();
-	}
-	
 	private void initHandlers()
 	{
 		icoCloseUI.addClickHandler(e -> hide());
@@ -555,23 +553,21 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 	
 	public DocumentPreviewPane()
 	{
-		super(ClientEndPoint.get().getLocalization());
 		state = new State();
 		showhideHandler = null;
 		visible = false;
 		
 		initWidget(uiBinder.createAndBindUi(this));
-		
-		initLocale();
+		initLocale(localeBinder.bind(this));
+
 		initHandlers();
 		initUI();
 	}
-	
-	
+		
 	@Override
-	public void setLocalization(Language lang)
+	public void setLocale(Language lang)
 	{
-		super.setLocalization(lang);
+		super.setLocale(lang);
 		state.reload(false);
 	}
 
@@ -613,7 +609,6 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 		return visible;
 	}
 
-	
 	public int getWidth() {
 		return PANEL_WIDTH;
 	}

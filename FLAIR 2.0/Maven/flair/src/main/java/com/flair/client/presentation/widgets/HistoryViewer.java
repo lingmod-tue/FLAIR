@@ -2,12 +2,12 @@ package com.flair.client.presentation.widgets;
 
 import java.util.List;
 
-import com.flair.client.ClientEndPoint;
+import com.flair.client.localization.CommonLocalizationTags;
+import com.flair.client.localization.DefaultLocalizationProviders;
 import com.flair.client.localization.LocalizedComposite;
-import com.flair.client.localization.SimpleLocalizedTextWidget;
-import com.flair.client.localization.SimpleLocalizedWidget;
-import com.flair.client.localization.locale.HistoryViewerLocale;
-import com.flair.client.localization.locale.LanguageLocale;
+import com.flair.client.localization.LocalizedFieldType;
+import com.flair.client.localization.annotations.LocalizedField;
+import com.flair.client.localization.interfaces.LocalizationBinder;
 import com.flair.client.model.interfaces.WebRankerAnalysis;
 import com.flair.client.presentation.interfaces.HistoryViewerService;
 import com.google.gwt.core.client.GWT;
@@ -39,9 +39,18 @@ public class HistoryViewer extends LocalizedComposite implements HistoryViewerSe
 	{
 	}
 
+	private static HistoryViewerLocalizationBinder localeBinder = GWT.create(HistoryViewerLocalizationBinder.class);
+	interface HistoryViewerLocalizationBinder extends LocalizationBinder<HistoryViewer> {}
+	
+	static enum LocalizationTags
+	{
+		NUM_ANALYSES,
+	}
+	
 	@UiField
 	MaterialModal			mdlRootUI;
 	@UiField
+	@LocalizedField
 	MaterialLabel			lblTitleUI;
 	@UiField
 	MaterialIcon			btnCloseUI;
@@ -52,10 +61,8 @@ public class HistoryViewer extends LocalizedComposite implements HistoryViewerSe
 	@UiField
 	MaterialCollection		pnlSelectionUI;
 	@UiField
+	@LocalizedField(type=LocalizedFieldType.TITLE)
 	MaterialEmptyState		lblPlaceholderUI;
-
-	SimpleLocalizedTextWidget<MaterialLabel>			lblTitleLC;
-	SimpleLocalizedWidget<MaterialEmptyState>			lblPlaceholderLC;
 	
 	FetchAnalysesHandler	fetchAnalysesHandler;
 	RestoreAnalysisHandler	restoreAnalysisHandler;
@@ -77,7 +84,7 @@ public class HistoryViewer extends LocalizedComposite implements HistoryViewerSe
 			pnlListContainerUI.setVisible(true);
 		}
 		
-		lblSelCountUI.setText(analyses.size() + " " + getLocalizedString(HistoryViewerLocale.DESC_AnalysesCount));
+		lblSelCountUI.setText(analyses.size() + " " + getLocalizedString(LocalizationTags.NUM_ANALYSES.toString()));
 		for (WebRankerAnalysis itr : analyses)
 		{
 			MaterialCollectionItem wrapper = new MaterialCollectionItem();
@@ -102,10 +109,23 @@ public class HistoryViewer extends LocalizedComposite implements HistoryViewerSe
 				throw new RuntimeException("Invalid analysis type");
 			}
 			
+			String langTag = "";
+			switch (itr.getLanguage())
+			{
+			case ENGLISH:
+				langTag = CommonLocalizationTags.LANGUAGE_ENGLISH.toString();
+				break;
+			case GERMAN:
+				langTag = CommonLocalizationTags.LANGUAGE_GERMAN.toString();
+				break;
+			default:
+				langTag = CommonLocalizationTags.INVALID.toString();
+			}
 			
-			MaterialLabel numResults = new MaterialLabel(LanguageLocale.get().getLocalizedName(itr.getLanguage(), localeCore.getLanguage()) +
+			MaterialLabel numResults = new MaterialLabel(getLocalizedString(DefaultLocalizationProviders.COMMON.toString(), langTag) +
 														" (" + itr.getParsedDocs().size() +
-														" " + getLocalizedString(HistoryViewerLocale.DESC_ResultCount) +
+														" " + getLocalizedString(DefaultLocalizationProviders.COMMON.toString(),
+																				CommonLocalizationTags.RESULTS.toString()) +
 														")",
 														Color.GREY);
 			numResults.setFontSize(0.8, Unit.EM);
@@ -120,20 +140,6 @@ public class HistoryViewer extends LocalizedComposite implements HistoryViewerSe
 		}
 	}
 
-	private void initLocale()
-	{
-		lblTitleLC = new SimpleLocalizedTextWidget<>(lblTitleUI, HistoryViewerLocale.DESC_lblTitleUI);
-		lblPlaceholderLC = new SimpleLocalizedWidget<>(lblPlaceholderUI, HistoryViewerLocale.DESC_NotifyEmpty, (w,s) -> w.setTitle(s));
-		
-		registerLocale(HistoryViewerLocale.INSTANCE.en);
-		registerLocale(HistoryViewerLocale.INSTANCE.de);
-
-		registerLocalizedWidget(lblTitleLC);
-		registerLocalizedWidget(lblPlaceholderLC);
-
-		refreshLocalization();
-	}
-
 	private void initHandlers()
 	{
 		btnCloseUI.addClickHandler(e -> hide());
@@ -146,13 +152,12 @@ public class HistoryViewer extends LocalizedComposite implements HistoryViewerSe
 
 	public HistoryViewer()
 	{
-		super(ClientEndPoint.get().getLocalization());
 		initWidget(uiBinder.createAndBindUi(this));
+		initLocale(localeBinder.bind(this));
 
 		fetchAnalysesHandler = null;
 		restoreAnalysisHandler = null;
 
-		initLocale();
 		initHandlers();
 		initUI();
 	}

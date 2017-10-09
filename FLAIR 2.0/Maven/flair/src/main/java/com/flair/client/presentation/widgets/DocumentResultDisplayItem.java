@@ -1,9 +1,10 @@
 package com.flair.client.presentation.widgets;
 
-import com.flair.client.localization.LocalizationEngine;
+import com.flair.client.localization.CommonLocalizationTags;
 import com.flair.client.localization.LocalizedComposite;
-import com.flair.client.localization.SimpleLocalizedTextButtonWidget;
-import com.flair.client.localization.locale.DocumentResultDisplayItemLocale;
+import com.flair.client.localization.LocalizedFieldType;
+import com.flair.client.localization.annotations.LocalizedCommonField;
+import com.flair.client.localization.interfaces.LocalizationBinder;
 import com.flair.client.presentation.interfaces.AbstractResultItem;
 import com.flair.client.presentation.interfaces.AbstractResultItem.Type;
 import com.flair.client.presentation.interfaces.CompletedResultItem;
@@ -33,6 +34,14 @@ public class DocumentResultDisplayItem extends LocalizedComposite
 	{
 	}
 	
+	private static DocumentResultDisplayItemLocalizationBinder localeBinder = GWT.create(DocumentResultDisplayItemLocalizationBinder.class);
+	interface DocumentResultDisplayItemLocalizationBinder extends LocalizationBinder<DocumentResultDisplayItem> {}
+	
+	static enum LocalizationTags
+	{
+		ORIGINAL_RANK,
+	}
+	
 	@UiField
 	MaterialRow				pnlRootUI;
 	@UiField
@@ -58,28 +67,15 @@ public class DocumentResultDisplayItem extends LocalizedComposite
 	@UiField
 	MaterialDropDown		pnlMenuUI;
 	@UiField
+	@LocalizedCommonField(tag=CommonLocalizationTags.COMPARE, type=LocalizedFieldType.BUTTON)
 	MaterialLink			btnAddToCompareUI;
-	
-	SimpleLocalizedTextButtonWidget<MaterialLink>		btnAddToCompareLC;
-	
+
 	int						orgRank;
-	
-	private void initLocale()
-	{
-		btnAddToCompareLC = new SimpleLocalizedTextButtonWidget<>(btnAddToCompareUI, DocumentResultDisplayItemLocale.DESC_btnAddToCompareUI);
-		
-		registerLocale(DocumentResultDisplayItemLocale.INSTANCE.en);
-		registerLocale(DocumentResultDisplayItemLocale.INSTANCE.de);
-		
-		registerLocalizedWidget(btnAddToCompareLC);
-		
-		refreshLocalization();
-	}
 	
 	public DocumentResultDisplayItem(AbstractResultItem item)
 	{
-		super(LocalizationEngine.get());
 		initWidget(uiBinder.createAndBindUi(this));
+		initLocale(localeBinder.bind(this));
 		
 		btnTitleUI.setText(item.getTitle());
 
@@ -131,8 +127,6 @@ public class DocumentResultDisplayItem extends LocalizedComposite
 			
 			colInProgressHeaderUI.setVisible(false);
 		}
-		
-		initLocale();
 	}
 	
 
@@ -141,11 +135,11 @@ public class DocumentResultDisplayItem extends LocalizedComposite
 	}
 	
 	@Override
-	public void setLocalization(Language lang)
+	public void setLocale(Language lang)
 	{
-		super.setLocalization(lang);
+		super.setLocale(lang);
 		
-		String orank = getLocalizedString(DocumentResultDisplayItemLocale.DESC_ItemOrgRank) + ": " + orgRank;
+		String orank = getLocalizedString(LocalizationTags.ORIGINAL_RANK.toString()) + ": " + orgRank;
 		icoRankOffsetUI.setTooltip(orank);
 	}
 }

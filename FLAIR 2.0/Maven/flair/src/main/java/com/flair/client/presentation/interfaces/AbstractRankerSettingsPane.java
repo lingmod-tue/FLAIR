@@ -1,7 +1,7 @@
 package com.flair.client.presentation.interfaces;
 
 import com.flair.client.model.interfaces.DocumentRankerOutput;
-import com.flair.client.presentation.widgets.DocumentLengthSlider;
+import com.flair.client.presentation.widgets.DocumentLengthConfigPane;
 import com.flair.client.presentation.widgets.KeywordWeightSlider;
 import com.flair.client.presentation.widgets.LanguageSpecificConstructionSliderBundle;
 import com.flair.shared.grammar.Language;
@@ -29,7 +29,7 @@ public interface AbstractRankerSettingsPane
 	public void											setResetAllHandler(EventHandler handler);
 	
 	public LanguageSpecificConstructionSliderBundle		getSliderBundle();
-	public DocumentLengthSlider							getLengthSlider();
+	public DocumentLengthConfigPane						getLengthConfig();
 	public KeywordWeightSlider							getKeywordSlider();
 	
 	public boolean										isDocLevelEnabled(DocumentReadabilityLevel level);

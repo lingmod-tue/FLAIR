@@ -548,7 +548,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 
 			@Override
 			public double getDocLengthWeight() {
-				return settings.getLengthSlider().getWeight();
+				return settings.getLengthConfig().getWeight();
 			}
 
 			@Override
@@ -638,7 +638,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 
 			@Override
 			public String getConstructionTitle(GrammaticalConstruction gram) {
-				return GrammaticalConstructionLocale.get().getLocalizedName(gram, LocalizationEngine.get().getLanguage());
+				return GrammaticalConstructionLocalizationProvider.get().getLocalizedName(gram, LocalizationEngine.get().getLanguage());
 			}
 
 			@Override

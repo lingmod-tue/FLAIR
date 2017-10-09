@@ -2,11 +2,11 @@ package com.flair.client.presentation.widgets;
 
 import com.flair.client.ClientEndPoint;
 import com.flair.client.localization.LocalizedComposite;
-import com.flair.client.localization.SimpleLocalizedListBoxOptionWidget;
-import com.flair.client.localization.SimpleLocalizedTextButtonWidget;
-import com.flair.client.localization.SimpleLocalizedWidget;
 import com.flair.client.localization.locale.LanguageLocale;
 import com.flair.client.localization.locale.WebSearchModalLocale;
+import com.flair.client.localization.wrappers.SimpleLocalizedListBoxOptionWidget;
+import com.flair.client.localization.wrappers.SimpleLocalizedTextButtonWidget;
+import com.flair.client.localization.wrappers.SimpleLocalizedWidget;
 import com.flair.client.presentation.interfaces.WebSearchService;
 import com.flair.shared.grammar.Language;
 import com.google.gwt.core.client.GWT;

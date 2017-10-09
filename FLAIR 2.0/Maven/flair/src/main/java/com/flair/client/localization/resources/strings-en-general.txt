@@ -1,0 +1,181 @@
+_common-strings_	INVALID	<NO LOCALIZED STRING>
+_common-strings_	YES	Yes
+_common-strings_	NO	No
+_common-strings_	OK	OK
+_common-strings_	APPLY	Apply
+_common-strings_	CANCEL	Cancel
+_common-strings_	CLOSE	Close
+_common-strings_	FINISH	Finish
+_common-strings_	RESET	Reset
+_common-strings_	RESET_ALL	Reset All
+_common-strings_	NEXT	Next
+_common-strings_	SEARCH	Search
+_common-strings_	UPLOAD	Upload
+_common-strings_	COMPARE	Compare
+_common-strings_	FILTER	Filter
+_common-strings_	OPERATION_INPROGRESS_CONFIRM_TITLE	Confirmation
+_common-strings_	OPERATION_INPROGRESS_CONFIRM_CAPTION	A previous operation is in progress. Are you sure you want to continue? This will cancel the currently executing operation.
+_common-strings_	WAIT_TILL_COMPLETION	Please wait until the current operation has finished
+_common-strings_	RESULT	Result
+_common-strings_	RESULTS	Results
+_common-strings_	LANGUAGE_ENGLISH	English
+_common-strings_	LANGUAGE_GERMAN	German
+_common-strings_	ACADEMIC_VOCAB	Academic Vocabulary
+_common-strings_	KEYWORDS	Keywords
+_common-strings_	CUSTOM_VOCAB	Custom Vocabulary
+
+MainViewport	btnWebSearchUI	Web Search
+MainViewport	btnAboutUI	About FLAIR
+MainViewport	btnHistoryUI	Recent Analyses
+MainViewport	btnSwitchLangUI	Switch Interface Language
+MainViewport	btnUploadUI	Upload Corpus
+MainViewport	lblDefaultSearchCaptionUI	Click on the Search icon below and type in a query. FLAIR will fetch the top results from the Bing Search Engine.
+MainViewport	lblDefaultConfigTitleUI	Configure
+MainViewport	lblDefaultConfigCaptionUI	Configure the settings: text (complexity, length) and language (the passive, wh- questions, academic vocabulary, ...). You can export the settings to apply them to all further searches. FLAIR will re-rank the documents according to the configured settings. Click on the link to open the page in a new tab or read the enhanced text in the right-side panel.
+MainViewport	lblDefaultUploadCaptionUI	Upload custom documents and corpora. FLAIR will analyse and rank their content according to your settings.
+
+CorpusFileUploader	lblUploadTextUI	Drag and drop files here
+CorpusFileUploader	stpLangUI	Choose Language
+CorpusFileUploader	UPLOAD_INPROGRESS	Please wait until the upload process is complete
+CorpusFileUploader	UPLOAD_FAILED	The following file couldn't be uploaded
+CorpusFileUploader	MAX_FILE_LIMIT	You have uploaded too many files at a time
+
+CustomKeywordsEditor	lblTitleUI	Edit Custom Vocabulary
+CustomKeywordsEditor	txtKeywordsUI	Enter your keywords here, separated by commas or line breaks
+CustomKeywordsEditor	KEYWORDS_APPLIED	The new vocabulary will be used during the next analysis
+CustomKeywordsEditor	NO_KEYWORDS	The word list is empty
+
+DocumentCollectionVisualizer	mdlVisualizerUI	Interactive Visualization
+DocumentCollectionVisualizer	lblTitleUI	Select ranges by dragging the pointers up and down. Change the order of axes by dragging them left and right. Add or remove axes via checkboxes below.
+DocumentCollectionVisualizer	chkAxisWordsUI	# of Words
+DocumentCollectionVisualizer	chkAxisSentencesUI	# of Sentences
+DocumentCollectionVisualizer	chkAxisComplexityUI	Complexity
+DocumentCollectionVisualizer	chkAxisKeywordsUI	Keywords
+DocumentCollectionVisualizer	NO_FILTERED_DOCS	None of the results were filtered.
+DocumentCollectionVisualizer	DOCS_FILTERED	Filter applied. Filtered results
+
+DocumentComparer	lblTitleUI	Compare Results
+DocumentComparer	btnClearSelectionUI	Clear selection
+DocumentComparer	lblPlaceholderUI	The clipboard is empty
+
+DocumentLengthConfigPane	lblTextLengthUI	Length:
+DocumentLengthConfigPane	chkShorterTextsUI	Prefer shorter texts
+
+DocumentPreviewPane	icoHelpTextUI	Highlights may overlap - Mouse over a highlight to see a tooltip with the names of all embedded constructions
+DocumentPreviewPane	btnShowAllConstUI	All Constructions
+DocumentPreviewPane	NUM_WORDS	Word(s)
+DocumentPreviewPane	NUM_SENTENCES	Sentence(s)
+DocumentPreviewPane	COLUMN_CONSTRUCTION	Construction
+DocumentPreviewPane	COLUMN_WEIGHT	Weight
+DocumentPreviewPane	COLUMN_HITS	Count
+DocumentPreviewPane	COLUMN_RELFREQ	Relative Frequency %
+
+DocumentResultDisplayItem	ORIGINAL_RANK	Original Rank
+
+DocumentResultsPane	btnCancelOpUI	Cancel Analysis
+
+RankerSettingsPane	btnVisualizeUI	Visualize
+RankerSettingsPane	btnExportSettingsUI	Share Search Setup
+RankerSettingsPane	lblTextCharacteristicsUI	Text Characteristics:
+RankerSettingsPane	lblTextLevelUI	Levels:
+RankerSettingsPane	lblConstructionsUI	Constructions:
+RankerSettingsPane	lblLanguageUseUI	Language Use:
+RankerSettingsPane	FILTERED	Filtered
+
+GrammaticalConstructionWeightSlider	chkToggleUI	Uncheck to exclude texts with this construction
+GrammaticalConstructionWeightSlider	sldWeightUI	Move right to rank texts with this construction higher
+
+HistoryViewer	lblTitleUI	Analysis History
+HistoryViewer	lblPlaceholderUI	No analyses so far
+HistoryViewer	NUM_ANALYSES	Analyses
+
+KeywordWeightSlider	chkToggleUI	Check to highlight keywords
+KeywordWeightSlider	sldWeightUI	Move right to rank texts with this construct higher
+KeywordWeightSlider	btnEditKeywordsUI	Edit vocabulary
+KeywordWeightSlider	btnResetKeywordsUI	Use default academic vocabulary
+
+
+
+
+ConstructionSliderBundleEnglish	voice	voice
+ConstructionSliderBundleEnglish	verb forms	verb forms
+ConstructionSliderBundleEnglish	negation	negation
+ConstructionSliderBundleEnglish	sentences	sentences
+ConstructionSliderBundleEnglish	conjunctions	conjunctions
+ConstructionSliderBundleEnglish	parts of speech	parts of speech
+ConstructionSliderBundleEnglish	questions	questions
+ConstructionSliderBundleEnglish	prepositions	prepositions
+ConstructionSliderBundleEnglish	adjectives	adjectives
+ConstructionSliderBundleEnglish	tenses	tenses
+ConstructionSliderBundleEnglish	phrasal	phrasal
+ConstructionSliderBundleEnglish	clause types	clause types
+ConstructionSliderBundleEnglish	sentence types	sentence types
+ConstructionSliderBundleEnglish	aspect	aspect
+ConstructionSliderBundleEnglish	verbs	verbs
+ConstructionSliderBundleEnglish	pronouns	pronouns
+ConstructionSliderBundleEnglish	time	time
+ConstructionSliderBundleEnglish	nouns	nouns
+ConstructionSliderBundleEnglish	quantifiers	quantifiers
+ConstructionSliderBundleEnglish	imperative	imperative
+ConstructionSliderBundleEnglish	articles	articles
+ConstructionSliderBundleEnglish	modal	modal
+ConstructionSliderBundleEnglish	transitive	transitive
+ConstructionSliderBundleEnglish	adverbs	adverbs
+ConstructionSliderBundleGerman	Saetze	sentences
+ConstructionSliderBundleGerman	Satzklammer	sentence bracket
+ConstructionSliderBundleGerman	Negation	negation
+ConstructionSliderBundleGerman	Verbtypen	verb forms
+ConstructionSliderBundleGerman	IndefiniteQuantifizierer	quantifiers
+ConstructionSliderBundleGerman	Attribute	attribute
+ConstructionSliderBundleGerman	AdjAdvZW	adjectives, adverbs and cardinals
+ConstructionSliderBundleGerman	Nomen	nouns
+ConstructionSliderBundleGerman	Zeiten	tenses
+ConstructionSliderBundleGerman	Verben	verbs
+ConstructionSliderBundleGerman	Passiv	voice
+ConstructionSliderBundleGerman	Nebensatztypen	clause types
+ConstructionSliderBundleGerman	Nominalisierungen	nominalization
+ConstructionSliderBundleGerman	Verbformen	verb types
+ConstructionSliderBundleGerman	Pronomen	pronouns
+ConstructionSliderBundleGerman	Wortarten	parts of speech
+ConstructionSliderBundleGerman	Praepositionen	prepositions
+ConstructionSliderBundleGerman	Fragen	questions
+ConstructionSliderBundleGerman	Artikel	articles
+ConstructionSliderBundleGerman	Satztypen	sentence types
+
+
+
+
+
+
+
+
+
+
+
+
+SettingsExporter	lblCaptionUI	You can use this link to apply your current settings to future searches.
+SettingsExporter	lblTitleUI	Export Settings
+WebRankerCore	AnalysisComplete	Analysis complete.
+WebRankerCore	AddToCompareSel	Selected for comparison
+WebRankerCore	KeywordTitle	keyword
+WebRankerCore	CustomCorpusTitle	Uploaded Files
+WebRankerCore	AppliedImportedSettings	Applied custom settings
+WebRankerCore	ServerError	Blimey! Something went wrong on our end. Please try again later.
+WebRankerCore	OpTimeout	The operation timed-out
+WebRankerCore	NoResultsForFilter	No results for the current settings
+WebRankerCore	NoSearchResults	Sorry, our search engine didn't return any results for your query.
+WebRankerCore	ImportedSettings	FLAIR will automatically apply your custom settings
+WebRankerCore	SearchCooldown	Please wait for a few minutes before starting a new search
+WebRankerCore	NoParsedDocs	None of the results/files could be analyzed.
+WebRankerCore	MissingDoc	Some results/files couldn't be analyzed due to technical issues.
+WebRankerCore	MissingSearchResult	Some results couldn't be analyzed due to connectivity issues.
+WebRankerCore	WaitTillCompletion	Please wait until the current analysis is complete.
+WebRankerCore	CompareResultsTitle	Compare
+WebSearchModal	selResultCountItm50UI	50 Results
+WebSearchModal	selResultCountItm40UI	40 Results
+WebSearchModal	txtSearchBoxUI	Enter a query
+WebSearchModal	btnCancelUI	Cancel
+WebSearchModal	btnSearchUI	Search
+WebSearchModal	selResultCountItm10UI	10 Results
+WebSearchModal	selResultCountItm20UI	20 Results
+WebSearchModal	selResultCountItm30UI	30 Results

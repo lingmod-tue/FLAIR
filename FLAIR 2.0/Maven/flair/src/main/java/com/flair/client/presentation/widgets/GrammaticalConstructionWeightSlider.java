@@ -1,9 +1,12 @@
 package com.flair.client.presentation.widgets;
 
-import com.flair.client.ClientEndPoint;
+import com.flair.client.localization.CommonLocalizationTags;
+import com.flair.client.localization.GrammaticalConstructionLocalizationProvider;
 import com.flair.client.localization.LocalizedComposite;
-import com.flair.client.localization.locale.GrammaticalConstructionLocale;
-import com.flair.client.localization.locale.GrammaticalConstructionWeightSliderLocale;
+import com.flair.client.localization.LocalizedFieldType;
+import com.flair.client.localization.annotations.LocalizedCommonField;
+import com.flair.client.localization.annotations.LocalizedField;
+import com.flair.client.localization.interfaces.LocalizationBinder;
 import com.flair.client.presentation.interfaces.AbstractWeightSlider;
 import com.flair.client.presentation.interfaces.CanReset;
 import com.flair.shared.grammar.GrammaticalConstruction;
@@ -15,6 +18,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import gwt.material.design.client.ui.MaterialBadge;
 import gwt.material.design.client.ui.MaterialCheckBox;
+import gwt.material.design.client.ui.MaterialIcon;
 import gwt.material.design.client.ui.MaterialRange;
 
 /*
@@ -28,40 +32,39 @@ public class GrammaticalConstructionWeightSlider extends LocalizedComposite impl
 	{
 	}
 	
+	private static GrammaticalConstructionWeightSliderLocalizationBinder localeBinder = GWT.create(GrammaticalConstructionWeightSliderLocalizationBinder.class);
+	interface GrammaticalConstructionWeightSliderLocalizationBinder extends LocalizationBinder<GrammaticalConstructionWeightSlider> {}
 	
 	public interface ResetHandler {
 		public void handle(GrammaticalConstructionWeightSlider source, boolean fireEvents);
 	}
 	
+	private static final String			PLACEHOLDER_STRING ="<INVALID GRAM CONST>";
+	
 	@UiField
+	@LocalizedField(type=LocalizedFieldType.ALT_TEXT)
 	MaterialCheckBox				chkToggleUI;
 	@UiField
+	MaterialIcon					icoHelpTextUI;
+	@UiField
+	@LocalizedField(type=LocalizedFieldType.ALT_TEXT)
 	MaterialRange					sldWeightUI;
 	@UiField
+	@LocalizedCommonField(tag=CommonLocalizationTags.RESULTS, type=LocalizedFieldType.ALT_TEXT)
 	MaterialBadge					bdgResultCountUI;
 	
 	GenericWeightSlider				base;
 	private GrammaticalConstruction	gramConstruction;
 	private ResetHandler			resetHandler;
 	
-	private void initLocale()
-	{
-		registerLocale(GrammaticalConstructionWeightSliderLocale.INSTANCE.en);
-		registerLocale(GrammaticalConstructionWeightSliderLocale.INSTANCE.de);
-		
-		refreshLocalization();
-	}
-	
 	public GrammaticalConstructionWeightSlider()
 	{
-		super(ClientEndPoint.get().getLocalization());
 		initWidget(uiBinder.createAndBindUi(this));
+		initLocale(localeBinder.bind(this));
 		
 		base = new GenericWeightSlider(this, chkToggleUI, sldWeightUI);
 		gramConstruction = null;
 		resetHandler = null;
-
-		initLocale();
 	}
 	
 	public GrammaticalConstruction getGram() {
@@ -91,19 +94,17 @@ public class GrammaticalConstructionWeightSlider extends LocalizedComposite impl
 	}
 
 	@Override
-	public void setLocalization(Language lang)
+	public void setLocale(Language lang)
 	{
-		super.setLocalization(lang);
+		super.setLocale(lang);
 		
 		// update toggle and tooltip
 		if (gramConstruction == null)
-			setToggleText("INVALID_GRAM_CONST");
+			setToggleText(PLACEHOLDER_STRING);
 		else
-			setToggleText(GrammaticalConstructionLocale.get().getLocalizedName(gramConstruction, lang));
+			setToggleText(GrammaticalConstructionLocalizationProvider.getName(gramConstruction, lang));
 		
-		chkToggleUI.setTitle(getLocalizationData(lang).get(GrammaticalConstructionWeightSliderLocale.DESC_toggleTooltip));
-		bdgResultCountUI.setTitle(getLocalizationData(lang).get(GrammaticalConstructionWeightSliderLocale.DESC_resultCountTooltip));
-		sldWeightUI.setTitle(getLocalizationData(lang).get(GrammaticalConstructionWeightSliderLocale.DESC_sliderTooltip));
+		icoHelpTextUI.setTooltip(GrammaticalConstructionLocalizationProvider.getHelpText(gramConstruction, lang));
 	}
 	
 	@Override

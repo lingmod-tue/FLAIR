@@ -1,0 +1,444 @@
+_gram-name_	ADJECTIVE_COMPARATIVE_LONG	ADJECTIVE_COMPARATIVE_LONG
+_gram-path_	ADJECTIVE_COMPARATIVE_LONG	ADJECTIVE_COMPARATIVE_LONG
+_gram-helpText_	ADJECTIVE_COMPARATIVE_LONG	BUMMY
+_gram-name_	ADJECTIVE_COMPARATIVE_SHORT	ADJECTIVE_COMPARATIVE_SHORT
+_gram-path_	ADJECTIVE_COMPARATIVE_SHORT	ADJECTIVE_COMPARATIVE_SHORT
+_gram-helpText_	ADJECTIVE_COMPARATIVE_SHORT	BUMMY
+_gram-name_	ADJECTIVE_POSITIVE	Adjektive
+_gram-path_	ADJECTIVE_POSITIVE	Adjektiven, Adverben und Zahlworte > Adjektive
+_gram-helpText_	ADJECTIVE_POSITIVE	BUMMY
+_gram-name_	ADJECTIVE_SUPERLATIVE_LONG	ADJECTIVE_SUPERLATIVE_LONG
+_gram-path_	ADJECTIVE_SUPERLATIVE_LONG	ADJECTIVE_SUPERLATIVE_LONG
+_gram-helpText_	ADJECTIVE_SUPERLATIVE_LONG	BUMMY
+_gram-name_	ADJECTIVE_SUPERLATIVE_SHORT	ADJECTIVE_SUPERLATIVE_SHORT
+_gram-path_	ADJECTIVE_SUPERLATIVE_SHORT	ADJECTIVE_SUPERLATIVE_SHORT
+_gram-helpText_	ADJECTIVE_SUPERLATIVE_SHORT	BUMMY
+_gram-name_	ADVERB_COMPARATIVE_LONG	ADVERB_COMPARATIVE_LONG
+_gram-path_	ADVERB_COMPARATIVE_LONG	ADVERB_COMPARATIVE_LONG
+_gram-helpText_	ADVERB_COMPARATIVE_LONG	BUMMY
+_gram-name_	ADVERB_COMPARATIVE_SHORT	ADVERB_COMPARATIVE_SHORT
+_gram-path_	ADVERB_COMPARATIVE_SHORT	ADVERB_COMPARATIVE_SHORT
+_gram-helpText_	ADVERB_COMPARATIVE_SHORT	BUMMY
+_gram-name_	ADVERB_POSITIVE	Adverben
+_gram-path_	ADVERB_POSITIVE	Adjektiven, Adverben und Zahlworte > Adverben
+_gram-helpText_	ADVERB_POSITIVE	BUMMY
+_gram-name_	ADVERB_SUPERLATIVE_LONG	ADVERB_SUPERLATIVE_LONG
+_gram-path_	ADVERB_SUPERLATIVE_LONG	ADVERB_SUPERLATIVE_LONG
+_gram-helpText_	ADVERB_SUPERLATIVE_LONG	BUMMY
+_gram-name_	ADVERB_SUPERLATIVE_SHORT	ADVERB_SUPERLATIVE_SHORT
+_gram-path_	ADVERB_SUPERLATIVE_SHORT	ADVERB_SUPERLATIVE_SHORT
+_gram-helpText_	ADVERB_SUPERLATIVE_SHORT	BUMMY
+_gram-name_	ARTICLES	Alle Artikel
+_gram-path_	ARTICLES	Artikel > Alle Artikel
+_gram-helpText_	ARTICLES	BUMMY
+_gram-name_	ARTICLE_A	Unbestimmte Artikel
+_gram-path_	ARTICLE_A	Artikel > Unbestimmte Artikel
+_gram-helpText_	ARTICLE_A	BUMMY
+_gram-name_	ARTICLE_AN	ARTICLE_AN
+_gram-path_	ARTICLE_AN	ARTICLE_AN
+_gram-helpText_	ARTICLE_AN	BUMMY
+_gram-name_	ARTICLE_THE	Bestimmte Artikel
+_gram-path_	ARTICLE_THE	Artikel > Bestimmte artikel
+_gram-helpText_	ARTICLE_THE	BUMMY
+_gram-name_	ASPECT_PERFECT	ASPECT_PERFECT
+_gram-path_	ASPECT_PERFECT	ASPECT_PERFECT
+_gram-helpText_	ASPECT_PERFECT	BUMMY
+_gram-name_	ASPECT_PERFECT_PROGRESSIVE	ASPECT_PERFECT_PROGRESSIVE
+_gram-path_	ASPECT_PERFECT_PROGRESSIVE	ASPECT_PERFECT_PROGRESSIVE
+_gram-helpText_	ASPECT_PERFECT_PROGRESSIVE	BUMMY
+_gram-name_	ASPECT_PROGRESSIVE	ASPECT_PROGRESSIVE
+_gram-path_	ASPECT_PROGRESSIVE	ASPECT_PROGRESSIVE
+_gram-helpText_	ASPECT_PROGRESSIVE	BUMMY
+_gram-name_	ASPECT_SIMPLE	ASPECT_SIMPLE
+_gram-path_	ASPECT_SIMPLE	ASPECT_SIMPLE
+_gram-helpText_	ASPECT_SIMPLE	BUMMY
+_gram-name_	ATTRIBUTES_ADJECTIVE	Adjektivattribut
+_gram-path_	ATTRIBUTES_ADJECTIVE	Nomen > Attribute > Adjektivattribut
+_gram-helpText_	ATTRIBUTES_ADJECTIVE	zB: der schwarze Kater
+_gram-name_	ATTRIBUTES_PARTICIPLE_1	Partizipialattribut I
+_gram-path_	ATTRIBUTES_PARTICIPLE_1	Nomen > Attribute > Partizipialattribut I
+_gram-helpText_	ATTRIBUTES_PARTICIPLE_1	zB: das rennende Kanninchen
+_gram-name_	ATTRIBUTES_PARTICIPLE_2	Partizipialattribut II
+_gram-path_	ATTRIBUTES_PARTICIPLE_2	Nomen > Attribute > Partizipialattribut II
+_gram-helpText_	ATTRIBUTES_PARTICIPLE_2	zB: der gelaufene Marathon
+_gram-name_	ATTRIBUTES_PREPOSITION	Präpositionalattribut
+_gram-path_	ATTRIBUTES_PREPOSITION	Nomen > Attribute > Präpositionalattribut
+_gram-helpText_	ATTRIBUTES_PREPOSITION	zB: die Zerstörung von der Stadt
+_gram-name_	CARDINALS	Zahlworte
+_gram-path_	CARDINALS	Adjektive, Adverben und Zahlworte > Zahlworte
+_gram-helpText_	CARDINALS	BUMMY
+_gram-name_	CLAUSE_ADVERBIAL	Adverbial
+_gram-path_	CLAUSE_ADVERBIAL	Nebensatztypen > Adverbial
+_gram-helpText_	CLAUSE_ADVERBIAL	BUMMY
+_gram-name_	CLAUSE_DASS	Dass
+_gram-path_	CLAUSE_DASS	Nebensatztypen > Dass
+_gram-helpText_	CLAUSE_DASS	BUMMY
+_gram-name_	CLAUSE_RELATIVE	Relativ
+_gram-path_	CLAUSE_RELATIVE	Nebensatztypen > Relativ
+_gram-helpText_	CLAUSE_RELATIVE	BUMMY
+_gram-name_	CLAUSE_RELATIVE_REDUCED	CLAUSE_RELATIVE_REDUCED
+_gram-path_	CLAUSE_RELATIVE_REDUCED	CLAUSE_RELATIVE_REDUCED
+_gram-helpText_	CLAUSE_RELATIVE_REDUCED	BUMMY
+_gram-name_	CLAUSE_SUBORDINATE	Subordiniert
+_gram-path_	CLAUSE_SUBORDINATE	Satztypen > Subordiniert
+_gram-helpText_	CLAUSE_SUBORDINATE	BUMMY
+_gram-name_	CONDITIONALS	CONDITIONALS
+_gram-path_	CONDITIONALS	CONDITIONALS
+_gram-helpText_	CONDITIONALS	BUMMY
+_gram-name_	CONDITIONALS_REAL	CONDITIONALS_REAL
+_gram-path_	CONDITIONALS_REAL	CONDITIONALS_REAL
+_gram-helpText_	CONDITIONALS_REAL	BUMMY
+_gram-name_	CONDITIONALS_UNREAL	CONDITIONALS_UNREAL
+_gram-path_	CONDITIONALS_UNREAL	CONDITIONALS_UNREAL
+_gram-helpText_	CONDITIONALS_UNREAL	BUMMY
+_gram-name_	CONJUNCTIONS_ADVANCED	CONJUNCTIONS_ADVANCED
+_gram-path_	CONJUNCTIONS_ADVANCED	CONJUNCTIONS_ADVANCED
+_gram-helpText_	CONJUNCTIONS_ADVANCED	BUMMY
+_gram-name_	CONJUNCTIONS_SIMPLE	CONJUNCTIONS_SIMPLE
+_gram-path_	CONJUNCTIONS_SIMPLE	CONJUNCTIONS_SIMPLE
+_gram-helpText_	CONJUNCTIONS_SIMPLE	BUMMY
+_gram-name_	DETERMINER_ANY	irgend...
+_gram-path_	DETERMINER_ANY	Indefinite quantifizierer > Irgend
+_gram-helpText_	DETERMINER_ANY	BUMMY
+_gram-name_	DETERMINER_A_LOT_OF	DETERMINER_A_LOT_OF
+_gram-path_	DETERMINER_A_LOT_OF	DETERMINER_A_LOT_OF
+_gram-helpText_	DETERMINER_A_LOT_OF	BUMMY
+_gram-name_	DETERMINER_MANY	viel, viele, ...
+_gram-path_	DETERMINER_MANY	indefinite quantifizierer > viel, viele
+_gram-helpText_	DETERMINER_MANY	BUMMY
+_gram-name_	DETERMINER_MUCH	DETERMINER_MUCH
+_gram-path_	DETERMINER_MUCH	DETERMINER_MUCH
+_gram-helpText_	DETERMINER_MUCH	BUMMY
+_gram-name_	DETERMINER_SOME	einige, manche, ...
+_gram-path_	DETERMINER_SOME	indefinite quantifizierer > einige, manche
+_gram-helpText_	DETERMINER_SOME	BUMMY
+_gram-name_	EXISTENTIAL_THERE	EXISTENTIAL_THERE
+_gram-path_	EXISTENTIAL_THERE	EXISTENTIAL_THERE
+_gram-helpText_	EXISTENTIAL_THERE	BUMMY
+_gram-name_	IMPERATIVES	Imperative
+_gram-path_	IMPERATIVES	verbformen > imperative
+_gram-helpText_	IMPERATIVES	BUMMY
+_gram-name_	MODALS	MODALS
+_gram-path_	MODALS	MODALS
+_gram-helpText_	MODALS	BUMMY
+_gram-name_	MODALS_ABLE	MODALS_ABLE
+_gram-path_	MODALS_ABLE	MODALS_ABLE
+_gram-helpText_	MODALS_ABLE	BUMMY
+_gram-name_	MODALS_ADVANCED	MODALS_ADVANCED
+_gram-path_	MODALS_ADVANCED	MODALS_ADVANCED
+_gram-helpText_	MODALS_ADVANCED	BUMMY
+_gram-name_	MODALS_CAN	MODALS_CAN
+_gram-path_	MODALS_CAN	MODALS_CAN
+_gram-helpText_	MODALS_CAN	BUMMY
+_gram-name_	MODALS_COULD	MODALS_COULD
+_gram-path_	MODALS_COULD	MODALS_COULD
+_gram-helpText_	MODALS_COULD	BUMMY
+_gram-name_	MODALS_HAVE_TO	MODALS_HAVE_TO
+_gram-path_	MODALS_HAVE_TO	MODALS_HAVE_TO
+_gram-helpText_	MODALS_HAVE_TO	BUMMY
+_gram-name_	MODALS_MAY	MODALS_MAY
+_gram-path_	MODALS_MAY	MODALS_MAY
+_gram-helpText_	MODALS_MAY	BUMMY
+_gram-name_	MODALS_MIGHT	MODALS_MIGHT
+_gram-path_	MODALS_MIGHT	MODALS_MIGHT
+_gram-helpText_	MODALS_MIGHT	BUMMY
+_gram-name_	MODALS_MUST	MODALS_MUST
+_gram-path_	MODALS_MUST	MODALS_MUST
+_gram-helpText_	MODALS_MUST	BUMMY
+_gram-name_	MODALS_NEED	MODALS_NEED
+_gram-path_	MODALS_NEED	MODALS_NEED
+_gram-helpText_	MODALS_NEED	BUMMY
+_gram-name_	MODALS_OUGHT	MODALS_OUGHT
+_gram-path_	MODALS_OUGHT	MODALS_OUGHT
+_gram-helpText_	MODALS_OUGHT	BUMMY
+_gram-name_	MODALS_SIMPLE	MODALS_SIMPLE
+_gram-path_	MODALS_SIMPLE	MODALS_SIMPLE
+_gram-helpText_	MODALS_SIMPLE	BUMMY
+_gram-name_	NEGATION_ALL	Negation (kein, kaum, nie, etc.)
+_gram-path_	NEGATION_ALL	negation > negation
+_gram-helpText_	NEGATION_ALL	BUMMY
+_gram-name_	NEGATION_NOT	NEGATION_NOT
+_gram-path_	NEGATION_NOT	NEGATION_NOT
+_gram-helpText_	NEGATION_NOT	BUMMY
+_gram-name_	NEGATION_NO_NOT_NEVER	Volle Negation (kein, nichts, nirgends, etc.)
+_gram-path_	NEGATION_NO_NOT_NEVER	negation > volle negation
+_gram-helpText_	NEGATION_NO_NOT_NEVER	BUMMY
+_gram-name_	NEGATION_NT	NEGATION_NT
+_gram-path_	NEGATION_NT	NEGATION_NT
+_gram-helpText_	NEGATION_NT	BUMMY
+_gram-name_	NEGATION_PARTIAL	Partielle Negation (kaum, selten, etc.)
+_gram-path_	NEGATION_PARTIAL	negation > partielle negation
+_gram-helpText_	NEGATION_PARTIAL	BUMMY
+_gram-name_	NOUNFORMS_ING	NOUNFORMS_ING
+_gram-path_	NOUNFORMS_ING	NOUNFORMS_ING
+_gram-helpText_	NOUNFORMS_ING	BUMMY
+_gram-name_	NOUNS_ISMUS	-ismus Nominalisierungen (Naturalismus, Pluralismus, etc.)
+_gram-path_	NOUNS_ISMUS	nomen > nominalisierungen > -ismus
+_gram-helpText_	NOUNS_ISMUS	BUMMY
+_gram-name_	NOUNS_TUR	-tur Nominalisierungen (Natur, Statur, etc.)
+_gram-path_	NOUNS_TUR	nomen > nominalisierungen > -tur
+_gram-helpText_	NOUNS_TUR	BUMMY
+_gram-name_	NOUNS_UNG	-ung Nominalisierungen (Schenkung, Schulung, etc.)
+_gram-path_	NOUNS_UNG	nomen > nominalisierungen > -ung
+_gram-helpText_	NOUNS_UNG	BUMMY
+_gram-name_	OBJECT_DIRECT	OBJECT_DIRECT
+_gram-path_	OBJECT_DIRECT	OBJECT_DIRECT
+_gram-helpText_	OBJECT_DIRECT	BUMMY
+_gram-name_	OBJECT_INDIRECT	OBJECT_INDIRECT
+_gram-path_	OBJECT_INDIRECT	OBJECT_INDIRECT
+_gram-helpText_	OBJECT_INDIRECT	BUMMY
+_gram-name_	PARTICLE_PLUS_ADJ_ADV	Adjektiv- und Adverbpartikel
+_gram-path_	PARTICLE_PLUS_ADJ_ADV	adjektive, adverben und zahlworte > adjektiv- und adverbpartikel
+_gram-helpText_	PARTICLE_PLUS_ADJ_ADV	BUMMY
+_gram-name_	PASSIVE_VOICE	PASSIVE_VOICE
+_gram-path_	PASSIVE_VOICE	PASSIVE_VOICE
+_gram-helpText_	PASSIVE_VOICE	BUMMY
+_gram-name_	PASSIVE_VOICE_SEIN	sein-Passiv
+_gram-path_	PASSIVE_VOICE_SEIN	verben > passive > sein
+_gram-helpText_	PASSIVE_VOICE_SEIN	BUMMY
+_gram-name_	PASSIVE_VOICE_WERDEN	werden-Passiv
+_gram-path_	PASSIVE_VOICE_WERDEN	verben > passive > werden
+_gram-helpText_	PASSIVE_VOICE_WERDEN	BUMMY
+_gram-name_	PLURAL_IRREGULAR	PLURAL_IRREGULAR
+_gram-path_	PLURAL_IRREGULAR	PLURAL_IRREGULAR
+_gram-helpText_	PLURAL_IRREGULAR	BUMMY
+_gram-name_	PLURAL_REGULAR	PLURAL_REGULAR
+_gram-path_	PLURAL_REGULAR	PLURAL_REGULAR
+_gram-helpText_	PLURAL_REGULAR	BUMMY
+_gram-name_	PREPOSITIONS	PREPOSITIONS
+_gram-path_	PREPOSITIONS	PREPOSITIONS
+_gram-helpText_	PREPOSITIONS	BUMMY
+_gram-name_	PREPOSITIONS_ADVANCED	PREPOSITIONS_ADVANCED
+_gram-path_	PREPOSITIONS_ADVANCED	PREPOSITIONS_ADVANCED
+_gram-helpText_	PREPOSITIONS_ADVANCED	BUMMY
+_gram-name_	PREPOSITIONS_COMPLEX	Postposition (zufolge, wegen, etc.)
+_gram-path_	PREPOSITIONS_COMPLEX	präpositionen > postposition
+_gram-helpText_	PREPOSITIONS_COMPLEX	BUMMY
+_gram-name_	PREPOSITIONS_SIMPLE	Präposition (auf, unter, neben, etc.)
+_gram-path_	PREPOSITIONS_SIMPLE	präpositionen > präposition
+_gram-helpText_	PREPOSITIONS_SIMPLE	BUMMY
+_gram-name_	PRONOUNS	PRONOUNS
+_gram-path_	PRONOUNS	PRONOUNS
+_gram-helpText_	PRONOUNS	BUMMY
+_gram-name_	PRONOUNS_DEMONSTRATIVE	Demonstrativpronomen (dieser, jener, ...)
+_gram-path_	PRONOUNS_DEMONSTRATIVE	pronomen > demonstrativ
+_gram-helpText_	PRONOUNS_DEMONSTRATIVE	BUMMY
+_gram-name_	PRONOUNS_INDEFINITE	Indefinitpronomen (kein, irgendein)
+_gram-path_	PRONOUNS_INDEFINITE	pronomen > indefinit
+_gram-helpText_	PRONOUNS_INDEFINITE	BUMMY
+_gram-name_	PRONOUNS_INTERROGATIVE	Interrogativpronomen (welche, wobei)
+_gram-path_	PRONOUNS_INTERROGATIVE	pronomen > interrogativ
+_gram-helpText_	PRONOUNS_INTERROGATIVE	BUMMY
+_gram-name_	PRONOUNS_OBJECTIVE	PRONOUNS_OBJECTIVE
+_gram-path_	PRONOUNS_OBJECTIVE	PRONOUNS_OBJECTIVE
+_gram-helpText_	PRONOUNS_OBJECTIVE	BUMMY
+_gram-name_	PRONOUNS_PERSONAL	Personalpronomen (ich, du, ...)
+_gram-path_	PRONOUNS_PERSONAL	pronomen > personal
+_gram-helpText_	PRONOUNS_PERSONAL	BUMMY
+_gram-name_	PRONOUNS_POSSESSIVE	Possessivpronomen (mein, dein, ...)
+_gram-path_	PRONOUNS_POSSESSIVE	pronomen > possessive
+_gram-helpText_	PRONOUNS_POSSESSIVE	BUMMY
+_gram-name_	PRONOUNS_POSSESSIVE_ABSOLUTE	PRONOUNS_POSSESSIVE_ABSOLUTE
+_gram-path_	PRONOUNS_POSSESSIVE_ABSOLUTE	PRONOUNS_POSSESSIVE_ABSOLUTE
+_gram-helpText_	PRONOUNS_POSSESSIVE_ABSOLUTE	BUMMY
+_gram-name_	PRONOUNS_REFLEXIVE	Reflexivpronomen (mich, sich)
+_gram-path_	PRONOUNS_REFLEXIVE	pronomen > reflexiv
+_gram-helpText_	PRONOUNS_REFLEXIVE	BUMMY
+_gram-name_	PRONOUNS_RELATIVE	Relativpronomen (der, dessen, ...)
+_gram-path_	PRONOUNS_RELATIVE	pronomen > relativ
+_gram-helpText_	PRONOUNS_RELATIVE	BUMMY
+_gram-name_	PRONOUNS_SUBJECTIVE	PRONOUNS_SUBJECTIVE
+_gram-path_	PRONOUNS_SUBJECTIVE	PRONOUNS_SUBJECTIVE
+_gram-helpText_	PRONOUNS_SUBJECTIVE	BUMMY
+_gram-name_	QUESTIONS_DIRECT	direkte Fragen
+_gram-path_	QUESTIONS_DIRECT	fragen > direkt
+_gram-helpText_	QUESTIONS_DIRECT	BUMMY
+_gram-name_	QUESTIONS_HOW	QUESTIONS_HOW
+_gram-path_	QUESTIONS_HOW	QUESTIONS_HOW
+_gram-helpText_	QUESTIONS_HOW	BUMMY
+_gram-name_	QUESTIONS_INDIRECT	indirekte Fragen
+_gram-path_	QUESTIONS_INDIRECT	fragen > indirekt
+_gram-helpText_	QUESTIONS_INDIRECT	BUMMY
+_gram-name_	QUESTIONS_MODAL	QUESTIONS_MODAL
+_gram-path_	QUESTIONS_MODAL	QUESTIONS_MODAL
+_gram-helpText_	QUESTIONS_MODAL	BUMMY
+_gram-name_	QUESTIONS_TAG	QUESTIONS_TAG
+_gram-path_	QUESTIONS_TAG	QUESTIONS_TAG
+_gram-helpText_	QUESTIONS_TAG	BUMMY
+_gram-name_	QUESTIONS_TO_BE	QUESTIONS_TO_BE
+_gram-path_	QUESTIONS_TO_BE	QUESTIONS_TO_BE
+_gram-helpText_	QUESTIONS_TO_BE	BUMMY
+_gram-name_	QUESTIONS_TO_DO	QUESTIONS_TO_DO
+_gram-path_	QUESTIONS_TO_DO	QUESTIONS_TO_DO
+_gram-helpText_	QUESTIONS_TO_DO	BUMMY
+_gram-name_	QUESTIONS_TO_HAVE	QUESTIONS_TO_HAVE
+_gram-path_	QUESTIONS_TO_HAVE	QUESTIONS_TO_HAVE
+_gram-helpText_	QUESTIONS_TO_HAVE	BUMMY
+_gram-name_	QUESTIONS_WH	W-Fragen
+_gram-path_	QUESTIONS_WH	fragen > w-fragen
+_gram-helpText_	QUESTIONS_WH	BUMMY
+_gram-name_	QUESTIONS_WHAT	QUESTIONS_WHAT
+_gram-path_	QUESTIONS_WHAT	QUESTIONS_WHAT
+_gram-helpText_	QUESTIONS_WHAT	BUMMY
+_gram-name_	QUESTIONS_WHEN	QUESTIONS_WHEN
+_gram-path_	QUESTIONS_WHEN	QUESTIONS_WHEN
+_gram-helpText_	QUESTIONS_WHEN	BUMMY
+_gram-name_	QUESTIONS_WHERE	QUESTIONS_WHERE
+_gram-path_	QUESTIONS_WHERE	QUESTIONS_WHERE
+_gram-helpText_	QUESTIONS_WHERE	BUMMY
+_gram-name_	QUESTIONS_WHICH	QUESTIONS_WHICH
+_gram-path_	QUESTIONS_WHICH	QUESTIONS_WHICH
+_gram-helpText_	QUESTIONS_WHICH	BUMMY
+_gram-name_	QUESTIONS_WHO	QUESTIONS_WHO
+_gram-path_	QUESTIONS_WHO	QUESTIONS_WHO
+_gram-helpText_	QUESTIONS_WHO	BUMMY
+_gram-name_	QUESTIONS_WHOM	QUESTIONS_WHOM
+_gram-path_	QUESTIONS_WHOM	QUESTIONS_WHOM
+_gram-helpText_	QUESTIONS_WHOM	BUMMY
+_gram-name_	QUESTIONS_WHOSE	QUESTIONS_WHOSE
+_gram-path_	QUESTIONS_WHOSE	QUESTIONS_WHOSE
+_gram-helpText_	QUESTIONS_WHOSE	BUMMY
+_gram-name_	QUESTIONS_WHY	QUESTIONS_WHY
+_gram-path_	QUESTIONS_WHY	QUESTIONS_WHY
+_gram-helpText_	QUESTIONS_WHY	BUMMY
+_gram-name_	QUESTIONS_YESNO	Ja/Nein Fragen
+_gram-path_	QUESTIONS_YESNO	fragen > ja/nein
+_gram-helpText_	QUESTIONS_YESNO	BUMMY
+_gram-name_	SENTENCE_COMPLEX	SENTENCE_COMPLEX
+_gram-path_	SENTENCE_COMPLEX	SENTENCE_COMPLEX
+_gram-helpText_	SENTENCE_COMPLEX	BUMMY
+_gram-name_	SENTENCE_COMPOUND	koordiniert
+_gram-path_	SENTENCE_COMPOUND	satztypen > koordiniert
+_gram-helpText_	SENTENCE_COMPOUND	BUMMY
+_gram-name_	SENTENCE_INCOMPLETE	Satzfragmente
+_gram-path_	SENTENCE_INCOMPLETE	satztypen > satzfragment
+_gram-helpText_	SENTENCE_INCOMPLETE	BUMMY
+_gram-name_	SENTENCE_SIMPLE	einfach
+_gram-path_	SENTENCE_SIMPLE	satztypen > einfach
+_gram-helpText_	SENTENCE_SIMPLE	BUMMY
+_gram-name_	TENSE_FUTURE_PERFECT	Futur 2
+_gram-path_	TENSE_FUTURE_PERFECT	verben > zeiten > futur 2
+_gram-helpText_	TENSE_FUTURE_PERFECT	BUMMY
+_gram-name_	TENSE_FUTURE_PERFECT_PROGRESSIVE	TENSE_FUTURE_PERFECT_PROGRESSIVE
+_gram-path_	TENSE_FUTURE_PERFECT_PROGRESSIVE	TENSE_FUTURE_PERFECT_PROGRESSIVE
+_gram-helpText_	TENSE_FUTURE_PERFECT_PROGRESSIVE	BUMMY
+_gram-name_	TENSE_FUTURE_PROGRESSIVE	TENSE_FUTURE_PROGRESSIVE
+_gram-path_	TENSE_FUTURE_PROGRESSIVE	TENSE_FUTURE_PROGRESSIVE
+_gram-helpText_	TENSE_FUTURE_PROGRESSIVE	BUMMY
+_gram-name_	TENSE_FUTURE_SIMPLE	Futur 1
+_gram-path_	TENSE_FUTURE_SIMPLE	verben > zeiten > futur 1
+_gram-helpText_	TENSE_FUTURE_SIMPLE	BUMMY
+_gram-name_	TENSE_PAST_PERFECT	TENSE_PAST_PERFECT
+_gram-path_	TENSE_PAST_PERFECT	TENSE_PAST_PERFECT
+_gram-helpText_	TENSE_PAST_PERFECT	BUMMY
+_gram-name_	TENSE_PAST_PERFECT_HABEN	haben-Plusquamperfekt
+_gram-path_	TENSE_PAST_PERFECT_HABEN	verben > zeiten > haben-plusquamperfekt
+_gram-helpText_	TENSE_PAST_PERFECT_HABEN	BUMMY
+_gram-name_	TENSE_PAST_PERFECT_PROGRESSIVE	TENSE_PAST_PERFECT_PROGRESSIVE
+_gram-path_	TENSE_PAST_PERFECT_PROGRESSIVE	TENSE_PAST_PERFECT_PROGRESSIVE
+_gram-helpText_	TENSE_PAST_PERFECT_PROGRESSIVE	BUMMY
+_gram-name_	TENSE_PAST_PERFECT_SEIN	sein-Plusquamperfekt
+_gram-path_	TENSE_PAST_PERFECT_SEIN	verben > zeiten > sein-plusquamperfekt
+_gram-helpText_	TENSE_PAST_PERFECT_SEIN	BUMMY
+_gram-name_	TENSE_PAST_PROGRESSIVE	TENSE_PAST_PROGRESSIVE
+_gram-path_	TENSE_PAST_PROGRESSIVE	TENSE_PAST_PROGRESSIVE
+_gram-helpText_	TENSE_PAST_PROGRESSIVE	BUMMY
+_gram-name_	TENSE_PAST_SIMPLE	TENSE_PAST_SIMPLE
+_gram-path_	TENSE_PAST_SIMPLE	TENSE_PAST_SIMPLE
+_gram-helpText_	TENSE_PAST_SIMPLE	BUMMY
+_gram-name_	TENSE_PRESENT_PERFECT	TENSE_PRESENT_PERFECT
+_gram-path_	TENSE_PRESENT_PERFECT	TENSE_PRESENT_PERFECT
+_gram-helpText_	TENSE_PRESENT_PERFECT	BUMMY
+_gram-name_	TENSE_PRESENT_PERFECT_HABEN	haben-Perfekt
+_gram-path_	TENSE_PRESENT_PERFECT_HABEN	verben > zeiten > haben-perfekt
+_gram-helpText_	TENSE_PRESENT_PERFECT_HABEN	BUMMY
+_gram-name_	TENSE_PRESENT_PERFECT_PROGRESSIVE	TENSE_PRESENT_PERFECT_PROGRESSIVE
+_gram-path_	TENSE_PRESENT_PERFECT_PROGRESSIVE	TENSE_PRESENT_PERFECT_PROGRESSIVE
+_gram-helpText_	TENSE_PRESENT_PERFECT_PROGRESSIVE	BUMMY
+_gram-name_	TENSE_PRESENT_PERFECT_SEIN	sein-Perfekt
+_gram-path_	TENSE_PRESENT_PERFECT_SEIN	verben > zeiten > sein-perfekt
+_gram-helpText_	TENSE_PRESENT_PERFECT_SEIN	BUMMY
+_gram-name_	TENSE_PRESENT_PROGRESSIVE	TENSE_PRESENT_PROGRESSIVE
+_gram-path_	TENSE_PRESENT_PROGRESSIVE	TENSE_PRESENT_PROGRESSIVE
+_gram-helpText_	TENSE_PRESENT_PROGRESSIVE	BUMMY
+_gram-name_	TENSE_PRESENT_SIMPLE	TENSE_PRESENT_SIMPLE
+_gram-path_	TENSE_PRESENT_SIMPLE	TENSE_PRESENT_SIMPLE
+_gram-helpText_	TENSE_PRESENT_SIMPLE	BUMMY
+_gram-name_	THERE_IS_ARE	THERE_IS_ARE
+_gram-path_	THERE_IS_ARE	THERE_IS_ARE
+_gram-helpText_	THERE_IS_ARE	BUMMY
+_gram-name_	THERE_WAS_WERE	THERE_WAS_WERE
+_gram-path_	THERE_WAS_WERE	THERE_WAS_WERE
+_gram-helpText_	THERE_WAS_WERE	BUMMY
+_gram-name_	TIME_FUTURE	TIME_FUTURE
+_gram-path_	TIME_FUTURE	TIME_FUTURE
+_gram-helpText_	TIME_FUTURE	BUMMY
+_gram-name_	TIME_PAST	TIME_PAST
+_gram-path_	TIME_PAST	TIME_PAST
+_gram-helpText_	TIME_PAST	BUMMY
+_gram-name_	TIME_PRESENT	TIME_PRESENT
+_gram-path_	TIME_PRESENT	TIME_PRESENT
+_gram-helpText_	TIME_PRESENT	BUMMY
+_gram-name_	VERBCONST_GOING_TO	VERBCONST_GOING_TO
+_gram-path_	VERBCONST_GOING_TO	VERBCONST_GOING_TO
+_gram-helpText_	VERBCONST_GOING_TO	BUMMY
+_gram-name_	VERBCONST_USED_TO	VERBCONST_USED_TO
+_gram-path_	VERBCONST_USED_TO	VERBCONST_USED_TO
+_gram-helpText_	VERBCONST_USED_TO	BUMMY
+_gram-name_	VERBFORM_AUXILIARIES_BE_DO_HAVE	VERBFORM_AUXILIARIES_BE_DO_HAVE
+_gram-path_	VERBFORM_AUXILIARIES_BE_DO_HAVE	VERBFORM_AUXILIARIES_BE_DO_HAVE
+_gram-helpText_	VERBFORM_AUXILIARIES_BE_DO_HAVE	BUMMY
+_gram-name_	VERBFORM_COPULAR	VERBFORM_COPULAR
+_gram-path_	VERBFORM_COPULAR	VERBFORM_COPULAR
+_gram-helpText_	VERBFORM_COPULAR	BUMMY
+_gram-name_	VERBFORM_EMPATHIC_DO	VERBFORM_EMPATHIC_DO
+_gram-path_	VERBFORM_EMPATHIC_DO	VERBFORM_EMPATHIC_DO
+_gram-helpText_	VERBFORM_EMPATHIC_DO	BUMMY
+_gram-name_	VERBFORM_INFINITIVE	Infinitive
+_gram-path_	VERBFORM_INFINITIVE	verbformen > infinitive
+_gram-helpText_	VERBFORM_INFINITIVE	BUMMY
+_gram-name_	VERBFORM_ING	VERBFORM_ING
+_gram-path_	VERBFORM_ING	VERBFORM_ING
+_gram-helpText_	VERBFORM_ING	BUMMY
+_gram-name_	VERBFORM_LONG	VERBFORM_LONG
+_gram-path_	VERBFORM_LONG	VERBFORM_LONG
+_gram-helpText_	VERBFORM_LONG	BUMMY
+_gram-name_	VERBFORM_PARTICIPLE	Partizipien
+_gram-path_	VERBFORM_PARTICIPLE	verbformen > partizipien
+_gram-helpText_	VERBFORM_PARTICIPLE	BUMMY
+_gram-name_	VERBFORM_PARTICIPLE_1	VERBFORM_PARTICIPLE_1
+_gram-path_	VERBFORM_PARTICIPLE_1	VERBFORM_PARTICIPLE_1
+_gram-helpText_	VERBFORM_PARTICIPLE_1	BUMMY
+_gram-name_	VERBFORM_PARTICIPLE_2	VERBFORM_PARTICIPLE_2
+_gram-path_	VERBFORM_PARTICIPLE_2	VERBFORM_PARTICIPLE_2
+_gram-helpText_	VERBFORM_PARTICIPLE_2	BUMMY
+_gram-name_	VERBFORM_SHORT	VERBFORM_SHORT
+_gram-path_	VERBFORM_SHORT	VERBFORM_SHORT
+_gram-helpText_	VERBFORM_SHORT	BUMMY
+_gram-name_	VERBFORM_TO_INFINITIVE	zu-Infinitive
+_gram-path_	VERBFORM_TO_INFINITIVE	verbformen > zu-infinitive
+_gram-helpText_	VERBFORM_TO_INFINITIVE	BUMMY
+_gram-name_	VERBS_IRREGULAR	VERBS_IRREGULAR
+_gram-path_	VERBS_IRREGULAR	VERBS_IRREGULAR
+_gram-helpText_	VERBS_IRREGULAR	BUMMY
+_gram-name_	VERBS_PHRASAL	VERBS_PHRASAL
+_gram-path_	VERBS_PHRASAL	VERBS_PHRASAL
+_gram-helpText_	VERBS_PHRASAL	BUMMY
+_gram-name_	VERBS_REGULAR	VERBS_REGULAR
+_gram-path_	VERBS_REGULAR	VERBS_REGULAR
+_gram-helpText_	VERBS_REGULAR	BUMMY
+_gram-name_	VERBTYP_AUXILIARIES	Hilfsverben (sein, haben)
+_gram-path_	VERBTYP_AUXILIARIES	verbtypen > hilfsverben
+_gram-helpText_	VERBTYP_AUXILIARIES	BUMMY
+_gram-name_	VERBTYP_MAIN	Vollverben (gehen, sprechen, etc.)
+_gram-path_	VERBTYP_MAIN	verbtypen > vollverben
+_gram-helpText_	VERBTYP_MAIN	BUMMY
+_gram-name_	VERBTYP_MODAL	Modalverben (können, müssen, etc.)
+_gram-path_	VERBTYP_MODAL	verbtypen > modalverben
+_gram-helpText_	VERBTYP_MODAL	BUMMY
+_gram-name_	VERB_BRACKETS	Besetzte Satzklammer
+_gram-path_	VERB_BRACKETS	satzklammer > besetzte satzklammer
+_gram-helpText_	VERB_BRACKETS	BUMMY
+_gram-name_	VERB_CLUSTER	Verbcluster
+_gram-path_	VERB_CLUSTER	satzklammer > verbcluster
+_gram-helpText_	VERB_CLUSTER	BUMMY

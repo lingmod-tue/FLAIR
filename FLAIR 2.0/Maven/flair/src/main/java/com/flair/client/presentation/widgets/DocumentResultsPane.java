@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.flair.client.ClientEndPoint;
 import com.flair.client.localization.LocalizedComposite;
-import com.flair.client.localization.SimpleLocalizedTextButtonWidget;
-import com.flair.client.localization.locale.DocumentResultsPaneLocale;
+import com.flair.client.localization.LocalizedFieldType;
+import com.flair.client.localization.annotations.LocalizedField;
+import com.flair.client.localization.interfaces.LocalizationBinder;
 import com.flair.client.presentation.interfaces.AbstractDocumentResultsPane;
 import com.flair.client.presentation.interfaces.AbstractResultItem;
 import com.flair.client.presentation.interfaces.AbstractResultItem.Type;
@@ -40,11 +40,16 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 	{
 	}
 	
+	private static DocumentResultsPaneLocalizationBinder localeBinder = GWT.create(DocumentResultsPaneLocalizationBinder.class);
+	interface DocumentResultsPaneLocalizationBinder extends LocalizationBinder<DocumentResultsPane> {}
+	
+	
 	@UiField
 	MaterialPanel			pnlRootUI;
 	@UiField
 	MaterialTitle			lblTitleUI;
 	@UiField
+	@LocalizedField(type=LocalizedFieldType.BUTTON)
 	MaterialButton			btnCancelOpUI;
 	@UiField
 	MaterialRow				pnlCompletedContainerUI;
@@ -54,8 +59,6 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 	MaterialDivider			divDividerUI;
 	@UiField
 	MaterialRow				pnlSpinnerUI;
-	
-	SimpleLocalizedTextButtonWidget<MaterialButton>		btnCancelOpLC;
 	
 	State					state;
 	CancelHandler			cancelHandler;
@@ -204,18 +207,6 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 
 	}
 	
-	private void initLocale()
-	{
-		btnCancelOpLC = new SimpleLocalizedTextButtonWidget<>(btnCancelOpUI, DocumentResultsPaneLocale.DESC_btnCancelOpUI);
-		
-		registerLocale(DocumentResultsPaneLocale.INSTANCE.en);
-		registerLocale(DocumentResultsPaneLocale.INSTANCE.de);
-		
-		registerLocalizedWidget(btnCancelOpLC);
-	
-		refreshLocalization();
-	}
-	
 	private void initHandlers()
 	{
 		btnCancelOpUI.addClickHandler(e -> cancelOperation());
@@ -228,13 +219,12 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 	
 	public DocumentResultsPane()
 	{
-		super(ClientEndPoint.get().getLocalization());
 		initWidget(uiBinder.createAndBindUi(this));
+		initLocale(localeBinder.bind(this));
 		
 		state = new State();
 		cancelHandler = null;
-		
-		initLocale();
+
 		initHandlers();
 		initUI();
 	}

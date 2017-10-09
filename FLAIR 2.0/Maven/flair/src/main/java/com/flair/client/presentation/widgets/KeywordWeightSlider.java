@@ -1,8 +1,11 @@
 package com.flair.client.presentation.widgets;
 
-import com.flair.client.ClientEndPoint;
+import com.flair.client.localization.CommonLocalizationTags;
+import com.flair.client.localization.DefaultLocalizationProviders;
 import com.flair.client.localization.LocalizedComposite;
-import com.flair.client.localization.locale.KeywordWeightSliderLocale;
+import com.flair.client.localization.LocalizedFieldType;
+import com.flair.client.localization.annotations.LocalizedField;
+import com.flair.client.localization.interfaces.LocalizationBinder;
 import com.flair.client.presentation.interfaces.AbstractWeightSlider;
 import com.flair.client.presentation.interfaces.CanReset;
 import com.flair.shared.grammar.Language;
@@ -26,32 +29,31 @@ public class KeywordWeightSlider extends LocalizedComposite implements AbstractW
 	{
 	}
 	
+	private static KeywordWeightSliderLocalizationBinder localeBinder = GWT.create(KeywordWeightSliderLocalizationBinder.class);
+	interface KeywordWeightSliderLocalizationBinder extends LocalizationBinder<KeywordWeightSlider> {}
+
 	
 	public interface ClickHandler {
 		public void handle(KeywordWeightSlider source);
 	}
 			
 	@UiField
+	@LocalizedField(type=LocalizedFieldType.ALT_TEXT)
 	MaterialCheckBox		chkToggleUI;
 	@UiField
+	@LocalizedField(type=LocalizedFieldType.ALT_TEXT)
 	MaterialRange			sldWeightUI;
 	@UiField
+	@LocalizedField(type=LocalizedFieldType.TOOLTIP)
 	MaterialIcon			btnEditKeywordsUI;
 	@UiField
+	@LocalizedField(type=LocalizedFieldType.TOOLTIP)
 	MaterialIcon 			btnResetKeywordsUI;
 	
 	GenericWeightSlider		base;
 	ClickHandler			editHandler;
 	ClickHandler			resetHandler;
 	boolean					customVocab;
-	
-	private void initLocale()
-	{
-		registerLocale(KeywordWeightSliderLocale.INSTANCE.en);
-		registerLocale(KeywordWeightSliderLocale.INSTANCE.de);
-		
-		refreshLocalization();
-	}
 	
 	private void initUI()
 	{
@@ -60,8 +62,8 @@ public class KeywordWeightSlider extends LocalizedComposite implements AbstractW
 	
 	public KeywordWeightSlider()
 	{
-		super(ClientEndPoint.get().getLocalization());
 		initWidget(uiBinder.createAndBindUi(this));
+		initLocale(localeBinder.bind(this));
 		
 		base = new GenericWeightSlider(this, chkToggleUI, sldWeightUI);
 		editHandler = resetHandler = null;
@@ -77,7 +79,6 @@ public class KeywordWeightSlider extends LocalizedComposite implements AbstractW
 				resetHandler.handle(this);
 		});
 		
-		initLocale();
 		initUI();
 	}
 	
@@ -88,7 +89,7 @@ public class KeywordWeightSlider extends LocalizedComposite implements AbstractW
 	public void setCustomVocab(boolean val)
 	{
 		customVocab = val;
-		refreshLocalization();
+		refreshLocale();
 	}
 
 	public void setEditHander(ClickHandler handler) {
@@ -100,17 +101,16 @@ public class KeywordWeightSlider extends LocalizedComposite implements AbstractW
 	}
 
 	@Override
-	public void setLocalization(Language lang)
+	public void setLocale(Language lang)
 	{
-		super.setLocalization(lang);
+		super.setLocale(lang);
 		
 		// update components
-		setToggleText(getLocalizationData(lang).get(customVocab == false ? KeywordWeightSliderLocale.DESC_toggleDefault : KeywordWeightSliderLocale.DESC_toggleCustom));
-		chkToggleUI.setTitle(getLocalizationData(lang).get(KeywordWeightSliderLocale.DESC_toggleTooltip));
+		String toggleTextTag = CommonLocalizationTags.ACADEMIC_VOCAB.toString();
+		if (customVocab)
+			toggleTextTag = CommonLocalizationTags.CUSTOM_VOCAB.toString();
 		
-		btnEditKeywordsUI.setTooltip(getLocalizationData(lang).get(KeywordWeightSliderLocale.DESC_editTooltip));
-		btnResetKeywordsUI.setTooltip(getLocalizationData(lang).get(KeywordWeightSliderLocale.DESC_resetTooltip));
-		sldWeightUI.setTitle(getLocalizationData(lang).get(KeywordWeightSliderLocale.DESC_sliderTooltip));
+		setToggleText(getLocalizedString(DefaultLocalizationProviders.COMMON.toString(), toggleTextTag));
 	}
 
 	@Override

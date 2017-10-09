@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.flair.client.ClientEndPoint;
+import com.flair.client.localization.CommonLocalizationTags;
+import com.flair.client.localization.DefaultLocalizationProviders;
 import com.flair.client.localization.LocalizedComposite;
-import com.flair.client.localization.locale.GrammaticalConstructionPanelItemLocale;
 import com.flair.client.presentation.interfaces.CanReset;
 import com.flair.client.presentation.interfaces.GrammaticalConstructionContainer;
 import com.flair.shared.grammar.GrammaticalConstruction;
@@ -41,14 +41,6 @@ public class GrammaticalConstructionPanelItem extends LocalizedComposite impleme
 
 	private final List<Widget> 					children;
 	
-	private void initLocale()
-	{
-		registerLocale(GrammaticalConstructionPanelItemLocale.INSTANCE.en);
-		registerLocale(GrammaticalConstructionPanelItemLocale.INSTANCE.de);
-		
-		refreshLocalization();
-	}
-	
 	private void initHandlers()
 	{
 		reset.addClickHandler(e -> {
@@ -58,8 +50,6 @@ public class GrammaticalConstructionPanelItem extends LocalizedComposite impleme
 	
 	public GrammaticalConstructionPanelItem()
 	{
-		super(ClientEndPoint.get().getLocalization());
-		
 		text = new MaterialLink();
 		reset = new MaterialIcon(IconType.UNDO);
 		header = new MaterialCollapsibleHeader(text, reset);
@@ -78,8 +68,6 @@ public class GrammaticalConstructionPanelItem extends LocalizedComposite impleme
 		reset.setIconColor(Color.GREY);
 		
 		initWidget(item);
-		
-		initLocale();
 		initHandlers();
 	}
 	
@@ -92,12 +80,12 @@ public class GrammaticalConstructionPanelItem extends LocalizedComposite impleme
 	}
 
 	@Override
-	public void setLocalization(Language lang)
+	public void setLocale(Language lang)
 	{
-		super.setLocalization(lang);
+		super.setLocale(lang);
 		
 		// update tooltip
-		reset.setTitle(getLocalizationData(lang).get(GrammaticalConstructionPanelItemLocale.DESC_resetTooltip));
+		reset.setTitle(getLocalizedString(DefaultLocalizationProviders.COMMON.toString(), CommonLocalizationTags.RESET.toString()));
 	}
 
 	@Override

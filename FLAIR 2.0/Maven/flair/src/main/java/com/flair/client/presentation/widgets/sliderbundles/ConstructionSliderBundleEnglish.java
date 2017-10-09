@@ -1,7 +1,7 @@
 package com.flair.client.presentation.widgets.sliderbundles;
 
-import com.flair.client.localization.SimpleLocalizedTextWidget;
 import com.flair.client.localization.locale.ConstructionSliderPackageEnglishLocale;
+import com.flair.client.localization.wrappers.SimpleLocalizedTextWidget;
 import com.flair.client.presentation.widgets.GrammaticalConstructionPanelItem;
 import com.flair.client.presentation.widgets.LanguageSpecificConstructionSliderBundle;
 import com.flair.shared.grammar.Language;

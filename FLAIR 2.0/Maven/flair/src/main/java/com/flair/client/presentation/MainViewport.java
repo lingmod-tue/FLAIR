@@ -2,12 +2,13 @@ package com.flair.client.presentation;
 
 
 import com.flair.client.ClientEndPoint;
+import com.flair.client.localization.CommonLocalizationTags;
+import com.flair.client.localization.LocalizationEngine;
 import com.flair.client.localization.LocalizedComposite;
-import com.flair.client.localization.SimpleLocalizedTextWidget;
-import com.flair.client.localization.SimpleLocalizedTooltipWidget;
-import com.flair.client.localization.SimpleLocalizedWidget;
-import com.flair.client.localization.locale.LanguageLocale;
-import com.flair.client.localization.locale.MainViewportLocale;
+import com.flair.client.localization.LocalizedFieldType;
+import com.flair.client.localization.annotations.LocalizedCommonField;
+import com.flair.client.localization.annotations.LocalizedField;
+import com.flair.client.localization.interfaces.LocalizationBinder;
 import com.flair.client.presentation.interfaces.AbstractDocumentPreviewPane;
 import com.flair.client.presentation.interfaces.AbstractDocumentResultsPane;
 import com.flair.client.presentation.interfaces.AbstractRankerSettingsPane;
@@ -108,9 +109,11 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	}
 	
 	private static MainViewportUiBinder uiBinder = GWT.create(MainViewportUiBinder.class);
-
 	interface MainViewportUiBinder extends UiBinder<Widget, MainViewport> {
 	}
+	
+	private static MainViewportLocalizationBinder localeBinder = GWT.create(MainViewportLocalizationBinder.class);
+	interface MainViewportLocalizationBinder extends LocalizationBinder<MainViewport> {}
 	
 	@UiField
 	MaterialPanel								pnlRootUI;
@@ -123,26 +126,26 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	@UiField
 	MaterialNavBar								navMainUI;
 	@UiField
+	@LocalizedField(type=LocalizedFieldType.TOOLTIP)
 	MaterialButton								btnWebSearchUI;
-	SimpleLocalizedWidget<MaterialButton>		btnWebSearchLC;
 	@UiField
+	@LocalizedField(type=LocalizedFieldType.TOOLTIP)
 	MaterialAnchorButton						btnUploadUI;
-	SimpleLocalizedWidget<MaterialAnchorButton>	btnUploadLC;
 	@UiField
+	@LocalizedField(type=LocalizedFieldType.TOOLTIP)
 	MaterialLink								btnHistoryUI;
-	SimpleLocalizedWidget<MaterialLink>			btnHistoryLC;
 	@UiField
+	@LocalizedField(type=LocalizedFieldType.TOOLTIP)
 	MaterialLink								btnSwitchLangUI;
-	SimpleLocalizedWidget<MaterialLink>			btnSwitchLangLC;
 	@UiField
+	@LocalizedField(type=LocalizedFieldType.TOOLTIP)
 	MaterialNavBrand							btnAboutUI;
-	SimpleLocalizedWidget<MaterialNavBrand>		btnAboutLC;
 	@UiField
+	@LocalizedCommonField(tag=CommonLocalizationTags.LANGUAGE_ENGLISH, type=LocalizedFieldType.BUTTON)
 	MaterialLink								btnLangEnUI;
-	SimpleLocalizedWidget<MaterialLink>			btnLangEnLC;
 	@UiField
+	@LocalizedCommonField(tag=CommonLocalizationTags.LANGUAGE_GERMAN, type=LocalizedFieldType.BUTTON)
 	MaterialLink								btnLangDeUI;
-	SimpleLocalizedWidget<MaterialLink>			btnLangDeLC;
 	@UiField
 	MaterialModal								mdlAboutEnUI;
 	@UiField
@@ -157,7 +160,6 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	MaterialLink								tglSettingsPaneUI;
 	@UiField
 	MaterialIconMorph							icoSettingsMorphUI;
-	SimpleLocalizedTooltipWidget<MaterialIconMorph>	icoSettingsMorphLC;
 	@UiField
 	RankerSettingsPane							pnlConstructionsSettingsUI;
 	@UiField
@@ -175,43 +177,43 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	@UiField
 	DocumentCollectionVisualizer				mdlVisualizerUI;
 	@UiField
-	MaterialRow										pnlDefaultPlaceholderUI;
+	MaterialRow									pnlDefaultPlaceholderUI;
 	@UiField
-	MaterialCardTitle								lblDefaultSearchTitleUI;
-	SimpleLocalizedTextWidget<MaterialCardTitle>	lblDefaultSearchTitleLC;
+	@LocalizedCommonField(tag=CommonLocalizationTags.SEARCH)
+	MaterialCardTitle							lblDefaultSearchTitleUI;
 	@UiField
-	MaterialLabel									lblDefaultSearchCaptionUI;
-	SimpleLocalizedTextWidget<MaterialLabel>		lblDefaultSearchCaptionLC;
+	@LocalizedField
+	MaterialLabel								lblDefaultSearchCaptionUI;
 	@UiField
-	MaterialCardTitle								lblDefaultConfigTitleUI;
-	SimpleLocalizedTextWidget<MaterialCardTitle>	lblDefaultConfigTitleLC;
+	@LocalizedField
+	MaterialCardTitle							lblDefaultConfigTitleUI;
 	@UiField
-	MaterialLabel									lblDefaultConfigCaptionUI;
-	SimpleLocalizedTextWidget<MaterialLabel>		lblDefaultConfigCaptionLC;
+	@LocalizedField
+	MaterialLabel								lblDefaultConfigCaptionUI;
 	@UiField
-	MaterialCardTitle								lblDefaultUploadTitleUI;
-	SimpleLocalizedTextWidget<MaterialCardTitle>	lblDefaultUploadTitleLC;
+	@LocalizedCommonField(tag=CommonLocalizationTags.UPLOAD)
+	MaterialCardTitle							lblDefaultUploadTitleUI;
 	@UiField
-	MaterialLabel									lblDefaultUploadCaptionUI;
-	SimpleLocalizedTextWidget<MaterialLabel>		lblDefaultUploadCaptionLC;
+	@LocalizedField
+	MaterialLabel								lblDefaultUploadCaptionUI;
 	@UiField
-	MaterialOverlay									mdlOverlayUI;
+	MaterialOverlay								mdlOverlayUI;
 	@UiField
-	SettingsExporter								mdlExporterUI;
+	SettingsExporter							mdlExporterUI;
 	@UiField
-	DocumentComparer								mdlComparerUI;
+	DocumentComparer							mdlComparerUI;
 	@UiField
-	HistoryViewer									mdlHistoryUI;
-	ToastNotifications								notificationService;
-	BasicOverlay									overlayService;
+	HistoryViewer								mdlHistoryUI;
+	ToastNotifications							notificationService;
+	BasicOverlay								overlayService;
 	
 	private void invokeAtomicOperation(Runnable handler)
 	{
 		if (ClientEndPoint.get().getWebRanker().isOperationInProgress())
 		{
 			// prompt the user if they want to cancel the currently running operation
-			String title = getLocalizedString(MainViewportLocale.DESC_OpInProgessTitle);
-			String caption = getLocalizedString(MainViewportLocale.DESC_OpInProgessCaption);
+			String title = getLocalizedString(CommonLocalizationTags.OPERATION_INPROGRESS_CONFIRM_TITLE.toString());
+			String caption = getLocalizedString(CommonLocalizationTags.OPERATION_INPROGRESS_CONFIRM_CAPTION.toString());
 
 			mdlPromptUI.yesNo(title, caption, () -> {
 				ClientEndPoint.get().getWebRanker().cancelCurrentOperation();
@@ -258,51 +260,7 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	}
 	
 	private void switchLanguage(Language lang) {
-		localeCore.setLanguage(lang);
-	}
-	
-	private void initLocale()
-	{
-		btnAboutLC = new SimpleLocalizedTooltipWidget<>(btnAboutUI, MainViewportLocale.DESC_btnAboutUI);
-		btnWebSearchLC = new SimpleLocalizedTooltipWidget<>(btnWebSearchUI, MainViewportLocale.DESC_btnWebSearchUI);
-		btnUploadLC = new SimpleLocalizedTooltipWidget<>(btnUploadUI, MainViewportLocale.DESC_btnUploadUI);
-		btnHistoryLC = new SimpleLocalizedTooltipWidget<>(btnHistoryUI, MainViewportLocale.DESC_btnHistoryUI);
-		btnSwitchLangLC = new SimpleLocalizedTooltipWidget<>(btnSwitchLangUI, MainViewportLocale.DESC_btnSwitchLangUI);
-		btnLangEnLC = new SimpleLocalizedWidget<>(btnLangEnUI, "", (w, s, d) -> {
-			w.setText(LanguageLocale.get().getLocalizedName(Language.ENGLISH, d.getLanguage()));
-		});
-		btnLangDeLC = new SimpleLocalizedWidget<>(btnLangDeUI, "", (w, s, d) -> {
-			w.setText(LanguageLocale.get().getLocalizedName(Language.GERMAN, d.getLanguage()));
-		});
-		icoSettingsMorphLC = new SimpleLocalizedTooltipWidget<>(icoSettingsMorphUI, MainViewportLocale.DESC_icoSettingsMorphUI);
-		
-		lblDefaultSearchTitleLC = new SimpleLocalizedTextWidget<>(lblDefaultSearchTitleUI, MainViewportLocale.DESC_defSearchTitle);
-		lblDefaultSearchCaptionLC = new SimpleLocalizedTextWidget<>(lblDefaultSearchCaptionUI, MainViewportLocale.DESC_defSearchCaption);
-		lblDefaultConfigTitleLC = new SimpleLocalizedTextWidget<>(lblDefaultConfigTitleUI, MainViewportLocale.DESC_defConfigTitle);
-		lblDefaultConfigCaptionLC = new SimpleLocalizedTextWidget<>(lblDefaultConfigCaptionUI, MainViewportLocale.DESC_defConfigCaption);
-		lblDefaultUploadTitleLC = new SimpleLocalizedTextWidget<>(lblDefaultUploadTitleUI, MainViewportLocale.DESC_defUploadTitle);
-		lblDefaultUploadCaptionLC = new SimpleLocalizedTextWidget<>(lblDefaultUploadCaptionUI, MainViewportLocale.DESC_defUploadCaption);
-		
-		registerLocale(MainViewportLocale.INSTANCE.en);
-		registerLocale(MainViewportLocale.INSTANCE.de);
-		
-		registerLocalizedWidget(btnAboutLC);
-		registerLocalizedWidget(btnWebSearchLC);
-		registerLocalizedWidget(btnUploadLC);
-		registerLocalizedWidget(btnHistoryLC);
-		registerLocalizedWidget(btnSwitchLangLC);
-		registerLocalizedWidget(btnLangEnLC);
-		registerLocalizedWidget(btnLangDeLC);
-//		registerLocalizedWidget(icoSettingsMorphLC);
-		
-		registerLocalizedWidget(lblDefaultSearchTitleLC);
-		registerLocalizedWidget(lblDefaultSearchCaptionLC);
-		registerLocalizedWidget(lblDefaultConfigTitleLC);
-		registerLocalizedWidget(lblDefaultConfigCaptionLC);
-		registerLocalizedWidget(lblDefaultUploadTitleLC);
-		registerLocalizedWidget(lblDefaultUploadCaptionLC);
-		
-		refreshLocalization();
+		LocalizationEngine.get().setLanguage(lang);
 	}
 	
 	private void initHandlers()
@@ -320,7 +278,7 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		});
 		
 		btnAboutUI.addClickHandler(e -> {
-			switch (localeCore.getLanguage())
+			switch (LocalizationEngine.get().getLanguage())
 			{
 			case ENGLISH:
 				mdlAboutEnUI.open();
@@ -385,13 +343,12 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	@UiConstructor
 	public MainViewport()
 	{
-		super(ClientEndPoint.get().getLocalization());
 		initWidget(uiBinder.createAndBindUi(this));
+		initLocale(localeBinder.bind(this));
 		
 		notificationService = new ToastNotifications();
 		overlayService = new BasicOverlay(mdlOverlayUI);
 		
-		initLocale();
 		initHandlers();
 		initUI();
 	}
@@ -523,14 +480,12 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	public DocumentCompareService getDocumentCompareService() {
 		return mdlComparerUI;
 	}
-
 	
 	@Override
 	public HistoryViewerService getHistoryViewerService() {
 		return mdlHistoryUI;
 	}
 
-	
 	@Override
 	public WebSearchService getWebSearchService() {
 		return mdlWebSearchUI;

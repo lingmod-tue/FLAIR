@@ -8,12 +8,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.flair.client.localization.LocalizationEngine;
+import com.flair.client.localization.CommonLocalizationTags;
+import com.flair.client.localization.DefaultLocalizationProviders;
+import com.flair.client.localization.GrammaticalConstructionLocalizationProvider;
 import com.flair.client.localization.LocalizedComposite;
-import com.flair.client.localization.SimpleLocalizedTextButtonWidget;
-import com.flair.client.localization.SimpleLocalizedTextWidget;
-import com.flair.client.localization.locale.DocumentCollectionVisualizerLocale;
-import com.flair.client.localization.locale.GrammaticalConstructionLocale;
+import com.flair.client.localization.LocalizedFieldType;
+import com.flair.client.localization.annotations.LocalizedCommonField;
+import com.flair.client.localization.annotations.LocalizedField;
+import com.flair.client.localization.interfaces.LocalizationBinder;
 import com.flair.client.presentation.interfaces.VisualizerService;
 import com.flair.client.presentation.widgets.sliderbundles.ConstructionSliderBundleEnglish;
 import com.flair.client.presentation.widgets.sliderbundles.ConstructionSliderBundleGerman;
@@ -140,15 +142,15 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 			switch (dim)
 			{
 			case COMPLEXITY:
-				return getLocalizedString(DocumentCollectionVisualizerLocale.DESC_axisComplexity);
+				return getLocalizedString(LocalizationTags.chkAxisComplexityUI.toString());
 			case NUM_SENTENCES:
-				return getLocalizedString(DocumentCollectionVisualizerLocale.DESC_axisSentences);
+				return getLocalizedString(LocalizationTags.chkAxisSentencesUI.toString());
 			case NUM_WORDS:
-				return getLocalizedString(DocumentCollectionVisualizerLocale.DESC_axisWords);
+				return getLocalizedString(LocalizationTags.chkAxisWordsUI.toString());
 			case RESULT:
-				return getLocalizedString(DocumentCollectionVisualizerLocale.DESC_axisResult);
+				return getLocalizedString(DefaultLocalizationProviders.COMMON.toString(), CommonLocalizationTags.RESULT.toString());
 			case KEYWORDS:
-				return getLocalizedString(DocumentCollectionVisualizerLocale.DESC_axisKeywords);
+				return getLocalizedString(LocalizationTags.chkAxisKeywordsUI.toString());
 			default:
 				return "";
 			}
@@ -439,7 +441,7 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 					 if (gram != null)
 					 {
 						 // get the localized string and format it a bit
-						 String name = GrammaticalConstructionLocale.get().getLocalizedName(gram, localeCore.getLanguage());
+						 String name = GrammaticalConstructionLocalizationProvider.getName(gram, getCurrentLocale());
 						 int delimiter = name.indexOf("(");
 						 if (delimiter == -1)
 							 return name;
@@ -534,7 +536,7 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 				n.setEnabled(false, false);
 				n.setSliderVisible(false);
 				n.setResultCountVisible(false);
-				n.refreshLocalization();
+				n.refreshLocale();
 				n.setWeight(o.getWeight(), false);
 				
 				// toggle axis if the slider is weighted
@@ -622,10 +624,10 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 			List<RankableDocument> filtered = getFilteredDocs();
 			
 			if (filtered.isEmpty())
-				MaterialToast.fireToast(getLocalizedString(DocumentCollectionVisualizerLocale.DESC_NoFilteredDocs));
+				MaterialToast.fireToast(getLocalizedString(LocalizationTags.NO_FILTERED_DOCS.toString()));
 			else
 			{
-				String msg = getLocalizedString(DocumentCollectionVisualizerLocale.DESC_HasFilteredDocs	) + ": " + filtered.size();
+				String msg = getLocalizedString(LocalizationTags.DOCS_FILTERED.toString()) + ": " + filtered.size();
 				MaterialToast.fireToast(msg);
 			}
 			
@@ -656,23 +658,43 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 	{
 	}
 
+	private static DocumentCollectionVisualizerLocalizationBinder localeBinder = GWT.create(DocumentCollectionVisualizerLocalizationBinder.class);
+	interface DocumentCollectionVisualizerLocalizationBinder extends LocalizationBinder<DocumentCollectionVisualizer> {}
+	
+	static enum LocalizationTags
+	{
+		mdlVisualizerUI,
+		chkAxisWordsUI,
+		chkAxisSentencesUI,
+		chkAxisComplexityUI,
+		chkAxisKeywordsUI,
+		NO_FILTERED_DOCS,
+		DOCS_FILTERED,
+	}
+	
 	@UiField
 	MaterialWindow				mdlVisualizerUI;
 	@UiField
 	MaterialSplitPanel			pnlSplitContainer;
 	@UiField
+	@LocalizedField(type=LocalizedFieldType.TITLE)
 	MaterialLabel				lblTitleUI;
 	@UiField
 	FlowPanel					pnlSVGContainerUI;
 	@UiField
+	@LocalizedCommonField(tag=CommonLocalizationTags.RESET, type=LocalizedFieldType.BUTTON)
 	MaterialButton				btnResetUI;
 	@UiField
+	@LocalizedField
 	MaterialCheckBox			chkAxisWordsUI;
 	@UiField
+	@LocalizedField
 	MaterialCheckBox			chkAxisSentencesUI;
 	@UiField
+	@LocalizedField
 	MaterialCheckBox			chkAxisComplexityUI;
 	@UiField
+	@LocalizedField
 	MaterialCheckBox			chkAxisKeywordsUI;
 	@UiField
 	MaterialRow					pnlToggleContainerUI;
@@ -681,39 +703,10 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 	@UiField
 	ConstructionSliderBundleGerman		bdlGermanSlidersUI;
 	@UiField
+	@LocalizedCommonField(tag=CommonLocalizationTags.FILTER, type=LocalizedFieldType.BUTTON)
 	MaterialButton				btnApplyUI;
-	
-	SimpleLocalizedTextWidget<MaterialLabel>			lblTitleLC;
-	SimpleLocalizedTextButtonWidget<MaterialButton>		btnResetLC;
-	SimpleLocalizedTextWidget<MaterialCheckBox>			chkAxisWordsLC;
-	SimpleLocalizedTextWidget<MaterialCheckBox>			chkAxisSentencesLC;
-	SimpleLocalizedTextWidget<MaterialCheckBox>			chkAxisComplexityLC;
-	SimpleLocalizedTextWidget<MaterialCheckBox>			chkAxisKeywordsLC;
-	SimpleLocalizedTextButtonWidget<MaterialButton>		btnApplyLC;
-	
-	State	state;
-	
-	private void initLocale()
-	{
-		lblTitleLC = new SimpleLocalizedTextWidget<>(lblTitleUI, DocumentCollectionVisualizerLocale.DESC_lblTitleCaptionUI);
-		btnResetLC = new SimpleLocalizedTextButtonWidget<>(btnResetUI, DocumentCollectionVisualizerLocale.DESC_btnResetUI);
-		chkAxisWordsLC = new SimpleLocalizedTextWidget<>(chkAxisWordsUI, DocumentCollectionVisualizerLocale.DESC_chkAxisWordsUI);
-		chkAxisSentencesLC = new SimpleLocalizedTextWidget<>(chkAxisSentencesUI, DocumentCollectionVisualizerLocale.DESC_chkAxisSentencesUI);
-		chkAxisComplexityLC = new SimpleLocalizedTextWidget<>(chkAxisComplexityUI, DocumentCollectionVisualizerLocale.DESC_chkAxisComplexityUI);
-		chkAxisKeywordsLC = new SimpleLocalizedTextWidget<>(chkAxisKeywordsUI, DocumentCollectionVisualizerLocale.DESC_chkAxisKeywordsUI);
-		btnApplyLC = new SimpleLocalizedTextButtonWidget<>(btnApplyUI, DocumentCollectionVisualizerLocale.DESC_btnApplyUI);
-
-		registerLocale(DocumentCollectionVisualizerLocale.INSTANCE.en);
-		registerLocale(DocumentCollectionVisualizerLocale.INSTANCE.de);
 		
-		registerLocalizedWidget(lblTitleLC);
-		registerLocalizedWidget(btnResetLC);
-		registerLocalizedWidget(chkAxisWordsLC);
-		registerLocalizedWidget(chkAxisSentencesLC);
-		registerLocalizedWidget(chkAxisComplexityLC);
-		registerLocalizedWidget(chkAxisKeywordsLC);
-		registerLocalizedWidget(btnApplyLC);
-	}
+	State	state;
 	
 	private void initHandlers()
 	{
@@ -758,24 +751,23 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 	
 	public DocumentCollectionVisualizer()
 	{
-		super(LocalizationEngine.get());
 		initWidget(uiBinder.createAndBindUi(this));
+		initLocale(localeBinder.bind(this));
 		
 		state = new State();
-		
-		initLocale();
+
 		initHandlers();
 		initUI();
 	}
 	
 	@Override
-	public void setLocalization(Language lang)
+	public void setLocale(Language lang)
 	{
-		super.setLocalization(lang);
+		super.setLocale(lang);
 		
-		mdlVisualizerUI.setTitle(getLocalizedString(DocumentCollectionVisualizerLocale.DESC_lblTitleUI));
+		mdlVisualizerUI.setTitle(getLocalizedString(LocalizationTags.mdlVisualizerUI.toString()));
 	}
-
+	
 	@Override
 	public void show()
 	{

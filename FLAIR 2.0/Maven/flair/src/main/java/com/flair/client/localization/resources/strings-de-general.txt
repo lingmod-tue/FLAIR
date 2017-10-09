@@ -1,0 +1,178 @@
+_common-strings_	INVALID	<NO LOCALIZED STRING>
+_common-strings_	YES	Ja
+_common-strings_	NO	Nein
+_common-strings_	OK	OK
+_common-strings_	APPLY	Übernehmen
+_common-strings_	CANCEL	Abbrechen
+_common-strings_	CLOSE	Schliessen
+_common-strings_	FINISH	Fertig
+_common-strings_	RESET	Zurücksetzen
+_common-strings_	RESET_ALL	Alle Zurücksetzen
+_common-strings_	NEXT	Weiter
+_common-strings_	SEARCH	Suchen
+_common-strings_	UPLOAD	Hochladen
+_common-strings_	COMPARE	Vergleichen
+_common-strings_	FILTER	Filtern
+_common-strings_	OPERATION_INPROGRESS_CONFIRM_TITLE	Bestätigung
+_common-strings_	OPERATION_INPROGRESS_CONFIRM_CAPTION	Ein vorheriger Vorgang läuft noch. Möchten Sie wirklich fortsetzen? Der andere Vorgang wird storniert.
+_common-strings_	WAIT_TILL_COMPLETION	Bitte warten Sie, bis die bereits angefangene Analyse abschliesst
+_common-strings_	RESULT	Ergebniss
+_common-strings_	RESULTS	Ergebnisse
+_common-strings_	LANGUAGE_ENGLISH	Englisch
+_common-strings_	LANGUAGE_GERMAN	Deutsch
+_common-strings_	ACADEMIC_VOCAB	Akademisches Vokabular
+_common-strings_	KEYWORDS	Schlüsselwörter
+_common-strings_	CUSTOM_VOCAB	Benutzerdefiniertes Vokabular
+
+MainViewport	btnWebSearchUI	Internetsuche
+MainViewport	btnAboutUI	Über FLAIR
+MainViewport	btnHistoryUI	Neuanalysen
+MainViewport	btnSwitchLangUI	Anzeigesprache wechseln
+MainViewport	btnUploadUI	Text hochladen
+MainViewport	lblDefaultSearchCaptionUI	Klicken Sie auf das Suchsymbol unten und geben Sie eine Suchanfrage ein. FLAIR wird die obersten Ergebnisse von der Bing Suchmaschine abrufen.
+MainViewport	lblDefaultConfigTitleUI	Konfigurieren
+MainViewport	lblDefaultConfigCaptionUI	Konfgurieren Sie die Einstellungen: Text (Länge, Schwierigkeitsgrad) und Grammatik (Passiv, W-Fragen, akademisches Vokabular, ...). Sie können die Einstellungen auch exportieren, um sie auf spätere Suchen anzuwenden. FLAIR bewertet die Suchergebnisse entsprechend Ihrer Einstellungen neu. Klicken Sie auf den Link, um die Seite in einem neuen Tab zu öffnen, oder lesen Sie den extrahierten, erweiterten Text im Textfeld auf der rechten Seite.
+MainViewport	lblDefaultUploadCaptionUI	Laden Sie Ihre Dateien hoch. FLAIR wird sie analysieren und Ihren Einstellungen entsprechend bewerten.
+
+CorpusFileUploader	lblUploadTextUI	Hier können Sie Dateien ziehen und ablegen
+CorpusFileUploader	stpLangUI	Textsprache Wählen
+CorpusFileUploader	UPLOAD_INPROGRESS	Bitte warten Sie, bis der Hochladensvorgang abschliesst
+CorpusFileUploader	UPLOAD_FAILED	Diese Datei konnte nicht hochgeladen werden
+CorpusFileUploader	MAX_FILE_LIMIT	Sie dürfen nicht so viele Dateien auf einmal hochladen
+
+CustomKeywordsEditor	lblTitleUI	Benutzerdefiniertes Vokabular bearbeiten
+CustomKeywordsEditor	txtKeywordsUI	Wörter können durch Kommas oder Zeilenumbrüche getrennt sein.
+CustomKeywordsEditor	KEYWORDS_APPLIED	Das neue Vokabular wird beim nächsten Suchvorgang angewendet
+CustomKeywordsEditor	NO_KEYWORDS	Die Wörterliste ist leer
+
+DocumentCollectionVisualizer	mdlVisualizerUI	Interaktive Visualisierung
+DocumentCollectionVisualizer	lblTitleUI	Bereiche auswählen durch Hoch- und Runterziehen des Zeigers. Reihenfolge der Achsen umtauschen durch Rechts- und Linksbewegen der Achsen. Achsen hinzufügen oder entfernen durch An- und Abwählen der Kontrollkästchen unten.
+DocumentCollectionVisualizer	chkAxisWordsUI	# von Wörtern
+DocumentCollectionVisualizer	chkAxisSentencesUI	# von Sätzen
+DocumentCollectionVisualizer	chkAxisComplexityUI	Komplexität
+DocumentCollectionVisualizer	chkAxisKeywordsUI	Schlüsselwörter
+DocumentCollectionVisualizer	NO_FILTERED_DOCS	Keine Ergebnisse wurden gefiltert.
+DocumentCollectionVisualizer	DOCS_FILTERED	Gefilterte Ergebnisse
+
+DocumentComparer	lblTitleUI	Ergebnisse Vergleich
+DocumentComparer	btnClearSelectionUI	Zwischenablage leeren
+DocumentComparer	lblPlaceholderUI	Die Zwischenablage ist leer
+
+DocumentLengthConfigPane	lblTextLengthUI	Länge:
+DocumentLengthConfigPane	chkShorterTextsUI	Kurzere Texte bevorzugen
+
+DocumentPreviewPane	icoHelpTextUI	Hervorhebungen können sich überlappen - Bewegen Sie die Maus über eine Hervorhebung, um einen Tooltip mit den Namen aller eingebetteten Konstruktionen zu sehen
+DocumentPreviewPane	btnShowAllConstUI	Alle Konstruktionen
+DocumentPreviewPane	NUM_WORDS	Wörter
+DocumentPreviewPane	NUM_SENTENCES	Sätze
+DocumentPreviewPane	COLUMN_CONSTRUCTION	Konstruktion
+DocumentPreviewPane	COLUMN_WEIGHT	Gewichtung
+DocumentPreviewPane	COLUMN_HITS	Anzahl
+DocumentPreviewPane	COLUMN_RELFREQ	Relative Häufigkeit in %
+
+DocumentResultDisplayItem	ORIGINAL_RANK	Origineller Rang
+
+DocumentResultsPane	btnCancelOpUI	Analyse stornieren
+
+RankerSettingsPane	btnVisualizeUI	Visualisieren
+RankerSettingsPane	btnExportSettingsUI	Sucheinstellungen Exportieren
+RankerSettingsPane	lblTextCharacteristicsUI	Eigenschaften der Texte:
+RankerSettingsPane	lblTextLevelUI	Schwierigkeitsgrad:
+RankerSettingsPane	lblConstructionsUI	Konstructionen:
+RankerSettingsPane	lblLanguageUseUI	Sprachverwendung:
+RankerSettingsPane	FILTERED	Gefiltert
+
+GrammaticalConstructionWeightSlider	chkToggleUI	Abwählen, um Texte mit dieser Konstruktion auszuschließen
+GrammaticalConstructionWeightSlider	sldWeightUI	Nach rechts bewegen, um Texte mit dieser Konstruktion höher zu bewerten
+
+HistoryViewer	lblTitleUI	Analysenchronik
+HistoryViewer	lblPlaceholderUI	Keine Analysen bisher
+HistoryViewer	NUM_ANALYSES	Analysen
+
+KeywordWeightSlider	chkToggleUI	Auswählen, um Schlüsselwörter hervorzuheben
+KeywordWeightSlider	sldWeightUI	Nach rechts bewegen, um Texte mit dieser Konstruktion höher zu bewerten
+KeywordWeightSlider	btnEditKeywordsUI	Vokabular bearbeiten
+KeywordWeightSlider	btnResetKeywordsUI	Standardliste für benutzerdefiniertes Vokabular verwenden
+
+
+
+
+ConstructionSliderBundleEnglish	voice	Passiv
+ConstructionSliderBundleEnglish	verb forms	Verbtypen
+ConstructionSliderBundleEnglish	negation	Negation
+ConstructionSliderBundleEnglish	sentences	Sätze
+ConstructionSliderBundleEnglish	conjunctions	Konjugationen
+ConstructionSliderBundleEnglish	parts of speech	Wortarten
+ConstructionSliderBundleEnglish	questions	Fragen
+ConstructionSliderBundleEnglish	prepositions	Präpositionen
+ConstructionSliderBundleEnglish	adjectives	Adjektive
+ConstructionSliderBundleEnglish	tenses	Tempora
+ConstructionSliderBundleEnglish	phrasal	Phrasal
+ConstructionSliderBundleEnglish	clause types	Nebensatztypen
+ConstructionSliderBundleEnglish	sentence types	Satztypen
+ConstructionSliderBundleEnglish	aspect	Aspekt
+ConstructionSliderBundleEnglish	verbs	Verben
+ConstructionSliderBundleEnglish	pronouns	Pronomen
+ConstructionSliderBundleEnglish	time	Zeiten
+ConstructionSliderBundleEnglish	nouns	Nomen
+ConstructionSliderBundleEnglish	quantifiers	Quantifizierer
+ConstructionSliderBundleEnglish	imperative	Imperativ
+ConstructionSliderBundleEnglish	articles	Artikel
+ConstructionSliderBundleEnglish	modal	Modal
+ConstructionSliderBundleEnglish	transitive	Transitiv
+ConstructionSliderBundleEnglish	adverbs	Adverben
+ConstructionSliderBundleGerman	Saetze	Sätze
+ConstructionSliderBundleGerman	Satzklammer	Satzklammer
+ConstructionSliderBundleGerman	Negation	Negation
+ConstructionSliderBundleGerman	Verbtypen	Verbtypen
+ConstructionSliderBundleGerman	IndefiniteQuantifizierer	Indefinite Quantifizierer
+ConstructionSliderBundleGerman	Attribute	Attribute
+ConstructionSliderBundleGerman	AdjAdvZW	Adjektive, Adverben und Zahlworte
+ConstructionSliderBundleGerman	Nomen	Nomen
+ConstructionSliderBundleGerman	Zeiten	Zeiten
+ConstructionSliderBundleGerman	Verben	Verben
+ConstructionSliderBundleGerman	Passiv	Passiv
+ConstructionSliderBundleGerman	Nebensatztypen	Nebensatztypen
+ConstructionSliderBundleGerman	Nominalisierungen	Nominalisierungen
+ConstructionSliderBundleGerman	Verbformen	Verbformen
+ConstructionSliderBundleGerman	Pronomen	Pronomen
+ConstructionSliderBundleGerman	Wortarten	Wortarten
+ConstructionSliderBundleGerman	Praepositionen	Präpositionen
+ConstructionSliderBundleGerman	Fragen	Fragen
+ConstructionSliderBundleGerman	Artikel	Artikel
+ConstructionSliderBundleGerman	Satztypen	Satztypen
+
+
+
+
+
+
+
+
+
+SettingsExporter	lblCaptionUI	Sie können diesen Link benutzen, um Ihre derzeigen Einstellungen auf zukünftige Suchen anzuwenden.
+SettingsExporter	lblTitleUI	Einstellungen Exportieren
+WebRankerCore	AnalysisComplete	Analyse abgeschlossen.
+WebRankerCore	AddToCompareSel	Zum Vergleichen ausgewählt
+WebRankerCore	KeywordTitle	Schlüsselwort
+WebRankerCore	CustomCorpusTitle	Hochgeladene Dateien
+WebRankerCore	AppliedImportedSettings	Benutzerdefinierte Einstellungen wurden übernommen
+WebRankerCore	ServerError	Schade! Wir sind auf einen schweren Fehler gestoßen. Bitte versuchen Sie es später.
+WebRankerCore	OpTimeout	Der Vorgang wurde storniert, weil er zu lange gedauert hat
+WebRankerCore	NoResultsForFilter	Keine Ergebnisse für die aktuellen Sucheinstellungen
+WebRankerCore	NoSearchResults	Keine Ergebnisse für den Suchbegriff.
+WebRankerCore	ImportedSettings	FLAIR wird Ihre benutzerdefinierten Einstellungen automatisch übernehmen
+WebRankerCore	SearchCooldown	Bitte warten Sie wenigere Minuten, bevor Sie eine neue Websuche tätigen
+WebRankerCore	NoParsedDocs	Wir konnten keine der Webseiten/Dateien verarbeiten.
+WebRankerCore	MissingDoc	Einige Webseiten/Dateien konnten nicht analysiert werden.
+WebRankerCore	MissingSearchResult	Einige Webseiten konnten aufgrund von Konnektivitätsproblemen nicht analysiert werden.
+WebRankerCore	WaitTillCompletion	Bitte warten Sie, bis die bereits angefangene Analyse abschliesst
+WebRankerCore	CompareResultsTitle	Vergleichen
+WebSearchModal	selResultCountItm50UI	50 Ergebnisse
+WebSearchModal	selResultCountItm40UI	40 Ergebnisse
+WebSearchModal	txtSearchBoxUI	Suchbegriff eingeben
+WebSearchModal	btnCancelUI	Abbrechen
+WebSearchModal	btnSearchUI	Suchen
+WebSearchModal	selResultCountItm10UI	10 Ergebnisse
+WebSearchModal	selResultCountItm20UI	20 Ergebnisse
+WebSearchModal	selResultCountItm30UI	30 Ergebnisse

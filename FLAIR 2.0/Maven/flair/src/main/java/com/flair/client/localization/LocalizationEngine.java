@@ -3,13 +3,12 @@ package com.flair.client.localization;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.flair.client.ClientEndPoint;
 import com.flair.client.localization.interfaces.LocalizedUI;
 import com.flair.shared.grammar.Language;
 import com.flair.shared.utilities.GenericEventSource;
 
 /*
- * Manages localization state
+ * Manages the locale state of active views
  */
 public class LocalizationEngine
 {
@@ -18,11 +17,16 @@ public class LocalizationEngine
 		public Language newLang;
 	}
 	
+	private static final LocalizationEngine	INSTANCE = new LocalizationEngine();
+	public static LocalizationEngine get() {
+		return INSTANCE;
+	}
+	
 	private Language									currentLang;
 	private final Set<LocalizedUI>						activeLocalizedViews;
 	private final GenericEventSource<LanguageChanged>	langChangeListeners;
 	
-	public LocalizationEngine()
+	private LocalizationEngine()
 	{
 		this.currentLang = Language.ENGLISH;
 		this.activeLocalizedViews = new HashSet<>();
@@ -32,7 +36,7 @@ public class LocalizationEngine
 	private void refreshActiveViews()
 	{
 		for (LocalizedUI itr : activeLocalizedViews)
-			itr.setLocalization(currentLang);
+			itr.setLocale(currentLang);
 	}
 	
 	private void notifyLanguageChange()
@@ -68,7 +72,7 @@ public class LocalizationEngine
 		langChangeListeners.addHandler(handler);
 	}
 	
-	public static LocalizationEngine get() {
-		return ClientEndPoint.get().getLocalization();
+	public String getLocalizedString(String provider, String tag) {
+		return LocalizationStringTable.get().getLocalizedString(provider, tag, currentLang);
 	}
 }

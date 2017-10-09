@@ -3,12 +3,14 @@ package com.flair.client.presentation.widgets;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.flair.client.ClientEndPoint;
+import com.flair.client.localization.CommonLocalizationTags;
 import com.flair.client.localization.LocalizedComposite;
-import com.flair.client.localization.SimpleLocalizedTextButtonWidget;
-import com.flair.client.localization.SimpleLocalizedWidget;
-import com.flair.client.localization.locale.CustomKeywordsEditorLocale;
+import com.flair.client.localization.LocalizedFieldType;
+import com.flair.client.localization.annotations.LocalizedCommonField;
+import com.flair.client.localization.annotations.LocalizedField;
+import com.flair.client.localization.interfaces.LocalizationBinder;
 import com.flair.client.presentation.interfaces.CustomKeywordService;
+import com.flair.shared.grammar.Language;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -22,28 +24,35 @@ import gwt.material.design.client.ui.MaterialToast;
 
 public class CustomKeywordsEditor extends LocalizedComposite implements CustomKeywordService
 {
-
 	private static CustomKeywordsEditorUiBinder uiBinder = GWT.create(CustomKeywordsEditorUiBinder.class);
 
 	interface CustomKeywordsEditorUiBinder extends UiBinder<Widget, CustomKeywordsEditor>
 	{
 	}
 
+	private static CustomKeywordsEditorLocalizationBinder localeBinder = GWT.create(CustomKeywordsEditorLocalizationBinder.class);
+	interface CustomKeywordsEditorLocalizationBinder extends LocalizationBinder<CustomKeywordsEditor> {}
+	
+	static enum LocalizationTags
+	{
+		txtKeywordsUI,
+		KEYWORDS_APPLIED,
+		NO_KEYWORDS
+	}
+	
 	@UiField
 	MaterialModal			mdlKeywordEditorUI;
 	@UiField
+	@LocalizedField(type=LocalizedFieldType.TITLE)
 	MaterialTitle			lblTitleUI;
 	@UiField
 	MaterialTextArea		txtKeywordsUI;
 	@UiField
+	@LocalizedCommonField(tag=CommonLocalizationTags.APPLY, type=LocalizedFieldType.BUTTON)
 	MaterialButton			btnApplyUI;
 	@UiField
+	@LocalizedCommonField(tag=CommonLocalizationTags.CANCEL, type=LocalizedFieldType.BUTTON)
 	MaterialButton			btnCancelUI;
-
-	SimpleLocalizedWidget<MaterialTitle>				lblTitleLC;
-	SimpleLocalizedWidget<MaterialTextArea>				txtKeywordsLC;
-	SimpleLocalizedTextButtonWidget<MaterialButton>		btnApplyLC;
-	SimpleLocalizedTextButtonWidget<MaterialButton>		btnCancelLC;
 
 	KeywordWeightSlider		slider;
 	List<String>			keywords;
@@ -54,7 +63,7 @@ public class CustomKeywordsEditor extends LocalizedComposite implements CustomKe
 		String[] splits = text.replace("\n", ",").split(",");
 
 		if (splits.length == 0 || (splits.length == 1 && splits[0].length() == 0))
-			MaterialToast.fireToast(getLocalizedString(CustomKeywordsEditorLocale.DESC_NotifyEmpty));
+			MaterialToast.fireToast(getLocalizedString(LocalizationTags.NO_KEYWORDS.toString()));
 		else
 		{
 			keywords.clear();
@@ -62,7 +71,7 @@ public class CustomKeywordsEditor extends LocalizedComposite implements CustomKe
 				keywords.add(itr.trim());
 			slider.setCustomVocab(true);
 
-			MaterialToast.fireToast(getLocalizedString(CustomKeywordsEditorLocale.DESC_NotifySuccess));
+			MaterialToast.fireToast(getLocalizedString(LocalizationTags.KEYWORDS_APPLIED.toString()));
 			hide();
 		}
 	}
@@ -83,24 +92,6 @@ public class CustomKeywordsEditor extends LocalizedComposite implements CustomKe
 		slider.setCustomVocab(false);
 	}
 
-	private void initLocale()
-	{
-		lblTitleLC = new SimpleLocalizedWidget<>(lblTitleUI, CustomKeywordsEditorLocale.DESC_lblTitleUI, (w,s) -> w.setTitle(s));
-		txtKeywordsLC = new SimpleLocalizedWidget<>(txtKeywordsUI, CustomKeywordsEditorLocale.DESC_txtKeywordsUI, (w,s) -> w.setLabel(s));
-		btnApplyLC = new SimpleLocalizedTextButtonWidget<>(btnApplyUI, CustomKeywordsEditorLocale.DESC_btnApplyUI);
-		btnCancelLC = new SimpleLocalizedTextButtonWidget<>(btnCancelUI, CustomKeywordsEditorLocale.DESC_btnCancelUI);
-
-		registerLocale(CustomKeywordsEditorLocale.INSTANCE.en);
-		registerLocale(CustomKeywordsEditorLocale.INSTANCE.de);
-
-		registerLocalizedWidget(lblTitleLC);
-		registerLocalizedWidget(txtKeywordsLC);
-		registerLocalizedWidget(btnApplyLC);
-		registerLocalizedWidget(btnCancelLC);
-
-		refreshLocalization();
-	}
-
 	private void initHandlers()
 	{
 		btnApplyUI.addClickHandler(e -> onApply());
@@ -109,16 +100,23 @@ public class CustomKeywordsEditor extends LocalizedComposite implements CustomKe
 
 	public CustomKeywordsEditor()
 	{
-		super(ClientEndPoint.get().getLocalization());
 		initWidget(uiBinder.createAndBindUi(this));
+		initLocale(localeBinder.bind(this));
 
 		slider = null;
 		keywords = new ArrayList<>();
 
-		initLocale();
 		initHandlers();
 	}
 
+	@Override
+	public void setLocale(Language lang)
+	{
+		super.setLocale(lang);
+		
+		txtKeywordsUI.setLabel(getLocalizedString(LocalizationTags.txtKeywordsUI.toString()));
+	}
+	
 	public void show() {
 		mdlKeywordEditorUI.open();
 	}

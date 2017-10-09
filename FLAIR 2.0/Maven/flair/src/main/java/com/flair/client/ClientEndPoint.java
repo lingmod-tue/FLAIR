@@ -2,7 +2,7 @@ package com.flair.client;
 
 import com.flair.client.interop.FuncCallback;
 import com.flair.client.interop.MessageReceiverFactory;
-import com.flair.client.localization.LocalizationEngine;
+import com.flair.client.localization.LocalizationStringTable;
 import com.flair.client.model.DocumentAnnotator;
 import com.flair.client.model.DocumentRanker;
 import com.flair.client.model.WebRankerCore;
@@ -17,7 +17,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
 
 /*
- * Client-side state manager
+ * Manages basic client-side state and authentication
  */
 public class ClientEndPoint
 {
@@ -30,7 +30,6 @@ public class ClientEndPoint
 	private AuthToken						clientToken;
 	private MainViewport					viewport;
 	private WebRankerCore					webranker;
-	private LocalizationEngine				localeCore;
 	private SessionManagementServiceAsync	sessionService;
 	private AbstractMessageReceiver			messagePipeline;
 	
@@ -41,7 +40,6 @@ public class ClientEndPoint
 		clientToken = null;
 		viewport = null;
 		webranker = null;
-		localeCore = new LocalizationEngine();
 		sessionService = null;
 		messagePipeline = MessageReceiverFactory.get().create();
 		
@@ -97,6 +95,7 @@ public class ClientEndPoint
 		
 		viewport = new MainViewport();
 		sessionService = SessionManagementServiceAsync.Util.getInstance();
+		LocalizationStringTable.get().init();
 		
 		RootPanel.get().add(viewport);
 		initiateServerHandshake();
@@ -120,10 +119,6 @@ public class ClientEndPoint
 	
 	public AbstractWebRankerCore getWebRanker() {
 		return webranker;
-	}
-	
-	public LocalizationEngine getLocalization() {
-		return localeCore;
 	}
 
 	public AbstractWebRankerPresenter getViewport() {

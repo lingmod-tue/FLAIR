@@ -1,6 +1,5 @@
 package com.flair.client.presentation.widgets;
 
-import com.flair.client.ClientEndPoint;
 import com.flair.client.localization.LocalizedComposite;
 import com.flair.client.presentation.interfaces.CanReset;
 import com.flair.client.presentation.interfaces.GrammaticalConstructionContainer;
@@ -19,7 +18,6 @@ public abstract class LanguageSpecificConstructionSliderBundle extends Localized
 	
 	public LanguageSpecificConstructionSliderBundle(Language lang)
 	{
-		super(ClientEndPoint.get().getLocalization());
 		this.lang = lang;
 		this.rootContainer = null;
 	}

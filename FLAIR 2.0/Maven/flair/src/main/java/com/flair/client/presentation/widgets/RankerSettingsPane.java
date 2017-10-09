@@ -1,11 +1,12 @@
 package com.flair.client.presentation.widgets;
 
-import com.flair.client.ClientEndPoint;
-import com.flair.client.localization.LocalizationData;
+import com.flair.client.localization.CommonLocalizationTags;
+import com.flair.client.localization.DefaultLocalizationProviders;
 import com.flair.client.localization.LocalizedComposite;
-import com.flair.client.localization.SimpleLocalizedTextButtonWidget;
-import com.flair.client.localization.SimpleLocalizedTextWidget;
-import com.flair.client.localization.locale.RankerSettingsPaneLocale;
+import com.flair.client.localization.LocalizedFieldType;
+import com.flair.client.localization.annotations.LocalizedCommonField;
+import com.flair.client.localization.annotations.LocalizedField;
+import com.flair.client.localization.interfaces.LocalizationBinder;
 import com.flair.client.model.interfaces.DocumentRankerOutput;
 import com.flair.client.model.interfaces.DocumentRankerOutput.Rank;
 import com.flair.client.presentation.interfaces.AbstractRankerSettingsPane;
@@ -40,6 +41,14 @@ public class RankerSettingsPane extends LocalizedComposite implements AbstractRa
 	{
 	}
 	
+	private static RankerSettingsPaneLocalizationBinder localeBinder = GWT.create(RankerSettingsPaneLocalizationBinder.class);
+	interface RankerSettingsPaneLocalizationBinder extends LocalizationBinder<RankerSettingsPane> {}
+	
+	static enum LocalizationTags
+	{
+		FILTERED,
+	}
+	
 	private static final int				PANEL_WIDTH = 400;
 	
 	@UiField
@@ -47,16 +56,18 @@ public class RankerSettingsPane extends LocalizedComposite implements AbstractRa
 	@UiField
 	MaterialLabel							lblDocCountUI;
 	@UiField
+	@LocalizedField(type=LocalizedFieldType.BUTTON)
 	MaterialButton							btnVisualizeUI;
 	@UiField
+	@LocalizedField(type=LocalizedFieldType.BUTTON)
 	MaterialButton							btnExportSettingsUI;
 	@UiField
+	@LocalizedField
 	MaterialCardTitle						lblTextCharacteristicsUI;
 	@UiField
-	MaterialLabel							lblTextLengthUI;
+	DocumentLengthConfigPane				pnlDocLengthUI;
 	@UiField
-	DocumentLengthSlider					sldDocLengthUI;
-	@UiField
+	@LocalizedField
 	MaterialLabel							lblTextLevelUI;
 	@UiField
 	MaterialCheckBox						chkTextLevelAUI;
@@ -73,21 +84,18 @@ public class RankerSettingsPane extends LocalizedComposite implements AbstractRa
 	@UiField
 	KeywordWeightSlider						sldKeywordsUI;
 	@UiField
-	MaterialButton							btnConstructionsListUI;
+	@LocalizedField
+	MaterialCardTitle						lblConstructionsUI;
 	@UiField
 	ConstructionSliderBundleEnglish			bdlEnglishSlidersUI;
 	@UiField
 	ConstructionSliderBundleGerman			bdlGermanSlidersUI;
 	@UiField
+	@LocalizedField
+	MaterialCardTitle						lblLanguageUseUI;
+	@UiField
+	@LocalizedCommonField(tag=CommonLocalizationTags.RESET_ALL, type=LocalizedFieldType.BUTTON)
 	MaterialButton							btnResetAllUI;
-	
-	SimpleLocalizedTextButtonWidget<MaterialButton>			btnVisualizeLC;
-	SimpleLocalizedTextButtonWidget<MaterialButton>			btnExportSettingsLC;
-	SimpleLocalizedTextWidget<MaterialCardTitle>			lblTextCharacteristicsLC;
-	SimpleLocalizedTextWidget<MaterialLabel>				lblTextLengthLC;
-	SimpleLocalizedTextWidget<MaterialLabel>				lblTextLevelLC;
-	SimpleLocalizedTextButtonWidget<MaterialButton>			btnConstructionsListLC;
-	SimpleLocalizedTextButtonWidget<MaterialButton>			btnResetAllLC;
 	
 	State				state;
 	ShowHideHandler		showhideHandler;
@@ -155,15 +163,15 @@ public class RankerSettingsPane extends LocalizedComposite implements AbstractRa
 		{
 			if (rankData == null)
 				return;
-			
-			LocalizationData ld = getLocalizationData(localeCore.getLanguage());
+
 			final int resultCount = rankData.getRankedDocuments().size();
 			int levelA = (int)rankData.getDocLevelDf(DocumentReadabilityLevel.LEVEL_A);
 			int levelB = (int)rankData.getDocLevelDf(DocumentReadabilityLevel.LEVEL_B);
 			int levelC = (int)rankData.getDocLevelDf(DocumentReadabilityLevel.LEVEL_C);
 			
-			lblDocCountUI.setText(resultCount + " " + ld.get(RankerSettingsPaneLocale.DESC_lblDocCountUI) +
-								" (" + rankData.getNumFilteredDocuments() + " " + ld.get(RankerSettingsPaneLocale.DESC_lblDocCountFilterUI) + ")");
+			lblDocCountUI.setText(resultCount + " " + getLocalizedString(DefaultLocalizationProviders.COMMON.toString(),
+																		CommonLocalizationTags.RESULTS.toString()) +
+								" (" + rankData.getNumFilteredDocuments() + " " + getLocalizedString(LocalizationTags.FILTERED.toString()) + ")");
 			
 			bdgTextLevelACountUI.setText(levelA + " / " + resultCount);
 			bdgTextLevelBCountUI.setText(levelB + " / " + resultCount);
@@ -199,7 +207,7 @@ public class RankerSettingsPane extends LocalizedComposite implements AbstractRa
 		
 		public void resetAll()
 		{
-			sldDocLengthUI.resetState(false);
+			pnlDocLengthUI.resetState(false);
 			sldKeywordsUI.resetState(false);
 			getSliderBundle().resetState(false);
 			
@@ -238,36 +246,12 @@ public class RankerSettingsPane extends LocalizedComposite implements AbstractRa
 		setPanelLeft(visible ? 0 : -PANEL_WIDTH);
 	}
 	
-	private void initLocale()
-	{
-		btnVisualizeLC = new SimpleLocalizedTextButtonWidget<>(btnVisualizeUI, RankerSettingsPaneLocale.DESC_btnVisualizeUI);
-		btnExportSettingsLC = new SimpleLocalizedTextButtonWidget<>(btnExportSettingsUI, RankerSettingsPaneLocale.DESC_btnExportSettingsUI);
-		lblTextCharacteristicsLC = new SimpleLocalizedTextWidget<>(lblTextCharacteristicsUI, RankerSettingsPaneLocale.DESC_lblTextCharacteristicsUI);
-		lblTextLengthLC = new SimpleLocalizedTextWidget<>(lblTextLengthUI, RankerSettingsPaneLocale.DESC_lblTextLengthUI);
-		lblTextLevelLC = new SimpleLocalizedTextWidget<>(lblTextLevelUI, RankerSettingsPaneLocale.DESC_lblTextLevelUI);
-		btnConstructionsListLC = new SimpleLocalizedTextButtonWidget<>(btnConstructionsListUI, RankerSettingsPaneLocale.DESC_btnConstructionsListUI);
-		btnResetAllLC = new SimpleLocalizedTextButtonWidget<>(btnResetAllUI, RankerSettingsPaneLocale.DESC_btnResetAllUI);
-		
-		registerLocale(RankerSettingsPaneLocale.INSTANCE.en);
-		registerLocale(RankerSettingsPaneLocale.INSTANCE.de);
-
-		registerLocalizedWidget(btnVisualizeLC);
-		registerLocalizedWidget(btnExportSettingsLC);
-		registerLocalizedWidget(lblTextCharacteristicsLC);
-		registerLocalizedWidget(lblTextLengthLC);
-		registerLocalizedWidget(lblTextLevelLC);
-		registerLocalizedWidget(btnConstructionsListLC);
-		registerLocalizedWidget(btnResetAllLC);
-		
-		refreshLocalization();
-	}
-	
 	private void initHandlers()
 	{
 		btnVisualizeUI.addClickHandler(e -> state.onVisualize());
 		btnExportSettingsUI.addClickHandler(e -> state.onExport());
 		
-		sldDocLengthUI.setWeightChangeHandler((v) -> state.onSettingChange());
+		pnlDocLengthUI.setWeightChangeHandler((v) -> state.onSettingChange());
 		
 		sldKeywordsUI.setWeightChangeHandler((w, v) -> state.onSettingChange());
 		sldKeywordsUI.setToggleHandler((w, v) -> state.onSettingChange());
@@ -288,24 +272,21 @@ public class RankerSettingsPane extends LocalizedComposite implements AbstractRa
 	
 	public RankerSettingsPane()
 	{
-		super(ClientEndPoint.get().getLocalization());
-		
 		initWidget(uiBinder.createAndBindUi(this));
+		initLocale(localeBinder.bind(this));
 		
 		this.state = new State();
 		showhideHandler = null;
 		visible = false;
-		
-		initLocale();
+
 		initHandlers();
 		initUI();
 	}
 	
-	
 	@Override
-	public void setLocalization(Language lang)
+	public void setLocale(Language lang)
 	{
-		super.setLocalization(lang);
+		super.setLocale(lang);
 		state.reloadUI();
 	}
 
@@ -348,13 +329,13 @@ public class RankerSettingsPane extends LocalizedComposite implements AbstractRa
 		bdlEnglishSlidersUI.forEachWeightSlider(s -> {
 			s.setWeightChangeHandler((w, v) -> state.onSettingChange());
 			s.setToggleHandler((w, v) -> state.onSettingChange());
-			s.refreshLocalization();
+			s.refreshLocale();
 		});
 		
 		bdlGermanSlidersUI.forEachWeightSlider(s -> {
 			s.setWeightChangeHandler((w, v) -> state.onSettingChange());
 			s.setToggleHandler((w, v) -> state.onSettingChange());
-			s.refreshLocalization();
+			s.refreshLocale();
 		});
 		
 		state.setChangeHandler(handler);
@@ -376,8 +357,8 @@ public class RankerSettingsPane extends LocalizedComposite implements AbstractRa
 	}
 
 	@Override
-	public DocumentLengthSlider getLengthSlider() {
-		return sldDocLengthUI;
+	public DocumentLengthConfigPane getLengthConfig() {
+		return pnlDocLengthUI;
 	}
 
 	@Override
@@ -422,7 +403,7 @@ public class RankerSettingsPane extends LocalizedComposite implements AbstractRa
 		chkTextLevelBUI.setValue(profile.isDocLevelEnabled(DocumentReadabilityLevel.LEVEL_B), false);
 		chkTextLevelCUI.setValue(profile.isDocLevelEnabled(DocumentReadabilityLevel.LEVEL_C), false);
 		
-		sldDocLengthUI.setWeight(profile.getDocLengthWeight(), false);
+		pnlDocLengthUI.setWeight(profile.getDocLengthWeight(), false);
 		sldKeywordsUI.setEnabled(profile.isKeywordsEnabled(), false);
 		sldKeywordsUI.setWeight(profile.getKeywordsWeight(), false);
 		
@@ -446,7 +427,7 @@ public class RankerSettingsPane extends LocalizedComposite implements AbstractRa
 		ConstructionSettingsProfileImpl out = new ConstructionSettingsProfileImpl();
 		
 		out.setLanguage(getSliderBundle().getLanguage());
-		out.setDocLengthWeight(sldDocLengthUI.getWeight());
+		out.setDocLengthWeight(pnlDocLengthUI.getWeight());
 		out.setKeywordsData(sldKeywordsUI.isEnabled(), sldKeywordsUI.getWeight());
 		out.setDocLevelEnabled(DocumentReadabilityLevel.LEVEL_A, chkTextLevelAUI.getValue());
 		out.setDocLevelEnabled(DocumentReadabilityLevel.LEVEL_B, chkTextLevelBUI.getValue());

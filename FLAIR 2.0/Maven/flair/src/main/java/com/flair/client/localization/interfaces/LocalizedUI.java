@@ -1,6 +1,5 @@
 package com.flair.client.localization.interfaces;
 
-import com.flair.client.localization.LocalizationData;
 import com.flair.shared.grammar.Language;
 
 /*
@@ -8,6 +7,8 @@ import com.flair.shared.grammar.Language;
  */
 public interface LocalizedUI
 {
-	public LocalizationData			getLocalizationData(Language lang);		// gets the locale data for the lang
-	public void						setLocalization(Language lang);			// updates the view's locale
+	public LocalizationProvider		getLocalizationProvider();
+	
+	public void						setLocale(Language lang);
+	public void						refreshLocale();
 }
