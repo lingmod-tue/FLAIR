@@ -32,10 +32,10 @@ public class ModalPrompt extends LocalizedComposite implements UserPromptService
 	@UiField
 	MaterialTitle			lblTextUI;
 	@UiField
-	@LocalizedCommonField(tag=CommonLocalizationTags.YES, type=LocalizedFieldType.BUTTON)
+	@LocalizedCommonField(tag=CommonLocalizationTags.YES, type=LocalizedFieldType.TEXT_BUTTON)
 	MaterialButton			btnYesUI;
 	@UiField
-	@LocalizedCommonField(tag=CommonLocalizationTags.NO, type=LocalizedFieldType.BUTTON)
+	@LocalizedCommonField(tag=CommonLocalizationTags.NO, type=LocalizedFieldType.TEXT_BUTTON)
 	MaterialButton			btnNoUI;
 	
 	YesHandler				yesHandler;

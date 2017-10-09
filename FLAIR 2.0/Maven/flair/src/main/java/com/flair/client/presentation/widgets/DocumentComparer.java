@@ -63,7 +63,7 @@ public class DocumentComparer extends LocalizedComposite implements DocumentComp
 	@LocalizedField
 	MaterialLabel			lblTitleUI;
 	@UiField
-	@LocalizedField(type=LocalizedFieldType.TOOLTIP)
+	@LocalizedField(type=LocalizedFieldType.TOOLTIP_MATERIAL)
 	MaterialIcon			btnClearSelectionUI;
 	@UiField
 	MaterialRow				pnlListContainerUI;
@@ -72,13 +72,13 @@ public class DocumentComparer extends LocalizedComposite implements DocumentComp
 	@UiField
 	MaterialCollection		pnlSelectionUI;
 	@UiField
-	@LocalizedField(type=LocalizedFieldType.TITLE)
+	@LocalizedField(type=LocalizedFieldType.TEXT_TITLE)
 	MaterialEmptyState		lblPlaceholderUI;
 	@UiField
-	@LocalizedCommonField(tag=CommonLocalizationTags.COMPARE, type=LocalizedFieldType.BUTTON)
+	@LocalizedCommonField(tag=CommonLocalizationTags.COMPARE, type=LocalizedFieldType.TEXT_BUTTON)
 	MaterialButton			btnCompareUI;
 	@UiField
-	@LocalizedCommonField(tag=CommonLocalizationTags.CANCEL, type=LocalizedFieldType.BUTTON)
+	@LocalizedCommonField(tag=CommonLocalizationTags.CANCEL, type=LocalizedFieldType.TEXT_BUTTON)
 	MaterialButton			btnCancelUI;
 	@UiField
 	MaterialFAB				fabCompareUI;

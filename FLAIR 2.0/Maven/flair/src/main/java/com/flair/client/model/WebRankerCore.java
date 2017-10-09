@@ -12,9 +12,11 @@ import java.util.Set;
 
 import com.flair.client.ClientEndPoint;
 import com.flair.client.interop.FuncCallback;
+import com.flair.client.localization.CommonLocalizationTags;
+import com.flair.client.localization.DefaultLocalizationProviders;
+import com.flair.client.localization.GrammaticalConstructionLocalizationProvider;
 import com.flair.client.localization.LocalizationEngine;
-import com.flair.client.localization.locale.GrammaticalConstructionLocale;
-import com.flair.client.localization.locale.WebRankerCoreLocale;
+import com.flair.client.localization.LocalizationStringTable;
 import com.flair.client.model.interfaces.AbstractDocumentAnnotator;
 import com.flair.client.model.interfaces.AbstractDocumentRanker;
 import com.flair.client.model.interfaces.AbstractWebRankerCore;
@@ -73,10 +75,27 @@ import com.google.gwt.user.client.Window;
 import gwt.material.design.client.constants.Color;
 
 /*
- * Web ranker module
+ * Monolithic controller component for the various widgets and services
  */
 public class WebRankerCore implements AbstractWebRankerCore
 {
+	static enum LocalizationTags
+	{
+		ANALYSIS_COMPLETE,
+		SELECTED_FOR_COMPARISON,
+		CUSTOM_CORPUS_TITLE,
+		APPLIED_IMPORTED_SETTINGS,
+		SERVER_ERROR,
+		OP_TIMEDOUT,
+		NO_RESULTS_FOR_FILTER,
+		NO_SEARCH_RESULTS,
+		IMPORTED_SETINGS,
+		SEARCH_COOLDOWN,
+		NO_PARSED_DOCS,
+		MISSING_DOCS,
+		MISSING_SEARCH_RESULTS,
+	}
+	
 	private abstract class ProcessData implements WebRankerAnalysis
 	{
 		final OperationType				type;
@@ -397,7 +416,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 		public void addToCompare()
 		{
 			comparer.addToSelection(doc);
-			notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_AddToCompareSel));
+			notification.notify(getLocalizedString(LocalizationTags.SELECTED_FOR_COMPARISON.toString()));
 		}
 	}
 
@@ -638,7 +657,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 
 			@Override
 			public String getConstructionTitle(GrammaticalConstruction gram) {
-				return GrammaticalConstructionLocalizationProvider.get().getLocalizedName(gram, LocalizationEngine.get().getLanguage());
+				return GrammaticalConstructionLocalizationProvider.getName(gram, LocalizationEngine.get().getLanguage());
 			}
 
 			@Override
@@ -653,7 +672,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 
 			@Override
 			public String getKeywordTitle() {
-				return getLocalizedString(WebRankerCoreLocale.DESC_KeywordTitle);
+				return getLocalizedString(DefaultLocalizationProviders.COMMON.toString(), CommonLocalizationTags.KEYWORDS.toString());
 			}
 
 			@Override
@@ -840,10 +859,10 @@ public class WebRankerCore implements AbstractWebRankerCore
 			switch (data.type)
 			{
 			case COMPARE:
-				results.setPanelTitle(getLocalizedString(WebRankerCoreLocale.DESC_CompareResultsTitle));
+				results.setPanelTitle(getLocalizedString(DefaultLocalizationProviders.COMMON.toString(), CommonLocalizationTags.COMPARE.toString()));
 				break;
 			case CUSTOM_CORPUS:
-				results.setPanelTitle(getLocalizedString(WebRankerCoreLocale.DESC_CustomCorpusTitle));
+				results.setPanelTitle(getLocalizedString(LocalizationTags.CUSTOM_CORPUS_TITLE.toString()));
 				break;
 			case WEB_SEARCH:
 				results.setPanelTitle("'" + ((WebSearchProcessData)data).query + "'");
@@ -856,7 +875,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 				if ((rankData != null && rankData.getRankedDocuments().isEmpty()) ||
 					data.parsedDocs.isEmpty())
 				{
-					results.setPanelSubtitle(getLocalizedString(WebRankerCoreLocale.DESC_NoResultsForFilter));
+					results.setPanelSubtitle(getLocalizedString(LocalizationTags.NO_RESULTS_FOR_FILTER.toString()));
 				}
 			}
 		}
@@ -901,7 +920,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 			if (profile.getLanguage() == data.lang)
 			{
 				settings.applySettingsProfile(importedSettings, false);
-				notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_AppliedImportedSettings));
+				notification.notify(getLocalizedString(LocalizationTags.APPLIED_IMPORTED_SETTINGS.toString()));
 			}
 		}
 	}
@@ -964,9 +983,9 @@ public class WebRankerCore implements AbstractWebRankerCore
 				if (numReceivedInprogress == 0)
 				{
 					if (data.type == OperationType.WEB_SEARCH)
-						notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_NoSearchResults));
+						notification.notify(getLocalizedString(LocalizationTags.NO_SEARCH_RESULTS.toString()));
 					else
-						notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_NoParsedDocs));
+						notification.notify(getLocalizedString(LocalizationTags.NO_PARSED_DOCS.toString()));
 
 					if (data.parsedDocs.isEmpty() == false)
 						ClientLogger.get().error("Eh? We received no in-progress items but have parsed docs regardless?!");
@@ -975,7 +994,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 				}
 				else if (data.parsedDocs.isEmpty())
 				{
-					notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_NoParsedDocs));
+					notification.notify(getLocalizedString(LocalizationTags.NO_PARSED_DOCS.toString()));
 					success = false;
 				}
 				else
@@ -992,7 +1011,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 					}
 				
 					if (data.parsedDocs.size() < expectedResults)
-						notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_MissingDoc));
+						notification.notify(getLocalizedString(LocalizationTags.MISSING_DOCS.toString()));
 				}
 				
 				reset(success);
@@ -1087,7 +1106,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 					if (data != null)
 					{
 						cancel();
-						notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_OpTimeout), 5000);
+						notification.notify(getLocalizedString(LocalizationTags.OP_TIMEDOUT.toString()), 5000);
 						ClientLogger.get().error("The current operation timed-out!");
 					}
 				}
@@ -1133,8 +1152,10 @@ public class WebRankerCore implements AbstractWebRankerCore
 				results.setPanelTitle("'" + ((WebSearchProcessData)data).query + "'");
 			}
 			else
+			{
 				// no timeout for the upload op as the corpus uploader manages its own state (that needs cleanup)
-				results.setPanelTitle(getLocalizedString(WebRankerCoreLocale.DESC_CustomCorpusTitle));
+				results.setPanelTitle(getLocalizedString(LocalizationTags.CUSTOM_CORPUS_TITLE.toString()));
+			}
 		}
 		
 		void reset(boolean success)
@@ -1160,7 +1181,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 					i++;
 				}
 
-				notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_AnalysisComplete));
+				notification.notify(getLocalizedString(LocalizationTags.ANALYSIS_COMPLETE.toString()));
 			}
 			else
 			{
@@ -1522,7 +1543,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 		});
 		settings.setVisualizeHandler(() -> {
 			if (transientProcessManager.isBusy())
-				notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_WaitTillCompletion));
+				notification.notify(getLocalizedString(DefaultLocalizationProviders.COMMON.toString(), CommonLocalizationTags.WAIT_TILL_COMPLETION.toString()));
 			else
 				rankPreviewModule.visualize();
 		});
@@ -1585,7 +1606,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 			return;
 		else if (transientProcessManager.isBusy())
 		{
-			notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_WaitTillCompletion));
+			notification.notify(getLocalizedString(DefaultLocalizationProviders.COMMON.toString(), CommonLocalizationTags.WAIT_TILL_COMPLETION.toString()));
 			return;
 		}
 		
@@ -1658,12 +1679,12 @@ public class WebRankerCore implements AbstractWebRankerCore
 	{
 		if (query.length() == 0)
 		{
-			notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_NoSearchResults));
+			notification.notify(getLocalizedString(LocalizationTags.NO_SEARCH_RESULTS.toString()));
 			return;
 		}
 		else if (searchCooldown.tryBeginOperation() == false)
 		{
-			notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_SearchCooldown));
+			notification.notify(getLocalizedString(LocalizationTags.SEARCH_COOLDOWN.toString()));
 			return;
 		}
 		
@@ -1693,7 +1714,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 					onTransientProcessBegin(proc);
 				}, e -> {
 					ClientLogger.get().error(e, "Couldn't begin web search operation");
-					notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_ServerError));
+					notification.notify(getLocalizedString(LocalizationTags.SERVER_ERROR.toString()));
 					presenter.showLoaderOverlay(false);
 					
 					if (e instanceof InvalidAuthTokenException)
@@ -1716,7 +1737,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 					presenter.showLoaderOverlay(false);
 				}, e -> {
 					ClientLogger.get().error(e, "Couldn't begin corpus upload operation");
-					notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_ServerError));
+					notification.notify(getLocalizedString(LocalizationTags.SERVER_ERROR.toString()));
 					presenter.showLoaderOverlay(false);
 					
 					if (e instanceof InvalidAuthTokenException)
@@ -1764,10 +1785,14 @@ public class WebRankerCore implements AbstractWebRankerCore
 			cancelCurrentOperation();
 	}
 
-	private String getLocalizedString(String desc)
+	private String getLocalizedString(String provider, String tag)
 	{
 		Language lang = LocalizationEngine.get().getLanguage();
-		return WebRankerCoreLocale.INSTANCE.lookup(lang, desc);
+		return LocalizationStringTable.get().getLocalizedString(provider, tag, lang);
+	}
+	
+	private String getLocalizedString(String tag) {
+		return getLocalizedString(DefaultLocalizationProviders.WEBRANKERCORE.toString(), tag);
 	}
 	
 	@Override
@@ -1784,7 +1809,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 		// load custom settings from url
 		importedSettings = exporter.importSettings();
 		if (importedSettings != null)
-			notification.notify(getLocalizedString(WebRankerCoreLocale.DESC_ImportedSettings));
+			notification.notify(getLocalizedString(LocalizationTags.IMPORTED_SETINGS.toString()));
 	}
 
 	@Override

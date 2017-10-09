@@ -1,12 +1,11 @@
 package com.flair.client.presentation.widgets;
 
-import com.flair.client.ClientEndPoint;
+import com.flair.client.localization.CommonLocalizationTags;
 import com.flair.client.localization.LocalizedComposite;
-import com.flair.client.localization.locale.LanguageLocale;
-import com.flair.client.localization.locale.WebSearchModalLocale;
-import com.flair.client.localization.wrappers.SimpleLocalizedListBoxOptionWidget;
-import com.flair.client.localization.wrappers.SimpleLocalizedTextButtonWidget;
-import com.flair.client.localization.wrappers.SimpleLocalizedWidget;
+import com.flair.client.localization.LocalizedFieldType;
+import com.flair.client.localization.annotations.LocalizedCommonField;
+import com.flair.client.localization.annotations.LocalizedField;
+import com.flair.client.localization.interfaces.LocalizationBinder;
 import com.flair.client.presentation.interfaces.WebSearchService;
 import com.flair.shared.grammar.Language;
 import com.google.gwt.core.client.GWT;
@@ -30,42 +29,46 @@ public class WebSearchModal extends LocalizedComposite implements WebSearchServi
 	{
 	}
 
+	private static WebSearchModalLocalizationBinder localeBinder = GWT.create(WebSearchModalLocalizationBinder.class);
+	interface WebSearchModalLocalizationBinder extends LocalizationBinder<WebSearchModal> {}
+	
+	
 	@UiField
 	MaterialModal								mdlWebSearchUI;
 	@UiField
+	@LocalizedField(type=LocalizedFieldType.TEXTBOX_LABEL)
 	MaterialTextBox								txtSearchBoxUI;
-	SimpleLocalizedWidget<MaterialTextBox>		txtSearchBoxLC;
 	@UiField
 	MaterialListBox								selResultCountUI;
 	@UiField
+	@LocalizedField(type=LocalizedFieldType.LISTBOX_OPTION)
 	Option										selResultCountItm10UI;
-	SimpleLocalizedListBoxOptionWidget			selResultCountItm10LC;
 	@UiField
+	@LocalizedField(type=LocalizedFieldType.LISTBOX_OPTION)
 	Option										selResultCountItm20UI;
-	SimpleLocalizedListBoxOptionWidget			selResultCountItm20LC;
 	@UiField
+	@LocalizedField(type=LocalizedFieldType.LISTBOX_OPTION)
 	Option										selResultCountItm30UI;
-	SimpleLocalizedListBoxOptionWidget			selResultCountItm30LC;
 	@UiField
+	@LocalizedField(type=LocalizedFieldType.LISTBOX_OPTION)
 	Option										selResultCountItm40UI;
-	SimpleLocalizedListBoxOptionWidget			selResultCountItm40LC;
 	@UiField
+	@LocalizedField(type=LocalizedFieldType.LISTBOX_OPTION)
 	Option										selResultCountItm50UI;
-	SimpleLocalizedListBoxOptionWidget			selResultCountItm50LC;
 	@UiField
 	MaterialListBox								selResultLangUI;
 	@UiField
+	@LocalizedCommonField(tag=CommonLocalizationTags.LANGUAGE_ENGLISH, type=LocalizedFieldType.LISTBOX_OPTION)
 	Option										selResultLangItmEnUI;
-	SimpleLocalizedWidget<Option>				selResultLangItmEnLC;
 	@UiField
+	@LocalizedCommonField(tag=CommonLocalizationTags.LANGUAGE_GERMAN, type=LocalizedFieldType.LISTBOX_OPTION)
 	Option										selResultLangItmDeUI;
-	SimpleLocalizedWidget<Option>				selResultLangItmDeLC;
 	@UiField
+	@LocalizedCommonField(tag=CommonLocalizationTags.SEARCH, type=LocalizedFieldType.TEXT_BUTTON)
 	MaterialButton								btnSearchUI;
-	SimpleLocalizedTextButtonWidget<MaterialButton> btnSearchLC;
 	@UiField
+	@LocalizedCommonField(tag=CommonLocalizationTags.CANCEL, type=LocalizedFieldType.TEXT_BUTTON)
 	MaterialButton								btnCancelUI;
-	SimpleLocalizedTextButtonWidget<MaterialButton> btnCancelLC;
 	
 	SearchHandler		searchHandler;
 	
@@ -78,41 +81,6 @@ public class WebSearchModal extends LocalizedComposite implements WebSearchServi
 		searchHandler.handle(searchLang, query, resultCount);
 	}
 	
-	private void initLocale()
-	{
-		btnSearchLC = new SimpleLocalizedTextButtonWidget<>(btnSearchUI, WebSearchModalLocale.DESC_btnSearchUI);
-		btnCancelLC = new SimpleLocalizedTextButtonWidget<>(btnCancelUI, WebSearchModalLocale.DESC_btnCancelUI);
-		
-		txtSearchBoxLC = new SimpleLocalizedWidget<>(txtSearchBoxUI, WebSearchModalLocale.DESC_txtSearchBoxUI, (w,t) -> w.setLabel(t));
-		selResultCountItm10LC = new SimpleLocalizedListBoxOptionWidget(selResultCountItm10UI, WebSearchModalLocale.DESC_selResultCountItm10UI);
-		selResultCountItm20LC = new SimpleLocalizedListBoxOptionWidget(selResultCountItm20UI, WebSearchModalLocale.DESC_selResultCountItm20UI);
-		selResultCountItm30LC = new SimpleLocalizedListBoxOptionWidget(selResultCountItm30UI, WebSearchModalLocale.DESC_selResultCountItm30UI);
-		selResultCountItm40LC = new SimpleLocalizedListBoxOptionWidget(selResultCountItm40UI, WebSearchModalLocale.DESC_selResultCountItm40UI);
-		selResultCountItm50LC = new SimpleLocalizedListBoxOptionWidget(selResultCountItm50UI, WebSearchModalLocale.DESC_selResultCountItm50UI);
-		selResultLangItmEnLC = new SimpleLocalizedWidget<>(selResultLangItmEnUI, "", (w, s, d) -> {
-			w.setText(LanguageLocale.get().getLocalizedName(Language.ENGLISH, d.getLanguage()));
-		});
-		selResultLangItmDeLC = new SimpleLocalizedWidget<>(selResultLangItmDeUI, "", (w, s, d) -> {
-			w.setText(LanguageLocale.get().getLocalizedName(Language.GERMAN, d.getLanguage()));
-		});
-		
-		registerLocale(WebSearchModalLocale.INSTANCE.en);
-		registerLocale(WebSearchModalLocale.INSTANCE.de);
-		
-		registerLocalizedWidget(txtSearchBoxLC);
-		registerLocalizedWidget(selResultCountItm10LC);
-		registerLocalizedWidget(selResultCountItm20LC);
-		registerLocalizedWidget(selResultCountItm30LC);
-		registerLocalizedWidget(selResultCountItm40LC);
-		registerLocalizedWidget(selResultCountItm50LC);
-		registerLocalizedWidget(selResultLangItmEnLC);
-		registerLocalizedWidget(selResultLangItmDeLC);
-		registerLocalizedWidget(btnSearchLC);
-		registerLocalizedWidget(btnCancelLC);
-
-		refreshLocalization();
-	}
-
 	private void initHandlers()
 	{
 		btnSearchUI.addClickHandler(e -> {
@@ -137,19 +105,17 @@ public class WebSearchModal extends LocalizedComposite implements WebSearchServi
 
 	public WebSearchModal()
 	{
-		super(ClientEndPoint.get().getLocalization());
 		initWidget(uiBinder.createAndBindUi(this));
+		initLocale(localeBinder.bind(this));
 				
 		searchHandler = null;
-
-		initLocale();
 		initHandlers();
 	}
 
 	@Override
-	public void setLocalization(Language lang)
+	public void setLocale(Language lang)
 	{
-		super.setLocalization(lang);
+		super.setLocale(lang);
 
 		// switch the default search language as well
 		switch (lang)

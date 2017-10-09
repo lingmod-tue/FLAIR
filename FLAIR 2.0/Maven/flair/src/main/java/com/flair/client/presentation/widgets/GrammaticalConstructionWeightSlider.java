@@ -42,15 +42,15 @@ public class GrammaticalConstructionWeightSlider extends LocalizedComposite impl
 	private static final String			PLACEHOLDER_STRING ="<INVALID GRAM CONST>";
 	
 	@UiField
-	@LocalizedField(type=LocalizedFieldType.ALT_TEXT)
+	@LocalizedField(type=LocalizedFieldType.TOOLTIP_BASIC)
 	MaterialCheckBox				chkToggleUI;
 	@UiField
 	MaterialIcon					icoHelpTextUI;
 	@UiField
-	@LocalizedField(type=LocalizedFieldType.ALT_TEXT)
+	@LocalizedField(type=LocalizedFieldType.TOOLTIP_BASIC)
 	MaterialRange					sldWeightUI;
 	@UiField
-	@LocalizedCommonField(tag=CommonLocalizationTags.RESULTS, type=LocalizedFieldType.ALT_TEXT)
+	@LocalizedCommonField(tag=CommonLocalizationTags.RESULTS, type=LocalizedFieldType.TOOLTIP_BASIC)
 	MaterialBadge					bdgResultCountUI;
 	
 	GenericWeightSlider				base;
@@ -60,11 +60,12 @@ public class GrammaticalConstructionWeightSlider extends LocalizedComposite impl
 	public GrammaticalConstructionWeightSlider()
 	{
 		initWidget(uiBinder.createAndBindUi(this));
-		initLocale(localeBinder.bind(this));
 		
 		base = new GenericWeightSlider(this, chkToggleUI, sldWeightUI);
 		gramConstruction = null;
 		resetHandler = null;
+		
+		initLocale(localeBinder.bind(this));
 	}
 	
 	public GrammaticalConstruction getGram() {
@@ -100,11 +101,15 @@ public class GrammaticalConstructionWeightSlider extends LocalizedComposite impl
 		
 		// update toggle and tooltip
 		if (gramConstruction == null)
+		{
 			setToggleText(PLACEHOLDER_STRING);
+			icoHelpTextUI.setTooltip(PLACEHOLDER_STRING);
+		}
 		else
+		{
 			setToggleText(GrammaticalConstructionLocalizationProvider.getName(gramConstruction, lang));
-		
-		icoHelpTextUI.setTooltip(GrammaticalConstructionLocalizationProvider.getHelpText(gramConstruction, lang));
+			icoHelpTextUI.setTooltip(GrammaticalConstructionLocalizationProvider.getHelpText(gramConstruction, lang));
+		}
 	}
 	
 	@Override

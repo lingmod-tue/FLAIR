@@ -56,10 +56,10 @@ public class RankerSettingsPane extends LocalizedComposite implements AbstractRa
 	@UiField
 	MaterialLabel							lblDocCountUI;
 	@UiField
-	@LocalizedField(type=LocalizedFieldType.BUTTON)
+	@LocalizedField(type=LocalizedFieldType.TEXT_BUTTON)
 	MaterialButton							btnVisualizeUI;
 	@UiField
-	@LocalizedField(type=LocalizedFieldType.BUTTON)
+	@LocalizedField(type=LocalizedFieldType.TEXT_BUTTON)
 	MaterialButton							btnExportSettingsUI;
 	@UiField
 	@LocalizedField
@@ -94,7 +94,7 @@ public class RankerSettingsPane extends LocalizedComposite implements AbstractRa
 	@LocalizedField
 	MaterialCardTitle						lblLanguageUseUI;
 	@UiField
-	@LocalizedCommonField(tag=CommonLocalizationTags.RESET_ALL, type=LocalizedFieldType.BUTTON)
+	@LocalizedCommonField(tag=CommonLocalizationTags.RESET_ALL, type=LocalizedFieldType.TEXT_BUTTON)
 	MaterialButton							btnResetAllUI;
 	
 	State				state;

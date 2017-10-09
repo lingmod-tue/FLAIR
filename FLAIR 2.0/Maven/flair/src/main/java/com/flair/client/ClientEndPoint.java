@@ -93,9 +93,11 @@ public class ClientEndPoint
 		if (initialized)
 			throw new RuntimeException("Client endpoint already initialized");
 		
+		// init'ed first to ensure localization providers are ready and available
+		LocalizationStringTable.get().init();
+		
 		viewport = new MainViewport();
 		sessionService = SessionManagementServiceAsync.Util.getInstance();
-		LocalizationStringTable.get().init();
 		
 		RootPanel.get().add(viewport);
 		initiateServerHandshake();

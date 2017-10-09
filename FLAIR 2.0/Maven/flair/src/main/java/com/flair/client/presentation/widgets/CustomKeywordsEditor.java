@@ -43,15 +43,15 @@ public class CustomKeywordsEditor extends LocalizedComposite implements CustomKe
 	@UiField
 	MaterialModal			mdlKeywordEditorUI;
 	@UiField
-	@LocalizedField(type=LocalizedFieldType.TITLE)
+	@LocalizedField(type=LocalizedFieldType.TEXT_TITLE)
 	MaterialTitle			lblTitleUI;
 	@UiField
 	MaterialTextArea		txtKeywordsUI;
 	@UiField
-	@LocalizedCommonField(tag=CommonLocalizationTags.APPLY, type=LocalizedFieldType.BUTTON)
+	@LocalizedCommonField(tag=CommonLocalizationTags.APPLY, type=LocalizedFieldType.TEXT_BUTTON)
 	MaterialButton			btnApplyUI;
 	@UiField
-	@LocalizedCommonField(tag=CommonLocalizationTags.CANCEL, type=LocalizedFieldType.BUTTON)
+	@LocalizedCommonField(tag=CommonLocalizationTags.CANCEL, type=LocalizedFieldType.TEXT_BUTTON)
 	MaterialButton			btnCancelUI;
 
 	KeywordWeightSlider		slider;

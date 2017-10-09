@@ -61,7 +61,7 @@ public class HistoryViewer extends LocalizedComposite implements HistoryViewerSe
 	@UiField
 	MaterialCollection		pnlSelectionUI;
 	@UiField
-	@LocalizedField(type=LocalizedFieldType.TITLE)
+	@LocalizedField(type=LocalizedFieldType.TEXT_TITLE)
 	MaterialEmptyState		lblPlaceholderUI;
 	
 	FetchAnalysesHandler	fetchAnalysesHandler;

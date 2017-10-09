@@ -1,10 +1,12 @@
 package com.flair.client.presentation.widgets;
 
-import com.flair.client.ClientEndPoint;
+import com.flair.client.localization.CommonLocalizationTags;
 import com.flair.client.localization.LocalizedComposite;
-import com.flair.client.localization.locale.SettingsExporterLocale;
+import com.flair.client.localization.LocalizedFieldType;
+import com.flair.client.localization.annotations.LocalizedCommonField;
+import com.flair.client.localization.annotations.LocalizedField;
+import com.flair.client.localization.interfaces.LocalizationBinder;
 import com.flair.client.presentation.interfaces.SettingsUrlExporterView;
-import com.flair.shared.grammar.Language;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -24,22 +26,21 @@ public class SettingsExporter extends LocalizedComposite implements SettingsUrlE
 	{
 	}
 	
+	private static SettingsExporterLocalizationBinder localeBinder = GWT.create(SettingsExporterLocalizationBinder.class);
+	interface SettingsExporterLocalizationBinder extends LocalizationBinder<SettingsExporter> {}
+	
+	
 	@UiField
 	MaterialModal			mdlExporterUI;
 	@UiField
+	@LocalizedField(type=LocalizedFieldType.TEXT_TITLE)
+	@LocalizedField(tag="lblTitleUI_Desc", type=LocalizedFieldType.TEXT_DESCRIPTION)
 	MaterialTitle			lblTitleUI;
 	@UiField
 	MaterialTextBox			txtURLUI;
 	@UiField
+	@LocalizedCommonField(tag=CommonLocalizationTags.CLOSE, type=LocalizedFieldType.TEXT_BUTTON)
 	MaterialButton			btnCloseUI;
-	
-	private void initLocale()
-	{
-		registerLocale(SettingsExporterLocale.INSTANCE.en);
-		registerLocale(SettingsExporterLocale.INSTANCE.de);
-		
-		refreshLocalization();
-	}
 	
 	private void initHandlers()
 	{
@@ -50,21 +51,9 @@ public class SettingsExporter extends LocalizedComposite implements SettingsUrlE
 
 	public SettingsExporter()
 	{
-		super(ClientEndPoint.get().getLocalization());
 		initWidget(uiBinder.createAndBindUi(this));
-		
-		initLocale();
+		initLocale(localeBinder.bind(this));
 		initHandlers();
-	}
-
-	@Override
-	public void setLocalization(Language lang)
-	{
-		super.setLocalization(lang);
-		
-		lblTitleUI.setTitle(getLocalizedString(SettingsExporterLocale.DESC_lblTitleUI));
-		lblTitleUI.setDescription(getLocalizedString(SettingsExporterLocale.DESC_lblCaptionUI));
-		btnCloseUI.setText(getLocalizedString(SettingsExporterLocale.DESC_btnCloseUI));
 	}
 
 	@Override

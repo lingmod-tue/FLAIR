@@ -677,12 +677,12 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 	@UiField
 	MaterialSplitPanel			pnlSplitContainer;
 	@UiField
-	@LocalizedField(type=LocalizedFieldType.TITLE)
+	@LocalizedField
 	MaterialLabel				lblTitleUI;
 	@UiField
 	FlowPanel					pnlSVGContainerUI;
 	@UiField
-	@LocalizedCommonField(tag=CommonLocalizationTags.RESET, type=LocalizedFieldType.BUTTON)
+	@LocalizedCommonField(tag=CommonLocalizationTags.RESET, type=LocalizedFieldType.TEXT_BUTTON)
 	MaterialButton				btnResetUI;
 	@UiField
 	@LocalizedField
@@ -703,7 +703,7 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 	@UiField
 	ConstructionSliderBundleGerman		bdlGermanSlidersUI;
 	@UiField
-	@LocalizedCommonField(tag=CommonLocalizationTags.FILTER, type=LocalizedFieldType.BUTTON)
+	@LocalizedCommonField(tag=CommonLocalizationTags.FILTER, type=LocalizedFieldType.TEXT_BUTTON)
 	MaterialButton				btnApplyUI;
 		
 	State	state;

@@ -38,16 +38,16 @@ public class KeywordWeightSlider extends LocalizedComposite implements AbstractW
 	}
 			
 	@UiField
-	@LocalizedField(type=LocalizedFieldType.ALT_TEXT)
+	@LocalizedField(type=LocalizedFieldType.TOOLTIP_BASIC)
 	MaterialCheckBox		chkToggleUI;
 	@UiField
-	@LocalizedField(type=LocalizedFieldType.ALT_TEXT)
+	@LocalizedField(type=LocalizedFieldType.TOOLTIP_BASIC)
 	MaterialRange			sldWeightUI;
 	@UiField
-	@LocalizedField(type=LocalizedFieldType.TOOLTIP)
+	@LocalizedField(type=LocalizedFieldType.TOOLTIP_MATERIAL)
 	MaterialIcon			btnEditKeywordsUI;
 	@UiField
-	@LocalizedField(type=LocalizedFieldType.TOOLTIP)
+	@LocalizedField(type=LocalizedFieldType.TOOLTIP_MATERIAL)
 	MaterialIcon 			btnResetKeywordsUI;
 	
 	GenericWeightSlider		base;
@@ -63,7 +63,6 @@ public class KeywordWeightSlider extends LocalizedComposite implements AbstractW
 	public KeywordWeightSlider()
 	{
 		initWidget(uiBinder.createAndBindUi(this));
-		initLocale(localeBinder.bind(this));
 		
 		base = new GenericWeightSlider(this, chkToggleUI, sldWeightUI);
 		editHandler = resetHandler = null;
@@ -79,6 +78,7 @@ public class KeywordWeightSlider extends LocalizedComposite implements AbstractW
 				resetHandler.handle(this);
 		});
 		
+		initLocale(localeBinder.bind(this));
 		initUI();
 	}
 	

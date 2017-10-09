@@ -19,5 +19,5 @@ public @interface LocalizedField
 {
 	String 					provider() 	default "";			// by default, resolved automatically during binding
 	String 					tag() 		default "";			// same as above
-	LocalizedFieldType 		type() 		default LocalizedFieldType.TEXT;
+	LocalizedFieldType 		type() 		default LocalizedFieldType.TEXT_BASIC;
 }

@@ -21,6 +21,7 @@ public class StringTableReader
 		int lineno = 1;
 		for (String line : splits)
 		{
+			line = line.trim();
 			if (line.isEmpty())
 				continue;
 			else if (line.charAt(0) == '#')

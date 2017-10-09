@@ -29,6 +29,7 @@ public abstract class LocalizedComposite extends Composite implements LocalizedU
 		
 		super.onAttach();
 		LocalizationEngine.get().registerLocalizedView(this);
+		refreshLocale();
 	}
 	
 	@Override
@@ -40,7 +41,6 @@ public abstract class LocalizedComposite extends Composite implements LocalizedU
 	
 	protected void initLocale(LocalizationBinderData data) {
 		localizationBinderData = data;
-		refreshLocale();
 	}
 	
 	protected String getLocalizedString(String tag) {

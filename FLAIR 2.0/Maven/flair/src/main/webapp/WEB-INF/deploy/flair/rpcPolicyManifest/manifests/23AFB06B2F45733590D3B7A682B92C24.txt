@@ -1,2 +1,0 @@
-serviceClass: com.flair.shared.interop.services.WebRankerService
-path: F2B7DAE5FDE3DA797945968377DFBB3B.gwt.rpc

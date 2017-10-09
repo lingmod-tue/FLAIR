@@ -5,9 +5,9 @@ import gwt.material.design.client.ui.html.Option;
 /*
  * SetText update method specialization for Material listbox options
  */
-public class SimpleLocalizedListBoxOptionWidget extends SimpleLocalizedWidget<Option>
+public class SimpleLocalizedListBoxOptionWidget<T extends Option> extends SimpleLocalizedWidget<T>
 {
-	public SimpleLocalizedListBoxOptionWidget(Option w, String provider, String tag)
+	public SimpleLocalizedListBoxOptionWidget(T w, String provider, String tag)
 	{
 		super(w, provider, tag, (widget, str) -> {
 			widget.setText(str);

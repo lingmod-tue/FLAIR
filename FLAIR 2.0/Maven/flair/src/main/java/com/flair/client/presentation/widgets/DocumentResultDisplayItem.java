@@ -67,7 +67,7 @@ public class DocumentResultDisplayItem extends LocalizedComposite
 	@UiField
 	MaterialDropDown		pnlMenuUI;
 	@UiField
-	@LocalizedCommonField(tag=CommonLocalizationTags.COMPARE, type=LocalizedFieldType.BUTTON)
+	@LocalizedCommonField(tag=CommonLocalizationTags.COMPARE, type=LocalizedFieldType.TEXT_BUTTON)
 	MaterialLink			btnAddToCompareUI;
 
 	int						orgRank;

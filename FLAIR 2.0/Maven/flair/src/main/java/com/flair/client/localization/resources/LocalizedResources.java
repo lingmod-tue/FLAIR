@@ -15,7 +15,7 @@ public class LocalizedResources
 		return INSTANCE;
 	}
 	
-	private interface EnglishStrings extends ClientBundle
+	interface EnglishStrings extends ClientBundle
 	{
 		@Source("strings-en-constructions.txt")
 		public TextResource			getGramConstructionStrings();
@@ -24,7 +24,7 @@ public class LocalizedResources
 		public TextResource			getGeneralStrings();
 	}
 	
-	private interface GermanStrings extends ClientBundle
+	interface GermanStrings extends ClientBundle
 	{
 		@Source("strings-de-constructions.txt")
 		public TextResource			getGramConstructionStrings();

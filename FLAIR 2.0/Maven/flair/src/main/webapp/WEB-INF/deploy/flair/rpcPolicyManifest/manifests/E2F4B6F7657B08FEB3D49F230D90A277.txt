@@ -1,2 +1,0 @@
-serviceClass: com.flair.shared.interop.services.PullMessageEndpointService
-path: 7A1BDEAFEB68331460047E8FAB8C2184.gwt.rpc

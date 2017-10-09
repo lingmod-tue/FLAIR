@@ -83,7 +83,7 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 	@UiField
 	MaterialChip				lblDocNumWordsUI;
 	@UiField
-	@LocalizedField(type=LocalizedFieldType.TOOLTIP)
+	@LocalizedField(type=LocalizedFieldType.TOOLTIP_MATERIAL)
 	MaterialIcon				icoHelpTextUI;
 	@UiField
 	ScrollPanel					pnlDocTextPreviewUI;
@@ -98,7 +98,7 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 	@UiField
 	MaterialColumn			 	pnlWeightSelectionCol3UI;
 	@UiField
-	@LocalizedField(type=LocalizedFieldType.BUTTON)
+	@LocalizedField(type=LocalizedFieldType.TEXT_BUTTON)
 	MaterialButton				btnShowAllConstUI;
 	@UiField
 	MaterialIcon				icoCloseModalUI;

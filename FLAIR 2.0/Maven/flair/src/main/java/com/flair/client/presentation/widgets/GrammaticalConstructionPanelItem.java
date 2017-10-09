@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.flair.client.localization.CommonLocalizationTags;
 import com.flair.client.localization.DefaultLocalizationProviders;
+import com.flair.client.localization.LocalizationBinderData;
 import com.flair.client.localization.LocalizedComposite;
 import com.flair.client.presentation.interfaces.CanReset;
 import com.flair.client.presentation.interfaces.GrammaticalConstructionContainer;
@@ -68,6 +69,7 @@ public class GrammaticalConstructionPanelItem extends LocalizedComposite impleme
 		reset.setIconColor(Color.GREY);
 		
 		initWidget(item);
+		initLocale(new LocalizationBinderData("GrammaticalConstructionPanelItem"));		// ### this class doesn't need the binder, so init with dummy data
 		initHandlers();
 	}
 	

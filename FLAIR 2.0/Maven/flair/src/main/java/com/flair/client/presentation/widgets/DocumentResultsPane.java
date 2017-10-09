@@ -49,7 +49,7 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 	@UiField
 	MaterialTitle			lblTitleUI;
 	@UiField
-	@LocalizedField(type=LocalizedFieldType.BUTTON)
+	@LocalizedField(type=LocalizedFieldType.TEXT_BUTTON)
 	MaterialButton			btnCancelOpUI;
 	@UiField
 	MaterialRow				pnlCompletedContainerUI;

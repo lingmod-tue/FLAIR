@@ -126,25 +126,25 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	@UiField
 	MaterialNavBar								navMainUI;
 	@UiField
-	@LocalizedField(type=LocalizedFieldType.TOOLTIP)
+	@LocalizedField(type=LocalizedFieldType.TOOLTIP_MATERIAL)
 	MaterialButton								btnWebSearchUI;
 	@UiField
-	@LocalizedField(type=LocalizedFieldType.TOOLTIP)
+	@LocalizedField(type=LocalizedFieldType.TOOLTIP_MATERIAL)
 	MaterialAnchorButton						btnUploadUI;
 	@UiField
-	@LocalizedField(type=LocalizedFieldType.TOOLTIP)
+	@LocalizedField(type=LocalizedFieldType.TOOLTIP_MATERIAL)
 	MaterialLink								btnHistoryUI;
 	@UiField
-	@LocalizedField(type=LocalizedFieldType.TOOLTIP)
+	@LocalizedField(type=LocalizedFieldType.TOOLTIP_MATERIAL)
 	MaterialLink								btnSwitchLangUI;
 	@UiField
-	@LocalizedField(type=LocalizedFieldType.TOOLTIP)
+	@LocalizedField(type=LocalizedFieldType.TOOLTIP_MATERIAL)
 	MaterialNavBrand							btnAboutUI;
 	@UiField
-	@LocalizedCommonField(tag=CommonLocalizationTags.LANGUAGE_ENGLISH, type=LocalizedFieldType.BUTTON)
+	@LocalizedCommonField(tag=CommonLocalizationTags.LANGUAGE_ENGLISH, type=LocalizedFieldType.TEXT_BUTTON)
 	MaterialLink								btnLangEnUI;
 	@UiField
-	@LocalizedCommonField(tag=CommonLocalizationTags.LANGUAGE_GERMAN, type=LocalizedFieldType.BUTTON)
+	@LocalizedCommonField(tag=CommonLocalizationTags.LANGUAGE_GERMAN, type=LocalizedFieldType.TEXT_BUTTON)
 	MaterialLink								btnLangDeUI;
 	@UiField
 	MaterialModal								mdlAboutEnUI;

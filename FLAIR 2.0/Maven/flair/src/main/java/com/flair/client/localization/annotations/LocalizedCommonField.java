@@ -19,5 +19,5 @@ import com.flair.client.localization.LocalizedFieldType;
 public @interface LocalizedCommonField
 {
 	CommonLocalizationTags	tag() 	default CommonLocalizationTags.INVALID;
-	LocalizedFieldType 		type() 	default LocalizedFieldType.TEXT;
+	LocalizedFieldType 		type() 	default LocalizedFieldType.TEXT_BASIC;
 }

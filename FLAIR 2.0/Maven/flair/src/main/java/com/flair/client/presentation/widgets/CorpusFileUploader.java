@@ -48,12 +48,12 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 	@UiField
 	MaterialFileUploader 	uplUploaderUI;
 	@UiField
-	@LocalizedField(type=LocalizedFieldType.DESCRIPTION)
+	@LocalizedField(type=LocalizedFieldType.TEXT_DESCRIPTION)
 	MaterialUploadLabel		lblUploadTextUI;
 	@UiField
 	MaterialStepper			stprUploaderUI;
 	@UiField
-	@LocalizedField(type=LocalizedFieldType.TITLE)
+	@LocalizedField(type=LocalizedFieldType.TEXT_TITLE)
 	MaterialStep			stpLangUI;
 	@UiField
 	@LocalizedCommonField(tag=CommonLocalizationTags.LANGUAGE_ENGLISH)
@@ -62,19 +62,19 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 	@LocalizedCommonField(tag=CommonLocalizationTags.LANGUAGE_GERMAN)
 	MaterialRadioButton		rdoGermanUI;
 	@UiField
-	@LocalizedCommonField(tag=CommonLocalizationTags.NEXT)
+	@LocalizedCommonField(tag=CommonLocalizationTags.NEXT, type=LocalizedFieldType.TEXT_BUTTON)
 	MaterialButton			btnToUploaderUI;
 	@UiField
-	@LocalizedCommonField(tag=CommonLocalizationTags.CANCEL)
+	@LocalizedCommonField(tag=CommonLocalizationTags.CANCEL, type=LocalizedFieldType.TEXT_BUTTON)
 	MaterialButton			btnCancel1UI;
 	@UiField
-	@LocalizedCommonField(tag=CommonLocalizationTags.UPLOAD)
+	@LocalizedCommonField(tag=CommonLocalizationTags.UPLOAD, type=LocalizedFieldType.TEXT_TITLE)
 	MaterialStep			stpUploadUI;
 	@UiField
-	@LocalizedCommonField(tag=CommonLocalizationTags.FINISH)
+	@LocalizedCommonField(tag=CommonLocalizationTags.FINISH, type=LocalizedFieldType.TEXT_BUTTON)
 	MaterialButton			btnFinishUI;
 	@UiField
-	@LocalizedCommonField(tag=CommonLocalizationTags.CANCEL)
+	@LocalizedCommonField(tag=CommonLocalizationTags.CANCEL, type=LocalizedFieldType.TEXT_BUTTON)
 	MaterialButton			btnCancel2UI;
 
 	UploadBeginHandler		beginHandler;
