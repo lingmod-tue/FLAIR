@@ -2,6 +2,7 @@ package com.flair.client;
 
 import com.flair.client.interop.FuncCallback;
 import com.flair.client.interop.MessageReceiverFactory;
+import com.flair.client.localization.GrammaticalConstructionLocalizationProvider;
 import com.flair.client.localization.LocalizationStringTable;
 import com.flair.client.model.DocumentAnnotator;
 import com.flair.client.model.DocumentRanker;
@@ -76,6 +77,7 @@ public class ClientEndPoint
 												messagePipeline);
 					webranker.init(clientToken, viewport);
 					viewport.showDefaultPane(true);
+					GrammaticalConstructionLocalizationProvider.bindToWebRankerCore(webranker);
 					
 					initialized = true;
 					break;

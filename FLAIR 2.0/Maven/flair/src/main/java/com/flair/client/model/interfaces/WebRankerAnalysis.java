@@ -7,7 +7,7 @@ import com.flair.shared.grammar.Language;
 import com.flair.shared.interop.RankableDocument;
 
 /*
- * Represents a successful analysis operation
+ * Represents a executing or completed analysis operation
  */
 public interface WebRankerAnalysis
 {
@@ -17,4 +17,5 @@ public interface WebRankerAnalysis
 	
 	public Language						getLanguage();
 	public List<RankableDocument>		getParsedDocs();
+	public boolean						inProgress();
 }

@@ -10,45 +10,45 @@
 				<flair:GrammaticalConstructionPanel accordion="true" popout="false">
 					<!-- Questions -->
 					<flair:GrammaticalConstructionPanelItem ui:field="pnlQuestionsUI" text="questions" iconType="EXPAND_MORE">
-						<flair:GrammaticalConstructionWeightSlider gram="QUESTIONS_DIRECT"/>
+						<flair:GrammaticalConstructionWeightSlider gram="QUESTIONS_DIRECT" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="QUESTIONS_WH"/>
+						<flair:GrammaticalConstructionWeightSlider gram="QUESTIONS_WH" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="QUESTIONS_TO_DO"/>
+						<flair:GrammaticalConstructionWeightSlider gram="QUESTIONS_TO_DO" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="QUESTIONS_TO_BE"/>
+						<flair:GrammaticalConstructionWeightSlider gram="QUESTIONS_TO_BE" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="QUESTIONS_TO_HAVE"/>
+						<flair:GrammaticalConstructionWeightSlider gram="QUESTIONS_TO_HAVE" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="QUESTIONS_YESNO"/>
+						<flair:GrammaticalConstructionWeightSlider gram="QUESTIONS_YESNO" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="QUESTIONS_TAG"/>
+						<flair:GrammaticalConstructionWeightSlider gram="QUESTIONS_TAG" parentLanguage="ENGLISH"/>
 					</flair:GrammaticalConstructionPanelItem>
 					
 					<!-- Sentence Types -->
 					<flair:GrammaticalConstructionPanelItem ui:field="pnlSentenceTypesUI" text="sentence types" iconType="EXPAND_MORE">
-						<flair:GrammaticalConstructionWeightSlider gram="SENTENCE_SIMPLE"/>
+						<flair:GrammaticalConstructionWeightSlider gram="SENTENCE_SIMPLE" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="SENTENCE_COMPOUND"/>
+						<flair:GrammaticalConstructionWeightSlider gram="SENTENCE_COMPOUND" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="CLAUSE_SUBORDINATE"/>
+						<flair:GrammaticalConstructionWeightSlider gram="CLAUSE_SUBORDINATE" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="SENTENCE_INCOMPLETE"/>
+						<flair:GrammaticalConstructionWeightSlider gram="SENTENCE_INCOMPLETE" parentLanguage="ENGLISH"/>
 					</flair:GrammaticalConstructionPanelItem>
 					
 					<!-- Clause Types -->
 					<flair:GrammaticalConstructionPanelItem ui:field="pnlClauseTypesUI" text="clause types" iconType="EXPAND_MORE">
-						<flair:GrammaticalConstructionWeightSlider gram="CLAUSE_RELATIVE"/>
+						<flair:GrammaticalConstructionWeightSlider gram="CLAUSE_RELATIVE" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="CLAUSE_ADVERBIAL"/>
+						<flair:GrammaticalConstructionWeightSlider gram="CLAUSE_ADVERBIAL" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="CONDITIONALS_REAL"/>
+						<flair:GrammaticalConstructionWeightSlider gram="CONDITIONALS_REAL" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="CONDITIONALS_UNREAL"/>
+						<flair:GrammaticalConstructionWeightSlider gram="CONDITIONALS_UNREAL" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="THERE_IS_ARE"/>
+						<flair:GrammaticalConstructionWeightSlider gram="THERE_IS_ARE" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="THERE_WAS_WERE"/>
+						<flair:GrammaticalConstructionWeightSlider gram="THERE_WAS_WERE" parentLanguage="ENGLISH"/>
 					</flair:GrammaticalConstructionPanelItem>
 				</flair:GrammaticalConstructionPanel>
 			</flair:GrammaticalConstructionPanelItem>
@@ -61,198 +61,198 @@
 						<flair:GrammaticalConstructionPanel accordion="true" popout="false">
 							<!-- Verb Forms -->
 							<flair:GrammaticalConstructionPanelItem ui:field="pnlVerbFormsUI" text="verb forms" iconType="EXPAND_MORE">
-								<flair:GrammaticalConstructionWeightSlider gram="VERBFORM_SHORT"/>
+								<flair:GrammaticalConstructionWeightSlider gram="VERBFORM_SHORT" parentLanguage="ENGLISH"/>
 								
-								<flair:GrammaticalConstructionWeightSlider gram="VERBFORM_LONG"/>
+								<flair:GrammaticalConstructionWeightSlider gram="VERBFORM_LONG" parentLanguage="ENGLISH"/>
 								
-								<flair:GrammaticalConstructionWeightSlider gram="VERBFORM_AUXILIARIES_BE_DO_HAVE"/>
+								<flair:GrammaticalConstructionWeightSlider gram="VERBFORM_AUXILIARIES_BE_DO_HAVE" parentLanguage="ENGLISH"/>
 								
-								<flair:GrammaticalConstructionWeightSlider gram="VERBFORM_COPULAR"/>
+								<flair:GrammaticalConstructionWeightSlider gram="VERBFORM_COPULAR" parentLanguage="ENGLISH"/>
 								
-								<flair:GrammaticalConstructionWeightSlider gram="VERBFORM_ING"/>
+								<flair:GrammaticalConstructionWeightSlider gram="VERBFORM_ING" parentLanguage="ENGLISH"/>
 								
-								<flair:GrammaticalConstructionWeightSlider gram="VERBFORM_TO_INFINITIVE"/>
+								<flair:GrammaticalConstructionWeightSlider gram="VERBFORM_TO_INFINITIVE" parentLanguage="ENGLISH"/>
 								
-								<flair:GrammaticalConstructionWeightSlider gram="VERBFORM_EMPATHIC_DO"/>
+								<flair:GrammaticalConstructionWeightSlider gram="VERBFORM_EMPATHIC_DO" parentLanguage="ENGLISH"/>
 								
-								<flair:GrammaticalConstructionWeightSlider gram="VERBS_IRREGULAR"/>
+								<flair:GrammaticalConstructionWeightSlider gram="VERBS_IRREGULAR" parentLanguage="ENGLISH"/>
 								
-								<flair:GrammaticalConstructionWeightSlider gram="VERBS_REGULAR"/>
+								<flair:GrammaticalConstructionWeightSlider gram="VERBS_REGULAR" parentLanguage="ENGLISH"/>
 							</flair:GrammaticalConstructionPanelItem>			
 			
 							<!-- Tenses -->
 							<flair:GrammaticalConstructionPanelItem ui:field="pnlTensesUI" text="tenses" iconType="EXPAND_MORE">
-								<flair:GrammaticalConstructionWeightSlider gram="TENSE_PRESENT_SIMPLE"/>
+								<flair:GrammaticalConstructionWeightSlider gram="TENSE_PRESENT_SIMPLE" parentLanguage="ENGLISH"/>
 								
-								<flair:GrammaticalConstructionWeightSlider gram="TENSE_PRESENT_PROGRESSIVE"/>
+								<flair:GrammaticalConstructionWeightSlider gram="TENSE_PRESENT_PROGRESSIVE" parentLanguage="ENGLISH"/>
 								
-								<flair:GrammaticalConstructionWeightSlider gram="TENSE_PAST_SIMPLE"/>
+								<flair:GrammaticalConstructionWeightSlider gram="TENSE_PAST_SIMPLE" parentLanguage="ENGLISH"/>
 								
-								<flair:GrammaticalConstructionWeightSlider gram="TENSE_PAST_PROGRESSIVE"/>
+								<flair:GrammaticalConstructionWeightSlider gram="TENSE_PAST_PROGRESSIVE" parentLanguage="ENGLISH"/>
 								
-								<flair:GrammaticalConstructionWeightSlider gram="TENSE_FUTURE_SIMPLE"/>
+								<flair:GrammaticalConstructionWeightSlider gram="TENSE_FUTURE_SIMPLE" parentLanguage="ENGLISH"/>
 								
-								<flair:GrammaticalConstructionWeightSlider gram="TENSE_FUTURE_PROGRESSIVE"/>
+								<flair:GrammaticalConstructionWeightSlider gram="TENSE_FUTURE_PROGRESSIVE" parentLanguage="ENGLISH"/>
 								
-								<flair:GrammaticalConstructionWeightSlider gram="TENSE_PRESENT_PERFECT"/>
+								<flair:GrammaticalConstructionWeightSlider gram="TENSE_PRESENT_PERFECT" parentLanguage="ENGLISH"/>
 								
-								<flair:GrammaticalConstructionWeightSlider gram="TENSE_PAST_PERFECT"/>
+								<flair:GrammaticalConstructionWeightSlider gram="TENSE_PAST_PERFECT" parentLanguage="ENGLISH"/>
 								
-								<flair:GrammaticalConstructionWeightSlider gram="TENSE_FUTURE_PERFECT"/>
+								<flair:GrammaticalConstructionWeightSlider gram="TENSE_FUTURE_PERFECT" parentLanguage="ENGLISH"/>
 								
-								<flair:GrammaticalConstructionWeightSlider gram="TENSE_PRESENT_PERFECT_PROGRESSIVE"/>
+								<flair:GrammaticalConstructionWeightSlider gram="TENSE_PRESENT_PERFECT_PROGRESSIVE" parentLanguage="ENGLISH"/>
 								
-								<flair:GrammaticalConstructionWeightSlider gram="TENSE_PAST_PERFECT_PROGRESSIVE"/>
+								<flair:GrammaticalConstructionWeightSlider gram="TENSE_PAST_PERFECT_PROGRESSIVE" parentLanguage="ENGLISH"/>
 								
-								<flair:GrammaticalConstructionWeightSlider gram="TENSE_FUTURE_PERFECT_PROGRESSIVE"/>
+								<flair:GrammaticalConstructionWeightSlider gram="TENSE_FUTURE_PERFECT_PROGRESSIVE" parentLanguage="ENGLISH"/>
 							</flair:GrammaticalConstructionPanelItem>
 							
 							<!-- Aspect -->
 							<flair:GrammaticalConstructionPanelItem ui:field="pnlAspectUI" text="aspect" iconType="EXPAND_MORE">
-								<flair:GrammaticalConstructionWeightSlider gram="ASPECT_SIMPLE"/>
+								<flair:GrammaticalConstructionWeightSlider gram="ASPECT_SIMPLE" parentLanguage="ENGLISH"/>
 								
-								<flair:GrammaticalConstructionWeightSlider gram="ASPECT_PROGRESSIVE"/>
+								<flair:GrammaticalConstructionWeightSlider gram="ASPECT_PROGRESSIVE" parentLanguage="ENGLISH"/>
 								
-								<flair:GrammaticalConstructionWeightSlider gram="ASPECT_PERFECT"/>
+								<flair:GrammaticalConstructionWeightSlider gram="ASPECT_PERFECT" parentLanguage="ENGLISH"/>
 								
-								<flair:GrammaticalConstructionWeightSlider gram="ASPECT_PERFECT_PROGRESSIVE"/>
+								<flair:GrammaticalConstructionWeightSlider gram="ASPECT_PERFECT_PROGRESSIVE" parentLanguage="ENGLISH"/>
 							</flair:GrammaticalConstructionPanelItem>
 							
 							<!-- Time -->
 							<flair:GrammaticalConstructionPanelItem ui:field="pnlTimeUI" text="time" iconType="EXPAND_MORE">
-								<flair:GrammaticalConstructionWeightSlider gram="TIME_PRESENT"/>
+								<flair:GrammaticalConstructionWeightSlider gram="TIME_PRESENT" parentLanguage="ENGLISH"/>
 								
-								<flair:GrammaticalConstructionWeightSlider gram="TIME_PAST"/>
+								<flair:GrammaticalConstructionWeightSlider gram="TIME_PAST" parentLanguage="ENGLISH"/>
 								
-								<flair:GrammaticalConstructionWeightSlider gram="TIME_FUTURE"/>
+								<flair:GrammaticalConstructionWeightSlider gram="TIME_FUTURE" parentLanguage="ENGLISH"/>
 							</flair:GrammaticalConstructionPanelItem>
 							
 							<!-- Voice -->
 							<flair:GrammaticalConstructionPanelItem ui:field="pnlVoiceUI" text="voice" iconType="EXPAND_MORE">
-								<flair:GrammaticalConstructionWeightSlider gram="PASSIVE_VOICE"/>
+								<flair:GrammaticalConstructionWeightSlider gram="PASSIVE_VOICE" parentLanguage="ENGLISH"/>
 							</flair:GrammaticalConstructionPanelItem>
 							
 							<!-- Phrasal -->
 							<flair:GrammaticalConstructionPanelItem ui:field="pnlPhrasalUI" text="phrasal" iconType="EXPAND_MORE">
-								<flair:GrammaticalConstructionWeightSlider gram="VERBS_PHRASAL"/>
+								<flair:GrammaticalConstructionWeightSlider gram="VERBS_PHRASAL" parentLanguage="ENGLISH"/>
 							</flair:GrammaticalConstructionPanelItem>
 							
 							<!-- Modal -->
 							<flair:GrammaticalConstructionPanelItem ui:field="pnlModalUI" text="modal" iconType="EXPAND_MORE">
-								<flair:GrammaticalConstructionWeightSlider gram="MODALS_SIMPLE"/>
+								<flair:GrammaticalConstructionWeightSlider gram="MODALS_SIMPLE" parentLanguage="ENGLISH"/>
 								
-								<flair:GrammaticalConstructionWeightSlider gram="MODALS_ADVANCED"/>
+								<flair:GrammaticalConstructionWeightSlider gram="MODALS_ADVANCED" parentLanguage="ENGLISH"/>
 							</flair:GrammaticalConstructionPanelItem>
 							
 							<!-- Transitive -->
 							<flair:GrammaticalConstructionPanelItem ui:field="pnlTransitiveUI" text="transitive" iconType="EXPAND_MORE">
-								<flair:GrammaticalConstructionWeightSlider gram="OBJECT_DIRECT"/>
+								<flair:GrammaticalConstructionWeightSlider gram="OBJECT_DIRECT" parentLanguage="ENGLISH"/>
 								
-								<flair:GrammaticalConstructionWeightSlider gram="OBJECT_INDIRECT"/>
+								<flair:GrammaticalConstructionWeightSlider gram="OBJECT_INDIRECT" parentLanguage="ENGLISH"/>
 							</flair:GrammaticalConstructionPanelItem>
 							
 							<!-- Imperative -->
 							<flair:GrammaticalConstructionPanelItem ui:field="pnlImperativeUI" text="imperatives" iconType="EXPAND_MORE">
-									<flair:GrammaticalConstructionWeightSlider gram="IMPERATIVES"/>
+									<flair:GrammaticalConstructionWeightSlider gram="IMPERATIVES" parentLanguage="ENGLISH"/>
 							</flair:GrammaticalConstructionPanelItem>
 						</flair:GrammaticalConstructionPanel>
 					</flair:GrammaticalConstructionPanelItem>
 				
 					<!-- Negation -->
 					<flair:GrammaticalConstructionPanelItem ui:field="pnlNegationUI" text="negation" iconType="EXPAND_MORE">
-						<flair:GrammaticalConstructionWeightSlider gram="NEGATION_ALL"/>
+						<flair:GrammaticalConstructionWeightSlider gram="NEGATION_ALL" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="NEGATION_PARTIAL"/>
+						<flair:GrammaticalConstructionWeightSlider gram="NEGATION_PARTIAL" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="NEGATION_NO_NOT_NEVER"/>
+						<flair:GrammaticalConstructionWeightSlider gram="NEGATION_NO_NOT_NEVER" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="NEGATION_NOT"/>
+						<flair:GrammaticalConstructionWeightSlider gram="NEGATION_NOT" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="NEGATION_NT"/>
+						<flair:GrammaticalConstructionWeightSlider gram="NEGATION_NT" parentLanguage="ENGLISH"/>
 					</flair:GrammaticalConstructionPanelItem>
 					
 					<!-- Articles -->
 					<flair:GrammaticalConstructionPanelItem ui:field="pnlArticlesUI" text="articles" iconType="EXPAND_MORE">
-						<flair:GrammaticalConstructionWeightSlider gram="ARTICLES"/>
+						<flair:GrammaticalConstructionWeightSlider gram="ARTICLES" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="ARTICLE_A"/>
+						<flair:GrammaticalConstructionWeightSlider gram="ARTICLE_A" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="ARTICLE_AN"/>
+						<flair:GrammaticalConstructionWeightSlider gram="ARTICLE_AN" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="ARTICLE_THE"/>
+						<flair:GrammaticalConstructionWeightSlider gram="ARTICLE_THE" parentLanguage="ENGLISH"/>
 					</flair:GrammaticalConstructionPanelItem>
 					
 					<!-- Quantifiers -->
 					<flair:GrammaticalConstructionPanelItem ui:field="pnlQuantifiersUI" text="quantifiers" iconType="EXPAND_MORE">
-						<flair:GrammaticalConstructionWeightSlider gram="DETERMINER_SOME"/>
+						<flair:GrammaticalConstructionWeightSlider gram="DETERMINER_SOME" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="DETERMINER_ANY"/>
+						<flair:GrammaticalConstructionWeightSlider gram="DETERMINER_ANY" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="DETERMINER_MUCH"/>
+						<flair:GrammaticalConstructionWeightSlider gram="DETERMINER_MUCH" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="DETERMINER_MANY"/>
+						<flair:GrammaticalConstructionWeightSlider gram="DETERMINER_MANY" parentLanguage="ENGLISH"/>
 					</flair:GrammaticalConstructionPanelItem>
 					
 					<!-- Adjectives -->
 					<flair:GrammaticalConstructionPanelItem ui:field="pnlAdjectivesUI" text="adjectives" iconType="EXPAND_MORE">
-						<flair:GrammaticalConstructionWeightSlider gram="ADJECTIVE_POSITIVE"/>
+						<flair:GrammaticalConstructionWeightSlider gram="ADJECTIVE_POSITIVE" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="ADJECTIVE_COMPARATIVE_SHORT"/>
+						<flair:GrammaticalConstructionWeightSlider gram="ADJECTIVE_COMPARATIVE_SHORT" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="ADJECTIVE_SUPERLATIVE_SHORT"/>
+						<flair:GrammaticalConstructionWeightSlider gram="ADJECTIVE_SUPERLATIVE_SHORT" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="ADJECTIVE_COMPARATIVE_LONG"/>
+						<flair:GrammaticalConstructionWeightSlider gram="ADJECTIVE_COMPARATIVE_LONG" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="ADJECTIVE_SUPERLATIVE_LONG"/>
+						<flair:GrammaticalConstructionWeightSlider gram="ADJECTIVE_SUPERLATIVE_LONG" parentLanguage="ENGLISH"/>
 					</flair:GrammaticalConstructionPanelItem>
 					
 					<!-- Adverbs -->
 					<flair:GrammaticalConstructionPanelItem ui:field="pnlAdverbsUI" text="adverbs" iconType="EXPAND_MORE">
-						<flair:GrammaticalConstructionWeightSlider gram="ADVERB_POSITIVE"/>
+						<flair:GrammaticalConstructionWeightSlider gram="ADVERB_POSITIVE" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="ADVERB_COMPARATIVE_SHORT"/>
+						<flair:GrammaticalConstructionWeightSlider gram="ADVERB_COMPARATIVE_SHORT" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="ADVERB_SUPERLATIVE_SHORT"/>
+						<flair:GrammaticalConstructionWeightSlider gram="ADVERB_SUPERLATIVE_SHORT" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="ADVERB_COMPARATIVE_LONG"/>
+						<flair:GrammaticalConstructionWeightSlider gram="ADVERB_COMPARATIVE_LONG" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="ADVERB_SUPERLATIVE_LONG"/>
+						<flair:GrammaticalConstructionWeightSlider gram="ADVERB_SUPERLATIVE_LONG" parentLanguage="ENGLISH"/>
 					</flair:GrammaticalConstructionPanelItem>
 					
 					<!-- Pronouns -->
 					<flair:GrammaticalConstructionPanelItem ui:field="pnlPronounsUI" text="pronouns" iconType="EXPAND_MORE">
-						<flair:GrammaticalConstructionWeightSlider gram="PRONOUNS_SUBJECTIVE"/>
+						<flair:GrammaticalConstructionWeightSlider gram="PRONOUNS_SUBJECTIVE" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="PRONOUNS_OBJECTIVE"/>
+						<flair:GrammaticalConstructionWeightSlider gram="PRONOUNS_OBJECTIVE" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="PRONOUNS_POSSESSIVE"/>
+						<flair:GrammaticalConstructionWeightSlider gram="PRONOUNS_POSSESSIVE" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="PRONOUNS_POSSESSIVE_ABSOLUTE"/>
+						<flair:GrammaticalConstructionWeightSlider gram="PRONOUNS_POSSESSIVE_ABSOLUTE" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="PRONOUNS_REFLEXIVE"/>
+						<flair:GrammaticalConstructionWeightSlider gram="PRONOUNS_REFLEXIVE" parentLanguage="ENGLISH"/>
 					</flair:GrammaticalConstructionPanelItem>
 					
 					<!-- Conjunctions -->
 					<flair:GrammaticalConstructionPanelItem ui:field="pnlConjunctionsUI" text="conjunctions" iconType="EXPAND_MORE">
-						<flair:GrammaticalConstructionWeightSlider gram="CONJUNCTIONS_SIMPLE"/>
+						<flair:GrammaticalConstructionWeightSlider gram="CONJUNCTIONS_SIMPLE" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="CONJUNCTIONS_ADVANCED"/>
+						<flair:GrammaticalConstructionWeightSlider gram="CONJUNCTIONS_ADVANCED" parentLanguage="ENGLISH"/>
 					</flair:GrammaticalConstructionPanelItem>
 					
 					<!-- Prepositions -->
 					<flair:GrammaticalConstructionPanelItem ui:field="pnlPrepositionsUI" text="prepositions" iconType="EXPAND_MORE">
-						<flair:GrammaticalConstructionWeightSlider gram="PREPOSITIONS_SIMPLE"/>
+						<flair:GrammaticalConstructionWeightSlider gram="PREPOSITIONS_SIMPLE" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="PREPOSITIONS_COMPLEX"/>
+						<flair:GrammaticalConstructionWeightSlider gram="PREPOSITIONS_COMPLEX" parentLanguage="ENGLISH"/>
 					</flair:GrammaticalConstructionPanelItem>
 					
 					<!-- Nouns -->
 					<flair:GrammaticalConstructionPanelItem ui:field="pnlNounsUI" text="nouns" iconType="EXPAND_MORE">
-						<flair:GrammaticalConstructionWeightSlider gram="PLURAL_REGULAR"/>
+						<flair:GrammaticalConstructionWeightSlider gram="PLURAL_REGULAR" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="PLURAL_IRREGULAR"/>
+						<flair:GrammaticalConstructionWeightSlider gram="PLURAL_IRREGULAR" parentLanguage="ENGLISH"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="NOUNFORMS_ING"/>
+						<flair:GrammaticalConstructionWeightSlider gram="NOUNFORMS_ING" parentLanguage="ENGLISH"/>
 					</flair:GrammaticalConstructionPanelItem>
 				</flair:GrammaticalConstructionPanel>
 			</flair:GrammaticalConstructionPanelItem>	

@@ -55,6 +55,7 @@ public class GrammaticalConstructionWeightSlider extends LocalizedComposite impl
 	
 	GenericWeightSlider				base;
 	private GrammaticalConstruction	gramConstruction;
+	private Language				parentLang;				// language this construction/slider is associated with
 	private ResetHandler			resetHandler;
 	
 	public GrammaticalConstructionWeightSlider()
@@ -64,6 +65,7 @@ public class GrammaticalConstructionWeightSlider extends LocalizedComposite impl
 		base = new GenericWeightSlider(this, chkToggleUI, sldWeightUI);
 		gramConstruction = null;
 		resetHandler = null;
+		parentLang = null;
 		
 		initLocale(localeBinder.bind(this));
 	}
@@ -76,6 +78,10 @@ public class GrammaticalConstructionWeightSlider extends LocalizedComposite impl
 	{
 		gramConstruction = gram;
 		setToggleText(gramConstruction.toString());
+	}
+	
+	public void setParentLanguage(Language l) {
+		parentLang = l;
 	}
 	
 	public void setResultCount(Integer count, Integer total) {
@@ -99,16 +105,16 @@ public class GrammaticalConstructionWeightSlider extends LocalizedComposite impl
 	{
 		super.setLocale(lang);
 		
-		// update toggle and tooltip
-		if (gramConstruction == null)
+		// update toggle and tooltip based on the parent language
+		if (gramConstruction == null || parentLang == null)
 		{
 			setToggleText(PLACEHOLDER_STRING);
 			icoHelpTextUI.setTooltip(PLACEHOLDER_STRING);
 		}
 		else
 		{
-			setToggleText(GrammaticalConstructionLocalizationProvider.getName(gramConstruction));
-			icoHelpTextUI.setTooltip(GrammaticalConstructionLocalizationProvider.getHelpText(gramConstruction));
+			setToggleText(GrammaticalConstructionLocalizationProvider.getName(gramConstruction, parentLang));
+			icoHelpTextUI.setTooltip(GrammaticalConstructionLocalizationProvider.getHelpText(gramConstruction, parentLang));
 		}
 	}
 	

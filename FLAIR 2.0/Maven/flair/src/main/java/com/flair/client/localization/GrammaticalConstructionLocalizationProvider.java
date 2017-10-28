@@ -1,7 +1,6 @@
 package com.flair.client.localization;
 
-import com.flair.client.ClientEndPoint;
-import com.flair.client.model.interfaces.WebRankerAnalysis;
+import com.flair.client.model.interfaces.AbstractWebRankerCore;
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
 
@@ -10,28 +9,43 @@ import com.flair.shared.grammar.Language;
  */
 public class GrammaticalConstructionLocalizationProvider
 {
-	private static Language getGramConstLanguage()
+	private static Language activeLang = Language.ENGLISH;		// the language of the active operation
+	
+	public static void bindToWebRankerCore(AbstractWebRankerCore ranker)
 	{
-		Language out = Language.ENGLISH;
-		if (ClientEndPoint.get().getWebRanker() != null)
-		{
-			WebRankerAnalysis currentOp = ClientEndPoint.get().getWebRanker().getCurrentOperation();
-			if (currentOp != null)
-				out = currentOp.getLanguage();
-		}
+		ranker.addBeginOperationHandler(p -> {
+			activeLang = p.lang;
+		});
 		
-		return out;
+		ranker.addEndOperationHandler(p -> {
+			if (p.success)
+				activeLang = p.lang;
+			else
+				activeLang = Language.ENGLISH;
+		});
 	}
 	
 	public static String getName(GrammaticalConstruction gram) {
-		return LocalizationStringTable.get().getLocalizedString(DefaultLocalizationProviders.GRAMMATICAL_CONSTRUCTION_NAME.toString(), gram.name(), getGramConstLanguage());
+		return getName(gram, activeLang);
 	}
 	
 	public static String getPath(GrammaticalConstruction gram) {
-		return LocalizationStringTable.get().getLocalizedString(DefaultLocalizationProviders.GRAMMATICAL_CONSTRUCTION_PATH.toString(), gram.name(), getGramConstLanguage());
+		return getPath(gram, activeLang);
 	}
 	
 	public static String getHelpText(GrammaticalConstruction gram) {
-		return LocalizationStringTable.get().getLocalizedString(DefaultLocalizationProviders.GRAMMATICAL_CONSTRUCTION_HELPTEXT.toString(), gram.name(), getGramConstLanguage());
+		return getHelpText(gram, activeLang);
+	}
+	
+	public static String getName(GrammaticalConstruction gram, Language lang) {
+		return LocalizationStringTable.get().getLocalizedString(DefaultLocalizationProviders.GRAMMATICAL_CONSTRUCTION_NAME.toString(), gram.name(), lang);
+	}
+	
+	public static String getPath(GrammaticalConstruction gram, Language lang) {
+		return LocalizationStringTable.get().getLocalizedString(DefaultLocalizationProviders.GRAMMATICAL_CONSTRUCTION_PATH.toString(), gram.name(), lang);
+	}
+	
+	public static String getHelpText(GrammaticalConstruction gram, Language lang) {
+		return LocalizationStringTable.get().getLocalizedString(DefaultLocalizationProviders.GRAMMATICAL_CONSTRUCTION_HELPTEXT.toString(), gram.name(), lang);
 	}
 }

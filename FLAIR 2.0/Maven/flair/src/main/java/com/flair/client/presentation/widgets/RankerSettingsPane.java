@@ -190,6 +190,7 @@ public class RankerSettingsPane extends LocalizedComposite implements AbstractRa
 			sliderLanguage = lang;
 			
 			getSliderBundle().setVisible(true);
+			getSliderBundle().refreshLocale();
 		}
 		
 		public LanguageSpecificConstructionSliderBundle getSliderBundle()

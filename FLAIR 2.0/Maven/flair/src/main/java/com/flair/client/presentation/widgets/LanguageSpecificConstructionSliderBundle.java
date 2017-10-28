@@ -81,4 +81,14 @@ public abstract class LanguageSpecificConstructionSliderBundle extends Localized
 			}
 		}
 	}
+
+	@Override
+	public void refreshLocale()
+	{
+		super.refreshLocale();
+		
+		// additionally refresh the widget's children
+		// shortcut to refresh the locale of all sliders
+		forEachWeightSlider(w -> w.refreshLocale());
+	}
 }

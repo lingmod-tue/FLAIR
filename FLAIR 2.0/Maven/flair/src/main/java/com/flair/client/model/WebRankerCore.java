@@ -133,6 +133,11 @@ public class WebRankerCore implements AbstractWebRankerCore
 		public List<RankableDocument> getParsedDocs() {
 			return parsedDocs;
 		}
+		
+		@Override
+		public boolean inProgress() {
+			return complete == false;
+		}
 	}
 		
 	private final class WebSearchProcessData extends ProcessData
@@ -789,6 +794,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 			reset();
 			
 			data = d;
+			settings.setSliderBundle(data.lang);
 		}
 		
 		void reset()
@@ -1142,7 +1148,6 @@ public class WebRankerCore implements AbstractWebRankerCore
 			settings.hide();
 			preview.hide();
 
-			settings.setSliderBundle(data.lang);
 			messagePipeline.setHandler(new ServerMessageHandler());
 			messagePipeline.open(token);
 			
