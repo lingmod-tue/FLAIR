@@ -441,7 +441,7 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 					 if (gram != null)
 					 {
 						 // get the localized string and format it a bit
-						 String name = GrammaticalConstructionLocalizationProvider.getName(gram, getCurrentLocale());
+						 String name = GrammaticalConstructionLocalizationProvider.getName(gram);
 						 int delimiter = name.indexOf("(");
 						 if (delimiter == -1)
 							 return name;

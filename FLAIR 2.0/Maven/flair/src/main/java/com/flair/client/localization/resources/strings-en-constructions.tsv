@@ -1,0 +1,444 @@
+_gram-name_	ADJECTIVE_COMPARATIVE_LONG	Comparative Long
+_gram-path_	ADJECTIVE_COMPARATIVE_LONG	Adjectives > Comparative form of long adjectives
+_gram-helpText_	ADJECTIVE_COMPARATIVE_LONG	e.g., more difficult
+_gram-name_	ADJECTIVE_COMPARATIVE_SHORT	Comparative Short
+_gram-path_	ADJECTIVE_COMPARATIVE_SHORT	Adjectives > Comparative form of short adjectives
+_gram-helpText_	ADJECTIVE_COMPARATIVE_SHORT	e.g., nicer
+_gram-name_	ADJECTIVE_POSITIVE	Positive
+_gram-path_	ADJECTIVE_POSITIVE	Adjectives > Positive form of all adjectives
+_gram-helpText_	ADJECTIVE_POSITIVE	e.g., nice, difficult, bad, amazing
+_gram-name_	ADJECTIVE_SUPERLATIVE_LONG	Superlative Long
+_gram-path_	ADJECTIVE_SUPERLATIVE_LONG	Adjectives > Superlative form of long adjectives
+_gram-helpText_	ADJECTIVE_SUPERLATIVE_LONG	e.g., most difficult
+_gram-name_	ADJECTIVE_SUPERLATIVE_SHORT	Superlative Short
+_gram-path_	ADJECTIVE_SUPERLATIVE_SHORT	Adjectives > Superlative form of short adjectives
+_gram-helpText_	ADJECTIVE_SUPERLATIVE_SHORT	e.g., nicest
+_gram-name_	ADVERB_COMPARATIVE_LONG	Comparative Long
+_gram-path_	ADVERB_COMPARATIVE_LONG	Adverbs > Comparative form of long adverbs
+_gram-helpText_	ADVERB_COMPARATIVE_LONG	e.g., more seriously
+_gram-name_	ADVERB_COMPARATIVE_SHORT	Comparative Short
+_gram-path_	ADVERB_COMPARATIVE_SHORT	Adverbs > Comparative form of short adverbs
+_gram-helpText_	ADVERB_COMPARATIVE_SHORT	e.g., later
+_gram-name_	ADVERB_POSITIVE	Positive
+_gram-path_	ADVERB_POSITIVE	Adverbs > Positive form of all adverbs
+_gram-helpText_	ADVERB_POSITIVE	e.g., late
+_gram-name_	ADVERB_SUPERLATIVE_LONG	Superlative Long
+_gram-path_	ADVERB_SUPERLATIVE_LONG	Adverbs > Superlative form of long adverbs
+_gram-helpText_	ADVERB_SUPERLATIVE_LONG	e.g., most seriously
+_gram-name_	ADVERB_SUPERLATIVE_SHORT	Superlative Short
+_gram-path_	ADVERB_SUPERLATIVE_SHORT	Adverbs > Superlative form of short adverbs
+_gram-helpText_	ADVERB_SUPERLATIVE_SHORT	e.g., latest
+_gram-name_	ARTICLES	All Articles
+_gram-path_	ARTICLES	Articles > All articles
+_gram-helpText_	ARTICLES	e.g., a, an, the
+_gram-name_	ARTICLE_A	A
+_gram-path_	ARTICLE_A	Articles > Article "a"
+_gram-helpText_	ARTICLE_A	e.g., a tortoise
+_gram-name_	ARTICLE_AN	An
+_gram-path_	ARTICLE_AN	Articles > Article "an"
+_gram-helpText_	ARTICLE_AN	e.g., an apple
+_gram-name_	ARTICLE_THE	The
+_gram-path_	ARTICLE_THE	Articles > Article "the"
+_gram-helpText_	ARTICLE_THE	e.g., the Alps
+_gram-name_	ASPECT_PERFECT	Perfect
+_gram-path_	ASPECT_PERFECT	Verbs > Aspects > Perfect aspect
+_gram-helpText_	ASPECT_PERFECT	All perfect tenses. Have/has/had/will have + done. 
+_gram-name_	ASPECT_PERFECT_PROGRESSIVE	Perfect Progressive
+_gram-path_	ASPECT_PERFECT_PROGRESSIVE	Verbs > Aspects > Perfect Progressive aspect
+_gram-helpText_	ASPECT_PERFECT_PROGRESSIVE	All perfect progressive tenses. Have/has/had/will have + been + doing.
+_gram-name_	ASPECT_PROGRESSIVE	Progressive
+_gram-path_	ASPECT_PROGRESSIVE	Verbs > Aspects > Progressive aspect
+_gram-helpText_	ASPECT_PROGRESSIVE	All progressive tenses. Am/is/are/was/were/will be + doing. 
+_gram-name_	ASPECT_SIMPLE	Simple
+_gram-path_	ASPECT_SIMPLE	Verbs > Aspects > Simple aspect
+_gram-helpText_	ASPECT_SIMPLE	All simple tenses. Do/does/did/will do. 
+_gram-name_	ATTRIBUTES_ADJECTIVE	ATTRIBUTES_ADJECTIVE
+_gram-path_	ATTRIBUTES_ADJECTIVE	ATTRIBUTES_ADJECTIVE
+_gram-helpText_	ATTRIBUTES_ADJECTIVE	<INSERT_HELP_TEXT>
+_gram-name_	ATTRIBUTES_PARTICIPLE_1	ATTRIBUTES_PARTICIPLE_1
+_gram-path_	ATTRIBUTES_PARTICIPLE_1	ATTRIBUTES_PARTICIPLE_1
+_gram-helpText_	ATTRIBUTES_PARTICIPLE_1	<INSERT_HELP_TEXT>
+_gram-name_	ATTRIBUTES_PARTICIPLE_2	ATTRIBUTES_PARTICIPLE_2
+_gram-path_	ATTRIBUTES_PARTICIPLE_2	ATTRIBUTES_PARTICIPLE_2
+_gram-helpText_	ATTRIBUTES_PARTICIPLE_2	<INSERT_HELP_TEXT>
+_gram-name_	ATTRIBUTES_PREPOSITION	ATTRIBUTES_PREPOSITION
+_gram-path_	ATTRIBUTES_PREPOSITION	ATTRIBUTES_PREPOSITION
+_gram-helpText_	ATTRIBUTES_PREPOSITION	<INSERT_HELP_TEXT>
+_gram-name_	CARDINALS	CARDINALS
+_gram-path_	CARDINALS	CARDINALS
+_gram-helpText_	CARDINALS	<INSERT_HELP_TEXT>
+_gram-name_	CLAUSE_ADVERBIAL	Adverbial
+_gram-path_	CLAUSE_ADVERBIAL	Clauses > Adverbial clause
+_gram-helpText_	CLAUSE_ADVERBIAL	A subordinate clause functioning as an adverb. E.g., John's goldfish died when he was 3.
+_gram-name_	CLAUSE_DASS	CLAUSE_DASS
+_gram-path_	CLAUSE_DASS	CLAUSE_DASS
+_gram-helpText_	CLAUSE_DASS	<INSERT_HELP_TEXT>
+_gram-name_	CLAUSE_RELATIVE	Relative
+_gram-path_	CLAUSE_RELATIVE	Clauses > Relative clause
+_gram-helpText_	CLAUSE_RELATIVE	A subordinate clause that defines a noun phrase and starts with a relative pronoun (who, which, that, where, when, whose, whom). E.g., John saw Sam who was talking to his parents.
+_gram-name_	CLAUSE_RELATIVE_REDUCED	Relative reduced
+_gram-path_	CLAUSE_RELATIVE_REDUCED	Clauses > Relative reduced clause
+_gram-helpText_	CLAUSE_RELATIVE_REDUCED	A subordinate clause that defines a noun phrase (an object from another clause) but does not start with a relative pronoun. E.g., John ate an apple he bought a day ago.
+_gram-name_	CLAUSE_SUBORDINATE	Subordinate
+_gram-path_	CLAUSE_SUBORDINATE	Clauses > Subordinate clause
+_gram-helpText_	CLAUSE_SUBORDINATE	A clause that is dependent on the main clause and usually starts with a conjunction. E.g., Even though John goes snowboarding every year, he does not own a snowboard.
+_gram-name_	CONDITIONALS	Conditionals
+_gram-path_	CONDITIONALS	Clauses > All conditional clauses
+_gram-helpText_	CONDITIONALS	An if-clause of four types: real present, unreal present, unreal past, and mixed. E.g., If John works hard, he will get far. If I were you, I would talk to John about it. If John had known this before, he would have told you. If John had not seen this movie, he would watch it with us now. 
+_gram-name_	CONDITIONALS_REAL	Real Conditional
+_gram-path_	CONDITIONALS_REAL	Clauses > Real conditional clause
+_gram-helpText_	CONDITIONALS_REAL	An if-clause describing a fact or a situation when a certain condition has to be met. E.g., If John wakes up early, he goes jogging. If John has enough time, he will join us.
+_gram-name_	CONDITIONALS_UNREAL	Unreal Conditional
+_gram-path_	CONDITIONALS_UNREAL	Clauses > Unreal conditional clause
+_gram-helpText_	CONDITIONALS_UNREAL	An if-clause describing an unprobable or an impossible situation in the present or past. E.g., If John were here, he would tell you the same thing. If John had been more careful, he would not have got into trouble.
+_gram-name_	CONJUNCTIONS_ADVANCED	Advanced
+_gram-path_	CONJUNCTIONS_ADVANCED	Conjunctions > Advanced conjunctions
+_gram-helpText_	CONJUNCTIONS_ADVANCED	All non-simple conjunctions. E.g., therefore, until, besides
+_gram-name_	CONJUNCTIONS_SIMPLE	Simple
+_gram-path_	CONJUNCTIONS_SIMPLE	Conjunctions > Simple conjunctions
+_gram-helpText_	CONJUNCTIONS_SIMPLE	The following conjunctions: and, or, but, because, so
+_gram-name_	DETERMINER_ANY	Any
+_gram-path_	DETERMINER_ANY	Determiner > Determiner "any"
+_gram-helpText_	DETERMINER_ANY	e.g., Any questions?
+_gram-name_	DETERMINER_A_LOT_OF	A lot of
+_gram-path_	DETERMINER_A_LOT_OF	Determiner > Determiner "a lot of"
+_gram-helpText_	DETERMINER_A_LOT_OF	e.g., a lot of air
+_gram-name_	DETERMINER_MANY	Many
+_gram-path_	DETERMINER_MANY	Determiner > Determiner "many"
+_gram-helpText_	DETERMINER_MANY	e.g., many texts
+_gram-name_	DETERMINER_MUCH	Much
+_gram-path_	DETERMINER_MUCH	Determiner > Determiner "much"
+_gram-helpText_	DETERMINER_MUCH	e.g., much water
+_gram-name_	DETERMINER_SOME	Some
+_gram-path_	DETERMINER_SOME	Determiner > Determiner "some"
+_gram-helpText_	DETERMINER_SOME	e.g., some time
+_gram-name_	EXISTENTIAL_THERE	Existential "there"
+_gram-path_	EXISTENTIAL_THERE	Clauses > Existential "there"
+_gram-helpText_	EXISTENTIAL_THERE	A clause starting with there is/are/was/were/will be. E.g., There is no internet connection in this room.
+_gram-name_	IMPERATIVES	Imperative
+_gram-path_	IMPERATIVES	Verbs > Imperative > Imperative verb
+_gram-helpText_	IMPERATIVES	A verb at the beginning of an imperative clause. E.g., Write this down. Watch out! 
+_gram-name_	MODALS	Modal
+_gram-path_	MODALS	Verbs > Modals > Modal verbs
+_gram-helpText_	MODALS	A verb that indicates likelihood, ability, permission, or obligation. E.g., might, can, ought to, must
+_gram-name_	MODALS_ABLE	Able
+_gram-path_	MODALS_ABLE	Verbs > Modals > Modal verb "able"
+_gram-helpText_	MODALS_ABLE	e.g., We were not able to reach John.
+_gram-name_	MODALS_ADVANCED	Advanced
+_gram-path_	MODALS_ADVANCED	Verbs > Modals > Advanced modal verbs
+_gram-helpText_	MODALS_ADVANCED	All non-simple modal verbs. E.g., ought to, able to, should.
+_gram-name_	MODALS_CAN	Can
+_gram-path_	MODALS_CAN	Verbs > Modals > Modal verb "can"
+_gram-helpText_	MODALS_CAN	e.g., John can draw pretty well.
+_gram-name_	MODALS_COULD	Could
+_gram-path_	MODALS_COULD	Verbs > Modals > Modal verb "could"
+_gram-helpText_	MODALS_COULD	As the past form of "can" or a separate modal verb. E.g., John could climb trees when he was 7. I could call you at 8pm.
+_gram-name_	MODALS_HAVE_TO	Have to
+_gram-path_	MODALS_HAVE_TO	Verbs > Modals > Modal verb "have to"
+_gram-helpText_	MODALS_HAVE_TO	e.g. Sorry, it is already late, I have to go. 
+_gram-name_	MODALS_MAY	May
+_gram-path_	MODALS_MAY	Verbs > Modals > Modal verb "may"
+_gram-helpText_	MODALS_MAY	e.g., May I ask a question?
+_gram-name_	MODALS_MIGHT	Might
+_gram-path_	MODALS_MIGHT	Verbs > Modals > Modal verb "might"
+_gram-helpText_	MODALS_MIGHT	As the past form of "may" or a separate modal verb. E.g., John might have won that game. This might be true.
+_gram-name_	MODALS_MUST	Must
+_gram-path_	MODALS_MUST	Verbs > Modals > Modal verb "must"
+_gram-helpText_	MODALS_MUST	e.g., You must be careful.
+_gram-name_	MODALS_NEED	Need
+_gram-path_	MODALS_NEED	Verbs > Modals > Modal verb "need"
+_gram-helpText_	MODALS_NEED	e.g., John needs your help.
+_gram-name_	MODALS_OUGHT	Ought to
+_gram-path_	MODALS_OUGHT	Verbs > Modals > Modal verb "ought to"
+_gram-helpText_	MODALS_OUGHT	e.g., Everyone ought to respect the law.
+_gram-name_	MODALS_SIMPLE	Simple 
+_gram-path_	MODALS_SIMPLE	Verbs > Modals > Simple modal verbs
+_gram-helpText_	MODALS_SIMPLE	The following modal verbs: can, must, need, may
+_gram-name_	NEGATION_ALL	All negation
+_gram-path_	NEGATION_ALL	Negation > All negation
+_gram-helpText_	NEGATION_ALL	All forms of negation: no, not, never, nobody, partial negation (e.g., barely, hardly)
+_gram-name_	NEGATION_NOT	Not (full form)
+_gram-path_	NEGATION_NOT	Negation > Full form "not"
+_gram-helpText_	NEGATION_NOT	e.g., John has not been to the US before.
+_gram-name_	NEGATION_NO_NOT_NEVER	No, not, never
+_gram-path_	NEGATION_NO_NOT_NEVER	Negation > Negative forms "no, not, never"
+_gram-helpText_	NEGATION_NO_NOT_NEVER	e.g., You have no right to say that. We do not know John well enough. Sam has never seen John.
+_gram-name_	NEGATION_NT	N't (contracted form)
+_gram-path_	NEGATION_NT	Negation > Contracted form "n't"
+_gram-helpText_	NEGATION_NT	e.g., John isn't feeling very well.
+_gram-name_	NEGATION_PARTIAL	Partial negation
+_gram-path_	NEGATION_PARTIAL	Negation > Partial negation
+_gram-helpText_	NEGATION_PARTIAL	The following adverbs: hardly, barely, scarcely, rarely, seldom. E.g., John could hardly understand the lecture.
+_gram-name_	NOUNFORMS_ING	-ing forms 
+_gram-path_	NOUNFORMS_ING	Nouns > -ing noun forms
+_gram-helpText_	NOUNFORMS_ING	Nouns derived from verbs and ending with -ing. E.g., skiing, being, but also building.
+_gram-name_	NOUNS_ISMUS	NOUNS_ISMUS
+_gram-path_	NOUNS_ISMUS	NOUNS_ISMUS
+_gram-helpText_	NOUNS_ISMUS	<INSERT_HELP_TEXT>
+_gram-name_	NOUNS_TUR	NOUNS_TUR
+_gram-path_	NOUNS_TUR	NOUNS_TUR
+_gram-helpText_	NOUNS_TUR	<INSERT_HELP_TEXT>
+_gram-name_	NOUNS_UNG	NOUNS_UNG
+_gram-path_	NOUNS_UNG	NOUNS_UNG
+_gram-helpText_	NOUNS_UNG	<INSERT_HELP_TEXT>
+_gram-name_	OBJECT_DIRECT	Transitive
+_gram-path_	OBJECT_DIRECT	Verbs > Transitive > Transitive verb
+_gram-helpText_	OBJECT_DIRECT	A verb that takes one direct object. E.g., John drives a Mercedes. 
+_gram-name_	OBJECT_INDIRECT	Ditransitive
+_gram-path_	OBJECT_INDIRECT	Verbs > Transitive > Ditransitive verb
+_gram-helpText_	OBJECT_INDIRECT	A verb that takes a direct and an indirect object. E.g., Please, pass this book to me. 
+_gram-name_	PARTICLE_PLUS_ADJ_ADV	PARTICLE_PLUS_ADJ_ADV
+_gram-path_	PARTICLE_PLUS_ADJ_ADV	PARTICLE_PLUS_ADJ_ADV
+_gram-helpText_	PARTICLE_PLUS_ADJ_ADV	<INSERT_HELP_TEXT>
+_gram-name_	PASSIVE_VOICE	Passive
+_gram-path_	PASSIVE_VOICE	Verbs > Voice > Passive voice
+_gram-helpText_	PASSIVE_VOICE	e.g., This book was written by George R. R. Martin.
+_gram-name_	PASSIVE_VOICE_SEIN	PASSIVE_VOICE_SEIN
+_gram-path_	PASSIVE_VOICE_SEIN	PASSIVE_VOICE_SEIN
+_gram-helpText_	PASSIVE_VOICE_SEIN	<INSERT_HELP_TEXT>
+_gram-name_	PASSIVE_VOICE_WERDEN	PASSIVE_VOICE_WERDEN
+_gram-path_	PASSIVE_VOICE_WERDEN	PASSIVE_VOICE_WERDEN
+_gram-helpText_	PASSIVE_VOICE_WERDEN	<INSERT_HELP_TEXT>
+_gram-name_	PLURAL_IRREGULAR	Plural irregular
+_gram-path_	PLURAL_IRREGULAR	Nouns > Irregular plural form of nouns
+_gram-helpText_	PLURAL_IRREGULAR	e.g., people, children, women
+_gram-name_	PLURAL_REGULAR	Plural regular
+_gram-path_	PLURAL_REGULAR	Nouns > Regular plural form of nouns
+_gram-helpText_	PLURAL_REGULAR	e.g., texts, flowers, settings
+_gram-name_	PREPOSITIONS	Prepositions
+_gram-path_	PREPOSITIONS	Prepositions > All prepositions
+_gram-helpText_	PREPOSITIONS	e.g., in, on, between, under
+_gram-name_	PREPOSITIONS_ADVANCED	Advanced
+_gram-path_	PREPOSITIONS_ADVANCED	Prepositions > Advanced preposition
+_gram-helpText_	PREPOSITIONS_ADVANCED	All non-simple prepositions. E.g., between, above, after
+_gram-name_	PREPOSITIONS_COMPLEX	Complex
+_gram-path_	PREPOSITIONS_COMPLEX	Prepositions > Complex preposition
+_gram-helpText_	PREPOSITIONS_COMPLEX	Prepositions consisting of two or more words. E.g., apart from, by means of
+_gram-name_	PREPOSITIONS_SIMPLE	Simple 
+_gram-path_	PREPOSITIONS_SIMPLE	Prepositions > Simple preposition
+_gram-helpText_	PREPOSITIONS_SIMPLE	The following prepositions: at, on, in, to, with, after
+_gram-name_	PRONOUNS	Pronouns
+_gram-path_	PRONOUNS	Pronouns > All pronouns
+_gram-helpText_	PRONOUNS	Personal, possessive, indefinite, interrogative, reflexive, relative, demonstrative pronouns
+_gram-name_	PRONOUNS_DEMONSTRATIVE	Demonstrative
+_gram-path_	PRONOUNS_DEMONSTRATIVE	Pronouns > Demonstrative pronoun
+_gram-helpText_	PRONOUNS_DEMONSTRATIVE	e.g., this, that, these, those
+_gram-name_	PRONOUNS_INDEFINITE	Indefinite
+_gram-path_	PRONOUNS_INDEFINITE	Pronouns > Indefinite pronoun
+_gram-helpText_	PRONOUNS_INDEFINITE	e.g., somewhere, everything, nobody, neither, another
+_gram-name_	PRONOUNS_INTERROGATIVE	Interrogative
+_gram-path_	PRONOUNS_INTERROGATIVE	Pronouns > Interrogative pronoun
+_gram-helpText_	PRONOUNS_INTERROGATIVE	All question words. E.g., what, where, which, how
+_gram-name_	PRONOUNS_OBJECTIVE	Object 
+_gram-path_	PRONOUNS_OBJECTIVE	Pronouns > Object pronoun
+_gram-helpText_	PRONOUNS_OBJECTIVE	Any pronoun used as an object. E.g., me, him, them
+_gram-name_	PRONOUNS_PERSONAL	Personal
+_gram-path_	PRONOUNS_PERSONAL	Pronouns > Personal pronoun
+_gram-helpText_	PRONOUNS_PERSONAL	e.g., I, he, they
+_gram-name_	PRONOUNS_POSSESSIVE	Possessive
+_gram-path_	PRONOUNS_POSSESSIVE	Pronouns > Possessive pronoun
+_gram-helpText_	PRONOUNS_POSSESSIVE	e.g., my, his, their
+_gram-name_	PRONOUNS_POSSESSIVE_ABSOLUTE	Absolute possessive
+_gram-path_	PRONOUNS_POSSESSIVE_ABSOLUTE	Pronouns > Absolute possessive pronoun
+_gram-helpText_	PRONOUNS_POSSESSIVE_ABSOLUTE	e.g., mine, his, theirs
+_gram-name_	PRONOUNS_REFLEXIVE	Reflexive
+_gram-path_	PRONOUNS_REFLEXIVE	Pronouns > Reflexive pronoun
+_gram-helpText_	PRONOUNS_REFLEXIVE	e.g., myself, himself, themselves
+_gram-name_	PRONOUNS_RELATIVE	Relative
+_gram-path_	PRONOUNS_RELATIVE	Pronouns > Relative pronouns
+_gram-helpText_	PRONOUNS_RELATIVE	e.g., who, which, that
+_gram-name_	PRONOUNS_SUBJECTIVE	Subject
+_gram-path_	PRONOUNS_SUBJECTIVE	Pronouns > Subject pronoun
+_gram-helpText_	PRONOUNS_SUBJECTIVE	Any pronoun used as a subject. E.g., I, everyone, something
+_gram-name_	QUESTIONS_DIRECT	Questions
+_gram-path_	QUESTIONS_DIRECT	Questions > All questions
+_gram-helpText_	QUESTIONS_DIRECT	All direct questions. E.g., What is the capital of Germany?
+_gram-name_	QUESTIONS_HOW	"How" questions
+_gram-path_	QUESTIONS_HOW	Questions > "How" questions
+_gram-helpText_	QUESTIONS_HOW	Questions starting with "how". E.g., How are you doing today?
+_gram-name_	QUESTIONS_INDIRECT	Indirect
+_gram-path_	QUESTIONS_INDIRECT	Questions > Indirect questions
+_gram-helpText_	QUESTIONS_INDIRECT	Questions reported using indirect speech. E.g., John asked when he should come.
+_gram-name_	QUESTIONS_MODAL	Modal
+_gram-path_	QUESTIONS_MODAL	Questions > Modal questions
+_gram-helpText_	QUESTIONS_MODAL	Questions starting with a modal verb. E.g., Could you help me? 
+_gram-name_	QUESTIONS_TAG	Tag questions
+_gram-path_	QUESTIONS_TAG	Questions > Tag questions
+_gram-helpText_	QUESTIONS_TAG	e.g. It is still raining outside, isn't it?
+_gram-name_	QUESTIONS_TO_BE	"Be" questions
+_gram-path_	QUESTIONS_TO_BE	Questions > "Be" questions (Progressive Aspect)
+_gram-helpText_	QUESTIONS_TO_BE	Yes/no questions starting with a form of the verb "be". E.g., Are you listening to me?
+_gram-name_	QUESTIONS_TO_DO	"Do" questions
+_gram-path_	QUESTIONS_TO_DO	Questions > "Do" questions (Simple Aspect)
+_gram-helpText_	QUESTIONS_TO_DO	Yes/no questions starting with a form of the verb "do". E.g., Did you go to the cinema at the weekend?
+_gram-name_	QUESTIONS_TO_HAVE	"Have" questions 
+_gram-path_	QUESTIONS_TO_HAVE	Questions > "Have" questions (Perfect or Perfect Progressive Aspect)
+_gram-helpText_	QUESTIONS_TO_HAVE	Yes/no questions starting with a form of the verb "have". E.g., Have you ever seen a snake? Have you been studying for the last hour?
+_gram-name_	QUESTIONS_WH	"Wh" questions
+_gram-path_	QUESTIONS_WH	Questions > "Wh" questions
+_gram-helpText_	QUESTIONS_WH	All non-yes/no questions. E.g., When is John's birthday? Which text have you read?
+_gram-name_	QUESTIONS_WHAT	"What" questions
+_gram-path_	QUESTIONS_WHAT	Questions > "What" questions
+_gram-helpText_	QUESTIONS_WHAT	Questions starting with "what". E.g., What date is it today?
+_gram-name_	QUESTIONS_WHEN	"When" questions
+_gram-path_	QUESTIONS_WHEN	Questions > "When" questions
+_gram-helpText_	QUESTIONS_WHEN	Questions starting with "when". E.g., When is the next break?
+_gram-name_	QUESTIONS_WHERE	"Where" questions
+_gram-path_	QUESTIONS_WHERE	Questions > "Where" questions
+_gram-helpText_	QUESTIONS_WHERE	Questions starting with "where". E.g., Where did you go on holidays last summer?
+_gram-name_	QUESTIONS_WHICH	"Which" questions
+_gram-path_	QUESTIONS_WHICH	Questions > "Which" questions
+_gram-helpText_	QUESTIONS_WHICH	Questions starting with "which". E.g., Which topic have you chosen for your presentation?
+_gram-name_	QUESTIONS_WHO	"Who" questions
+_gram-path_	QUESTIONS_WHO	Questions > "Who" questions
+_gram-helpText_	QUESTIONS_WHO	Questions starting with "who". E.g., Who is absent today?
+_gram-name_	QUESTIONS_WHOM	"Whom" questions
+_gram-path_	QUESTIONS_WHOM	Questions > "Whom" questions
+_gram-helpText_	QUESTIONS_WHOM	Questions starting with "whom". E.g., Whom should I contact?
+_gram-name_	QUESTIONS_WHOSE	"Whose" questions
+_gram-path_	QUESTIONS_WHOSE	Questions > "Whose" questions
+_gram-helpText_	QUESTIONS_WHOSE	Questions starting with "whose". E.g., Whose turn is it?
+_gram-name_	QUESTIONS_WHY	"Why" questions
+_gram-path_	QUESTIONS_WHY	Questions > "Why" questions
+_gram-helpText_	QUESTIONS_WHY	Questions starting with "why". E.g., Why are you asking me this question?
+_gram-name_	QUESTIONS_YESNO	Yes/no questions
+_gram-path_	QUESTIONS_YESNO	Questions > Yes/no questions
+_gram-helpText_	QUESTIONS_YESNO	General yes/no questions starting with an auxiliary verb. E.g., Is John busy now? Have you completed the task?
+_gram-name_	SENTENCE_COMPLEX	Complex
+_gram-path_	SENTENCE_COMPLEX	Structure > Complex sentence
+_gram-helpText_	SENTENCE_COMPLEX	A sentence consisting of at least one independent (main) and one dependent (subordinate) clause. E.g., John is reading a book that Sam has given to him.
+_gram-name_	SENTENCE_COMPOUND	Coordinate
+_gram-path_	SENTENCE_COMPOUND	Structure > Coordinate sentence
+_gram-helpText_	SENTENCE_COMPOUND	A sentence consisting of two or more independent clauses. E.g., John was reading, and Sam was watching TV.
+_gram-name_	SENTENCE_INCOMPLETE	Incomplete
+_gram-path_	SENTENCE_INCOMPLETE	Structure > Incomplete sentence
+_gram-helpText_	SENTENCE_INCOMPLETE	A simple sentence missing either a subject or a predicate. E.g., Him. Don't. What a shame.
+_gram-name_	SENTENCE_SIMPLE	Simple
+_gram-path_	SENTENCE_SIMPLE	Structure > Simple sentence
+_gram-helpText_	SENTENCE_SIMPLE	A sentence consisting of one clause that contains a subject and a predicate. E.g., John loves peanut butter.
+_gram-name_	TENSE_FUTURE_PERFECT	Future perfect
+_gram-path_	TENSE_FUTURE_PERFECT	Verbs > Tenses > Future perfect tense
+_gram-helpText_	TENSE_FUTURE_PERFECT	E.g., John will have been here for one year on June 3rd.
+_gram-name_	TENSE_FUTURE_PERFECT_PROGRESSIVE	Future perfect progressive
+_gram-path_	TENSE_FUTURE_PERFECT_PROGRESSIVE	Verbs > Tenses > Future perfect progressive tense
+_gram-helpText_	TENSE_FUTURE_PERFECT_PROGRESSIVE	E.g., John will have been writing his essay for 3 days at 10pm tonight.
+_gram-name_	TENSE_FUTURE_PROGRESSIVE	Future progressive
+_gram-path_	TENSE_FUTURE_PROGRESSIVE	Verbs > Tenses > Future progressive tense
+_gram-helpText_	TENSE_FUTURE_PROGRESSIVE	E.g., John will be working late tonight.
+_gram-name_	TENSE_FUTURE_SIMPLE	Future simple
+_gram-path_	TENSE_FUTURE_SIMPLE	Verbs > Tenses > Future simple tense
+_gram-helpText_	TENSE_FUTURE_SIMPLE	E.g., John will reply to your email when he has time.
+_gram-name_	TENSE_PAST_PERFECT	Past perfect
+_gram-path_	TENSE_PAST_PERFECT	Verbs > Tenses > Past perfect tense
+_gram-helpText_	TENSE_PAST_PERFECT	E.g., John had already seen this movie before we watched it together.
+_gram-name_	TENSE_PAST_PERFECT_HABEN	TENSE_PAST_PERFECT_HABEN
+_gram-path_	TENSE_PAST_PERFECT_HABEN	TENSE_PAST_PERFECT_HABEN
+_gram-helpText_	TENSE_PAST_PERFECT_HABEN	<INSERT_HELP_TEXT>
+_gram-name_	TENSE_PAST_PERFECT_PROGRESSIVE	Past perfect progressive
+_gram-path_	TENSE_PAST_PERFECT_PROGRESSIVE	Verbs > Tenses > Past perfect progressive tense
+_gram-helpText_	TENSE_PAST_PERFECT_PROGRESSIVE	E.g., We had been driving very fast before we saw the speed limit sign.
+_gram-name_	TENSE_PAST_PERFECT_SEIN	TENSE_PAST_PERFECT_SEIN
+_gram-path_	TENSE_PAST_PERFECT_SEIN	TENSE_PAST_PERFECT_SEIN
+_gram-helpText_	TENSE_PAST_PERFECT_SEIN	<INSERT_HELP_TEXT>
+_gram-name_	TENSE_PAST_PROGRESSIVE	Past progressive
+_gram-path_	TENSE_PAST_PROGRESSIVE	Verbs > Tenses > Past progressive tense
+_gram-helpText_	TENSE_PAST_PROGRESSIVE	E.g., John and Sam were having lunch when I came by yesterday.
+_gram-name_	TENSE_PAST_SIMPLE	Past simple
+_gram-path_	TENSE_PAST_SIMPLE	Verbs > Tenses > Past simple tense
+_gram-helpText_	TENSE_PAST_SIMPLE	E.g., John dressed up as a pumpkin last Halloween.
+_gram-name_	TENSE_PRESENT_PERFECT	Present perfect
+_gram-path_	TENSE_PRESENT_PERFECT	Verbs > Tenses > Present perfect tense
+_gram-helpText_	TENSE_PRESENT_PERFECT	E.g., John and Sam have already prepared their presentation.
+_gram-name_	TENSE_PRESENT_PERFECT_HABEN	TENSE_PRESENT_PERFECT_HABEN
+_gram-path_	TENSE_PRESENT_PERFECT_HABEN	TENSE_PRESENT_PERFECT_HABEN
+_gram-helpText_	TENSE_PRESENT_PERFECT_HABEN	<INSERT_HELP_TEXT>
+_gram-name_	TENSE_PRESENT_PERFECT_PROGRESSIVE	Perfect progressive
+_gram-path_	TENSE_PRESENT_PERFECT_PROGRESSIVE	Verbs > Tenses > Present perfect progressive tense
+_gram-helpText_	TENSE_PRESENT_PERFECT_PROGRESSIVE	E.g., John has been playing this online game for the last 5 hours.
+_gram-name_	TENSE_PRESENT_PERFECT_SEIN	TENSE_PRESENT_PERFECT_SEIN
+_gram-path_	TENSE_PRESENT_PERFECT_SEIN	TENSE_PRESENT_PERFECT_SEIN
+_gram-helpText_	TENSE_PRESENT_PERFECT_SEIN	<INSERT_HELP_TEXT>
+_gram-name_	TENSE_PRESENT_PROGRESSIVE	Present progressive
+_gram-path_	TENSE_PRESENT_PROGRESSIVE	Verbs > Tenses > Present progressive tense
+_gram-helpText_	TENSE_PRESENT_PROGRESSIVE	E.g., My family and I are enjoying our holidays in Spain right now.
+_gram-name_	TENSE_PRESENT_SIMPLE	Present simple
+_gram-path_	TENSE_PRESENT_SIMPLE	Verbs > Tenses > Present simple tense
+_gram-helpText_	TENSE_PRESENT_SIMPLE	E.g., John wakes up at 7am every day.
+_gram-name_	THERE_IS_ARE	There is/are
+_gram-path_	THERE_IS_ARE	Clauses > There is/are
+_gram-helpText_	THERE_IS_ARE	E.g., There is no juice left in the fridge.
+_gram-name_	THERE_WAS_WERE	There was/were
+_gram-path_	THERE_WAS_WERE	Clauses > There was/were
+_gram-helpText_	THERE_WAS_WERE	E.g., There were too many people, so we left.
+_gram-name_	TIME_FUTURE	Future
+_gram-path_	TIME_FUTURE	Verbs > Time > Future time
+_gram-helpText_	TIME_FUTURE	All future tenses. Will/shall + do/be doing/have done/have been doing
+_gram-name_	TIME_PAST	Past
+_gram-path_	TIME_PAST	Verbs > Time > Past time
+_gram-helpText_	TIME_PAST	All past tenses. Did/was/were doing/had done/had been doing
+_gram-name_	TIME_PRESENT	Present
+_gram-path_	TIME_PRESENT	Verbs > Time > Present time
+_gram-helpText_	TIME_PRESENT	All present tenses. Do/does/am/is/are doing/have/has done/have/has been doing
+_gram-name_	VERBCONST_GOING_TO	Going to 
+_gram-path_	VERBCONST_GOING_TO	Verbs > Other > Going to
+_gram-helpText_	VERBCONST_GOING_TO	An intention. Going to + verb. E.g., John is going to invite you to his party.
+_gram-name_	VERBCONST_USED_TO	Used to
+_gram-path_	VERBCONST_USED_TO	Verbs > Other > Used to
+_gram-helpText_	VERBCONST_USED_TO	A habitual action in the past. Used to + verb. E.g., John used to play football every day when he was a kid.
+_gram-name_	VERBFORM_AUXILIARIES_BE_DO_HAVE	Auxiliaries 
+_gram-path_	VERBFORM_AUXILIARIES_BE_DO_HAVE	Verbs > Verb forms > Auxiliaries
+_gram-helpText_	VERBFORM_AUXILIARIES_BE_DO_HAVE	Auxiliaries "be" and "have" (short and full forms). E.g., I am, He's
+_gram-name_	VERBFORM_COPULAR	Copula
+_gram-path_	VERBFORM_COPULAR	Verbs > Verb forms > Copular verbs
+_gram-helpText_	VERBFORM_COPULAR	Copular verbs be, seem, look, stay, etc. E.g., She looks upset.
+_gram-name_	VERBFORM_EMPATHIC_DO	Emphatic do 
+_gram-path_	VERBFORM_EMPATHIC_DO	Verbs > Other > Emphatic do
+_gram-helpText_	VERBFORM_EMPATHIC_DO	e.g., I did tell the truth.
+_gram-name_	VERBFORM_INFINITIVE	Infinitive
+_gram-path_	VERBFORM_INFINITIVE	Verbs > Verb forms > Infinitive
+_gram-helpText_	VERBFORM_INFINITIVE	Base form of the verb. E.g., John can draw pretty well.
+_gram-name_	VERBFORM_ING	-ing
+_gram-path_	VERBFORM_ING	Verbs > Verb forms > -ing verb form
+_gram-helpText_	VERBFORM_ING	Gerunds and present participles. E.g., John likes swimming. You are constantly arguing with me.
+_gram-name_	VERBFORM_LONG	Full auxiliary
+_gram-path_	VERBFORM_LONG	Verbs > Verb forms > Full auxiliary form
+_gram-helpText_	VERBFORM_LONG	Full form of the auxiliaries "be" and "have". E.g., I am, he has, we are
+_gram-name_	VERBFORM_PARTICIPLE	VERBFORM_PARTICIPLE
+_gram-path_	VERBFORM_PARTICIPLE	VERBFORM_PARTICIPLE
+_gram-helpText_	VERBFORM_PARTICIPLE	<INSERT_HELP_TEXT>
+_gram-name_	VERBFORM_PARTICIPLE_1	VERBFORM_PARTICIPLE_1
+_gram-path_	VERBFORM_PARTICIPLE_1	VERBFORM_PARTICIPLE_1
+_gram-helpText_	VERBFORM_PARTICIPLE_1	<INSERT_HELP_TEXT>
+_gram-name_	VERBFORM_PARTICIPLE_2	VERBFORM_PARTICIPLE_2
+_gram-path_	VERBFORM_PARTICIPLE_2	VERBFORM_PARTICIPLE_2
+_gram-helpText_	VERBFORM_PARTICIPLE_2	<INSERT_HELP_TEXT>
+_gram-name_	VERBFORM_SHORT	Contracted auxiliary
+_gram-path_	VERBFORM_SHORT	Verbs > Verb forms > Contracted auxiliary form
+_gram-helpText_	VERBFORM_SHORT	Contracted form of the auxiliaries "be" and "have". E.g., I'm, he's, we're
+_gram-name_	VERBFORM_TO_INFINITIVE	"to" infinitive
+_gram-path_	VERBFORM_TO_INFINITIVE	Verbs > Verb forms > "To" infinitive
+_gram-helpText_	VERBFORM_TO_INFINITIVE	Base form of the verb precedes by "to". E.g., John wants to talk to you.
+_gram-name_	VERBS_IRREGULAR	Irregular
+_gram-path_	VERBS_IRREGULAR	Verbs > Verb forms > Irregular verbs
+_gram-helpText_	VERBS_IRREGULAR	Irregular forms V2 and V3. E.g., bought, said, forgot
+_gram-name_	VERBS_PHRASAL	Phrasal verbs
+_gram-path_	VERBS_PHRASAL	Verbs > Phrasal > Phrasal verbs
+_gram-helpText_	VERBS_PHRASAL	Phrasal or particle verbs. E.g., speak up, get off, watch out
+_gram-name_	VERBS_REGULAR	Regular
+_gram-path_	VERBS_REGULAR	Verbs > Verb forms > Regular verbs
+_gram-helpText_	VERBS_REGULAR	Regular forms V2 and V3. E.g., liked, typed, selected
+_gram-name_	VERBTYP_AUXILIARIES	Auxiliaries
+_gram-path_	VERBTYP_AUXILIARIES	Verbs > Verb forms > Auxiliary verbs
+_gram-helpText_	VERBTYP_AUXILIARIES	Full and contracted forms of "be" and "have". E.g., am, 's, have, 're
+_gram-name_	VERBTYP_MAIN	VERBTYP_MAIN
+_gram-path_	VERBTYP_MAIN	VERBTYP_MAIN
+_gram-helpText_	VERBTYP_MAIN	<INSERT_HELP_TEXT>
+_gram-name_	VERBTYP_MODAL	VERBTYP_MODAL
+_gram-path_	VERBTYP_MODAL	VERBTYP_MODAL
+_gram-helpText_	VERBTYP_MODAL	<INSERT_HELP_TEXT>
+_gram-name_	VERB_BRACKETS	VERB_BRACKETS
+_gram-path_	VERB_BRACKETS	VERB_BRACKETS
+_gram-helpText_	VERB_BRACKETS	<INSERT_HELP_TEXT>
+_gram-name_	VERB_CLUSTER	VERB_CLUSTER
+_gram-path_	VERB_CLUSTER	VERB_CLUSTER
+_gram-helpText_	VERB_CLUSTER	<INSERT_HELP_TEXT>

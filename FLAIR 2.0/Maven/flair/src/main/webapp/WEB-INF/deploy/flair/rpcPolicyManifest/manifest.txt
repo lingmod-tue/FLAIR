@@ -1,5 +1,5 @@
 # Module flair
 # RPC service class, partial path of RPC policy file
-com.flair.shared.interop.services.WebRankerService, F2B7DAE5FDE3DA797945968377DFBB3B.gwt.rpc
-com.flair.shared.interop.services.SessionManagementService, 7851E4A8122EC5BD0FCD64509EBC4667.gwt.rpc
-com.flair.shared.interop.services.PullMessageEndpointService, 7A1BDEAFEB68331460047E8FAB8C2184.gwt.rpc
+com.flair.shared.interop.services.WebRankerService, 964D826A84756D8C1AB331A651244AE6.gwt.rpc
+com.flair.shared.interop.services.SessionManagementService, 6987E8815B2B10FC3999639FCE8BFA6C.gwt.rpc
+com.flair.shared.interop.services.PullMessageEndpointService, 7D6E158DF3139358D2CA8635F533D867.gwt.rpc

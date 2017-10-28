@@ -43,10 +43,6 @@ import gwt.material.design.client.ui.html.Br;
 
 public class DocumentPreviewPane extends LocalizedComposite implements AbstractDocumentPreviewPane
 {
-	public interface ShowHideHandler {
-		public void handle(boolean visible);
-	}
-	
 	private static DocumentPreviewPaneUiBinder uiBinder = GWT.create(DocumentPreviewPaneUiBinder.class);
 
 	interface DocumentPreviewPaneUiBinder extends UiBinder<Widget, DocumentPreviewPane>
@@ -171,7 +167,7 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 							CommonLocalizationTags.ACADEMIC_VOCAB.toString(), lang);
 			}
 			else
-				return GrammaticalConstructionLocalizationProvider.getPath(gram, lang);
+				return GrammaticalConstructionLocalizationProvider.getPath(gram);
 		}
 	}
 	
@@ -600,6 +596,7 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 			showhideHandler.handle(visible);
 	}
 
+	@Override
 	public void setShowHideEventHandler(ShowHideHandler handler) {
 		showhideHandler = handler;
 	}

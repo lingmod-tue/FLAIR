@@ -1,0 +1,2 @@
+serviceClass: com.flair.shared.interop.services.SessionManagementService
+path: 6987E8815B2B10FC3999639FCE8BFA6C.gwt.rpc

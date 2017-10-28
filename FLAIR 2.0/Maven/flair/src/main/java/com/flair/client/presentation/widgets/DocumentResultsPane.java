@@ -74,7 +74,7 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 			displayItem = new DocumentResultDisplayItem(parent);
 		}
 		
-		Widget getWidget() {
+		DocumentResultDisplayItem getWidget() {
 			return displayItem;
 		}
 	}
@@ -83,11 +83,13 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 	{
 		Map<AbstractResultItem, DisplayItem>		completed;
 		Map<AbstractResultItem, DisplayItem>		inprogress;
+		DisplayItem									lastSelection;
 	
 		State()
 		{
 			completed = new HashMap<>();
 			inprogress = new HashMap<>();
+			lastSelection = null;
 		}
 		
 		private void animate(Widget w, Transition t, int delay, int duration, Func callback)
@@ -164,6 +166,14 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 				throw new RuntimeException("Item already exists");
 			
 			DisplayItem d = new DisplayItem(item);
+			d.getWidget().addTextClickHandler(e -> {
+				if (d.getWidget().isSelected() == false)
+				{
+					d.getWidget().setSelected(true);
+					clearSelection();
+					lastSelection = d;
+				}
+			});
 			map.put(item, d);
 				
 			addDisplayItem(d, container);
@@ -205,6 +215,13 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 			validatePlaceholders();
 		}
 
+		public void clearSelection()
+		{
+			if (lastSelection != null)
+				lastSelection.getWidget().setSelected(false);
+						
+			lastSelection = null;
+		}
 	}
 	
 	private void initHandlers()
@@ -307,5 +324,10 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 			GlobalWidgetAnimator.get().animateWithStop(btnCancelOpUI,
 					Transition.ZOOMOUT, 0, 450, () -> btnCancelOpUI.setVisible(false));
 		}
+	}
+
+	@Override
+	public void clearSelection() {
+		state.clearSelection();
 	}
 }

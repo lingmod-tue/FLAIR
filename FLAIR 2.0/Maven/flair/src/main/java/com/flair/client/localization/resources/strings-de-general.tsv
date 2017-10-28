@@ -1,81 +1,81 @@
-_common-strings_	INVALID	<NO LOCALIZED STRING>
+_common-strings_	INVALID	Unbekannt
 _common-strings_	YES	Ja
 _common-strings_	NO	Nein
 _common-strings_	OK	OK
 _common-strings_	APPLY	Übernehmen
 _common-strings_	CANCEL	Abbrechen
-_common-strings_	CLOSE	Schliessen
+_common-strings_	CLOSE	Schließen
 _common-strings_	FINISH	Fertig
 _common-strings_	RESET	Zurücksetzen
-_common-strings_	RESET_ALL	Alle Zurücksetzen
+_common-strings_	RESET_ALL	Alles Zurücksetzen
 _common-strings_	NEXT	Weiter
 _common-strings_	SEARCH	Suchen
 _common-strings_	UPLOAD	Hochladen
 _common-strings_	COMPARE	Vergleichen
 _common-strings_	FILTER	Filtern
 _common-strings_	OPERATION_INPROGRESS_CONFIRM_TITLE	Bestätigung
-_common-strings_	OPERATION_INPROGRESS_CONFIRM_CAPTION	Ein vorheriger Vorgang läuft noch. Möchten Sie wirklich fortsetzen? Der andere Vorgang wird storniert.
-_common-strings_	WAIT_TILL_COMPLETION	Bitte warten Sie, bis die bereits angefangene Analyse abschliesst
-_common-strings_	RESULT	Ergebniss
+_common-strings_	OPERATION_INPROGRESS_CONFIRM_CAPTION	Möchten Sie wirklich fortfahren und den laufenden Vorgang abbrechen?
+_common-strings_	WAIT_TILL_COMPLETION	Bitte warten Sie, bis die begonnene Analyse fertig ist.
+_common-strings_	RESULT	Ergebnis
 _common-strings_	RESULTS	Ergebnisse
 _common-strings_	LANGUAGE_ENGLISH	Englisch
 _common-strings_	LANGUAGE_GERMAN	Deutsch
 _common-strings_	ACADEMIC_VOCAB	Akademisches Vokabular
 _common-strings_	KEYWORDS	Schlüsselwörter
 _common-strings_	CUSTOM_VOCAB	Benutzerdefiniertes Vokabular
-
-_webrankercore_	ANALYSIS_COMPLETE	Analyse abgeschlossen.
+		
+_webrankercore_	ANALYSIS_COMPLETE	Analyse abgeschlossen
 _webrankercore_	SELECTED_FOR_COMPARISON	Zum Vergleichen ausgewählt
 _webrankercore_	CUSTOM_CORPUS_TITLE	Hochgeladene Dateien
-_webrankercore_	APPLIED_IMPORTED_SETTINGS	Benutzerdefinierte Einstellungen wurden übernommen
-_webrankercore_	SERVER_ERROR	Schade! Wir sind auf einen schweren Fehler gestoßen. Bitte versuchen Sie es später.
-_webrankercore_	OP_TIMEDOUT	Der Vorgang wurde storniert, weil er zu lange gedauert hat
-_webrankercore_	NO_RESULTS_FOR_FILTER	Keine Ergebnisse für die aktuellen Sucheinstellungen
+_webrankercore_	APPLIED_IMPORTED_SETTINGS	Benutzerdefinierte Einstellungen wurden übernommen.
+_webrankercore_	SERVER_ERROR	Ein schwerwiegender Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.
+_webrankercore_	OP_TIMEDOUT	Der Vorgang wurde abgebrochen, da er zu lange gedauert hat.
+_webrankercore_	NO_RESULTS_FOR_FILTER	Keine Ergebnisse mit den aktuellen Sucheinstellungen.
 _webrankercore_	NO_SEARCH_RESULTS	Keine Ergebnisse für den Suchbegriff.
-_webrankercore_	IMPORTED_SETINGS	FLAIR wird Ihre benutzerdefinierten Einstellungen automatisch übernehmen
-_webrankercore_	SEARCH_COOLDOWN	Bitte warten Sie wenigere Minuten, bevor Sie eine neue Websuche tätigen
+_webrankercore_	IMPORTED_SETINGS	FLAIR wird Ihre benutzerdefinierten Einstellungen automatisch übernehmen.
+_webrankercore_	SEARCH_COOLDOWN	Bitte warten Sie einige Minuten, bevor Sie eine neue Websuche tätigen.
 _webrankercore_	NO_PARSED_DOCS	Wir konnten keine der Webseiten/Dateien verarbeiten.
 _webrankercore_	MISSING_DOCS	Einige Webseiten/Dateien konnten nicht analysiert werden.
 _webrankercore_	MISSING_SEARCH_RESULTS	Einige Webseiten konnten aufgrund von Konnektivitätsproblemen nicht analysiert werden.
-
+		
 MainViewport	btnWebSearchUI	Internetsuche
 MainViewport	btnAboutUI	Über FLAIR
-MainViewport	btnHistoryUI	Neuanalysen
+MainViewport	btnHistoryUI	Frühere Analysen
 MainViewport	btnSwitchLangUI	Anzeigesprache wechseln
 MainViewport	btnUploadUI	Text hochladen
-MainViewport	lblDefaultSearchCaptionUI	Klicken Sie auf das Suchsymbol unten und geben Sie eine Suchanfrage ein. FLAIR wird die obersten Ergebnisse von der Bing Suchmaschine abrufen.
+MainViewport	lblDefaultSearchCaptionUI	Klicken Sie auf das Suchsymbol unten und geben Sie eine Suchanfrage ein. FLAIR wird die relevantesten Treffer der Bing Suchmaschine abrufen.
 MainViewport	lblDefaultConfigTitleUI	Konfigurieren
 MainViewport	lblDefaultConfigCaptionUI	Konfgurieren Sie die Einstellungen: Text (Länge, Schwierigkeitsgrad) und Grammatik (Passiv, W-Fragen, akademisches Vokabular, ...). Sie können die Einstellungen auch exportieren, um sie auf spätere Suchen anzuwenden. FLAIR bewertet die Suchergebnisse entsprechend Ihrer Einstellungen neu. Klicken Sie auf den Link, um die Seite in einem neuen Tab zu öffnen, oder lesen Sie den extrahierten, erweiterten Text im Textfeld auf der rechten Seite.
-MainViewport	lblDefaultUploadCaptionUI	Laden Sie Ihre Dateien hoch. FLAIR wird sie analysieren und Ihren Einstellungen entsprechend bewerten.
-
-CorpusFileUploader	lblUploadTextUI	Hier können Sie Dateien ziehen und ablegen
-CorpusFileUploader	stpLangUI	Textsprache Wählen
-CorpusFileUploader	UPLOAD_INPROGRESS	Bitte warten Sie, bis der Hochladensvorgang abschliesst
-CorpusFileUploader	UPLOAD_FAILED	Diese Datei konnte nicht hochgeladen werden
-CorpusFileUploader	MAX_FILE_LIMIT	Sie dürfen nicht so viele Dateien auf einmal hochladen
-
-CustomKeywordsEditor	lblTitleUI	Benutzerdefiniertes Vokabular bearbeiten
+MainViewport	lblDefaultUploadCaptionUI	Laden Sie Ihre Dateien hoch. FLAIR wird sie analysieren und basierend auf Ihren Einstellungen nach Relevanz sortieren.
+		
+CorpusFileUploader	lblUploadTextUI	Ziehen Sie Ihre Dateien in diesen Bereich.
+CorpusFileUploader	stpLangUI	Textsprache wählen
+CorpusFileUploader	UPLOAD_INPROGRESS	Bitte warten Sie, bis der Hochladevorgang abgeschlossen ist.
+CorpusFileUploader	UPLOAD_FAILED	Diese Datei konnte nicht hochgeladen werden.
+CorpusFileUploader	MAX_FILE_LIMIT	Leider können nicht so viele Dateien auf einmal hochgeladen werden.
+		
+CustomKeywordsEditor	lblTitleUI	Benutzerdefiniertes Vokabular bearbeiten.
 CustomKeywordsEditor	txtKeywordsUI	Wörter können durch Kommas oder Zeilenumbrüche getrennt sein.
-CustomKeywordsEditor	KEYWORDS_APPLIED	Das neue Vokabular wird beim nächsten Suchvorgang angewendet
-CustomKeywordsEditor	NO_KEYWORDS	Die Wörterliste ist leer
-
+CustomKeywordsEditor	KEYWORDS_APPLIED	Das neue Vokabular wird beim nächsten Suchvorgang angewendet.
+CustomKeywordsEditor	NO_KEYWORDS	Die Wortliste ist leer.
+		
 DocumentCollectionVisualizer	mdlVisualizerUI	Interaktive Visualisierung
 DocumentCollectionVisualizer	lblTitleUI	Bereiche auswählen durch Hoch- und Runterziehen des Zeigers. Reihenfolge der Achsen umtauschen durch Rechts- und Linksbewegen der Achsen. Achsen hinzufügen oder entfernen durch An- und Abwählen der Kontrollkästchen unten.
 DocumentCollectionVisualizer	chkAxisWordsUI	# von Wörtern
 DocumentCollectionVisualizer	chkAxisSentencesUI	# von Sätzen
 DocumentCollectionVisualizer	chkAxisComplexityUI	Komplexität
 DocumentCollectionVisualizer	chkAxisKeywordsUI	Schlüsselwörter
-DocumentCollectionVisualizer	NO_FILTERED_DOCS	Keine Ergebnisse wurden gefiltert.
+DocumentCollectionVisualizer	NO_FILTERED_DOCS	Die Ergebnisse wurden nicht gefiltert.
 DocumentCollectionVisualizer	DOCS_FILTERED	Gefilterte Ergebnisse
-
-DocumentComparer	lblTitleUI	Ergebnisse Vergleich
+		
+DocumentComparer	lblTitleUI	Ergebnisse vergleichen
 DocumentComparer	btnClearSelectionUI	Zwischenablage leeren
 DocumentComparer	lblPlaceholderUI	Die Zwischenablage ist leer
-
+		
 DocumentLengthConfigPane	lblTextLengthUI	Länge:
 DocumentLengthConfigPane	chkShorterTextsUI	Kurzere Texte bevorzugen
-
-DocumentPreviewPane	icoHelpTextUI	Hervorhebungen können sich überlappen - Bewegen Sie die Maus über eine Hervorhebung, um einen Tooltip mit den Namen aller eingebetteten Konstruktionen zu sehen
+		
+DocumentPreviewPane	icoHelpTextUI	Hervorhebungen können sich überlappen - Bewegen Sie die Maus über eine Hervorhebung, um eine Liste der Namen aller eingebetteten Konstruktionen zu sehen.
 DocumentPreviewPane	btnShowAllConstUI	Alle Konstruktionen
 DocumentPreviewPane	NUM_WORDS	Wörter
 DocumentPreviewPane	NUM_SENTENCES	Sätze
@@ -83,41 +83,41 @@ DocumentPreviewPane	COLUMN_CONSTRUCTION	Konstruktion
 DocumentPreviewPane	COLUMN_WEIGHT	Gewichtung
 DocumentPreviewPane	COLUMN_HITS	Anzahl
 DocumentPreviewPane	COLUMN_RELFREQ	Relative Häufigkeit in %
-
-DocumentResultDisplayItem	ORIGINAL_RANK	Origineller Rang
-
+		
+DocumentResultDisplayItem	ORIGINAL_RANK	Ursprüngliche Listenposition
+		
 DocumentResultsPane	btnCancelOpUI	Analyse stornieren
-
+		
 RankerSettingsPane	btnVisualizeUI	Visualisieren
-RankerSettingsPane	btnExportSettingsUI	Sucheinstellungen Exportieren
+RankerSettingsPane	btnExportSettingsUI	Sucheinstellungen exportieren
 RankerSettingsPane	lblTextCharacteristicsUI	Eigenschaften der Texte:
 RankerSettingsPane	lblTextLevelUI	Schwierigkeitsgrad:
-RankerSettingsPane	lblConstructionsUI	Konstructionen:
+RankerSettingsPane	lblConstructionsUI	Konstruktionen:
 RankerSettingsPane	lblLanguageUseUI	Sprachverwendung:
 RankerSettingsPane	FILTERED	Gefiltert
-
-GrammaticalConstructionWeightSlider	chkToggleUI	Abwählen, um Texte mit dieser Konstruktion auszuschließen
-GrammaticalConstructionWeightSlider	sldWeightUI	Nach rechts bewegen, um Texte mit dieser Konstruktion höher zu bewerten
-
-HistoryViewer	lblTitleUI	Analysenchronik
+		
+GrammaticalConstructionWeightSlider	chkToggleUI	Abwählen, um Texte mit dieser Konstruktion auszuschließen.
+GrammaticalConstructionWeightSlider	sldWeightUI	Nach rechts bewegen, um Texte mit dieser Konstruktion höher zu bewerten.
+		
+HistoryViewer	lblTitleUI	Analysechronik
 HistoryViewer	lblPlaceholderUI	Keine Analysen bisher
 HistoryViewer	NUM_ANALYSES	Analysen
-
-KeywordWeightSlider	chkToggleUI	Auswählen, um Schlüsselwörter hervorzuheben
-KeywordWeightSlider	sldWeightUI	Nach rechts bewegen, um Texte mit dieser Konstruktion höher zu bewerten
+		
+KeywordWeightSlider	chkToggleUI	Auswählen, um Schlüsselwörter hervorzuheben.
+KeywordWeightSlider	sldWeightUI	Nach rechts bewegen, um Texte mit dieser Konstruktion zu priorisieren.
 KeywordWeightSlider	btnEditKeywordsUI	Vokabular bearbeiten
-KeywordWeightSlider	btnResetKeywordsUI	Standardliste für benutzerdefiniertes Vokabular verwenden
-
-SettingsExporter	lblTitleUI	Einstellungen Exportieren
+KeywordWeightSlider	btnResetKeywordsUI	Standardliste für benutzerdefiniertes Vokabular verwenden.
+		
+SettingsExporter	lblTitleUI	Einstellungen exportieren
 SettingsExporter	lblTitleUI_Desc	Sie können diesen Link benutzen, um Ihre derzeigen Einstellungen auf zukünftige Suchen anzuwenden.
-
+		
 WebSearchModal	txtSearchBoxUI	Suchbegriff eingeben
 WebSearchModal	selResultCountItm10UI	10 Ergebnisse
 WebSearchModal	selResultCountItm20UI	20 Ergebnisse
 WebSearchModal	selResultCountItm30UI	30 Ergebnisse
 WebSearchModal	selResultCountItm40UI	40 Ergebnisse
 WebSearchModal	selResultCountItm50UI	50 Ergebnisse
-
+		
 ConstructionSliderBundleEnglish	pnlSentencesUI	Sätze
 ConstructionSliderBundleEnglish	pnlQuestionsUI	Fragen
 ConstructionSliderBundleEnglish	pnlSentenceTypesUI	Satztypen
@@ -139,10 +139,10 @@ ConstructionSliderBundleEnglish	pnlQuantifiersUI	Quantifizierer
 ConstructionSliderBundleEnglish	pnlAdjectivesUI	Adjektive
 ConstructionSliderBundleEnglish	pnlAdverbsUI	Adverben
 ConstructionSliderBundleEnglish	pnlPronounsUI	Pronomen
-ConstructionSliderBundleEnglish	pnlConjunctionsUI	Konjugationen
+ConstructionSliderBundleEnglish	pnlConjunctionsUI	Konjunktionen
 ConstructionSliderBundleEnglish	pnlPrepositionsUI	Präpositionen
 ConstructionSliderBundleEnglish	pnlNounsUI	Nomen
-
+		
 ConstructionSliderBundleGerman	pnlSaetzeUI	Sätze
 ConstructionSliderBundleGerman	pnlFragenUI	Fragen
 ConstructionSliderBundleGerman	pnlSatztypenUI	Satztypen

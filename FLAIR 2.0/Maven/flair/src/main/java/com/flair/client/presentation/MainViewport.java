@@ -245,21 +245,8 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	private void showSearchModal() {
 		invokeAtomicOperation(() -> mdlWebSearchUI.show());
 	}
-	
-	private void updateResultsListGrid()
-	{
-		boolean settingsVisible = pnlConstructionsSettingsUI.isVisible();
-		boolean previewVisible = pnlDocPreviewUI.isVisible();
-
-		if (settingsVisible && previewVisible)
-			pnlResultsContainerUI.setGrid("l4 m4 s12");
-		else if (settingsVisible ^ previewVisible)
-			pnlResultsContainerUI.setGrid("l8 m8 s12");
-		else
-			pnlResultsContainerUI.setGrid("l12 m12 s12");
-	}
-	
-	private void switchLanguage(Language lang) {
+		
+	private void switchDisplayLanguage(Language lang) {
 		LocalizationEngine.get().setLanguage(lang);
 	}
 	
@@ -270,11 +257,11 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		btnHistoryUI.addClickHandler(e -> mdlHistoryUI.show());
 		
 		btnLangEnUI.addClickHandler(e -> {
-			switchLanguage(Language.ENGLISH);
+			switchDisplayLanguage(Language.ENGLISH);
 		});
 		
 		btnLangDeUI.addClickHandler(e -> {
-			switchLanguage(Language.GERMAN);
+			switchDisplayLanguage(Language.GERMAN);
 		});
 		
 		btnAboutUI.addClickHandler(e -> {
@@ -304,13 +291,11 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		lblDefaultUploadTitleUI.addClickHandler(e -> showUploadModal());
 		
 		pnlConstructionsSettingsUI.setShowHideEventHandler(v -> {
-			updateResultsListGrid();
 			if (v)
 				icoSettingsMorphUI.getElement().addClassName("morphed");
 			else
 				icoSettingsMorphUI.getElement().removeClassName("morphed");
 		});
-		pnlDocPreviewUI.setShowHideEventHandler(v -> updateResultsListGrid());
 		
 		mdlCustomKeywordsUI.bindToSlider(pnlConstructionsSettingsUI.getKeywordSlider());
 	}

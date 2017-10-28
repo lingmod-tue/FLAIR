@@ -69,6 +69,7 @@ public interface AbstractWebRankerCore
 	
 	public void						init(AuthToken token, AbstractWebRankerPresenter presenter);
 
+	public WebRankerAnalysis		getCurrentOperation();
 	public void						cancelCurrentOperation();
 	public boolean					isOperationInProgress();
 	

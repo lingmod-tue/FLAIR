@@ -657,7 +657,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 
 			@Override
 			public String getConstructionTitle(GrammaticalConstruction gram) {
-				return GrammaticalConstructionLocalizationProvider.getName(gram, LocalizationEngine.get().getLanguage());
+				return GrammaticalConstructionLocalizationProvider.getName(gram);
 			}
 
 			@Override
@@ -1267,6 +1267,10 @@ public class WebRankerCore implements AbstractWebRankerCore
 			}
 			return out;
 		}
+		
+		boolean isEmpty() {
+			return stack.isEmpty();
+		}
 	}
 	
 	private final class SettingsUrlExporter implements SettingsExportService
@@ -1551,6 +1555,10 @@ public class WebRankerCore implements AbstractWebRankerCore
 		settings.setSettingsChangedHandler(() -> onSettingsChanged());
 		settings.setResetAllHandler(() -> onSettingsReset());
 		search.setSearchHandler((l, q, n) -> onWebSearch(l, q, n));
+		preview.setShowHideEventHandler(v -> {
+			if (!v)
+				results.clearSelection();
+		});
 		upload.setUploadBeginHandler(e -> onUploadBegin(e));
 		upload.setUploadCompleteHandler((n,s) -> onUploadComplete(n, s));
 		visualizer.setApplyFilterHandler(d -> {
@@ -1812,6 +1820,11 @@ public class WebRankerCore implements AbstractWebRankerCore
 			notification.notify(getLocalizedString(LocalizationTags.IMPORTED_SETINGS.toString()));
 	}
 
+	@Override
+	public WebRankerAnalysis getCurrentOperation() {
+		return processHistory.isEmpty() ? null : processHistory.poll();
+	}
+	
 	@Override
 	public void cancelCurrentOperation() {
 		transientProcessManager.cancel();

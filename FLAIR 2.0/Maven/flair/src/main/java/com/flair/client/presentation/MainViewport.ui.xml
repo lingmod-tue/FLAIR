@@ -61,12 +61,11 @@
 			<m:MaterialLink ui:field="btnLangDeUI" waves="DEFAULT" text="German"/>
 		</m:MaterialDropDown>
 		
-		<!-- Main FAB -->
+		<!-- Main FABs -->
 		<m:MaterialFAB axis="VERTICAL" depth="998" type="CLICK_ONLY" marginBottom="75">
 			<m:MaterialButton ui:field="btnWebSearchUI"
 				type="FLOATING" iconType="SEARCH" size="LARGE" backgroundColor="ORANGE" waves="LIGHT"/>
-		</m:MaterialFAB>
-		
+		</m:MaterialFAB>		
 		<m:MaterialFAB axis="VERTICAL" depth="998" type="CLICK_ONLY" >
 			<m:MaterialAnchorButton ui:field="btnUploadUI" size="LARGE"
 					type="FLOATING" waves="LIGHT" backgroundColor="BLUE" iconType="FILE_UPLOAD"/>
@@ -84,9 +83,10 @@
 		<!-- Settings Pane -->
 		<flair:RankerSettingsPane ui:field="pnlConstructionsSettingsUI"/>
 		
+		<!-- Results Pane-->
 		<m:MaterialPanel ui:field="pnlResultsContainerUI" backgroundColor="WHITE" layoutPosition="RELATIVE" overflow="HIDDEN"
 			marginBottom="0" grid="l5 m5 s5" padding="20" addStyleNames="{style.global-animation}">
-			<!-- Results Pane-->
+			
 			<flair:DocumentResultsPane ui:field="pnlDocResultsUI"/>
 		</m:MaterialPanel>
 		
@@ -207,14 +207,14 @@
 								target="_top" title="write to Madeeswaran Kannan">
 								<span class="glyphicon glyphicon-envelope"></span>
 							</a>
-							supervised by
+							, supervised by
 							<a href="http://sfs.uni-tuebingen.de/~dm/" target="_blank">Prof. Dr.
 								Detmar Meurers</a>
 							<br/>
 								<span style="color:darkorange">@</span>
 								University of Tübingen, Germany
 								<span style="color:darkorange">|</span>
-								2015-2017
+								2015
 								<br/> Version 2.0
 						</p>
 					</center>
@@ -348,14 +348,14 @@
 								target="_top" title="Madeeswaran Kannan kontaktieren">
 								<span class="glyphicon glyphicon-envelope"></span>
 							</a>
-							betreut von
+							, betreut von
 							<a href="http://sfs.uni-tuebingen.de/~dm/" target="_blank">Prof. Dr. Detmar
 								Meurers</a>
 							<br />
 							<span style="color:darkorange">@</span>
 							Universität Tübingen, Deutschland
 							<span style="color:darkorange">|</span>
-							2015-2017
+							2015
 							<br />
 							Version 2.0
 						</p>

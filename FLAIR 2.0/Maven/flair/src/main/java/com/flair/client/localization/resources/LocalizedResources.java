@@ -17,19 +17,19 @@ public class LocalizedResources
 	
 	interface EnglishStrings extends ClientBundle
 	{
-		@Source("strings-en-constructions.txt")
+		@Source("strings-en-constructions.tsv")
 		public TextResource			getGramConstructionStrings();
 		
-		@Source("strings-en-general.txt")
+		@Source("strings-en-general.tsv")
 		public TextResource			getGeneralStrings();
 	}
 	
 	interface GermanStrings extends ClientBundle
 	{
-		@Source("strings-de-constructions.txt")
+		@Source("strings-de-constructions.tsv")
 		public TextResource			getGramConstructionStrings();
 		
-		@Source("strings-de-general.txt")
+		@Source("strings-de-general.tsv")
 		public TextResource			getGeneralStrings();
 	}
 	

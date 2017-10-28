@@ -107,8 +107,8 @@ public class GrammaticalConstructionWeightSlider extends LocalizedComposite impl
 		}
 		else
 		{
-			setToggleText(GrammaticalConstructionLocalizationProvider.getName(gramConstruction, lang));
-			icoHelpTextUI.setTooltip(GrammaticalConstructionLocalizationProvider.getHelpText(gramConstruction, lang));
+			setToggleText(GrammaticalConstructionLocalizationProvider.getName(gramConstruction));
+			icoHelpTextUI.setTooltip(GrammaticalConstructionLocalizationProvider.getHelpText(gramConstruction));
 		}
 	}
 	

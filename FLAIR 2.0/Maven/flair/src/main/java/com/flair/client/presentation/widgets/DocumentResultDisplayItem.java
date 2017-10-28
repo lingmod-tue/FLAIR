@@ -25,9 +25,15 @@ import gwt.material.design.client.ui.MaterialIcon;
 import gwt.material.design.client.ui.MaterialLabel;
 import gwt.material.design.client.ui.MaterialLink;
 import gwt.material.design.client.ui.MaterialRow;
+import gwt.material.design.client.ui.animate.MaterialAnimation;
+import gwt.material.design.client.ui.animate.Transition;
 
 public class DocumentResultDisplayItem extends LocalizedComposite
 {
+	public interface TextClickHandler {
+		public void handle(DocumentResultDisplayItem selected);
+	}
+	
 	private static DocumentResultDisplayItemUiBinder uiBinder = GWT.create(DocumentResultDisplayItemUiBinder.class);
 
 	interface DocumentResultDisplayItemUiBinder extends UiBinder<Widget, DocumentResultDisplayItem>
@@ -71,6 +77,8 @@ public class DocumentResultDisplayItem extends LocalizedComposite
 	MaterialLink			btnAddToCompareUI;
 
 	int						orgRank;
+	boolean					selected;
+	MaterialAnimation		selectionAnimation;
 	
 	public DocumentResultDisplayItem(AbstractResultItem item)
 	{
@@ -127,11 +135,62 @@ public class DocumentResultDisplayItem extends LocalizedComposite
 			
 			colInProgressHeaderUI.setVisible(false);
 		}
+		
+		selectionAnimation = new MaterialAnimation(pnlCardUI);
+		selectionAnimation.transition(Transition.PULSE).duration(1000).delay(100).infinite(true);
+
+		setSelected(false);
 	}
 	
+	private void setShadow(int val) {
+		pnlCardUI.setShadow(val);
+	}
+	
+	private void setInvertColors(boolean val)
+	{
+		if (val)
+		{
+			pnlCardUI.setBackgroundColor(Color.ORANGE_LIGHTEN_2);
+			btnTitleUI.setTextColor(Color.WHITE);
+			lblURLUI.setTextColor(Color.WHITE);
+			lblSnippetUI.setTextColor(Color.WHITE);
+			lblNewRankUI.setTextColor(Color.WHITE);
+			btnOverflowUI.setTextColor(Color.WHITE);
+		}
+		else
+		{
+			pnlCardUI.setBackgroundColor(Color.WHITE);
+			btnTitleUI.setTextColor(Color.BLUE);
+			lblURLUI.setTextColor(Color.GREY_LIGHTEN_1);
+			lblSnippetUI.setTextColor(Color.BLACK);
+			lblNewRankUI.setTextColor(Color.BLACK);
+			btnOverflowUI.setTextColor(Color.GREY);
+		}
+	}
+	
+	public void setSelected(boolean val)
+	{
+		selected = val;
+		if (selected)
+		{
+			setInvertColors(true);
+			setShadow(3);
+	//		selectionAnimation.animate();
+		}
+		else
+		{
+			setInvertColors(false);
+			setShadow(1);
+	//		selectionAnimation.stopAnimation();
+		}
+	}
+	
+	public boolean isSelected() {
+		return selected;
+	}
 
-	public void setOpacity(double o) {
-		pnlCardUI.setOpacity(o);
+	public void addTextClickHandler(TextClickHandler handler) {
+		colTextUI.addClickHandler(e -> handler.handle(this));
 	}
 	
 	@Override
