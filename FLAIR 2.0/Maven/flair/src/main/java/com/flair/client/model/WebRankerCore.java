@@ -858,6 +858,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 			}
 			
 			lastSelection = item;
+			results.setSelection(lastSelection);
 		}
 		
 		void refreshResultsTitle()
@@ -889,6 +890,12 @@ public class WebRankerCore implements AbstractWebRankerCore
 		void refreshResults()
 		{
 			results.clearCompleted();
+			RankableDocument sel = null;
+			if (lastSelection != null && preview.isVisible())
+			{
+				if (lastSelection.getType() == Type.COMPLETED)
+					sel = ((CompletedResultItemImpl)lastSelection).getDoc();
+			}
 			
 			// add from ranked data, if available
 			int i = 1;
@@ -896,17 +903,25 @@ public class WebRankerCore implements AbstractWebRankerCore
 			{
 				for (RankableDocument itr : rankData.getRankedDocuments())
 				{
-					results.addCompleted(new CompletedResultItemImpl(itr, i, itr.getRank(), data.type != OperationType.COMPARE));
+					CompletedResultItem addend = new CompletedResultItemImpl(itr, i, itr.getRank(), data.type != OperationType.COMPARE);
+					if (itr == sel)
+						lastSelection = addend;
+					results.addCompleted(addend);
 					i++;
 				}
 			}
 			else for (RankableDocument itr : data.parsedDocs)
 			{
-				results.addCompleted(new CompletedResultItemImpl(itr, i, itr.getRank(), data.type != OperationType.COMPARE));
+				CompletedResultItem addend = new CompletedResultItemImpl(itr, i, itr.getRank(), data.type != OperationType.COMPARE);
+				if (itr == sel)
+					lastSelection = addend;
+				results.addCompleted(addend);
 				i++;
 			}
 			
 			refreshResultsTitle();
+			if (sel != null)
+				results.setSelection(lastSelection);
 		}
 		
 		void refreshLocalization(Language l)

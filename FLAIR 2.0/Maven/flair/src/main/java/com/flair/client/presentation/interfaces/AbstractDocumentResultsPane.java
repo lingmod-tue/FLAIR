@@ -19,5 +19,7 @@ public interface AbstractDocumentResultsPane
 	
 	public void			clearCompleted();
 	public void			clearInProgress();
+	
+	public void			setSelection(AbstractResultItem item);
 	public void			clearSelection();
 }

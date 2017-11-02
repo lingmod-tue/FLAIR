@@ -30,10 +30,6 @@ import gwt.material.design.client.ui.animate.Transition;
 
 public class DocumentResultDisplayItem extends LocalizedComposite
 {
-	public interface TextClickHandler {
-		public void handle(DocumentResultDisplayItem selected);
-	}
-	
 	private static DocumentResultDisplayItemUiBinder uiBinder = GWT.create(DocumentResultDisplayItemUiBinder.class);
 
 	interface DocumentResultDisplayItemUiBinder extends UiBinder<Widget, DocumentResultDisplayItem>
@@ -187,10 +183,6 @@ public class DocumentResultDisplayItem extends LocalizedComposite
 	
 	public boolean isSelected() {
 		return selected;
-	}
-
-	public void addTextClickHandler(TextClickHandler handler) {
-		colTextUI.addClickHandler(e -> handler.handle(this));
 	}
 	
 	@Override

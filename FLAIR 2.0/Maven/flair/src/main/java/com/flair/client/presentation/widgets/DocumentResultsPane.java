@@ -166,14 +166,6 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 				throw new RuntimeException("Item already exists");
 			
 			DisplayItem d = new DisplayItem(item);
-			d.getWidget().addTextClickHandler(e -> {
-				if (d.getWidget().isSelected() == false)
-				{
-					d.getWidget().setSelected(true);
-					clearSelection();
-					lastSelection = d;
-				}
-			});
 			map.put(item, d);
 				
 			addDisplayItem(d, container);
@@ -214,7 +206,23 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 			
 			validatePlaceholders();
 		}
-
+		
+		public void setSelection(AbstractResultItem item)
+		{
+			Map<AbstractResultItem, DisplayItem> map = getMap(item.getType());
+			DisplayItem d = map.get(item);
+			
+			if (d != null)
+			{
+				if (d.getWidget().isSelected() == false)
+				{
+					d.getWidget().setSelected(true);
+					clearSelection();
+					lastSelection = d;
+				}
+			}
+		}
+		
 		public void clearSelection()
 		{
 			if (lastSelection != null)
@@ -326,6 +334,11 @@ public class DocumentResultsPane extends LocalizedComposite implements AbstractD
 		}
 	}
 
+	@Override
+	public void setSelection(AbstractResultItem item) {
+		state.setSelection(item);
+	}
+	
 	@Override
 	public void clearSelection() {
 		state.clearSelection();
