@@ -67,6 +67,7 @@ import com.flair.shared.parser.DocumentReadabilityLevel;
 import com.flair.shared.utilities.GenericEventSource;
 import com.flair.shared.utilities.GenericEventSource.EventHandler;
 import com.google.gwt.core.client.Duration;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.Timer;
@@ -1505,6 +1506,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 	private final ProcessHistory			processHistory;
 	private ConstructionSettingsProfile		importedSettings;
 	private final WebSearchCooldownTimer	searchCooldown;
+	private boolean							rerankFlag;
 	
 	private final GenericEventSource<BeginOperation>	eventBeginProc;
 	private final GenericEventSource<EndOperation>		eventEndProc;
@@ -1540,6 +1542,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 		searchCooldown = new WebSearchCooldownTimer();
 		
 		importedSettings = null;
+		rerankFlag = false;
 		
 		eventBeginProc = new GenericEventSource<>();
 		eventEndProc = new GenericEventSource<>();
@@ -1664,10 +1667,22 @@ public class WebRankerCore implements AbstractWebRankerCore
 		}
 	}
 	
+	private void doDeferredReranking()
+	{
+		if (rerankFlag)
+		{
+			rerankFlag = false;
+			rankPreviewModule.rerank();
+			rankPreviewModule.refreshResults();
+		}
+	}
+	
 	private void onSettingsChanged()
 	{
-		rankPreviewModule.rerank();
-		rankPreviewModule.refreshResults();
+		// this handler can be spammed under certain circumstances
+		// to prevent the rerank calls from accumulating, defer the execution until the browser event loop returns
+		rerankFlag = true;
+		Scheduler.get().scheduleDeferred(() -> doDeferredReranking());
 	}
 
 	private void onSettingsReset()

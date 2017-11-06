@@ -46,6 +46,7 @@ public class GrammaticalConstructionPanelItem extends LocalizedComposite impleme
 	{
 		reset.addClickHandler(e -> {
 			resetState(true);
+			e.stopPropagation();
 		});
 	}
 	
