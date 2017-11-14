@@ -1,6 +1,33 @@
 /*
  * Common styles
  */
+ 
+/*
+ * Scrollbars
+ */
+ ::-webkit-scrollbar {
+    max-width: 10px !important;
+    max-height: 10px !important;
+    background: #ffffff !important;
+}
+
+::-webkit-scrollbar-track, ::-webkit-scrollbar-corner {
+    background: #ffffff !important;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(244, 176, 66, .5) !important;
+}
+
+::-webkit-scrollbar-track, ::-webkit-scrollbar-corner {
+    background: #ffffff !important;
+}
+
+::selection {
+    background-color: #ffa131 !important;
+    color: #fff !important;
+}
+ 
 /*
  * Weight widget styles
  */
