@@ -12,3 +12,5 @@ The third column is the actual localized string that needs translation.
 
 Generally, grammatical constructions need localized strings for every language that uses them. If a construction is exclusive to just one language, its strings do not need to be localized to other languages. 
 The language of construction in the interface depends on the language of the current operation and not on the actual display language.    
+
+Localized strings are allowed to have inline references (no deeper than one level) to other strings with the following syntax: ${provider.tag}

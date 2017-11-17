@@ -450,7 +450,7 @@ class StanfordDocumentParserGermanStrategy extends BasicStanfordDocumentParserSt
 					{
 						addConstructionOccurrence(GrammaticalConstruction.PREPOSITIONS, label.beginPosition(),
 								label.endPosition(), labelWord);
-						addConstructionOccurrence(GrammaticalConstruction.PREPOSITIONS_ADVANCED, label.beginPosition(),
+						addConstructionOccurrence(GrammaticalConstruction.POSTPOSITION, label.beginPosition(),
 								label.endPosition(), labelWord);
 					} else if (labelTag.startsWith("p"))
 					{

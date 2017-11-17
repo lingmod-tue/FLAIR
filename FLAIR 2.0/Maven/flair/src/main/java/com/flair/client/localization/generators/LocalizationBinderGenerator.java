@@ -15,6 +15,7 @@ import com.flair.client.localization.annotations.LocalizedField;
 import com.flair.client.localization.annotations.LocalizedFieldContainer;
 import com.flair.client.localization.wrappers.SimpleLocalizedAltTextWidget;
 import com.flair.client.localization.wrappers.SimpleLocalizedListBoxOptionWidget;
+import com.flair.client.localization.wrappers.SimpleLocalizedNavBrandWidget;
 import com.flair.client.localization.wrappers.SimpleLocalizedTextBoxWidget;
 import com.flair.client.localization.wrappers.SimpleLocalizedTextButtonWidget;
 import com.flair.client.localization.wrappers.SimpleLocalizedTextWidget;
@@ -170,6 +171,9 @@ public class LocalizationBinderGenerator extends BaseGenerator
 				case TEXTBOX_PLACEHOLDER:
 					wrapperSB.append(SimpleLocalizedTextBoxWidget.class.getSimpleName());
 					break;
+				case TEXT_NAVBRAND:
+					wrapperSB.append(SimpleLocalizedNavBrandWidget.class.getSimpleName());
+					break;
 				default:
 					logger.log(Type.ERROR, "Missing implementation for LocalizedFieldType " + wd.type);
 					throw new UnableToCompleteException();
@@ -239,6 +243,7 @@ public class LocalizationBinderGenerator extends BaseGenerator
 		writer.write(IMPORT, SimpleLocalizedTitleWidget.class.getName());
 		writer.write(IMPORT, SimpleLocalizedAltTextWidget.class.getName());
 		writer.write(IMPORT, SimpleLocalizedTextBoxWidget.class.getName());
+		writer.write(IMPORT, SimpleLocalizedNavBrandWidget.class.getName());
 		writer.newline();
 	}
 

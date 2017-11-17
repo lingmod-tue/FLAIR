@@ -1,4 +1,5 @@
 _common-strings_	INVALID	Unbekannt
+_common-strings_	BRANDING	FLAIR
 _common-strings_	YES	Ja
 _common-strings_	NO	Nein
 _common-strings_	OK	OK
@@ -32,21 +33,21 @@ _webrankercore_	SERVER_ERROR	Ein schwerwiegender Fehler ist aufgetreten. Bitte v
 _webrankercore_	OP_TIMEDOUT	Der Vorgang wurde abgebrochen, da er zu lange gedauert hat.
 _webrankercore_	NO_RESULTS_FOR_FILTER	Keine Ergebnisse mit den aktuellen Sucheinstellungen.
 _webrankercore_	NO_SEARCH_RESULTS	Keine Ergebnisse für den Suchbegriff.
-_webrankercore_	IMPORTED_SETINGS	FLAIR wird Ihre benutzerdefinierten Einstellungen automatisch übernehmen.
+_webrankercore_	IMPORTED_SETINGS	${_common-strings_.BRANDING} wird Ihre benutzerdefinierten Einstellungen automatisch übernehmen.
 _webrankercore_	SEARCH_COOLDOWN	Bitte warten Sie einige Minuten, bevor Sie eine neue Websuche tätigen.
 _webrankercore_	NO_PARSED_DOCS	Wir konnten keine der Webseiten/Dateien verarbeiten.
 _webrankercore_	MISSING_DOCS	Einige Webseiten/Dateien konnten nicht analysiert werden.
 _webrankercore_	MISSING_SEARCH_RESULTS	Einige Webseiten konnten aufgrund von Konnektivitätsproblemen nicht analysiert werden.
 		
 MainViewport	btnWebSearchUI	Internetsuche
-MainViewport	btnAboutUI	Über FLAIR
+MainViewport	btnAboutUI	Über ${_common-strings_.BRANDING}
 MainViewport	btnHistoryUI	Frühere Analysen
 MainViewport	btnSwitchLangUI	Anzeigesprache wechseln
 MainViewport	btnUploadUI	Text hochladen
-MainViewport	lblDefaultSearchCaptionUI	Klicken Sie auf das Suchsymbol unten und geben Sie eine Suchanfrage ein. FLAIR wird die relevantesten Treffer der Bing Suchmaschine abrufen.
+MainViewport	lblDefaultSearchCaptionUI	Klicken Sie auf das Suchsymbol unten und geben Sie eine Suchanfrage ein. ${_common-strings_.BRANDING} wird die relevantesten Treffer der Bing Suchmaschine abrufen.
 MainViewport	lblDefaultConfigTitleUI	Konfigurieren
-MainViewport	lblDefaultConfigCaptionUI	Konfgurieren Sie die Einstellungen: Text (Länge, Schwierigkeitsgrad) und Grammatik (Passiv, W-Fragen, akademisches Vokabular, ...). Sie können die Einstellungen auch exportieren, um sie auf spätere Suchen anzuwenden. FLAIR bewertet die Suchergebnisse entsprechend Ihrer Einstellungen neu. Klicken Sie auf den Link, um die Seite in einem neuen Tab zu öffnen, oder lesen Sie den extrahierten, erweiterten Text im Textfeld auf der rechten Seite.
-MainViewport	lblDefaultUploadCaptionUI	Laden Sie Ihre Dateien hoch. FLAIR wird sie analysieren und basierend auf Ihren Einstellungen nach Relevanz sortieren.
+MainViewport	lblDefaultConfigCaptionUI	Konfgurieren Sie die Einstellungen: Text (Länge, Schwierigkeitsgrad) und Grammatik (Passiv, W-Fragen, akademisches Vokabular, ...). Sie können die Einstellungen auch exportieren, um sie auf spätere Suchen anzuwenden. ${_common-strings_.BRANDING} bewertet die Suchergebnisse entsprechend Ihrer Einstellungen neu. Klicken Sie auf den Link, um die Seite in einem neuen Tab zu öffnen, oder lesen Sie den extrahierten, erweiterten Text im Textfeld auf der rechten Seite.
+MainViewport	lblDefaultUploadCaptionUI	Laden Sie Ihre Dateien hoch. ${_common-strings_.BRANDING} wird sie analysieren und basierend auf Ihren Einstellungen nach Relevanz sortieren.
 		
 CorpusFileUploader	lblUploadTextUI	Ziehen Sie Ihre Dateien in diesen Bereich.
 CorpusFileUploader	stpLangUI	Textsprache wählen
@@ -94,7 +95,7 @@ RankerSettingsPane	lblTextCharacteristicsUI	Eigenschaften der Texte:
 RankerSettingsPane	lblTextLevelUI	Schwierigkeitsgrad:
 RankerSettingsPane	lblConstructionsUI	Konstruktionen:
 RankerSettingsPane	lblLanguageUseUI	Sprachverwendung:
-RankerSettingsPane	FILTERED	Gefiltert
+RankerSettingsPane	FILTERED	gefiltert
 		
 GrammaticalConstructionWeightSlider	chkToggleUI	Abwählen, um Texte mit dieser Konstruktion auszuschließen.
 GrammaticalConstructionWeightSlider	sldWeightUI	Nach rechts bewegen, um Texte mit dieser Konstruktion höher zu bewerten.

@@ -54,6 +54,10 @@ public class LocalizationStringTable implements LocalizationDataCache
 			TextResource gram = LocalizedResources.get().getGramConstructionStrings(lang);
 			reader.parse(gram, (p, t, l) -> parseStringTableEntry(lang, p, t, l));
 		}
+		
+		// second pass to resolve inline references
+		for (BasicLocalizationProvider provider : providers.values())
+			provider.resolveReferences(this);
 	}
 	
 	@Override
@@ -64,5 +68,10 @@ public class LocalizationStringTable implements LocalizationDataCache
 	@Override
 	public String getLocalizedString(String provider, String tag, Language lang) {
 		return getProvider(provider).getLocalizedString(tag, lang);
+	}
+
+	@Override
+	public boolean hasProvider(String name) {
+		return providers.containsKey(name);
 	}
 }

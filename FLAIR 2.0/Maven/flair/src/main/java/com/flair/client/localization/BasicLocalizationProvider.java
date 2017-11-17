@@ -3,6 +3,7 @@ package com.flair.client.localization;
 import java.util.EnumMap;
 import java.util.HashMap;
 
+import com.flair.client.localization.interfaces.LocalizationDataCache;
 import com.flair.client.localization.interfaces.LocalizationProvider;
 import com.flair.client.utilities.ClientLogger;
 import com.flair.shared.grammar.Language;
@@ -60,6 +61,50 @@ public class BasicLocalizationProvider implements LocalizationProvider
 		{
 			ClientLogger.get().error(new RuntimeException("Localization error"), "No localized string for tag '" + tag + "' in langauge '" + lang + "'");
 			return PLACEHOLDER_STRING;
+		}
+	}
+
+	public void resolveReferences(LocalizationDataCache stringTable)
+	{
+		// replace all inline references with their corresponding localized string
+		for (java.util.Map.Entry<String, Entry> itr : data.entrySet())
+		{
+			String tag = itr.getKey();
+			Entry entry = itr.getValue();
+			for (Language l : Language.values())
+			{
+				// naive replacement
+				String toReplace = entry.get(l);
+				int start = 0, end = 0;
+				do
+				{
+					start = toReplace.indexOf("${");
+					end = toReplace.indexOf("}");
+					
+					if (start != -1 && end != -1)
+					{
+						String ref = toReplace.substring(start + 2, end);
+						String[] splits = ref.split("\\.");
+						if (splits.length != 2)
+							throw new RuntimeException("Invalid inline reference in locale string " + tag + ", " + l);
+						
+						String refprovider = splits[0];
+						String reftag = splits[1];
+						String replacement = null;
+						
+						if (refprovider.equals(name))
+							replacement = getLocalizedString(reftag, l);
+						else
+							replacement = stringTable.getLocalizedString(refprovider, reftag, l);
+
+						toReplace = toReplace.substring(0, start)
+									+ replacement
+									+ (end < toReplace.length() - 1 ? toReplace.substring(end + 1) : "");
+					}
+				} while (start != -1);
+				
+				entry.put(l, toReplace);
+			}
 		}
 	}
 }

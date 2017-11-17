@@ -7,6 +7,7 @@ import com.flair.shared.grammar.Language;
  */
 public interface LocalizationDataCache
 {
+	public boolean					hasProvider(String name);
 	public LocalizationProvider		getProvider(String name);
 	public String					getLocalizedString(String provider, String tag, Language lang);
 }

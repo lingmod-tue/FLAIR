@@ -1,4 +1,5 @@
 _common-strings_	INVALID	Unknown
+_common-strings_	BRANDING	FLAIR
 _common-strings_	YES	Yes
 _common-strings_	NO	No
 _common-strings_	OK	OK
@@ -32,21 +33,21 @@ _webrankercore_	SERVER_ERROR	Blimey! Something went wrong on our end. Please try
 _webrankercore_	OP_TIMEDOUT	The operation timed out.
 _webrankercore_	NO_RESULTS_FOR_FILTER	No results for the current settings.
 _webrankercore_	NO_SEARCH_RESULTS	Sorry, our search engine didn't return any results for your query.
-_webrankercore_	IMPORTED_SETINGS	FLAIR will automatically apply your custom settings.
+_webrankercore_	IMPORTED_SETINGS	${_common-strings_.BRANDING} will automatically apply your custom settings.
 _webrankercore_	SEARCH_COOLDOWN	Please wait for a few minutes before starting a new search.
 _webrankercore_	NO_PARSED_DOCS	None of the results/files could be analyzed.
 _webrankercore_	MISSING_DOCS	Some results/files couldn't be analyzed due to technical issues.
 _webrankercore_	MISSING_SEARCH_RESULTS	Some results couldn't be analyzed due to connectivity issues.
 		
 MainViewport	btnWebSearchUI	Web Search
-MainViewport	btnAboutUI	About FLAIR
+MainViewport	btnAboutUI	About ${_common-strings_.BRANDING}
 MainViewport	btnHistoryUI	Recent Analyses
 MainViewport	btnSwitchLangUI	Switch Interface Language
 MainViewport	btnUploadUI	Upload Corpus
-MainViewport	lblDefaultSearchCaptionUI	Click on the search icon below and type in a query. FLAIR will fetch the top results from the Bing Search Engine.
+MainViewport	lblDefaultSearchCaptionUI	Click on the search icon below and type in a query. ${_common-strings_.BRANDING} will fetch the top results from the Bing Search Engine.
 MainViewport	lblDefaultConfigTitleUI	Configure
-MainViewport	lblDefaultConfigCaptionUI	Configure the settings: text (difficulty, length) and language (the passive, wh- questions, academic vocabulary, ...). You can export the settings to apply them to all further searches. FLAIR will re-rank the documents according to the configured settings. Click on the link to open the page in a new tab or read the enhanced text in the right-side panel.
-MainViewport	lblDefaultUploadCaptionUI	Upload custom documents and corpora. FLAIR will analyse and rank their content according to your settings.
+MainViewport	lblDefaultConfigCaptionUI	Configure the settings: text (difficulty, length) and language (the passive, wh- questions, academic vocabulary, ...). You can export the settings to apply them to all further searches. ${_common-strings_.BRANDING} will re-rank the documents according to the configured settings. Click on the link to open the page in a new tab or read the enhanced text in the right-side panel.
+MainViewport	lblDefaultUploadCaptionUI	Upload custom documents and corpora. ${_common-strings_.BRANDING} will analyse and rank their content according to your settings.
 		
 CorpusFileUploader	lblUploadTextUI	Drag and drop files here.
 CorpusFileUploader	stpLangUI	Choose Language

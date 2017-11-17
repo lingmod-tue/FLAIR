@@ -32,8 +32,8 @@ public enum GrammaticalConstruction
     
     PREPOSITIONS("prepositions", Language.ENGLISH, Language.GERMAN),
     PREPOSITIONS_SIMPLE("simplePrepositions", Language.ENGLISH, Language.GERMAN),
-    PREPOSITIONS_COMPLEX("complexPrepositions", Language.ENGLISH, Language.GERMAN),
-    PREPOSITIONS_ADVANCED("advancedPrepositions", Language.ENGLISH, Language.GERMAN),
+    PREPOSITIONS_COMPLEX("complexPrepositions", Language.ENGLISH),
+    PREPOSITIONS_ADVANCED("advancedPrepositions", Language.ENGLISH),
     
     // sentence structure
     CLAUSE_SUBORDINATE("subordinateClause", Language.ENGLISH, Language.GERMAN),
@@ -134,8 +134,6 @@ public enum GrammaticalConstruction
     VERBFORM_TO_INFINITIVE("toInfinitiveForms", Language.ENGLISH, Language.GERMAN),
     VERBFORM_INFINITIVE("infinitiveForms", Language.GERMAN),// "I want toPrep do it."
     VERBFORM_PARTICIPLE("participleForms", Language.GERMAN),// "I want toPrep do it."
-    VERBFORM_PARTICIPLE_1("participleForms1"),
-    VERBFORM_PARTICIPLE_2("participleForms2"),
     
     VERB_CLUSTER("verbCluster", Language.GERMAN),
     VERB_BRACKETS("verbBrackets", Language.GERMAN),
@@ -200,6 +198,8 @@ public enum GrammaticalConstruction
     TENSE_PRESENT_PERFECT("presentPerfect", Language.ENGLISH),
     TENSE_PAST_PERFECT("pastPerfect", Language.ENGLISH),
     PRONOUNS_OBJECTIVE("pronounsObjective", Language.ENGLISH), // /PRP + me, you, them...
+    POSTPOSITION("postposition", Language.GERMAN),
+    
     ;
     
 	

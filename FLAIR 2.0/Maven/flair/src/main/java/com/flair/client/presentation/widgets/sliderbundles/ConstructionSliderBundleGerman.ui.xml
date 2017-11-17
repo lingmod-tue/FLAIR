@@ -14,7 +14,27 @@
 						
 						<flair:GrammaticalConstructionWeightSlider gram="QUESTIONS_WH" parentLanguage="GERMAN"/>
 						
+						<flair:GrammaticalConstructionWeightSlider gram="QUESTIONS_WHAT" parentLanguage="GERMAN"/>
+						
+						<flair:GrammaticalConstructionWeightSlider gram="QUESTIONS_WHEN" parentLanguage="GERMAN"/>
+						
+						<flair:GrammaticalConstructionWeightSlider gram="QUESTIONS_WHERE" parentLanguage="GERMAN"/>
+						
+						<flair:GrammaticalConstructionWeightSlider gram="QUESTIONS_WHICH" parentLanguage="GERMAN"/>
+						
+						<flair:GrammaticalConstructionWeightSlider gram="QUESTIONS_WHO" parentLanguage="GERMAN"/>
+						
+						<flair:GrammaticalConstructionWeightSlider gram="QUESTIONS_WHOM" parentLanguage="GERMAN"/>
+						
+						<flair:GrammaticalConstructionWeightSlider gram="QUESTIONS_WHOSE" parentLanguage="GERMAN"/>
+
+						<flair:GrammaticalConstructionWeightSlider gram="QUESTIONS_WHY" parentLanguage="GERMAN"/>
+
+						<flair:GrammaticalConstructionWeightSlider gram="QUESTIONS_HOW" parentLanguage="GERMAN"/>
+						
 						<flair:GrammaticalConstructionWeightSlider gram="QUESTIONS_YESNO" parentLanguage="GERMAN"/>
+
+						<flair:GrammaticalConstructionWeightSlider gram="QUESTIONS_TAG" parentLanguage="GERMAN"/>
 					</flair:GrammaticalConstructionPanelItem>
 					
 					<!-- Satztypen -->
@@ -22,6 +42,8 @@
 						<flair:GrammaticalConstructionWeightSlider gram="SENTENCE_SIMPLE" parentLanguage="GERMAN"/>
 						
 						<flair:GrammaticalConstructionWeightSlider gram="SENTENCE_COMPOUND" parentLanguage="GERMAN"/>
+
+						<flair:GrammaticalConstructionWeightSlider gram="SENTENCE_COMPLEX" parentLanguage="GERMAN"/>
 						
 						<flair:GrammaticalConstructionWeightSlider gram="CLAUSE_SUBORDINATE" parentLanguage="GERMAN"/>
 						
@@ -136,6 +158,8 @@
 					
 					<!-- Pronomen -->
 					<flair:GrammaticalConstructionPanelItem ui:field="pnlPronomenUI" text="pronomen" iconType="EXPAND_MORE">
+						<flair:GrammaticalConstructionWeightSlider gram="PRONOUNS" parentLanguage="GERMAN"/>
+
 						<flair:GrammaticalConstructionWeightSlider gram="PRONOUNS_PERSONAL" parentLanguage="GERMAN"/>
 						
 						<flair:GrammaticalConstructionWeightSlider gram="PRONOUNS_RELATIVE" parentLanguage="GERMAN"/>
@@ -153,6 +177,8 @@
 					
 					<!-- Präpositionen -->
 					<flair:GrammaticalConstructionPanelItem ui:field="pnlPraepositionenUI" text="präpositionen" iconType="EXPAND_MORE">
+						<flair:GrammaticalConstructionWeightSlider gram="PREPOSITIONS" parentLanguage="GERMAN"/>
+
 						<flair:GrammaticalConstructionWeightSlider gram="PREPOSITIONS_SIMPLE" parentLanguage="GERMAN"/>
 						
 						<flair:GrammaticalConstructionWeightSlider gram="PREPOSITIONS_COMPLEX" parentLanguage="GERMAN"/>

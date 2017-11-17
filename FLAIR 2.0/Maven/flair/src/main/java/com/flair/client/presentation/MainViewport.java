@@ -24,6 +24,7 @@ import com.flair.client.presentation.interfaces.SettingsUrlExporterView;
 import com.flair.client.presentation.interfaces.UserPromptService;
 import com.flair.client.presentation.interfaces.VisualizerService;
 import com.flair.client.presentation.interfaces.WebSearchService;
+import com.flair.client.presentation.widgets.AboutPage;
 import com.flair.client.presentation.widgets.CorpusFileUploader;
 import com.flair.client.presentation.widgets.CustomKeywordsEditor;
 import com.flair.client.presentation.widgets.DocumentCollectionVisualizer;
@@ -54,7 +55,6 @@ import gwt.material.design.client.ui.MaterialCardTitle;
 import gwt.material.design.client.ui.MaterialLabel;
 import gwt.material.design.client.ui.MaterialLink;
 import gwt.material.design.client.ui.MaterialLoader;
-import gwt.material.design.client.ui.MaterialModal;
 import gwt.material.design.client.ui.MaterialNavBar;
 import gwt.material.design.client.ui.MaterialNavBrand;
 import gwt.material.design.client.ui.MaterialPanel;
@@ -139,6 +139,7 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	MaterialLink								btnSwitchLangUI;
 	@UiField
 	@LocalizedField(type=LocalizedFieldType.TOOLTIP_MATERIAL)
+	@LocalizedCommonField(tag=CommonLocalizationTags.BRANDING, type=LocalizedFieldType.TEXT_NAVBRAND)
 	MaterialNavBrand							btnAboutUI;
 	@UiField
 	@LocalizedCommonField(tag=CommonLocalizationTags.LANGUAGE_ENGLISH, type=LocalizedFieldType.TEXT_BUTTON)
@@ -146,14 +147,6 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	@UiField
 	@LocalizedCommonField(tag=CommonLocalizationTags.LANGUAGE_GERMAN, type=LocalizedFieldType.TEXT_BUTTON)
 	MaterialLink								btnLangDeUI;
-	@UiField
-	MaterialModal								mdlAboutEnUI;
-	@UiField
-	MaterialButton								btnAboutEnCloseUI;
-	@UiField
-	MaterialModal								mdlAboutDeUI;
-	@UiField
-	MaterialButton								btnAboutDeCloseUI;
 	@UiField
 	WebSearchModal								mdlWebSearchUI;
 	@UiField
@@ -204,6 +197,8 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	DocumentComparer							mdlComparerUI;
 	@UiField
 	HistoryViewer								mdlHistoryUI;
+	@UiField
+	AboutPage									mdlAboutUI;
 	ToastNotifications							notificationService;
 	BasicOverlay								overlayService;
 	
@@ -255,6 +250,7 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		btnWebSearchUI.addClickHandler(e -> showSearchModal());
 		btnUploadUI.addClickHandler(e -> showUploadModal());
 		btnHistoryUI.addClickHandler(e -> mdlHistoryUI.show());
+		btnAboutUI.addClickHandler(e -> mdlAboutUI.show());
 		
 		btnLangEnUI.addClickHandler(e -> {
 			switchDisplayLanguage(Language.ENGLISH);
@@ -262,26 +258,6 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		
 		btnLangDeUI.addClickHandler(e -> {
 			switchDisplayLanguage(Language.GERMAN);
-		});
-		
-		btnAboutUI.addClickHandler(e -> {
-			switch (LocalizationEngine.get().getLanguage())
-			{
-			case ENGLISH:
-				mdlAboutEnUI.open();
-				break;
-			case GERMAN:
-				mdlAboutDeUI.open();
-				break;
-			}
-		});
-		
-		btnAboutEnCloseUI.addClickHandler(e-> {
-			mdlAboutEnUI.close();
-		});
-		
-		btnAboutDeCloseUI.addClickHandler(e-> {
-			mdlAboutDeUI.close();
 		});
 		
 		tglSettingsPaneUI.addClickHandler(e -> toggleSettingsPane());

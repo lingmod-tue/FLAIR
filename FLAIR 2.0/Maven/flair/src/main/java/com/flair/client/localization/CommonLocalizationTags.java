@@ -6,6 +6,7 @@ package com.flair.client.localization;
 public enum CommonLocalizationTags
 {
 	INVALID,
+	BRANDING,
 	YES,
 	NO,
 	OK,
