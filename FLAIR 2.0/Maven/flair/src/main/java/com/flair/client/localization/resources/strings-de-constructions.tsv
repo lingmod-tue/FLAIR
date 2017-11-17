@@ -208,9 +208,12 @@ _gram-helpText_	PLURAL_REGULAR	<INSERT_HELP_TEXT>
 _gram-name_	PREPOSITIONS	Präpositionen (gesamt)
 _gram-path_	PREPOSITIONS	Präpositionen > Präpositionen (gesamt)
 _gram-helpText_	PREPOSITIONS	auf, unter, zufolge, wegen
-_gram-name_	PREPOSITIONS_ADVANCED	Postposition
-_gram-path_	PREPOSITIONS_ADVANCED	Präpositionen > Postposition
-_gram-helpText_	PREPOSITIONS_ADVANCED	zufolge, wegen
+_gram-name_	PREPOSITIONS_ADVANCED	PREPOSITIONS_ADVANCED
+_gram-path_	PREPOSITIONS_ADVANCED	PREPOSITIONS_ADVANCED
+_gram-helpText_	PREPOSITIONS_ADVANCED	<INSERT_HELP_TEXT>
+_gram-name_	POSTPOSITION	Postposition
+_gram-path_	POSTPOSITION	Präpositionen > Postposition
+_gram-helpText_	POSTPOSITION	zufolge, wegen
 _gram-name_	PREPOSITIONS_COMPLEX	PREPOSITIONS_COMPLEX
 _gram-path_	PREPOSITIONS_COMPLEX	PREPOSITIONS_COMPLEX
 _gram-helpText_	PREPOSITIONS_COMPLEX	<INSERT_HELP_TEXT>

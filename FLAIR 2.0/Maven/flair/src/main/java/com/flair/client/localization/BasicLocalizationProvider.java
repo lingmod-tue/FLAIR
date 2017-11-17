@@ -13,7 +13,7 @@ import com.flair.shared.grammar.Language;
  */
 public class BasicLocalizationProvider implements LocalizationProvider
 {
-	private static final String			PLACEHOLDER_STRING = "<LOCALIZED STRING NOTFOUND>";
+	private static final String			PLACEHOLDER_STRING = "<LOCALIZED STRING NOT FOUND>";
 	
 	private static class Entry extends EnumMap<Language, String>
 	{

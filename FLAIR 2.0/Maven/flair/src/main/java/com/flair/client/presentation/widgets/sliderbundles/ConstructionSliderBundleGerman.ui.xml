@@ -181,7 +181,7 @@
 
 						<flair:GrammaticalConstructionWeightSlider gram="PREPOSITIONS_SIMPLE" parentLanguage="GERMAN"/>
 						
-						<flair:GrammaticalConstructionWeightSlider gram="PREPOSITIONS_COMPLEX" parentLanguage="GERMAN"/>
+						<flair:GrammaticalConstructionWeightSlider gram="POSTPOSITION" parentLanguage="GERMAN"/>
 					</flair:GrammaticalConstructionPanelItem>
 					
 					<!-- Nomen -->

@@ -25,7 +25,7 @@ public abstract class LocalizedComposite extends Composite implements LocalizedU
 	protected void onAttach()
 	{
 		if (localizationBinderData == null)
-			throw new RuntimeException("No localization data for composite");
+			throw new RuntimeException("No localization data for composite " + this.getClass().getCanonicalName());
 		
 		super.onAttach();
 		LocalizationEngine.get().registerLocalizedView(this);

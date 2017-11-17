@@ -6,11 +6,11 @@
 		
 	<m:MaterialPanel marginBottom="2">
 		<m:MaterialRow marginBottom="2">
-			<m:MaterialColumn grid="l8 m8 s8">
+			<m:MaterialColumn grid="l7 m7 s7">
 				<m:MaterialCheckBox ui:field="chkToggleUI" text="Gram Const"/>
 			</m:MaterialColumn>
 			
-			<m:MaterialColumn grid="l2 m2 s2" paddingTop="2">
+			<m:MaterialColumn grid="l3 m3 s3" paddingTop="2">
 				<m:MaterialIcon ui:field="icoHelpTextUI" iconType="INFO" iconSize="TINY" textColor="GREY"/>
 			</m:MaterialColumn>
 			

@@ -377,12 +377,12 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 
 	@Override
 	public void showLoaderOverlay(boolean visible) {
-		MaterialLoader.showLoading(visible);
+		MaterialLoader.loading(visible);
 	}
 
 	@Override
 	public void showProgressBar(boolean visible) {
-		MaterialLoader.showProgress(visible);
+		MaterialLoader.progress(visible);
 	}
 	
 	@Override
