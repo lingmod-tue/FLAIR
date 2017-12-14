@@ -225,8 +225,7 @@ public class DocumentRanker implements AbstractDocumentRanker
 		public int getNumFilteredDocuments() {
 			return numFiltered;
 		}
-
-		
+	
 		@Override
 		public Language getLanguage() {
 			return lang;

@@ -18,7 +18,7 @@
 		<m:MaterialPanel layoutPosition="RELATIVE" grid="l12 m12 s12" padding="25" overflow="HIDDEN">
 			<ma.splitpanel:MaterialSplitPanel ui:field="pnlSplitContainer" backgroundColor="GREY_LIGHTEN_5" 
 				leftMin="400" leftMax="400" barPosition="30" overflow="HIDDEN" axis="HORIZONTAL" dock="RIGHT">
-				<m:MaterialPanel grid="l4 m4 s6" padding="20" overflow="HIDDEN">
+				<m:MaterialPanel grid="l4 m4 s6" padding="20">
 					<m:MaterialLabel ui:field="lblTitleUI"
 						text="Select ranges by dragging the pointers up and down. Change the order of axes by dragging them left and right. Add or remove axes via checkboxes on the right."/>
 						

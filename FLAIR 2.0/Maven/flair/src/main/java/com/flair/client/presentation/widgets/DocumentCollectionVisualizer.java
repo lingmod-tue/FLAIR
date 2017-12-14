@@ -53,6 +53,7 @@ import gwt.material.design.addins.client.window.MaterialWindow;
 import gwt.material.design.client.ui.MaterialButton;
 import gwt.material.design.client.ui.MaterialCheckBox;
 import gwt.material.design.client.ui.MaterialLabel;
+import gwt.material.design.client.ui.MaterialPushpin;
 import gwt.material.design.client.ui.MaterialRow;
 import gwt.material.design.client.ui.MaterialToast;
 import gwt.material.design.client.ui.animate.MaterialAnimation;
@@ -306,7 +307,7 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 				
 				y.put(dim, D3.scale.linear()
 								.domain(extents)
-								.range(0, height));
+								.range(height, 0));
 								
 				return true;
 			});
@@ -747,6 +748,7 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 		
 		// hide the maximize button
 		mdlVisualizerUI.getIconMaximize().setVisible(false);
+		MaterialPushpin.apply(pnlSVGContainerUI, 50.d);
 	}
 	
 	public DocumentCollectionVisualizer()

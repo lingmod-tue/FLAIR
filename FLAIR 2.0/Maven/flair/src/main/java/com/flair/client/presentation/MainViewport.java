@@ -72,12 +72,12 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		private static final int			DEFAULT_TIMEOUT_MS = 3 * 1000;
 		@Override
 		public void notify(String text) {
-			MaterialToast.fireToast(text, DEFAULT_TIMEOUT_MS);
+			MaterialToast.fireToast(text, DEFAULT_TIMEOUT_MS, "rounded");
 		}
 
 		@Override
 		public void notify(String text, int timeout) {
-			MaterialToast.fireToast(text, timeout);
+			MaterialToast.fireToast(text, timeout, "rounded");
 		}
 	}
 	
