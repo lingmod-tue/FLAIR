@@ -59,7 +59,7 @@ public class DocumentLengthConfigPane extends LocalizedComposite implements CanR
 	{
 		// don't trigger the change handler to avoid recursion
 		int weight = getWeight();
-		boolean shorterPreferred = weight == SLIDER_MIN_VAL;
+		boolean shorterPreferred = weight == SLIDER_MAX_VAL;
 		
 		chkShorterTextsUI.setValue(shorterPreferred, false);
 	}
@@ -75,9 +75,9 @@ public class DocumentLengthConfigPane extends LocalizedComposite implements CanR
 		chkShorterTextsUI.addValueChangeHandler(e -> {
 			boolean enabled = e.getValue();
 			if (enabled)
-				setWeight(SLIDER_MIN_VAL, true);
-			else
 				setWeight(SLIDER_MAX_VAL, true);
+			else
+				setWeight(SLIDER_MIN_VAL, true);
 		});
 		
 		sldLengthUI.addValueChangeHandler(e -> {

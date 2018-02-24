@@ -334,7 +334,7 @@ public class DocumentRanker implements AbstractDocumentRanker
 		else if (lengthParam != 0)
 		{
 			Collections.sort(out.docs, (a, b) -> {
-				return -Integer.compare((int)a.getNumWords(), (int)b.getNumWords());
+				return Integer.compare((int)a.getNumWords(), (int)b.getNumWords());
 			});
 		}
 		else

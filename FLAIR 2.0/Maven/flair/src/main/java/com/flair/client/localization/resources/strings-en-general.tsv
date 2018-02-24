@@ -38,6 +38,7 @@ _webrankercore_	SEARCH_COOLDOWN	Please wait for a few minutes before starting a 
 _webrankercore_	NO_PARSED_DOCS	None of the results/files could be analyzed.
 _webrankercore_	MISSING_DOCS	Some results/files couldn't be analyzed due to technical issues.
 _webrankercore_	MISSING_SEARCH_RESULTS	Some results couldn't be analyzed due to connectivity issues.
+_webrankercore_	SERVER_PING_TIMEOUT	We are busy analyzing the results. Thank you for your patience!
 		
 MainViewport	btnWebSearchUI	Web Search
 MainViewport	btnAboutUI	About ${_common-strings_.BRANDING}

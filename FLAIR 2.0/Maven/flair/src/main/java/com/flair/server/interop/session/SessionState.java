@@ -320,7 +320,6 @@ public class SessionState
 
 	private synchronized void handleCrawlComplete(SearchResult sr)
 	{
-		
 		if (hasOperation() == false)
 		{
 			ServerLogger.get().error("Invalid crawl complete event");

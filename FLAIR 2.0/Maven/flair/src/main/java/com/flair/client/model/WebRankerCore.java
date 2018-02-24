@@ -95,6 +95,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 		NO_PARSED_DOCS,
 		MISSING_DOCS,
 		MISSING_SEARCH_RESULTS,
+		SERVER_PING_TIMEOUT,
 	}
 	
 	private abstract class ProcessData implements WebRankerAnalysis
@@ -950,6 +951,7 @@ public class WebRankerCore implements AbstractWebRankerCore
 	private final class TransientProcessManager
 	{
 		private static final int	TIMEOUT_MS = 10 * 60 * 1000;
+		private static final int	PING_TIMEOUT_MS = 30 * 1000;
 		
 		final class InProgressData
 		{

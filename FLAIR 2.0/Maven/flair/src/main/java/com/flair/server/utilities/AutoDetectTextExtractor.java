@@ -24,11 +24,11 @@ class AutoDetectTextExtractor extends AbstractTextExtractor
 			// Boilerpipe for regular webpages, Tika for everything else
 			if (TikaTextExtractor.isContentHTMLPlainText(input.url, input.lang))
 			{
-				ServerLogger.get().trace("Plain Text MIME @ '" + input.url + "' - Using BoilerpipeTextExtractor");
+	//			ServerLogger.get().trace("Plain Text MIME @ '" + input.url + "' - Using BoilerpipeTextExtractor");
 				return new BoilerpipeTextExtractor().extractText(input);
 			} else
 			{
-				ServerLogger.get().trace("Non-Text MIME @ '" + input.url + "' - Using TikaTextExtractor");
+	//			ServerLogger.get().trace("Non-Text MIME @ '" + input.url + "' - Using TikaTextExtractor");
 				return new TikaTextExtractor().extractText(input);
 			}
 		} catch (Throwable ex)

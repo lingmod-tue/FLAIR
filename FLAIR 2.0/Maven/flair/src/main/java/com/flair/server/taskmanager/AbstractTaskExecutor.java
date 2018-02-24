@@ -8,9 +8,11 @@ package com.flair.server.taskmanager;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 import com.flair.server.utilities.ServerLogger;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 /**
  * Basic implementation of a background task executor
@@ -21,8 +23,8 @@ abstract class AbstractTaskExecutor
 {
 	private final ExecutorService threadPool;
 
-	public AbstractTaskExecutor(int numThreads) {
-		threadPool = Executors.newFixedThreadPool(numThreads);
+	public AbstractTaskExecutor(String poolName, int numThreads) {
+		threadPool = Executors.newFixedThreadPool(numThreads, createPoolThreadFactory(poolName));
 	}
 
 	protected void queue(List<AbstractTask<?>> tasks)
@@ -44,7 +46,7 @@ abstract class AbstractTaskExecutor
 			try
 			{
 				pool.shutdown();
-				if (pool.awaitTermination(5, TimeUnit.MINUTES) == false)
+				if (pool.awaitTermination(2, TimeUnit.MINUTES) == false)
 					pool.shutdownNow();
 			} catch (InterruptedException ex)
 			{
@@ -55,5 +57,9 @@ abstract class AbstractTaskExecutor
 
 	public void shutdown(boolean force) {
 		shutdown(threadPool, force);
+	}
+
+	public static ThreadFactory createPoolThreadFactory(String poolName) {
+		return new ThreadFactoryBuilder().setNameFormat("FLAIR-Pool-" + poolName + " %d").build();
 	}
 }

@@ -35,8 +35,8 @@ class DocumentParseTask extends AbstractTask<DocumentParseTaskResult>
 
 		private Executor()
 		{
-			super(Constants.PARSER_THREADPOOL_SIZE);
-			auxThreadPool = Executors.newFixedThreadPool(Constants.PARSER_THREADPOOL_SIZE);
+			super("DocParse", Constants.PARSER_THREADPOOL_SIZE);
+			auxThreadPool = Executors.newFixedThreadPool(Constants.PARSER_THREADPOOL_SIZE, createPoolThreadFactory("DocParseAux"));
 		}
 
 		public void parse(DocumentParseTask task)
@@ -119,13 +119,11 @@ class DocumentParseTask extends AbstractTask<DocumentParseTaskResult>
 			throw new IllegalStateException("Keyword searcher not set");
 
 		AbstractDocument output = null;
-		SimpleObjectPoolResource<AbstractDocumentParser> parserPoolData = null;
 		long startTime = 0;
 		boolean error = false;
 
-		try
+		try (SimpleObjectPoolResource<AbstractDocumentParser> parserPoolData = parserPool.get())
 		{
-			parserPoolData = parserPool.get();
 			FutureTask<AbstractDocument> wrapper = new FutureTask<>(new ParseRunnable(parserPoolData.get()));
 			startTime = System.currentTimeMillis();
 			parseExecutor.submit(wrapper).get(TIMEOUT_SECONDS, TimeUnit.SECONDS);
@@ -140,16 +138,11 @@ class DocumentParseTask extends AbstractTask<DocumentParseTaskResult>
 			ServerLogger.get().error(ex, "Document parsing task encountered an error. Exception: " + ex.toString());
 			output = null;
 			error = true;
-		} finally
-		{
-			if (parserPoolData != null)
-				parserPoolData.release();
 		}
-
+		
 		long endTime = System.currentTimeMillis();
 		if (false == error)
-			ServerLogger.get()
-					.trace("Document " + output.getDescription() + " parsed in " + (endTime - startTime) + " ms");
+			ServerLogger.get().trace("Document " + output.getDescription() + " parsed in " + (endTime - startTime) + " ms");
 
 		DocumentParseTaskResult result = new DocumentParseTaskResult(output);
 		return result;

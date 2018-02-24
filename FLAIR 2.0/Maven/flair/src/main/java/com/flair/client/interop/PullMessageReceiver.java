@@ -99,6 +99,8 @@ class PullMessageReceiver implements AbstractMessageReceiver
 	{
 		if (open)
 			throw new RuntimeException("Receiver already open");
+		else if (handler == null)
+			throw new RuntimeException("Message handler not set");
 		
 		// schedule timer
 		token = receiverToken;
@@ -134,6 +136,7 @@ class PullMessageReceiver implements AbstractMessageReceiver
 		timer.cancel();
 		token = null;
 		open = false;
+		handler = null;
 	}
 
 	@Override

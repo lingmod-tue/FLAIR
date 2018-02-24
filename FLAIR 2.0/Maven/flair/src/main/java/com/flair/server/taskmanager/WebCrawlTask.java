@@ -29,8 +29,8 @@ class WebCrawlTask extends AbstractTask<WebCrawlTaskResult>
 		
 		private Executor()
 		{
-			super(Constants.TEXTFETCHER_THREADPOOL_SIZE);
-			auxThreadPool = Executors.newFixedThreadPool(Constants.TEXTFETCHER_THREADPOOL_SIZE);
+			super("WebCrawl", Constants.TEXTFETCHER_THREADPOOL_SIZE);
+			auxThreadPool = Executors.newFixedThreadPool(Constants.TEXTFETCHER_THREADPOOL_SIZE, createPoolThreadFactory("WebCrawlAux"));
 		}
 
 		public void crawl(WebCrawlTask task)

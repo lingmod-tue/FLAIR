@@ -5,11 +5,11 @@
  */
 package com.flair.server.taskmanager;
 
+import java.util.List;
+
 import com.flair.server.crawler.SearchResult;
 import com.flair.server.crawler.WebSearchAgent;
 import com.flair.server.utilities.ServerLogger;
-
-import java.util.List;
 
 /**
  * Fetches search results for a given query
@@ -21,7 +21,7 @@ class WebSearchTask extends AbstractTask<WebSearchTaskResult>
 	static final class Executor extends AbstractTaskExecutor
 	{
 		private Executor() {
-			super(Constants.TEXTFETCHER_THREADPOOL_SIZE);
+			super("WebSearch", Constants.TEXTFETCHER_THREADPOOL_SIZE);
 		}
 
 		public void search(WebSearchTask task) {

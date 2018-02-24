@@ -38,6 +38,7 @@ _webrankercore_	SEARCH_COOLDOWN	Bitte warten Sie einige Minuten, bevor Sie eine 
 _webrankercore_	NO_PARSED_DOCS	Wir konnten keine der Webseiten/Dateien verarbeiten.
 _webrankercore_	MISSING_DOCS	Einige Webseiten/Dateien konnten nicht analysiert werden.
 _webrankercore_	MISSING_SEARCH_RESULTS	Einige Webseiten konnten aufgrund von Konnektivitätsproblemen nicht analysiert werden.
+_webrankercore_	SERVER_PING_TIMEOUT	Die Analyse läuft auf vollen Touren. Vielen Dank für Ihre Geduld!
 		
 MainViewport	btnWebSearchUI	Internetsuche
 MainViewport	btnAboutUI	Über ${_common-strings_.BRANDING}
