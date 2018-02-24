@@ -21,9 +21,9 @@ import org.apache.http.ssl.SSLContextBuilder;
  */
 public class HttpClientFactory
 {
-	private static final int						CONNECT_TIMEOUT 			= 15 * 1000;
-	private static final int						REQUEST_TIMEOUT 			= 15 * 1000;
-	private static final int						SOCKET_TIMEOUT 				= 15 * 1000;
+	private static final int						CONNECT_TIMEOUT 			= 10 * 1000;
+	private static final int						REQUEST_TIMEOUT 			= 10 * 1000;
+	private static final int						SOCKET_TIMEOUT 				= 10 * 1000;
 	
 	private static final HttpClientFactory			INSTANCE = new HttpClientFactory();
 	
