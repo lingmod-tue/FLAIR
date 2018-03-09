@@ -9,7 +9,11 @@ import com.flair.grammar.Language;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
 
 /**
  * Extracts plain text from a given source
@@ -29,60 +33,28 @@ public abstract class AbstractTextExtractor
     
     public abstract Output extractText(Input input);
     
-    protected static InputStream openURLStream(String url, Language lang) throws IOException
+    protected static InputStream openURLStream(String url, Language lang) throws IOException, URISyntaxException
     {
-	URL pageURL = new URL(url);
-	HttpURLConnection connection = (HttpURLConnection)pageURL.openConnection();
-	String langStr = "en-US,en;q=0.8";
-	
-	switch (lang)
-	{
-	    case ENGLISH:
-		langStr = "en-US,en;q=0.8";
-		break;
-	    case GERMAN:
-		langStr = "de-DE,de;q=0.8";
-		break;
-	}
-	
-	if (connection != null)
-	{
-	    connection.setConnectTimeout(5000);
-	    connection.setReadTimeout(5000);
-	    connection.addRequestProperty("Accept-Language", langStr);
-	    connection.addRequestProperty("User-Agent", "Mozilla/4.76");
-	    connection.addRequestProperty("Referer", "google.com");
+        String langStr = "en-US,en;q=0.8";
 
-	    boolean redirect = false;
-	    // normally, 3xx is redirect
-	    int status = connection.getResponseCode();
-	    if (status == HttpURLConnection.HTTP_MOVED_TEMP ||
-		status == HttpURLConnection.HTTP_MOVED_PERM ||
-		status == HttpURLConnection.HTTP_SEE_OTHER)
-	    {
-		redirect = true;
-	    }
+        switch (lang)
+        {
+        case ENGLISH:
+                langStr = "en-US,en;q=0.8";
+                break;
+        case GERMAN:
+                langStr = "de-DE,de;q=0.8";
+                break;
+        }
 
-	    if (redirect) 
-	    {
-		// get redirect url from "location" header field
-		String newUrl = connection.getHeaderField("Location");
+        URI uri = new URI(url);
+        HttpGet get = new HttpGet(uri);
+        get.setHeader("Accept-Language", langStr);
+        get.setHeader("User-Agent", "Mozilla/4.76");
+        get.setHeader("Referer", "google.com");
 
-		pageURL = new URL(newUrl);
-		// open the new connnection again
-		connection = (HttpURLConnection)pageURL.openConnection();
-		connection.setReadTimeout(5000);
-		connection.setConnectTimeout(5000);
-		connection.addRequestProperty("Accept-Language", langStr);
-		connection.addRequestProperty("User-Agent", "Mozilla/4.76");
-		connection.addRequestProperty("Referer", "google.com");
-	    }
-	}
-	
-	if (connection == null)
-	    throw new IOException("Invalid UrlConnection for " + pageURL);
-	else
-	    return connection.getInputStream();
+        HttpClient client = HttpClientFactory.get().create();
+        return client.execute(get).getEntity().getContent();
     }
     
     public static class Input

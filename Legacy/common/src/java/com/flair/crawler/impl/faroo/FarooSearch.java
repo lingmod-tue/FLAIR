@@ -6,6 +6,7 @@ package com.flair.crawler.impl.faroo;
 import com.flair.crawler.impl.AbstractSearchAgentImpl;
 import com.flair.crawler.impl.AbstractSearchAgentImplResult;
 import com.flair.utilities.FLAIRLogger;
+import com.flair.utilities.HttpClientFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.InputStream;
@@ -223,7 +224,7 @@ public class FarooSearch implements AbstractSearchAgentImpl
             URI uri = new URI(FAROOSEARCH_SCHEME, FAROOSEARCH_HOSTNAME, FAROOSEARCH_PATH, full_query, null);
             
 	    HttpGet get = new HttpGet(uri);
-	    HttpClient client = new DefaultHttpClient();    
+	    HttpClient client = HttpClientFactory.get().create();    
 	    responsePost = client.execute(get);
 	    resEntity = responsePost.getEntity();
 

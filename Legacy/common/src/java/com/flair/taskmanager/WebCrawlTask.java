@@ -124,4 +124,23 @@ class WebCrawlTaskExecutor extends AbstractTaskExecutor
 	collection.addAll(tasks);
 	queue(collection);
     }
+    
+    public void shudown(boolean force) {
+        super.shutdown(force);
+        
+        if (force)
+	    auxThreadPool.shutdownNow();
+	else
+	{
+	    try
+	    {
+		auxThreadPool.shutdown();
+		if (auxThreadPool.awaitTermination(5, TimeUnit.MINUTES) == false)
+		    auxThreadPool.shutdownNow();
+	    }
+	    catch (InterruptedException ex) {
+		FLAIRLogger.get().error(ex, "Couldn't shutdown task executor thread pool. Exception: " + ex.toString());
+	    }
+	}
+    }
 }

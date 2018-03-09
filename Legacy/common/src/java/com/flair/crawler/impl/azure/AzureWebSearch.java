@@ -7,6 +7,7 @@ package com.flair.crawler.impl.azure;
 import com.flair.crawler.impl.AbstractSearchAgentImpl;
 import com.flair.crawler.impl.AbstractSearchAgentImplResult;
 import com.flair.utilities.FLAIRLogger;
+import com.flair.utilities.HttpClientFactory;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.InputStream;
@@ -172,7 +173,7 @@ public class AzureWebSearch implements AbstractSearchAgentImpl
 	    get.addHeader("Accept", "application/json");
 	    get.addHeader("Ocp-Apim-Subscription-Key", getApiKey());
 	    
-	    HttpClient client = new DefaultHttpClient();    
+	    HttpClient client = HttpClientFactory.get().create();
 	    responsePost = client.execute(get);
 	    resEntity = responsePost.getEntity();
 

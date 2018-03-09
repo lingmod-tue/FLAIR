@@ -8,6 +8,7 @@ import com.flair.grammar.Language;
 import static com.flair.utilities.AbstractTextExtractor.openURLStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import org.apache.tika.Tika;
 import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
@@ -89,7 +90,7 @@ class TikaTextExtractor extends AbstractTextExtractor
 	return new Output(input, error == false, pageText, isHtml);
     } 
     
-    public static boolean isContentHTMLPlainText(String url, Language lang) throws IOException
+    public static boolean isContentHTMLPlainText(String url, Language lang) throws IOException, URISyntaxException
     {
 	Tika pipeline = new Tika();
 	MediaType type;
