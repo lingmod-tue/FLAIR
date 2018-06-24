@@ -29,4 +29,5 @@ public interface AbstractWeightSlider
 
 	public boolean 		isSliderVisible();
 	public void 		setSliderVisible(boolean val);
+	public void         setAnimateSliderOnToggle(boolean val);
 }

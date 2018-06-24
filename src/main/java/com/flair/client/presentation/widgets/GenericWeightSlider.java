@@ -4,16 +4,27 @@ import com.flair.client.presentation.interfaces.AbstractWeightSlider;
 
 import gwt.material.design.client.ui.MaterialCheckBox;
 import gwt.material.design.client.ui.MaterialRange;
+import gwt.material.design.client.ui.animate.MaterialAnimation;
+import gwt.material.design.client.ui.animate.Transition;
 
 /*
  * Base class for custom weight slider widgets
  */
 public class GenericWeightSlider implements AbstractWeightSlider
 {
+	private static final MaterialAnimation      ANIM_SLIDER_FADEIN_DOWN = new MaterialAnimation();
+	private static final MaterialAnimation      ANIM_SLIDER_FADEOUT_UP = new MaterialAnimation();
+	static {
+		ANIM_SLIDER_FADEIN_DOWN.transition(Transition.FADEINDOWN)
+							   .duration(600);
+		ANIM_SLIDER_FADEOUT_UP.transition(Transition.FADEOUTUP)
+							  .duration(500);
+	}
+
+
 	protected static final int		SLIDER_MIN_VAL = 0;
 	protected static final int		SLIDER_MAX_VAL = 5;
-	protected static final int		SLIDER_STEP = 1;
-	
+
 	public static int getSliderMin() {
 		return SLIDER_MIN_VAL;
 	}
@@ -27,10 +38,24 @@ public class GenericWeightSlider implements AbstractWeightSlider
 	protected MaterialRange 			slider;
 	private ToggleHandler				toggleHandler;
 	private WeightChangeHandler			weightHandler;
+	private boolean                     animateSliderOnToggle;
+
+	protected void animateSlider()
+	{
+		if (isEnabled()) {
+			ANIM_SLIDER_FADEIN_DOWN.animate(slider, () -> slider.setVisible(true));
+			slider.setVisible(true);
+		}
+		else
+			ANIM_SLIDER_FADEOUT_UP.animate(slider, () -> slider.setVisible(false));
+	}
 	
 	private void onToggle()
 	{
 		slider.setEnabled(isEnabled());
+		if (animateSliderOnToggle)
+			animateSlider();
+
 		if (toggleHandler != null)
 			toggleHandler.handle(parent, isEnabled());
 	}
@@ -48,6 +73,7 @@ public class GenericWeightSlider implements AbstractWeightSlider
 		slider = r;
 		toggleHandler = null;
 		weightHandler = null;
+		animateSliderOnToggle = true;
 		
 		// setup components
 		toggle.setValue(true);
@@ -93,6 +119,8 @@ public class GenericWeightSlider implements AbstractWeightSlider
 	{
 		toggle.setValue(val, fireEvent);
 		slider.setEnabled(val);
+		if (animateSliderOnToggle)
+			animateSlider();
 	}
 	
 	@Override
@@ -118,5 +146,9 @@ public class GenericWeightSlider implements AbstractWeightSlider
 	@Override
 	public void setSliderVisible(boolean val) {
 		slider.setVisible(val);
+	}
+
+	public void setAnimateSliderOnToggle(boolean val) {
+		animateSliderOnToggle = val;
 	}
 }

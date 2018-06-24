@@ -53,7 +53,7 @@ public class GrammaticalConstructionWeightSlider extends LocalizedComposite impl
 	@LocalizedCommonField(tag=CommonLocalizationTags.RESULTS, type=LocalizedFieldType.TOOLTIP_BASIC)
 	MaterialBadge					bdgResultCountUI;
 	
-	GenericWeightSlider				base;
+	private GenericWeightSlider	    base;
 	private GrammaticalConstruction	gramConstruction;
 	private Language				parentLang;				// language this construction/slider is associated with
 	private ResetHandler			resetHandler;
@@ -185,5 +185,10 @@ public class GrammaticalConstructionWeightSlider extends LocalizedComposite impl
 	@Override
 	public void setSliderVisible(boolean val) {
 		base.setSliderVisible(val);
+	}
+
+	@Override
+	public void setAnimateSliderOnToggle(boolean val) {
+		base.setAnimateSliderOnToggle(val);
 	}
 }

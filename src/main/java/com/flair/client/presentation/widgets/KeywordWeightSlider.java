@@ -57,7 +57,7 @@ public class KeywordWeightSlider extends LocalizedComposite implements AbstractW
 	
 	private void initUI()
 	{
-		setEnabled(false, false);
+		setEnabled(false, true);
 	}
 	
 	public KeywordWeightSlider()
@@ -173,5 +173,10 @@ public class KeywordWeightSlider extends LocalizedComposite implements AbstractW
 	@Override
 	public void setSliderVisible(boolean val) {
 		base.setSliderVisible(val);
+	}
+
+	@Override
+	public void setAnimateSliderOnToggle(boolean val) {
+		base.setAnimateSliderOnToggle(val);
 	}
 }

@@ -232,8 +232,8 @@ public class DocumentRanker implements AbstractDocumentRanker
 		}
 	}
 
-	private static final double			LENGTH_PARAM_MULTIPLIER = 10;		// ### what's this?
-	private static final double			TF_NORM_MULTIPLIER = 1.7;			// ### what's this?
+	private static final double			LENGTH_PARAM_MULTIPLIER = 10;
+	private static final double			TF_NORM_MULTIPLIER = 1.7;
 
 
 	private boolean isDocConstructionFiltered(DocumentRankerInput.Rank input, RankableDocument doc)

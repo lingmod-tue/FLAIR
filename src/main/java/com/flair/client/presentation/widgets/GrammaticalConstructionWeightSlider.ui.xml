@@ -4,8 +4,8 @@
 	xmlns:m="urn:import:gwt.material.design.client.ui"
 	xmlns:m.html="urn:import:gwt.material.design.client.ui.html">
 		
-	<m:MaterialPanel marginBottom="2">
-		<m:MaterialRow marginBottom="2">
+	<m:MaterialPanel marginBottom="5">
+		<m:MaterialRow marginBottom="5">
 			<m:MaterialColumn grid="l8 m8 s8">
 				<m:MaterialCheckBox ui:field="chkToggleUI" text="Gram Const"/>
 			</m:MaterialColumn>
@@ -19,6 +19,6 @@
 			</m:MaterialColumn>
 		</m:MaterialRow>
 		
-		<m:MaterialRange ui:field="sldWeightUI"/>
+		<m:MaterialRange ui:field="sldWeightUI" paddingBottom="5"/>
 	</m:MaterialPanel>
 </ui:UiBinder> 

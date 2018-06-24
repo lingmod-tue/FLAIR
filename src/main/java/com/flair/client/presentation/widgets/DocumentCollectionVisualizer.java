@@ -536,6 +536,7 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 				GrammaticalConstructionWeightSlider o = input.getSliders().getWeightSlider(n.getGram());
 				n.setEnabled(false, false);
 				n.setSliderVisible(false);
+				n.setAnimateSliderOnToggle(false);
 				n.setResultCountVisible(false);
 				n.refreshLocale();
 				n.setWeight(o.getWeight(), false);
