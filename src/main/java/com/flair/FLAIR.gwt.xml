@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- When updating your version of GWT, you should also update this DTD reference, 
+	so that your app can take advantage of the latest GWT module capabilities. -->
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.8.0//EN"
+  "http://gwtproject.org/doctype/2.8.0/gwt-module.dtd">
+  
+<module rename-to='flair'>
+	<!-- Inherit the core Web Toolkit stuff. -->
+	<inherits name='com.google.gwt.user.User' />
+	<inherits name="com.google.gwt.logging.Logging" />
+	<inherits name="com.google.gwt.resources.Resources" />
+
+	<!-- Other module inherits -->
+	<inherits name="gwt.material.design.GwtMaterialWithJQuery" />
+	<inherits name="gwt.material.design.addins.GwtMaterialAddins" />
+	<inherits name="gwt.material.design.GwtMaterialDesignBasic" />
+	<inherits name="gwt.material.design.themes.ThemeBlue" />
+	<inherits name="com.github.gwtd3.D3" />
+
+	<!-- Specify the app entry point class. -->
+	<entry-point class='com.flair.client.FLAIR' />
+
+	<!-- Specify the paths for translatable code -->
+	<source path='client'>
+		<exclude name="**/generators/**"/>
+	</source>
+	<source path='shared' />
+	
+	<!-- Invoke custom generators -->
+	<generate-with class="com.flair.client.localization.generators.LocalizationBinderGenerator">
+		<when-type-assignable class="com.flair.client.localization.interfaces.LocalizationBinder" />		
+	</generate-with> 
+</module>
