@@ -5,13 +5,11 @@ import com.flair.server.utilities.ServerLogger;
 /*
  * Abstract operation that wraps around a generic job
  */
-abstract class BasicPipelineOperation implements AbstractPipelineOperation
-{
-	protected final AbstractJob<?,?>			job;
-	protected final PipelineOperationType		type;
+abstract class BasicPipelineOperation implements AbstractPipelineOperation {
+	protected final AbstractJob<?, ?> job;
+	protected final PipelineOperationType type;
 
-	public BasicPipelineOperation(AbstractJob<?,?> job, PipelineOperationType type)
-	{
+	public BasicPipelineOperation(AbstractJob<?, ?> job, PipelineOperationType type) {
 		this.job = job;
 		this.type = type;
 	}
@@ -28,8 +26,7 @@ abstract class BasicPipelineOperation implements AbstractPipelineOperation
 
 	@Override
 	public void cancel() {
-		if (isCompleted() == false)
-		{
+		if (isCompleted() == false) {
 			job.cancel();
 			ServerLogger.get().info("Pipeline operation " + getType() + " was cancelled");
 		}
@@ -44,14 +41,14 @@ abstract class BasicPipelineOperation implements AbstractPipelineOperation
 	public boolean isCompleted() {
 		return job.isCompleted();
 	}
-	
+
 	@Override
 	public PipelineOperationType getType() {
 		return type;
 	}
-	
+
 	@Override
 	public void waitForCompletion() {
 		job.waitForCompletion();
-	}	
+	}
 }

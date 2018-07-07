@@ -1,29 +1,26 @@
 /*
  * This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/.
- 
+
  */
 package com.flair.server.parser;
+
+import com.flair.shared.grammar.GrammaticalConstruction;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.flair.shared.grammar.GrammaticalConstruction;
-
 /**
  * Represents basic properties of a construction for a specific document
- * 
+ *
  * @author shadeMe
  */
-public class DocumentConstructionData extends AbstractConstructionData
-{
-	private final AbstractDocument					parentDocument;
-	private final ArrayList<ConstructionOccurrence>	occurrences;
+public class DocumentConstructionData extends AbstractConstructionData {
+	private final AbstractDocument parentDocument;
+	private final ArrayList<ConstructionOccurrence> occurrences;
 
-	private boolean hasOccurence(int start, int end)
-	{
-		for (ConstructionOccurrence itr : occurrences)
-		{
+	private boolean hasOccurence(int start, int end) {
+		for (ConstructionOccurrence itr : occurrences) {
 			if (itr.getStart() == start && itr.getEnd() == end)
 				return true;
 		}
@@ -31,8 +28,7 @@ public class DocumentConstructionData extends AbstractConstructionData
 		return false;
 	}
 
-	public DocumentConstructionData(GrammaticalConstruction type, AbstractDocument parent)
-	{
+	public DocumentConstructionData(GrammaticalConstruction type, AbstractDocument parent) {
 		super(type);
 
 		assert parent != null;
@@ -60,11 +56,9 @@ public class DocumentConstructionData extends AbstractConstructionData
 		return getWeightedFrequency() / parentDocument.getFancyLength();
 	}
 
-	public boolean addOccurrence(int start, int end)
-	{
+	public boolean addOccurrence(int start, int end) {
 		// especially in case of dependencies (gov/dep): make sure start is smaller than end
-		if (start > end)
-		{
+		if (start > end) {
 			int tmp = end;
 			end = start;
 			start = tmp;
@@ -86,8 +80,7 @@ public class DocumentConstructionData extends AbstractConstructionData
 	}
 }
 
-class DocumentConstructionDataFactory extends AbstractConstructionDataFactory
-{
+class DocumentConstructionDataFactory extends AbstractConstructionDataFactory {
 	private final Document parent;
 
 	public DocumentConstructionDataFactory(Document parent) {

@@ -9,7 +9,6 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  * Interface queried by the client to retrieve messages from the server
  */
 @RemoteServiceRelativePath("PullMessage")
-public interface PullMessageEndpointService extends RemoteService
-{
-	public ServerMessage[]		dequeueMessages(AuthToken token);
+public interface PullMessageEndpointService extends RemoteService {
+	public ServerMessage[] dequeueMessages(AuthToken token);
 }

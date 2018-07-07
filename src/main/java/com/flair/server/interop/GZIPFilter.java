@@ -8,23 +8,21 @@
  */
 package com.flair.server.interop;
 
-import java.io.*;
 import javax.servlet.*;
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
-public class GZIPFilter implements Filter
-{
+public class GZIPFilter implements Filter {
 
 	@Override
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
 			throws IOException, ServletException {
-		if (req instanceof HttpServletRequest)
-		{
+		if (req instanceof HttpServletRequest) {
 			HttpServletRequest request = (HttpServletRequest) req;
 			HttpServletResponse response = (HttpServletResponse) res;
 			String ae = request.getHeader("accept-encoding");
-			if (ae != null && ae.contains("gzip"))
-			{
+			if (ae != null && ae.contains("gzip")) {
 				GZIPResponseWrapper wrappedResponse = new GZIPResponseWrapper(response);
 				chain.doFilter(req, wrappedResponse);
 				wrappedResponse.finishResponse();

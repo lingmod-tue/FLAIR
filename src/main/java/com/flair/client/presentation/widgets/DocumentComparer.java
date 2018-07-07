@@ -1,9 +1,5 @@
 package com.flair.client.presentation.widgets;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
-
 import com.flair.client.localization.CommonLocalizationTags;
 import com.flair.client.localization.DefaultLocalizationProviders;
 import com.flair.client.localization.LocalizedComposite;
@@ -21,104 +17,91 @@ import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
-
 import gwt.material.design.addins.client.emptystate.MaterialEmptyState;
 import gwt.material.design.addins.client.subheader.MaterialSubHeader;
 import gwt.material.design.client.constants.Color;
 import gwt.material.design.client.constants.IconType;
 import gwt.material.design.client.constants.Position;
-import gwt.material.design.client.ui.MaterialButton;
-import gwt.material.design.client.ui.MaterialCollection;
-import gwt.material.design.client.ui.MaterialCollectionItem;
-import gwt.material.design.client.ui.MaterialCollectionSecondary;
-import gwt.material.design.client.ui.MaterialFAB;
-import gwt.material.design.client.ui.MaterialIcon;
-import gwt.material.design.client.ui.MaterialLabel;
-import gwt.material.design.client.ui.MaterialModal;
-import gwt.material.design.client.ui.MaterialRow;
+import gwt.material.design.client.ui.*;
 import gwt.material.design.client.ui.animate.MaterialAnimation;
 import gwt.material.design.client.ui.animate.Transition;
 
-public class DocumentComparer extends LocalizedComposite implements DocumentCompareService
-{
-	private static final double					COMPARE_FAB_BOTTOM = 25;
-	
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+
+public class DocumentComparer extends LocalizedComposite implements DocumentCompareService {
+	private static final double COMPARE_FAB_BOTTOM = 25;
+
 	private static DocumentComparerUiBinder uiBinder = GWT.create(DocumentComparerUiBinder.class);
 
-	interface DocumentComparerUiBinder extends UiBinder<Widget, DocumentComparer>
-	{
+	interface DocumentComparerUiBinder extends UiBinder<Widget, DocumentComparer> {
 	}
 
 	private static DocumentComparerLocalizationBinder localeBinder = GWT.create(DocumentComparerLocalizationBinder.class);
+
 	interface DocumentComparerLocalizationBinder extends LocalizationBinder<DocumentComparer> {}
-	
-	static enum LocalizationTags
-	{
+
+	static enum LocalizationTags {
 		lblTitleUI,
 	}
-	
+
 	@UiField
-	MaterialModal			mdlRootUI;
+	MaterialModal mdlRootUI;
 	@UiField
 	@LocalizedField
-	MaterialLabel			lblTitleUI;
+	MaterialLabel lblTitleUI;
 	@UiField
-	@LocalizedField(type=LocalizedFieldType.TOOLTIP_MATERIAL)
-	MaterialIcon			btnClearSelectionUI;
+	@LocalizedField(type = LocalizedFieldType.TOOLTIP_MATERIAL)
+	MaterialIcon btnClearSelectionUI;
 	@UiField
-	MaterialRow				pnlListContainerUI;
+	MaterialRow pnlListContainerUI;
 	@UiField
-	MaterialSubHeader		lblSelCountUI;
+	MaterialSubHeader lblSelCountUI;
 	@UiField
-	MaterialCollection		pnlSelectionUI;
+	MaterialCollection pnlSelectionUI;
 	@UiField
-	@LocalizedField(type=LocalizedFieldType.TEXT_TITLE)
-	MaterialEmptyState		lblPlaceholderUI;
+	@LocalizedField(type = LocalizedFieldType.TEXT_TITLE)
+	MaterialEmptyState lblPlaceholderUI;
 	@UiField
-	@LocalizedCommonField(tag=CommonLocalizationTags.COMPARE, type=LocalizedFieldType.TEXT_BUTTON)
-	MaterialButton			btnCompareUI;
+	@LocalizedCommonField(tag = CommonLocalizationTags.COMPARE, type = LocalizedFieldType.TEXT_BUTTON)
+	MaterialButton btnCompareUI;
 	@UiField
-	@LocalizedCommonField(tag=CommonLocalizationTags.CANCEL, type=LocalizedFieldType.TEXT_BUTTON)
-	MaterialButton			btnCancelUI;
+	@LocalizedCommonField(tag = CommonLocalizationTags.CANCEL, type = LocalizedFieldType.TEXT_BUTTON)
+	MaterialButton btnCancelUI;
 	@UiField
-	MaterialFAB				fabCompareUI;
+	MaterialFAB fabCompareUI;
 	@UiField
-	MaterialButton			btnFabContentUI;
+	MaterialButton btnFabContentUI;
 
-	Language										activeLang;
-	EnumMap<Language, List<RankableDocument>>		selection;
-	DocumentCompareService.CompareHandler			compareHandler;
-	
-	private void showCompareFAB(boolean visible)
-	{
+	Language activeLang;
+	EnumMap<Language, List<RankableDocument>> selection;
+	DocumentCompareService.CompareHandler compareHandler;
+
+	private void showCompareFAB(boolean visible) {
 		if (visible)
 			fabCompareUI.setBottom(COMPARE_FAB_BOTTOM);
 		else
 			fabCompareUI.setBottom(-100);
 	}
-	
-	private void reloadUI()
-	{
+
+	private void reloadUI() {
 		pnlSelectionUI.clear();
-		
+
 		List<RankableDocument> docs = selection.get(activeLang);
-		
-		if (docs.isEmpty())
-		{
+
+		if (docs.isEmpty()) {
 			lblPlaceholderUI.setVisible(true);
 			pnlListContainerUI.setVisible(false);
 			btnCompareUI.setEnabled(false);
-		}
-		else
-		{
+		} else {
 			lblPlaceholderUI.setVisible(false);
 			pnlListContainerUI.setVisible(true);
 			btnCompareUI.setEnabled(true);
 		}
-		
+
 		lblSelCountUI.setText(docs.size() + " " + getLocalizedString(DefaultLocalizationProviders.COMMON.toString(), CommonLocalizationTags.RESULTS.toString()));
-		for (RankableDocument itr : docs)
-		{
+		for (RankableDocument itr : docs) {
 			MaterialCollectionItem wrapper = new MaterialCollectionItem();
 			MaterialLabel title = new MaterialLabel(itr.getTitle());
 			title.setFontSize(1.15, Unit.EM);
@@ -136,26 +119,23 @@ public class DocumentComparer extends LocalizedComposite implements DocumentComp
 			wrapper.add(title);
 			wrapper.add(url);
 			wrapper.add(buttonCont);
-			
+
 			pnlSelectionUI.add(wrapper);
 		}
 	}
-	
-	private void onCompare()
-	{
+
+	private void onCompare() {
 		if (compareHandler != null)
 			compareHandler.handle(activeLang, selection.get(activeLang));
-		
+
 		hide();
 	}
 
-	private void onCancel()
-	{
+	private void onCancel() {
 		hide();
 	}
 
-	private void initHandlers()
-	{
+	private void initHandlers() {
 		btnCompareUI.addClickHandler(e -> onCompare());
 		btnCancelUI.addClickHandler(e -> onCancel());
 		btnClearSelectionUI.addClickHandler(e -> {
@@ -163,14 +143,13 @@ public class DocumentComparer extends LocalizedComposite implements DocumentComp
 			reloadUI();
 			hide();
 		});
-		
+
 		btnFabContentUI.addClickHandler(e -> show());
 	}
-	
-	private void initUI()
-	{
+
+	private void initUI() {
 		btnFabContentUI.setTooltipPosition(Position.TOP);
-		
+
 		MaterialAnimation pulse = new MaterialAnimation();
 		pulse.setTransition(Transition.PULSE);
 		pulse.setDelay(10);
@@ -179,8 +158,7 @@ public class DocumentComparer extends LocalizedComposite implements DocumentComp
 		pulse.animate(btnFabContentUI);
 	}
 
-	public DocumentComparer()
-	{
+	public DocumentComparer() {
 		initWidget(uiBinder.createAndBindUi(this));
 		initLocale(localeBinder.bind(this));
 
@@ -194,28 +172,25 @@ public class DocumentComparer extends LocalizedComposite implements DocumentComp
 		initUI();
 	}
 
-	private boolean docEquality(RankableDocument a, RankableDocument b)
-	{
+	private boolean docEquality(RankableDocument a, RankableDocument b) {
 		if (a.getDisplayUrl().length() != 0 && b.getDisplayUrl().length() != 0)
 			return a.getDisplayUrl().equalsIgnoreCase(b.getDisplayUrl());
 		else
 			return a.getTitle().equalsIgnoreCase(b.getTitle()) && a.getSnippet().equalsIgnoreCase(b.getSnippet());
 	}
-	
+
 	private void onSelectionChange(Language lang, int selCount) {
 		showCompareFAB(selCount != 0);
 	}
 
 	@Override
-	public void setLocale(Language lang)
-	{
+	public void setLocale(Language lang) {
 		super.setLocale(lang);
-		
+
 		btnFabContentUI.setTooltip(getLocalizedString(LocalizationTags.lblTitleUI.toString()));
 	}
-	
-	public void show()
-	{
+
+	public void show() {
 		reloadUI();
 		mdlRootUI.open();
 	}
@@ -225,52 +200,45 @@ public class DocumentComparer extends LocalizedComposite implements DocumentComp
 	}
 
 	@Override
-	public void addToSelection(RankableDocument doc)
-	{
+	public void addToSelection(RankableDocument doc) {
 		if (isInSelection(doc))
 			return;
-		
+
 		List<RankableDocument> list = selection.get(doc.getLanguage());
 		list.add(doc);
 		onSelectionChange(doc.getLanguage(), list.size());
 	}
 
 	@Override
-	public void removeFromSelection(RankableDocument doc)
-	{
+	public void removeFromSelection(RankableDocument doc) {
 		int i = 0;
 		List<RankableDocument> list = selection.get(doc.getLanguage());
-		for (RankableDocument itr : list)
-		{
-			if (docEquality(doc, itr))
-			{
+		for (RankableDocument itr : list) {
+			if (docEquality(doc, itr)) {
 				list.remove(i);
 				onSelectionChange(doc.getLanguage(), list.size());
 				return;
 			}
-			
+
 			i++;
 		}
 	}
 
 	@Override
-	public boolean isInSelection(RankableDocument doc)
-	{
-		for (RankableDocument itr : selection.get(doc.getLanguage()))
-		{
+	public boolean isInSelection(RankableDocument doc) {
+		for (RankableDocument itr : selection.get(doc.getLanguage())) {
 			if (docEquality(doc, itr))
 				return true;
 		}
-		
+
 		return false;
 	}
 
 	@Override
-	public void clearSelection(Language lang)
-	{
+	public void clearSelection(Language lang) {
 		List<RankableDocument> list = selection.get(lang);
 		list.clear();
-		
+
 		onSelectionChange(lang, list.size());
 	}
 
@@ -278,23 +246,21 @@ public class DocumentComparer extends LocalizedComposite implements DocumentComp
 	public int getSelectionCount(Language lang) {
 		return selection.get(lang).size();
 	}
-	
+
 	@Override
 	public void setCompareHandler(CompareHandler handler) {
 		compareHandler = handler;
 	}
 
 	@Override
-	public void bindToWebRankerCore(AbstractWebRankerCore core)
-	{
+	public void bindToWebRankerCore(AbstractWebRankerCore core) {
 		// deferred binding due to cyclic dependencies
 		core.addBeginOperationHandler(o -> {
 			hide();
 			showCompareFAB(false);
 		});
 		core.addEndOperationHandler(o -> {
-			if (o.success)
-			{
+			if (o.success) {
 				activeLang = o.lang;
 				onSelectionChange(activeLang, getSelectionCount(activeLang));
 			}

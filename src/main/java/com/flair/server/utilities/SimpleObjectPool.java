@@ -10,13 +10,11 @@ import java.util.concurrent.Semaphore;
 
 /**
  * A basic implementation of a blocking object pool
- * 
+ *
  * @author shadeMe
  */
-public class SimpleObjectPool<T>
-{
-	private final class ResourceUsageData
-	{
+public class SimpleObjectPool<T> {
+	private final class ResourceUsageData {
 		private boolean inUse;
 
 		public ResourceUsageData() {
@@ -27,16 +25,14 @@ public class SimpleObjectPool<T>
 			return inUse == false;
 		}
 
-		public void acquire()
-		{
+		public void acquire() {
 			if (inUse)
 				throw new IllegalStateException("Resource is already in use");
 
 			inUse = true;
 		}
 
-		public void release()
-		{
+		public void release() {
 			if (inUse == false)
 				throw new IllegalStateException("Resource is not in use");
 
@@ -44,13 +40,11 @@ public class SimpleObjectPool<T>
 		}
 	}
 
-	private final class AcquiredResource implements SimpleObjectPoolResource<T>
-	{
-		private final T	resource;
-		private boolean	valid;
+	private final class AcquiredResource implements SimpleObjectPoolResource<T> {
+		private final T resource;
+		private boolean valid;
 
-		public AcquiredResource(T resource)
-		{
+		public AcquiredResource(T resource) {
 			if (resource == null)
 				throw new IllegalArgumentException("Invalid resource object");
 
@@ -59,8 +53,7 @@ public class SimpleObjectPool<T>
 		}
 
 		@Override
-		public T get()
-		{
+		public T get() {
 			if (valid == false)
 				throw new IllegalStateException("Resource already released");
 
@@ -68,19 +61,17 @@ public class SimpleObjectPool<T>
 		}
 
 		@Override
-		public void close() throws Exception
-		{
+		public void close() throws Exception {
 			put(resource);
 			valid = false;
 		}
 
 	}
 
-	private final Semaphore					synchronizer;
-	private final Map<T, ResourceUsageData>	resourceTable;
+	private final Semaphore synchronizer;
+	private final Map<T, ResourceUsageData> resourceTable;
 
-	public SimpleObjectPool(int poolSize, T[] resources)
-	{
+	public SimpleObjectPool(int poolSize, T[] resources) {
 		this.synchronizer = new Semaphore(poolSize, true);
 		this.resourceTable = new HashMap<>();
 
@@ -92,12 +83,9 @@ public class SimpleObjectPool<T>
 			resourceTable.put(resources[i], new ResourceUsageData());
 	}
 
-	private synchronized T lend()
-	{
-		for (Entry<T, ResourceUsageData> itr : resourceTable.entrySet())
-		{
-			if (itr.getValue().isFree())
-			{
+	private synchronized T lend() {
+		for (Entry<T, ResourceUsageData> itr : resourceTable.entrySet()) {
+			if (itr.getValue().isFree()) {
 				itr.getValue().acquire();
 				return itr.getKey();
 			}
@@ -106,8 +94,7 @@ public class SimpleObjectPool<T>
 		return null;
 	}
 
-	private synchronized void reclaim(T resource)
-	{
+	private synchronized void reclaim(T resource) {
 		if (resourceTable.containsKey(resource) == false)
 			throw new IllegalArgumentException("Resource does not belong to the pool");
 
@@ -119,8 +106,7 @@ public class SimpleObjectPool<T>
 		synchronizer.release();
 	}
 
-	public final SimpleObjectPoolResource<T> get() throws InterruptedException
-	{
+	public final SimpleObjectPoolResource<T> get() throws InterruptedException {
 		synchronizer.acquire();
 		return new AcquiredResource(lend());
 	}

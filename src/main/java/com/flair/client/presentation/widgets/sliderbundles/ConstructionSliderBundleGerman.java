@@ -14,85 +14,83 @@ import com.google.gwt.user.client.ui.Widget;
 /*
  * Gram const. weight sliders for German
  */
-public class ConstructionSliderBundleGerman extends LanguageSpecificConstructionSliderBundle
-{
+public class ConstructionSliderBundleGerman extends LanguageSpecificConstructionSliderBundle {
 	private static ConstructionSliderBundleGermanUiBinder uiBinder = GWT.create(ConstructionSliderBundleGermanUiBinder.class);
 
-	interface ConstructionSliderBundleGermanUiBinder extends UiBinder<Widget, ConstructionSliderBundleGerman>
-	{
+	interface ConstructionSliderBundleGermanUiBinder extends UiBinder<Widget, ConstructionSliderBundleGerman> {
 	}
 
 	private static ConstructionSliderBundleGermanLocalizationBinder localeBinder = GWT.create(ConstructionSliderBundleGermanLocalizationBinder.class);
+
 	interface ConstructionSliderBundleGermanLocalizationBinder extends LocalizationBinder<ConstructionSliderBundleGerman> {}
-	
+
 	@UiField
-	HTMLPanel		pnlRootUI;
-	
-	@UiField
-	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlSaetzeUI;
+	HTMLPanel pnlRootUI;
+
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlFragenUI;
+	GrammaticalConstructionPanelItem pnlSaetzeUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlSatztypenUI;
+	GrammaticalConstructionPanelItem pnlFragenUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlNebensatztypenUI;
+	GrammaticalConstructionPanelItem pnlSatztypenUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlWortartenUI;
+	GrammaticalConstructionPanelItem pnlNebensatztypenUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlVerbenUI;
+	GrammaticalConstructionPanelItem pnlWortartenUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlVerbtypenUI;
+	GrammaticalConstructionPanelItem pnlVerbenUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlZeitenUI;
+	GrammaticalConstructionPanelItem pnlVerbtypenUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlPassivUI;
+	GrammaticalConstructionPanelItem pnlZeitenUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlSatzklammerUI;
+	GrammaticalConstructionPanelItem pnlPassivUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlVerbformenUI;
+	GrammaticalConstructionPanelItem pnlSatzklammerUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlNegationUI;
+	GrammaticalConstructionPanelItem pnlVerbformenUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlArtikelUI;
+	GrammaticalConstructionPanelItem pnlNegationUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlIndefiniteQuantifiziererUI;
+	GrammaticalConstructionPanelItem pnlArtikelUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlAdjAdvZWUI;
+	GrammaticalConstructionPanelItem pnlIndefiniteQuantifiziererUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlPronomenUI;
+	GrammaticalConstructionPanelItem pnlAdjAdvZWUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlPraepositionenUI;
+	GrammaticalConstructionPanelItem pnlPronomenUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlNomenUI;
+	GrammaticalConstructionPanelItem pnlPraepositionenUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlNominalisierungenUI;
+	GrammaticalConstructionPanelItem pnlNomenUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlAttributeUI;
-	
-	public ConstructionSliderBundleGerman()
-	{
+	GrammaticalConstructionPanelItem pnlNominalisierungenUI;
+	@UiField
+	@LocalizedField
+	GrammaticalConstructionPanelItem pnlAttributeUI;
+
+	public ConstructionSliderBundleGerman() {
 		super(Language.GERMAN);
-		
+
 		initWidget(uiBinder.createAndBindUi(this));
 		initLocale(localeBinder.bind(this));
 		setRootContainer(pnlRootUI);

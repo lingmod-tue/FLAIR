@@ -1,47 +1,40 @@
 package com.flair.shared.interop;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 import java.util.ArrayList;
 import java.util.Collection;
-
-import com.google.gwt.user.client.rpc.IsSerializable;
 
 /*
  * Represents a message from the server to the client
  */
-public class ServerMessage implements IsSerializable
-{
-	public enum Type
-	{
+public class ServerMessage implements IsSerializable {
+	public enum Type {
 		ERROR,
 		SEARCH_CRAWL_PARSE,
 		CUSTOM_CORPUS
 	}
-	
-	public static final class Error implements IsSerializable
-	{
-		String				message;
-		Throwable			exception;
-		
-		public Error()
-		{
+
+	public static final class Error implements IsSerializable {
+		String message;
+		Throwable exception;
+
+		public Error() {
 			message = "";
 			exception = null;
 		}
-		
-		public Error(String message)
-		{
+
+		public Error(String message) {
 			this.message = message;
 			exception = null;
 		}
-		
-		public Error(Throwable exception)
-		{
+
+		public Error(Throwable exception) {
 			message = exception.toString();
 			this.exception = exception;
 		}
-		
-		public Error(String m, Throwable t)
-		{
+
+		public Error(String m, Throwable t) {
 			message = m;
 			exception = t;
 		}
@@ -61,10 +54,9 @@ public class ServerMessage implements IsSerializable
 		public void setException(Throwable exception) {
 			this.exception = exception;
 		}
-		
+
 		@Override
-		public String toString()
-		{
+		public String toString() {
 			StringBuilder sb = new StringBuilder();
 			sb.append("ERROR: ").append(message);
 			if (exception != null)
@@ -72,43 +64,37 @@ public class ServerMessage implements IsSerializable
 			return sb.toString();
 		}
 	}
-	
-	public static final class SearchCrawlParse implements IsSerializable
-	{
-		public enum Type
-		{
+
+	public static final class SearchCrawlParse implements IsSerializable {
+		public enum Type {
 			CRAWL_COMPLETE,
 			PARSE_COMPLETE,
 			JOB_COMPLETE
 		}
-		
-		Type						type;
-		RankableWebSearchResult		crawled;
-		RankableDocument			parsed;
-		
-		public SearchCrawlParse()
-		{
+
+		Type type;
+		RankableWebSearchResult crawled;
+		RankableDocument parsed;
+
+		public SearchCrawlParse() {
 			type = null;
 			crawled = null;
 			parsed = null;
 		}
-		
-		public SearchCrawlParse(Type t)
-		{
+
+		public SearchCrawlParse(Type t) {
 			type = t;
 			crawled = null;
 			parsed = null;
 		}
-		
-		public SearchCrawlParse(RankableWebSearchResult r)
-		{
+
+		public SearchCrawlParse(RankableWebSearchResult r) {
 			type = Type.CRAWL_COMPLETE;
 			crawled = r;
 			parsed = null;
 		}
-		
-		public SearchCrawlParse(RankableDocument r)
-		{
+
+		public SearchCrawlParse(RankableDocument r) {
 			type = Type.PARSE_COMPLETE;
 			crawled = null;
 			parsed = r;
@@ -121,7 +107,7 @@ public class ServerMessage implements IsSerializable
 		public void setType(Type type) {
 			this.type = type;
 		}
-		
+
 		public RankableWebSearchResult getCrawled() {
 			return crawled;
 		}
@@ -137,10 +123,9 @@ public class ServerMessage implements IsSerializable
 		public void setParsed(RankableDocument parsed) {
 			this.parsed = parsed;
 		}
-		
+
 		@Override
-		public String toString()
-		{
+		public String toString() {
 			StringBuilder sb = new StringBuilder();
 			sb.append("SEARCH-CRAWL-PARSE: ").append(type).append("\n");
 			if (type == Type.CRAWL_COMPLETE)
@@ -150,43 +135,37 @@ public class ServerMessage implements IsSerializable
 			return sb.toString();
 		}
 	}
-	
-	public static final class CustomCorpus implements IsSerializable
-	{
-		public enum Type
-		{
+
+	public static final class CustomCorpus implements IsSerializable {
+		public enum Type {
 			UPLOAD_COMPLETE,
 			PARSE_COMPLETE,
 			JOB_COMPLETE
 		}
-		
-		Type						type;
-		ArrayList<UploadedDocument>	uploaded;
-		RankableDocument			parsed;
-		
-		public CustomCorpus()
-		{
+
+		Type type;
+		ArrayList<UploadedDocument> uploaded;
+		RankableDocument parsed;
+
+		public CustomCorpus() {
 			type = null;
 			uploaded = null;
 			parsed = null;
 		}
-		
-		public CustomCorpus(Type t)
-		{
+
+		public CustomCorpus(Type t) {
 			type = t;
 			uploaded = null;
 			parsed = null;
 		}
-		
-		public CustomCorpus(RankableDocument r)
-		{
+
+		public CustomCorpus(RankableDocument r) {
 			type = Type.PARSE_COMPLETE;
 			parsed = r;
 			uploaded = null;
 		}
-		
-		public CustomCorpus(Collection<UploadedDocument> u)
-		{
+
+		public CustomCorpus(Collection<UploadedDocument> u) {
 			type = Type.UPLOAD_COMPLETE;
 			parsed = null;
 			uploaded = new ArrayList<>(u);
@@ -215,10 +194,9 @@ public class ServerMessage implements IsSerializable
 		public void setUploaded(ArrayList<UploadedDocument> uploaded) {
 			this.uploaded = uploaded;
 		}
-		
+
 		@Override
-		public String toString()
-		{
+		public String toString() {
 			StringBuilder sb = new StringBuilder();
 			sb.append("CUSTOM-CORPUS: ").append(type).append("\n");
 			if (type == Type.UPLOAD_COMPLETE)
@@ -228,35 +206,33 @@ public class ServerMessage implements IsSerializable
 			return sb.toString();
 		}
 	}
-	
-	AuthToken			receiverToken;
-	Type				type;
-	Error				error;
-	SearchCrawlParse	searchCrawlParse;
-	CustomCorpus		customCorpus;
-	
-	public ServerMessage()
-	{
+
+	AuthToken receiverToken;
+	Type type;
+	Error error;
+	SearchCrawlParse searchCrawlParse;
+	CustomCorpus customCorpus;
+
+	public ServerMessage() {
 		receiverToken = null;
 		type = null;
 		error = null;
 		searchCrawlParse = null;
 		customCorpus = null;
 	}
-	
-	public ServerMessage(AuthToken t)
-	{
+
+	public ServerMessage(AuthToken t) {
 		receiverToken = t;
 		type = null;
 		error = null;
 		searchCrawlParse = null;
 		customCorpus = null;
 	}
-	
+
 	public AuthToken getReceiverToken() {
 		return receiverToken;
 	}
-	
+
 	public void setReceiverToken(AuthToken t) {
 		receiverToken = t;
 	}
@@ -292,10 +268,9 @@ public class ServerMessage implements IsSerializable
 	public void setCustomCorpus(CustomCorpus customCorpus) {
 		this.customCorpus = customCorpus;
 	}
-	
+
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("SERVER-MESSAGE: ").append(type).append("\n");
 		if (type == Type.ERROR)
@@ -304,7 +279,7 @@ public class ServerMessage implements IsSerializable
 			sb.append("\t").append(searchCrawlParse.toString());
 		else
 			sb.append("\t").append(customCorpus.toString());
-		
+
 		return sb.toString();
 	}
 }

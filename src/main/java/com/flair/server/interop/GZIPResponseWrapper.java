@@ -8,18 +8,19 @@
  */
 package com.flair.server.interop;
 
-import java.io.*;
-import javax.servlet.*;
-import javax.servlet.http.*;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 
-public class GZIPResponseWrapper extends HttpServletResponseWrapper
-{
-	protected HttpServletResponse	origResponse	= null;
-	protected ServletOutputStream	stream			= null;
-	protected PrintWriter			writer			= null;
+public class GZIPResponseWrapper extends HttpServletResponseWrapper {
+	protected HttpServletResponse origResponse = null;
+	protected ServletOutputStream stream = null;
+	protected PrintWriter writer = null;
 
-	public GZIPResponseWrapper(HttpServletResponse response)
-	{
+	public GZIPResponseWrapper(HttpServletResponse response) {
 		super(response);
 		origResponse = response;
 	}
@@ -29,20 +30,15 @@ public class GZIPResponseWrapper extends HttpServletResponseWrapper
 	}
 
 	public void finishResponse() {
-		try
-		{
-			if (writer != null)
-			{
+		try {
+			if (writer != null) {
 				writer.close();
-			} else
-			{
-				if (stream != null)
-				{
+			} else {
+				if (stream != null) {
 					stream.close();
 				}
 			}
-		} catch (IOException e)
-		{
+		} catch (IOException e) {
 		}
 	}
 
@@ -53,8 +49,7 @@ public class GZIPResponseWrapper extends HttpServletResponseWrapper
 
 	@Override
 	public ServletOutputStream getOutputStream() throws IOException {
-		if (writer != null)
-		{
+		if (writer != null) {
 			throw new IllegalStateException("getWriter() has already been called!");
 		}
 
@@ -65,13 +60,11 @@ public class GZIPResponseWrapper extends HttpServletResponseWrapper
 
 	@Override
 	public PrintWriter getWriter() throws IOException {
-		if (writer != null)
-		{
+		if (writer != null) {
 			return (writer);
 		}
 
-		if (stream != null)
-		{
+		if (stream != null) {
 			throw new IllegalStateException("getOutputStream() has already been called!");
 		}
 

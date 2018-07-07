@@ -5,16 +5,14 @@ import com.flair.shared.grammar.Language;
 /*
  * Serializable contents of an uploaded document
  */
-public class UploadedDocumentImpl implements UploadedDocument
-{
-	int			identifier;
-	Language	language;
-	String		title;
-	String		snippet;
-	String		text;
-	
-	public UploadedDocumentImpl()
-	{
+public class UploadedDocumentImpl implements UploadedDocument {
+	int identifier;
+	Language language;
+	String title;
+	String snippet;
+	String text;
+
+	public UploadedDocumentImpl() {
 		identifier = 0;
 		language = null;
 		title = snippet = text = "";
@@ -60,7 +58,7 @@ public class UploadedDocumentImpl implements UploadedDocument
 	public int getIdentifier() {
 		return identifier;
 	}
-	
+
 	public void setIdentifier(int id) {
 		identifier = id;
 	}

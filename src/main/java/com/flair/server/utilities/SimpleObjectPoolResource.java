@@ -5,9 +5,9 @@ package com.flair.server.utilities;
 
 /**
  * Represents a resource stored in a SimpleObjectPool that has been acquired for use
+ *
  * @author shadeMe
  */
-public interface SimpleObjectPoolResource<T extends Object> extends AutoCloseable
-{
-    public T		get();
+public interface SimpleObjectPoolResource<T extends Object> extends AutoCloseable {
+	public T get();
 }

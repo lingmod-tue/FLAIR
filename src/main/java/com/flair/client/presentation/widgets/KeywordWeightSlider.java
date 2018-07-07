@@ -13,7 +13,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
-
 import gwt.material.design.client.ui.MaterialCheckBox;
 import gwt.material.design.client.ui.MaterialIcon;
 import gwt.material.design.client.ui.MaterialRange;
@@ -21,53 +20,50 @@ import gwt.material.design.client.ui.MaterialRange;
 /*
  * Weight slider for keywords
  */
-public class KeywordWeightSlider extends LocalizedComposite implements AbstractWeightSlider, CanReset
-{
+public class KeywordWeightSlider extends LocalizedComposite implements AbstractWeightSlider, CanReset {
 	private static KeywordWeightSliderUiBinder uiBinder = GWT.create(KeywordWeightSliderUiBinder.class);
 
-	interface KeywordWeightSliderUiBinder extends UiBinder<Widget, KeywordWeightSlider>
-	{
+	interface KeywordWeightSliderUiBinder extends UiBinder<Widget, KeywordWeightSlider> {
 	}
-	
+
 	private static KeywordWeightSliderLocalizationBinder localeBinder = GWT.create(KeywordWeightSliderLocalizationBinder.class);
+
 	interface KeywordWeightSliderLocalizationBinder extends LocalizationBinder<KeywordWeightSlider> {}
 
-	
+
 	public interface ClickHandler {
 		public void handle(KeywordWeightSlider source);
 	}
-			
+
 	@UiField
-	@LocalizedField(type=LocalizedFieldType.TOOLTIP_BASIC)
-	MaterialCheckBox		chkToggleUI;
+	@LocalizedField(type = LocalizedFieldType.TOOLTIP_BASIC)
+	MaterialCheckBox chkToggleUI;
 	@UiField
-	@LocalizedField(type=LocalizedFieldType.TOOLTIP_BASIC)
-	MaterialRange			sldWeightUI;
+	@LocalizedField(type = LocalizedFieldType.TOOLTIP_BASIC)
+	MaterialRange sldWeightUI;
 	@UiField
-	@LocalizedField(type=LocalizedFieldType.TOOLTIP_MATERIAL)
-	MaterialIcon			btnEditKeywordsUI;
+	@LocalizedField(type = LocalizedFieldType.TOOLTIP_MATERIAL)
+	MaterialIcon btnEditKeywordsUI;
 	@UiField
-	@LocalizedField(type=LocalizedFieldType.TOOLTIP_MATERIAL)
-	MaterialIcon 			btnResetKeywordsUI;
-	
-	GenericWeightSlider		base;
-	ClickHandler			editHandler;
-	ClickHandler			resetHandler;
-	boolean					customVocab;
-	
-	private void initUI()
-	{
+	@LocalizedField(type = LocalizedFieldType.TOOLTIP_MATERIAL)
+	MaterialIcon btnResetKeywordsUI;
+
+	GenericWeightSlider base;
+	ClickHandler editHandler;
+	ClickHandler resetHandler;
+	boolean customVocab;
+
+	private void initUI() {
 		setEnabled(false, true);
 	}
-	
-	public KeywordWeightSlider()
-	{
+
+	public KeywordWeightSlider() {
 		initWidget(uiBinder.createAndBindUi(this));
-		
+
 		base = new GenericWeightSlider(this, chkToggleUI, sldWeightUI);
 		editHandler = resetHandler = null;
 		customVocab = false;
-		
+
 		btnEditKeywordsUI.addClickHandler(e -> {
 			if (editHandler != null)
 				editHandler.handle(this);
@@ -77,17 +73,16 @@ public class KeywordWeightSlider extends LocalizedComposite implements AbstractW
 			if (resetHandler != null)
 				resetHandler.handle(this);
 		});
-		
+
 		initLocale(localeBinder.bind(this));
 		initUI();
 	}
-	
+
 	public boolean hasCustomVocab() {
 		return customVocab;
 	}
-	
-	public void setCustomVocab(boolean val)
-	{
+
+	public void setCustomVocab(boolean val) {
 		customVocab = val;
 		refreshLocale();
 	}
@@ -95,27 +90,25 @@ public class KeywordWeightSlider extends LocalizedComposite implements AbstractW
 	public void setEditHander(ClickHandler handler) {
 		editHandler = handler;
 	}
-	
+
 	public void setResetHandler(ClickHandler handler) {
 		resetHandler = handler;
 	}
 
 	@Override
-	public void setLocale(Language lang)
-	{
+	public void setLocale(Language lang) {
 		super.setLocale(lang);
-		
+
 		// update components
 		String toggleTextTag = CommonLocalizationTags.ACADEMIC_VOCAB.toString();
 		if (customVocab)
 			toggleTextTag = CommonLocalizationTags.CUSTOM_VOCAB.toString();
-		
+
 		setToggleText(getLocalizedString(DefaultLocalizationProviders.COMMON.toString(), toggleTextTag));
 	}
 
 	@Override
-	public void resetState(boolean fireEvents)
-	{
+	public void resetState(boolean fireEvents) {
 		setEnabled(false, fireEvents);
 		setWeight(GenericWeightSlider.getSliderMin(), fireEvents);
 	}

@@ -6,7 +6,6 @@ import com.flair.client.localization.LocalizedComposite;
 /*
  * Binds widgets to their localization wrappers
  */
-public interface LocalizationBinder<O extends LocalizedComposite>
-{
+public interface LocalizationBinder<O extends LocalizedComposite> {
 	public LocalizationBinderData bind(O owner);
 }

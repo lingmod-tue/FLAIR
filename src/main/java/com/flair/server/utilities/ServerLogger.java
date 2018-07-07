@@ -1,30 +1,28 @@
 /*
  * This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/.
- 
+
  */
 package com.flair.server.utilities;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
+import com.flair.shared.utilities.AbstractDebugLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.flair.shared.utilities.AbstractDebugLogger;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 /**
  * Thread-safe logger for server code
- * 
+ *
  * @author shadeMe
  */
-public final class ServerLogger extends AbstractDebugLogger
-{
+public final class ServerLogger extends AbstractDebugLogger {
 	private static final ServerLogger SINGLETON = new ServerLogger();
 
-	private final Logger	pipeline;
+	private final Logger pipeline;
 
-	private ServerLogger()
-	{
+	private ServerLogger() {
 		super("FLAIR-ServerLogger");
 		this.pipeline = LoggerFactory.getLogger(loggerName);
 	}
@@ -32,9 +30,8 @@ public final class ServerLogger extends AbstractDebugLogger
 	public static ServerLogger get() {
 		return SINGLETON;
 	}
-	
-	private String prettyPrintCaller() 
-	{
+
+	private String prettyPrintCaller() {
 		StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
 
 		// the calling method would be the fifth element in the array (the first would be the call to getStackTrace())
@@ -43,8 +40,7 @@ public final class ServerLogger extends AbstractDebugLogger
 	}
 
 	@Override
-	protected void print(Channel channel, String message)
-	{
+	protected void print(Channel channel, String message) {
 		StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < indentLevel; i++)
 			builder.append("\t");
@@ -53,8 +49,7 @@ public final class ServerLogger extends AbstractDebugLogger
 		builder.append(" ");
 		builder.append(message);
 
-		switch (channel)
-		{
+		switch (channel) {
 		case TRACE:
 			pipeline.info(builder.toString());
 			break;
@@ -69,10 +64,9 @@ public final class ServerLogger extends AbstractDebugLogger
 			pipeline.info(builder.toString());
 		}
 	}
-	
+
 	@Override
-	public void error(Throwable ex, String message) 
-	{
+	public void error(Throwable ex, String message) {
 		StringWriter sw = new StringWriter();
 		ex.printStackTrace(new PrintWriter(sw));
 		error(message);

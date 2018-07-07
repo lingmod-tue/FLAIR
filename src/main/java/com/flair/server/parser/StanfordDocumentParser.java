@@ -1,37 +1,34 @@
 /*
  * This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/.
- 
+
  */
 package com.flair.server.parser;
 
-import java.util.Properties;
-
 import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.grammar.Language;
-
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
+
+import java.util.Properties;
 
 /**
  * Implementation of the AbstractDocumentParser that uses the Stanford CoreNLP (shift-reduce) parser
- * 
+ *
  * @author shadeMe
  */
-class StanfordDocumentParser extends AbstractDocumentParser
-{
-	private static final String	ENGLISH_SR_PARSER_MODEL	= "edu/stanford/nlp/models/srparser/englishSR.ser.gz";
-	private static final String	GERMAN_SR_PARSER_MODEL	= "edu/stanford/nlp/models/srparser/germanSR.ser.gz";
-	private static final String	GERMAN_POS_MODEL		= "edu/stanford/nlp/models/pos-tagger/german/german-hgc.tagger";
+class StanfordDocumentParser extends AbstractDocumentParser {
+	private static final String ENGLISH_SR_PARSER_MODEL = "edu/stanford/nlp/models/srparser/englishSR.ser.gz";
+	private static final String GERMAN_SR_PARSER_MODEL = "edu/stanford/nlp/models/srparser/germanSR.ser.gz";
+	private static final String GERMAN_POS_MODEL = "edu/stanford/nlp/models/pos-tagger/german/german-hgc.tagger";
 
-	private AbstractDocumentSource				docSource;
-	private AbstractDocument					outputDoc;
-	private BasicStanfordDocumentParserStrategy	parsingStrategy;
+	private AbstractDocumentSource docSource;
+	private AbstractDocument outputDoc;
+	private BasicStanfordDocumentParserStrategy parsingStrategy;
 
-	private final StanfordCoreNLP				pipeline;
-	private final Language						modelLanguage;
+	private final StanfordCoreNLP pipeline;
+	private final Language modelLanguage;
 
-	public StanfordDocumentParser(AbstractDocumentFactory factory, Language modelLang)
-	{
+	public StanfordDocumentParser(AbstractDocumentFactory factory, Language modelLang) {
 		super(factory);
 
 		docSource = null;
@@ -40,8 +37,7 @@ class StanfordDocumentParser extends AbstractDocumentParser
 		modelLanguage = modelLang;
 
 		Properties pipelineProps = new Properties();
-		switch (modelLanguage)
-		{
+		switch (modelLanguage) {
 		case ENGLISH:
 			// ### TODO update the parsing strategy to support universal deps
 			// ### TODO consider using the neural network depparser
@@ -62,8 +58,7 @@ class StanfordDocumentParser extends AbstractDocumentParser
 		pipeline = new StanfordCoreNLP(pipelineProps);
 	}
 
-	private void resetState()
-	{
+	private void resetState() {
 		docSource = null;
 		outputDoc = null;
 		parsingStrategy = null;
@@ -73,18 +68,14 @@ class StanfordDocumentParser extends AbstractDocumentParser
 		return docSource != null || outputDoc != null || parsingStrategy != null;
 	}
 
-	private AbstractDocument initializeState(AbstractDocumentSource source, AbstractParsingStrategy strategy)
-	{
-		if (isBusy())
-		{
+	private AbstractDocument initializeState(AbstractDocumentSource source, AbstractParsingStrategy strategy) {
+		if (isBusy()) {
 			// this could be the case if the previous task timed-out
 			ServerLogger.get().warn("Parser did complete its previous task. Resetting...");
-		}
-		else if (strategy instanceof BasicStanfordDocumentParserStrategy == false) {
+		} else if (strategy instanceof BasicStanfordDocumentParserStrategy == false) {
 			throw new IllegalArgumentException(
 					strategy.getClass() + " is not subclass of " + BasicStanfordDocumentParserStrategy.class);
-		}
-		else if (isLanguageSupported(source.getLanguage()) == false) {
+		} else if (isLanguageSupported(source.getLanguage()) == false) {
 			throw new IllegalArgumentException("Document language " + source.getLanguage()
 					+ " not supported (Model language: " + modelLanguage + ")");
 		}
@@ -97,11 +88,9 @@ class StanfordDocumentParser extends AbstractDocumentParser
 	}
 
 	@Override
-	public AbstractDocument parse(AbstractDocumentSource source, AbstractParsingStrategy strategy)
-	{
+	public AbstractDocument parse(AbstractDocumentSource source, AbstractParsingStrategy strategy) {
 		AbstractDocument result = null;
-		try
-		{
+		try {
 			result = initializeState(source, strategy);
 			parsingStrategy.setPipeline(pipeline);
 			parsingStrategy.apply(outputDoc);
@@ -122,16 +111,14 @@ class StanfordDocumentParser extends AbstractDocumentParser
 
 /**
  * Factory class for the Stanford CoreNLP parser
- * 
+ *
  * @author shadeMe
  */
-class StanfordDocumentParserFactory implements AbstractDocumentParserFactory
-{
-	private final AbstractDocumentFactory	docFactory;
-	private final Language					language;
+class StanfordDocumentParserFactory implements AbstractDocumentParserFactory {
+	private final AbstractDocumentFactory docFactory;
+	private final Language language;
 
-	public StanfordDocumentParserFactory(AbstractDocumentFactory factory, Language lang)
-	{
+	public StanfordDocumentParserFactory(AbstractDocumentFactory factory, Language lang) {
 		docFactory = factory;
 		language = lang;
 	}

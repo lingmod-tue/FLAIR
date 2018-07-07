@@ -5,9 +5,9 @@ package com.flair.server.parser;
 
 /**
  * Abstract factory class for the AbstractDocumentKeywordSearcher class
+ *
  * @author shadeMe
  */
-public interface AbstractDocumentKeywordSearcherFactory
-{
-    public AbstractDocumentKeywordSearcher		    create();
+public interface AbstractDocumentKeywordSearcherFactory {
+	public AbstractDocumentKeywordSearcher create();
 }

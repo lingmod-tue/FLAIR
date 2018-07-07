@@ -3,8 +3,7 @@ package com.flair.client.localization;
 /*
  * Types of localized widget fields
  */
-public enum LocalizedFieldType
-{
+public enum LocalizedFieldType {
 	TEXT_BASIC,
 	TEXT_BUTTON,
 	TEXT_TITLE,

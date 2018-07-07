@@ -1,21 +1,18 @@
 package com.flair.shared.interop;
 
-import java.util.EnumMap;
-import java.util.Map;
-
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
 import com.flair.shared.parser.DocumentReadabilityLevel;
 
-public class ConstructionSettingsProfileImpl implements ConstructionSettingsProfile
-{
-	public static final class WeightData
-	{
-		boolean		enabled;
-		int			weight;
-		
-		WeightData()
-		{
+import java.util.EnumMap;
+import java.util.Map;
+
+public class ConstructionSettingsProfileImpl implements ConstructionSettingsProfile {
+	public static final class WeightData {
+		boolean enabled;
+		int weight;
+
+		WeightData() {
 			enabled = true;
 			weight = 0;
 		}
@@ -36,16 +33,15 @@ public class ConstructionSettingsProfileImpl implements ConstructionSettingsProf
 			this.weight = weight;
 		}
 	}
-	
-	Language									language;
-	Map<DocumentReadabilityLevel, WeightData>	docLevels;
-	int											docLengthWeight;
-	WeightData									keywords;
-	Map<GrammaticalConstruction, WeightData>	grams;
-	
-	
-	public ConstructionSettingsProfileImpl()
-	{
+
+	Language language;
+	Map<DocumentReadabilityLevel, WeightData> docLevels;
+	int docLengthWeight;
+	WeightData keywords;
+	Map<GrammaticalConstruction, WeightData> grams;
+
+
+	public ConstructionSettingsProfileImpl() {
 		language = null;
 		docLevels = new EnumMap<>(DocumentReadabilityLevel.class);
 		docLengthWeight = 0;
@@ -59,8 +55,7 @@ public class ConstructionSettingsProfileImpl implements ConstructionSettingsProf
 	}
 
 	@Override
-	public boolean isDocLevelEnabled(DocumentReadabilityLevel level)
-	{
+	public boolean isDocLevelEnabled(DocumentReadabilityLevel level) {
 		if (docLevels.containsKey(level) == false)
 			return false;
 		else
@@ -83,8 +78,7 @@ public class ConstructionSettingsProfileImpl implements ConstructionSettingsProf
 	}
 
 	@Override
-	public boolean isConstructionEnabled(GrammaticalConstruction gram)
-	{
+	public boolean isConstructionEnabled(GrammaticalConstruction gram) {
 		if (grams.containsKey(gram) == false)
 			return false;
 		else
@@ -92,8 +86,7 @@ public class ConstructionSettingsProfileImpl implements ConstructionSettingsProf
 	}
 
 	@Override
-	public int getConstructionWeight(GrammaticalConstruction gram)
-	{
+	public int getConstructionWeight(GrammaticalConstruction gram) {
 		if (grams.containsKey(gram) == false)
 			return 0;
 		else
@@ -137,27 +130,24 @@ public class ConstructionSettingsProfileImpl implements ConstructionSettingsProf
 		return grams.containsKey(gram);
 	}
 
-	public void setDocLevelEnabled(DocumentReadabilityLevel level, boolean enabled)
-	{
+	public void setDocLevelEnabled(DocumentReadabilityLevel level, boolean enabled) {
 		WeightData d = new WeightData();
 		d.enabled = enabled;
-		
+
 		docLevels.remove(level);
 		docLevels.put(level, d);
 	}
-	
-	public void setGramData(GrammaticalConstruction gram, boolean enabled, int weight)
-	{
+
+	public void setGramData(GrammaticalConstruction gram, boolean enabled, int weight) {
 		WeightData d = new WeightData();
 		d.enabled = enabled;
 		d.weight = weight;
-		
+
 		grams.remove(gram);
 		grams.put(gram, d);
 	}
-	
-	public void setKeywordsData(boolean enabled, int weight)
-	{
+
+	public void setKeywordsData(boolean enabled, int weight) {
 		WeightData d = new WeightData();
 		d.enabled = enabled;
 		d.weight = weight;

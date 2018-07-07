@@ -11,62 +11,57 @@ import com.google.gwt.user.client.ui.Composite;
  * Naming conventions for widgets: <name>{UI} where:
  * 	UI - UiBinder widget instance
  */
-public abstract class LocalizedComposite extends Composite implements LocalizedUI
-{
-	private LocalizationBinderData		localizationBinderData;
-	
-	public LocalizedComposite()
-	{
+public abstract class LocalizedComposite extends Composite implements LocalizedUI {
+	private LocalizationBinderData localizationBinderData;
+
+	public LocalizedComposite() {
 		super();
 		localizationBinderData = null;
 	}
-	
+
 	@Override
-	protected void onAttach()
-	{
+	protected void onAttach() {
 		if (localizationBinderData == null)
 			throw new RuntimeException("No localization data for composite " + this.getClass().getCanonicalName());
-		
+
 		super.onAttach();
 		LocalizationEngine.get().registerLocalizedView(this);
 		refreshLocale();
 	}
-	
+
 	@Override
-	protected void onDetach()
-	{
+	protected void onDetach() {
 		super.onDetach();
 		LocalizationEngine.get().deregisterLocalizedView(this);
 	}
-	
+
 	protected void initLocale(LocalizationBinderData data) {
 		localizationBinderData = data;
 	}
-	
+
 	protected String getLocalizedString(String tag) {
 		return LocalizationEngine.get().getLocalizedString(localizationBinderData.providerName, tag);
 	}
-	
+
 	protected String getLocalizedString(String provider, String tag) {
 		return LocalizationEngine.get().getLocalizedString(provider, tag);
 	}
-	
+
 	protected Language getCurrentLocale() {
 		return LocalizationEngine.get().getLanguage();
 	}
-	
+
 	@Override
 	public LocalizationProvider getLocalizationProvider() {
 		return LocalizationStringTable.get().getProvider(localizationBinderData.providerName);
 	}
-	
+
 	@Override
-	public void setLocale(Language lang)
-	{
+	public void setLocale(Language lang) {
 		for (LocalizableEntity itr : localizationBinderData.localizationWrappers)
 			itr.setLocale(lang, LocalizationStringTable.get());
 	}
-	
+
 	@Override
 	public void refreshLocale() {
 		setLocale(getCurrentLocale());

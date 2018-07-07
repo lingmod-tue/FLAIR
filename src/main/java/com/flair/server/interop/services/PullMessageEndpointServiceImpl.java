@@ -6,11 +6,9 @@ import com.flair.shared.interop.ServerAuthenticationToken;
 import com.flair.shared.interop.ServerMessage;
 import com.flair.shared.interop.services.PullMessageEndpointService;
 
-public class PullMessageEndpointServiceImpl extends AbstractRemoteService implements PullMessageEndpointService
-{
+public class PullMessageEndpointServiceImpl extends AbstractRemoteService implements PullMessageEndpointService {
 	@Override
-	public ServerMessage[] dequeueMessages(AuthToken token) 
-	{
+	public ServerMessage[] dequeueMessages(AuthToken token) {
 		ServerAuthenticationToken authToken = validateToken(token);
 		return MessagePipeline.get().getQueuedMessages(authToken);
 	}

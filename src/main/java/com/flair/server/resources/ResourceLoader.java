@@ -7,11 +7,10 @@ import java.io.InputStream;
 
 /**
  * Tiny wrapper class for loading bundled resource files
- * 
+ *
  * @author shadeMe
  */
-public final class ResourceLoader
-{
+public final class ResourceLoader {
 	public static InputStream get(String fileName) {
 		return ResourceLoader.class.getResourceAsStream("/com/flair/server/resources/" + fileName);
 	}

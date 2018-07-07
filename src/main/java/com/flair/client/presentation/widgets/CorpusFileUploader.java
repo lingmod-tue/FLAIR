@@ -14,7 +14,6 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
-
 import gwt.material.design.addins.client.fileuploader.MaterialFileUploader;
 import gwt.material.design.addins.client.fileuploader.MaterialUploadLabel;
 import gwt.material.design.addins.client.fileuploader.base.UploadFile;
@@ -25,117 +24,111 @@ import gwt.material.design.client.ui.MaterialModal;
 import gwt.material.design.client.ui.MaterialRadioButton;
 import gwt.material.design.client.ui.MaterialToast;
 
-public class CorpusFileUploader extends LocalizedComposite implements CorpusUploadService
-{
+public class CorpusFileUploader extends LocalizedComposite implements CorpusUploadService {
 	private static CorpusFileUploaderUiBinder uiBinder = GWT.create(CorpusFileUploaderUiBinder.class);
 
-	interface CorpusFileUploaderUiBinder extends UiBinder<Widget, CorpusFileUploader>
-	{
+	interface CorpusFileUploaderUiBinder extends UiBinder<Widget, CorpusFileUploader> {
 	}
-	
+
 	private static CorpusFileUploaderLocalizationBinder localeBinder = GWT.create(CorpusFileUploaderLocalizationBinder.class);
+
 	interface CorpusFileUploaderLocalizationBinder extends LocalizationBinder<CorpusFileUploader> {}
-	
-	static enum LocalizationTags
-	{
+
+	static enum LocalizationTags {
 		UPLOAD_INPROGRESS,
 		UPLOAD_FAILED,
 		MAX_FILE_LIMIT
 	}
 
 	@UiField
-	MaterialModal			mdlUploadUI;
+	MaterialModal mdlUploadUI;
 	@UiField
-	MaterialFileUploader 	uplUploaderUI;
+	MaterialFileUploader uplUploaderUI;
 	@UiField
-	@LocalizedField(type=LocalizedFieldType.TEXT_DESCRIPTION)
-	MaterialUploadLabel		lblUploadTextUI;
+	@LocalizedField(type = LocalizedFieldType.TEXT_DESCRIPTION)
+	MaterialUploadLabel lblUploadTextUI;
 	@UiField
-	MaterialStepper			stprUploaderUI;
+	MaterialStepper stprUploaderUI;
 	@UiField
-	@LocalizedField(type=LocalizedFieldType.TEXT_TITLE)
-	MaterialStep			stpLangUI;
+	@LocalizedField(type = LocalizedFieldType.TEXT_TITLE)
+	MaterialStep stpLangUI;
 	@UiField
-	@LocalizedCommonField(tag=CommonLocalizationTags.LANGUAGE_ENGLISH)
-	MaterialRadioButton		rdoEnglishUI;
+	@LocalizedCommonField(tag = CommonLocalizationTags.LANGUAGE_ENGLISH)
+	MaterialRadioButton rdoEnglishUI;
 	@UiField
-	@LocalizedCommonField(tag=CommonLocalizationTags.LANGUAGE_GERMAN)
-	MaterialRadioButton		rdoGermanUI;
+	@LocalizedCommonField(tag = CommonLocalizationTags.LANGUAGE_GERMAN)
+	MaterialRadioButton rdoGermanUI;
 	@UiField
-	@LocalizedCommonField(tag=CommonLocalizationTags.NEXT, type=LocalizedFieldType.TEXT_BUTTON)
-	MaterialButton			btnToUploaderUI;
+	@LocalizedCommonField(tag = CommonLocalizationTags.NEXT, type = LocalizedFieldType.TEXT_BUTTON)
+	MaterialButton btnToUploaderUI;
 	@UiField
-	@LocalizedCommonField(tag=CommonLocalizationTags.CANCEL, type=LocalizedFieldType.TEXT_BUTTON)
-	MaterialButton			btnCancel1UI;
+	@LocalizedCommonField(tag = CommonLocalizationTags.CANCEL, type = LocalizedFieldType.TEXT_BUTTON)
+	MaterialButton btnCancel1UI;
 	@UiField
-	@LocalizedCommonField(tag=CommonLocalizationTags.UPLOAD, type=LocalizedFieldType.TEXT_TITLE)
-	MaterialStep			stpUploadUI;
+	@LocalizedCommonField(tag = CommonLocalizationTags.UPLOAD, type = LocalizedFieldType.TEXT_TITLE)
+	MaterialStep stpUploadUI;
 	@UiField
-	@LocalizedCommonField(tag=CommonLocalizationTags.FINISH, type=LocalizedFieldType.TEXT_BUTTON)
-	MaterialButton			btnFinishUI;
+	@LocalizedCommonField(tag = CommonLocalizationTags.FINISH, type = LocalizedFieldType.TEXT_BUTTON)
+	MaterialButton btnFinishUI;
 	@UiField
-	@LocalizedCommonField(tag=CommonLocalizationTags.CANCEL, type=LocalizedFieldType.TEXT_BUTTON)
-	MaterialButton			btnCancel2UI;
+	@LocalizedCommonField(tag = CommonLocalizationTags.CANCEL, type = LocalizedFieldType.TEXT_BUTTON)
+	MaterialButton btnCancel2UI;
 
-	UploadBeginHandler		beginHandler;
-	UploadCompleteHandler	completeHandler;
+	UploadBeginHandler beginHandler;
+	UploadCompleteHandler completeHandler;
 
-	boolean					uploadInProgress;
-	int						numUploaded;
-	Language				corpusLang;
-	boolean					initialized;
-	
+	boolean uploadInProgress;
+	int numUploaded;
+	Language corpusLang;
+	boolean initialized;
+
 	// hack to work around the incomplete Dropzone API MaterialFileUploader provides
 	private native boolean hasPendingUploads(MaterialFileUploader u) /*-{
-		var dropzone = u.@gwt.material.design.addins.client.fileuploader.MaterialFileUploader::uploader;
-		return dropzone.getUploadingFiles().length !== 0 || dropzone.getQueuedFiles().length !== 0;
-	}-*/;
-	
+        var dropzone = u.@gwt.material.design.addins.client.fileuploader.MaterialFileUploader::uploader;
+        return dropzone.getUploadingFiles().length !== 0 || dropzone.getQueuedFiles().length !== 0;
+    }-*/;
+
 	private native void setupDropzone(AuthToken t, MaterialFileUploader u) /*-{
-		var dropzone = u.@gwt.material.design.addins.client.fileuploader.MaterialFileUploader::uploader;
-		var uuid = t.toString();
-	
-		// tag uploaded files with the client token's uuid
-		dropzone.on('sending', function(file, xhr, formData){
+        var dropzone = u.@gwt.material.design.addins.client.fileuploader.MaterialFileUploader::uploader;
+        var uuid = t.toString();
+
+        // tag uploaded files with the client token's uuid
+        dropzone.on('sending', function (file, xhr, formData) {
             formData.append('AuthToken', uuid);
         });
-	}-*/;
+    }-*/;
 
-	private void onBeginUpload(Language lang)
-	{
+	private void onBeginUpload(Language lang) {
 		// deferred init to ensure that we have a valid token
-		if (initialized == false)
-		{
+		if (initialized == false) {
 			initialized = true;
 			setupDropzone(ClientEndPoint.get().getClientToken(), uplUploaderUI);
 		}
-		
+
 		if (uploadInProgress)
 			throw new RuntimeException("Previous upload operation not complete");
 
 		if (beginHandler != null)
 			beginHandler.handle(lang);
-		
+
 		uploadInProgress = true;
 		corpusLang = lang;
 		numUploaded = 0;
-		
+
 		stprUploaderUI.nextStep();
 	}
 
-	private void onEndUpload(boolean success)
-	{
+	private void onEndUpload(boolean success) {
 		if (uploadInProgress == false && success)
 			throw new RuntimeException("Upload hasn't started yet");
-		else if (hasPendingUploads(uplUploaderUI))
-		{
+		else if (hasPendingUploads(uplUploaderUI)) {
 			MaterialToast.fireToast(getLocalizedString(LocalizationTags.UPLOAD_INPROGRESS.toString()));
 			return;
 		}
 
 		if (uploadInProgress && completeHandler != null)
 			completeHandler.handle(numUploaded, success);
-		
+
 		uploadInProgress = false;
 		numUploaded = 0;
 		corpusLang = Language.ENGLISH;
@@ -151,40 +144,37 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 	private void onMaxFilesReached() {
 		MaterialToast.fireToast(getLocalizedString(LocalizationTags.MAX_FILE_LIMIT.toString()));
 	}
-	
-	private void resetUI()
-	{
+
+	private void resetUI() {
 		stprUploaderUI.reset();
 		uplUploaderUI.getUploadPreview().setVisible(false);
 	}
 
 
-	private void initHandlers()
-	{
+	private void initHandlers() {
 		btnToUploaderUI.addClickHandler(e -> {
 			Language lang = Language.ENGLISH;
 			if (rdoEnglishUI.getValue())
 				;//
 			else if (rdoGermanUI.getValue())
 				lang = Language.GERMAN;
-			
+
 			onBeginUpload(lang);
 		});
-		
+
 		btnFinishUI.addClickHandler(e -> onEndUpload(true));
 		btnCancel1UI.addClickHandler(e -> onEndUpload(false));
 		btnCancel2UI.addClickHandler(e -> onEndUpload(false));
-		
+
 		uplUploaderUI.addErrorHandler(e -> onUploadError(e.getTarget()));
 		uplUploaderUI.addMaxFilesReachHandler(e -> onMaxFilesReached());
 		uplUploaderUI.addSuccessHandler(e -> numUploaded++);
 	}
 
-	public CorpusFileUploader()
-	{
+	public CorpusFileUploader() {
 		initWidget(uiBinder.createAndBindUi(this));
 		initLocale(localeBinder.bind(this));
-		
+
 		beginHandler = null;
 		completeHandler = null;
 		uploadInProgress = false;
@@ -195,18 +185,16 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 	}
 
 	@Override
-	public void show()
-	{
+	public void show() {
 		if (ClientEndPoint.get().getWebRanker().isOperationInProgress())
 			throw new RuntimeException("Invalid atomic operation invokation");
-		
+
 		mdlUploadUI.open();
 		uplUploaderUI.getUploadPreview().setVisible(true);
 	}
 
 	@Override
-	public void hide()
-	{
+	public void hide() {
 		resetUI();
 		mdlUploadUI.close();
 	}

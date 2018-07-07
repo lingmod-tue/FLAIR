@@ -4,52 +4,49 @@
  */
 package com.flair.server.crawler.impl.azure;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-
 import com.flair.server.crawler.impl.AbstractSearchAgentImpl;
 import com.flair.server.crawler.impl.AbstractSearchAgentImplResult;
 import com.flair.server.utilities.HttpClientFactory;
 import com.flair.server.utilities.ServerLogger;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Basic web search implementation that uses the Azure Search API
- * 
+ *
  * @author shadeMe
  */
-public class AzureWebSearch implements AbstractSearchAgentImpl
-{
-	private static final String	AZURESEARCH_SCHEME		= "https";
-	private static final String	AZURESEARCH_HOSTNAME	= "api.cognitive.microsoft.com";
-	private static final String	AZURESEARCH_PATH		= "/bing/v5.0/search";
+public class AzureWebSearch implements AbstractSearchAgentImpl {
+	private static final String AZURESEARCH_SCHEME = "https";
+	private static final String AZURESEARCH_HOSTNAME = "api.cognitive.microsoft.com";
+	private static final String AZURESEARCH_PATH = "/bing/v5.0/search";
 
-	private static final String	RESPONSE_FILTER		= "Webpages";
-	private static final int	RESULTS_PER_PAGE	= 10;
+	private static final String RESPONSE_FILTER = "Webpages";
+	private static final int RESULTS_PER_PAGE = 10;
 
-	private final List<AzureWebSearchResult>	results;
-	private final Gson							deserializer;
+	private final List<AzureWebSearchResult> results;
+	private final Gson deserializer;
 
-	private HttpResponse	responsePost;
-	private HttpEntity		resEntity;
+	private HttpResponse responsePost;
+	private HttpEntity resEntity;
 
-	private String	apiKey;
-	private String	query;
-	private String	market;
-	private int		perPage;
-	private int		skip;
+	private String apiKey;
+	private String query;
+	private String market;
+	private int perPage;
+	private int skip;
 
-	public AzureWebSearch()
-	{
+	public AzureWebSearch() {
 		this.results = new ArrayList<>();
 		this.deserializer = new GsonBuilder().setPrettyPrinting().create();
 
@@ -94,8 +91,7 @@ public class AzureWebSearch implements AbstractSearchAgentImpl
 		return skip;
 	}
 
-	public void setSkip(int skip)
-	{
+	public void setSkip(int skip) {
 		this.skip = skip;
 		if (this.skip < 0)
 			this.skip = 0;
@@ -113,8 +109,7 @@ public class AzureWebSearch implements AbstractSearchAgentImpl
 		return results;
 	}
 
-	private String getUrlQuery()
-	{
+	private String getUrlQuery() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("q=");
 		sb.append(getQuery());
@@ -124,8 +119,7 @@ public class AzureWebSearch implements AbstractSearchAgentImpl
 		sb.append("&offset=");
 		sb.append(getSkip());
 
-		if (market.isEmpty() == false)
-		{
+		if (market.isEmpty() == false) {
 			sb.append("&mkt=");
 			sb.append(getMarket());
 		}
@@ -136,19 +130,15 @@ public class AzureWebSearch implements AbstractSearchAgentImpl
 		return sb.toString();
 	}
 
-	private void loadResults(InputStream stream)
-	{
+	private void loadResults(InputStream stream) {
 		results.clear();
 		AzureWebSearchResponse response = deserializer.fromJson(new InputStreamReader(stream),
 				AzureWebSearchResponse.class);
-		if (response != null)
-		{
+		if (response != null) {
 			WebAnswer answer = response.webPages;
-			if (answer != null && answer.value.length != 0)
-			{
+			if (answer != null && answer.value.length != 0) {
 				// ### presumably we don't need to rerank the results according to the RankingResponse as we aren't mixing result types
-				for (WebAnswer.Webpage itr : answer.value)
-				{
+				for (WebAnswer.Webpage itr : answer.value) {
 					AzureWebSearchResult newResult = new AzureWebSearchResult(itr.name, itr.url, itr.displayUrl,
 							itr.snippet);
 					results.add(newResult);
@@ -157,10 +147,8 @@ public class AzureWebSearch implements AbstractSearchAgentImpl
 		}
 	}
 
-	private void doQuery()
-	{
-		try
-		{
+	private void doQuery() {
+		try {
 			String full_query = getUrlQuery();
 			URI uri = new URI(AZURESEARCH_SCHEME, AZURESEARCH_HOSTNAME, AZURESEARCH_PATH, full_query, null);
 			// Bing and java URI disagree about how to represent + in query
@@ -177,15 +165,13 @@ public class AzureWebSearch implements AbstractSearchAgentImpl
 			resEntity = responsePost.getEntity();
 
 			loadResults(resEntity.getContent());
-		} catch (Throwable ex)
-		{
+		} catch (Throwable ex) {
 			ServerLogger.get().error(ex, "Couldn't fetch search results from Azure. Exception: " + ex.toString());
 		}
 	}
 
 	@Override
-	public List<? extends AbstractSearchAgentImplResult> performSearch()
-	{
+	public List<? extends AbstractSearchAgentImplResult> performSearch() {
 		doQuery();
 		return getResults();
 	}

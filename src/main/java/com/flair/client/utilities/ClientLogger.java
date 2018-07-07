@@ -1,21 +1,19 @@
 package com.flair.client.utilities;
 
+import com.flair.shared.utilities.AbstractDebugLogger;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import com.flair.shared.utilities.AbstractDebugLogger;
 
 /*
  * Simple client-side logger
  */
-public final class ClientLogger extends AbstractDebugLogger
-{
+public final class ClientLogger extends AbstractDebugLogger {
 	private static final ClientLogger SINGLETON = new ClientLogger();
 
-	private final Logger	pipeline;
+	private final Logger pipeline;
 
-	public ClientLogger()
-	{
+	public ClientLogger() {
 		super("FLAIR-ClientLogger");
 		this.pipeline = Logger.getLogger(loggerName);
 	}
@@ -25,8 +23,7 @@ public final class ClientLogger extends AbstractDebugLogger
 	}
 
 	@Override
-	protected void print(Channel channel, String message) 
-	{
+	protected void print(Channel channel, String message) {
 		StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < indentLevel; i++)
 			builder.append("\t");
@@ -34,8 +31,7 @@ public final class ClientLogger extends AbstractDebugLogger
 		builder.append(" ");
 		builder.append(message);
 
-		switch (channel)
-		{
+		switch (channel) {
 		case TRACE:
 			pipeline.log(Level.FINE, builder.toString());
 			break;

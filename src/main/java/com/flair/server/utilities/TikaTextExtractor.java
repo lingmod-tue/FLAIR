@@ -4,10 +4,7 @@
  */
 package com.flair.server.utilities;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URISyntaxException;
-
+import com.flair.shared.grammar.Language;
 import org.apache.tika.Tika;
 import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
@@ -18,32 +15,30 @@ import org.apache.tika.sax.BodyContentHandler;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
-import com.flair.shared.grammar.Language;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URISyntaxException;
 
 /**
  * Apache Tika implementation of a text extractor
- * 
+ *
  * @author shadeMe
  */
-class TikaTextExtractor extends AbstractTextExtractor
-{
+class TikaTextExtractor extends AbstractTextExtractor {
 	public TikaTextExtractor() {
 		super(TextExtractorType.TIKA);
 	}
 
 	@Override
-	public Output extractText(Input input)
-	{
+	public Output extractText(Input input) {
 		boolean error = false;
 		String pageText = "";
 		MediaType streamType = MediaType.EMPTY;
 		boolean isHtml = false;
 
-		try
-		{
+		try {
 			InputStream read = null;
-			switch (input.sourceType)
-			{
+			switch (input.sourceType) {
 			case URL:
 				read = openURLStream(input.url, input.lang);
 				break;
@@ -72,8 +67,7 @@ class TikaTextExtractor extends AbstractTextExtractor
 			// if the source is HTML, run it through boilerpipe to get the relevant text (only for URLs)
 			// some HTML pages are detected as plain text by Tika, so allow plain text to count as HTML
 			isHtml = streamType == MediaType.TEXT_HTML || streamType == MediaType.TEXT_PLAIN;
-			if (isHtml && input.sourceType == Input.SourceType.URL)
-			{
+			if (isHtml && input.sourceType == Input.SourceType.URL) {
 				// the boilerpipe pass can potentially fail/return an empty string
 				// if it does, fallback to the original extract
 				String extract = AbstractTextExtractor.doBoilerpipePass(pageText);
@@ -82,8 +76,7 @@ class TikaTextExtractor extends AbstractTextExtractor
 			}
 
 			stream.close();
-		} catch (Throwable ex)
-		{
+		} catch (Throwable ex) {
 			ServerLogger.get().error(ex, "Couldn't extract text. Exception: " + ex.toString());
 			error = true;
 		}
@@ -91,19 +84,16 @@ class TikaTextExtractor extends AbstractTextExtractor
 		return new Output(input, error == false, pageText, isHtml);
 	}
 
-	public static boolean isContentHTMLPlainText(String url, Language lang) throws IOException, URISyntaxException
-	{
+	public static boolean isContentHTMLPlainText(String url, Language lang) throws IOException, URISyntaxException {
 		Tika pipeline = new Tika();
 		MediaType type;
-		try (TikaInputStream in = TikaInputStream.get(openURLStream(url, lang)))
-		{
+		try (TikaInputStream in = TikaInputStream.get(openURLStream(url, lang))) {
 			type = pipeline.getDetector().detect(in, new Metadata());
 		}
 
 		if (type == MediaType.TEXT_HTML || type == MediaType.TEXT_PLAIN || type == MediaType.APPLICATION_XML)
 			return true;
-		else
-		{
+		else {
 			ServerLogger.get().trace("URL '" + url + "' media type: " + type);
 			return false;
 		}

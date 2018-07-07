@@ -9,33 +9,8 @@ import com.flair.client.localization.LocalizedFieldType;
 import com.flair.client.localization.annotations.LocalizedCommonField;
 import com.flair.client.localization.annotations.LocalizedField;
 import com.flair.client.localization.interfaces.LocalizationBinder;
-import com.flair.client.presentation.interfaces.AbstractDocumentPreviewPane;
-import com.flair.client.presentation.interfaces.AbstractDocumentResultsPane;
-import com.flair.client.presentation.interfaces.AbstractRankerSettingsPane;
-import com.flair.client.presentation.interfaces.AbstractWebRankerPresenter;
-import com.flair.client.presentation.interfaces.CorpusUploadService;
-import com.flair.client.presentation.interfaces.CustomKeywordService;
-import com.flair.client.presentation.interfaces.DocumentCompareService;
-import com.flair.client.presentation.interfaces.HistoryViewerService;
-import com.flair.client.presentation.interfaces.NotificationService;
-import com.flair.client.presentation.interfaces.OperationCancelService;
-import com.flair.client.presentation.interfaces.OverlayService;
-import com.flair.client.presentation.interfaces.SettingsUrlExporterView;
-import com.flair.client.presentation.interfaces.UserPromptService;
-import com.flair.client.presentation.interfaces.VisualizerService;
-import com.flair.client.presentation.interfaces.WebSearchService;
-import com.flair.client.presentation.widgets.AboutPage;
-import com.flair.client.presentation.widgets.CorpusFileUploader;
-import com.flair.client.presentation.widgets.CustomKeywordsEditor;
-import com.flair.client.presentation.widgets.DocumentCollectionVisualizer;
-import com.flair.client.presentation.widgets.DocumentComparer;
-import com.flair.client.presentation.widgets.DocumentPreviewPane;
-import com.flair.client.presentation.widgets.DocumentResultsPane;
-import com.flair.client.presentation.widgets.HistoryViewer;
-import com.flair.client.presentation.widgets.ModalPrompt;
-import com.flair.client.presentation.widgets.RankerSettingsPane;
-import com.flair.client.presentation.widgets.SettingsExporter;
-import com.flair.client.presentation.widgets.WebSearchModal;
+import com.flair.client.presentation.interfaces.*;
+import com.flair.client.presentation.widgets.*;
 import com.flair.client.utilities.GlobalWidgetAnimator;
 import com.flair.shared.grammar.Language;
 import com.google.gwt.core.client.GWT;
@@ -44,32 +19,17 @@ import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
-
 import gwt.material.design.addins.client.iconmorph.MaterialIconMorph;
 import gwt.material.design.addins.client.overlay.MaterialOverlay;
 import gwt.material.design.client.base.MaterialWidget;
 import gwt.material.design.client.constants.Position;
-import gwt.material.design.client.ui.MaterialAnchorButton;
-import gwt.material.design.client.ui.MaterialButton;
-import gwt.material.design.client.ui.MaterialCardTitle;
-import gwt.material.design.client.ui.MaterialLabel;
-import gwt.material.design.client.ui.MaterialLink;
-import gwt.material.design.client.ui.MaterialLoader;
-import gwt.material.design.client.ui.MaterialNavBar;
-import gwt.material.design.client.ui.MaterialNavBrand;
-import gwt.material.design.client.ui.MaterialPanel;
-import gwt.material.design.client.ui.MaterialRow;
-import gwt.material.design.client.ui.MaterialSplashScreen;
-import gwt.material.design.client.ui.MaterialTitle;
-import gwt.material.design.client.ui.MaterialToast;
+import gwt.material.design.client.ui.*;
 import gwt.material.design.client.ui.animate.MaterialAnimation;
 import gwt.material.design.client.ui.animate.Transition;
 
-public class MainViewport extends LocalizedComposite implements AbstractWebRankerPresenter
-{
-	static final class ToastNotifications implements NotificationService
-	{
-		private static final int			DEFAULT_TIMEOUT_MS = 3 * 1000;
+public class MainViewport extends LocalizedComposite implements AbstractWebRankerPresenter {
+	static final class ToastNotifications implements NotificationService {
+		private static final int DEFAULT_TIMEOUT_MS = 3 * 1000;
 		@Override
 		public void notify(String text) {
 			MaterialToast.fireToast(text, DEFAULT_TIMEOUT_MS, "rounded");
@@ -80,11 +40,10 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 			MaterialToast.fireToast(text, timeout, "rounded");
 		}
 	}
-	
-	static final class BasicOverlay implements OverlayService
-	{
-		private final MaterialOverlay			overlay;
-		
+
+	static final class BasicOverlay implements OverlayService {
+		private final MaterialOverlay overlay;
+
 		public BasicOverlay(MaterialOverlay o) {
 			overlay = o;
 		}
@@ -95,8 +54,7 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		}
 
 		@Override
-		public void show(MaterialWidget source, Widget content)
-		{
+		public void show(MaterialWidget source, Widget content) {
 			overlay.clear();
 			overlay.add(content);
 			overlay.open(source);
@@ -107,105 +65,105 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 			overlay.close();
 		}
 	}
-	
+
 	private static MainViewportUiBinder uiBinder = GWT.create(MainViewportUiBinder.class);
+
 	interface MainViewportUiBinder extends UiBinder<Widget, MainViewport> {
 	}
-	
+
 	private static MainViewportLocalizationBinder localeBinder = GWT.create(MainViewportLocalizationBinder.class);
+
 	interface MainViewportLocalizationBinder extends LocalizationBinder<MainViewport> {}
-	
+
 	@UiField
-	MaterialPanel								pnlRootUI;
+	MaterialPanel pnlRootUI;
 	@UiField
-	MaterialSplashScreen						splSplashUI;
+	MaterialSplashScreen splSplashUI;
 	@UiField
-	MaterialTitle								lblSplashStatus;
+	MaterialTitle lblSplashStatus;
 	@UiField
-	HTML										htmlSplashLogoUI;
+	HTML htmlSplashLogoUI;
 	@UiField
-	MaterialNavBar								navMainUI;
+	MaterialNavBar navMainUI;
 	@UiField
-	@LocalizedField(type=LocalizedFieldType.TOOLTIP_MATERIAL)
-	MaterialButton								btnWebSearchUI;
+	@LocalizedField(type = LocalizedFieldType.TOOLTIP_MATERIAL)
+	MaterialButton btnWebSearchUI;
 	@UiField
-	@LocalizedField(type=LocalizedFieldType.TOOLTIP_MATERIAL)
-	MaterialAnchorButton						btnUploadUI;
+	@LocalizedField(type = LocalizedFieldType.TOOLTIP_MATERIAL)
+	MaterialAnchorButton btnUploadUI;
 	@UiField
-	@LocalizedField(type=LocalizedFieldType.TOOLTIP_MATERIAL)
-	MaterialLink								btnHistoryUI;
+	@LocalizedField(type = LocalizedFieldType.TOOLTIP_MATERIAL)
+	MaterialLink btnHistoryUI;
 	@UiField
-	@LocalizedField(type=LocalizedFieldType.TOOLTIP_MATERIAL)
-	MaterialLink								btnSwitchLangUI;
+	@LocalizedField(type = LocalizedFieldType.TOOLTIP_MATERIAL)
+	MaterialLink btnSwitchLangUI;
 	@UiField
-	@LocalizedField(type=LocalizedFieldType.TOOLTIP_MATERIAL)
-	@LocalizedCommonField(tag=CommonLocalizationTags.BRANDING, type=LocalizedFieldType.TEXT_NAVBRAND)
-	MaterialNavBrand							btnAboutUI;
+	@LocalizedField(type = LocalizedFieldType.TOOLTIP_MATERIAL)
+	@LocalizedCommonField(tag = CommonLocalizationTags.BRANDING, type = LocalizedFieldType.TEXT_NAVBRAND)
+	MaterialNavBrand btnAboutUI;
 	@UiField
-	@LocalizedCommonField(tag=CommonLocalizationTags.LANGUAGE_ENGLISH, type=LocalizedFieldType.TEXT_BUTTON)
-	MaterialLink								btnLangEnUI;
+	@LocalizedCommonField(tag = CommonLocalizationTags.LANGUAGE_ENGLISH, type = LocalizedFieldType.TEXT_BUTTON)
+	MaterialLink btnLangEnUI;
 	@UiField
-	@LocalizedCommonField(tag=CommonLocalizationTags.LANGUAGE_GERMAN, type=LocalizedFieldType.TEXT_BUTTON)
-	MaterialLink								btnLangDeUI;
+	@LocalizedCommonField(tag = CommonLocalizationTags.LANGUAGE_GERMAN, type = LocalizedFieldType.TEXT_BUTTON)
+	MaterialLink btnLangDeUI;
 	@UiField
-	WebSearchModal								mdlWebSearchUI;
+	WebSearchModal mdlWebSearchUI;
 	@UiField
-	MaterialLink								tglSettingsPaneUI;
+	MaterialLink tglSettingsPaneUI;
 	@UiField
-	MaterialIconMorph							icoSettingsMorphUI;
+	MaterialIconMorph icoSettingsMorphUI;
 	@UiField
-	RankerSettingsPane							pnlConstructionsSettingsUI;
+	RankerSettingsPane pnlConstructionsSettingsUI;
 	@UiField
-	DocumentResultsPane							pnlDocResultsUI;
+	DocumentResultsPane pnlDocResultsUI;
 	@UiField
-	DocumentPreviewPane							pnlDocPreviewUI;
+	DocumentPreviewPane pnlDocPreviewUI;
 	@UiField
-	ModalPrompt 								mdlPromptUI;
+	ModalPrompt mdlPromptUI;
 	@UiField
-	CorpusFileUploader 							mdlCorpusUploadUI;
+	CorpusFileUploader mdlCorpusUploadUI;
 	@UiField
-	CustomKeywordsEditor 						mdlCustomKeywordsUI;
+	CustomKeywordsEditor mdlCustomKeywordsUI;
 	@UiField
-	MaterialPanel								pnlResultsContainerUI;
+	MaterialPanel pnlResultsContainerUI;
 	@UiField
-	DocumentCollectionVisualizer				mdlVisualizerUI;
+	DocumentCollectionVisualizer mdlVisualizerUI;
 	@UiField
-	MaterialRow									pnlDefaultPlaceholderUI;
+	MaterialRow pnlDefaultPlaceholderUI;
 	@UiField
-	@LocalizedCommonField(tag=CommonLocalizationTags.SEARCH)
-	MaterialCardTitle							lblDefaultSearchTitleUI;
-	@UiField
-	@LocalizedField
-	MaterialLabel								lblDefaultSearchCaptionUI;
+	@LocalizedCommonField(tag = CommonLocalizationTags.SEARCH)
+	MaterialCardTitle lblDefaultSearchTitleUI;
 	@UiField
 	@LocalizedField
-	MaterialCardTitle							lblDefaultConfigTitleUI;
+	MaterialLabel lblDefaultSearchCaptionUI;
 	@UiField
 	@LocalizedField
-	MaterialLabel								lblDefaultConfigCaptionUI;
-	@UiField
-	@LocalizedCommonField(tag=CommonLocalizationTags.UPLOAD)
-	MaterialCardTitle							lblDefaultUploadTitleUI;
+	MaterialCardTitle lblDefaultConfigTitleUI;
 	@UiField
 	@LocalizedField
-	MaterialLabel								lblDefaultUploadCaptionUI;
+	MaterialLabel lblDefaultConfigCaptionUI;
 	@UiField
-	MaterialOverlay								mdlOverlayUI;
+	@LocalizedCommonField(tag = CommonLocalizationTags.UPLOAD)
+	MaterialCardTitle lblDefaultUploadTitleUI;
 	@UiField
-	SettingsExporter							mdlExporterUI;
+	@LocalizedField
+	MaterialLabel lblDefaultUploadCaptionUI;
 	@UiField
-	DocumentComparer							mdlComparerUI;
+	MaterialOverlay mdlOverlayUI;
 	@UiField
-	HistoryViewer								mdlHistoryUI;
+	SettingsExporter mdlExporterUI;
 	@UiField
-	AboutPage									mdlAboutUI;
-	ToastNotifications							notificationService;
-	BasicOverlay								overlayService;
-	
-	private void invokeAtomicOperation(Runnable handler)
-	{
-		if (ClientEndPoint.get().getWebRanker().isOperationInProgress())
-		{
+	DocumentComparer mdlComparerUI;
+	@UiField
+	HistoryViewer mdlHistoryUI;
+	@UiField
+	AboutPage mdlAboutUI;
+	ToastNotifications notificationService;
+	BasicOverlay overlayService;
+
+	private void invokeAtomicOperation(Runnable handler) {
+		if (ClientEndPoint.get().getWebRanker().isOperationInProgress()) {
 			// prompt the user if they want to cancel the currently running operation
 			String title = getLocalizedString(CommonLocalizationTags.OPERATION_INPROGRESS_CONFIRM_TITLE.toString());
 			String caption = getLocalizedString(CommonLocalizationTags.OPERATION_INPROGRESS_CONFIRM_CAPTION.toString());
@@ -214,77 +172,70 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 				ClientEndPoint.get().getWebRanker().cancelCurrentOperation();
 				handler.run();
 			}, () -> {});
-		}
-		else
+		} else
 			handler.run();
 	}
-	
-	private void toggleSettingsPane()
-	{
-		if (pnlConstructionsSettingsUI.isVisible())
-		{
+
+	private void toggleSettingsPane() {
+		if (pnlConstructionsSettingsUI.isVisible()) {
 			pnlConstructionsSettingsUI.hide();
 			icoSettingsMorphUI.getElement().removeClassName("morphed");
-		}
-		else
-		{
+		} else {
 			pnlConstructionsSettingsUI.show();
 			icoSettingsMorphUI.getElement().addClassName("morphed");
 		}
 	}
-		
+
 	private void showUploadModal() {
 		invokeAtomicOperation(() -> mdlCorpusUploadUI.show());
 	}
-	
+
 	private void showSearchModal() {
 		invokeAtomicOperation(() -> mdlWebSearchUI.show());
 	}
-		
+
 	private void switchDisplayLanguage(Language lang) {
 		LocalizationEngine.get().setLanguage(lang);
 	}
-	
-	private void initHandlers()
-	{
+
+	private void initHandlers() {
 		btnWebSearchUI.addClickHandler(e -> showSearchModal());
 		btnUploadUI.addClickHandler(e -> showUploadModal());
 		btnHistoryUI.addClickHandler(e -> mdlHistoryUI.show());
 		btnAboutUI.addClickHandler(e -> mdlAboutUI.show());
-		
+
 		btnLangEnUI.addClickHandler(e -> {
 			switchDisplayLanguage(Language.ENGLISH);
 		});
-		
+
 		btnLangDeUI.addClickHandler(e -> {
 			switchDisplayLanguage(Language.GERMAN);
 		});
-		
+
 		tglSettingsPaneUI.addClickHandler(e -> toggleSettingsPane());
-		
+
 		lblDefaultSearchTitleUI.addClickHandler(e -> showSearchModal());
 		lblDefaultConfigTitleUI.addClickHandler(e -> toggleSettingsPane());
 		lblDefaultUploadTitleUI.addClickHandler(e -> showUploadModal());
-		
+
 		pnlConstructionsSettingsUI.setShowHideEventHandler(v -> {
 			if (v)
 				icoSettingsMorphUI.getElement().addClassName("morphed");
 			else
 				icoSettingsMorphUI.getElement().removeClassName("morphed");
 		});
-		
+
 		mdlCustomKeywordsUI.bindToSlider(pnlConstructionsSettingsUI.getKeywordSlider());
 	}
-	
-	private void initUI()
-	{
+
+	private void initUI() {
 		btnWebSearchUI.setTooltipPosition(Position.LEFT);
 		btnUploadUI.setTooltipPosition(Position.LEFT);
 		btnSwitchLangUI.setTooltipPosition(Position.LEFT);
-		
+
 		// disable the settings toggle icon morph's default behaviour (this ought to be a part of the API)
 		icoSettingsMorphUI.getElement().removeAttribute("onclick");
-		
+
 		// animate FABs slightly
 		MaterialAnimation pulseSearch = new MaterialAnimation();
 		pulseSearch.setTransition(Transition.PULSE);
@@ -292,7 +243,7 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		pulseSearch.setDuration(3000);
 		pulseSearch.setInfinite(true);
 		pulseSearch.animate(btnWebSearchUI);
-		
+
 		MaterialAnimation pulseUpload = new MaterialAnimation();
 		pulseUpload.setTransition(Transition.PULSE);
 		pulseUpload.setDelay(3000);
@@ -300,37 +251,32 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		pulseUpload.setInfinite(true);
 		pulseUpload.animate(btnUploadUI);
 	}
-		
+
 	@UiConstructor
-	public MainViewport()
-	{
+	public MainViewport() {
 		initWidget(uiBinder.createAndBindUi(this));
 		initLocale(localeBinder.bind(this));
-		
+
 		notificationService = new ToastNotifications();
 		overlayService = new BasicOverlay(mdlOverlayUI);
-		
+
 		initHandlers();
 		initUI();
 	}
-	
-	public void showSplash(boolean visible)
-	{
-		if (visible)
-		{
+
+	public void showSplash(boolean visible) {
+		if (visible) {
 			splSplashUI.show();
-			
+
 			MaterialAnimation pulse = new MaterialAnimation(htmlSplashLogoUI);
 			pulse.setTransition(Transition.PULSE);
 			pulse.setDelay(10);
 			pulse.setDuration(2000);
 			pulse.setInfinite(true);
 			pulse.animate();
-		}
-		else
-		{
+		} else {
 			MaterialAnimation fadeout = new MaterialAnimation();
-			
+
 			fadeout.setTransition(Transition.SLIDEOUTDOWN);
 			fadeout.setDelay(1500);
 			fadeout.setDuration(850);
@@ -340,15 +286,15 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 			});
 		}
 	}
-	
+
 	public void setSplashTitle(String text) {
 		lblSplashStatus.setTitle(text);
 	}
-	
+
 	public void setSplashSubtitle(String text) {
 		lblSplashStatus.setDescription(text);
 	}
-	
+
 
 	@Override
 	public AbstractRankerSettingsPane getRankerSettingsPane() {
@@ -384,22 +330,18 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	public void showProgressBar(boolean visible) {
 		MaterialLoader.progress(visible);
 	}
-	
+
 	@Override
 	public void showCancelPane(boolean visible) {
 		pnlDocResultsUI.setCancelVisible(visible);
 	}
 
 	@Override
-	public void showDefaultPane(boolean visible)
-	{
-		if (visible)
-		{
+	public void showDefaultPane(boolean visible) {
+		if (visible) {
 			GlobalWidgetAnimator.get().animateWithStart(pnlDefaultPlaceholderUI,
 					Transition.ZOOMINUP, 10, 800, () -> pnlDefaultPlaceholderUI.setVisible(true));
-		}
-		else
-		{
+		} else {
 			GlobalWidgetAnimator.get().animateWithStartStop(pnlDefaultPlaceholderUI,
 					Transition.ZOOMOUTUP, 10, 800,
 					() -> pnlDefaultPlaceholderUI.setVisible(true),
@@ -441,7 +383,7 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	public DocumentCompareService getDocumentCompareService() {
 		return mdlComparerUI;
 	}
-	
+
 	@Override
 	public HistoryViewerService getHistoryViewerService() {
 		return mdlHistoryUI;

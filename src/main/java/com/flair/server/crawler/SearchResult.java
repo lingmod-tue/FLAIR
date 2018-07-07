@@ -7,22 +7,20 @@ import com.flair.shared.grammar.Language;
 
 /**
  * Represents a single search result for a specific query
- * 
+ *
  * @author shadeMe
  */
-public class SearchResult implements Comparable<SearchResult>
-{
-	private final Language	lang;
-	private final String	query;
-	private final String	title;
-	private final String	URL;
-	private final String	displayURL;
-	private final String	snippet;
-	private int				rank;		// as returned by the search engine
-	private String			pageText;	// page text without any markup
+public class SearchResult implements Comparable<SearchResult> {
+	private final Language lang;
+	private final String query;
+	private final String title;
+	private final String URL;
+	private final String displayURL;
+	private final String snippet;
+	private int rank;        // as returned by the search engine
+	private String pageText;    // page text without any markup
 
-	public SearchResult(Language lang, String query, String title, String URL, String displayURL, String snippet)
-	{
+	public SearchResult(Language lang, String query, String title, String URL, String displayURL, String snippet) {
 		this.lang = lang;
 		this.query = query;
 		this.title = title;
@@ -73,8 +71,7 @@ public class SearchResult implements Comparable<SearchResult>
 		return pageText.isEmpty() == false;
 	}
 
-	public boolean fetchPageText(boolean forceFetch)
-	{
+	public boolean fetchPageText(boolean forceFetch) {
 		if (isTextFetched() == true && forceFetch == false)
 			return false;
 
@@ -83,16 +80,14 @@ public class SearchResult implements Comparable<SearchResult>
 
 		if (output.success == false)
 			return false;
-		else
-		{
+		else {
 			pageText = output.extractedText;
 			return pageText.isEmpty() == false;
 		}
 	}
 
 	@Override
-	public int compareTo(SearchResult t)
-	{
+	public int compareTo(SearchResult t) {
 		if (rank < t.rank)
 			return -1;
 		else if (rank > t.rank)

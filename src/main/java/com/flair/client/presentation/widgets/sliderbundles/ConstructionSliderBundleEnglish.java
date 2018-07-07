@@ -14,98 +14,96 @@ import com.google.gwt.user.client.ui.Widget;
 /*
  * Gram const. weight sliders for English
  */
-public class ConstructionSliderBundleEnglish extends LanguageSpecificConstructionSliderBundle
-{
+public class ConstructionSliderBundleEnglish extends LanguageSpecificConstructionSliderBundle {
 	private static ConstructionSliderBundleEnglishUiBinder uiBinder = GWT.create(ConstructionSliderBundleEnglishUiBinder.class);
 
-	interface ConstructionSliderBundleEnglishUiBinder extends UiBinder<Widget, ConstructionSliderBundleEnglish>
-	{
+	interface ConstructionSliderBundleEnglishUiBinder extends UiBinder<Widget, ConstructionSliderBundleEnglish> {
 	}
 
 	private static ConstructionSliderBundleEnglishLocalizationBinder localeBinder = GWT.create(ConstructionSliderBundleEnglishLocalizationBinder.class);
+
 	interface ConstructionSliderBundleEnglishLocalizationBinder extends LocalizationBinder<ConstructionSliderBundleEnglish> {}
-	
-	
+
+
 	@UiField
-	HTMLPanel									pnlRootUI;
-	
-	@UiField
-	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlSentencesUI;
+	HTMLPanel pnlRootUI;
+
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlQuestionsUI;
+	GrammaticalConstructionPanelItem pnlSentencesUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlSentenceTypesUI;
+	GrammaticalConstructionPanelItem pnlQuestionsUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlClauseTypesUI;
+	GrammaticalConstructionPanelItem pnlSentenceTypesUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlPartsOfSpeechUI;
+	GrammaticalConstructionPanelItem pnlClauseTypesUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlVerbsUI;
+	GrammaticalConstructionPanelItem pnlPartsOfSpeechUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlVerbFormsUI;
+	GrammaticalConstructionPanelItem pnlVerbsUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlTensesUI;
+	GrammaticalConstructionPanelItem pnlVerbFormsUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlAspectUI;
+	GrammaticalConstructionPanelItem pnlTensesUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlTimeUI;
+	GrammaticalConstructionPanelItem pnlAspectUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlVoiceUI;
+	GrammaticalConstructionPanelItem pnlTimeUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlPhrasalUI;
+	GrammaticalConstructionPanelItem pnlVoiceUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlModalUI;
+	GrammaticalConstructionPanelItem pnlPhrasalUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlTransitiveUI;
+	GrammaticalConstructionPanelItem pnlModalUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlImperativeUI;
+	GrammaticalConstructionPanelItem pnlTransitiveUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlNegationUI;
+	GrammaticalConstructionPanelItem pnlImperativeUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlArticlesUI;
+	GrammaticalConstructionPanelItem pnlNegationUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlQuantifiersUI;
+	GrammaticalConstructionPanelItem pnlArticlesUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlAdjectivesUI;
+	GrammaticalConstructionPanelItem pnlQuantifiersUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlAdverbsUI;
+	GrammaticalConstructionPanelItem pnlAdjectivesUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlPronounsUI;
+	GrammaticalConstructionPanelItem pnlAdverbsUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlConjunctionsUI;
+	GrammaticalConstructionPanelItem pnlPronounsUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlPrepositionsUI;
+	GrammaticalConstructionPanelItem pnlConjunctionsUI;
 	@UiField
 	@LocalizedField
-	GrammaticalConstructionPanelItem			pnlNounsUI;
-	
-	public ConstructionSliderBundleEnglish()
-	{
+	GrammaticalConstructionPanelItem pnlPrepositionsUI;
+	@UiField
+	@LocalizedField
+	GrammaticalConstructionPanelItem pnlNounsUI;
+
+	public ConstructionSliderBundleEnglish() {
 		super(Language.ENGLISH);
-		
+
 		initWidget(uiBinder.createAndBindUi(this));
 		initLocale(localeBinder.bind(this));
 		setRootContainer(pnlRootUI);

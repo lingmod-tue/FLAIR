@@ -5,9 +5,9 @@ package com.flair.server.parser;
 
 /**
  * List of keyword searcher implementations FLAIR supports
+ *
  * @author shadeMe
  */
-public enum KeywordSearcherType
-{
-    NAIVE_SUBSTRING
+public enum KeywordSearcherType {
+	NAIVE_SUBSTRING
 }

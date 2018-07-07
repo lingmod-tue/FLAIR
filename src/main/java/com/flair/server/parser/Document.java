@@ -1,45 +1,43 @@
 /*
  * This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/.
- 
+
  */
 package com.flair.server.parser;
-
-import java.util.StringTokenizer;
 
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
 import com.flair.shared.parser.DocumentReadabilityLevel;
 
+import java.util.StringTokenizer;
+
 /**
  * Represents a text document that's parsed by the NLP Parser
- * 
+ *
  * @author shadeMe
  */
-class Document implements AbstractDocument
-{
-	private final AbstractDocumentSource				source;
-	private final double								readabilityScore;
-	private final DocumentReadabilityLevel				readabilityLevel;	// calculate from the readability score
-	private final ConstructionDataCollection			constructionData;
+class Document implements AbstractDocument {
+	private final AbstractDocumentSource source;
+	private final double readabilityScore;
+	private final DocumentReadabilityLevel readabilityLevel;    // calculate from the readability score
+	private final ConstructionDataCollection constructionData;
 
-	private int											numCharacters;
-	private int											numSentences;
-	private int											numDependencies;
-	private int											numWords;
-	private int											numTokens;		// no of words essentially (kinda), later substituted with no of words (without punctuation)
+	private int numCharacters;
+	private int numSentences;
+	private int numDependencies;
+	private int numWords;
+	private int numTokens;        // no of words essentially (kinda), later substituted with no of words (without punctuation)
 
-	private double										avgWordLength;		// doesn't include punctuation
-	private double										avgSentenceLength;
-	private double										avgTreeDepth;
+	private double avgWordLength;        // doesn't include punctuation
+	private double avgSentenceLength;
+	private double avgTreeDepth;
 
-	private double										fancyDocLength;	// ### TODO better name needed, formerly "docLenTfIdf"
-	private KeywordSearcherOutput						keywordData;
+	private double fancyDocLength;    // ### TODO better name needed, formerly "docLenTfIdf"
+	private KeywordSearcherOutput keywordData;
 
 	private boolean parsed;
 
-	public Document(AbstractDocumentSource parent)
-	{
+	public Document(AbstractDocumentSource parent) {
 		assert parent != null;
 
 		source = parent;
@@ -51,8 +49,7 @@ class Document implements AbstractDocument
 		// calculate readability score, level, etc
 		numTokens = tokenizer.countTokens();
 		int whitespaceCount = 0;
-		for (int i = 0; i < pageText.length(); i++)
-		{
+		for (int i = 0; i < pageText.length(); i++) {
 			if (pageText.charAt(i) == ' ')
 				whitespaceCount++;
 		}
@@ -65,8 +62,7 @@ class Document implements AbstractDocument
 		double readabilityLevelThreshold_A = 0;
 		double readabilityLevelThreshold_B = 0;
 
-		switch (source.getLanguage())
-		{
+		switch (source.getLanguage()) {
 		case ENGLISH:
 			readabilityScoreCalc = Math.ceil(4.71 * ((double) numCharacters / (double) numTokens)
 					+ 0.5 * (numTokens / (double) numSentences) - 21.43);
@@ -120,13 +116,11 @@ class Document implements AbstractDocument
 		return (DocumentConstructionData) constructionData.getData(type);
 	}
 
-	public void calculateFancyDocLength()
-	{
+	public void calculateFancyDocLength() {
 		double sumOfPowers = 0.0;
 		double squareRoot = 0.0;
 		// iterate through the construction data set and calc
-		for (GrammaticalConstruction itr : getSupportedConstructions())
-		{
+		for (GrammaticalConstruction itr : getSupportedConstructions()) {
 			DocumentConstructionData data = getConstructionData(itr);
 			if (data.hasConstruction())
 				sumOfPowers += Math.pow(data.getWeightedFrequency(), 2);
@@ -283,8 +277,7 @@ class Document implements AbstractDocument
 	}
 }
 
-class DocumentFactory implements AbstractDocumentFactory
-{
+class DocumentFactory implements AbstractDocumentFactory {
 	@Override
 	public AbstractDocument create(AbstractDocumentSource source) {
 		return new Document(source);

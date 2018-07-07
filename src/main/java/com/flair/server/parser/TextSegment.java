@@ -5,24 +5,23 @@ package com.flair.server.parser;
 
 /**
  * Represents a segment in a text
+ *
  * @author shadeMe
  */
-public class TextSegment
-{
-    private final int		startIdx;
-    private final int		endIdx;
+public class TextSegment {
+	private final int startIdx;
+	private final int endIdx;
 
-    public TextSegment(int startIdx, int endIdx)
-    {
-	this.startIdx = startIdx;
-	this.endIdx = endIdx;
-    }
-    
-    public int getStart() {
-	return startIdx;
-    }
-    
-    public int getEnd() {
-	return endIdx;
-    }
+	public TextSegment(int startIdx, int endIdx) {
+		this.startIdx = startIdx;
+		this.endIdx = endIdx;
+	}
+
+	public int getStart() {
+		return startIdx;
+	}
+
+	public int getEnd() {
+		return endIdx;
+	}
 }

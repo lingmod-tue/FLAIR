@@ -3,22 +3,19 @@
  */
 package com.flair.server.grammar;
 
+import com.flair.shared.grammar.Language;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import com.flair.shared.grammar.Language;
-
 /**
  * Wrapper class for the default keywords for each language
- * 
+ *
  * @author shadeMe
  */
-public class DefaultVocabularyList
-{
-	public static List<String> get(Language lang) 
-	{
-		switch (lang)
-		{
+public class DefaultVocabularyList {
+	public static List<String> get(Language lang) {
+		switch (lang) {
 		case ENGLISH:
 			return EnglishAcademicWordList.getKeywords();
 		case GERMAN:

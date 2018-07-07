@@ -12,16 +12,14 @@ import java.io.InputStream;
 
 /**
  * Represents a document source that encapsulates an arbitrary InputStream
- * 
+ *
  * @author shadeMe
  */
-public class StreamDocumentSource extends AbstractDocumentSource
-{
-	private final String	sourceString;
-	private final String	name;
+public class StreamDocumentSource extends AbstractDocumentSource {
+	private final String sourceString;
+	private final String name;
 
-	public StreamDocumentSource(InputStream source, String name, Language lang)
-	{
+	public StreamDocumentSource(InputStream source, String name, Language lang) {
 		super(lang);
 		this.name = name;
 
@@ -45,8 +43,7 @@ public class StreamDocumentSource extends AbstractDocumentSource
 	}
 
 	@Override
-	public int compareTo(AbstractDocumentSource t) 
-	{
+	public int compareTo(AbstractDocumentSource t) {
 		if (t instanceof StreamDocumentSource == false)
 			throw new IllegalArgumentException("Incompatible source type");
 

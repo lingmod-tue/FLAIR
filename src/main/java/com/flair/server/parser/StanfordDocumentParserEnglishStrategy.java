@@ -1,18 +1,13 @@
 /*
  * This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License.
  * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/.
- 
+
  */
 package com.flair.server.parser;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.regex.Pattern;
 
 import com.flair.server.grammar.EnglishGrammaticalConstants;
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
-
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.IndexedWord;
@@ -25,35 +20,37 @@ import edu.stanford.nlp.trees.tregex.TregexMatcher;
 import edu.stanford.nlp.trees.tregex.TregexPattern;
 import edu.stanford.nlp.util.CoreMap;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.regex.Pattern;
+
 /**
  * Implementation of English language parsing logic for the Stanford parser
  *
  * @author Maria
  */
-class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserStrategy
-{
+class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserStrategy {
 	private AbstractDocument workingDoc;
 
-	private int	dependencyCount;	// count dependencies - correspond to token count without punctuation
-	private int	wordCount;			// count words (without numbers, symbols and punctuation)
-	private int	tokenCount;			// count tokens (incl. numbers, symbols and punctuation)
-	private int	sentenceCount;		// count sentences
-	private int	depthCount;			// count tree depthCount
-	private int	characterCount;		// count characters in words
+	private int dependencyCount;    // count dependencies - correspond to token count without punctuation
+	private int wordCount;            // count words (without numbers, symbols and punctuation)
+	private int tokenCount;            // count tokens (incl. numbers, symbols and punctuation)
+	private int sentenceCount;        // count sentences
+	private int depthCount;            // count tree depthCount
+	private int characterCount;        // count characters in words
 
 	// for easier access; is reset in every inspectSentence():
-	private boolean	conditionalFound;
-	private boolean	usedFound;				// for the "used to" construction
-	private int		goingToFound;
-	private boolean	comparativeMoreFound;
-	private boolean	superlativeMostFound;
+	private boolean conditionalFound;
+	private boolean usedFound;                // for the "used to" construction
+	private int goingToFound;
+	private boolean comparativeMoreFound;
+	private boolean superlativeMostFound;
 
-	private Tree						treeOutput;		// syntax tree: output from parser (Stanford CoreNLP)
-	private List<CoreLabel>				wordsOutput;	// annotated words: output from parser (Stanford CoreNLP)
-	private Collection<TypedDependency>	depsOutput;		// dependencies: output from parser (Stanford CoreNLP)
+	private Tree treeOutput;        // syntax tree: output from parser (Stanford CoreNLP)
+	private List<CoreLabel> wordsOutput;    // annotated words: output from parser (Stanford CoreNLP)
+	private Collection<TypedDependency> depsOutput;        // dependencies: output from parser (Stanford CoreNLP)
 
-	public StanfordDocumentParserEnglishStrategy()
-	{
+	public StanfordDocumentParserEnglishStrategy() {
 		workingDoc = null;
 		// treeOutput = null;
 		// wordsOutput = null;
@@ -66,11 +63,9 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 	}
 
 	private void initializeState(AbstractDocument doc) {
-		if (pipeline == null)
-		{
+		if (pipeline == null) {
 			throw new IllegalStateException("Parser not set");
-		} else if (isLanguageSupported(doc.getLanguage()) == false)
-		{
+		} else if (isLanguageSupported(doc.getLanguage()) == false) {
 			throw new IllegalArgumentException("Document language " + doc.getLanguage()
 					+ " not supported (Strategy language: " + Language.ENGLISH + ")");
 		}
@@ -103,8 +98,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 	}
 
 	private void inspectSentence(Tree tree, List<CoreLabel> words, Collection<TypedDependency> deps) {
-		if (words == null || words.isEmpty())
-		{
+		if (words == null || words.isEmpty()) {
 			return;
 		}
 
@@ -141,43 +135,36 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 
 		// independent of type of sentence
 		////// go through the wordsOutput (CoreLabels) for POS tags
-		for (CoreLabel label : wordsOutput)
-		{
+		for (CoreLabel label : wordsOutput) {
 			String labelTag = label.tag().toLowerCase();
 			String labelWord = label.word().toLowerCase();
 			if (labelTag != null && labelWord != null
-					&& (!(labelTag.equalsIgnoreCase(".") || labelTag.equalsIgnoreCase(","))))
-			{
+					&& (!(labelTag.equalsIgnoreCase(".") || labelTag.equalsIgnoreCase(",")))) {
 
 				// >>> negation (first part; the other part in TypedDependency itr
 				// words that won't occur in a dependency "neg":
 				// "neither", "nobody", "none", "nothing", "nor", "nowhere"
 				// "hardly", "scarcely", "rarely", "seldom", "barely"
-				if (EnglishGrammaticalConstants.NEGATION.contains(labelWord.toLowerCase()))
-				{
+				if (EnglishGrammaticalConstants.NEGATION.contains(labelWord.toLowerCase())) {
 					addConstructionOccurrence(GrammaticalConstruction.NEGATION_ALL, label.beginPosition(),
 							label.endPosition(), labelWord);
-				} else if (EnglishGrammaticalConstants.PARTIAL_NEGATION.contains(labelWord.toLowerCase()))
-				{
+				} else if (EnglishGrammaticalConstants.PARTIAL_NEGATION.contains(labelWord.toLowerCase())) {
 					addConstructionOccurrence(GrammaticalConstruction.NEGATION_PARTIAL, label.beginPosition(),
 							label.endPosition(), labelWord);
 				}
 
 				// >>> "used to"
-				if (usedFound)
-				{
+				if (usedFound) {
 					findUsedTo(label, labelWord, labelTag);
 				}
 
 				// >>> "going to"
-				if (goingToFound > 0)
-				{
+				if (goingToFound > 0) {
 					findGoingTo(label, labelWord, labelTag);
 				}
 
 				// >>> "a lot of" quantifier
-				if (labelWord.equalsIgnoreCase("lot"))
-				{
+				if (labelWord.equalsIgnoreCase("lot")) {
 					int lotInd = label.index() - 1; // indices start at 1 !!!
 					// conditions:
 					// 1. it is not the first or the last word ("a" and "of" has to surround it)
@@ -185,8 +172,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 					// 3. it is followed by "of"
 					if (lotInd > 0 && lotInd < wordsOutput.size() - 1
 							&& wordsOutput.get(lotInd - 1).word().equalsIgnoreCase("a")
-							&& wordsOutput.get(lotInd + 1).word().equalsIgnoreCase("of"))
-					{
+							&& wordsOutput.get(lotInd + 1).word().equalsIgnoreCase("of")) {
 						addConstructionOccurrence(GrammaticalConstruction.DETERMINER_A_LOT_OF,
 								wordsOutput.get(label.index() - 1).beginPosition(),
 								wordsOutput.get(label.index() + 1).endPosition(), "a " + labelWord + " of");
@@ -194,36 +180,29 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 				}
 
 				//// >>> degrees of comparison of LONG adjectives and adverbs: "more/RBR beautiful/JJ", "most/RBS beautiful/JJ" (PROBLEM ???)
-				if (comparativeMoreFound && (labelTag.equalsIgnoreCase("jj") || labelTag.equalsIgnoreCase("rb")))
-				{
+				if (comparativeMoreFound && (labelTag.equalsIgnoreCase("jj") || labelTag.equalsIgnoreCase("rb"))) {
 					addLongComparative(label, labelWord, labelTag);
-				} else if (superlativeMostFound && (labelTag.equalsIgnoreCase("jj") || labelTag.equalsIgnoreCase("rb")))
-				{
+				} else if (superlativeMostFound && (labelTag.equalsIgnoreCase("jj") || labelTag.equalsIgnoreCase("rb"))) {
 					addLongSuperlative(label, labelWord, labelTag);
 				}
 				//// >>> degrees of comparison of SHORT adverbs
-				else if (labelTag.equalsIgnoreCase("rbr"))
-				{
+				else if (labelTag.equalsIgnoreCase("rbr")) {
 					addShortComparativeAdv(label, labelWord);
-				} else if (labelTag.equalsIgnoreCase("rbs"))
-				{
+				} else if (labelTag.equalsIgnoreCase("rbs")) {
 					addShortSuperlativeAdv(label, labelWord);
 				}
 				//// >>> forms of adjectives (except for long comparative and superlative forms
-				else if (labelTag.startsWith("jj"))
-				{
+				else if (labelTag.startsWith("jj")) {
 					addAdjectiveForms(label, labelWord, labelTag);
 				}
 
 				//// >>> pronouns (reflexive or possessive)
-				else if (labelTag.toLowerCase().startsWith("prp"))
-				{
+				else if (labelTag.toLowerCase().startsWith("prp")) {
 					addReflexiveAndPossessivePronouns(label, labelWord, labelTag);
 				}
 				// Stanford sometimes parses such sentences incorrectly (as PRP$: his, yours, its; as NN: mine, hers; as JJ: theirs): "This is mine/hers."
 				// Therefore, there might be false positives in PRONOUNS ("This is mine." vs. "This is a mine." will both be added)
-				else if (EnglishGrammaticalConstants.POSSESSIVE_ABSOLUTE_PRONOUNS.contains(labelWord))
-				{
+				else if (EnglishGrammaticalConstants.POSSESSIVE_ABSOLUTE_PRONOUNS.contains(labelWord)) {
 					addConstructionOccurrence(GrammaticalConstruction.PRONOUNS_POSSESSIVE_ABSOLUTE,
 							label.beginPosition(), label.endPosition(), labelWord);
 					addConstructionOccurrence(GrammaticalConstruction.PRONOUNS, label.beginPosition(),
@@ -232,34 +211,29 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 
 				//// >>> conjunctions (all or simple)
 				else if (labelTag.equalsIgnoreCase("in") || labelTag.equalsIgnoreCase("cc")
-						|| labelTag.equalsIgnoreCase("rb") || labelTag.equalsIgnoreCase("wrb"))
-				{
+						|| labelTag.equalsIgnoreCase("rb") || labelTag.equalsIgnoreCase("wrb")) {
 					addConjunctions(label, labelWord, labelTag);
 				}
 
 				//// NOT HERE : determiners (some, any) - see dependencies
 				//// HERE: >>> articles (a, an, the)
-				else if (labelTag.equalsIgnoreCase("dt"))
-				{
+				else if (labelTag.equalsIgnoreCase("dt")) {
 					addArticles(label, labelWord);
 				}
 
 				//// >>> ing noun forms
-				else if (labelTag.startsWith("nn"))
-				{
+				else if (labelTag.startsWith("nn")) {
 					findIngNounForms(label, labelWord, labelTag);
 				}
 
 				//// >>> modals
-				else if (labelTag.equalsIgnoreCase("md"))
-				{
+				else if (labelTag.equalsIgnoreCase("md")) {
 					// includes "will"
 					addModalVerb(label, labelWord);
 				}
 
 				//// >>> verb forms
-				else if (labelTag.startsWith("v") || labelTag.equalsIgnoreCase("md"))
-				{
+				else if (labelTag.startsWith("v") || labelTag.equalsIgnoreCase("md")) {
 					// already in lower case // include modals "will" and "would" ++
 					findVerbFormsPOS(label, labelWord, labelTag);
 				}
@@ -267,8 +241,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 		}
 
 		////// go through the DEPENDENCIES
-		for (TypedDependency dependency : depsOutput)
-		{
+		for (TypedDependency dependency : depsOutput) {
 			String rel = dependency.reln().toString();
 
 			IndexedWord dep = dependency.dep();
@@ -285,88 +258,73 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 			int start = -1;
 			int end = -1;
 
-			if (rel.equalsIgnoreCase("root"))
-			{
+			if (rel.equalsIgnoreCase("root")) {
 				start = dep.beginPosition();
 				end = dep.endPosition();
 			} // if not a root dependency
-			else if (depBegin < govBegin)
-			{
+			else if (depBegin < govBegin) {
 				start = depBegin;
 				end = govEnd;
-			} else
-			{
+			} else {
 				start = govBegin;
 				end = depEnd;
 			}
 			// by this point there has to be a value assigned to each start and end
-			if (start < 0 || end < 0)
-			{
+			if (start < 0 || end < 0) {
 				System.out.println("Wrong highlight indices for dependencies!: rel " + rel);
 			}
 
 			// if there is a null value anywhere (if rel is ROOT, gov.word() is null)
 			if (gov.word() == null || gov.lemma() == null || gov.tag() == null || dep.word() == null
-					|| dep.lemma() == null || dep.tag() == null)
-			{
+					|| dep.lemma() == null || dep.tag() == null) {
 				// skip to next dependency
 				continue;
 			}
 
 			// >>> negation
 			//// >>> (continue) negation dependency (noNotNever, nt, not) (first part in CoreLabel itr)
-			if (rel.equalsIgnoreCase("neg"))
-			{
+			if (rel.equalsIgnoreCase("neg")) {
 				addNegation(dependency, dep, depBegin, depEnd);
 			}
 
 			//// >>> there is / there are: expl( is-3 , there-2 )
-			else if (rel.toLowerCase().equalsIgnoreCase("expl") && dep.word().equalsIgnoreCase("there"))
-			{
+			else if (rel.toLowerCase().equalsIgnoreCase("expl") && dep.word().equalsIgnoreCase("there")) {
 				addExistentialThere(dependency, start, end, gov);
 			}
 
 			//// >>> prepositions (incl. simple)
-			else if (rel.toLowerCase().startsWith("prep"))
-			{
+			else if (rel.toLowerCase().startsWith("prep")) {
 				findPrepositions(dependency, depBegin, depEnd, rel, dep, gov);
 			}
 
 			//// >>> objective and subjective pronouns
 			// nsubj rel here!
-			else if (rel.equalsIgnoreCase("iobj") || rel.equalsIgnoreCase("dobj") || rel.equalsIgnoreCase("nsubj"))
-			{
+			else if (rel.equalsIgnoreCase("iobj") || rel.equalsIgnoreCase("dobj") || rel.equalsIgnoreCase("nsubj")) {
 				addSubjectiveAndObjectivePronouns(dependency, start, end, rel, dep, depBegin, depEnd);
 			}
 
 			//// >>> determinets some, any
-			else if (rel.equalsIgnoreCase("det") || rel.equalsIgnoreCase("amod"))
-			{
+			else if (rel.equalsIgnoreCase("det") || rel.equalsIgnoreCase("amod")) {
 				addSomeAnyMuchMany(dependency, gov, dep, rel);
 			}
 
 			//// >>> verb forms
-			else if (rel.equalsIgnoreCase("aux"))
-			{
+			else if (rel.equalsIgnoreCase("aux")) {
 				// >>> emphatic do and to-infinitive
 				findVerbFormsDep(dependency, start, end, gov, dep, depBegin, depEnd);
-			} else if (rel.equalsIgnoreCase("cop"))
-			{
+			} else if (rel.equalsIgnoreCase("cop")) {
 				addConstructionOccurrence(GrammaticalConstruction.VERBFORM_COPULAR, start, end, dependency.toString());
-			} else if (rel.equalsIgnoreCase("prt") && gov.tag().startsWith("V"))
-			{
+			} else if (rel.equalsIgnoreCase("prt") && gov.tag().startsWith("V")) {
 				addConstructionOccurrence(GrammaticalConstruction.VERBS_PHRASAL, start, end, dependency.toString());
 			}
 		}
 
 		//// second round for: conditionals
-		if (conditionalFound)
-		{
+		if (conditionalFound) {
 			identifyConditionals(wordsOutput, depsOutput);
 		} // look for tenses only 'outside' of conditionals!
-			// after the first iteration over all dependencies
-		else
-		{
+		// after the first iteration over all dependencies
+		else {
 			// if conditional not found -> look for tenses/times/aspects/voice
 			identifyTenses(depsOutput);
 		}
@@ -380,22 +338,18 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 		int endInd = wordsOutput.get(wordsOutput.size() - 1).endPosition();
 
 		int numSBAR = countSubstr("SBAR ", treeStr); // the whitespace is important!
-		if (numSBAR > 0)
-		{
+		if (numSBAR > 0) {
 			addConstructionOccurrence(GrammaticalConstruction.SENTENCE_COMPLEX, startInd, endInd, treeStr); // highlight the whole sentence
-			for (int i = 0; i < numSBAR; i++)
-			{
+			for (int i = 0; i < numSBAR; i++) {
 				addConstructionOccurrence(GrammaticalConstruction.CLAUSE_SUBORDINATE, startInd, endInd, treeStr); // highlight the whole sentence
 			}
 
 			int withCC = countSubstr("(sbar (whnp ", treeStr.toLowerCase()); // with a conjunction // TODO: can be an indirect question: "She asked me what I like" -> check for reporting wordsOutput in dependency?
 			int withoutCC = countSubstr("(sbar (s ", treeStr.toLowerCase()); // reduced relative clauses "The man I saw" // TODO: check
-			for (int i = 0; i < withCC; i++)
-			{
+			for (int i = 0; i < withCC; i++) {
 				addConstructionOccurrence(GrammaticalConstruction.CLAUSE_RELATIVE, startInd, endInd, treeStr); // highlight the whole sentence
 			}
-			for (int i = 0; i < withoutCC; i++)
-			{
+			for (int i = 0; i < withoutCC; i++) {
 				addConstructionOccurrence(GrammaticalConstruction.CLAUSE_RELATIVE_REDUCED, startInd, endInd, treeStr); // highlight the whole sentence
 			}
 
@@ -416,35 +370,26 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 			// indirectQuestionFound = true;
 			// }
 
-			if (numOfAdvClIF > 0 || numOfAdvUnless > 0)
-			{
+			if (numOfAdvClIF > 0 || numOfAdvUnless > 0) {
 				conditionalFound = true;
 			}
-		} else if (numSBAR == 0)
-		{
+		} else if (numSBAR == 0) {
 			int numOfS = countSubstr("S ", treeStr); // whitespace is important!
-			if (numOfS == 1)
-			{
+			if (numOfS == 1) {
 				// incomplete sentence (no VP or NP)
-				if (!(treeStr.contains("VP") && treeStr.contains("NP")))
-				{
+				if (!(treeStr.contains("VP") && treeStr.contains("NP"))) {
 					addConstructionOccurrence(GrammaticalConstruction.SENTENCE_INCOMPLETE, startInd, endInd, treeStr); // highlight the whole sentence
-				} else
-				{
+				} else {
 					addConstructionOccurrence(GrammaticalConstruction.SENTENCE_SIMPLE, startInd, endInd, treeStr); // highlight the whole sentence
 				}
-			} else if (numOfS > 1)
-			{
+			} else if (numOfS > 1) {
 				// changed: also when numOfS > 1, it can be incomplete
-				if (!(treeStr.contains("VP") && treeStr.contains("NP")))
-				{
+				if (!(treeStr.contains("VP") && treeStr.contains("NP"))) {
 					addConstructionOccurrence(GrammaticalConstruction.SENTENCE_INCOMPLETE, startInd, endInd, treeStr); // highlight the whole sentence
-				} else
-				{
+				} else {
 					addConstructionOccurrence(GrammaticalConstruction.SENTENCE_COMPOUND, startInd, endInd, treeStr);
 				}
-			} else
-			{
+			} else {
 				addConstructionOccurrence(GrammaticalConstruction.SENTENCE_INCOMPLETE, startInd, endInd, treeStr);
 			}
 		}
@@ -465,8 +410,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 		int haveStart = -1;
 		IndexedWord theVerb = null;
 
-		for (TypedDependency dependency : dependencies)
-		{
+		for (TypedDependency dependency : dependencies) {
 			String rel = dependency.reln().getShortName().toLowerCase(); // dependency relation
 			IndexedWord gov = dependency.gov();
 			IndexedWord dep = dependency.dep();
@@ -478,35 +422,28 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 			int govEnd = gov.endPosition();
 			int start = -1;
 			int end = -1;
-			if (depBegin < govBegin)
-			{
+			if (depBegin < govBegin) {
 				start = depBegin;
 				end = govEnd;
-			} else
-			{
+			} else {
 				start = govBegin;
 				end = depEnd;
 			}
 
-			if (start < 0 || end < 0)
-			{
-				if (rel.equalsIgnoreCase("root"))
-				{
+			if (start < 0 || end < 0) {
+				if (rel.equalsIgnoreCase("root")) {
 					start = dep.beginPosition();
 					end = dep.endPosition();
 				}
-				if (start < 0 || end < 0)
-				{
+				if (start < 0 || end < 0) {
 					System.out.println("Wrong highlight indices for dependencies - identifyTenses!");
 				}
 			}
 
 			// first examine the root (the main verb phrase)
-			if (rel.equalsIgnoreCase("root") && verbIndex != dep.index())
-			{
+			if (rel.equalsIgnoreCase("root") && verbIndex != dep.index()) {
 				// roughly identify the aspect (any Time)
-				if (dep.tag().toLowerCase().startsWith("v"))
-				{
+				if (dep.tag().toLowerCase().startsWith("v")) {
 					verbIndex = dep.index();
 					theVerb = dep;
 
@@ -527,8 +464,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 				}
 			} // don't only look at the root, find other verb phrases
 			else if ((rel.equalsIgnoreCase("nsubj") || rel.equalsIgnoreCase("nsubjpass"))
-					&& gov.tag().toLowerCase().startsWith("v") && gov.index() != verbIndex)
-			{
+					&& gov.tag().toLowerCase().startsWith("v") && gov.index() != verbIndex) {
 				// != condition: don't count 1 verb twice: as root() and nsubj()
 				verbIndex = gov.index();
 				theVerb = gov;
@@ -547,23 +483,19 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 				pastPartFound = found[1];
 				baseFormFound = found[2];
 
-			} else if (rel.equalsIgnoreCase("aux"))
-			{
+			} else if (rel.equalsIgnoreCase("aux")) {
 
-				if (dep.word().equalsIgnoreCase("will") && (!gov.tag().toLowerCase().startsWith("v")))
-				{
+				if (dep.word().equalsIgnoreCase("will") && (!gov.tag().toLowerCase().startsWith("v"))) {
 					willCopulaFound = true;
 					willStart = dep.beginPosition();
 				}
 
 				// simple Aspect
-				if (baseFormFound && theVerb != null & verbIndex == gov.index())
-				{
+				if (baseFormFound && theVerb != null & verbIndex == gov.index()) {
 					// ! simpleAspect - already added above ???
 					// future
 					if (dep.word().equalsIgnoreCase("will")
-							|| (dep.word().equalsIgnoreCase("shall") && dep.index() > 1))
-					{
+							|| (dep.word().equalsIgnoreCase("shall") && dep.index() > 1)) {
 						// Future Simple
 						addConstructionOccurrence(GrammaticalConstruction.ASPECT_SIMPLE, depBegin,
 								theVerb.endPosition(), dependency.toString());
@@ -572,8 +504,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 						addConstructionOccurrence(GrammaticalConstruction.TENSE_FUTURE_SIMPLE, depBegin,
 								theVerb.endPosition(), dependency.toString());
 					} // past (negation or question)
-					else if (dep.word().equalsIgnoreCase("did"))
-					{
+					else if (dep.word().equalsIgnoreCase("did")) {
 						// Past Simple negation or question
 						addConstructionOccurrence(GrammaticalConstruction.ASPECT_SIMPLE, depBegin,
 								theVerb.endPosition(), dependency.toString());
@@ -582,23 +513,19 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 						addConstructionOccurrence(GrammaticalConstruction.TENSE_PAST_SIMPLE, depBegin,
 								theVerb.endPosition(), dependency.toString());
 					} // present (negation or question)
-					else if (dep.word().equalsIgnoreCase("do") || dep.word().equalsIgnoreCase("does"))
-					{
+					else if (dep.word().equalsIgnoreCase("do") || dep.word().equalsIgnoreCase("does")) {
 						// no modals!
 						// NOT incl. emphatic do
 						List<ConstructionOccurrence> imperativeOccs = workingDoc
 								.getConstructionData(GrammaticalConstruction.IMPERATIVES).getOccurrences();
 						boolean imperativeFound = false;
-						for (ConstructionOccurrence occ : imperativeOccs)
-						{
-							if (occ.getStart() == depBegin)
-							{
+						for (ConstructionOccurrence occ : imperativeOccs) {
+							if (occ.getStart() == depBegin) {
 								imperativeFound = true;
 								break;
 							}
 						}
-						if (!imperativeFound)
-						{
+						if (!imperativeFound) {
 							// Present Simple negation or question
 							addConstructionOccurrence(GrammaticalConstruction.ASPECT_SIMPLE, depBegin,
 									theVerb.endPosition(), dependency.toString());
@@ -616,16 +543,13 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 
 				//// >>> Perfect aspect
 				// after aux(done,will) is found: Future Perfect, Passive
-				if (willDoneFound)
-				{
-					if (dep.word().equalsIgnoreCase("have"))
-					{
+				if (willDoneFound) {
+					if (dep.word().equalsIgnoreCase("have")) {
 						// Future Perfect, Passive (perfect)
 						willHaveDoneFound = true;
 						haveHasDoneFound = true;
 					} // Passive (simple): just in case: normally under auxpass() dependency
-					else if (dep.word().equalsIgnoreCase("be") || dep.word().equalsIgnoreCase("get"))
-					{
+					else if (dep.word().equalsIgnoreCase("be") || dep.word().equalsIgnoreCase("get")) {
 						addConstructionOccurrence(GrammaticalConstruction.PASSIVE_VOICE, start, end,
 								dependency.toString());
 						willDoneFound = false;
@@ -634,15 +558,12 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 					}
 
 				} // after willHaveDoneFound is found : Future Perfect, Passive (perfect)
-				else if (willHaveDoneFound)
-				{
+				else if (willHaveDoneFound) {
 					// >>> Passive (perfect): just in case: normally under auxpass() dependency
-					if (dep.word().equalsIgnoreCase("been"))
-					{
+					if (dep.word().equalsIgnoreCase("been")) {
 						addConstructionOccurrence(GrammaticalConstruction.PASSIVE_VOICE, start, end,
 								dependency.toString());
-					} else if (willStart == -1)
-					{
+					} else if (willStart == -1) {
 						addConstructionOccurrence(GrammaticalConstruction.TIME_FUTURE, willStart, end,
 								dependency.toString());
 						addConstructionOccurrence(GrammaticalConstruction.TENSE_FUTURE_PERFECT, willStart, end,
@@ -660,45 +581,36 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 					haveStart = -1;
 					willStart = -1;
 				} // after aux(done,had) is found : Past Perfect, Passive
-					// but we're at aux() dependency now: in case of Past Perfect, we wouldn't be here
-				else if (hadDoneFound)
-				{
+				// but we're at aux() dependency now: in case of Past Perfect, we wouldn't be here
+				else if (hadDoneFound) {
 					// Passive (perfect) : just in case: normally under auxpass() dependency
 					if (dep.word().equalsIgnoreCase("been") || dep.word().equalsIgnoreCase("got")
-							|| dep.word().equalsIgnoreCase("gotten"))
-					{
-						if (gov.tag().equalsIgnoreCase("vbn"))
-						{
+							|| dep.word().equalsIgnoreCase("gotten")) {
+						if (gov.tag().equalsIgnoreCase("vbn")) {
 							addConstructionOccurrence(GrammaticalConstruction.PASSIVE_VOICE, start, end,
 									dependency.toString());
 						}
 					}
 				} // after aux(done,have/has) is found : Present Perfect, Passive
-				else if (haveHasDoneFound)
-				{
+				else if (haveHasDoneFound) {
 					// Passive (perfect) : just in case: normally under auxpass() dependency
 					if (dep.word().equalsIgnoreCase("been") || dep.word().equalsIgnoreCase("got")
-							|| dep.word().equalsIgnoreCase("gotten"))
-					{
-						if (gov.tag().equalsIgnoreCase("vbn"))
-						{
+							|| dep.word().equalsIgnoreCase("gotten")) {
+						if (gov.tag().equalsIgnoreCase("vbn")) {
 							addConstructionOccurrence(GrammaticalConstruction.PASSIVE_VOICE, start, end,
 									dependency.toString());
 						}
 					}
 				} // ? right after "done" as main verb is found
-				else if (!(willDoneFound || hadDoneFound || haveHasDoneFound))
-				{
+				else if (!(willDoneFound || hadDoneFound || haveHasDoneFound)) {
 					// future
 					if (pastPartFound && dep.word().equalsIgnoreCase("will")
-							|| (dep.word().equalsIgnoreCase("shall") && dep.index() > 1))
-					{ // indices start at 1 !!!
+							|| (dep.word().equalsIgnoreCase("shall") && dep.index() > 1)) { // indices start at 1 !!!
 						// can still be: Future Perfect, Passive
 						willDoneFound = true;
 						willStart = dep.beginPosition();
 					} // past
-					else if (dep.word().equalsIgnoreCase("had"))
-					{
+					else if (dep.word().equalsIgnoreCase("had")) {
 
 						// can still be: Past Perfect, Passive
 						// sometimes the order is different:
@@ -706,8 +618,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 						// rcmod(foreigners-4, moved-7)
 						// nsubj(moved-7, who-5)
 						// aux(moved-7, have-6)
-						if (pastPartFound && theVerb != null && gov.beginPosition() == theVerb.beginPosition())
-						{
+						if (pastPartFound && theVerb != null && gov.beginPosition() == theVerb.beginPosition()) {
 							haveStart = dep.beginPosition();
 							addConstructionOccurrence(GrammaticalConstruction.TIME_PAST, haveStart,
 									theVerb.endPosition(), dependency.toString());
@@ -718,16 +629,14 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 							// hadDoneFound = false;
 							// haveStart = -1;
 							// pastPartFound = false;
-						} else
-						{
+						} else {
 							hadDoneFound = true;
 							haveStart = dep.beginPosition();
 							theVerb = gov;
 							verbIndex = gov.index();
 						}
 					} // present
-					else if (dep.word().equalsIgnoreCase("have") || dep.word().equalsIgnoreCase("has"))
-					{
+					else if (dep.word().equalsIgnoreCase("have") || dep.word().equalsIgnoreCase("has")) {
 						// no modals!
 						// can still be: Present Perfect, Passive
 						// sometimes the order is different:
@@ -735,8 +644,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 						// rcmod(foreigners-4, moved-7)
 						// nsubj(moved-7, who-5)
 						// aux(moved-7, have-6)
-						if (pastPartFound && theVerb != null && gov.beginPosition() == theVerb.beginPosition())
-						{
+						if (pastPartFound && theVerb != null && gov.beginPosition() == theVerb.beginPosition()) {
 							haveStart = dep.beginPosition();
 							addConstructionOccurrence(GrammaticalConstruction.TIME_PRESENT, haveStart,
 									theVerb.endPosition(), dependency.toString());
@@ -747,8 +655,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 							// haveHasDoneFound = false;
 							// haveStart = -1;
 							// pastPartFound = false;
-						} else
-						{
+						} else {
 							haveHasDoneFound = true;
 							haveStart = dep.beginPosition();
 							theVerb = gov;
@@ -758,12 +665,9 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 				}
 
 				//// >>> Progressive aspect : Present/Past/Future Progressive, Present/Past/Future Perfect Progressive,
-				if ((ingFound && theVerb != null) || gov.tag().equalsIgnoreCase("vbg"))
-				{
-					if (willDoingFound)
-					{
-						if (dep.word().equalsIgnoreCase("be"))
-						{
+				if ((ingFound && theVerb != null) || gov.tag().equalsIgnoreCase("vbg")) {
+					if (willDoingFound) {
+						if (dep.word().equalsIgnoreCase("be")) {
 							// Future Progressive
 							addConstructionOccurrence(GrammaticalConstruction.TIME_FUTURE, willStart, gov.endPosition(),
 									dependency.toString());
@@ -771,8 +675,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 									gov.endPosition(), dependency.toString());
 							addConstructionOccurrence(GrammaticalConstruction.ASPECT_PROGRESSIVE, willStart,
 									gov.endPosition(), dependency.toString());
-						} else if (dep.word().equalsIgnoreCase("have"))
-						{
+						} else if (dep.word().equalsIgnoreCase("have")) {
 							addConstructionOccurrence(GrammaticalConstruction.TIME_FUTURE, willStart, gov.endPosition(),
 									dependency.toString());
 							addConstructionOccurrence(GrammaticalConstruction.TENSE_FUTURE_PERFECT_PROGRESSIVE,
@@ -785,14 +688,12 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 						willStart = -1;
 						verbIndex = -1;
 						theVerb = null;
-					} else if (dep.word().equalsIgnoreCase("will"))
-					{
+					} else if (dep.word().equalsIgnoreCase("will")) {
 						// >>> Future Progressive, Future Perfect Progressive
 						willDoingFound = true;
 						willStart = dep.beginPosition();
 					} else if (dep.word().equalsIgnoreCase("am") || dep.word().equalsIgnoreCase("are")
-							|| dep.word().equalsIgnoreCase("is"))
-					{
+							|| dep.word().equalsIgnoreCase("is")) {
 						// >>> Present Progressive
 						addConstructionOccurrence(GrammaticalConstruction.TIME_PRESENT, depBegin, gov.endPosition(),
 								dependency.toString());
@@ -802,8 +703,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 								gov.endPosition(), dependency.toString());
 						verbIndex = -1;
 						theVerb = null;
-					} else if (dep.word().equalsIgnoreCase("was") || dep.word().equalsIgnoreCase("were"))
-					{
+					} else if (dep.word().equalsIgnoreCase("was") || dep.word().equalsIgnoreCase("were")) {
 						// >>> Past Progressive
 						addConstructionOccurrence(GrammaticalConstruction.TIME_PAST, depBegin, gov.endPosition(),
 								dependency.toString());
@@ -814,8 +714,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 						verbIndex = -1;
 						theVerb = null;
 					} else if ((!willDoingFound)
-							&& (dep.word().equalsIgnoreCase("have") || dep.word().equalsIgnoreCase("has")))
-					{
+							&& (dep.word().equalsIgnoreCase("have") || dep.word().equalsIgnoreCase("has"))) {
 						// >>> Present Perfect Progressive
 						addConstructionOccurrence(GrammaticalConstruction.TIME_PRESENT, depBegin, gov.endPosition(),
 								dependency.toString());
@@ -827,8 +726,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 						theVerb = null;
 						haveHasDoneFound = false;
 						haveStart = -1;
-					} else if ((!willDoingFound) && (dep.word().equalsIgnoreCase("had")))
-					{
+					} else if ((!willDoingFound) && (dep.word().equalsIgnoreCase("had"))) {
 						// >>> Past Perfect Progressive
 						addConstructionOccurrence(GrammaticalConstruction.TIME_PAST, depBegin, gov.endPosition(),
 								dependency.toString());
@@ -845,12 +743,10 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 					ingFound = false;
 				}
 				//// >>> passive
-			} else if (rel.equalsIgnoreCase("auxpass"))
-			{
+			} else if (rel.equalsIgnoreCase("auxpass")) {
 				// only with verb==root! TODO change!
 
-				if (dep.word().equalsIgnoreCase("was") || dep.word().equalsIgnoreCase("were"))
-				{
+				if (dep.word().equalsIgnoreCase("was") || dep.word().equalsIgnoreCase("were")) {
 					addConstructionOccurrence(GrammaticalConstruction.ASPECT_SIMPLE, dep.beginPosition(),
 							gov.endPosition(), dependency.toString());
 					addConstructionOccurrence(GrammaticalConstruction.TIME_PAST, dep.beginPosition(), gov.endPosition(),
@@ -858,8 +754,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 					addConstructionOccurrence(GrammaticalConstruction.TENSE_PAST_SIMPLE, dep.beginPosition(),
 							gov.endPosition(), dependency.toString());
 				} else if (dep.word().equalsIgnoreCase("is") || dep.word().equalsIgnoreCase("am")
-						|| dep.word().equalsIgnoreCase("are"))
-				{
+						|| dep.word().equalsIgnoreCase("are")) {
 					addConstructionOccurrence(GrammaticalConstruction.ASPECT_SIMPLE, dep.beginPosition(),
 							gov.endPosition(), dependency.toString());
 					addConstructionOccurrence(GrammaticalConstruction.TIME_PRESENT, dep.beginPosition(),
@@ -873,8 +768,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 				verbIndex = -1;
 				theVerb = null;
 
-				if (willHaveDoneFound)
-				{
+				if (willHaveDoneFound) {
 					addConstructionOccurrence(GrammaticalConstruction.TIME_FUTURE, willStart, end,
 							dependency.toString());
 					addConstructionOccurrence(GrammaticalConstruction.ASPECT_PERFECT, willStart, end,
@@ -888,22 +782,18 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 					haveStart = -1;
 				}
 
-				if (haveHasDoneFound)
-				{
+				if (haveHasDoneFound) {
 					haveHasDoneFound = false;
 					haveStart = -1;
 				}
 
-				if (hadDoneFound)
-				{
+				if (hadDoneFound) {
 					hadDoneFound = false;
 					haveStart = -1;
 				}
 
-			} else if (theVerb != null && verbIndex > 0 && haveHasDoneFound && (!rel.equalsIgnoreCase("auxpass")))
-			{
-				if (willHaveDoneFound)
-				{
+			} else if (theVerb != null && verbIndex > 0 && haveHasDoneFound && (!rel.equalsIgnoreCase("auxpass"))) {
+				if (willHaveDoneFound) {
 					// >>> Future Perfect
 					addConstructionOccurrence(GrammaticalConstruction.TIME_FUTURE, willStart, theVerb.endPosition(),
 							dependency.toString());
@@ -914,8 +804,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 					willHaveDoneFound = false;
 					willDoneFound = false;
 					willStart = -1;
-				} else
-				{
+				} else {
 					// >>> Present Perfect
 					addConstructionOccurrence(GrammaticalConstruction.TIME_PRESENT, haveStart, theVerb.endPosition(),
 							dependency.toString());
@@ -929,8 +818,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 				verbIndex = -1;
 				theVerb = null;
 				haveStart = -1;
-			} else if (theVerb != null && verbIndex > 0 && hadDoneFound && (!rel.equalsIgnoreCase("auxpass")))
-			{
+			} else if (theVerb != null && verbIndex > 0 && hadDoneFound && (!rel.equalsIgnoreCase("auxpass"))) {
 				// >>> Past Perfect
 				addConstructionOccurrence(GrammaticalConstruction.TIME_PAST, haveStart, theVerb.endPosition(),
 						dependency.toString());
@@ -942,26 +830,21 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 				haveStart = -1;
 				verbIndex = -1;
 				theVerb = null;
-			} else if (rel.equalsIgnoreCase("cop"))
-			{
-				if (haveHasDoneFound)
-				{
+			} else if (rel.equalsIgnoreCase("cop")) {
+				if (haveHasDoneFound) {
 					addConstructionOccurrence(GrammaticalConstruction.TIME_PRESENT, start, end, dependency.toString());
 					addConstructionOccurrence(GrammaticalConstruction.TENSE_PRESENT_PERFECT, start, end,
 							dependency.toString());
 					addConstructionOccurrence(GrammaticalConstruction.ASPECT_PERFECT, start, end,
 							dependency.toString());
-				} else if (hadDoneFound)
-				{
+				} else if (hadDoneFound) {
 					addConstructionOccurrence(GrammaticalConstruction.TIME_PAST, start, end, dependency.toString());
 					addConstructionOccurrence(GrammaticalConstruction.TENSE_PAST_PERFECT, start, end,
 							dependency.toString());
 					addConstructionOccurrence(GrammaticalConstruction.ASPECT_PERFECT, start, end,
 							dependency.toString());
-				} else
-				{
-					switch (dep.tag().toLowerCase())
-					{
+				} else {
+					switch (dep.tag().toLowerCase()) {
 					case "vbp":
 					case "vbz":
 						addConstructionOccurrence(GrammaticalConstruction.ASPECT_SIMPLE, start, end,
@@ -979,8 +862,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 						addConstructionOccurrence(GrammaticalConstruction.TIME_PAST, start, end, dependency.toString());
 						break;
 					case "vb":
-						if (willCopulaFound)
-						{
+						if (willCopulaFound) {
 							addConstructionOccurrence(GrammaticalConstruction.ASPECT_SIMPLE, start, end,
 									"will " + dependency.toString());
 							addConstructionOccurrence(GrammaticalConstruction.TENSE_FUTURE_SIMPLE, willStart, end,
@@ -1006,22 +888,19 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 		boolean pastPartFound = found[1];
 		boolean baseFormFound = found[2];
 
-		if (verb.tag().equalsIgnoreCase("vbg"))
-		{
+		if (verb.tag().equalsIgnoreCase("vbg")) {
 			// check for Progressive aspect
 			// can still be: Present/Past/Future Progressive, Present/Past/Future Perfect Progressive
 			ingFound = true;
 			pastPartFound = false;
 			baseFormFound = false;
-		} else if (verb.tag().equalsIgnoreCase("vbn"))
-		{
+		} else if (verb.tag().equalsIgnoreCase("vbn")) {
 			// check for Perfect aspect
 			// can still be: Past Perfect, Present Perfect, Future Perfect, Passive
 			ingFound = false;
 			pastPartFound = true;
 			baseFormFound = false;
-		} else if (verb.tag().equalsIgnoreCase("vb"))
-		{
+		} else if (verb.tag().equalsIgnoreCase("vb")) {
 			// base form
 			// can still be: Past Simple (negation), Future Simple, Present Simple (negation)
 			// cannot be Present Simple : VBP or VBZ instead
@@ -1030,8 +909,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 			ingFound = false;
 			pastPartFound = false;
 			baseFormFound = true;
-		} else if (verb.tag().equalsIgnoreCase("vbp") || verb.tag().equalsIgnoreCase("vbz"))
-		{
+		} else if (verb.tag().equalsIgnoreCase("vbp") || verb.tag().equalsIgnoreCase("vbz")) {
 			// single or plural present
 			addConstructionOccurrence(GrammaticalConstruction.ASPECT_SIMPLE, verbBegin, verbEnd, dependency.toString());
 			addConstructionOccurrence(GrammaticalConstruction.TIME_PRESENT, verbBegin, verbEnd, dependency.toString());
@@ -1040,8 +918,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 			ingFound = false;
 			pastPartFound = false;
 			baseFormFound = false;
-		} else if (verb.tag().equalsIgnoreCase("vbd"))
-		{
+		} else if (verb.tag().equalsIgnoreCase("vbd")) {
 			// past form
 			addConstructionOccurrence(GrammaticalConstruction.ASPECT_SIMPLE, verbBegin, verbEnd, dependency.toString());
 			addConstructionOccurrence(GrammaticalConstruction.TIME_PAST, verbBegin, verbEnd, dependency.toString());
@@ -1069,40 +946,34 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 		int startInd = labeledWords.get(0).beginPosition();
 		int endInd = labeledWords.get(labeledWords.size() - 1).endPosition();
 
-		for (TypedDependency dependency : dependencies)
-		{
+		for (TypedDependency dependency : dependencies) {
 			String rel = dependency.reln().getShortName().toLowerCase(); // dependency relation
 			IndexedWord gov = dependency.gov();
 			IndexedWord dep = dependency.dep();
 
-			if ((dep.word() != null) && (gov.tag() != null))
-			{
+			if ((dep.word() != null) && (gov.tag() != null)) {
 				// retrieve all real conditionals using the conditional 'if' clause
-				if (rel.equalsIgnoreCase("mark"))
-				{
+				if (rel.equalsIgnoreCase("mark")) {
 					verbBegin = gov.beginPosition(); // mark(do-2,if-1)
 					verbInd = gov.index();
 					// e.g. If they call, ... // If it rains ... // If I should go ...
 					// but: "If you didn't have a child now ..." -> mark(have,if) :/ - adds to condReal imediately, skips the would-clause
 					// TODO: but: "I don't know if he knows it." - treated as conditional! (ambiguous!)
 					if (gov.tag().equalsIgnoreCase("vb") || gov.tag().equalsIgnoreCase("vbp")
-							|| gov.tag().equalsIgnoreCase("vbz") || gov.tag().equalsIgnoreCase("should"))
-					{
+							|| gov.tag().equalsIgnoreCase("vbz") || gov.tag().equalsIgnoreCase("should")) {
 						// filter out: "If you didn't have a child now, you wouldn't..." as well as "If you did know, you would..."
 						// i.e. don't skip the would-clause
 
 						// indices start at 1 !!!
 						if (!((verbInd >= 2 && labeledWords.get(verbInd - 2).word().equalsIgnoreCase("did"))
-								|| ((verbInd >= 3) && labeledWords.get(verbInd - 3).word().equalsIgnoreCase("did"))))
-						{
+								|| ((verbInd >= 3) && labeledWords.get(verbInd - 3).word().equalsIgnoreCase("did")))) {
 							addConstructionOccurrence(GrammaticalConstruction.CONDITIONALS_REAL, startInd, endInd,
 									labeledWords.toString());
 							addConstructionOccurrence(GrammaticalConstruction.CONDITIONALS, startInd, endInd,
 									labeledWords.toString());
 							break; // don't look at the 'would' clause
 						}
-					} else if (gov.tag().equalsIgnoreCase("vbg"))
-					{
+					} else if (gov.tag().equalsIgnoreCase("vbg")) {
 						// continuous tense
 						continuous = true;
 						continuousInd = verbInd;
@@ -1110,17 +981,14 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 
 					mark_found = true;
 				} // retrieve all unreal conditionals using the 'would' clause
-				else if (rel.equals("aux"))
-				{
+				else if (rel.equals("aux")) {
 					// aux(watched-4, would-2) // aux(travel-4, to-3)
 					// conditionals
 					if (dep.word().equalsIgnoreCase("would") // or only would?
 							|| dep.word().equalsIgnoreCase("should") || dep.word().equalsIgnoreCase("could")
-							|| dep.word().equalsIgnoreCase("might") || dep.word().equalsIgnoreCase("may"))
-					{
+							|| dep.word().equalsIgnoreCase("might") || dep.word().equalsIgnoreCase("may")) {
 						would_found = true;
-						if (gov.tag().equalsIgnoreCase("VBN"))
-						{
+						if (gov.tag().equalsIgnoreCase("VBN")) {
 							// past participle form: "would have gone"
 							addConstructionOccurrence(GrammaticalConstruction.CONDITIONALS_UNREAL, startInd, endInd,
 									labeledWords.toString());
@@ -1129,8 +997,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 							break; // with fetch only 1 conditional per sentence - which is fine
 							// but: (won't catch mixedConditionals: If you had done it, you wouldn't regret it now.)
 							// TODO
-						} else if (gov.tag().equalsIgnoreCase("VB"))
-						{
+						} else if (gov.tag().equalsIgnoreCase("VB")) {
 							// base form: "would go"
 							// constructions.get("condII").incrementCount(docNum, labeledWords.toString());
 							addConstructionOccurrence(GrammaticalConstruction.CONDITIONALS_UNREAL, startInd, endInd,
@@ -1143,10 +1010,8 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 						}
 					} // fetch Present Perfect: "If you have lost...", "If he's won..."
 					else if ((dep.tag().equalsIgnoreCase("vb") || dep.tag().equalsIgnoreCase("vbp")
-							|| dep.tag().equalsIgnoreCase("vbz")) && (dep.lemma().equalsIgnoreCase("have")))
-					{
-						if (gov.beginPosition() == verbBegin)
-						{
+							|| dep.tag().equalsIgnoreCase("vbz")) && (dep.lemma().equalsIgnoreCase("have"))) {
+						if (gov.beginPosition() == verbBegin) {
 							mark_found = false;
 							addConstructionOccurrence(GrammaticalConstruction.CONDITIONALS_REAL, startInd, endInd,
 									labeledWords.toString());
@@ -1155,10 +1020,8 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 							break; // don't look at the 'would' clause
 						}
 					} // fetch: continuous (present and past)
-					else if (continuous && (gov.index() == continuousInd))
-					{
-						if (dep.tag().equalsIgnoreCase("vbd") || dep.tag().equalsIgnoreCase("vbn"))
-						{
+					else if (continuous && (gov.index() == continuousInd)) {
+						if (dep.tag().equalsIgnoreCase("vbd") || dep.tag().equalsIgnoreCase("vbn")) {
 							// past
 							mark_found = false;
 							addConstructionOccurrence(GrammaticalConstruction.CONDITIONALS_UNREAL, startInd, endInd,
@@ -1167,8 +1030,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 									labeledWords.toString());
 							break;
 						} else if (dep.tag().equalsIgnoreCase("vb") || dep.tag().equalsIgnoreCase("vbp")
-								|| dep.tag().equalsIgnoreCase("vbz"))
-						{
+								|| dep.tag().equalsIgnoreCase("vbz")) {
 							// present
 							mark_found = false;
 							addConstructionOccurrence(GrammaticalConstruction.CONDITIONALS_REAL, startInd, endInd,
@@ -1183,13 +1045,11 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 		}
 
 		// fetch present and past real conditional: "If you didn't go there, you didn't see him"
-		if (mark_found && !would_found)
-		{
+		if (mark_found && !would_found) {
 			addConstructionOccurrence(GrammaticalConstruction.CONDITIONALS_REAL, startInd, endInd,
 					labeledWords.toString());
 			addConstructionOccurrence(GrammaticalConstruction.CONDITIONALS, startInd, endInd, labeledWords.toString());
-		} else if (continuous)
-		{
+		} else if (continuous) {
 			// TODO ???
 		}
 	}
@@ -1197,54 +1057,44 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 	private void findQuestionOrImperative(int startInd, int endInd) {
 		// find the first and the last word (skip bullets, quotes, etc.)
 		CoreLabel firstWord = null;
-		for (CoreLabel w : wordsOutput)
-		{
-			if (w.word() != null && w.word().toLowerCase().matches("[a-z]*"))
-			{
+		for (CoreLabel w : wordsOutput) {
+			if (w.word() != null && w.word().toLowerCase().matches("[a-z]*")) {
 				// first real word
 				firstWord = w;
 				break;
 			}
 		}
 
-		if (firstWord == null)
-		{
+		if (firstWord == null) {
 			return;
 		}
 
 		// find the last token (punctuation mark) (don't take quotes into account)
 		CoreLabel lastWord = null;
-		for (int i = wordsOutput.size() - 1; i > 0; i--)
-		{
-			if (wordsOutput.get(i).tag() != null && wordsOutput.get(i).tag().equalsIgnoreCase("."))
-			{
+		for (int i = wordsOutput.size() - 1; i > 0; i--) {
+			if (wordsOutput.get(i).tag() != null && wordsOutput.get(i).tag().equalsIgnoreCase(".")) {
 				lastWord = wordsOutput.get(i);
 				break;
 			}
 		}
 
 		//// find questions and imperatives
-		if (lastWord != null && lastWord.word() != null)
-		{
+		if (lastWord != null && lastWord.word() != null) {
 			// questions
-			if (lastWord.word().toLowerCase().endsWith("?"))
-			{
+			if (lastWord.word().toLowerCase().endsWith("?")) {
 				// question (not indirect!)
 				// indirectQuestions - ??? not here!
 				inspectQuestion(firstWord);
-			} else
-			{
+			} else {
 				// use tregex to find imperatives within the sentence
 				// a sentence that has a vp that is NOT preceded by a sister NP
 				String pattern = "/^S.*/ !$ /NP$/ < (VP=imperativeVerb !$-- /^N.*/)";
 				TregexPattern impPattern = TregexPattern.compile(pattern);
 				TregexMatcher tregexImperative = impPattern.matcher(treeOutput);
-				while (tregexImperative.find())
-				{
+				while (tregexImperative.find()) {
 					Tree imperativeVerb = tregexImperative.getNode("imperativeVerb");
 					CoreLabel impFirstWord = imperativeVerb.taggedLabeledYield().get(0);
-					if (impFirstWord.tag().equalsIgnoreCase("vb") || impFirstWord.tag().equalsIgnoreCase("vbp"))
-					{ // the verb is sometimes annotated as VBP by the parser
+					if (impFirstWord.tag().equalsIgnoreCase("vb") || impFirstWord.tag().equalsIgnoreCase("vbp")) { // the verb is sometimes annotated as VBP by the parser
 						int impStart = impFirstWord.beginPosition();
 						int impEnd = imperativeVerb.taggedLabeledYield()
 								.get(imperativeVerb.taggedLabeledYield().size() - 1).endPosition();
@@ -1263,8 +1113,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 		//// direct question
 		addConstructionOccurrence(GrammaticalConstruction.QUESTIONS_DIRECT, startInd, endInd, wordsOutput.toString());
 
-		if (firstWord == null)
-		{
+		if (firstWord == null) {
 			return;
 		}
 
@@ -1275,22 +1124,18 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 		findTagQuestion(endInd);
 
 		//// wh-question
-		if (firstWordTag.toLowerCase().startsWith("w"))
-		{
+		if (firstWordTag.toLowerCase().startsWith("w")) {
 			findWhQuestion(firstWordWord, startInd, endInd);
 		} //// yesNoQuestions (starts with a verb (or modal))
-		else if (firstWordTag.toLowerCase().startsWith("vb"))
-		{
+		else if (firstWordTag.toLowerCase().startsWith("vb")) {
 			findYesNoQuestion(firstWord, startInd, endInd);
 		} // modal question
-		else if (firstWordTag.toLowerCase().contains("md"))
-		{
+		else if (firstWordTag.toLowerCase().contains("md")) {
 			addConstructionOccurrence(GrammaticalConstruction.QUESTIONS_YESNO, startInd, endInd,
 					wordsOutput.toString());
 			addConstructionOccurrence(GrammaticalConstruction.QUESTIONS_MODAL, startInd, endInd,
 					wordsOutput.toString());
-		} else
-		{
+		} else {
 			// it can still be the case that it is a wh- or yes-no question but it doesn't start at the beginning of a sentence
 			// e.g.: That person has to wonder 'What did I do wrong?'
 			// TODO: At ..., _do_ you know _what_ I mean?"
@@ -1303,36 +1148,29 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 		CoreLabel lastWord = null;
 		CoreLabel qMark = null; // it must be there
 		int count = 0; // count the words between ? and ,
-		for (int i = wordsOutput.size() - 1; i > 0; i--)
-		{
+		for (int i = wordsOutput.size() - 1; i > 0; i--) {
 			CoreLabel label = wordsOutput.get(i);
 			String tag = label.tag();
 			String word = label.word().toLowerCase();
 
-			if (qMark == null && tag.equalsIgnoreCase(".") && word.contains("?"))
-			{
+			if (qMark == null && tag.equalsIgnoreCase(".") && word.contains("?")) {
 				qMark = label;
 				count++;
-			} else if (qMark != null && (tag.equalsIgnoreCase("prp") || word.equalsIgnoreCase("not")))
-			{
+			} else if (qMark != null && (tag.equalsIgnoreCase("prp") || word.equalsIgnoreCase("not"))) {
 				// check for the pronoun or the negation (do they not?)
 				lastWord = label;
 				count++;
 			} else if (lastWord != null && (!tag.equalsIgnoreCase(","))) // check for the negation or for the verb
 			{
 				count++;
-			} else if (lastWord != null && tag.equalsIgnoreCase(","))
-			{
-				if (count < 5)
-				{
+			} else if (lastWord != null && tag.equalsIgnoreCase(",")) {
+				if (count < 5) {
 					addConstructionOccurrence(GrammaticalConstruction.QUESTIONS_TAG, label.beginPosition(), endInd,
 							wordsOutput.toString()); // highlight only the tag
-				} else
-				{
+				} else {
 					break;
 				}
-			} else
-			{
+			} else {
 				break;
 			}
 		}
@@ -1344,36 +1182,30 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 		// in case there is a question phrase at the beginning ("What kind of music do you like?") - go from the ROOT to find the verb
 		// toBeQuestions; toDoQuestions; toHaveQuestions // direct: "What's this?" - look into the dependencies: the root should be a verb -> aux(verb, ??)
 		int depStartInd = 0;
-		for (TypedDependency dependency : depsOutput)
-		{
+		for (TypedDependency dependency : depsOutput) {
 			String rel = dependency.reln().getShortName();
 			IndexedWord dep = dependency.dep();
 			IndexedWord gov = dependency.gov();
 
-			if ((!rootFound) && rel.equalsIgnoreCase("root"))
-			{
+			if ((!rootFound) && rel.equalsIgnoreCase("root")) {
 				rootFound = true;
 				depStartInd = dep.beginPosition();
 			}
 
 			if (rootFound
 					&& (rel.equalsIgnoreCase("aux") || rel.equalsIgnoreCase("cop") || rel.equalsIgnoreCase("auxpass"))
-					&& (dep.beginPosition() == depStartInd || dependency.gov().beginPosition() == depStartInd))
-			{
+					&& (dep.beginPosition() == depStartInd || dependency.gov().beginPosition() == depStartInd)) {
 				// check the dep of aux()
-				if (dep.lemma().equalsIgnoreCase("be") || gov.lemma().equalsIgnoreCase("be"))
-				{
+				if (dep.lemma().equalsIgnoreCase("be") || gov.lemma().equalsIgnoreCase("be")) {
 					// it might not get here
 					addWhQuestion(firstWordWord, startInd, endInd);
 					addConstructionOccurrence(GrammaticalConstruction.QUESTIONS_TO_BE, startInd, endInd,
 							wordsOutput.toString());
-				} else if (dep.lemma().equalsIgnoreCase("do") || gov.lemma().equalsIgnoreCase("do"))
-				{
+				} else if (dep.lemma().equalsIgnoreCase("do") || gov.lemma().equalsIgnoreCase("do")) {
 					addWhQuestion(firstWordWord, startInd, endInd);
 					addConstructionOccurrence(GrammaticalConstruction.QUESTIONS_TO_DO, startInd, endInd,
 							wordsOutput.toString());
-				} else if (dep.lemma().equalsIgnoreCase("have") || gov.lemma().equalsIgnoreCase("have"))
-				{
+				} else if (dep.lemma().equalsIgnoreCase("have") || gov.lemma().equalsIgnoreCase("have")) {
 					addWhQuestion(firstWordWord, startInd, endInd);
 					addConstructionOccurrence(GrammaticalConstruction.QUESTIONS_TO_HAVE, startInd, endInd,
 							wordsOutput.toString());
@@ -1386,8 +1218,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 
 	private void addWhQuestion(String qWord, int startInd, int endInd) {
 		addConstructionOccurrence(GrammaticalConstruction.QUESTIONS_WH, startInd, endInd, qWord);
-		switch (qWord.toLowerCase())
-		{
+		switch (qWord.toLowerCase()) {
 		case "what":
 			addConstructionOccurrence(GrammaticalConstruction.QUESTIONS_WHAT, startInd, endInd, qWord);
 			break;
@@ -1422,22 +1253,19 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 	}
 
 	private void findYesNoQuestion(CoreLabel firstWord, int startInd, int endInd) {
-		if (firstWord.lemma().equalsIgnoreCase("be"))
-		{
+		if (firstWord.lemma().equalsIgnoreCase("be")) {
 			// toBeQuestions;
 			addConstructionOccurrence(GrammaticalConstruction.QUESTIONS_YESNO, startInd, endInd,
 					wordsOutput.toString());
 			addConstructionOccurrence(GrammaticalConstruction.QUESTIONS_TO_BE, startInd, endInd,
 					wordsOutput.toString());
-		} else if (firstWord.lemma().equalsIgnoreCase("do"))
-		{
+		} else if (firstWord.lemma().equalsIgnoreCase("do")) {
 			// simple
 			addConstructionOccurrence(GrammaticalConstruction.QUESTIONS_YESNO, startInd, endInd,
 					wordsOutput.toString());
 			addConstructionOccurrence(GrammaticalConstruction.QUESTIONS_TO_DO, startInd, endInd,
 					wordsOutput.toString());
-		} else if (firstWord.lemma().equalsIgnoreCase("have"))
-		{
+		} else if (firstWord.lemma().equalsIgnoreCase("have")) {
 			// perfect
 			addConstructionOccurrence(GrammaticalConstruction.QUESTIONS_YESNO, startInd, endInd,
 					wordsOutput.toString());
@@ -1449,41 +1277,33 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 
 	private void findInlineQuestion(int startInd, int endInd) {
 		CoreLabel questionWord = null;
-		for (CoreLabel aWord : wordsOutput)
-		{
+		for (CoreLabel aWord : wordsOutput) {
 			// look for a question word
-			if ((questionWord == null) && (aWord.tag().toLowerCase().startsWith("w")))
-			{
+			if ((questionWord == null) && (aWord.tag().toLowerCase().startsWith("w"))) {
 				questionWord = aWord;
-			} else if (questionWord != null)
-			{
+			} else if (questionWord != null) {
 				// if question word found
-				if (aWord.tag().toLowerCase().startsWith("vb"))
-				{
-					if (aWord.lemma().equalsIgnoreCase("be"))
-					{
+				if (aWord.tag().toLowerCase().startsWith("vb")) {
+					if (aWord.lemma().equalsIgnoreCase("be")) {
 						// toBeQuestions;
 						addWhQuestion(questionWord.word().toLowerCase(), startInd, endInd);
 						addConstructionOccurrence(GrammaticalConstruction.QUESTIONS_TO_BE, startInd, endInd,
 								wordsOutput.toString());
 						break;
-					} else if (aWord.lemma().equalsIgnoreCase("do"))
-					{
+					} else if (aWord.lemma().equalsIgnoreCase("do")) {
 						// simple
 						addWhQuestion(questionWord.word().toLowerCase(), startInd, endInd);
 						addConstructionOccurrence(GrammaticalConstruction.QUESTIONS_TO_DO, startInd, endInd,
 								wordsOutput.toString());
 						break;
-					} else if (aWord.lemma().equalsIgnoreCase("have"))
-					{
+					} else if (aWord.lemma().equalsIgnoreCase("have")) {
 						// perfect
 						addWhQuestion(questionWord.word().toLowerCase(), startInd, endInd);
 						addConstructionOccurrence(GrammaticalConstruction.QUESTIONS_TO_HAVE, startInd, endInd,
 								wordsOutput.toString());
 						break;
 					}
-				} else if (aWord.tag().toLowerCase().startsWith("md"))
-				{
+				} else if (aWord.tag().toLowerCase().startsWith("md")) {
 					addWhQuestion(questionWord.word().toLowerCase(), startInd, endInd);
 					addConstructionOccurrence(GrammaticalConstruction.QUESTIONS_MODAL, startInd, endInd,
 							wordsOutput.toString());
@@ -1502,16 +1322,13 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 	}
 
 	private void findGoingTo(CoreLabel label, String labelWord, String labelTag) {
-		switch (goingToFound)
-		{
+		switch (goingToFound) {
 		case 1:
 			// only "going" found
-			if (labelTag.equalsIgnoreCase("to"))
-			{
+			if (labelTag.equalsIgnoreCase("to")) {
 				goingToFound++;
 				// indices start at 1 !!! : wordsOutput.get(label.index()) will be the word following the current "label" word
-				if (label.index() < wordsOutput.size() - 1 && ".,!?;:)".contains(wordsOutput.get(label.index()).tag()))
-				{
+				if (label.index() < wordsOutput.size() - 1 && ".,!?;:)".contains(wordsOutput.get(label.index()).tag())) {
 					// catches "yes, I'm going to."
 					// indices start at 1 !!!
 					addConstructionOccurrence(GrammaticalConstruction.VERBCONST_GOING_TO,
@@ -1519,15 +1336,13 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 							"going " + labelWord);
 					goingToFound = 0;
 				}
-			} else
-			{
+			} else {
 				goingToFound = 0;
 			}
 			break;
 		case 2:
 			// "going to" found
-			if (labelTag.equalsIgnoreCase("vb"))
-			{
+			if (labelTag.equalsIgnoreCase("vb")) {
 				// can tell it from "I'm going to France" // can't catch "I'm going to _slowly_ start packing" - use Tregex?
 				// indices start at 1 !!!
 				addConstructionOccurrence(GrammaticalConstruction.VERBCONST_GOING_TO,
@@ -1545,20 +1360,16 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 
 	private void findIngNounForms(CoreLabel label, String labelWord, String labelTag) {
 		if (labelWord.endsWith("ing") && labelWord.length() > 4
-				&& (!EnglishGrammaticalConstants.ING_NOUNS.contains(labelWord)))
-		{
+				&& (!EnglishGrammaticalConstants.ING_NOUNS.contains(labelWord))) {
 			addConstructionOccurrence(GrammaticalConstruction.NOUNFORMS_ING, label.beginPosition(), label.endPosition(),
 					labelWord);
 		}
 		// plural noun forms
-		if (labelTag.equalsIgnoreCase("nns"))
-		{
-			if (labelWord.endsWith("s"))
-			{
+		if (labelTag.equalsIgnoreCase("nns")) {
+			if (labelWord.endsWith("s")) {
 				addConstructionOccurrence(GrammaticalConstruction.PLURAL_REGULAR, label.beginPosition(),
 						label.endPosition(), labelWord);
-			} else
-			{
+			} else {
 				addConstructionOccurrence(GrammaticalConstruction.PLURAL_IRREGULAR, label.beginPosition(),
 						label.endPosition(), labelWord);
 			}
@@ -1568,8 +1379,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 	private void addModalVerb(CoreLabel label, String labelWord) {
 		addConstructionOccurrence(GrammaticalConstruction.MODALS, label.beginPosition(), label.endPosition(),
 				labelWord);
-		switch (labelWord)
-		{
+		switch (labelWord) {
 		case "can":
 		case "ca": // for negation: ca/MD n't/RB
 			addConstructionOccurrence(GrammaticalConstruction.MODALS_SIMPLE, label.beginPosition(), label.endPosition(),
@@ -1615,8 +1425,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 			break;
 		default:
 			if (!(labelWord.equalsIgnoreCase("will") || labelWord.equalsIgnoreCase("shall")
-					|| labelWord.equalsIgnoreCase("wo") || labelWord.equalsIgnoreCase("sha")))
-			{
+					|| labelWord.equalsIgnoreCase("wo") || labelWord.equalsIgnoreCase("sha"))) {
 				addConstructionOccurrence(GrammaticalConstruction.MODALS_ADVANCED, label.beginPosition(),
 						label.endPosition(), labelWord);
 			}
@@ -1625,15 +1434,12 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 	}
 
 	private void findVerbFormsPOS(CoreLabel label, String labelWord, String labelTag) {
-		if (labelWord.startsWith("'"))
-		{
+		if (labelWord.startsWith("'")) {
 			addConstructionOccurrence(GrammaticalConstruction.VERBFORM_SHORT, label.beginPosition(),
 					label.endPosition(), labelWord);
 			// do NOT add auxiiaries here (can be main verb as well)
-		} else
-		{
-			switch (labelWord)
-			{
+		} else {
+			switch (labelWord) {
 			case "are":
 			case "is":
 			case "am":
@@ -1648,10 +1454,8 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 						label.endPosition(), labelWord);
 				// add modal "have to" here if the tag is MD
 				int thisInd = label.index() - 1;
-				if (wordsOutput.size() > thisInd + 1)
-				{
-					if (wordsOutput.get(thisInd + 1).tag().equalsIgnoreCase("to"))
-					{
+				if (wordsOutput.size() > thisInd + 1) {
+					if (wordsOutput.get(thisInd + 1).tag().equalsIgnoreCase("to")) {
 						// catch the elliptical "I have to." BUT not "I will give everything I have to John"
 						addConstructionOccurrence(GrammaticalConstruction.MODALS, label.beginPosition(),
 								wordsOutput.get(thisInd + 1).endPosition(), labelWord + " to");
@@ -1670,22 +1474,17 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 				}
 			}
 
-			if (labelTag.equalsIgnoreCase("vbg"))
-			{
+			if (labelTag.equalsIgnoreCase("vbg")) {
 				addConstructionOccurrence(GrammaticalConstruction.VERBFORM_ING, label.beginPosition(),
 						label.endPosition(), labelWord);
-				if (labelWord.equalsIgnoreCase("going") || labelWord.equalsIgnoreCase("gon"))
-				{
+				if (labelWord.equalsIgnoreCase("going") || labelWord.equalsIgnoreCase("gon")) {
 					goingToFound++;
 				}
-			} else if (labelTag.equalsIgnoreCase("vbd") || labelTag.equalsIgnoreCase("vbn"))
-			{
-				if (!labelWord.endsWith("ed"))
-				{
+			} else if (labelTag.equalsIgnoreCase("vbd") || labelTag.equalsIgnoreCase("vbn")) {
+				if (!labelWord.endsWith("ed")) {
 					addConstructionOccurrence(GrammaticalConstruction.VERBS_IRREGULAR, label.beginPosition(),
 							label.endPosition(), labelWord);
-				} else
-				{
+				} else {
 					addConstructionOccurrence(GrammaticalConstruction.VERBS_REGULAR, label.beginPosition(),
 							label.endPosition(), labelWord);
 				}
@@ -1695,37 +1494,31 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 	}
 
 	private void findVerbFormsDep(TypedDependency dependency, int start, int end, IndexedWord gov, IndexedWord dep,
-			int depBegin, int depEnd) {
+	                              int depBegin, int depEnd) {
 		// emphatic do (separately)
 		if ((dep.lemma().equalsIgnoreCase("do")
 				&& (gov.tag().equalsIgnoreCase("vb") || gov.tag().equalsIgnoreCase("vbp"))
-				&& (dep.index() == gov.index() - 1)))
-		{
+				&& (dep.index() == gov.index() - 1))) {
 			// "do" is followed by a verb
 			addConstructionOccurrence(GrammaticalConstruction.VERBFORM_EMPATHIC_DO, start, end, dependency.toString());
 		} else if (dep.lemma().equalsIgnoreCase("be") || dep.lemma().equalsIgnoreCase("have")
-				|| dep.lemma().equalsIgnoreCase("do"))
-		{
+				|| dep.lemma().equalsIgnoreCase("do")) {
 			addConstructionOccurrence(GrammaticalConstruction.VERBFORM_AUXILIARIES_BE_DO_HAVE, depBegin, depEnd,
 					dependency.toString());
 		}
 
 		// to-infinitives
-		if (dep.tag().equalsIgnoreCase("to"))
-		{
-			if (gov.tag().equalsIgnoreCase("vb"))
-			{
+		if (dep.tag().equalsIgnoreCase("to")) {
+			if (gov.tag().equalsIgnoreCase("vb")) {
 				// "He wants to sleep"
 				addConstructionOccurrence(GrammaticalConstruction.VERBFORM_TO_INFINITIVE, start, end,
 						dependency.toString());
-			} else
-			{
+			} else {
 				// "He wants to be a pilot" -> aux ( pilot-6 *!!!* , to-3 ) + cop ( pilot-6 , be-4 ) ** only with "be" as copula **
 				// indices start at 1 !!!
 				int toInd = dep.index() - 1;
 				int govInd = gov.index();
-				if (govInd - toInd > 1 && wordsOutput.get(toInd + 1).word().equalsIgnoreCase("be"))
-				{
+				if (govInd - toInd > 1 && wordsOutput.get(toInd + 1).word().equalsIgnoreCase("be")) {
 					addConstructionOccurrence(GrammaticalConstruction.VERBFORM_TO_INFINITIVE, dep.beginPosition(),
 							wordsOutput.get(toInd + 1).endPosition(), dependency.toString());
 				}
@@ -1734,37 +1527,31 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 	}
 
 	private void findPrepositions(TypedDependency dependency, int depBegin, int depEnd, String rel, IndexedWord dep,
-			IndexedWord gov) {
-		if (rel.contains("_"))
-		{
+	                              IndexedWord gov) {
+		if (rel.contains("_")) {
 			// collapsed dependencies
 			int startPrep = -1;
 			int endPrep = -1;
 
 			// identify the start and end indices of this preposition/these prepositions
-			if (rel.indexOf("_") == rel.lastIndexOf("_"))
-			{
+			if (rel.indexOf("_") == rel.lastIndexOf("_")) {
 				// 1-word preposition
 				String prep = rel.substring(rel.indexOf("_") + 1).toLowerCase();
 
 				// go through wordsOutput to find the indices
-				for (CoreLabel l : wordsOutput)
-				{
-					if (l.word().equalsIgnoreCase(prep))
-					{
+				for (CoreLabel l : wordsOutput) {
+					if (l.word().equalsIgnoreCase(prep)) {
 						startPrep = l.beginPosition();
 						endPrep = l.endPosition();
 
 						// add constructions here: in case of a duplicate, it'll not be added anyway
 						if (l.tag().equalsIgnoreCase("in")
-								&& EnglishGrammaticalConstants.SIMPLE_PREPOSITIONS.contains(prep))
-						{
+								&& EnglishGrammaticalConstants.SIMPLE_PREPOSITIONS.contains(prep)) {
 							addConstructionOccurrence(GrammaticalConstruction.PREPOSITIONS, startPrep, endPrep,
 									dependency.toString());
 							addConstructionOccurrence(GrammaticalConstruction.PREPOSITIONS_SIMPLE, startPrep, endPrep,
 									dependency.toString());
-						} else
-						{
+						} else {
 							addConstructionOccurrence(GrammaticalConstruction.PREPOSITIONS, startPrep, endPrep,
 									dependency.toString());
 							addConstructionOccurrence(GrammaticalConstruction.PREPOSITIONS_ADVANCED, startPrep, endPrep,
@@ -1773,25 +1560,20 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 					}
 				}
 
-			} else if (rel.indexOf("_") > 0 && rel.indexOf("_") < rel.lastIndexOf("_"))
-			{
+			} else if (rel.indexOf("_") > 0 && rel.indexOf("_") < rel.lastIndexOf("_")) {
 				// n-word preposition
 
 				// take the begin position of the 1st prep and the end position of the last prep
 				String prep1 = rel.substring(rel.indexOf("_") + 1, rel.indexOf("_", rel.indexOf("_") + 1));
 				String prep2 = rel.substring(rel.lastIndexOf("_") + 1);
 
-				for (CoreLabel l : wordsOutput)
-				{
-					if (l.word().equalsIgnoreCase(prep1))
-					{
+				for (CoreLabel l : wordsOutput) {
+					if (l.word().equalsIgnoreCase(prep1)) {
 						// at first find the first prep - don't add constructions yet
 						startPrep = l.beginPosition();
-					} else if (l.tag().equalsIgnoreCase("in") && l.word().equalsIgnoreCase(prep2))
-					{
+					} else if (l.tag().equalsIgnoreCase("in") && l.word().equalsIgnoreCase(prep2)) {
 						endPrep = l.endPosition();
-						if (startPrep > -1 && endPrep > -1 && endPrep > startPrep)
-						{
+						if (startPrep > -1 && endPrep > -1 && endPrep > startPrep) {
 							// add constructions here: in case of a duplicate, it'll not be added anyway
 							addConstructionOccurrence(GrammaticalConstruction.PREPOSITIONS, startPrep, endPrep,
 									dependency.toString());
@@ -1810,8 +1592,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 
 		/// objective pronouns after a preposition
 		if (dep.tag().equalsIgnoreCase("prp")
-				&& EnglishGrammaticalConstants.OBJECTIVE_PRONOUNS.contains(dep.word().toLowerCase()))
-		{
+				&& EnglishGrammaticalConstants.OBJECTIVE_PRONOUNS.contains(dep.word().toLowerCase())) {
 			addConstructionOccurrence(GrammaticalConstruction.PRONOUNS, depBegin, depEnd, dep.word());
 			addConstructionOccurrence(GrammaticalConstruction.PRONOUNS_OBJECTIVE, depBegin, depEnd, dep.word());
 		}
@@ -1822,11 +1603,9 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 				dependency.toString());
 		addConstructionOccurrence(GrammaticalConstruction.NEGATION_ALL, depBegin, depEnd, dependency.toString());
 
-		if (dep.word().equalsIgnoreCase("n't"))
-		{
+		if (dep.word().equalsIgnoreCase("n't")) {
 			addConstructionOccurrence(GrammaticalConstruction.NEGATION_NT, depBegin, depEnd, dependency.toString());
-		} else if (dep.word().equalsIgnoreCase("not"))
-		{
+		} else if (dep.word().equalsIgnoreCase("not")) {
 			addConstructionOccurrence(GrammaticalConstruction.NEGATION_NOT, depBegin, depEnd, dependency.toString());
 		}
 	}
@@ -1834,47 +1613,39 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 	private void addExistentialThere(TypedDependency dependency, int start, int end, IndexedWord gov) {
 		addConstructionOccurrence(GrammaticalConstruction.EXISTENTIAL_THERE, start, end, dependency.toString());
 
-		if (gov.word().equalsIgnoreCase("is") || gov.word().equalsIgnoreCase("are"))
-		{
+		if (gov.word().equalsIgnoreCase("is") || gov.word().equalsIgnoreCase("are")) {
 			addConstructionOccurrence(GrammaticalConstruction.THERE_IS_ARE, start, end, dependency.toString());
-		} else if (gov.word().equalsIgnoreCase("was") || gov.word().equalsIgnoreCase("were"))
-		{
+		} else if (gov.word().equalsIgnoreCase("was") || gov.word().equalsIgnoreCase("were")) {
 			addConstructionOccurrence(GrammaticalConstruction.THERE_WAS_WERE, start, end, dependency.toString());
 		}
 	}
 
 	private void addSubjectiveAndObjectivePronouns(TypedDependency dependency, int start, int end, String rel,
-			IndexedWord dep, int depBegin, int depEnd) {
-		if (rel.equalsIgnoreCase("iobj"))
-		{
+	                                               IndexedWord dep, int depBegin, int depEnd) {
+		if (rel.equalsIgnoreCase("iobj")) {
 			// indirect object
 			addConstructionOccurrence(GrammaticalConstruction.OBJECT_INDIRECT, start, end, dependency.toString());
 
 			if (dep.tag().equalsIgnoreCase("prp")
-					&& EnglishGrammaticalConstants.OBJECTIVE_PRONOUNS.contains(dep.word().toLowerCase()))
-			{
+					&& EnglishGrammaticalConstants.OBJECTIVE_PRONOUNS.contains(dep.word().toLowerCase())) {
 				addConstructionOccurrence(GrammaticalConstruction.PRONOUNS, depBegin, depEnd, dependency.toString());
 				addConstructionOccurrence(GrammaticalConstruction.PRONOUNS_OBJECTIVE, depBegin, depEnd,
 						dependency.toString());
 			}
-		} else if (rel.equalsIgnoreCase("dobj"))
-		{
+		} else if (rel.equalsIgnoreCase("dobj")) {
 			// direct object
 			addConstructionOccurrence(GrammaticalConstruction.OBJECT_DIRECT, start, end, dependency.toString());
 
 			if (dep.tag().equalsIgnoreCase("prp")
-					&& EnglishGrammaticalConstants.OBJECTIVE_PRONOUNS.contains(dep.word().toLowerCase()))
-			{
+					&& EnglishGrammaticalConstants.OBJECTIVE_PRONOUNS.contains(dep.word().toLowerCase())) {
 				addConstructionOccurrence(GrammaticalConstruction.PRONOUNS, depBegin, depEnd, dependency.toString());
 				addConstructionOccurrence(GrammaticalConstruction.PRONOUNS_OBJECTIVE, depBegin, depEnd,
 						dependency.toString());
 			}
-		} else if (rel.equalsIgnoreCase("nsubj"))
-		{
+		} else if (rel.equalsIgnoreCase("nsubj")) {
 			// subjective pronouns
 			if (dep.tag().equalsIgnoreCase("prp")
-					&& EnglishGrammaticalConstants.SUBJECTIVE_PRONOUNS.contains(dep.word().toLowerCase()))
-			{
+					&& EnglishGrammaticalConstants.SUBJECTIVE_PRONOUNS.contains(dep.word().toLowerCase())) {
 				addConstructionOccurrence(GrammaticalConstruction.PRONOUNS, depBegin, depEnd, dep.word());
 				addConstructionOccurrence(GrammaticalConstruction.PRONOUNS_SUBJECTIVE, depBegin, depEnd, dep.word());
 			}
@@ -1882,25 +1653,19 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 	}
 
 	private void addSomeAnyMuchMany(TypedDependency dependency, IndexedWord gov, IndexedWord dep, String rel) {
-		if (rel.equalsIgnoreCase("det"))
-		{
-			if (dep.lemma().equalsIgnoreCase("some"))
-			{
+		if (rel.equalsIgnoreCase("det")) {
+			if (dep.lemma().equalsIgnoreCase("some")) {
 				addConstructionOccurrence(GrammaticalConstruction.DETERMINER_SOME, dep.beginPosition(),
 						gov.endPosition(), dependency.toString());
-			} else if (dep.lemma().equalsIgnoreCase("any"))
-			{
+			} else if (dep.lemma().equalsIgnoreCase("any")) {
 				addConstructionOccurrence(GrammaticalConstruction.DETERMINER_ANY, dep.beginPosition(),
 						gov.endPosition(), dependency.toString());
 			}
-		} else if (rel.equalsIgnoreCase("amod"))
-		{
-			if (dep.lemma().equalsIgnoreCase("many"))
-			{
+		} else if (rel.equalsIgnoreCase("amod")) {
+			if (dep.lemma().equalsIgnoreCase("many")) {
 				addConstructionOccurrence(GrammaticalConstruction.DETERMINER_MANY, dep.beginPosition(),
 						gov.endPosition(), dependency.toString());
-			} else if (dep.lemma().equalsIgnoreCase("much"))
-			{
+			} else if (dep.lemma().equalsIgnoreCase("much")) {
 				addConstructionOccurrence(GrammaticalConstruction.DETERMINER_MUCH, dep.beginPosition(),
 						gov.endPosition(), dependency.toString());
 			}
@@ -1909,19 +1674,15 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 
 	private void addAdjectiveForms(CoreLabel label, String labelWord, String labelTag) {
 		// already in lower case
-		switch (labelTag)
-		{
+		switch (labelTag) {
 		case "jj":
-			if (labelWord.equalsIgnoreCase("much") || labelWord.equalsIgnoreCase("many"))
-			{
+			if (labelWord.equalsIgnoreCase("much") || labelWord.equalsIgnoreCase("many")) {
 				break;
-			} else if (labelWord.equalsIgnoreCase("able") || labelWord.equalsIgnoreCase("unable"))
-			{
+			} else if (labelWord.equalsIgnoreCase("able") || labelWord.equalsIgnoreCase("unable")) {
 				int ableInd = label.index() - 1;
 
 				if (wordsOutput.size() >= ableInd && wordsOutput.size() > (ableInd + 1)
-						&& wordsOutput.get(ableInd + 1).tag().equalsIgnoreCase("to"))
-				{
+						&& wordsOutput.get(ableInd + 1).tag().equalsIgnoreCase("to")) {
 					addConstructionOccurrence(GrammaticalConstruction.MODALS_ADVANCED, label.beginPosition(),
 							label.endPosition(), labelWord);
 					addConstructionOccurrence(GrammaticalConstruction.MODALS, label.beginPosition(),
@@ -1930,11 +1691,9 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 							label.endPosition(), labelWord);
 				}
 				// otherwise it's an adjective: He's an able student.
-			} else
-			{
+			} else {
 				// if it doesn't contain numbers
-				if (!labelWord.matches(".*\\d.*"))
-				{
+				if (!labelWord.matches(".*\\d.*")) {
 					addConstructionOccurrence(GrammaticalConstruction.ADJECTIVE_POSITIVE, label.beginPosition(),
 							label.endPosition(), labelWord);
 				}
@@ -1979,8 +1738,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 	}
 
 	private void addShortComparativeAdv(CoreLabel label, String labelWord) {
-		if (labelWord.equalsIgnoreCase("more"))
-		{
+		if (labelWord.equalsIgnoreCase("more")) {
 			comparativeMoreFound = true;
 		}
 		// it might be any other short adverb in comparative form
@@ -1990,8 +1748,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 	}
 
 	private void addShortSuperlativeAdv(CoreLabel label, String labelWord) {
-		if (labelWord.equalsIgnoreCase("most"))
-		{
+		if (labelWord.equalsIgnoreCase("most")) {
 			superlativeMostFound = true;
 		}
 		// it might be any other short adverb in superlative form
@@ -2000,26 +1757,22 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 	}
 
 	private void addConjunctions(CoreLabel label, String labelWord, String labelTag) {
-		if (EnglishGrammaticalConstants.ADVANCED_CONJUNCTIONS.contains(labelWord))
-		{
+		if (EnglishGrammaticalConstants.ADVANCED_CONJUNCTIONS.contains(labelWord)) {
 			addConstructionOccurrence(GrammaticalConstruction.CONJUNCTIONS_ADVANCED, label.beginPosition(),
 					label.endPosition(), labelWord);
-		} else if (EnglishGrammaticalConstants.SIMPLE_CONJUNCTIONS.contains(labelWord))
-		{
+		} else if (EnglishGrammaticalConstants.SIMPLE_CONJUNCTIONS.contains(labelWord)) {
 			addConstructionOccurrence(GrammaticalConstruction.CONJUNCTIONS_SIMPLE, label.beginPosition(),
 					label.endPosition(), labelWord);
 		}
 
-		if (labelTag.equalsIgnoreCase("rb"))
-		{
+		if (labelTag.equalsIgnoreCase("rb")) {
 			addConstructionOccurrence(GrammaticalConstruction.ADVERB_POSITIVE, label.beginPosition(),
 					label.endPosition(), labelWord);
 		}
 	}
 
 	private void addArticles(CoreLabel label, String labelWord) {
-		switch (labelWord)
-		{
+		switch (labelWord) {
 		case "a":
 			addConstructionOccurrence(GrammaticalConstruction.ARTICLES, label.beginPosition(), label.endPosition(),
 					labelWord);
@@ -2042,15 +1795,13 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 	}
 
 	private void addReflexiveAndPossessivePronouns(CoreLabel label, String labelWord, String labelTag) {
-		if (labelTag.equalsIgnoreCase("prp") && EnglishGrammaticalConstants.REFLEXIVE_PRONOUNS.contains(labelWord))
-		{
+		if (labelTag.equalsIgnoreCase("prp") && EnglishGrammaticalConstants.REFLEXIVE_PRONOUNS.contains(labelWord)) {
 			addConstructionOccurrence(GrammaticalConstruction.PRONOUNS_REFLEXIVE, label.beginPosition(),
 					label.endPosition(), labelWord);
 			addConstructionOccurrence(GrammaticalConstruction.PRONOUNS, label.beginPosition(), label.endPosition(),
 					labelWord);
 		} else if (labelTag.equalsIgnoreCase("prp$")
-				&& EnglishGrammaticalConstants.POSSESSIVE_PRONOUNS.contains(labelWord))
-		{
+				&& EnglishGrammaticalConstants.POSSESSIVE_PRONOUNS.contains(labelWord)) {
 			// it can actually be either possessive or objective (stanford parser crashes on that!), or absolute possessive (his)
 			// TODO check if it is followed by a noun or an adj?
 			addConstructionOccurrence(GrammaticalConstruction.PRONOUNS_POSSESSIVE, label.beginPosition(),
@@ -2069,18 +1820,15 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 	public boolean apply(AbstractDocument docToParse) {
 
 		assert docToParse != null;
-		try
-		{
+		try {
 			initializeState(docToParse);
 
 			Annotation docAnnotation = new Annotation(workingDoc.getText());
 			pipeline.annotate(docAnnotation);
 
 			List<CoreMap> sentences = docAnnotation.get(CoreAnnotations.SentencesAnnotation.class);
-			for (CoreMap itr : sentences)
-			{
-				if (itr.size() > 0)
-				{
+			for (CoreMap itr : sentences) {
+				if (itr.size() > 0) {
 					Tree tree = itr.get(TreeCoreAnnotations.TreeAnnotation.class);
 					List<CoreLabel> words = itr.get(CoreAnnotations.TokensAnnotation.class);
 					Collection<TypedDependency> dependencies = itr
@@ -2092,11 +1840,9 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 					depthCount += tree.depth();
 
 					// changed: only count words (no punctuation)
-					for (CoreLabel cl : words)
-					{
+					for (CoreLabel cl : words) {
 						tokenCount++;
-						if (cl.tag().toLowerCase().matches("[a-z]*"))
-						{
+						if (cl.tag().toLowerCase().matches("[a-z]*")) {
 							wordCount++;
 							characterCount += cl.word().length();
 						}
@@ -2118,8 +1864,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 			workingDoc.setNumSentences(sentenceCount);
 			workingDoc.setNumCharacters(characterCount);
 			workingDoc.flagAsParsed();
-		} finally
-		{
+		} finally {
 			resetState();
 		}
 

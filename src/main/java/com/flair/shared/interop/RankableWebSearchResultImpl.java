@@ -5,19 +5,17 @@ import com.flair.shared.grammar.Language;
 /*
  * Serializable version of a web search result
  */
-public class RankableWebSearchResultImpl implements RankableWebSearchResult
-{
-	int				identifier;
-	Language		language;
-	String			title;
-	String			url;
-	String			displayUrl;
-	String			snippet;
-	int				rank;
-	String			text;
+public class RankableWebSearchResultImpl implements RankableWebSearchResult {
+	int identifier;
+	Language language;
+	String title;
+	String url;
+	String displayUrl;
+	String snippet;
+	int rank;
+	String text;
 
-	public RankableWebSearchResultImpl()
-	{
+	public RankableWebSearchResultImpl() {
 		identifier = 0;
 		rank = -1;
 		language = null;
@@ -86,12 +84,12 @@ public class RankableWebSearchResultImpl implements RankableWebSearchResult
 	public void setText(String text) {
 		this.text = text;
 	}
-	
+
 	@Override
 	public int getIdentifier() {
 		return identifier;
 	}
-	
+
 	public void setIdentifier(int id) {
 		identifier = id;
 	}

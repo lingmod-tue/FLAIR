@@ -1,34 +1,30 @@
 package com.flair.shared.interop;
 
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.HashSet;
-
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
 import com.flair.shared.parser.DocumentReadabilityLevel;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.HashSet;
+
 /*
  * Flattened, serializable version of an AbstractDocument
  */
-public final class RankableDocumentImpl implements RankableDocument
-{
-	public static final class ConstructionOccurrence implements RankableDocument.ConstructionRange, IsSerializable
-	{
-		int							start;
-		int							end;
-		GrammaticalConstruction		construction;
+public final class RankableDocumentImpl implements RankableDocument {
+	public static final class ConstructionOccurrence implements RankableDocument.ConstructionRange, IsSerializable {
+		int start;
+		int end;
+		GrammaticalConstruction construction;
 
-		public ConstructionOccurrence(int start, int end, GrammaticalConstruction gram)
-		{
+		public ConstructionOccurrence(int start, int end, GrammaticalConstruction gram) {
 			this.start = start;
 			this.end = end;
 			this.construction = gram;
 		}
-		
-		public ConstructionOccurrence()
-		{
+
+		public ConstructionOccurrence() {
 			start = end = -1;
 			construction = null;
 		}
@@ -61,21 +57,18 @@ public final class RankableDocumentImpl implements RankableDocument
 		}
 	}
 
-	public static final class KeywordOccurrence implements RankableDocument.KeywordRange, IsSerializable
-	{
-		int		start;
-		int		end;
-		String	keyword;
+	public static final class KeywordOccurrence implements RankableDocument.KeywordRange, IsSerializable {
+		int start;
+		int end;
+		String keyword;
 
-		public KeywordOccurrence(int start, int end, String keyword)
-		{
+		public KeywordOccurrence(int start, int end, String keyword) {
 			this.start = start;
 			this.end = end;
 			this.keyword = keyword;
 		}
 
-		public KeywordOccurrence()
-		{
+		public KeywordOccurrence() {
 			start = end = -1;
 			keyword = "";
 		}
@@ -107,48 +100,47 @@ public final class RankableDocumentImpl implements RankableDocument
 			this.keyword = keyword;
 		}
 	}
-	
-	int									identifier;
-	Language							language;
-	int									rank;
-	
-	String								title;
-	String								url;
-	String								displayUrl;
-	String								snippet;
-	String								text;
 
-	HashSet<GrammaticalConstruction>										constructions;
-	EnumMap<GrammaticalConstruction, Double>								relFrequencies;
-	EnumMap<GrammaticalConstruction, Integer>								frequencies;
-	EnumMap<GrammaticalConstruction, ArrayList<ConstructionOccurrence>>		constOccurrences;
-	ArrayList<KeywordOccurrence>											keywordOccurrences;
-	double							keywordCount;
-	double							keywordRelFreq;
-	
-	int								rawTextLength;
-	double							numWords;
-	double							numSentences;
-	double							numDependencies;
-	DocumentReadabilityLevel 		readabilityLevel;
-	double							readabilityScore;
-	
-	public RankableDocumentImpl()
-	{
+	int identifier;
+	Language language;
+	int rank;
+
+	String title;
+	String url;
+	String displayUrl;
+	String snippet;
+	String text;
+
+	HashSet<GrammaticalConstruction> constructions;
+	EnumMap<GrammaticalConstruction, Double> relFrequencies;
+	EnumMap<GrammaticalConstruction, Integer> frequencies;
+	EnumMap<GrammaticalConstruction, ArrayList<ConstructionOccurrence>> constOccurrences;
+	ArrayList<KeywordOccurrence> keywordOccurrences;
+	double keywordCount;
+	double keywordRelFreq;
+
+	int rawTextLength;
+	double numWords;
+	double numSentences;
+	double numDependencies;
+	DocumentReadabilityLevel readabilityLevel;
+	double readabilityScore;
+
+	public RankableDocumentImpl() {
 		identifier = 0;
 		language = null;
 		rank = -1;
-		
+
 		title = url = displayUrl = snippet = text = "";
-		
+
 		constructions = new HashSet<>();
 		relFrequencies = new EnumMap<>(GrammaticalConstruction.class);
 		frequencies = new EnumMap<>(GrammaticalConstruction.class);
 		constOccurrences = new EnumMap<>(GrammaticalConstruction.class);
-		
+
 		keywordOccurrences = new ArrayList<>();
 		keywordCount = keywordRelFreq = 0;
-		
+
 		rawTextLength = 0;
 		numWords = numSentences = numDependencies = 0;
 		readabilityLevel = null;
@@ -178,7 +170,7 @@ public final class RankableDocumentImpl implements RankableDocument
 	public String getTitle() {
 		return title;
 	}
-	
+
 	public void setTitle(String title) {
 		this.title = title;
 	}
@@ -330,8 +322,7 @@ public final class RankableDocumentImpl implements RankableDocument
 	}
 
 	@Override
-	public double getConstructionFreq(GrammaticalConstruction gram)
-	{
+	public double getConstructionFreq(GrammaticalConstruction gram) {
 		if (hasConstruction(gram))
 			return frequencies.get(gram);
 		else
@@ -339,8 +330,7 @@ public final class RankableDocumentImpl implements RankableDocument
 	}
 
 	@Override
-	public double getConstructionRelFreq(GrammaticalConstruction gram)
-	{
+	public double getConstructionRelFreq(GrammaticalConstruction gram) {
 		if (hasConstruction(gram))
 			return relFrequencies.get(gram);
 		else
@@ -348,8 +338,7 @@ public final class RankableDocumentImpl implements RankableDocument
 	}
 
 	@Override
-	public ArrayList<? extends ConstructionRange> getConstructionOccurrences(GrammaticalConstruction gram)
-	{
+	public ArrayList<? extends ConstructionRange> getConstructionOccurrences(GrammaticalConstruction gram) {
 		if (hasConstruction(gram))
 			return constOccurrences.get(gram);
 		else
@@ -360,7 +349,7 @@ public final class RankableDocumentImpl implements RankableDocument
 	public int getIdentifier() {
 		return identifier;
 	}
-	
+
 	public void setIdentifier(int id) {
 		identifier = id;
 	}
@@ -369,7 +358,7 @@ public final class RankableDocumentImpl implements RankableDocument
 	public double getReadablilityScore() {
 		return readabilityScore;
 	}
-	
+
 	public void setReadabilityScore(double val) {
 		readabilityScore = val;
 	}

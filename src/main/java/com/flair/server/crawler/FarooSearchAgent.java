@@ -3,40 +3,36 @@
  */
 package com.flair.server.crawler;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.flair.server.crawler.impl.AbstractSearchAgentImplResult;
 import com.flair.server.crawler.impl.faroo.FarooSearch;
 import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.grammar.Language;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Implementation of the Faroo search engine
- * 
+ *
  * @author shadeMe
  */
-public class FarooSearchAgent extends CachingSearchAgent
-{
+public class FarooSearchAgent extends CachingSearchAgent {
 	private static final String API_KEY = "";
 
-	private static final int	RESULTS_PER_PAGE	= 10;
-	private static final int	MAX_API_REQUESTS	= 2;
+	private static final int RESULTS_PER_PAGE = 10;
+	private static final int MAX_API_REQUESTS = 2;
 
-	public static enum Source
-	{
+	public static enum Source {
 		WEB, NEWS, TOPICS, TRENDS
 	}
 
 	private final FarooSearch pipeline;
 
-	public FarooSearchAgent(Language lang, String query)
-	{
+	public FarooSearchAgent(Language lang, String query) {
 		super(lang, query, MAX_API_REQUESTS);
 		this.pipeline = new FarooSearch();
 
-		switch (lang)
-		{
+		switch (lang) {
 		case ENGLISH:
 			pipeline.setLang(FarooSearch.SearchLanguage.ENGLISH);
 			break;
@@ -60,10 +56,8 @@ public class FarooSearchAgent extends CachingSearchAgent
 		pipeline.setTrending(trending);
 	}
 
-	public void setSearchSource(Source source)
-	{
-		switch (source)
-		{
+	public void setSearchSource(Source source) {
+		switch (source) {
 		case WEB:
 			pipeline.setSource(FarooSearch.SearchSource.WEB);
 			break;
@@ -80,17 +74,13 @@ public class FarooSearchAgent extends CachingSearchAgent
 	}
 
 	@Override
-	protected List<? extends AbstractSearchAgentImplResult> invokeSearchApi()
-	{
+	protected List<? extends AbstractSearchAgentImplResult> invokeSearchApi() {
 		List<? extends AbstractSearchAgentImplResult> azureResults = new ArrayList<>();
-		if (noMoreResults == false)
-		{
-			try
-			{
+		if (noMoreResults == false) {
+			try {
 				pipeline.setPage(nextPage);
 				azureResults = pipeline.performSearch();
-			} catch (Throwable e)
-			{
+			} catch (Throwable e) {
 				ServerLogger.get().error("Faroo search API encountered a fatal error. Exception: " + e.getMessage());
 				noMoreResults = true;
 			}

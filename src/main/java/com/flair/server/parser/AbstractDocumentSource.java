@@ -8,31 +8,27 @@ import com.flair.shared.grammar.Language;
 
 /**
  * Represents the source of a document object
- * 
+ *
  * @author shadeMe
  */
-public abstract class AbstractDocumentSource implements Comparable<AbstractDocumentSource>
-{
+public abstract class AbstractDocumentSource implements Comparable<AbstractDocumentSource> {
 	private final Language language;
 
 	public AbstractDocumentSource(Language lang) {
 		language = lang;
 	}
 
-	protected final String preprocessText(String input)
-	{
+	protected final String preprocessText(String input) {
 		// ensure that all EOL punctuation marks are periods
 		StringBuilder textWriter = new StringBuilder();
 		String[] sentences = input.split("\n");
-		
-		for (String itr : sentences)
-		{
-			if (itr.trim().isEmpty())
-			{
+
+		for (String itr : sentences) {
+			if (itr.trim().isEmpty()) {
 				textWriter.append("\n");
 				continue;
 			}
-			
+
 			textWriter.append(itr);
 			if (!(itr.endsWith(".") || itr.endsWith("!") || itr.endsWith("?") || itr.endsWith("\"")))
 				textWriter.append(".\n");

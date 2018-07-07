@@ -11,54 +11,49 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
-
 import gwt.material.design.client.ui.MaterialButton;
 import gwt.material.design.client.ui.MaterialModal;
 import gwt.material.design.client.ui.MaterialTextBox;
 import gwt.material.design.client.ui.MaterialTitle;
 
-public class SettingsExporter extends LocalizedComposite implements SettingsUrlExporterView
-{
+public class SettingsExporter extends LocalizedComposite implements SettingsUrlExporterView {
 
 	private static SettingsExporterUiBinder uiBinder = GWT.create(SettingsExporterUiBinder.class);
 
-	interface SettingsExporterUiBinder extends UiBinder<Widget, SettingsExporter>
-	{
+	interface SettingsExporterUiBinder extends UiBinder<Widget, SettingsExporter> {
 	}
-	
+
 	private static SettingsExporterLocalizationBinder localeBinder = GWT.create(SettingsExporterLocalizationBinder.class);
+
 	interface SettingsExporterLocalizationBinder extends LocalizationBinder<SettingsExporter> {}
-	
-	
+
+
 	@UiField
-	MaterialModal			mdlExporterUI;
+	MaterialModal mdlExporterUI;
 	@UiField
-	@LocalizedField(type=LocalizedFieldType.TEXT_TITLE)
-	@LocalizedField(tag="lblTitleUI_Desc", type=LocalizedFieldType.TEXT_DESCRIPTION)
-	MaterialTitle			lblTitleUI;
+	@LocalizedField(type = LocalizedFieldType.TEXT_TITLE)
+	@LocalizedField(tag = "lblTitleUI_Desc", type = LocalizedFieldType.TEXT_DESCRIPTION)
+	MaterialTitle lblTitleUI;
 	@UiField
-	MaterialTextBox			txtURLUI;
+	MaterialTextBox txtURLUI;
 	@UiField
-	@LocalizedCommonField(tag=CommonLocalizationTags.CLOSE, type=LocalizedFieldType.TEXT_BUTTON)
-	MaterialButton			btnCloseUI;
-	
-	private void initHandlers()
-	{
+	@LocalizedCommonField(tag = CommonLocalizationTags.CLOSE, type = LocalizedFieldType.TEXT_BUTTON)
+	MaterialButton btnCloseUI;
+
+	private void initHandlers() {
 		btnCloseUI.addClickHandler(e -> {
 			hide();
 		});
 	}
 
-	public SettingsExporter()
-	{
+	public SettingsExporter() {
 		initWidget(uiBinder.createAndBindUi(this));
 		initLocale(localeBinder.bind(this));
 		initHandlers();
 	}
 
 	@Override
-	public void show(String url)
-	{
+	public void show(String url) {
 		txtURLUI.setText(url);
 		mdlExporterUI.open();
 	}
@@ -67,5 +62,5 @@ public class SettingsExporter extends LocalizedComposite implements SettingsUrlE
 	public void hide() {
 		mdlExporterUI.close();
 	}
-	
+
 }

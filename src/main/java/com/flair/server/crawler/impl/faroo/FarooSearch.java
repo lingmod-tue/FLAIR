@@ -3,40 +3,37 @@
  */
 package com.flair.server.crawler.impl.faroo;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-
 import com.flair.server.crawler.impl.AbstractSearchAgentImpl;
 import com.flair.server.crawler.impl.AbstractSearchAgentImplResult;
 import com.flair.server.utilities.HttpClientFactory;
 import com.flair.server.utilities.ServerLogger;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Web search impelementation of the FAROO search API
- * 
+ *
  * @author shadeMe
  */
-public class FarooSearch implements AbstractSearchAgentImpl
-{
-	private static final String	FAROOSEARCH_SCHEME		= "http";
-	private static final String	FAROOSEARCH_HOSTNAME	= "www.faroo.com";
-	private static final String	FAROOSEARCH_PATH		= "/api";
+public class FarooSearch implements AbstractSearchAgentImpl {
+	private static final String FAROOSEARCH_SCHEME = "http";
+	private static final String FAROOSEARCH_HOSTNAME = "www.faroo.com";
+	private static final String FAROOSEARCH_PATH = "/api";
 
-	private static final int		RESULTS_PER_PAGE	= 10;
-	private static final boolean	KEYWORDS_IN_CONTEXT	= true;
+	private static final int RESULTS_PER_PAGE = 10;
+	private static final boolean KEYWORDS_IN_CONTEXT = true;
 
-	public static enum SearchSource
-	{
+	public static enum SearchSource {
 		WEB("web"), NEWS("news"), TOPICS("topics"), TRENDS("trends"), SUGGEST("suggest");
 
 		private final String name;
@@ -51,8 +48,7 @@ public class FarooSearch implements AbstractSearchAgentImpl
 		}
 	}
 
-	public static enum SearchLanguage
-	{
+	public static enum SearchLanguage {
 		ENGLISH("en"), GERMAN("de"), CHINESE("zh");
 
 		private final String name;
@@ -67,20 +63,19 @@ public class FarooSearch implements AbstractSearchAgentImpl
 		}
 	}
 
-	private final Gson 		deserializer;
+	private final Gson deserializer;
 
-	private HttpResponse	responsePost;
-	private HttpEntity		resEntity;
+	private HttpResponse responsePost;
+	private HttpEntity resEntity;
 
-	private String			query;
-	private String			apiKey;
-	private int				perPage;
-	private int				skip;
-	private SearchLanguage	lang;
-	private SearchSource	source;
+	private String query;
+	private String apiKey;
+	private int perPage;
+	private int skip;
+	private SearchLanguage lang;
+	private SearchSource source;
 
-	public FarooSearch()
-	{
+	public FarooSearch() {
 		this.deserializer = new GsonBuilder().setPrettyPrinting().create();
 
 		query = apiKey = "";
@@ -95,8 +90,7 @@ public class FarooSearch implements AbstractSearchAgentImpl
 		return query.isEmpty();
 	}
 
-	public void setTrending(boolean trending)
-	{
+	public void setTrending(boolean trending) {
 		if (trending)
 			query = "";
 	}
@@ -145,8 +139,7 @@ public class FarooSearch implements AbstractSearchAgentImpl
 		return skip;
 	}
 
-	public void setSkip(int skip)
-	{
+	public void setSkip(int skip) {
 		this.skip = skip;
 		if (this.skip < 0)
 			this.skip = 0;
@@ -160,8 +153,7 @@ public class FarooSearch implements AbstractSearchAgentImpl
 		setSkip(getPerPage() * (page - 1));
 	}
 
-	private String getUrlQuery()
-	{
+	private String getUrlQuery() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("q=");
 		sb.append(EncodingUtil.encodeURIComponent(getQuery()));
@@ -186,14 +178,11 @@ public class FarooSearch implements AbstractSearchAgentImpl
 		return sb.toString();
 	}
 
-	private List<FarooSearchResult> loadResults(InputStream stream)
-	{
+	private List<FarooSearchResult> loadResults(InputStream stream) {
 		List<FarooSearchResult> results = new ArrayList<>();
 		FarooSearchResponse response = deserializer.fromJson(new InputStreamReader(stream), FarooSearchResponse.class);
-		if (response != null)
-		{
-			for (FarooSearchResponse.SearchResult itr : response.results)
-			{
+		if (response != null) {
+			for (FarooSearchResponse.SearchResult itr : response.results) {
 				FarooSearchResult newRes = new FarooSearchResult(itr.title, itr.url, itr.url, itr.kwic);
 				results.add(newRes);
 			}
@@ -203,10 +192,8 @@ public class FarooSearch implements AbstractSearchAgentImpl
 	}
 
 	@Override
-	public List<? extends AbstractSearchAgentImplResult> performSearch()
-	{
-		try
-		{
+	public List<? extends AbstractSearchAgentImplResult> performSearch() {
+		try {
 			if (apiKey.isEmpty())
 				throw new IllegalStateException("Invalid API key");
 
@@ -219,8 +206,7 @@ public class FarooSearch implements AbstractSearchAgentImpl
 			resEntity = responsePost.getEntity();
 
 			return loadResults(resEntity.getContent());
-		} catch (Throwable ex)
-		{
+		} catch (Throwable ex) {
 			ServerLogger.get().error(ex, "Couldn't fetch search results from Faroo. Exception: " + ex.toString());
 		}
 

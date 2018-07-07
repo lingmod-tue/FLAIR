@@ -5,9 +5,9 @@ package com.flair.server.parser;
 
 /**
  * Searches a document for a list of keywords
+ *
  * @author shadeMe
  */
-public interface AbstractDocumentKeywordSearcher
-{
-    public KeywordSearcherOutput		    search(AbstractDocument source, KeywordSearcherInput input);
+public interface AbstractDocumentKeywordSearcher {
+	public KeywordSearcherOutput search(AbstractDocument source, KeywordSearcherInput input);
 }

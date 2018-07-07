@@ -7,53 +7,48 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
-
 import gwt.material.design.client.ui.MaterialButton;
 import gwt.material.design.client.ui.MaterialModal;
 
-public class AboutPage extends LocalizedComposite
-{
+public class AboutPage extends LocalizedComposite {
 
 	private static AboutPageUiBinder uiBinder = GWT.create(AboutPageUiBinder.class);
-	interface AboutPageUiBinder extends UiBinder<Widget, AboutPage>
-	{
+
+	interface AboutPageUiBinder extends UiBinder<Widget, AboutPage> {
 	}
 
 	private static AboutPageLocalizationBinder localeBinder = GWT.create(AboutPageLocalizationBinder.class);
+
 	interface AboutPageLocalizationBinder extends LocalizationBinder<AboutPage> {}
 
 	@UiField
-	MaterialModal								mdlAboutEnUI;
+	MaterialModal mdlAboutEnUI;
 	@UiField
-	MaterialButton								btnAboutEnCloseUI;
+	MaterialButton btnAboutEnCloseUI;
 	@UiField
-	MaterialModal								mdlAboutDeUI;
+	MaterialModal mdlAboutDeUI;
 	@UiField
-	MaterialButton								btnAboutDeCloseUI;
-	
-	private void initHandlers()
-	{
-		btnAboutEnCloseUI.addClickHandler(e-> {
+	MaterialButton btnAboutDeCloseUI;
+
+	private void initHandlers() {
+		btnAboutEnCloseUI.addClickHandler(e -> {
 			mdlAboutEnUI.close();
 		});
-		
-		btnAboutDeCloseUI.addClickHandler(e-> {
+
+		btnAboutDeCloseUI.addClickHandler(e -> {
 			mdlAboutDeUI.close();
 		});
 	}
-	
-	public AboutPage()
-	{
+
+	public AboutPage() {
 		initWidget(uiBinder.createAndBindUi(this));
 		initLocale(localeBinder.bind(this));
-		
+
 		initHandlers();
 	}
 
-	public void show()
-	{
-		switch (LocalizationEngine.get().getLanguage())
-		{
+	public void show() {
+		switch (LocalizationEngine.get().getLanguage()) {
 		case ENGLISH:
 			mdlAboutEnUI.open();
 			break;
@@ -62,9 +57,8 @@ public class AboutPage extends LocalizedComposite
 			break;
 		}
 	}
-	
-	public void hide()
-	{
+
+	public void hide() {
 		mdlAboutEnUI.close();
 		mdlAboutDeUI.close();
 	}

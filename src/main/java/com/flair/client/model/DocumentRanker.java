@@ -1,13 +1,5 @@
 package com.flair.client.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.flair.client.model.interfaces.AbstractDocumentRanker;
 import com.flair.client.model.interfaces.DocumentRankerInput;
 import com.flair.client.model.interfaces.DocumentRankerOutput;
@@ -16,34 +8,31 @@ import com.flair.shared.grammar.Language;
 import com.flair.shared.interop.RankableDocument;
 import com.flair.shared.parser.DocumentReadabilityLevel;
 
+import java.util.*;
+
 /*
  * Implements language agnostic ranking functionality
  */
-public class DocumentRanker implements AbstractDocumentRanker
-{
-	private static class WeightData
-	{
-		public final double		weight;
-		public double			df;
-		public double			idf;
+public class DocumentRanker implements AbstractDocumentRanker {
+	private static class WeightData {
+		public final double weight;
+		public double df;
+		public double idf;
 
-		public WeightData(double w)
-		{
+		public WeightData(double w) {
 			weight = w;
 			df = idf = 0;
 		}
 	}
 
-	private static class RankerWeights
-	{
-		public final WeightData			docLevelA;
-		public final WeightData			docLevelB;
-		public final WeightData			docLevelC;
-		public final WeightData			keywords;
-		public final Map<GrammaticalConstruction, WeightData> 	gram;
+	private static class RankerWeights {
+		public final WeightData docLevelA;
+		public final WeightData docLevelB;
+		public final WeightData docLevelC;
+		public final WeightData keywords;
+		public final Map<GrammaticalConstruction, WeightData> gram;
 
-		public RankerWeights(DocumentRankerInput.Rank input)
-		{
+		public RankerWeights(DocumentRankerInput.Rank input) {
 			double maxWeight = input.getMaxWeight();
 
 			docLevelA = new WeightData(input.isDocLevelEnabled(DocumentReadabilityLevel.LEVEL_A) ? 1 : 0);
@@ -57,11 +46,9 @@ public class DocumentRanker implements AbstractDocumentRanker
 
 		}
 
-		private WeightData getDocLevelWeight(RankableDocument doc)
-		{
+		private WeightData getDocLevelWeight(RankableDocument doc) {
 			WeightData data;
-			switch (doc.getReadabilityLevel())
-			{
+			switch (doc.getReadabilityLevel()) {
 			case LEVEL_A:
 				return docLevelA;
 			case LEVEL_B:
@@ -81,31 +68,26 @@ public class DocumentRanker implements AbstractDocumentRanker
 			getDocLevelWeight(doc).df += 1;
 		}
 
-		private void incrementGramDf(RankableDocument doc)
-		{
+		private void incrementGramDf(RankableDocument doc) {
 			for (GrammaticalConstruction itr : doc.getConstructions()) {
 				gram.get(itr).df += 1;
 			}
 		}
 
-		private void incrementKeywordDf(RankableDocument doc)
-		{
+		private void incrementKeywordDf(RankableDocument doc) {
 			if (doc.getKeywordCount() > 0)
 				keywords.df += 1;
 		}
 
-		private void calcIdf(WeightData w, double docCount)
-		{
+		private void calcIdf(WeightData w, double docCount) {
 			if (w.df != 0)
 				w.idf = Math.log((docCount) / w.df);
 			else
 				w.idf = 0;
 		}
 
-		public void updateDfIdf(Collection<RankableDocument> docs)
-		{
-			for (RankableDocument doc : docs)
-			{
+		public void updateDfIdf(Collection<RankableDocument> docs) {
+			for (RankableDocument doc : docs) {
 				// update the df scores of all weights
 				incrementDocLevelDf(doc);
 				incrementKeywordDf(doc);
@@ -128,10 +110,8 @@ public class DocumentRanker implements AbstractDocumentRanker
 		}
 	}
 
-	private static class RankerScores
-	{
-		class Score
-		{
+	private static class RankerScores {
+		class Score {
 			public double s;
 
 			Score() {
@@ -139,10 +119,9 @@ public class DocumentRanker implements AbstractDocumentRanker
 			}
 		}
 
-		public final Map<RankableDocument, Score>	scores;
+		public final Map<RankableDocument, Score> scores;
 
-		public RankerScores(Iterable<RankableDocument> input)
-		{
+		public RankerScores(Iterable<RankableDocument> input) {
 			scores = new HashMap<>();
 
 			for (RankableDocument itr : input)
@@ -150,15 +129,13 @@ public class DocumentRanker implements AbstractDocumentRanker
 		}
 	}
 
-	private static class RankOperationOutput implements DocumentRankerOutput.Rank
-	{
-		public final Language					lang;
-		public final List<RankableDocument>		docs;
-		public final RankerWeights				weights;
-		public int								numFiltered;
+	private static class RankOperationOutput implements DocumentRankerOutput.Rank {
+		public final Language lang;
+		public final List<RankableDocument> docs;
+		public final RankerWeights weights;
+		public int numFiltered;
 
-		RankOperationOutput(Language l, List<RankableDocument> d, RankerWeights w)
-		{
+		RankOperationOutput(Language l, List<RankableDocument> d, RankerWeights w) {
 			lang = l;
 			docs = d;
 			weights = w;
@@ -171,10 +148,8 @@ public class DocumentRanker implements AbstractDocumentRanker
 		}
 
 		@Override
-		public double getDocLevelDf(DocumentReadabilityLevel level)
-		{
-			switch (level)
-			{
+		public double getDocLevelDf(DocumentReadabilityLevel level) {
+			switch (level) {
 			case LEVEL_A:
 				return weights.docLevelA.df;
 			case LEVEL_B:
@@ -187,8 +162,7 @@ public class DocumentRanker implements AbstractDocumentRanker
 		}
 
 		@Override
-		public double getConstructionDf(GrammaticalConstruction gram)
-		{
+		public double getConstructionDf(GrammaticalConstruction gram) {
 			WeightData w = weights.getConstructionWeight(gram);
 			if (w == null)
 				return 0;
@@ -197,8 +171,7 @@ public class DocumentRanker implements AbstractDocumentRanker
 		}
 
 		@Override
-		public double getConstructionWeight(GrammaticalConstruction gram)
-		{
+		public double getConstructionWeight(GrammaticalConstruction gram) {
 			WeightData w = weights.getConstructionWeight(gram);
 			if (w == null)
 				return 0;
@@ -220,26 +193,24 @@ public class DocumentRanker implements AbstractDocumentRanker
 		public boolean isKeywordWeighted() {
 			return weights.keywords.weight != 0;
 		}
-		
+
 		@Override
 		public int getNumFilteredDocuments() {
 			return numFiltered;
 		}
-	
+
 		@Override
 		public Language getLanguage() {
 			return lang;
 		}
 	}
 
-	private static final double			LENGTH_PARAM_MULTIPLIER = 10;
-	private static final double			TF_NORM_MULTIPLIER = 1.7;
+	private static final double LENGTH_PARAM_MULTIPLIER = 10;
+	private static final double TF_NORM_MULTIPLIER = 1.7;
 
 
-	private boolean isDocConstructionFiltered(DocumentRankerInput.Rank input, RankableDocument doc)
-	{
-		for (GrammaticalConstruction itr : doc.getConstructions())
-		{
+	private boolean isDocConstructionFiltered(DocumentRankerInput.Rank input, RankableDocument doc) {
+		for (GrammaticalConstruction itr : doc.getConstructions()) {
 			if (input.hasConstructionSlider(itr) && input.isConstructionEnabled(itr) == false)
 				return true;
 		}
@@ -248,8 +219,7 @@ public class DocumentRanker implements AbstractDocumentRanker
 	}
 
 	@Override
-	public DocumentRankerOutput.Rank rerank(DocumentRankerInput.Rank input)
-	{
+	public DocumentRankerOutput.Rank rerank(DocumentRankerInput.Rank input) {
 		RankerWeights weights = new RankerWeights(input);
 		RankOperationOutput out = new RankOperationOutput(input.getLanguage(), new ArrayList<>(), weights);
 
@@ -257,12 +227,10 @@ public class DocumentRanker implements AbstractDocumentRanker
 		double avDocLenAccum = -1;
 
 		// perform filtering
-		for (RankableDocument itr : input.getDocuments())
-		{
+		for (RankableDocument itr : input.getDocuments()) {
 			if (input.isDocumentFiltered(itr) ||
-				weights.isDocLevelFiltered(itr) ||
-				isDocConstructionFiltered(input, itr))
-			{
+					weights.isDocLevelFiltered(itr) ||
+					isDocConstructionFiltered(input, itr)) {
 				out.numFiltered++;
 				continue;
 			}
@@ -293,16 +261,13 @@ public class DocumentRanker implements AbstractDocumentRanker
 			}
 		}
 		final BoolWrapper hasGramScore = new BoolWrapper(weights.keywords.weight != 0);
-		for (RankableDocument itr : out.docs)
-		{
+		for (RankableDocument itr : out.docs) {
 			RankerScores.Score score = scores.scores.get(itr);
 			// accumulate gram construction score
 			weights.gram.forEach((g, w) -> {
-				if (w.weight != 0 && w.df > 0)
-				{
+				if (w.weight != 0 && w.df > 0) {
 					hasGramScore.b = true;
-					if (itr.hasConstruction(g))
-					{
+					if (itr.hasConstruction(g)) {
 						double tf = itr.getConstructionFreq(g);
 						double idf = w.idf;
 						double tfNorm = ((TF_NORM_MULTIPLIER + 1) * tf) / (tf + TF_NORM_MULTIPLIER * (1 - lengthParam + lengthParam * (itr.getNumWords() / avgDocLen)));
@@ -325,20 +290,15 @@ public class DocumentRanker implements AbstractDocumentRanker
 		}
 
 		// sort docs by weight
-		if (hasGramScore.b)
-		{
+		if (hasGramScore.b) {
 			Collections.sort(out.docs, (a, b) -> {
 				return -Double.compare(scores.scores.get(a).s, scores.scores.get(b).s);
 			});
-		}
-		else if (lengthParam != 0)
-		{
+		} else if (lengthParam != 0) {
 			Collections.sort(out.docs, (a, b) -> {
-				return Integer.compare((int)a.getNumWords(), (int)b.getNumWords());
+				return Integer.compare((int) a.getNumWords(), (int) b.getNumWords());
 			});
-		}
-		else
-		{
+		} else {
 			Collections.sort(out.docs, (a, b) -> {
 				return Integer.compare(a.getRank(), b.getRank());
 			});

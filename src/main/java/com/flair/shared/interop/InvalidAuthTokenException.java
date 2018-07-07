@@ -3,11 +3,10 @@ package com.flair.shared.interop;
 /*
  * Indicates a fatal client-server interop error
  */
-public class InvalidAuthTokenException extends RuntimeException
-{
+public class InvalidAuthTokenException extends RuntimeException {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 2024964285747429072L;
 
@@ -28,8 +27,7 @@ public class InvalidAuthTokenException extends RuntimeException
 	}
 
 	public InvalidAuthTokenException(String message, Throwable cause, boolean enableSuppression,
-			boolean writableStackTrace)
-	{
+	                                 boolean writableStackTrace) {
 		super(message, cause, enableSuppression, writableStackTrace);
 	}
 }

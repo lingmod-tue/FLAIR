@@ -7,11 +7,11 @@ import com.flair.server.crawler.impl.AbstractSearchAgentImplResult;
 
 /**
  * Represents a web page in a Azure web search result
+ *
  * @author shadeMe
  */
-public class AzureWebSearchResult extends AbstractSearchAgentImplResult
-{
-    public AzureWebSearchResult(String name, String url, String displayUrl, String snippet) {
-	super(name, url, displayUrl, snippet);
-    }
+public class AzureWebSearchResult extends AbstractSearchAgentImplResult {
+	public AzureWebSearchResult(String name, String url, String displayUrl, String snippet) {
+		super(name, url, displayUrl, snippet);
+	}
 }
