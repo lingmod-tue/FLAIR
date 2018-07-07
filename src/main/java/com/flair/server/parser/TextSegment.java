@@ -4,7 +4,7 @@
 package com.flair.server.parser;
 
 /**
- * Represents a segement in a text
+ * Represents a segment in a text
  * @author shadeMe
  */
 public class TextSegment

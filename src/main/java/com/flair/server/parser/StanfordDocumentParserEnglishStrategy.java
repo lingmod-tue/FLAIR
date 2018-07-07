@@ -2079,7 +2079,6 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 			List<CoreMap> sentences = docAnnotation.get(CoreAnnotations.SentencesAnnotation.class);
 			for (CoreMap itr : sentences)
 			{
-
 				if (itr.size() > 0)
 				{
 					Tree tree = itr.get(TreeCoreAnnotations.TreeAnnotation.class);
