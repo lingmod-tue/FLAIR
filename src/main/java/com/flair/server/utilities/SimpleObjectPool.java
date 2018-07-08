@@ -14,6 +14,10 @@ import java.util.concurrent.Semaphore;
  * @author shadeMe
  */
 public class SimpleObjectPool<T> {
+	public interface Factory<T> {
+		T create();
+	}
+
 	private final class ResourceUsageData {
 		private boolean inUse;
 
@@ -70,6 +74,14 @@ public class SimpleObjectPool<T> {
 
 	private final Semaphore synchronizer;
 	private final Map<T, ResourceUsageData> resourceTable;
+
+	public SimpleObjectPool(int poolSize, Factory<T> factory) {
+		this.synchronizer = new Semaphore(poolSize, true);
+		this.resourceTable = new HashMap<>();
+
+		for (int i = 0; i < poolSize; i++)
+			resourceTable.put(factory.create(), new ResourceUsageData());
+	}
 
 	public SimpleObjectPool(int poolSize, T[] resources) {
 		this.synchronizer = new Semaphore(poolSize, true);

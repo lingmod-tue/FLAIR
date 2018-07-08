@@ -19,24 +19,11 @@ public abstract class AbstractDocumentSource implements Comparable<AbstractDocum
 	}
 
 	protected final String preprocessText(String input) {
-		// ensure that all EOL punctuation marks are periods
-		StringBuilder textWriter = new StringBuilder();
-		String[] sentences = input.split("\n");
-
-		for (String itr : sentences) {
-			if (itr.trim().isEmpty()) {
-				textWriter.append("\n");
-				continue;
-			}
-
-			textWriter.append(itr);
-			if (!(itr.endsWith(".") || itr.endsWith("!") || itr.endsWith("?") || itr.endsWith("\"")))
-				textWriter.append(".\n");
-			else
-				textWriter.append("\n");
-		}
-
-		return textWriter.toString();
+		// ideally, we'd fix up the text to make it easier for the parser to parse
+		// in particular, text extracted from web sources might contain malformed sentences due to markup issues
+		// however, we'll do nothing here since the parser is usually clever enough
+		// to overcome the most egregious instances
+		return input;
 	}
 
 	public final Language getLanguage() {

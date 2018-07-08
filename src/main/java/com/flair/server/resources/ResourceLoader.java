@@ -12,6 +12,6 @@ import java.io.InputStream;
  */
 public final class ResourceLoader {
 	public static InputStream get(String fileName) {
-		return ResourceLoader.class.getResourceAsStream("/com/flair/server/resources/" + fileName);
+		return ResourceLoader.class.getResourceAsStream(fileName);
 	}
 }

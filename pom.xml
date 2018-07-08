@@ -130,6 +130,26 @@
             <version>3.8.0</version>
             <classifier>models-german</classifier>
         </dependency>
+        <dependency>
+            <groupId>org.jgrapht</groupId>
+            <artifactId>jgrapht-core</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.zensols</groupId>
+            <artifactId>stopword-annotator</artifactId>
+            <version>2.2</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.trove4j</groupId>
+            <artifactId>trove4j</artifactId>
+            <version>3.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.dakusui</groupId>
+            <artifactId>combinatoradix</artifactId>
+            <version>0.8.2</version>
+        </dependency>
     </dependencies>
 
     <build>

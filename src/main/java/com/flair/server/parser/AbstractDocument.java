@@ -22,6 +22,8 @@ public interface AbstractDocument extends Comparable<AbstractDocument> {
 	public Iterable<GrammaticalConstruction> getSupportedConstructions();    // returns the constructions pertinent to the doc's language
 	public DocumentConstructionData getConstructionData(GrammaticalConstruction type);
 
+	void addSentenceSegment(TextSegment span);
+	Iterable<TextSegment> getSentenceSegments();    // returns the ordered list of document text's sentences as spans
 
 	public double getReadabilityScore();
 	public DocumentReadabilityLevel getReadabilityLevel();

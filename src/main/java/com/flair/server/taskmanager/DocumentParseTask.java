@@ -76,7 +76,7 @@ class DocumentParseTask extends AbstractTask<DocumentParseTaskResult> {
 	                         DocumentParserPool parserPool,
 	                         AbstractDocumentKeywordSearcher keywordSearcher,
 	                         KeywordSearcherInput keywordSearcherInput) {
-		super(TaskType.PARSE_DOCUMENT, job, new BasicTaskLinker<DocumentParseTaskResult>(job));
+		super(TaskType.PARSE_DOCUMENT, job, new BasicTaskLinker<>(job));
 
 		this.input = source;
 		this.strategy = strategy;

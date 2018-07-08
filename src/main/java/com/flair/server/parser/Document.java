@@ -9,6 +9,8 @@ import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
 import com.flair.shared.parser.DocumentReadabilityLevel;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 /**
@@ -21,6 +23,7 @@ class Document implements AbstractDocument {
 	private final double readabilityScore;
 	private final DocumentReadabilityLevel readabilityLevel;    // calculate from the readability score
 	private final ConstructionDataCollection constructionData;
+	private final List<TextSegment> sentenceSegments;
 
 	private int numCharacters;
 	private int numSentences;
@@ -42,6 +45,7 @@ class Document implements AbstractDocument {
 
 		source = parent;
 		constructionData = new ConstructionDataCollection(parent.getLanguage(), new DocumentConstructionDataFactory(this));
+		sentenceSegments = new ArrayList<>();
 
 		String pageText = source.getSourceText();
 		StringTokenizer tokenizer = new StringTokenizer(pageText, " ");
@@ -114,6 +118,14 @@ class Document implements AbstractDocument {
 	@Override
 	public DocumentConstructionData getConstructionData(GrammaticalConstruction type) {
 		return (DocumentConstructionData) constructionData.getData(type);
+	}
+	@Override
+	public void addSentenceSegment(TextSegment span) {
+		sentenceSegments.add(span);
+	}
+	@Override
+	public Iterable<TextSegment> getSentenceSegments() {
+		return sentenceSegments;
 	}
 
 	public void calculateFancyDocLength() {

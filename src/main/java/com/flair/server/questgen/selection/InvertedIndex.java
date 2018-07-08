@@ -1,6 +1,10 @@
 package com.flair.server.questgen.selection;
 
 import com.flair.server.parser.AbstractDocument;
+import gnu.trove.map.TIntObjectMap;
+import gnu.trove.map.TObjectIntMap;
+import gnu.trove.map.hash.TIntObjectHashMap;
+import gnu.trove.map.hash.TObjectIntHashMap;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,7 +13,7 @@ import java.util.HashSet;
  * Represents an inverted index of postings that map terms (words) to their
  * occurrence frequencies in a collection of documents
  */
-public class InvertedIndex {
+class InvertedIndex {
 	static final class Frequency {
 		int frequency;
 
@@ -56,20 +60,52 @@ public class InvertedIndex {
 		}
 	}
 
-	private final HashMap<String, Posting> term2posting;
-	private final HashSet<AbstractDocument> sourceDocs;
+	private static final int TERM_ID_BEGIN = 1;     // zero is reserved by the Trove4J map implementations
 
-	public InvertedIndex() {
-		term2posting = new HashMap<>();
+	private final TObjectIntMap<String> term2id;
+	private final TIntObjectMap<Posting> id2posting;
+	private final HashSet<AbstractDocument> sourceDocs;
+	private int nextId;
+
+	InvertedIndex() {
+		term2id = new TObjectIntHashMap<>();
+		id2posting = new TIntObjectHashMap<>();
 		sourceDocs = new HashSet<>();
+		nextId = TERM_ID_BEGIN;
+
+		if (term2id.getNoEntryValue() == TERM_ID_BEGIN || id2posting.getNoEntryKey() == TERM_ID_BEGIN)
+			throw new IllegalStateException("Invalid no entry key/value sentinel!");
 	}
 
+	private Posting getPosting(String term) {
+		int termId = term2id.get(term);
+		if (termId == term2id.getNoEntryValue())
+			return null;
+		else
+			return id2posting.get(termId);
+	}
+
+	boolean hasTerm(String term) {
+		return term2id.get(term) != term2id.getNoEntryValue();
+	}
+
+	int getTermId(String term) {
+		int id = term2id.get(term);
+		if (id == term2id.getNoEntryValue())
+			throw new IllegalArgumentException("Term '" + term + "' not found in index");
+		return id;
+	}
+
+
 	void addTerm(String term, AbstractDocument sourceDoc) {
-		Posting existing = term2posting.get(term);
+		Posting existing = getPosting(term);
 		if (existing == null) {
 			existing = new Posting();
 			existing.increment(sourceDoc);
-			term2posting.put(term, existing);
+
+			term2id.put(term, nextId);
+			id2posting.put(nextId, existing);
+			nextId += 1;
 		} else
 			existing.increment(sourceDoc);
 
@@ -77,19 +113,21 @@ public class InvertedIndex {
 	}
 
 	int getTermFrequency(String term, AbstractDocument source) {
-		Posting existing = term2posting.get(term);
+		Posting existing = getPosting(term);
 		int out = 0;
-		if (source == null) {
-			for (Frequency f : existing.doc2Freq.values())
-				out += f.get();
-		} else
-			out = existing.getTermFrequency(source);
+		if (existing != null) {
+			if (source == null) {
+				for (Frequency f : existing.doc2Freq.values())
+					out += f.get();
+			} else
+				out = existing.getTermFrequency(source);
+		}
 
 		return out;
 	}
 
 	int getTermDocumentFrequency(String term) {
-		Posting existing = term2posting.get(term);
+		Posting existing = getPosting(term);
 		if (existing != null)
 			return existing.getDocumentFrequency();
 		else
@@ -104,5 +142,9 @@ public class InvertedIndex {
 			tf = 1 + Math.log(tf);
 
 		return tf * Math.log(sourceDocs.size() / df);
+	}
+
+	int size() {
+		return nextId;
 	}
 }
