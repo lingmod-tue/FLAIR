@@ -25,9 +25,8 @@ class BoilerpipeTextExtractor extends AbstractTextExtractor {
 		String pageText = "";
 
 		try {
-			// TODO: check for encoding!!!
 			InputSource source = new InputSource();
-			source.setEncoding("UTF-8");
+			source.setEncoding("UTF-8");    // safe bet
 
 			switch (input.sourceType) {
 			case URL:
@@ -38,7 +37,7 @@ class BoilerpipeTextExtractor extends AbstractTextExtractor {
 				break;
 			}
 
-			pageText = DefaultExtractor.getInstance().getText(source);
+			pageText = ArticleExtractor.getInstance().getText(source);
 		} catch (Throwable ex) {
 			ServerLogger.get().error(ex, "Couldn't extract text. Exception: " + ex.toString());
 			error = true;

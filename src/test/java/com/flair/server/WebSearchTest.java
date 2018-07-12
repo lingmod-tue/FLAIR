@@ -1,13 +1,16 @@
 package com.flair.server;
 
-import java.util.Arrays;
-
 import com.flair.server.parser.AbstractDocument;
 import com.flair.server.parser.DocumentCollection;
 import com.flair.server.parser.KeywordSearcherInput;
+import com.flair.server.parser.TextSegment;
+import com.flair.server.questgen.selection.DocumentSentenceSelector;
+import com.flair.server.questgen.selection.DocumentSentenceSelectorGenerator;
 import com.flair.server.taskmanager.MasterJobPipeline;
 import com.flair.server.taskmanager.SearchCrawlParseOperation;
 import com.flair.shared.grammar.Language;
+
+import java.util.Arrays;
 
 /*
  * Runs a simple web search operation
@@ -15,15 +18,48 @@ import com.flair.shared.grammar.Language;
 public class WebSearchTest
 {
 	public static void processParsedDocs(DocumentCollection dc) {
-		// iterate through the document collection like you would a list
-		for (AbstractDocument doc : dc) {
-			// do things with the parsed document
+		DocumentSentenceSelector.Builder rankeBuilder = DocumentSentenceSelectorGenerator.create(DocumentSentenceSelectorGenerator.SelectorType.TEXTRANK, Language.ENGLISH);
+		rankeBuilder.stemWords(true)
+				.ignoreStopwords(true)
+				.source(DocumentSentenceSelector.Source.DOCUMENT)
+				.granularity(DocumentSentenceSelector.Granularity.DOCUMENT)
+				.mainDocument(dc.get(0));
+
+		int i = 0;
+		for (AbstractDocument itr : dc) {
+			if (i == 0)
+				rankeBuilder.mainDocument(itr);
+			else
+				rankeBuilder.copusDocument(itr);
+			i++;
+		}
+
+		DocumentSentenceSelector sel = rankeBuilder.build();
+
+		System.out.println("\nSentences:\n");
+
+		i = 1;
+		for (TextSegment itr : dc.get(0).getSentenceSegments()) {
+			StringBuilder line = new StringBuilder();
+			line.append(i).append(": ").append(dc.get(0).getSentenceText(itr, true));
+			System.out.println(line.toString());
+			i++;
+		}
+
+		System.out.println("\nRanked:\n");
+
+		i = 1;
+		for (DocumentSentenceSelector.SelectedSentence itr : sel.topK(10)) {
+			StringBuilder line = new StringBuilder();
+			line.append(i).append(": [").append(itr.getScore()).append("] ").append(itr.getText());
+			System.out.println(line.toString());
+			i++;
 		}
 	}
 
 	public static void main(String[] args)
 	{
-		String query = "Blue Oyster Cult";
+		String query = "site:theguardian.com nato";
 		int numResults = 10;
 		Language lang = Language.ENGLISH;
 		String[] keywords = new String[] {
@@ -51,10 +87,10 @@ public class WebSearchTest
 		 * Then, start the operation
 		 */
 		operation.setCrawlCompleteHandler(sr -> {
-			System.out.println("Do something with the search result: " + sr.toString());
+			//	System.out.println("Do something with the search result: " + sr.toString());
 		});
 		operation.setParseCompleteHandler(d -> {
-			System.out.println("Do something with the parsed document: " + d.toString());
+			//	System.out.println("Do something with the parsed document: " + d.toString());
 		});
 		operation.setJobCompleteHandler(dc -> {
 			System.out.println("Do something with the document collection: " + dc.toString());
@@ -76,6 +112,7 @@ public class WebSearchTest
 		 * At this point, the JobComplete handle would have executed
 		 */
 		System.out.println("Operation Complete");
+		System.exit(0);
 	}
 
 }

@@ -94,6 +94,6 @@ public abstract class AbstractTextExtractor {
 	}
 
 	public static String doBoilerpipePass(String html) {
-		return BoilerpipeTextExtractor.parse(html, false);
+		return BoilerpipeTextExtractor.parse(html, true);
 	}
 }

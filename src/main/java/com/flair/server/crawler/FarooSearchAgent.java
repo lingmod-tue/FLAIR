@@ -17,8 +17,6 @@ import java.util.List;
  * @author shadeMe
  */
 public class FarooSearchAgent extends CachingSearchAgent {
-	private static final String API_KEY = "";
-
 	private static final int RESULTS_PER_PAGE = 10;
 	private static final int MAX_API_REQUESTS = 2;
 
@@ -43,7 +41,6 @@ public class FarooSearchAgent extends CachingSearchAgent {
 			throw new IllegalArgumentException("Unsupported language " + lang);
 		}
 
-		pipeline.setApiKey(API_KEY);
 		pipeline.setQuery(query);
 		pipeline.setPerPage(RESULTS_PER_PAGE);
 	}

@@ -149,6 +149,9 @@ public class AzureWebSearch implements AbstractSearchAgentImpl {
 
 	private void doQuery() {
 		try {
+			if (getApiKey().isEmpty())
+				throw new IllegalStateException("No API key specified!");
+
 			String full_query = getUrlQuery();
 			URI uri = new URI(AZURESEARCH_SCHEME, AZURESEARCH_HOSTNAME, AZURESEARCH_PATH, full_query, null);
 			// Bing and java URI disagree about how to represent + in query

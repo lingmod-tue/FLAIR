@@ -12,11 +12,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import static com.flair.server.crawler.Constants.SEARCH_RESULT_MINIMUM_TOKEN_COUNT;
+
 /*
  * Performs a web search, crawls the results and parses the text
  */
 final class SearchCrawlParseJob extends AbstractJob<SearchCrawlParseJobOutput, SearchCrawlParseJobEvent> {
-	private static final int MINIMUM_TOKEN_COUNT = 100;    // in the page text
 	private static final int MAX_CRAWLS = 100;            // anymore and we time-out
 
 	private final SearchCrawlParseJobInput input;
@@ -94,7 +95,7 @@ final class SearchCrawlParseJob extends AbstractJob<SearchCrawlParseJobOutput, S
 				// check token count and queue parse task if valid
 				StringTokenizer tokenizer = new StringTokenizer(sr.getPageText(), " ");
 				int tokCount = tokenizer.countTokens();
-				if (tokCount > MINIMUM_TOKEN_COUNT) {
+				if (tokCount > SEARCH_RESULT_MINIMUM_TOKEN_COUNT) {
 					notifyListeners(new SearchCrawlParseJobEvent(sr));
 					numValidResults++;
 

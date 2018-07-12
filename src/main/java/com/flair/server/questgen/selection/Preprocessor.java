@@ -28,15 +28,15 @@ final class Preprocessor {
 
 	static final class PreprocessedSentence {
 		final AbstractDocument source;
-		final TextSegment sourceSentence;
-		final int sentId;
+		final TextSegment span;
+		final int id;               // sentence number as found in the source
 		final Set<String> tokens;       // unique tokens only
 
 		PreprocessedSentence(AbstractDocument s, TextSegment ss, int id) {
-			source = s;
-			sourceSentence = ss;
-			sentId = id;
-			tokens = new HashSet<>();
+			this.source = s;
+			this.span = ss;
+			this.id = id;
+			this.tokens = new HashSet<>();
 		}
 	}
 
@@ -46,9 +46,9 @@ final class Preprocessor {
 		final String stopwords;   // comma-separated
 		final SimpleObjectPool<StanfordCoreNLP> parserPool;
 
-		LanguageData(String sw, SimpleObjectPool.Factory f) {
+		LanguageData(String sw, SimpleObjectPool.Factory<StanfordCoreNLP> f) {
 			stopwords = sw;
-			parserPool = new SimpleObjectPool<StanfordCoreNLP>(PARSER_INSTANCE_POOL_SIZE, f);
+			parserPool = new SimpleObjectPool<>(PARSER_INSTANCE_POOL_SIZE, f);
 		}
 	}
 
@@ -104,12 +104,11 @@ final class Preprocessor {
 			throw new IllegalArgumentException("Couldn't preprocess unparsed document");
 
 		LanguageData state = SUPPORTED_LANGUAGES.get(params.lang);
-		String docText = doc.getText();
 
 		try (SimpleObjectPoolResource<StanfordCoreNLP> parser = state.parserPool.get()) {
 			int i = 1;
 			for (TextSegment itr : doc.getSentenceSegments()) {
-				String sentenceText = docText.substring(itr.getStart(), itr.getEnd());
+				String sentenceText = doc.getSentenceText(itr, true);
 				PreprocessedSentence preprocSent = new PreprocessedSentence(doc, itr, i);
 
 				Annotation anno = new Annotation(sentenceText);
@@ -135,7 +134,9 @@ final class Preprocessor {
 						preprocSent.tokens.add(word.toLowerCase());
 				}
 
-				out.add(preprocSent);
+				if (!preprocSent.tokens.isEmpty())
+					out.add(preprocSent);
+
 				++i;
 			}
 		} catch (Throwable e) {

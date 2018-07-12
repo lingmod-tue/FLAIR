@@ -24,6 +24,7 @@ public interface AbstractDocument extends Comparable<AbstractDocument> {
 
 	void addSentenceSegment(TextSegment span);
 	Iterable<TextSegment> getSentenceSegments();    // returns the ordered list of document text's sentences as spans
+	String getSentenceText(TextSegment sentSpan, boolean sanitize);
 
 	public double getReadabilityScore();
 	public DocumentReadabilityLevel getReadabilityLevel();

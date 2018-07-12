@@ -127,6 +127,15 @@ class Document implements AbstractDocument {
 	public Iterable<TextSegment> getSentenceSegments() {
 		return sentenceSegments;
 	}
+	@Override
+	public String getSentenceText(TextSegment sentSpan, boolean sanitize) {
+		String out = source.getSourceText()
+				.substring(sentSpan.getStart(), sentSpan.getEnd());
+		if (sanitize)
+			out = out.replace("\n", " ").replace("\r", "");
+
+		return out;
+	}
 
 	public void calculateFancyDocLength() {
 		double sumOfPowers = 0.0;

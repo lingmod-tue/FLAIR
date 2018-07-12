@@ -5,8 +5,10 @@ import com.flair.server.crawler.impl.azure.AzureWebSearch;
 import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.grammar.Language;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 /**
  * Implementation of the Bing Search engine
@@ -14,7 +16,15 @@ import java.util.List;
  * @author shadeMe
  */
 class BingSearchAgent extends CachingSearchAgent {
-	private static final String PROD_API_KEY = "***REMOVED***";        // Detmar/Maria's
+	private static final Properties PROPERTIES = new Properties();
+
+	static {
+		try {
+			PROPERTIES.load(BingSearchAgent.class.getResourceAsStream("BingSearchAgent.properties"));
+		} catch (IOException e) {
+			ServerLogger.get().error(e, "Couldn't load properties for BingSearchAgent");
+		}
+	}
 
 	private static final int RESULTS_PER_PAGE = 100;        // larger numbers will reduce the number of search transactions but will increase the response size
 	private static final int MAX_API_REQUESTS = 2;
@@ -42,7 +52,7 @@ class BingSearchAgent extends CachingSearchAgent {
 			throw new IllegalArgumentException("Unsupported language " + lang);
 		}
 
-		pipeline.setApiKey(PROD_API_KEY);
+		pipeline.setApiKey(PROPERTIES.getProperty("api-key"));
 
 		pipeline.setQuery(qPrefix + query + qPostfix);
 		pipeline.setPerPage(RESULTS_PER_PAGE);

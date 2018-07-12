@@ -4,13 +4,32 @@ import com.flair.server.parser.AbstractDocument;
 import com.flair.server.parser.TextSegment;
 
 /*
- * Selects sentences from a document based on some criteria
+ * Selects sentences from one or more documents based on some criteria
  */
 public interface DocumentSentenceSelector {
+	enum Granularity {
+		SENTENCE,      // (default) the model is trained exclusively on individual sentences
+		DOCUMENT       // the model is trained on both sentences and the documents they occur in
+	}
+
+	;
+
+	enum Source {
+		DOCUMENT,     // (default) the final sentences are selected from a specific document
+		CORPUS,       // the final sentences are selected from the entire corpus of documents
+	}
+
+	// all boolean parameters default to false
 	interface Builder {
 		Builder stemWords(boolean val);
 		Builder ignoreStopwords(boolean val);
-		Builder addDocument(AbstractDocument doc);
+		Builder useSynsets(boolean val);    // TODO implement WordNet
+		Builder granularity(Granularity val);
+		Builder source(Source val);
+
+		Builder mainDocument(AbstractDocument doc);     // document from which sentences are selected
+		Builder copusDocument(AbstractDocument doc);    // additional corpus that can be used the selector
+
 		DocumentSentenceSelector build();
 	}
 
@@ -18,8 +37,9 @@ public interface DocumentSentenceSelector {
 		TextSegment getSpan();
 		AbstractDocument getSource();
 		default String getText() {
-			return getSource().getText().substring(getSpan().getStart(), getSpan().getEnd());
+			return getSource().getSentenceText(getSpan(), true);
 		}
+		double getScore();
 	}
 
 	Iterable<? extends SelectedSentence> topK(int k);    // returns a ranked list of the top-k sentence spans

@@ -12,6 +12,7 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,17 +22,58 @@ import java.util.stream.Collectors;
 public class TextRankSentenceSelector implements DocumentSentenceSelector {
 	private static final int MAX_ITERATIONS = 10000;
 
-	static final class Node {
+	// represents the concept of a document wrt the inverted index
+	private static final class BaseDocument {
+		final Preprocessor.PreprocessedSentence sent;
+		final AbstractDocument doc;
+
+		BaseDocument(Preprocessor.PreprocessedSentence sent) {
+			this.sent = sent;
+			this.doc = null;
+		}
+		BaseDocument(AbstractDocument doc) {
+			this.doc = doc;
+			this.sent = null;
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+			BaseDocument that = (BaseDocument) o;
+			return sent == that.sent && doc == that.doc;
+		}
+		@Override
+		public int hashCode() {
+			if (doc != null)
+				return doc.hashCode();
+			else if (sent != null)
+				return sent.hashCode();
+			else
+				throw new IllegalStateException("Invalid BaseDocument!");
+		}
+	}
+
+	private static final class Node {
 		final Preprocessor.PreprocessedSentence source;
-		SparseDoubleVector vector;
+		final SparseDoubleVector vector;
 
 		Node(Preprocessor.PreprocessedSentence s, SparseDoubleVector v) {
 			source = s;
 			vector = v;
 		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+
+			Node node = (Node) o;
+			return source == node.source;
+		}
 	}
 
-	static final class RankedSentence implements SelectedSentence {
+	private static final class RankedSentence implements SelectedSentence {
 		final Preprocessor.PreprocessedSentence sent;
 		final double score;
 
@@ -42,71 +84,89 @@ public class TextRankSentenceSelector implements DocumentSentenceSelector {
 
 		@Override
 		public TextSegment getSpan() {
-			return sent.sourceSentence;
+			return sent.span;
 		}
 		@Override
 		public AbstractDocument getSource() {
 			return sent.source;
 		}
+		@Override
+		public double getScore() {
+			return score;
+		}
 	}
 
-	private final InvertedIndex index;
+	private final InvertedIndex<BaseDocument> index;
 	private final Graph<Node, DefaultWeightedEdge> graph;
-	private List<RankedSentence> rankedOutput;
+	private final List<RankedSentence> rankedOutput;
+
+	private BaseDocument getBaseDocument(Preprocessor.PreprocessedSentence sent, DocumentSentenceSelectorParams params) {
+		switch (params.granularity) {
+		case SENTENCE:
+			return new BaseDocument(sent);
+		case DOCUMENT:
+			return new BaseDocument(sent.source);
+		}
+
+		return null;
+	}
 
 	private void init(DocumentSentenceSelectorParams params) {
 		List<Preprocessor.PreprocessedSentence> allSents = new ArrayList<>();
 
 		// add terms to the index
-		for (AbstractDocument doc : params.docs) {
+		if (params.main != null)
+			params.corpus.add(params.main);
+
+		for (AbstractDocument doc : params.corpus) {
 			List<Preprocessor.PreprocessedSentence> docSents = Preprocessor.INSTANCE.get().preprocessDocument(doc, params);
-			docSents.forEach(sent -> {
-				sent.tokens.forEach(tok -> index.addTerm(tok, sent.source));
-			});
-			allSents.addAll(docSents);
+			docSents.forEach(sent -> sent.tokens.forEach(tok -> index.addTerm(tok, getBaseDocument(sent, params))));
+
+			switch (params.source) {
+			case DOCUMENT:
+				if (doc != params.main)
+					break;
+			case CORPUS:
+				allSents.addAll(docSents);
+				break;
+			}
 		}
 
 		// create tf-idf sentence vectors
 		List<Node> nodes = allSents.stream().map(sent -> {
 			Node newNode = new Node(sent, new SparseDoubleVector(index.size()));
-			sent.tokens.forEach(tok -> {
-				newNode.vector.set(index.getTermId(tok),
-						index.getTermTfIdf(tok, sent.source, false));
-			});
+			sent.tokens.forEach(tok -> newNode.vector.set(index.getTermId(tok), index.getTermTfIdf(tok, getBaseDocument(sent, params), false)));
 			return newNode;
 		}).collect(Collectors.toList());
 
 		// generate sentence graph
 		for (List<Node> pair : new Combinator<>(nodes, 2)) {
 			Node first = pair.get(0), second = pair.get(1);
-			if (!graph.addVertex(first)) {
-				ServerLogger.get().warn("Couldn't add sentence " + first.source.sentId +
-						" in document " + first.source.source.toString() + " to TextRank graph");
-			}
-
-			if (!graph.addVertex(second)) {
-				ServerLogger.get().warn("Couldn't add sentence " + second.source.sentId +
-						" in document " + second.source.source.toString() + " to TextRank graph");
-			}
+			graph.addVertex(first);
+			graph.addVertex(second);
 
 			DefaultWeightedEdge edge = graph.addEdge(first, second);
 			if (edge == null) {
-				ServerLogger.get().warn("Couldn't add edge between sentences " + first.source.sentId +
-						" and " + second.source.sentId + " in document " + first.source.source.toString() + " to TextRank graph");
+				ServerLogger.get().warn("Couldn't add edge between sentences: Sentence " + first.source.id + " in " + first.source.source.getDescription()
+						+ " and Sentence " + second.source.id + " in " + second.source.source.getDescription());
+			} else {
+				double cosineDist = 1 - (first.vector.dot(second.vector) / (first.vector.magnitude() * second.vector.magnitude()));
+				if (!Double.isFinite(cosineDist)) {
+					throw new RuntimeException("Invalid cosine distance between sentences " + first.source.id +
+							" and " + second.source.id + " in document " + first.source.source.getDescription());
+				}
+				graph.setEdgeWeight(edge, cosineDist);
 			}
-
-			double cosineDist = 1 - (first.vector.dot(second.vector) / first.vector.magnitude() * second.vector.magnitude());
-			graph.setEdgeWeight(edge, cosineDist);
 		}
 
 		// execute PageRank and rank results
 		PageRank<Node, DefaultWeightedEdge> pageRank = new PageRank<>(graph, PageRank.DAMPING_FACTOR_DEFAULT, MAX_ITERATIONS);
 		pageRank.getScores().forEach((n, s) -> rankedOutput.add(new RankedSentence(n.source, s)));
-		rankedOutput.sort((a, b) -> Double.compare(a.score, b.score));
+		rankedOutput.sort(Comparator.comparingDouble(a -> -a.score));
 	}
 
 	private TextRankSentenceSelector(DocumentSentenceSelectorParams p) {
-		index = new InvertedIndex();
+		index = new InvertedIndex<>();
 		graph = new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
 		rankedOutput = new ArrayList<>();
 
@@ -137,12 +197,33 @@ public class TextRankSentenceSelector implements DocumentSentenceSelector {
 			return this;
 		}
 		@Override
-		public DocumentSentenceSelector.Builder addDocument(AbstractDocument doc) {
-			params.docs.add(doc);
+		public DocumentSentenceSelector.Builder useSynsets(boolean val) {
+			params.useSynsets = val;
+			return this;
+		}
+		@Override
+		public DocumentSentenceSelector.Builder granularity(Granularity val) {
+			params.granularity = val;
+			return this;
+		}
+		@Override
+		public DocumentSentenceSelector.Builder source(Source val) {
+			params.source = val;
+			return this;
+		}
+		@Override
+		public DocumentSentenceSelector.Builder mainDocument(AbstractDocument doc) {
+			params.main = doc;
+			return this;
+		}
+		@Override
+		public DocumentSentenceSelector.Builder copusDocument(AbstractDocument doc) {
+			params.corpus.add(doc);
 			return this;
 		}
 		@Override
 		public DocumentSentenceSelector build() {
+			params.validate();
 			return new TextRankSentenceSelector(params);
 		}
 	}

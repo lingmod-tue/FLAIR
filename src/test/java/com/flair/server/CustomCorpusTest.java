@@ -1,6 +1,9 @@
 package com.flair.server;
 
-import com.flair.server.parser.*;
+import com.flair.server.parser.AbstractDocumentSource;
+import com.flair.server.parser.DocumentCollection;
+import com.flair.server.parser.KeywordSearcherInput;
+import com.flair.server.parser.StreamDocumentSource;
 import com.flair.server.questgen.selection.DocumentSentenceSelector;
 import com.flair.server.questgen.selection.DocumentSentenceSelectorGenerator;
 import com.flair.server.taskmanager.CustomParseOperation;
@@ -20,9 +23,11 @@ public class CustomCorpusTest
 {
 	public static void processParsedDocs(DocumentCollection dc) {
 		DocumentSentenceSelector.Builder rankeBuilder = DocumentSentenceSelectorGenerator.create(DocumentSentenceSelectorGenerator.SelectorType.TEXTRANK, Language.ENGLISH);
-		rankeBuilder.stemWords(true).ignoreStopwords(true);
-		for (AbstractDocument doc : dc)
-			rankeBuilder.addDocument(doc);
+		rankeBuilder.stemWords(true)
+				.ignoreStopwords(true)
+				.source(DocumentSentenceSelector.Source.DOCUMENT)
+				.granularity(DocumentSentenceSelector.Granularity.SENTENCE)
+				.mainDocument(dc.get(0));
 
 		DocumentSentenceSelector sel = rankeBuilder.build();
 		for (DocumentSentenceSelector.SelectedSentence itr : sel.topK(10))
@@ -66,7 +71,6 @@ public class CustomCorpusTest
 		operation.begin();
 		operation.waitForCompletion();
 		System.out.println("Operation Complete");
-
-
+		System.exit(0);
 	}
 }
