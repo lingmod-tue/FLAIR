@@ -12,8 +12,6 @@ public interface DocumentSentenceSelector {
 		DOCUMENT       // the model is trained on both sentences and the documents they occur in
 	}
 
-	;
-
 	enum Source {
 		DOCUMENT,     // (default) the final sentences are selected from a specific document
 		CORPUS,       // the final sentences are selected from the entire corpus of documents
@@ -23,7 +21,7 @@ public interface DocumentSentenceSelector {
 	interface Builder {
 		Builder stemWords(boolean val);
 		Builder ignoreStopwords(boolean val);
-		Builder useSynsets(boolean val);    // TODO implement WordNet
+		Builder useSynsets(boolean val);
 		Builder granularity(Granularity val);
 		Builder source(Source val);
 

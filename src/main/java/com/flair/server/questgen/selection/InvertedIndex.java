@@ -12,7 +12,7 @@ import java.util.HashSet;
  * Represents an inverted index of postings that map terms (words) to their
  * occurrence frequencies in a collection of documents
  */
-class InvertedIndex<D> {
+class InvertedIndex<T, D> {
 	static final class Frequency {
 		int frequency;
 
@@ -61,7 +61,7 @@ class InvertedIndex<D> {
 
 	private static final int TERM_ID_BEGIN = 1;     // zero is reserved by the Trove4J map implementations
 
-	private final TObjectIntMap<String> term2id;
+	private final TObjectIntMap<T> term2id;
 	private final TIntObjectMap<Posting<D>> id2posting;
 	private final HashSet<D> sourceDocs;
 	private int nextId;
@@ -76,7 +76,7 @@ class InvertedIndex<D> {
 			throw new IllegalStateException("Invalid no entry key/value sentinel!");
 	}
 
-	private Posting<D> getPosting(String term) {
+	private Posting<D> getPosting(T term) {
 		int termId = term2id.get(term);
 		if (termId == term2id.getNoEntryValue())
 			return null;
@@ -84,11 +84,11 @@ class InvertedIndex<D> {
 			return id2posting.get(termId);
 	}
 
-	boolean hasTerm(String term) {
+	boolean hasTerm(T term) {
 		return term2id.get(term) != term2id.getNoEntryValue();
 	}
 
-	int getTermId(String term) {
+	int getTermId(T term) {
 		int id = term2id.get(term);
 		if (id == term2id.getNoEntryValue())
 			throw new IllegalArgumentException("Term '" + term + "' not found in index");
@@ -96,7 +96,7 @@ class InvertedIndex<D> {
 	}
 
 
-	void addTerm(String term, D sourceDoc) {
+	void addTerm(T term, D sourceDoc) {
 		Posting<D> existing = getPosting(term);
 		if (existing == null) {
 			existing = new Posting<>();
@@ -111,7 +111,7 @@ class InvertedIndex<D> {
 		sourceDocs.add(sourceDoc);
 	}
 
-	int getTermFrequency(String term, D source) {
+	int getTermFrequency(T term, D source) {
 		Posting<D> existing = getPosting(term);
 		int out = 0;
 		if (existing != null) {
@@ -125,7 +125,7 @@ class InvertedIndex<D> {
 		return out;
 	}
 
-	int getTermDocumentFrequency(String term) {
+	int getTermDocumentFrequency(T term) {
 		Posting existing = getPosting(term);
 		if (existing != null)
 			return existing.getDocumentFrequency();
@@ -133,7 +133,7 @@ class InvertedIndex<D> {
 			return 0;
 	}
 
-	double getTermTfIdf(String term, D source, boolean logTf) {
+	double getTermTfIdf(T term, D source, boolean logTf) {
 		double tf = getTermFrequency(term, source);
 		double df = getTermDocumentFrequency(term);
 

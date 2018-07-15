@@ -27,7 +27,7 @@ abstract class CachingSearchAgent extends WebSearchAgent {
 	public CachingSearchAgent(Language lang, String query, int maxRequests) {
 		super(lang, query);
 		this.nextPage = 1;
-		this.nextRank = 0;
+		this.nextRank = 1;
 		this.cachedResults = new ArrayList<>();
 		this.noMoreResults = false;
 		this.fetchedResults = new ArrayList<>();
@@ -93,6 +93,7 @@ abstract class CachingSearchAgent extends WebSearchAgent {
 			return;
 		}
 
+		int numCached = 0;
 		for (AbstractSearchAgentImplResult itr : apiResults) {
 			if (WebSearchAgent.isURLBlacklisted(itr.getDisplayUrl()) == true)
 				ServerLogger.get().info("Blacklisted URL: " + itr.getDisplayUrl());
@@ -106,12 +107,14 @@ abstract class CachingSearchAgent extends WebSearchAgent {
 				fetchedResults.add(newResult);
 				newResult.setRank(nextRank);
 				nextRank++;
+				numCached++;
 
 				ServerLogger.get()
 						.info("Result " + (nextRank - 1) + ": " + itr.getTitle() + ", URL: " + itr.getDisplayUrl());
 			}
 		}
 
+		ServerLogger.get().info("Cached " + numCached + " search results");
 		nextPage++;
 	}
 

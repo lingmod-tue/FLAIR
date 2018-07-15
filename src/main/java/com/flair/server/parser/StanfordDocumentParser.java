@@ -42,7 +42,7 @@ class StanfordDocumentParser extends AbstractDocumentParser {
 		switch (modelLanguage) {
 		case ENGLISH:
 			// ### TODO update the parsing strategy to support universal deps
-			pipelineProps.put("annotators", "tokenize, ssplit, pos, lemma, stopword, parse, ner");
+			pipelineProps.put("annotators", "tokenize, ssplit, pos, lemma, stopword, parse");
 			pipelineProps.put("parse.originalDependencies", "true");
 			pipelineProps.setProperty("parse.model", ENGLISH_SR_PARSER_MODEL);
 			pipelineProps.setProperty("ner.applyNumericClassifiers", "false");

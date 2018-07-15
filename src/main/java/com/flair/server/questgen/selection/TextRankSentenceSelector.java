@@ -45,12 +45,9 @@ public class TextRankSentenceSelector implements DocumentSentenceSelector {
 		}
 		@Override
 		public int hashCode() {
-			if (doc != null)
-				return doc.hashCode();
-			else if (sent != null)
-				return sent.hashCode();
-			else
-				throw new IllegalStateException("Invalid BaseDocument!");
+			int result = sent != null ? sent.hashCode() : 0;
+			result = 31 * result + (doc != null ? doc.hashCode() : 0);
+			return result;
 		}
 	}
 
@@ -96,7 +93,7 @@ public class TextRankSentenceSelector implements DocumentSentenceSelector {
 		}
 	}
 
-	private final InvertedIndex<BaseDocument> index;
+	private final InvertedIndex<PreprocessedSentence.Token, BaseDocument> index;
 	private final Graph<Node, DefaultWeightedEdge> graph;
 	private final List<RankedSentence> rankedOutput;
 
@@ -144,7 +141,7 @@ public class TextRankSentenceSelector implements DocumentSentenceSelector {
 			Node first = pair.get(0), second = pair.get(1);
 			double cosineSimilarity = first.vector.dot(second.vector) / (first.vector.magnitude() * second.vector.magnitude());
 			if (!Double.isFinite(cosineSimilarity)) {
-				ServerLogger.get().warn("Invalid cosine similarity between sentences " + first.source.id +
+				ServerLogger.get().trace("Invalid cosine similarity between sentences " + first.source.id +
 						" and " + second.source.id + " in document " + first.source.source.getDescription());
 				continue;
 			} else if (cosineSimilarity == 0)
@@ -162,7 +159,7 @@ public class TextRankSentenceSelector implements DocumentSentenceSelector {
 		}
 
 		// execute PageRank and rank results
-		PageRank<Node, DefaultWeightedEdge> pageRank = new PageRank<>(graph, PageRank.DAMPING_FACTOR_DEFAULT, MAX_ITERATIONS);
+		PageRank<Node, DefaultWeightedEdge> pageRank = new PageRank<>(graph);
 		pageRank.getScores().forEach((n, s) -> rankedOutput.add(new RankedSentence(n.source, s)));
 		rankedOutput.sort(Comparator.comparingDouble(a -> -a.score));
 	}

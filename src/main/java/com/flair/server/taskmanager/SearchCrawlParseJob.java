@@ -108,7 +108,7 @@ final class SearchCrawlParseJob extends AbstractJob<SearchCrawlParseJobOutput, S
 			// queue search tasks as long as we need/have results or have timed-out
 			// wait till the last crawl task is complete
 			if (numActiveCrawlTasks == 0 && numTotalCrawlsQueued < MAX_CRAWLS) {
-				if (numValidResults < input.numResults && searchAgent.hasNoMoreResults() == false) {
+				if (numValidResults < input.numResults && !searchAgent.hasNoMoreResults()) {
 					int delta = input.numResults - numValidResults;
 					if (delta > 0)
 						queueWebSearchTask(searchAgent, delta);
