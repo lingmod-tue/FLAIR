@@ -15,7 +15,7 @@ import com.flair.shared.grammar.Language;
 public final class MasterParsingFactoryGenerator {
 	private MasterParsingFactoryGenerator() {}
 
-	public static AbstractDocumentParserFactory createParser(ParserType type, Language lang) {
+	public static AbstractDocumentParserFactory createParser(DocumentParserType type, Language lang) {
 		switch (type) {
 		case STANFORD_CORENLP:
 			return new StanfordDocumentParserFactory(new DocumentFactory(), lang);
@@ -24,7 +24,7 @@ public final class MasterParsingFactoryGenerator {
 		}
 	}
 
-	public static AbstractParsingStrategyFactory createParsingStrategy(ParserType type, Language lang) {
+	public static AbstractParsingStrategyFactory createParsingStrategy(DocumentParserType type, Language lang) {
 		switch (type) {
 		case STANFORD_CORENLP:
 			return new StanfordDocumentParserStrategyFactory(lang);

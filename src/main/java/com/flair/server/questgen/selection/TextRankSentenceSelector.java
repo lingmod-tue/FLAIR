@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  * Implements the TextRank algorithm to select salient sentences
  */
 public class TextRankSentenceSelector implements DocumentSentenceSelector {
-	private static final int MAX_ITERATIONS = 10000;
+	private static final int MAX_ITERATIONS = 1000;
 
 	// represents the concept of a document wrt the inverted index
 	private static final class BaseDocument {
@@ -142,6 +142,14 @@ public class TextRankSentenceSelector implements DocumentSentenceSelector {
 		// generate sentence graph
 		for (List<Node> pair : new Combinator<>(nodes, 2)) {
 			Node first = pair.get(0), second = pair.get(1);
+			double cosineSimilarity = first.vector.dot(second.vector) / (first.vector.magnitude() * second.vector.magnitude());
+			if (!Double.isFinite(cosineSimilarity)) {
+				ServerLogger.get().warn("Invalid cosine similarity between sentences " + first.source.id +
+						" and " + second.source.id + " in document " + first.source.source.getDescription());
+				continue;
+			} else if (cosineSimilarity == 0)
+				continue;
+
 			graph.addVertex(first);
 			graph.addVertex(second);
 
@@ -149,14 +157,8 @@ public class TextRankSentenceSelector implements DocumentSentenceSelector {
 			if (edge == null) {
 				ServerLogger.get().warn("Couldn't add edge between sentences: Sentence " + first.source.id + " in " + first.source.source.getDescription()
 						+ " and Sentence " + second.source.id + " in " + second.source.source.getDescription());
-			} else {
-				double cosineDist = 1 - (first.vector.dot(second.vector) / (first.vector.magnitude() * second.vector.magnitude()));
-				if (!Double.isFinite(cosineDist)) {
-					throw new RuntimeException("Invalid cosine distance between sentences " + first.source.id +
-							" and " + second.source.id + " in document " + first.source.source.getDescription());
-				}
-				graph.setEdgeWeight(edge, cosineDist);
-			}
+			} else
+				graph.setEdgeWeight(edge, cosineSimilarity);
 		}
 
 		// execute PageRank and rank results

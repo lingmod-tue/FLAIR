@@ -10,6 +10,6 @@ package com.flair.server.parser;
  *
  * @author shadeMe
  */
-public enum ParserType {
+public enum DocumentParserType {
 	STANFORD_CORENLP
 }

@@ -1,6 +1,3 @@
-/*
- * This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/.
- */
 package com.flair.server.grammar;
 
 import com.flair.server.utilities.ServerLogger;
@@ -15,13 +12,11 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 
-/**
- * Wrapper class for the default keywords for each language
- *
- * @author shadeMe
+/*
+ * Stopwords for different languages
  */
-public class DefaultVocabularyList {
-	private static final EnumMap<Language, List<String>> VOCAB_MAP = new EnumMap<>(Language.class);
+public class StopwordsList {
+	private static final EnumMap<Language, List<String>> STOPWORD_MAP = new EnumMap<>(Language.class);
 
 	private static List<String> loadWordListFromDisk(Language lang, InputStream input) {
 		List<String> out = new ArrayList<>();
@@ -33,7 +28,7 @@ public class DefaultVocabularyList {
 					out.add(line);
 			}
 		} catch (IOException e) {
-			ServerLogger.get().error(e, "Couldn't read default vocabulary list for " + lang);
+			ServerLogger.get().error(e, "Couldn't read stopwords list for " + lang);
 		}
 
 		out = Collections.unmodifiableList(out);
@@ -41,11 +36,11 @@ public class DefaultVocabularyList {
 	}
 
 	static {
-		VOCAB_MAP.put(Language.ENGLISH, loadWordListFromDisk(Language.ENGLISH, DefaultVocabularyList.class.getResourceAsStream("awl-english.txt")));
+		STOPWORD_MAP.put(Language.ENGLISH, loadWordListFromDisk(Language.ENGLISH, StopwordsList.class.getResourceAsStream("stopwords-en.txt")));
 	}
 
 	public static List<String> get(Language lang) {
-		List<String> out = VOCAB_MAP.get(lang);
+		List<String> out = STOPWORD_MAP.get(lang);
 		if (out == null)
 			out = new ArrayList<>();
 

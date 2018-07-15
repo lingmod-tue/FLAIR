@@ -30,7 +30,7 @@ final class Preprocessor {
 		final AbstractDocument source;
 		final TextSegment span;
 		final int id;               // sentence number as found in the source
-		final Set<String> tokens;       // unique tokens only
+		final Set<String> tokens;   // unique tokens only
 
 		PreprocessedSentence(AbstractDocument s, TextSegment ss, int id) {
 			this.source = s;
@@ -117,7 +117,13 @@ final class Preprocessor {
 				for (CoreLabel token : anno.get(CoreAnnotations.TokensAnnotation.class)) {
 					String lemma = token.lemma();
 					String word = token.word();
-					if (word.length() == 1 && "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~".contains(word))
+
+					if (word != null)
+						word = word.replaceAll("\\p{P}", "").trim().toLowerCase();
+					if (lemma != null)
+						lemma = lemma.replaceAll("\\p{P}", "").trim().toLowerCase();
+
+					if (word.isEmpty())
 						continue;
 
 					if (params.ignoreStopwords) {
@@ -128,10 +134,10 @@ final class Preprocessor {
 							continue;
 					}
 
-					if (params.stemWords && lemma != null)
-						preprocSent.tokens.add(lemma.toLowerCase());
+					if (params.stemWords && lemma != null && !lemma.isEmpty())
+						preprocSent.tokens.add(lemma);
 					else
-						preprocSent.tokens.add(word.toLowerCase());
+						preprocSent.tokens.add(word);
 				}
 
 				if (!preprocSent.tokens.isEmpty())

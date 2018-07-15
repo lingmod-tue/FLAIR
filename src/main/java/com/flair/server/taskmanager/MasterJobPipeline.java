@@ -53,9 +53,9 @@ public final class MasterJobPipeline {
 		this.webCrawlExecutor = WebCrawlTask.getExecutor();
 		this.docParseExecutor = DocumentParseTask.getExecutor();
 
-		this.stanfordEnglishStrategy = MasterParsingFactoryGenerator.createParsingStrategy(ParserType.STANFORD_CORENLP,
+		this.stanfordEnglishStrategy = MasterParsingFactoryGenerator.createParsingStrategy(DocumentParserType.STANFORD_CORENLP,
 				Language.ENGLISH);
-		this.stanfordGermanStrategy = MasterParsingFactoryGenerator.createParsingStrategy(ParserType.STANFORD_CORENLP,
+		this.stanfordGermanStrategy = MasterParsingFactoryGenerator.createParsingStrategy(DocumentParserType.STANFORD_CORENLP,
 				Language.GERMAN);
 
 		this.naiveSubstringSearcher = MasterParsingFactoryGenerator
@@ -88,14 +88,14 @@ public final class MasterJobPipeline {
 		case ENGLISH:
 			if (stanfordParserEnglishPool == null) {
 				stanfordParserEnglishPool = new DocumentParserPool(
-						MasterParsingFactoryGenerator.createParser(ParserType.STANFORD_CORENLP, Language.ENGLISH));
+						MasterParsingFactoryGenerator.createParser(DocumentParserType.STANFORD_CORENLP, Language.ENGLISH));
 			}
 
 			return stanfordParserEnglishPool;
 		case GERMAN:
 			if (stanfordParserGermanPool == null) {
 				stanfordParserGermanPool = new DocumentParserPool(
-						MasterParsingFactoryGenerator.createParser(ParserType.STANFORD_CORENLP, Language.GERMAN));
+						MasterParsingFactoryGenerator.createParser(DocumentParserType.STANFORD_CORENLP, Language.GERMAN));
 			}
 
 			return stanfordParserGermanPool;
