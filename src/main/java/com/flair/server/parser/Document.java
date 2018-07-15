@@ -9,8 +9,6 @@ import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
 import com.flair.shared.parser.DocumentReadabilityLevel;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.StringTokenizer;
 
 /**
@@ -23,7 +21,7 @@ class Document implements AbstractDocument {
 	private final double readabilityScore;
 	private final DocumentReadabilityLevel readabilityLevel;    // calculate from the readability score
 	private final ConstructionDataCollection constructionData;
-	private final List<TextSegment> sentenceSegments;
+	private ParserAnnotations parserAnnotations;
 
 	private int numCharacters;
 	private int numSentences;
@@ -35,7 +33,7 @@ class Document implements AbstractDocument {
 	private double avgSentenceLength;
 	private double avgTreeDepth;
 
-	private double fancyDocLength;    // ### TODO better name needed, formerly "docLenTfIdf"
+	private double gramL2Norm;
 	private KeywordSearcherOutput keywordData;
 
 	private boolean parsed;
@@ -45,7 +43,7 @@ class Document implements AbstractDocument {
 
 		source = parent;
 		constructionData = new ConstructionDataCollection(parent.getLanguage(), new DocumentConstructionDataFactory(this));
-		sentenceSegments = new ArrayList<>();
+		parserAnnotations = null;
 
 		String pageText = source.getSourceText();
 		StringTokenizer tokenizer = new StringTokenizer(pageText, " ");
@@ -95,7 +93,7 @@ class Document implements AbstractDocument {
 		else
 			readabilityLevel = DocumentReadabilityLevel.LEVEL_C;
 
-		avgWordLength = avgSentenceLength = avgTreeDepth = fancyDocLength = 0;
+		avgWordLength = avgSentenceLength = avgTreeDepth = gramL2Norm = 0;
 		keywordData = null;
 		parsed = false;
 	}
@@ -109,6 +107,10 @@ class Document implements AbstractDocument {
 	public String getText() {
 		return source.getSourceText();
 	}
+	@Override
+	public String getSpanText(TextSegment span) {
+		return source.getSourceText().substring(span.getStart(), span.getEnd());
+	}
 
 	@Override
 	public String getDescription() {
@@ -119,25 +121,13 @@ class Document implements AbstractDocument {
 	public DocumentConstructionData getConstructionData(GrammaticalConstruction type) {
 		return (DocumentConstructionData) constructionData.getData(type);
 	}
-	@Override
-	public void addSentenceSegment(TextSegment span) {
-		sentenceSegments.add(span);
-	}
-	@Override
-	public Iterable<TextSegment> getSentenceSegments() {
-		return sentenceSegments;
-	}
-	@Override
-	public String getSentenceText(TextSegment sentSpan, boolean sanitize) {
-		String out = source.getSourceText()
-				.substring(sentSpan.getStart(), sentSpan.getEnd());
-		if (sanitize)
-			out = out.replace("\n", " ").replace("\r", "");
 
-		return out;
+	@Override
+	public ParserAnnotations getParserAnnotations() {
+		return parserAnnotations;
 	}
 
-	public void calculateFancyDocLength() {
+	private void updateGramL2Norm() {
 		double sumOfPowers = 0.0;
 		double squareRoot = 0.0;
 		// iterate through the construction data set and calc
@@ -150,7 +140,7 @@ class Document implements AbstractDocument {
 		if (sumOfPowers > 0)
 			squareRoot = Math.sqrt(sumOfPowers);
 
-		fancyDocLength = squareRoot;
+		gramL2Norm = squareRoot;
 	}
 
 	@Override
@@ -209,8 +199,8 @@ class Document implements AbstractDocument {
 	}
 
 	@Override
-	public double getFancyLength() {
-		return fancyDocLength;
+	public double getGramL2Norm() {
+		return gramL2Norm;
 	}
 
 	@Override
@@ -264,12 +254,13 @@ class Document implements AbstractDocument {
 	}
 
 	@Override
-	public void flagAsParsed() {
+	public void flagAsParsed(ParserAnnotations annotations) {
 		if (parsed)
 			throw new IllegalStateException("Document already flagged as parsed");
 
 		parsed = true;
-		calculateFancyDocLength();
+		parserAnnotations = annotations;
+		updateGramL2Norm();
 	}
 
 	@Override

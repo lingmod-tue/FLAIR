@@ -1836,10 +1836,6 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 							.typedDependencies();
 
 					sentenceCount++;
-					Integer sentBegin = itr.get(CoreAnnotations.CharacterOffsetBeginAnnotation.class);
-					Integer sentEnd = itr.get(CoreAnnotations.CharacterOffsetEndAnnotation.class);
-					workingDoc.addSentenceSegment(new TextSegment(sentBegin, sentEnd));
-
 					dependencyCount += dependencies.size();
 					depthCount += tree.depth();
 
@@ -1867,7 +1863,7 @@ class StanfordDocumentParserEnglishStrategy extends BasicStanfordDocumentParserS
 			workingDoc.setNumTokens(tokenCount);
 			workingDoc.setNumSentences(sentenceCount);
 			workingDoc.setNumCharacters(characterCount);
-			workingDoc.flagAsParsed();
+			workingDoc.flagAsParsed(new StanfordDocumentParserAnnotation(docAnnotation));
 		} finally {
 			resetState();
 		}

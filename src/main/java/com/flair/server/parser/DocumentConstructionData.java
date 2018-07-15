@@ -28,7 +28,7 @@ public class DocumentConstructionData extends AbstractConstructionData {
 		return false;
 	}
 
-	public DocumentConstructionData(GrammaticalConstruction type, AbstractDocument parent) {
+	DocumentConstructionData(GrammaticalConstruction type, AbstractDocument parent) {
 		super(type);
 
 		assert parent != null;
@@ -53,7 +53,7 @@ public class DocumentConstructionData extends AbstractConstructionData {
 	}
 
 	public double getRelativeWeightedFrequency() {
-		return getWeightedFrequency() / parentDocument.getFancyLength();
+		return getWeightedFrequency() / parentDocument.getGramL2Norm();
 	}
 
 	public boolean addOccurrence(int start, int end) {

@@ -24,10 +24,10 @@ public class TextRankSentenceSelector implements DocumentSentenceSelector {
 
 	// represents the concept of a document wrt the inverted index
 	private static final class BaseDocument {
-		final Preprocessor.PreprocessedSentence sent;
+		final PreprocessedSentence sent;
 		final AbstractDocument doc;
 
-		BaseDocument(Preprocessor.PreprocessedSentence sent) {
+		BaseDocument(PreprocessedSentence sent) {
 			this.sent = sent;
 			this.doc = null;
 		}
@@ -55,10 +55,10 @@ public class TextRankSentenceSelector implements DocumentSentenceSelector {
 	}
 
 	private static final class Node {
-		final Preprocessor.PreprocessedSentence source;
+		final PreprocessedSentence source;
 		final SparseDoubleVector vector;
 
-		Node(Preprocessor.PreprocessedSentence s, SparseDoubleVector v) {
+		Node(PreprocessedSentence s, SparseDoubleVector v) {
 			source = s;
 			vector = v;
 		}
@@ -74,10 +74,10 @@ public class TextRankSentenceSelector implements DocumentSentenceSelector {
 	}
 
 	private static final class RankedSentence implements SelectedSentence {
-		final Preprocessor.PreprocessedSentence sent;
+		final PreprocessedSentence sent;
 		final double score;
 
-		RankedSentence(Preprocessor.PreprocessedSentence sent, double score) {
+		RankedSentence(PreprocessedSentence sent, double score) {
 			this.sent = sent;
 			this.score = score;
 		}
@@ -100,7 +100,7 @@ public class TextRankSentenceSelector implements DocumentSentenceSelector {
 	private final Graph<Node, DefaultWeightedEdge> graph;
 	private final List<RankedSentence> rankedOutput;
 
-	private BaseDocument getBaseDocument(Preprocessor.PreprocessedSentence sent, DocumentSentenceSelectorParams params) {
+	private BaseDocument getBaseDocument(PreprocessedSentence sent, DocumentSentenceSelectorParams params) {
 		switch (params.granularity) {
 		case SENTENCE:
 			return new BaseDocument(sent);
@@ -112,14 +112,14 @@ public class TextRankSentenceSelector implements DocumentSentenceSelector {
 	}
 
 	private void init(DocumentSentenceSelectorParams params) {
-		List<Preprocessor.PreprocessedSentence> allSents = new ArrayList<>();
+		List<PreprocessedSentence> allSents = new ArrayList<>();
 
 		// add terms to the index
 		if (params.main != null)
 			params.corpus.add(params.main);
 
 		for (AbstractDocument doc : params.corpus) {
-			List<Preprocessor.PreprocessedSentence> docSents = Preprocessor.INSTANCE.get().preprocessDocument(doc, params);
+			List<PreprocessedSentence> docSents = Preprocessor.preprocess(doc, params);
 			docSents.forEach(sent -> sent.tokens.forEach(tok -> index.addTerm(tok, getBaseDocument(sent, params))));
 
 			switch (params.source) {

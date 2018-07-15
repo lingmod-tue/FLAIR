@@ -37,7 +37,7 @@ public interface DocumentSentenceSelector {
 		TextSegment getSpan();
 		AbstractDocument getSource();
 		default String getText() {
-			return getSource().getSentenceText(getSpan(), true);
+			return getSource().getSpanText(getSpan());
 		}
 		double getScore();
 	}

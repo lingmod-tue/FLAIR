@@ -634,9 +634,6 @@ class StanfordDocumentParserGermanStrategy extends BasicStanfordDocumentParserSt
 					// Collection<TypedDependency> dependencies = itr.get(SemanticGraphCoreAnnotations.CollapsedDependenciesAnnotation.class).typedDependencies();
 
 					sentenceCount++;
-					Integer sentBegin = itr.get(CoreAnnotations.CharacterOffsetBeginAnnotation.class);
-					Integer sentEnd = itr.get(CoreAnnotations.CharacterOffsetEndAnnotation.class);
-					workingDoc.addSentenceSegment(new TextSegment(sentBegin, sentEnd));
 					depthCount += tree.depth();
 
 					// changed: only count words (no punctuation)
@@ -668,7 +665,7 @@ class StanfordDocumentParserGermanStrategy extends BasicStanfordDocumentParserSt
 			workingDoc.setNumCharacters(characterCount);
 			workingDoc.setNumWords(wordCount);
 			workingDoc.setNumTokens(tokenCount);
-			workingDoc.flagAsParsed();
+			workingDoc.flagAsParsed(new StanfordDocumentParserAnnotation(docAnnotation));
 		} finally {
 			resetState();
 		}

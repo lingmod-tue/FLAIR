@@ -5,6 +5,8 @@
  */
 package com.flair.server.parser;
 
+import com.flair.server.grammar.StopwordsList;
+import com.flair.server.parser.corenlp.StopwordAnnotator;
 import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.grammar.Language;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
@@ -28,7 +30,7 @@ class StanfordDocumentParser extends AbstractDocumentParser {
 	private final StanfordCoreNLP pipeline;
 	private final Language modelLanguage;
 
-	public StanfordDocumentParser(AbstractDocumentFactory factory, Language modelLang) {
+	StanfordDocumentParser(AbstractDocumentFactory factory, Language modelLang) {
 		super(factory);
 
 		docSource = null;
@@ -40,13 +42,16 @@ class StanfordDocumentParser extends AbstractDocumentParser {
 		switch (modelLanguage) {
 		case ENGLISH:
 			// ### TODO update the parsing strategy to support universal deps
-			// ### TODO consider using the neural network depparser
-			pipelineProps.put("annotators", "tokenize, ssplit, pos, lemma, parse");
+			pipelineProps.put("annotators", "tokenize, ssplit, pos, lemma, stopword, parse, ner");
 			pipelineProps.put("parse.originalDependencies", "true");
 			pipelineProps.setProperty("parse.model", ENGLISH_SR_PARSER_MODEL);
+			pipelineProps.setProperty("ner.applyNumericClassifiers", "false");
+			pipelineProps.setProperty("ner.useSUTime", "false");
+			pipelineProps.setProperty("ner.applyFineGrained", "false");
+
 			break;
 		case GERMAN:
-			pipelineProps.put("annotators", "tokenize, ssplit, pos, parse");
+			pipelineProps.put("annotators", "tokenize, ssplit, pos, stopword, parse");
 			pipelineProps.put("tokenize.language", "de");
 			pipelineProps.setProperty("parse.model", GERMAN_SR_PARSER_MODEL);
 			pipelineProps.setProperty("pos.model", GERMAN_POS_MODEL);
@@ -54,6 +59,15 @@ class StanfordDocumentParser extends AbstractDocumentParser {
 		default:
 			throw new IllegalArgumentException("Invalid model language: " + modelLanguage + "");
 		}
+
+		pipelineProps.put("tokenize.options", "tokenizePerLine");
+		pipelineProps.put("ssplit.newlineIsSentenceBreak", "two");
+
+		StringBuilder stopwords = new StringBuilder();
+		StopwordsList.get(modelLanguage).forEach(e -> stopwords.append(e).append(","));
+		pipelineProps.setProperty("customAnnotatorClass.stopword", "com.flair.server.parser.corenlp.StopwordAnnotator");
+		pipelineProps.setProperty(StopwordAnnotator.STOPWORDS_LIST, stopwords.toString());
+		pipelineProps.setProperty(StopwordAnnotator.IGNORE_STOPWORD_CASE, "true");
 
 		pipeline = new StanfordCoreNLP(pipelineProps);
 	}
@@ -118,7 +132,7 @@ class StanfordDocumentParserFactory implements AbstractDocumentParserFactory {
 	private final AbstractDocumentFactory docFactory;
 	private final Language language;
 
-	public StanfordDocumentParserFactory(AbstractDocumentFactory factory, Language lang) {
+	StanfordDocumentParserFactory(AbstractDocumentFactory factory, Language lang) {
 		docFactory = factory;
 		language = lang;
 	}

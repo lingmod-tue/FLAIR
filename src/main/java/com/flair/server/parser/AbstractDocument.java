@@ -15,47 +15,46 @@ import com.flair.shared.parser.DocumentReadabilityLevel;
  * @author shadeMe
  */
 public interface AbstractDocument extends Comparable<AbstractDocument> {
-	public AbstractDocumentSource getDocumentSource();
-	public Language getLanguage();
-	public String getText();
-	public String getDescription();
-	public Iterable<GrammaticalConstruction> getSupportedConstructions();    // returns the constructions pertinent to the doc's language
-	public DocumentConstructionData getConstructionData(GrammaticalConstruction type);
+	AbstractDocumentSource getDocumentSource();
+	Language getLanguage();
+	String getText();
+	String getSpanText(TextSegment span);
 
-	void addSentenceSegment(TextSegment span);
-	Iterable<TextSegment> getSentenceSegments();    // returns the ordered list of document text's sentences as spans
-	String getSentenceText(TextSegment sentSpan, boolean sanitize);
+	String getDescription();
+	Iterable<GrammaticalConstruction> getSupportedConstructions();    // returns the constructions pertinent to the doc's language
+	DocumentConstructionData getConstructionData(GrammaticalConstruction type);
+	ParserAnnotations getParserAnnotations();
 
-	public double getReadabilityScore();
-	public DocumentReadabilityLevel getReadabilityLevel();
+	double getReadabilityScore();
+	DocumentReadabilityLevel getReadabilityLevel();
 
-	public int getNumCharacters();
-	public int getNumSentences();
-	public int getNumDependencies();
-	public int getNumWords();
-	public int getNumTokens();
+	int getNumCharacters();
+	int getNumSentences();
+	int getNumDependencies();
+	int getNumWords();
+	int getNumTokens();
 
-	public double getAvgWordLength();
-	public double getAvgSentenceLength();
-	public double getAvgTreeDepth();
+	double getAvgWordLength();
+	double getAvgSentenceLength();
+	double getAvgTreeDepth();
 
-	public void setNumCharacters(int value);
-	public void setNumSentences(int value);
-	public void setNumDependencies(int value);
-	public void setNumWords(int value);
-	public void setNumTokens(int value);
+	void setNumCharacters(int value);
+	void setNumSentences(int value);
+	void setNumDependencies(int value);
+	void setNumWords(int value);
+	void setNumTokens(int value);
 
-	public void setAvgWordLength(double value);
-	public void setAvgSentenceLength(double value);
-	public void setAvgTreeDepth(double value);
+	void setAvgWordLength(double value);
+	void setAvgSentenceLength(double value);
+	void setAvgTreeDepth(double value);
 
-	public int getLength();
-	public void setLength(int value);
-	public double getFancyLength();
+	int getLength();
+	void setLength(int value);
+	double getGramL2Norm();
 
-	public KeywordSearcherOutput getKeywordData();
-	public void setKeywordData(KeywordSearcherOutput data);
+	KeywordSearcherOutput getKeywordData();
+	void setKeywordData(KeywordSearcherOutput data);
 
-	public boolean isParsed();
-	public void flagAsParsed();
+	boolean isParsed();
+	void flagAsParsed(ParserAnnotations annotations);
 }
