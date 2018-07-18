@@ -7,6 +7,8 @@ package com.flair.server.parser;
 
 import com.flair.server.crawler.SearchResult;
 
+import java.net.URL;
+
 /**
  * Represents a document source object that encapsulates a search result
  *
@@ -22,7 +24,21 @@ public class SearchResultDocumentSource extends AbstractDocumentSource {
 			throw new IllegalArgumentException("Search result doesn't have text");
 
 		parentSearchResult = parent;
-		pageText = preprocessText(parent.getPageText());
+		pageText = preprocessText(parent.getPageText(), input -> {
+			// do some basic website-specific preprocessing
+			String out = input;
+			try {
+				URL url = new URL(parentSearchResult.getDisplayURL());
+				if (url.getHost().contains("wikipedia.org")) {
+					out = out.replaceAll("\\[[0-9]+\\]|\\[[a-z]+\\]", "");      // citation bubbles
+					out = out.replaceAll("\\[ [a-zA-Z]* \\]", "");              // "edit" buttons
+					out = out.replaceAll("\\^", "");                            // citation up-tick
+				}
+			} catch (Throwable e) {
+			}
+
+			return out;
+		});
 	}
 
 	public SearchResult getSearchResult() {

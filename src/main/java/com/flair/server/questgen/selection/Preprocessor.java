@@ -12,6 +12,8 @@ import java.util.*;
  * Performs various preprocessing tasks for sentence selectors
  */
 final class Preprocessor {
+	private static final int MIN_UNIQUE_TOKEN_COUNT = 5;
+
 	private static final class LanguageSpecificData {
 		final SynSetDictionary synsetDict;
 
@@ -50,8 +52,9 @@ final class Preprocessor {
 
 		try {
 			LanguageSpecificData data = LANGUAGE_SPECIFIC.get(doc.getLanguage());
-			int i = 1;
+			int i = 0;
 			for (ParserAnnotations.Sentence sent : doc.getParserAnnotations().sentences()) {
+				++i;
 				PreprocessedSentence preprocSent = new PreprocessedSentence(doc, new TextSegment(sent.start(), sent.end()), i);
 
 				for (ParserAnnotations.Token token : sent.tokens()) {
@@ -79,10 +82,9 @@ final class Preprocessor {
 					}
 				}
 
-				if (!preprocSent.tokens.isEmpty())
+				if (preprocSent.tokens.size() >= MIN_UNIQUE_TOKEN_COUNT)
 					out.add(preprocSent);
 
-				++i;
 			}
 		} catch (Throwable e) {
 			ServerLogger.get().error(e, "Error while preprocessing document " + doc.toString());

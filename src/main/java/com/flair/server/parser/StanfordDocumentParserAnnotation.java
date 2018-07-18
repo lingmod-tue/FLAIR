@@ -69,6 +69,10 @@ public class StanfordDocumentParserAnnotation implements ParserAnnotations {
 		public Iterable<? extends ParserAnnotations.Token> tokens() {
 			return tokenCache.get();
 		}
+		@Override
+		public int tokenCount() {
+			return tokenCache.get().size();
+		}
 	}
 
 	private final Annotation annotation;

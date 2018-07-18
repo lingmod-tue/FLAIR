@@ -37,7 +37,7 @@ class BoilerpipeTextExtractor extends AbstractTextExtractor {
 				break;
 			}
 
-			pageText = ArticleExtractor.getInstance().getText(source);
+			pageText = DefaultExtractor.getInstance().getText(source);
 		} catch (Throwable ex) {
 			ServerLogger.get().error(ex, "Couldn't extract text. Exception: " + ex.toString());
 			error = true;
@@ -55,6 +55,7 @@ class BoilerpipeTextExtractor extends AbstractTextExtractor {
 			else
 				return DefaultExtractor.getInstance().getText(html);
 		} catch (Throwable ex) {
+			ServerLogger.get().error(ex, "Boilerpipe pass on crawled text failed! Exception: " + ex.toString());
 			return "";
 		}
 	}

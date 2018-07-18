@@ -16,6 +16,7 @@ public interface ParserAnnotations {
 		int end();
 		String text();
 		Iterable<? extends Token> tokens();
+		int tokenCount();
 	}
 
 	Iterable<? extends Sentence> sentences();
