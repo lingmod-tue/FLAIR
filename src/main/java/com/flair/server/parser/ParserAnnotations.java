@@ -21,6 +21,6 @@ public interface ParserAnnotations {
 
 	Iterable<? extends Sentence> sentences();
 
-	DocumentParserType type();
+	ParserKind type();
 	<T extends ParserAnnotations> T data(Class<T> typeClass);
 }

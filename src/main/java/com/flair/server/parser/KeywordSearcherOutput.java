@@ -3,13 +3,15 @@
  */
 package com.flair.server.parser;
 
+import com.flair.server.utilities.TextSegment;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Results of an AbstractDocumentKeywordSearcher search operation
+ * Results of an AbstractKeywordSearcher search operation
  *
  * @author shadeMe
  */

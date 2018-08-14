@@ -1,9 +1,9 @@
 package com.flair.server.questgen.selection;
 
-import com.flair.server.parser.AbstractDocument;
+import com.flair.server.document.AbstractDocument;
 import com.flair.server.parser.ParserAnnotations;
-import com.flair.server.parser.TextSegment;
 import com.flair.server.utilities.ServerLogger;
+import com.flair.server.utilities.TextSegment;
 import com.flair.shared.grammar.Language;
 
 import java.util.*;

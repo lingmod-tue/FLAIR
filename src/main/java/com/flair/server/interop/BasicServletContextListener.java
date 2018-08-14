@@ -6,7 +6,8 @@
 package com.flair.server.interop;
 
 import com.flair.server.interop.session.SessionManager;
-import com.flair.server.taskmanager.MasterJobPipeline;
+import com.flair.server.pipelines.gramparsing.GramParsingPipeline;
+import com.flair.server.scheduler.ThreadPool;
 import com.flair.server.utilities.ServerLogger;
 
 import javax.servlet.ServletContextEvent;
@@ -23,15 +24,13 @@ public class BasicServletContextListener implements ServletContextListener {
 		ServerLogger.get().info("FLAIR Context initializing...");
 		ServerLogger.get().indent();
 
-		MasterJobPipeline.get();
+		ThreadPool.get();
 		SessionManager.get();
+		GramParsingPipeline.get();
 
-		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-			@Override
-			public void uncaughtException(Thread thread, Throwable thrwbl) {
-				ServerLogger.get().error(thrwbl,
-						"Uncaught exception in thread " + thread.getName() + ": " + thrwbl.toString());
-			}
+		Thread.setDefaultUncaughtExceptionHandler((thread, thrwbl) -> {
+			ServerLogger.get().error(thrwbl,
+					"Uncaught exception in thread " + thread.getName() + ": " + thrwbl.toString());
 		});
 
 		ServerLogger.get().exdent();
@@ -43,8 +42,9 @@ public class BasicServletContextListener implements ServletContextListener {
 		ServerLogger.get().info("FLAIR Context deinitializing...");
 		ServerLogger.get().indent();
 
-		MasterJobPipeline.dispose();
+		GramParsingPipeline.dispose();
 		SessionManager.dispose();
+		ThreadPool.dispose();
 
 		ServerLogger.get().exdent();
 		ServerLogger.get().info("FLAIR Context deinitialized!");

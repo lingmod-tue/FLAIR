@@ -6,11 +6,16 @@
 package com.flair.server.interop.session;
 
 import com.flair.server.crawler.SearchResult;
+import com.flair.server.document.*;
 import com.flair.server.grammar.DefaultVocabularyList;
 import com.flair.server.interop.MessagePipeline;
-import com.flair.server.parser.*;
-import com.flair.server.taskmanager.*;
+import com.flair.server.parser.KeywordSearcherInput;
+import com.flair.server.parser.KeywordSearcherOutput;
+import com.flair.server.pipelines.PipelineOp;
+import com.flair.server.pipelines.PipelineOpBuilder;
+import com.flair.server.pipelines.gramparsing.GramParsingPipeline;
 import com.flair.server.utilities.ServerLogger;
+import com.flair.server.utilities.TextSegment;
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
 import com.flair.shared.interop.*;
@@ -26,41 +31,11 @@ import java.util.List;
  * @author shadeMe
  */
 public class SessionState {
-	static final class OperationState {
-		public final PipelineOperationType type;
-		public final SearchCrawlParseOperation searchCrawlParse;
-		public final CustomParseOperation customParse;
-
-		OperationState(SearchCrawlParseOperation op) {
-			type = op.getType();
-			searchCrawlParse = op;
-			customParse = null;
-		}
-
-		OperationState(CustomParseOperation op) {
-			type = op.getType();
-			searchCrawlParse = null;
-			customParse = op;
-		}
-
-		public AbstractPipelineOperation get() {
-			switch (type) {
-			case SEARCH_CRAWL_PARSE:
-				return searchCrawlParse;
-			case CUSTOM_PARSE:
-				return customParse;
-			}
-
-			return null;
-		}
-	}
-
 	static final class TemporaryCache {
 		static final class CustomCorpus {
 			Language lang;
 			KeywordSearcherInput keywords;
 			List<CustomCorpusFile> uploaded;
-
 
 			public CustomCorpus(Language l, List<String> k) {
 				lang = l;
@@ -80,61 +55,60 @@ public class SessionState {
 	static final class UploadedFileDocumentSource extends StreamDocumentSource {
 		private final int id;        // arbitrary identifier
 
-		public UploadedFileDocumentSource(InputStream source, String name, Language lang, int id) {
+		UploadedFileDocumentSource(InputStream source, String name, Language lang, int id) {
 			super(source, name, lang);
 			this.id = id;
 		}
 
-		public int getId() {
+		int getId() {
 			return id;
 		}
 	}
 
 	private final ServerAuthenticationToken token;
 	private final AbstractMesageSender messagePipeline;
-	private OperationState currentOperation;
+	private PipelineOp currentOp;
 	private TemporaryCache cache;
 
 	public SessionState(ServerAuthenticationToken tok) {
 		token = tok;
 		messagePipeline = MessagePipeline.get().createSender();
-		currentOperation = null;
+		currentOp = null;
 		cache = new TemporaryCache();
 
 		messagePipeline.open(token);
 	}
 
-	private void beginOperation(OperationState state) {
-		if (hasOperation())
+	private void beginOperation(PipelineOpBuilder opBuilder) {
+		if (hasActiveOp())
 			throw new RuntimeException("Previous state not cleared");
 
-		ServerLogger.get().info("Pipeline operation " + state.type + " has begun");
-
-		currentOperation = state;
 		// clear the message queue just in case any old messages ended up there
 		messagePipeline.clearPendingMessages();
 
-		// has to be the tail call as the begin operation can trigger the completion event if there are no queued tasks
-		currentOperation.get().begin();
+		currentOp = opBuilder.launch();
+		ServerLogger.get().info("Pipeline operation '" + currentOp.name() + "' has begun");
 	}
 
 	private void endOperation(boolean cancel) {
-		if (hasOperation() == false)
+		if (!hasActiveOp())
 			throw new RuntimeException("No operation running");
 
-		if (cancel)
-			currentOperation.get().cancel();
+		if (cancel) {
+			currentOp.cancel();
+			ServerLogger.get().info("Pipeline operation '" + currentOp.name() + "' was cancelled");
+		} else
+			ServerLogger.get().info("Pipeline operation '" + currentOp.name() + "' has ended");
 
-		ServerLogger.get().info("Pipeline operation " + currentOperation.type + " has ended | Cancelled = " + cancel);
-		currentOperation = null;
+		currentOp = null;
 	}
 
-	public synchronized boolean hasOperation() {
-		return currentOperation != null;
+	private boolean hasActiveOp() {
+		return currentOp != null;
 	}
 
 	public synchronized void cancelOperation() {
-		if (hasOperation() == false) {
+		if (!hasActiveOp()) {
 			sendErrorResponse("No active operation to cancel");
 			return;
 		}
@@ -146,7 +120,7 @@ public class SessionState {
 		RankableDocumentImpl out = new RankableDocumentImpl();
 		final int snippetMaxLen = 100;
 
-		if (source.isParsed() == false)
+		if (!source.isParsed())
 			throw new IllegalStateException("Document not flagged as parsed");
 
 		out.setLanguage(source.getLanguage());
@@ -185,7 +159,7 @@ public class SessionState {
 				out.getFrequencies().put(itr, data.getFrequency());
 
 				ArrayList<RankableDocumentImpl.ConstructionOccurrence> highlights = new ArrayList<>();
-				for (com.flair.server.parser.ConstructionOccurrence occr : data.getOccurrences())
+				for (ConstructionOccurrence occr : data.getOccurrences())
 					highlights.add(new RankableDocumentImpl.ConstructionOccurrence(occr.getStart(), occr.getEnd(), itr));
 
 				out.getConstOccurrences().put(itr, highlights);
@@ -195,8 +169,7 @@ public class SessionState {
 		KeywordSearcherOutput keywordData = source.getKeywordData();
 		if (keywordData != null) {
 			for (String itr : keywordData.getKeywords()) {
-				List<TextSegment> hits = keywordData.getHits(itr);
-				for (TextSegment hit : hits)
+				for (TextSegment hit : keywordData.getHits(itr))
 					out.getKeywordOccurrences().add(new RankableDocumentImpl.KeywordOccurrence(hit.getStart(), hit.getEnd(), itr));
 			}
 
@@ -257,7 +230,7 @@ public class SessionState {
 	}
 
 	private synchronized void handleCorpusJobBegin(Iterable<AbstractDocumentSource> source) {
-		if (hasOperation() == false) {
+		if (hasActiveOp() == false) {
 			ServerLogger.get().error("Invalid corpus job begin event");
 			return;
 		}
@@ -271,7 +244,7 @@ public class SessionState {
 	}
 
 	private synchronized void handleCrawlComplete(SearchResult sr) {
-		if (hasOperation() == false) {
+		if (hasActiveOp() == false) {
 			ServerLogger.get().error("Invalid crawl complete event");
 			return;
 		}
@@ -285,7 +258,7 @@ public class SessionState {
 	}
 
 	private synchronized void handleParseComplete(ServerMessage.Type t, AbstractDocument doc) {
-		if (hasOperation() == false) {
+		if (hasActiveOp() == false) {
 			ServerLogger.get().error("Invalid parse complete event for " + t);
 			return;
 		}
@@ -305,7 +278,7 @@ public class SessionState {
 	}
 
 	private synchronized void handleJobComplete(ServerMessage.Type t, DocumentCollection docs) {
-		if (hasOperation() == false) {
+		if (hasActiveOp() == false) {
 			ServerLogger.get().error("Invalid job complete event for " + t);
 			return;
 		}
@@ -341,7 +314,7 @@ public class SessionState {
 	public synchronized void handleCorpusUpload(List<CustomCorpusFile> corpus) {
 		ServerLogger.get().info("Received custom corpus from client");
 
-		if (hasOperation()) {
+		if (hasActiveOp()) {
 			sendErrorResponse("Another operation still running");
 			return;
 		} else if (cache.corpusData == null) {
@@ -357,35 +330,33 @@ public class SessionState {
 	public synchronized void searchCrawlParse(String query, Language lang, int numResults, List<String> keywords) {
 		ServerLogger.get().info("Begin search-crawl-parse -> Query: " + query + ", Language: " + lang.toString() + ", Results: " + numResults);
 
-		if (hasOperation()) {
+		if (hasActiveOp()) {
 			sendErrorResponse("Another operation still running");
 			return;
 		}
 
-		KeywordSearcherInput k;
+		KeywordSearcherInput keywordInput;
 		if (keywords.isEmpty())
-			k = new KeywordSearcherInput(DefaultVocabularyList.get(lang));
+			keywordInput = new KeywordSearcherInput(DefaultVocabularyList.get(lang));
 		else
-			k = new KeywordSearcherInput(keywords);
+			keywordInput = new KeywordSearcherInput(keywords);
 
-		SearchCrawlParseOperation op = MasterJobPipeline.get().doSearchCrawlParse(lang, query, numResults, k);
-		op.setCrawlCompleteHandler(e -> {
-			handleCrawlComplete(e);
-		});
-		op.setParseCompleteHandler(e -> {
-			handleParseComplete(ServerMessage.Type.SEARCH_CRAWL_PARSE, e);
-		});
-		op.setJobCompleteHandler(e -> {
-			handleJobComplete(ServerMessage.Type.SEARCH_CRAWL_PARSE, e);
-		});
+		GramParsingPipeline.SearchCrawlParseOpBuilder builder = GramParsingPipeline.get().searchCrawlParse();
+		builder.lang(lang)
+				.query(query)
+				.results(numResults)
+				.keywords(keywordInput)
+				.onCrawl(this::handleCrawlComplete)
+				.onParse(e -> handleParseComplete(ServerMessage.Type.SEARCH_CRAWL_PARSE, e))
+				.onComplete(e -> handleJobComplete(ServerMessage.Type.SEARCH_CRAWL_PARSE, e));
 
-		beginOperation(new OperationState(op));
+		beginOperation(builder);
 	}
 
 	public synchronized void beginCustomCorpusUpload(Language lang, List<String> keywords) {
 		ServerLogger.get().info("Begin custom corpus uploading -> Language: " + lang.toString());
 
-		if (hasOperation()) {
+		if (hasActiveOp()) {
 			ServerLogger.get().info("Another operation is in progress - Discarding file");
 			return;
 		}
@@ -399,12 +370,12 @@ public class SessionState {
 	public synchronized void endCustomCorpusUpload(boolean success) {
 		ServerLogger.get().info("End custom corpus uploading | Success: " + success);
 
-		if (hasOperation()) {
+		if (hasActiveOp()) {
 			sendErrorResponse("Another operation still running");
 			return;
 		}
 
-		if (success == false) {
+		if (!success) {
 			// don't begin the parse op
 			cache.corpusData = null;
 			return;
@@ -426,30 +397,23 @@ public class SessionState {
 		}
 
 
-		CustomParseOperation op = MasterJobPipeline.get().doDocumentParsing(cache.corpusData.lang,
-				sources,
-				cache.corpusData.keywords);
-		// register event handlers and start the op
-		op.setJobBeginHandler(e -> {
-			handleCorpusJobBegin(e);
-		});
-		op.setParseCompleteHandler(e -> {
-			handleParseComplete(ServerMessage.Type.CUSTOM_CORPUS, e);
-		});
-		op.setJobCompleteHandler(e -> {
-			handleJobComplete(ServerMessage.Type.CUSTOM_CORPUS, e);
-		});
+		GramParsingPipeline.ParseOpBuilder builder = GramParsingPipeline.get().documentParse();
+		builder.lang(cache.corpusData.lang)
+				.docSource(sources)
+				.keywords(cache.corpusData.keywords)
+				.onParse(e -> handleParseComplete(ServerMessage.Type.CUSTOM_CORPUS, e))
+				.onComplete(e -> handleJobComplete(ServerMessage.Type.CUSTOM_CORPUS, e));
 
-		beginOperation(new OperationState(op));
+		beginOperation(builder);
 
 		// reset cache
 		cache.corpusData = null;
 	}
 
 	public synchronized void release() {
-		if (hasOperation()) {
+		if (hasActiveOp()) {
 			ServerLogger.get().warn("Pipeline operation is still executing at the time of shutdown. Status: "
-					+ currentOperation.get().toString());
+					+ currentOp.toString());
 
 			endOperation(true);
 		}

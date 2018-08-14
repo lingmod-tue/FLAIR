@@ -1,7 +1,7 @@
 package com.flair.server.questgen.selection;
 
-import com.flair.server.parser.AbstractDocument;
-import com.flair.server.parser.TextSegment;
+import com.flair.server.document.AbstractDocument;
+import com.flair.server.utilities.TextSegment;
 
 import java.util.HashSet;
 import java.util.Set;

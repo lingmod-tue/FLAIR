@@ -155,6 +155,11 @@
             <artifactId>extjwnl-data-wn31</artifactId>
             <version>1.2</version>
         </dependency>
+        <dependency>
+            <groupId>org.threadly</groupId>
+            <artifactId>threadly</artifactId>
+            <version>5.27</version>
+        </dependency>
     </dependencies>
 
     <build>
