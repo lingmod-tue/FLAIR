@@ -120,7 +120,8 @@ public class SearchCrawlParseOp implements PipelineOp {
 				numTotalCrawlsQueued++;
 			}
 
-			scheduler.fire();
+			if (scheduler.hasTasks())
+				scheduler.fire();
 		});
 
 		taskLinker.addHandler(WebCrawlTask.Result.class, (j, r) -> {
@@ -168,7 +169,8 @@ public class SearchCrawlParseOp implements PipelineOp {
 				}
 			}
 
-			scheduler.fire();
+			if (scheduler.hasTasks())
+				scheduler.fire();
 		});
 
 		taskLinker.addHandler(DocParseTask.Result.class, (j, r) -> {

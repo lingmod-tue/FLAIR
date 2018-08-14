@@ -205,6 +205,10 @@ public final class AsyncJob implements Cancellable {
 			return parent;
 		}
 
+		public boolean hasTasks() {
+			return !queuedTasks.isEmpty();
+		}
+
 
 		public static Scheduler newJob(AsyncJob.NoMoreTasks noMoreTasks) {
 			return new Scheduler(noMoreTasks);
