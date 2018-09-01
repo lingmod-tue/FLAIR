@@ -101,7 +101,7 @@ public class ThreadPool {
 
 		public AsyncExecutorService build() {
 			SchedulerService executor = new SchedulerServiceLimiter(primaryThreadPool, poolSize);
-			executor = new ThreadRenamingSchedulerService(executor, "FLAIR ThreadPool[" + poolName + "]", true);
+			executor = new ThreadRenamingSchedulerService(executor, poolName, true);
 
 			return new ExecutorService(executor);
 		}

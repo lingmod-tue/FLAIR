@@ -53,7 +53,6 @@ public class CoreNlpParser implements ThreadSafeParser<CoreNlpParser,
 			strategy.apply(this);
 		} catch (Throwable e) {
 			throw e;
-		} finally {
 		}
 	}
 

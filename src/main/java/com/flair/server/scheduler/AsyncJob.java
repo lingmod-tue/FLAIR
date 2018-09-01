@@ -38,7 +38,7 @@ public final class AsyncJob implements Cancellable {
 			this.continuation = continuation;
 
 			AsyncJob.this.registerTask(this);
-			this.wrapper = new FutureTask<R>(() -> {
+			this.wrapper = new FutureTask<>(() -> {
 				R output = null;
 				try {
 					setExecuting(true);
