@@ -8,15 +8,13 @@ import com.flair.shared.grammar.Language;
  */
 public class WebSearchAgentFactory {
 	public enum SearchAgent {
-		BING, FAROO
+		BING
 	}
 
 	public static WebSearchAgent create(SearchAgent type, Language lang, String query) {
 		switch (type) {
 		case BING:
 			return new BingSearchAgent(lang, query);
-		case FAROO:
-			return new FarooSearchAgent(lang, query);
 		}
 
 		return null;
