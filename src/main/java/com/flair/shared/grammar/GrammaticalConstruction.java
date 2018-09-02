@@ -1,8 +1,4 @@
-/*
- * This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License.
- * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/.
 
- */
 package com.flair.shared.grammar;
 
 import java.util.HashMap;
@@ -13,8 +9,6 @@ import java.util.Set;
 /**
  * Represents a grammatical construction.
  * IMPORTANT - ORDER-DEPENDENT! ADD NEW ITEMS TO THE END!
- *
- * @author shadeMe
  */
 public enum GrammaticalConstruction {
 	// (simple) constructions

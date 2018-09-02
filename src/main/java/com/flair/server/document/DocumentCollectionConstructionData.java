@@ -1,16 +1,10 @@
-/*
- * This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License.
- * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/.
 
- */
 package com.flair.server.document;
 
 import com.flair.shared.grammar.GrammaticalConstruction;
 
 /**
  * Represent the properties of a construction in the larger domain of a set of (related) documents
- *
- * @author shadeMe
  */
 public class DocumentCollectionConstructionData extends AbstractConstructionData {
 	private final DocumentCollection parentDocumentCollection;

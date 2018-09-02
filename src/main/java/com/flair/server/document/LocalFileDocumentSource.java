@@ -1,8 +1,4 @@
-/*
- * This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License.
- * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/.
 
- */
 package com.flair.server.document;
 
 import com.flair.shared.grammar.Language;
@@ -13,8 +9,6 @@ import java.io.IOException;
 
 /**
  * Represents a document source object that encapsulates the contents of a local file
- *
- * @author shadeMe
  */
 public class LocalFileDocumentSource extends AbstractDocumentSource {
 	private final StreamDocumentSource source;

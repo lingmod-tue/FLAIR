@@ -12,8 +12,6 @@ import java.util.Properties;
 
 /**
  * Implementation of the Bing Search engine
- *
- * @author shadeMe
  */
 class BingSearchAgent extends CachingSearchAgent {
 	private static final Properties PROPERTIES = new Properties();

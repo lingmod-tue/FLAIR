@@ -7,8 +7,6 @@ package com.flair.server.utilities;
 
 /**
  * Auto-detects the target content type and picks an applicable implementation
- *
- * @author shadeMe
  */
 class AutoDetectTextExtractor extends AbstractTextExtractor {
 	public AutoDetectTextExtractor() {

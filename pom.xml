@@ -160,6 +160,29 @@
             <artifactId>threadly</artifactId>
             <version>5.27</version>
         </dependency>
+        <dependency>
+            <groupId>nz.ac.waikato.cms.weka</groupId>
+            <artifactId>weka-stable</artifactId>
+            <version>3.8.0</version>
+        </dependency>
+
+        <!-- Local Dependencies -->
+        <dependency>
+            <!-- https://github.com/brendano/arkref -->
+            <groupId>edu.cmu.ark</groupId>
+            <artifactId>supersense-tagger</artifactId>
+            <version>0.0.1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/supersense-tagger.jar</systemPath>
+        </dependency>
+        <dependency>
+            <!-- https://github.com/brendano/arkref -->
+            <groupId>arkref</groupId>
+            <artifactId>arkref</artifactId>
+            <version>0.0.1</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/arkref.jar</systemPath>
+        </dependency>
     </dependencies>
 
     <build>

@@ -7,8 +7,6 @@ import java.util.List;
 
 /**
  * Abstract base class for a web search executor
- *
- * @author shadeMe
  */
 public abstract class WebSearchAgent {
 	protected static boolean isBlacklistPopulated() {

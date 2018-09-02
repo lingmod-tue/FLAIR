@@ -1,8 +1,4 @@
-/*
- * This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License.
- * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/.
 
- */
 package com.flair.server.interop.session;
 
 import com.flair.server.interop.AuthTokenGenerator;
@@ -24,8 +20,6 @@ import java.util.List;
 
 /**
  * Tracks active sessions and its attributes
- *
- * @author shadeMe
  */
 public class SessionManager {
 	private static SessionManager SINGLETON = null;

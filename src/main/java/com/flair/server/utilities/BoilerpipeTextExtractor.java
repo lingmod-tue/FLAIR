@@ -1,8 +1,4 @@
-/*
- * This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License.
- * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/.
 
- */
 package com.flair.server.utilities;
 
 import de.l3s.boilerpipe.extractors.ArticleExtractor;
@@ -11,8 +7,6 @@ import org.xml.sax.InputSource;
 
 /**
  * Boilerpipe implementation of a text extractor
- *
- * @author shadeMe
  */
 class BoilerpipeTextExtractor extends AbstractTextExtractor {
 	public BoilerpipeTextExtractor() {

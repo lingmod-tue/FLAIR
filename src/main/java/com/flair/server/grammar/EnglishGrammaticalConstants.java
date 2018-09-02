@@ -1,8 +1,4 @@
-/*
- * This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License.
- * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/.
 
- */
 package com.flair.server.grammar;
 
 import java.util.Arrays;
@@ -10,8 +6,6 @@ import java.util.List;
 
 /**
  * Stable constants for the English language grammar
- *
- * @author shadeMe
  */
 public class EnglishGrammaticalConstants {
 	public static final List<String> QUESTION_WORDS = Arrays.asList("what", "who", "how", "why", "where", "when", "whose", "whom", "which");

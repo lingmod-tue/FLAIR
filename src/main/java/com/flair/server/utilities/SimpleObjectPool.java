@@ -1,6 +1,4 @@
-/*
- * This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/.
- */
+
 package com.flair.server.utilities;
 
 import java.util.HashMap;
@@ -10,8 +8,6 @@ import java.util.concurrent.Semaphore;
 
 /**
  * A basic implementation of a blocking object pool
- *
- * @author shadeMe
  */
 public class SimpleObjectPool<T> {
 	public interface Factory<T> {

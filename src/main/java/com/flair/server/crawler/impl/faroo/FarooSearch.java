@@ -1,6 +1,4 @@
-/*
- * This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/.
- */
+
 package com.flair.server.crawler.impl.faroo;
 
 import com.flair.server.crawler.impl.AbstractSearchAgentImpl;
@@ -22,8 +20,6 @@ import java.util.List;
 
 /**
  * Web search impelementation of the FAROO search API
- *
- * @author shadeMe
  */
 public class FarooSearch implements AbstractSearchAgentImpl {
 	private static final String FAROOSEARCH_SCHEME = "http";

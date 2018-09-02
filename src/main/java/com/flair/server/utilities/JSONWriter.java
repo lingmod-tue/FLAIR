@@ -1,8 +1,4 @@
-/*
- * This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License.
- * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/.
 
- */
 package com.flair.server.utilities;
 
 import com.google.gson.Gson;
@@ -14,8 +10,6 @@ import java.io.IOException;
 
 /**
  * Generic JSON serializer
- *
- * @author shadeMe
  */
 public class JSONWriter {
 	private final GsonBuilder builder;

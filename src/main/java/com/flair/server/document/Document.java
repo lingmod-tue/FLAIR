@@ -1,8 +1,4 @@
-/*
- * This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License.
- * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/.
 
- */
 package com.flair.server.document;
 
 import com.flair.server.parser.KeywordSearcherOutput;
@@ -16,8 +12,6 @@ import java.util.StringTokenizer;
 
 /**
  * Represents a text document that's parsed by the NLP Parser
- *
- * @author shadeMe
  */
 public class Document implements AbstractDocument {
 	private final AbstractDocumentSource source;

@@ -7,8 +7,6 @@ import com.flair.shared.grammar.Language;
 
 /**
  * Represents a single search result for a specific query
- *
- * @author shadeMe
  */
 public class SearchResult implements Comparable<SearchResult> {
 	private final Language lang;

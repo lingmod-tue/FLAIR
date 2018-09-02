@@ -1,16 +1,10 @@
-/*
- * This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License.
- * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/.
 
- */
 package com.flair.server.pipelines.gramparsing;
 
 import java.util.concurrent.TimeUnit;
 
 /**
  * Task manager specific constants
- *
- * @author shadeMe
  */
 class Constants {
 	static final int WEB_SEARCH_TASK_THREADPOOL_SIZE = 50;

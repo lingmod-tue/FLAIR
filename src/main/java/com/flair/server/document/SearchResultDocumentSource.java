@@ -1,8 +1,4 @@
-/*
- * This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License.
- * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/.
 
- */
 package com.flair.server.document;
 
 import com.flair.server.crawler.SearchResult;
@@ -11,8 +7,6 @@ import java.net.URL;
 
 /**
  * Represents a document source object that encapsulates a search result
- *
- * @author shadeMe
  */
 public class SearchResultDocumentSource extends AbstractDocumentSource {
 	private final SearchResult parentSearchResult;

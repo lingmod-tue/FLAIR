@@ -7,8 +7,6 @@ package com.flair.server.parser;
 
 /**
  * Keyword searcher that uses a basic substring search
- *
- * @author shadeMe
  */
 public class SimpleSubstringKeywordSearcher implements AbstractKeywordSearcher {
 	@Override

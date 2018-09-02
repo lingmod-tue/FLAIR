@@ -1,8 +1,4 @@
-/*
- * This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License.
- * To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/.
 
- */
 package com.flair.server.document;
 
 import com.flair.server.parser.KeywordSearcherOutput;
@@ -14,8 +10,6 @@ import com.flair.shared.parser.DocumentReadabilityLevel;
 
 /**
  * The interface all parsable documents must implement
- *
- * @author shadeMe
  */
 public interface AbstractDocument extends Comparable<AbstractDocument> {
 	AbstractDocumentSource getDocumentSource();

@@ -1,6 +1,4 @@
-/*
- * This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License. To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/4.0/.
- */
+
 package com.flair.server.grammar;
 
 import com.flair.server.utilities.ServerLogger;
@@ -17,8 +15,6 @@ import java.util.List;
 
 /**
  * Wrapper class for the default keywords for each language
- *
- * @author shadeMe
  */
 public class DefaultVocabularyList {
 	private static final EnumMap<Language, List<String>> VOCAB_MAP = new EnumMap<>(Language.class);
