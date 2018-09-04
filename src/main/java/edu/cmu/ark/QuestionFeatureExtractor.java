@@ -4,6 +4,7 @@ import arkref.parsestuff.AnalysisUtilities;
 import edu.stanford.nlp.trees.Tree;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class QuestionFeatureExtractor {
@@ -343,7 +344,7 @@ public class QuestionFeatureExtractor {
 		List<Tree> leaves = tree.getLeaves();
 
 		for (Tree leaf : leaves) {
-			res.add(leaf.yield().toString());
+			res.addAll(Arrays.asList(AnalysisUtilities.stringArrayFromLabels(leaf.yield())));
 		}
 
 		return res;
@@ -391,7 +392,6 @@ public class QuestionFeatureExtractor {
 			}
 		}
 	}
-
 
 	public static QuestionFeatureExtractor getInstance() {
 		if (instance == null) {

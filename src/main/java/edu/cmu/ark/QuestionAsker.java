@@ -25,7 +25,6 @@
 package edu.cmu.ark;
 
 import arkref.parsestuff.AnalysisUtilities;
-import com.flair.server.utilities.ServerLogger;
 import edu.stanford.nlp.trees.Tree;
 
 import java.io.BufferedReader;
@@ -56,15 +55,6 @@ import java.util.List;
  * @author mheilman@cs.cmu.edu
  */
 public class QuestionAsker {
-
-
-	public QuestionAsker() {
-	}
-
-
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		QuestionTransducer qt = new QuestionTransducer();
 		InitialTransformationStep trans = new InitialTransformationStep();
@@ -72,6 +62,9 @@ public class QuestionAsker {
 
 
 		qt.setAvoidPronounsAndDemonstratives(false);
+
+		//pre-load
+		AnalysisUtilities.getInstance();
 
 		String buf;
 		Tree parsed;
@@ -87,6 +80,9 @@ public class QuestionAsker {
 		boolean avoidFreqWords = false;
 		boolean dropPro = true;
 		boolean justWH = false;
+
+		GlobalProperties.setDebug(true);
+
 
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].equals("--debug")) {
@@ -124,7 +120,7 @@ public class QuestionAsker {
 		trans.setDoNonPronounNPC(doNonPronounNPC);
 
 		if (modelPath != null) {
-			ServerLogger.get().info("Loading question ranking models from " + modelPath + "...");
+			System.err.println("Loading question ranking models from " + modelPath + "...");
 			qr = new QuestionRanker();
 			qr.loadModel(modelPath);
 		}
@@ -132,7 +128,7 @@ public class QuestionAsker {
 		try {
 			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-			if (GlobalProperties.getDebug()) ServerLogger.get().info("\nInput Text:");
+			if (GlobalProperties.getDebug()) System.err.println("\nInput Text:");
 			String doc;
 
 
@@ -169,14 +165,14 @@ public class QuestionAsker {
 				List<Tree> inputTrees = new ArrayList<Tree>();
 
 				for (String sentence : sentences) {
-					if (GlobalProperties.getDebug()) ServerLogger.get().info("Question Asker: sentence: " + sentence);
+					if (GlobalProperties.getDebug()) System.err.println("Question Asker: sentence: " + sentence);
 
-					parsed = AnalysisUtilities.parseSentence(sentence).parse;
+					parsed = AnalysisUtilities.getInstance().parseSentence(sentence).parse;
 					inputTrees.add(parsed);
 				}
 
 				if (GlobalProperties.getDebug())
-					ServerLogger.get().info("Seconds Elapsed Parsing:\t" + ((System.currentTimeMillis() - startTime) / 1000.0));
+					System.err.println("Seconds Elapsed Parsing:\t" + ((System.currentTimeMillis() - startTime) / 1000.0));
 
 				//step 1 transformations
 				List<Question> transformationOutput = trans.transform(inputTrees);
@@ -184,7 +180,7 @@ public class QuestionAsker {
 				//step 2 question transducer
 				for (Question t : transformationOutput) {
 					if (GlobalProperties.getDebug())
-						ServerLogger.get().info("Stage 2 Input: " + t.getIntermediateTree().yield().toString());
+						System.err.println("Stage 2 Input: " + t.getIntermediateTree().yield().toString());
 					qt.generateQuestionsFromParse(t);
 					outputQuestionList.addAll(qt.getQuestions());
 				}
@@ -209,24 +205,25 @@ public class QuestionAsker {
 					if (justWH && question.getFeatureValue("whQuestion") != 1.0) {
 						continue;
 					}
-					ServerLogger.get().info(question.yield());
+					System.out.print(question.yield());
 					if (printVerbose)
-						ServerLogger.get().info("\t" + AnalysisUtilities.getCleanedUpYield(question.getSourceTree()));
+						System.out.print("\t" + AnalysisUtilities.getCleanedUpYield(question.getSourceTree()));
 					Tree ansTree = question.getAnswerPhraseTree();
-					if (printVerbose) ServerLogger.get().info("\t");
+					if (printVerbose) System.out.print("\t");
 					if (ansTree != null) {
 						if (printVerbose)
-							ServerLogger.get().info(AnalysisUtilities.getCleanedUpYield(question.getAnswerPhraseTree()));
+							System.out.print(AnalysisUtilities.getCleanedUpYield(question.getAnswerPhraseTree()));
 					}
-					if (printVerbose) ServerLogger.get().info("\t" + question.getScore());
-					//ServerLogger.get().info("Answer depth: "+question.getFeatureValue("answerDepth"));
+					if (printVerbose) System.out.print("\t" + question.getScore());
+					//System.err.println("Answer depth: "+question.getFeatureValue("answerDepth"));
 
+					System.out.println();
 				}
 
 				if (GlobalProperties.getDebug())
-					ServerLogger.get().info("Seconds Elapsed Total:\t" + ((System.currentTimeMillis() - startTime) / 1000.0));
-				//prompt for another piece of input text 
-				if (GlobalProperties.getDebug()) ServerLogger.get().info("\nInput Text:");
+					System.err.println("Seconds Elapsed Total:\t" + ((System.currentTimeMillis() - startTime) / 1000.0));
+				//prompt for another piece of input text
+				if (GlobalProperties.getDebug()) System.err.println("\nInput Text:");
 			}
 
 
@@ -239,10 +236,11 @@ public class QuestionAsker {
 		List<String> featureNames = Question.getFeatureNames();
 		for (int i = 0; i < featureNames.size(); i++) {
 			if (i > 0) {
-				ServerLogger.get().info("\n");
+				System.out.print("\n");
 			}
-			ServerLogger.get().info(featureNames.get(i));
+			System.out.print(featureNames.get(i));
 		}
+		System.out.println();
 	}
 
 }

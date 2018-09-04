@@ -1,7 +1,6 @@
 package edu.cmu.ark;
 
 import arkref.parsestuff.AnalysisUtilities;
-import com.flair.server.utilities.ServerLogger;
 import edu.cmu.ark.ranking.*;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.tregex.TregexMatcher;
@@ -110,7 +109,8 @@ public class QuestionRanker implements Serializable {
 
 
 	/**
-	 * ranks a set of questions.  For use with new questions, not for evaluation
+	 * ranks a set of questions.  For use with new questions, not for evaluation.
+	 *
 	 */
 	public void scoreGivenQuestions(List<Question> questions) {
 		List<List<Rankable>> lists = createQuestionLists(questions);
@@ -163,7 +163,7 @@ public class QuestionRanker implements Serializable {
 				}
 
 				//add to list
-				Tree tmptree = AnalysisUtilities.readTreeFromString("(ROOT (. .))");
+				Tree tmptree = AnalysisUtilities.getInstance().readTreeFromString("(ROOT (. .))");
 				question = new Question(tmptree);
 				question.setYield(yield);
 				question.setLabelScore(tmpLabelScore);
@@ -193,10 +193,10 @@ public class QuestionRanker implements Serializable {
 
 				Double tmpLabelScore = new Double(parts[0]);
 
-				Tree questionTree = AnalysisUtilities.readTreeFromString(parts[2]);
-				Tree answerPhraseTree = AnalysisUtilities.readTreeFromString(parts[4]);
-				Tree intermediateTree = AnalysisUtilities.readTreeFromString(parts[6]);
-				Tree sourceTree = AnalysisUtilities.readTreeFromString(parts[8]);
+				Tree questionTree = AnalysisUtilities.getInstance().readTreeFromString(parts[2]);
+				Tree answerPhraseTree = AnalysisUtilities.getInstance().readTreeFromString(parts[4]);
+				Tree intermediateTree = AnalysisUtilities.getInstance().readTreeFromString(parts[6]);
+				Tree sourceTree = AnalysisUtilities.getInstance().readTreeFromString(parts[8]);
 				String articleID = parts[9];
 
 				question = new Question();
@@ -269,7 +269,7 @@ public class QuestionRanker implements Serializable {
 
 	private void test(List<List<Rankable>> list) {
 		ranker.rankAll(list);
-		ServerLogger.get().trace(RankingEval.precisionAtN(list, 10, minimumAcceptability) + "\t"
+		System.out.println(RankingEval.precisionAtN(list, 10, minimumAcceptability) + "\t"
 				+ RankingEval.precisionAtN(list, 4, minimumAcceptability) + "\t"
 				+ RankingEval.precisionAtN(list, 1, minimumAcceptability) + "\t"
 				+ RankingEval.computeKendallsTau(list) + "\t"
@@ -293,7 +293,7 @@ public class QuestionRanker implements Serializable {
 			}
 
 			ranker.train(trainingFolds);
-			ServerLogger.get().info(i + "\t");
+			System.out.print(i + "\t");
 			test(testingFold);
 
 		}
@@ -345,10 +345,10 @@ public class QuestionRanker implements Serializable {
 			Map<String, Double> typeCounts = bagOfWordsExtractor.extractCounts(wordTokens);
 
 			if (GlobalProperties.getDebug())
-				ServerLogger.get().info("Frequent Words: " + findFrequentWords(typeCounts, wordTokens.size()).toString());
+				System.err.println("Frequent Words: " + findFrequentWords(typeCounts, wordTokens.size()).toString());
 
 			//downweight any questions whose answer's syntactic head word (or for PPs, the pp-object's head)
-			// appears at least 5 times 
+			// appears at least 5 times
 			// and constitutes at least 5% of the non-stopword nouns in the text
 			double threshold = Math.max(minCountForFreqWords, minProportionForFreqWords * wordTokens.size());
 			PorterStemmer stemmer = new PorterStemmer();
@@ -361,7 +361,7 @@ public class QuestionRanker implements Serializable {
 					q.setScore(q.getScore() - 1.0);
 					q.setFeatureValue("answerIsFrequentWord", 1.0);
 					if (GlobalProperties.getDebug())
-						ServerLogger.get().info("Question Ranker: downweighting due to frequent word (" + headWord + ") in answer: " + q.yield());
+						System.err.println("Question Ranker: downweighting due to frequent word (" + headWord + ") in answer: " + q.yield());
 				}
 			}
 		}
@@ -379,13 +379,13 @@ public class QuestionRanker implements Serializable {
 				Tree answerTree = q.getAnswerPhraseTree();
 				if (QuestionTransducer.containsUnresolvedPronounsOrDemonstratives(q)) {
 					if (GlobalProperties.getDebug())
-						ServerLogger.get().info("Question Ranker: downweighting due to pronoun in question: " + q.yield());
+						System.err.println("Question Ranker: downweighting due to pronoun in question: " + q.yield());
 					q.setScore(q.getScore() - 1.0);
 				} else if (answerTree != null && isHeadedByPronoun(answerTree)) {
 					q.setScore(q.getScore() - 1.0);
 					q.setFeatureValue("answerIsHeadedByPronoun", 1.0);
 					if (GlobalProperties.getDebug())
-						ServerLogger.get().info("Question Ranker: downweighting due to pronoun answer (" + answerTree.yield() + "): " + q.yield());
+						System.err.println("Question Ranker: downweighting due to pronoun answer (" + answerTree.yield() + "): " + q.yield());
 				}
 
 			}
@@ -507,7 +507,7 @@ public class QuestionRanker implements Serializable {
 		if (loadModelPath != null) {
 			r.loadModel(loadModelPath);
 		} else if (trainFile == null && loadTrainingQuestionsPath == null) {
-			ServerLogger.get().info("no training file!");
+			System.err.println("no training file!");
 			System.exit(0);
 		} else {
 			r = new QuestionRanker(rankerType);

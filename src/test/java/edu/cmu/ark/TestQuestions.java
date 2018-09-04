@@ -46,7 +46,7 @@ public class TestQuestions extends TestCase {
 		assertFalse(res.toString(), res.contains("What was the capital of visited by John?") || res.contains("Where was the capital of visited by John?"));
 
 		//parser doesn't produce the right parse with "in Alaska" attaching to "city"
-		parse = AnalysisUtilities.readTreeFromString("(ROOT (S (NP (NNP John)) (VP (VBD visited) (NP (NP (DT a) (NN city)) (PP (IN in) (NP (NNP Alaska))))) (. .)))");
+		parse = AnalysisUtilities.getInstance().readTreeFromString("(ROOT (S (NP (NNP John)) (VP (VBD visited) (NP (NP (DT a) (NN city)) (PP (IN in) (NP (NNP Alaska))))) (. .)))");
 		res = getQuestionOutputStringsFromParse(qt, parse);
 		assertFalse(res.toString(), res.contains("What did John visit a city in?") || res.contains("Where did John visit a city in?"));
 		assertTrue(res.toString(), res.contains("What did John visit?") || res.contains("Where did John visit?"));

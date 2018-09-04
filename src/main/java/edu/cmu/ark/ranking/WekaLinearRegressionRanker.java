@@ -3,10 +3,7 @@ package edu.cmu.ark.ranking;
 import edu.cmu.ark.GlobalProperties;
 import weka.classifiers.Classifier;
 import weka.classifiers.functions.LinearRegression;
-import weka.core.Attribute;
-import weka.core.FastVector;
-import weka.core.Instance;
-import weka.core.Instances;
+import weka.core.*;
 
 import java.util.Collections;
 import java.util.List;
@@ -67,7 +64,7 @@ public class WekaLinearRegressionRanker extends BaseRanker implements IRanker {
 	}
 
 	private Classifier createClassifierObject() {
-		Classifier res;
+		LinearRegression res;
 
 
 		//res = new SMOreg();
@@ -98,7 +95,7 @@ public class WekaLinearRegressionRanker extends BaseRanker implements IRanker {
 
 	private Instance makeInstance(Instances dataset, double[] featureValues, double labelValue) {
 		Instance res = null;
-		res = new Instance(featureValues.length + 1);
+		res = new DenseInstance(featureValues.length + 1);
 		res.setDataset(dataset);
 		for (int i = 0; i < featureValues.length; i++) {
 			res.setValue(i, featureValues[i]);

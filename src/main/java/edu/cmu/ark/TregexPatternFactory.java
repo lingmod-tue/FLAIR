@@ -35,8 +35,12 @@ public class TregexPatternFactory {
 
 	public static TregexPattern getPattern(String tregex) {
 		if (instance == null) {
-			instance = new TregexPatternFactory();
+			synchronized (TregexPatternFactory.class) {
+				if (instance == null)
+					instance = new TregexPatternFactory();
+			}
 		}
+
 		Map<String, TregexPattern> myMap = instance.getMap();
 		TregexPattern pattern = myMap.get(tregex);
 		if (pattern == null) {

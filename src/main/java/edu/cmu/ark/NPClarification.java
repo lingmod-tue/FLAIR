@@ -7,7 +7,6 @@ import arkref.analysis.Types;
 import arkref.data.Document;
 import arkref.data.Mention;
 import arkref.parsestuff.AnalysisUtilities;
-import com.flair.server.utilities.ServerLogger;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.tregex.TregexMatcher;
 import edu.stanford.nlp.trees.tregex.TregexPattern;
@@ -21,6 +20,7 @@ import java.util.List;
 import java.util.Set;
 
 public class NPClarification {
+
 	public void resolveCoreference(List<Tree> origdoc) {
 		List<Tree> trees = new ArrayList<Tree>();
 		List<String> entityStrings = new ArrayList<String>();
@@ -29,7 +29,10 @@ public class NPClarification {
 			Document.addNPsAbovePossessivePronouns(t);
 			Document.addInternalNPStructureForRoleAppositives(t);
 			trees.add(t);
-			entityStrings.add(convertSupersensesToEntityString(t, SuperSenseWrapper.getInstance().annotateSentenceWithSupersenses(t)));
+			entityStrings.add(convertSupersensesToEntityString(
+					t,
+					SuperSenseWrapper.getInstance().annotateSentenceWithSupersenses(
+							t)));
 		}
 
 		doc = new Document(trees, entityStrings);
@@ -39,8 +42,8 @@ public class NPClarification {
 		RefsToEntities.go(doc);
 	}
 
-
-	private String convertSupersensesToEntityString(Tree t, List<String> supersenses) {
+	private String convertSupersensesToEntityString(Tree t,
+	                                                List<String> supersenses) {
 		String res = "";
 
 		List<String> converted = new ArrayList<String>();
@@ -53,7 +56,8 @@ public class NPClarification {
 		}
 
 		List<Tree> leaves = t.getLeaves();
-		while (leaves.size() > converted.size()) converted.add("0");
+		while (leaves.size() > converted.size())
+			converted.add("0");
 		for (int i = 0; i < leaves.size(); i++) {
 			if (i > 0) res += " ";
 			res += leaves.get(i) + "/" + converted.get(i);
@@ -62,13 +66,11 @@ public class NPClarification {
 		return res;
 	}
 
-
 	public static boolean hasPronoun(Tree t) {
 		TregexPattern pat = TregexPatternFactory.getPattern("/^PRP/=pronoun");
 		TregexMatcher matcher = pat.matcher(t);
 		return matcher.find();
 	}
-
 
 	public static boolean isPronoun(Tree t) {
 		TregexPattern pat = TregexPatternFactory.getPattern("NP !>> __ <<# /^PRP/=pronoun");
@@ -76,8 +78,8 @@ public class NPClarification {
 		return matcher.find();
 	}
 
-
-	public List<Question> clarifyNPs(List<Question> treeSet, boolean clarifyPronouns, boolean clarifyNonPronouns) {
+	public List<Question> clarifyNPs(List<Question> treeSet,
+	                                 boolean clarifyPronouns, boolean clarifyNonPronouns) {
 		List<Question> newTrees = new ArrayList<Question>();
 
 		//arrays for return values from findReplacement
@@ -93,12 +95,12 @@ public class NPClarification {
 			Question qCopy = q.deeperCopy();
 			Tree qRoot = qCopy.getIntermediateTree();
 
-
 			List<Tree> replacedMentionTrees = new ArrayList<Tree>();
 			List<Tree> replacementMentionTrees = new ArrayList<Tree>();
 
 			if (GlobalProperties.getDebug())
-				ServerLogger.get().info("NPClarification processing: " + qRoot.yield().toString());
+				System.err.println("NPClarification processing: "
+						+ qRoot.yield().toString());
 
 			//iterate over mentions in the input tree
 			List<Tree> sentenceMentionNodes = FindMentions.findMentionNodes(qRoot);
@@ -115,7 +117,11 @@ public class NPClarification {
 				if (alreadySeenNodes.contains(qMentionNode)) continue;
 				alreadySeenNodes.add(qMentionNode);
 
-				replacement = findAndReplace(qMentionNode, sentenceMentionNodes, qRoot, qCopy.getSourceSentenceNumber(), clarifyNonPronouns, retHadPronouns, retResolvedPronounsIfNecessary, retModified);
+				replacement = findAndReplace(qMentionNode,
+						sentenceMentionNodes, qRoot,
+						qCopy.getSourceSentenceNumber(), clarifyNonPronouns,
+						retHadPronouns, retResolvedPronounsIfNecessary,
+						retModified);
 
 				if (replacement != null) {
 					replacedMentionTrees.add(qMentionNode);
@@ -127,18 +133,22 @@ public class NPClarification {
 				hadPronouns |= retHadPronouns.get(0);
 			}
 
-			if (modified && (!hadPronouns || (hadPronouns && resolvedPronounsIfNecessary))) {
+			if (modified
+					&& (!hadPronouns || (hadPronouns && resolvedPronounsIfNecessary))) {
 				if (GlobalProperties.getDebug())
-					ServerLogger.get().info("NPClarification added: " + qCopy.getIntermediateTree().yield().toString());
+					System.err.println("NPClarification added: "
+							+ qCopy.getIntermediateTree().yield().toString());
 
-				extractClarificationFeatures(qCopy, replacedMentionTrees, replacementMentionTrees);
+				extractClarificationFeatures(qCopy, replacedMentionTrees,
+						replacementMentionTrees);
 				newTrees.add(qCopy);
 
 			}
 
 			if (!modified && resolvedPronounsIfNecessary && hadPronouns) {
 				if (GlobalProperties.getDebug())
-					ServerLogger.get().info("NPClarification resolved pronouns in: " + q.getIntermediateTree().yield().toString());
+					System.err.println("NPClarification resolved pronouns in: "
+							+ q.getIntermediateTree().yield().toString());
 				//set the NPC feature for the ORIGINAL tree (we don't need to add it), not the copy
 				q.setFeatureValue("performedNPClarification", 1.0);
 			}
@@ -148,8 +158,8 @@ public class NPClarification {
 		return newTrees;
 	}
 
-
-	private void extractClarificationFeatures(Question qCopy, List<Tree> replacedMentionTrees, List<Tree> replacementMentionTrees) {
+	private void extractClarificationFeatures(Question qCopy,
+	                                          List<Tree> replacedMentionTrees, List<Tree> replacementMentionTrees) {
 
 		qCopy.setFeatureValue("performedNPClarification", 1.0);
 		String treeName;
@@ -176,46 +186,64 @@ public class NPClarification {
 			double numConjunctions = 0.0;
 			double numPronouns = 0.0;
 
-
 			SpecificityAnalyzer specificityAnalyzer = new SpecificityAnalyzer();
 			for (Tree tree : treeList) {
 				specificityAnalyzer.analyze(tree);
 				numVagueNPs += specificityAnalyzer.getNumVagueNPs();
 				length += tree.yield().size();
-				numNPs += AnalysisUtilities.getNumberOfMatchesInTree("NP !> NP", tree);
-				numProperNouns += AnalysisUtilities.getNumberOfMatchesInTree("/^NNP/", tree);
-				numQuantities += AnalysisUtilities.getNumberOfMatchesInTree("CD|QP", tree);
-				numAdjectives += AnalysisUtilities.getNumberOfMatchesInTree("/^JJ/", tree);
-				numAdverbs += AnalysisUtilities.getNumberOfMatchesInTree("/^RB/", tree);
+				numNPs += AnalysisUtilities.getNumberOfMatchesInTree(
+						"NP !> NP", tree);
+				numProperNouns += AnalysisUtilities.getNumberOfMatchesInTree(
+						"/^NNP/", tree);
+				numQuantities += AnalysisUtilities.getNumberOfMatchesInTree(
+						"CD|QP", tree);
+				numAdjectives += AnalysisUtilities.getNumberOfMatchesInTree(
+						"/^JJ/", tree);
+				numAdverbs += AnalysisUtilities.getNumberOfMatchesInTree(
+						"/^RB/", tree);
 				numPPs += AnalysisUtilities.getNumberOfMatchesInTree("PP", tree);
-				numSubordinateClauses += AnalysisUtilities.getNumberOfMatchesInTree("SBAR", tree);
-				numConjunctions += AnalysisUtilities.getNumberOfMatchesInTree("CC", tree);
-				numPronouns += AnalysisUtilities.getNumberOfMatchesInTree("/^PRP/", tree);
+				numSubordinateClauses += AnalysisUtilities.getNumberOfMatchesInTree(
+						"SBAR", tree);
+				numConjunctions += AnalysisUtilities.getNumberOfMatchesInTree(
+						"CC", tree);
+				numPronouns += AnalysisUtilities.getNumberOfMatchesInTree(
+						"/^PRP/", tree);
 			}
 
 			//set the features now
-			QuestionFeatureExtractor.extractCountAndGreaterThanFeatures(qCopy, "numVagueNPs" + treeName, 1, 5, numVagueNPs);
-			QuestionFeatureExtractor.extractCountAndGreaterThanFeatures(qCopy, "length" + treeName, 4, 10, length);
-			QuestionFeatureExtractor.extractCountAndGreaterThanFeatures(qCopy, "numNPs" + treeName, 1, 5, numNPs);
-			QuestionFeatureExtractor.extractCountAndGreaterThanFeatures(qCopy, "numProperNouns" + treeName, 1, 5, numProperNouns);
-			QuestionFeatureExtractor.extractCountAndGreaterThanFeatures(qCopy, "numQuantities" + treeName, 1, 5, numQuantities);
-			QuestionFeatureExtractor.extractCountAndGreaterThanFeatures(qCopy, "numAdjectives" + treeName, 1, 5, numAdjectives);
-			QuestionFeatureExtractor.extractCountAndGreaterThanFeatures(qCopy, "numAdverbs" + treeName, 1, 5, numAdverbs);
-			QuestionFeatureExtractor.extractCountAndGreaterThanFeatures(qCopy, "numPPs" + treeName, 1, 5, numPPs);
-			QuestionFeatureExtractor.extractCountAndGreaterThanFeatures(qCopy, "numSubordinateClauses" + treeName, 1, 5, numSubordinateClauses);
-			QuestionFeatureExtractor.extractCountAndGreaterThanFeatures(qCopy, "numConjunctions" + treeName, 1, 5, numConjunctions);
-			QuestionFeatureExtractor.extractCountAndGreaterThanFeatures(qCopy, "numPronouns" + treeName, 1, 5, numPronouns);
-
+			QuestionFeatureExtractor.extractCountAndGreaterThanFeatures(qCopy,
+					"numVagueNPs" + treeName, 1, 5, numVagueNPs);
+			QuestionFeatureExtractor.extractCountAndGreaterThanFeatures(qCopy,
+					"length" + treeName, 4, 10, length);
+			QuestionFeatureExtractor.extractCountAndGreaterThanFeatures(qCopy,
+					"numNPs" + treeName, 1, 5, numNPs);
+			QuestionFeatureExtractor.extractCountAndGreaterThanFeatures(qCopy,
+					"numProperNouns" + treeName, 1, 5, numProperNouns);
+			QuestionFeatureExtractor.extractCountAndGreaterThanFeatures(qCopy,
+					"numQuantities" + treeName, 1, 5, numQuantities);
+			QuestionFeatureExtractor.extractCountAndGreaterThanFeatures(qCopy,
+					"numAdjectives" + treeName, 1, 5, numAdjectives);
+			QuestionFeatureExtractor.extractCountAndGreaterThanFeatures(qCopy,
+					"numAdverbs" + treeName, 1, 5, numAdverbs);
+			QuestionFeatureExtractor.extractCountAndGreaterThanFeatures(qCopy,
+					"numPPs" + treeName, 1, 5, numPPs);
+			QuestionFeatureExtractor.extractCountAndGreaterThanFeatures(qCopy,
+					"numSubordinateClauses" + treeName, 1, 5,
+					numSubordinateClauses);
+			QuestionFeatureExtractor.extractCountAndGreaterThanFeatures(qCopy,
+					"numConjunctions" + treeName, 1, 5, numConjunctions);
+			QuestionFeatureExtractor.extractCountAndGreaterThanFeatures(qCopy,
+					"numPronouns" + treeName, 1, 5, numPronouns);
 
 		}
 
 	}
 
-
 	/**
-	 * Look in the entity graph of the document to find a replacement for mentionNode (a copy of a node from the original document).
-	 * Checks sentenceMentionNodes to make sure that the mention is the first in the sentence.
-	 * Uses sentenceRoot (a copy of the original sentence root) to find out if head's match.
+	 * Look in the entity graph of the document to find a replacement for mentionNode (a copy of a
+	 * node from the original document). Checks sentenceMentionNodes to make sure that the mention
+	 * is the first in the sentence. Uses sentenceRoot (a copy of the original sentence root) to
+	 * find out if head's match.
 	 *
 	 * @param mentionNode
 	 * @param sentenceMentionNodes
@@ -223,7 +251,12 @@ public class NPClarification {
 	 * @param qSentNumber
 	 * @return
 	 */
-	private Tree findAndReplace(Tree mentionNode, List<Tree> sentenceMentionNodes, Tree sentenceRoot, int qSentNumber, boolean clarifyNonPronouns, List<Boolean> retHadPronouns, List<Boolean> retResolvedPronounsIfNecessary, List<Boolean> retModified) {
+	private Tree findAndReplace(Tree mentionNode,
+	                            List<Tree> sentenceMentionNodes, Tree sentenceRoot,
+	                            int qSentNumber, boolean clarifyNonPronouns,
+	                            List<Boolean> retHadPronouns,
+	                            List<Boolean> retResolvedPronounsIfNecessary,
+	                            List<Boolean> retModified) {
 		boolean modified = false;
 		boolean resolvedPronounsIfNecessary = true;
 		boolean hadPronouns = false;
@@ -241,8 +274,8 @@ public class NPClarification {
 			}
 
 			//Skip if the original mention doesn't match the input mention.
-			//We use case-insensitive match so that "he" equals "He", which might happen due to other transformations... 
-			//Of course, using the case insensitive matching like this is a bit of a hack, 
+			//We use case-insensitive match so that "he" equals "He", which might happen due to other transformations...
+			//Of course, using the case insensitive matching like this is a bit of a hack,
 			//but it's probably simpler than making sure all the input is properly cased.
 			if (!caseInsensitiveNodeMatch(m.node(), mentionNode)) {
 				//if(!m.node().equals(mentionNode)){
@@ -254,8 +287,7 @@ public class NPClarification {
 				resolvedPronounsIfNecessary = false;
 			}
 
-
-			//with multiple instances of the same word (e.g., "he said he did") 
+			//with multiple instances of the same word (e.g., "he said he did")
 			//skip if the original mention has a different parent head word
 			//if(!parentsHaveSameHeadWords(m.node(), m.getSentence().rootNode(), mentionNode, sentenceRoot)){
 			//	continue;
@@ -263,11 +295,11 @@ public class NPClarification {
 
 			//find best mention to replace this with
 			Mention replacement = findReplacementByFirstMention(m);
-			//don't replace if the replacement is identical			
-			if (replacement.node().yield().toString().equalsIgnoreCase(mentionNode.yield().toString())) {
+			//don't replace if the replacement is identical
+			if (replacement.node().yield().toString().equalsIgnoreCase(
+					mentionNode.yield().toString())) {
 				continue;
 			}
-
 
 			//skip it if the best is a pronoun itself
 			if (hasPronoun(replacement.node())) {
@@ -276,35 +308,40 @@ public class NPClarification {
 				resolvedPronounsIfNecessary = true;
 			}
 
-			//only consider replacements for the first mention in the sentence of each entity 
-			if (!isFirstMentionOfEntityInSentence(m, mentionNode, sentenceMentionNodes)) {
+			//only consider replacements for the first mention in the sentence of each entity
+			if (!isFirstMentionOfEntityInSentence(m, mentionNode,
+					sentenceMentionNodes)) {
 				continue;
 			}
 
-
-			if (replacement.ID() != m.ID() && !replacement.node().dominates(m.node())) {
-				//make copy with nested mentions replaced						
+			if (replacement.ID() != m.ID()
+					&& !replacement.node().dominates(m.node())) {
+				//make copy with nested mentions replaced
 				//create a copy of the node that will be used to replace
 				//the node in the input tree.
 				if (clarifyNonPronouns) {
-					replacementCopy = createCopyWithNestedMentionsClarified(replacement, sentenceMentionNodes);
+					replacementCopy = createCopyWithNestedMentionsClarified(
+							replacement, sentenceMentionNodes);
 				} else {
 					replacementCopy = replacement.node().deepCopy();
 				}
 				replacementCopy = simplifyMentionTree(replacementCopy);
 
-
-				if (isPossessiveNP(m.node()) && !isPossessiveNP(replacement.node())) {
-					replacementCopy.addChild(AnalysisUtilities.readTreeFromString("(POS 's)"));
+				if (isPossessiveNP(m.node())
+						&& !isPossessiveNP(replacement.node())) {
+					replacementCopy.addChild(AnalysisUtilities.getInstance().readTreeFromString(
+							"(POS 's)"));
 				}
-				if (!isPossessiveNP(m.node()) && isPossessiveNP(replacement.node())) {
+				if (!isPossessiveNP(m.node())
+						&& isPossessiveNP(replacement.node())) {
 					//remove the POS node
 					List<Pair<TregexPattern, TsurgeonPattern>> ops = new ArrayList<Pair<TregexPattern, TsurgeonPattern>>();
 					List<TsurgeonPattern> ps = new ArrayList<TsurgeonPattern>();
 					TregexPattern matchPattern = TregexPatternFactory.getPattern("POS=pos");
 					ps.add(Tsurgeon.parseOperation("prune pos"));
 					TsurgeonPattern p = Tsurgeon.collectOperations(ps);
-					ops.add(new Pair<TregexPattern, TsurgeonPattern>(matchPattern, p));
+					ops.add(new Pair<TregexPattern, TsurgeonPattern>(
+							matchPattern, p));
 					Tsurgeon.processPatternsOnTree(ops, replacementCopy);
 
 				}
@@ -316,7 +353,6 @@ public class NPClarification {
 				if (qParent == null) {
 					continue;
 				}
-
 
 				qParent.setChild(qParent.objectIndexOf(mentionNode), replacementCopy);
 				modified = true;
@@ -336,16 +372,17 @@ public class NPClarification {
 		return replacementCopy;
 	}
 
-
 	/**
-	 * Creates a copy of the node for replacement that has any nested mentions clarified.
-	 * Uses sentenceMentionNodes to make sure any nested mentions will not be replaced if they are the second mention in the sentence.
+	 * Creates a copy of the node for replacement that has any nested mentions clarified. Uses
+	 * sentenceMentionNodes to make sure any nested mentions will not be replaced if they are the
+	 * second mention in the sentence.
 	 *
 	 * @param replacement          (from the original document object)
 	 * @param sentenceMentionNodes
 	 * @return
 	 */
-	private Tree createCopyWithNestedMentionsClarified(Mention replacement, List<Tree> sentenceMentionNodes) {
+	private Tree createCopyWithNestedMentionsClarified(Mention replacement,
+	                                                   List<Tree> sentenceMentionNodes) {
 		Tree copy = replacement.node().deepCopy();
 
 		//consider all nodes dominated by the replacement
@@ -356,7 +393,10 @@ public class NPClarification {
 
 			for (Tree t : copy) {
 				if (t.equals(other.node())) {
-					findAndReplace(t, sentenceMentionNodes, copy, other.getSentence().ID(), true, new ArrayList<Boolean>(), new ArrayList<Boolean>(), new ArrayList<Boolean>());
+					findAndReplace(t, sentenceMentionNodes, copy,
+							other.getSentence().ID(), true,
+							new ArrayList<Boolean>(), new ArrayList<Boolean>(),
+							new ArrayList<Boolean>());
 				}
 			}
 		}
@@ -364,46 +404,49 @@ public class NPClarification {
 		return copy;
 	}
 
-
 	/**
-	 * return true if one of the other mentions in the sentence (qMentionNodes)
-	 * is in the list of linked mentions for the given mention m
-	 * AND if this other mention comes before m.
-	 * Else, return false.
+	 * return true if one of the other mentions in the sentence (qMentionNodes) is in the list of
+	 * linked mentions for the given mention m AND if this other mention comes before m. Else,
+	 * return false.
 	 *
 	 * @param mentionInOriginalDocument
 	 * @param mentionNodesInCurrentSentence
 	 * @return
 	 */
-	private boolean isFirstMentionOfEntityInSentence(Mention mentionInOriginalDocument, Tree mentionNodeInCurrentSentence, List<Tree> mentionNodesInCurrentSentence) {
+	private boolean isFirstMentionOfEntityInSentence(
+			Mention mentionInOriginalDocument,
+			Tree mentionNodeInCurrentSentence,
+			List<Tree> mentionNodesInCurrentSentence) {
 		int mentionIndex = mentionNodesInCurrentSentence.indexOf(mentionNodeInCurrentSentence);
 
 		//iterate over mentions that are linked with the given mention m
-		for (Mention linkedMention : doc.entGraph().getLinkedMentions(mentionInOriginalDocument)) {
+		for (Mention linkedMention : doc.entGraph().getLinkedMentions(
+				mentionInOriginalDocument)) {
 
 			//skip the linked mention if it is not in the same sentence
 			if (linkedMention.getSentence().ID() != mentionInOriginalDocument.getSentence().ID()) {
 				continue;
 			}
 
-			//iterate through all the mentions before the given 
+			//iterate through all the mentions before the given
 			//mentionNode in the current (possibly transformed) sentence.
-			//if the linked mention matches a tree object, 
+			//if the linked mention matches a tree object,
 			//then return false to indicate that the given mention node is
 			//not the first mention of its entity (because linkedmention is).
 			Tree linkedMentionHead = linkedMention.getHeadNode();
 			for (int i = 0; i < mentionIndex; i++) {
-				if (caseInsensitiveNodeMatch(linkedMentionHead, mentionNodesInCurrentSentence.get(i).headTerminal(AnalysisUtilities.getInstance().getHeadFinder()))) {
+				if (caseInsensitiveNodeMatch(
+						linkedMentionHead,
+						mentionNodesInCurrentSentence.get(i).headTerminal(
+								AnalysisUtilities.getInstance().getHeadFinder()))) {
 					return false;
 				}
 			}
-
 
 		}
 
 		return true;
 	}
-
 
 	private Mention findReplacementByFirstMention(Mention m) {
 		Mention res = m;
@@ -418,11 +461,9 @@ public class NPClarification {
 		return res;
 	}
 
-
 	public Document getDocument() {
 		return doc;
 	}
-
 
 	public static boolean isPossessiveNP(Tree tree) {
 		String patS = "NP=parentnp [ < /^PRP\\$/ | < POS ] !> __";
@@ -430,7 +471,6 @@ public class NPClarification {
 		TregexMatcher matcher = pat.matcher(tree);
 		return matcher.find();
 	}
-
 
 	/**
 	 * remove non-restrictive appositives and non-restrictive relative clauses
@@ -445,7 +485,6 @@ public class NPClarification {
 
 		//if the head is a proper noun, return the NP subtree dominating the head
 		Tree newHead = input.headPreTerminal(AnalysisUtilities.getInstance().getHeadFinder());
-
 
 		boolean hasCommaSubtree = false;
 		boolean hasParenthesesSubtree = false;
@@ -486,13 +525,13 @@ public class NPClarification {
 			Tsurgeon.processPatternsOnTree(ops, input);
 		}
 
-
 		if (!hasCommaSubtree && !hasParenthesesSubtree) {
 			return input;
 		}
 
 		//if there is a comma, choose the subtree that has the proper noun as the head
-		if (!newHead.label().toString().equals("NNP") && !newHead.label().toString().equals("NNPS")) {
+		if (!newHead.label().toString().equals("NNP")
+				&& !newHead.label().toString().equals("NNPS")) {
 
 			tregexOpStr = "__=mention !> __ < /,/=comma << NP=np";
 
@@ -502,7 +541,8 @@ public class NPClarification {
 			while (m.find()) {
 				np = m.getNode("np");
 				Tree subtreeHead = np.headPreTerminal(AnalysisUtilities.getInstance().getHeadFinder());
-				if (subtreeHead.label().toString().equals("NNP") || subtreeHead.label().toString().equals("NNPS")) {
+				if (subtreeHead.label().toString().equals("NNP")
+						|| subtreeHead.label().toString().equals("NNPS")) {
 					newHead = subtreeHead;
 					break;
 				}
@@ -517,7 +557,6 @@ public class NPClarification {
 
 		return res;
 	}
-
 
 	public static boolean caseInsensitiveNodeMatch(Tree n1, Tree n2) {
 		return n1.toString().equalsIgnoreCase(n2.toString());
