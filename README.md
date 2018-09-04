@@ -9,11 +9,11 @@ FLAIR is an online tool for language teachers and learners that:
 # Relevant Citations
 
 ```
-@inproceedings{chinkina2016linguistically,
-  title={Linguistically aware information retrieval: Providing input enrichment for second language learners},
-  author={Chinkina, Maria and Meurers, Detmar},
-  booktitle={Proceedings of the 11th Workshop on Innovative Use of NLP for Building Educational Applications},
-  pages={188--198},
+@article{chinkina2016online,
+  title={Online information retrieval for language learning},
+  author={Chinkina, Maria and Kannan, Madeeswaran and Meurers, Detmar},
+  journal={Proceedings of ACL-2016 System Demonstrations},
+  pages={7--12},
   year={2016}
 }
 ```
