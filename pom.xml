@@ -20,6 +20,14 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <repositories>
+        <repository>
+            <id>clojars</id>
+            <name>Clojars Repository</name>
+            <url>http://clojars.org/repo/</url>
+        </repository>
+    </repositories>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -165,24 +173,17 @@
             <artifactId>weka-stable</artifactId>
             <version>3.8.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.simpleframework</groupId>
+            <artifactId>simple-xml</artifactId>
+            <version>2.1.6</version>
+        </dependency>
+        <dependency>
+            <groupId>com.aliasi</groupId>
+            <artifactId>lingpipe</artifactId>
+            <version>4.0.1</version>
+        </dependency>
 
-        <!-- Local Dependencies -->
-        <dependency>
-            <!-- https://github.com/brendano/arkref -->
-            <groupId>edu.cmu.ark</groupId>
-            <artifactId>supersense-tagger</artifactId>
-            <version>0.0.1</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/supersense-tagger.jar</systemPath>
-        </dependency>
-        <dependency>
-            <!-- https://github.com/brendano/arkref -->
-            <groupId>arkref</groupId>
-            <artifactId>arkref</artifactId>
-            <version>0.0.1</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/arkref.jar</systemPath>
-        </dependency>
     </dependencies>
 
     <build>

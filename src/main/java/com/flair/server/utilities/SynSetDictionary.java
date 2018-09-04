@@ -1,4 +1,4 @@
-package com.flair.server.questgen.selection;
+package com.flair.server.utilities;
 
 import com.flair.shared.grammar.Language;
 
@@ -7,7 +7,7 @@ import java.util.List;
 /*
  * A dictionary of synonym sets (e.g: WordNet)
  */
-interface SynSetDictionary {
+public interface SynSetDictionary {
 	interface SynSet {
 		String pos();
 		String description();
@@ -16,4 +16,5 @@ interface SynSetDictionary {
 
 	Language language();
 	List<? extends SynSet> lookup(String lemma, String pos);
+	String lemma(String word, String pos);
 }

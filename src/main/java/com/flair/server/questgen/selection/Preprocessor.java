@@ -3,7 +3,9 @@ package com.flair.server.questgen.selection;
 import com.flair.server.document.AbstractDocument;
 import com.flair.server.parser.ParserAnnotations;
 import com.flair.server.utilities.ServerLogger;
+import com.flair.server.utilities.SynSetDictionary;
 import com.flair.server.utilities.TextSegment;
+import com.flair.server.utilities.WordNetDictionary;
 import com.flair.shared.grammar.Language;
 
 import java.util.*;
@@ -27,7 +29,7 @@ final class Preprocessor {
 	static {
 		LANGUAGE_SPECIFIC = new EnumMap<>(Language.class);
 
-		LanguageSpecificData eng = new LanguageSpecificData(new WordNetDictionary());
+		LanguageSpecificData eng = new LanguageSpecificData(WordNetDictionary.defaultInstance());
 		LANGUAGE_SPECIFIC.put(Language.ENGLISH, eng);
 
 		// ensure immutablity

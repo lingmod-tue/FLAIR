@@ -1,6 +1,7 @@
 package com.flair.server.questgen.selection;
 
 import com.flair.server.document.AbstractDocument;
+import com.flair.server.utilities.SynSetDictionary;
 import com.flair.server.utilities.TextSegment;
 
 import java.util.HashSet;

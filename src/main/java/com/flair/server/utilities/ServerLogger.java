@@ -45,7 +45,7 @@ public final class ServerLogger extends AbstractDebugLogger {
 
 		switch (channel) {
 		case TRACE:
-			pipeline.info(builder.toString());
+			pipeline.trace(builder.toString());
 			break;
 		case ERROR:
 			pipeline.error(builder.toString());

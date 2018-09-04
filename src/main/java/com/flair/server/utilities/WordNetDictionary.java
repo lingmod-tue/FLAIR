@@ -1,6 +1,5 @@
-package com.flair.server.questgen.selection;
+package com.flair.server.utilities;
 
-import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.grammar.Language;
 import net.sf.extjwnl.data.IndexWord;
 import net.sf.extjwnl.data.POS;
@@ -13,7 +12,9 @@ import java.util.List;
 /*
  * A wrapper around the bundled WordNet dictionary
  */
-class WordNetDictionary implements SynSetDictionary {
+public class WordNetDictionary implements SynSetDictionary {
+	private static final WordNetDictionary DEFAULT_INSTANCE = new WordNetDictionary();
+
 	static final class SynSet implements SynSetDictionary.SynSet {
 		final Synset source;
 		final String pos;
@@ -51,13 +52,27 @@ class WordNetDictionary implements SynSetDictionary {
 
 	private Dictionary dict;
 
-	WordNetDictionary() {
+	public WordNetDictionary() {
 		try {
 			this.dict = Dictionary.getDefaultResourceInstance();
 		} catch (Throwable e) {
 			this.dict = null;
 			ServerLogger.get().error(e, "Couldn't load WordNet dictionary");
 		}
+	}
+
+	private POS parsePosTag(String pos) {
+		POS partOfSpeech = null;
+		if (pos.startsWith("JJ"))
+			partOfSpeech = POS.ADJECTIVE;
+		else if (pos.startsWith("RB"))
+			partOfSpeech = POS.ADVERB;
+		else if (pos.startsWith("NN"))
+			partOfSpeech = POS.NOUN;
+		else if (pos.startsWith("VB"))
+			partOfSpeech = POS.VERB;
+
+		return partOfSpeech;
 	}
 
 	@Override
@@ -67,16 +82,8 @@ class WordNetDictionary implements SynSetDictionary {
 	@Override
 	public List<? extends SynSetDictionary.SynSet> lookup(String lemma, String pos) {
 		List<SynSet> out = new ArrayList<>();
-		POS partOfSpeech;
-		if (pos.startsWith("JJ"))
-			partOfSpeech = POS.ADJECTIVE;
-		else if (pos.startsWith("RB"))
-			partOfSpeech = POS.ADVERB;
-		else if (pos.startsWith("NN"))
-			partOfSpeech = POS.NOUN;
-		else if (pos.startsWith("VB"))
-			partOfSpeech = POS.VERB;
-		else
+		POS partOfSpeech = parsePosTag(pos);
+		if (partOfSpeech == null)
 			return out;
 
 		try {
@@ -93,5 +100,26 @@ class WordNetDictionary implements SynSetDictionary {
 		}
 
 		return out;
+	}
+	@Override
+	public String lemma(String word, String pos) {
+		String lemma = "";
+		POS partOfSpeech = parsePosTag(pos);
+		if (partOfSpeech == null)
+			return lemma;
+
+		try {
+			IndexWord indexWord = dict.getMorphologicalProcessor().lookupBaseForm(partOfSpeech, word);
+			if (indexWord != null)
+				lemma = indexWord.getLemma();
+		} catch (Throwable e) {
+			ServerLogger.get().error(e, "Couldn't lookup lemma for '" + word + "' in WordNet!");
+		}
+
+		return lemma;
+	}
+
+	public static WordNetDictionary defaultInstance() {
+		return DEFAULT_INSTANCE;
 	}
 }
