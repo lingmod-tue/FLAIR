@@ -11,7 +11,6 @@ import com.flair.server.parser.AbstractKeywordSearcher;
 import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.KeywordSearcherInput;
 import com.flair.server.pipelines.PipelineOp;
-import com.flair.server.pipelines.TaskSyncHelper;
 import com.flair.server.scheduler.AsyncExecutorService;
 import com.flair.server.scheduler.AsyncJob;
 import com.flair.server.utilities.ServerLogger;
@@ -22,7 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 
-public class SearchCrawlParseOp implements PipelineOp {
+public class SearchCrawlParseOp extends PipelineOp<SearchCrawlParseOp.Input, SearchCrawlParseOp.Output> {
 	public interface CrawlComplete extends EventHandler<SearchResult> {}
 
 	public interface ParseComplete extends EventHandler<AbstractDocument> {}
@@ -83,8 +82,8 @@ public class SearchCrawlParseOp implements PipelineOp {
 	}
 
 	static final class Output {
-		public final List<SearchResult> searchResults;
-		public final DocumentCollection parsedDocs;
+		final List<SearchResult> searchResults;
+		final DocumentCollection parsedDocs;
 
 		public Output(Language sourceLang) {
 			this.searchResults = new ArrayList<>();
@@ -92,19 +91,16 @@ public class SearchCrawlParseOp implements PipelineOp {
 		}
 	}
 
-	private final AsyncJob job;
-	private final Input input;
-	private final Output output;
-	private final TaskSyncHelper taskLinker;
-
 	private WebSearchAgent searchAgent;
 	private int numValidResults;
 	private int numActiveCrawlTasks;
 	private int numTotalCrawlsQueued;
 
-
-	private synchronized <R> void linkTasks(AsyncJob job, R taskResult) {
-		taskLinker.syncTask(job, taskResult);
+	@Override
+	protected String desc() {
+		return name + " Output:\nInput:\n\tLanguage: " + input.sourceLanguage + "\n\tQuery: "
+				+ input.query + "\n\tRequired Results: " + input.numResults + "\nOutput\n\tSearch Results: "
+				+ output.searchResults.size() + "\n\tParsed Docs: " + output.parsedDocs.size();
 	}
 
 	private void initTaskSyncHandlers() {
@@ -188,10 +184,8 @@ public class SearchCrawlParseOp implements PipelineOp {
 	}
 
 	SearchCrawlParseOp(Input input) {
-		this.input = input;
-		this.output = new Output(input.sourceLanguage);
+		super("SearchCrawlParseOp", input, new Output(input.sourceLanguage));
 		this.numValidResults = this.numActiveCrawlTasks = this.numTotalCrawlsQueued = 0;
-		this.taskLinker = new TaskSyncHelper();
 		initTaskSyncHandlers();
 
 		this.searchAgent = WebSearchAgentFactory.create(WebSearchAgentFactory.SearchAgent.BING,
@@ -215,37 +209,5 @@ public class SearchCrawlParseOp implements PipelineOp {
 				.then(this::linkTasks)
 				.queue()
 				.fire();
-	}
-
-	@Override
-	public boolean isExecuting() {
-		return job.isExecuting();
-	}
-	@Override
-	public void await() {
-		job.await();
-	}
-	@Override
-	public String name() {
-		return "SearchCrawlParseOp";
-	}
-	@Override
-	public boolean isCancelled() {
-		return job.isCancelled();
-	}
-	@Override
-	public void cancel() {
-		job.cancel();
-	}
-	@Override
-	public String toString() {
-		if (isExecuting())
-			return "SearchCrawlParseOp is still running";
-		else if (isCancelled())
-			return "SearchCrawlParseOp was cancelled";
-		else
-			return "SearchCrawlParseOp Output:\nInput:\n\tLanguage: " + input.sourceLanguage + "\n\tQuery: "
-					+ input.query + "\n\tRequired Results: " + input.numResults + "\nOutput\n\tSearch Results: "
-					+ output.searchResults.size() + "\n\tParsed Docs: " + output.parsedDocs.size();
 	}
 }

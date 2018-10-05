@@ -1,10 +1,9 @@
-package com.flair.server.questgen.selection;
+package com.flair.server.pipelines.questgen;
 
 import com.flair.server.document.AbstractDocument;
 import com.flair.server.parser.ParserAnnotations;
 import com.flair.server.utilities.ServerLogger;
 import com.flair.server.utilities.SynSetDictionary;
-import com.flair.server.utilities.TextSegment;
 import com.flair.server.utilities.WordNetDictionary;
 import com.flair.shared.grammar.Language;
 
@@ -13,9 +12,7 @@ import java.util.*;
 /*
  * Performs various preprocessing tasks for sentence selectors
  */
-final class Preprocessor {
-	private static final int MIN_UNIQUE_TOKEN_COUNT = 5;
-
+final class SentenceSelectorPreprocessor {
 	private static final class LanguageSpecificData {
 		final SynSetDictionary synsetDict;
 
@@ -24,23 +21,23 @@ final class Preprocessor {
 		}
 	}
 
-	private static Map<Language, LanguageSpecificData> LANGUAGE_SPECIFIC;
+	private Map<Language, LanguageSpecificData> languageSpecificData;
 
-	static {
-		LANGUAGE_SPECIFIC = new EnumMap<>(Language.class);
+	SentenceSelectorPreprocessor() {
+		languageSpecificData = new EnumMap<>(Language.class);
 
 		LanguageSpecificData eng = new LanguageSpecificData(WordNetDictionary.defaultInstance());
-		LANGUAGE_SPECIFIC.put(Language.ENGLISH, eng);
+		languageSpecificData.put(Language.ENGLISH, eng);
 
 		// ensure immutablity
-		LANGUAGE_SPECIFIC = Collections.unmodifiableMap(LANGUAGE_SPECIFIC);
+		languageSpecificData = Collections.unmodifiableMap(languageSpecificData);
 	}
 
-	private static boolean isLanguageSupported(Language lang) {
-		return LANGUAGE_SPECIFIC.get(lang) != null;
+	private boolean isLanguageSupported(Language lang) {
+		return languageSpecificData.get(lang) != null;
 	}
 
-	static List<PreprocessedSentence> preprocess(AbstractDocument doc, DocumentSentenceSelectorParams params) {
+	List<PreprocessedSentence> preprocess(AbstractDocument doc, SentenceSelectorParams params) {
 		List<PreprocessedSentence> out = new ArrayList<>();
 
 		if (!doc.isParsed())
@@ -53,11 +50,11 @@ final class Preprocessor {
 			throw new IllegalArgumentException("Mismatching languages for preprocessor");
 
 		try {
-			LanguageSpecificData data = LANGUAGE_SPECIFIC.get(doc.getLanguage());
+			LanguageSpecificData data = languageSpecificData.get(doc.getLanguage());
 			int i = 0;
 			for (ParserAnnotations.Sentence sent : doc.getParserAnnotations().sentences()) {
 				++i;
-				PreprocessedSentence preprocSent = new PreprocessedSentence(doc, new TextSegment(sent.start(), sent.end()), i);
+				PreprocessedSentence preprocSent = new PreprocessedSentence(doc, sent, i);
 
 				for (ParserAnnotations.Token token : sent.tokens()) {
 					String lemma = token.lemma().replaceAll("\\p{P}", "").trim().toLowerCase();
@@ -84,7 +81,7 @@ final class Preprocessor {
 					}
 				}
 
-				if (preprocSent.tokens.size() >= MIN_UNIQUE_TOKEN_COUNT)
+				if (preprocSent.tokens.size() >= Constants.SELECTOR_MIN_UNIQUE_TOKEN_COUNT)
 					out.add(preprocSent);
 
 			}
@@ -93,5 +90,52 @@ final class Preprocessor {
 		}
 
 		return out;
+	}
+
+	static final class PreprocessedSentence {
+		// a unique, atomic unit of a sentence
+		static final class Token {
+			final String word;
+			final SynSetDictionary.SynSet concept;
+
+			Token(String word) {
+				this.word = word;
+				this.concept = null;
+			}
+
+			Token(SynSetDictionary.SynSet concept) {
+				this.word = null;
+				this.concept = concept;
+			}
+
+			@Override
+			public boolean equals(Object o) {
+				if (this == o) return true;
+				if (o == null || getClass() != o.getClass()) return false;
+
+				Token token = (Token) o;
+
+				if (word != null ? !word.equals(token.word) : token.word != null) return false;
+				return concept != null ? concept == token.concept : token.concept == null;
+			}
+			@Override
+			public int hashCode() {
+				int result = word != null ? word.hashCode() : 0;
+				result = 31 * result + (concept != null ? concept.hashCode() : 0);
+				return result;
+			}
+		}
+
+		final AbstractDocument sourceDoc;
+		final ParserAnnotations.Sentence annotation;
+		final int id;               // sentence number as found in the source
+		final Set<Token> tokens;    // unique tokens only
+
+		PreprocessedSentence(AbstractDocument sourceDoc, ParserAnnotations.Sentence annotation, int id) {
+			this.sourceDoc = sourceDoc;
+			this.annotation = annotation;
+			this.id = id;
+			this.tokens = new HashSet<>();
+		}
 	}
 }

@@ -20,7 +20,7 @@
 
 	<!-- Listeners -->
 	<listener>
-		<listener-class>com.flair.server.interop.BasicServletContextListener</listener-class>
+        <listener-class>com.flair.server.interop.FlairWebAppContextListener</listener-class>
 		<listener-class>com.flair.server.interop.BasicHttpSessionListener</listener-class>
 	</listener>
 

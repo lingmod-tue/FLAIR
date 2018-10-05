@@ -1,4 +1,4 @@
-package com.flair.server.questgen.selection;
+package com.flair.server.pipelines.questgen;
 
 import com.flair.server.document.AbstractDocument;
 import com.flair.shared.grammar.Language;
@@ -6,10 +6,10 @@ import com.flair.shared.grammar.Language;
 import java.util.ArrayList;
 import java.util.List;
 
-class DocumentSentenceSelectorParams {
+class SentenceSelectorParams {
 	Language lang;
-	DocumentSentenceSelector.Source source;
-	DocumentSentenceSelector.Granularity granularity;
+	SentenceSelector.Source source;
+	SentenceSelector.Granularity granularity;
 	boolean stemWords;
 	boolean ignoreStopwords;
 	boolean useSynsets;
@@ -17,13 +17,16 @@ class DocumentSentenceSelectorParams {
 	AbstractDocument main;
 	List<AbstractDocument> corpus;
 
-	DocumentSentenceSelectorParams(Language l) {
+	SentenceSelectorPreprocessor preprocessor;
+
+	SentenceSelectorParams(Language l, SentenceSelectorPreprocessor p) {
 		lang = l;
-		source = DocumentSentenceSelector.Source.DOCUMENT;
-		granularity = DocumentSentenceSelector.Granularity.SENTENCE;
+		source = SentenceSelector.Source.DOCUMENT;
+		granularity = SentenceSelector.Granularity.SENTENCE;
 		stemWords = ignoreStopwords = useSynsets = false;
 		main = null;
 		corpus = new ArrayList<>();
+		preprocessor = p;
 	}
 
 	void validate() {
@@ -31,7 +34,7 @@ class DocumentSentenceSelectorParams {
 		case DOCUMENT: {
 			if (main == null)
 				throw new IllegalStateException("Primary document source missing");
-			else if (granularity == DocumentSentenceSelector.Granularity.DOCUMENT && corpus.size() < 2)
+			else if (granularity == SentenceSelector.Granularity.DOCUMENT && corpus.size() < 2)
 				throw new IllegalStateException("Corpus size is too small for document-level granularity");
 
 			for (AbstractDocument itr : corpus) {

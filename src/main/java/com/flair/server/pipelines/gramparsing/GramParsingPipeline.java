@@ -10,7 +10,6 @@ import com.flair.server.parser.KeywordSearcherInput;
 import com.flair.server.parser.SimpleSubstringKeywordSearcher;
 import com.flair.server.parser.corenlp.StopwordAnnotator;
 import com.flair.server.pipelines.PipelineOp;
-import com.flair.server.pipelines.PipelineOpBuilder;
 import com.flair.server.scheduler.AsyncExecutorService;
 import com.flair.server.scheduler.ThreadPool;
 import com.flair.shared.grammar.Language;
@@ -91,17 +90,16 @@ public final class GramParsingPipeline {
 		Properties pipelineProps = new Properties();
 		switch (lang) {
 		case ENGLISH:
-			// ### TODO update the parsing strategy to support universal deps
 			pipelineProps.put("annotators", "tokenize, ssplit, pos, lemma, stopword, parse");
 			pipelineProps.put("parse.originalDependencies", "true");
-			pipelineProps.setProperty("parse.model", Constants.ENGLISH_SR_PARSER_MODEL);
+			pipelineProps.setProperty("parse.model", com.flair.server.parser.corenlp.Constants.ENGLISH_SR_PARSER_MODEL);
 
 			break;
 		case GERMAN:
 			pipelineProps.put("annotators", "tokenize, ssplit, pos, stopword, parse");
 			pipelineProps.put("tokenize.language", "de");
-			pipelineProps.setProperty("parse.model", Constants.GERMAN_SR_PARSER_MODEL);
-			pipelineProps.setProperty("pos.model", Constants.GERMAN_POS_MODEL);
+			pipelineProps.setProperty("parse.model", com.flair.server.parser.corenlp.Constants.GERMAN_SR_PARSER_MODEL);
+			pipelineProps.setProperty("pos.model", com.flair.server.parser.corenlp.Constants.GERMAN_POS_MODEL);
 			break;
 		default:
 			throw new IllegalArgumentException("Invalid model language: " + lang + "");
@@ -120,7 +118,7 @@ public final class GramParsingPipeline {
 	}
 
 
-	public final class SearchCrawlParseOpBuilder implements PipelineOpBuilder {
+	public final class SearchCrawlParseOpBuilder implements PipelineOp.PipelineOpBuilder {
 		Language lang;
 		String query;
 		int numResults;
@@ -199,7 +197,7 @@ public final class GramParsingPipeline {
 		}
 	}
 
-	public final class ParseOpBuilder implements PipelineOpBuilder {
+	public final class ParseOpBuilder implements PipelineOp.PipelineOpBuilder {
 		Language lang;
 		List<AbstractDocumentSource> sourceDocs;
 		KeywordSearcherInput keywords;

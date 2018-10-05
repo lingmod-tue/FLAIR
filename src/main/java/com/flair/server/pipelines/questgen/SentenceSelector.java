@@ -1,12 +1,14 @@
-package com.flair.server.questgen.selection;
+package com.flair.server.pipelines.questgen;
 
 import com.flair.server.document.AbstractDocument;
-import com.flair.server.utilities.TextSegment;
+import com.flair.server.parser.ParserAnnotations;
+
+import java.util.Collection;
 
 /*
  * Selects sentences from one or more documents based on some criteria
  */
-public interface DocumentSentenceSelector {
+interface SentenceSelector {
 	enum Granularity {
 		SENTENCE,      // (default) the model is trained exclusively on individual sentences
 		DOCUMENT       // the model is trained on both sentences and the documents they occur in
@@ -28,18 +30,14 @@ public interface DocumentSentenceSelector {
 		Builder mainDocument(AbstractDocument doc);     // document from which sentences are selected
 		Builder copusDocument(AbstractDocument doc);    // additional corpus that can be used the selector
 
-		DocumentSentenceSelector build();
+		SentenceSelector build();
 	}
 
 	interface SelectedSentence {
-		TextSegment getSpan();
-		AbstractDocument getSource();
-		default String getText() {
-			return getSource().getSpanText(getSpan());
-		}
-		double getScore();
+		double score();
+		ParserAnnotations.Sentence annotation();
 	}
 
-	Iterable<? extends SelectedSentence> topK(int k);    // returns a ranked list of the top-k sentence spans
+	Collection<? extends SelectedSentence> topK(int k);    // returns a ranked list of the top-k sentences
 }
 

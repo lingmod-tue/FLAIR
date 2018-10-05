@@ -4,10 +4,7 @@ import com.flair.server.document.AbstractDocumentSource;
 import com.flair.server.document.DocumentCollection;
 import com.flair.server.document.StreamDocumentSource;
 import com.flair.server.parser.KeywordSearcherInput;
-import com.flair.server.parser.ParserAnnotations;
 import com.flair.server.pipelines.gramparsing.GramParsingPipeline;
-import com.flair.server.questgen.selection.DocumentSentenceSelector;
-import com.flair.server.questgen.selection.DocumentSentenceSelectorGenerator;
 import com.flair.shared.grammar.Language;
 
 import java.io.FileInputStream;
@@ -22,33 +19,7 @@ import java.util.List;
 public class CustomCorpusTest
 {
 	public static void processParsedDocs(DocumentCollection dc) {
-		DocumentSentenceSelector.Builder rankeBuilder = DocumentSentenceSelectorGenerator.create(DocumentSentenceSelectorGenerator.SelectorType.TEXTRANK, Language.ENGLISH);
-		rankeBuilder.stemWords(false)
-				.ignoreStopwords(true)
-				.useSynsets(true)
-				.source(DocumentSentenceSelector.Source.DOCUMENT)
-				.granularity(DocumentSentenceSelector.Granularity.SENTENCE)
-				.mainDocument(dc.get(0));
 
-		DocumentSentenceSelector sel = rankeBuilder.build();
-
-		int i = 1;
-		for (ParserAnnotations.Sentence itr : dc.get(0).getParserAnnotations().sentences()) {
-			StringBuilder line = new StringBuilder();
-			line.append(i).append(": ").append(itr.text());
-			System.out.println(line.toString());
-			i++;
-		}
-
-		System.out.println("\nRanked:\n");
-
-		i = 1;
-		for (DocumentSentenceSelector.SelectedSentence itr : sel.topK(10)) {
-			StringBuilder line = new StringBuilder();
-			line.append(i).append(": [").append(itr.getScore()).append("] ").append(itr.getText());
-			System.out.println(line.toString());
-			i++;
-		}
 	}
 
 	public static void main(String[] args)

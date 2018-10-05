@@ -1,4 +1,4 @@
-package com.flair.server.questgen.selection;
+package com.flair.server.pipelines.questgen;
 
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.TObjectIntMap;

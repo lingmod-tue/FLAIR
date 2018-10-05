@@ -8,14 +8,13 @@ import com.flair.server.parser.AbstractKeywordSearcher;
 import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.KeywordSearcherInput;
 import com.flair.server.pipelines.PipelineOp;
-import com.flair.server.pipelines.TaskSyncHelper;
 import com.flair.server.scheduler.AsyncExecutorService;
 import com.flair.server.scheduler.AsyncJob;
 import com.flair.shared.grammar.Language;
 
 import java.util.List;
 
-public class ParseOp implements PipelineOp {
+public class ParseOp extends PipelineOp<ParseOp.Input, ParseOp.Output> {
 	public interface ParseComplete extends EventHandler<AbstractDocument> {}
 
 	public interface JobComplete extends EventHandler<DocumentCollection> {}
@@ -69,13 +68,10 @@ public class ParseOp implements PipelineOp {
 		}
 	}
 
-	private final AsyncJob job;
-	private final Input input;
-	private final Output output;
-	private final TaskSyncHelper taskLinker;
-
-	private synchronized <R> void linkTasks(AsyncJob job, R taskResult) {
-		taskLinker.syncTask(job, taskResult);
+	@Override
+	protected String desc() {
+		return name + " Output:\nInput:\n\tLanguage: " + input.sourceLanguage + "\n\tSource Docs:"
+				+ input.sourceDocs.size() + "\nOutput\n\t\n\tParsed Docs: " + output.parsedDocs.size();
 	}
 
 	private void initTaskSyncHandlers() {
@@ -91,9 +87,7 @@ public class ParseOp implements PipelineOp {
 	}
 
 	ParseOp(Input input) {
-		this.input = input;
-		this.output = new Output(input.sourceLanguage);
-		this.taskLinker = new TaskSyncHelper();
+		super("ParseOp", input, new Output(input.sourceLanguage));
 		initTaskSyncHandlers();
 
 		AsyncJob.Scheduler scheduler = AsyncJob.Scheduler.newJob(j -> {
@@ -117,36 +111,5 @@ public class ParseOp implements PipelineOp {
 		}
 
 		this.job = scheduler.fire();
-	}
-
-	@Override
-	public boolean isExecuting() {
-		return job.isExecuting();
-	}
-	@Override
-	public void await() {
-		job.await();
-	}
-	@Override
-	public String name() {
-		return "ParseOp";
-	}
-	@Override
-	public boolean isCancelled() {
-		return job.isCancelled();
-	}
-	@Override
-	public void cancel() {
-		job.cancel();
-	}
-	@Override
-	public String toString() {
-		if (isExecuting())
-			return "ParseOp is still running";
-		else if (isCancelled())
-			return "ParseOp was cancelled";
-		else
-			return "ParseOp Output:\nInput:\n\tLanguage: " + input.sourceLanguage + "\n\tSource Docs:"
-					+ input.sourceDocs.size() + "\nOutput\n\t\n\tParsed Docs: " + output.parsedDocs.size();
 	}
 }

@@ -8,7 +8,6 @@ import com.flair.server.interop.MessagePipeline;
 import com.flair.server.parser.KeywordSearcherInput;
 import com.flair.server.parser.KeywordSearcherOutput;
 import com.flair.server.pipelines.PipelineOp;
-import com.flair.server.pipelines.PipelineOpBuilder;
 import com.flair.server.pipelines.gramparsing.GramParsingPipeline;
 import com.flair.server.utilities.ServerLogger;
 import com.flair.server.utilities.TextSegment;
@@ -73,7 +72,7 @@ public class SessionState {
 		messagePipeline.open(token);
 	}
 
-	private void beginOperation(PipelineOpBuilder opBuilder) {
+	private void beginOperation(PipelineOp.PipelineOpBuilder opBuilder) {
 		if (hasActiveOp())
 			throw new RuntimeException("Previous state not cleared");
 

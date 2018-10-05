@@ -1,12 +1,8 @@
 package com.flair.server;
 
-import com.flair.server.document.AbstractDocument;
 import com.flair.server.document.DocumentCollection;
 import com.flair.server.parser.KeywordSearcherInput;
-import com.flair.server.parser.ParserAnnotations;
 import com.flair.server.pipelines.gramparsing.GramParsingPipeline;
-import com.flair.server.questgen.selection.DocumentSentenceSelector;
-import com.flair.server.questgen.selection.DocumentSentenceSelectorGenerator;
 import com.flair.shared.grammar.Language;
 
 import java.util.Arrays;
@@ -17,45 +13,7 @@ import java.util.Arrays;
 public class WebSearchTest
 {
 	public static void processParsedDocs(DocumentCollection dc) {
-		DocumentSentenceSelector.Builder rankeBuilder = DocumentSentenceSelectorGenerator.create(DocumentSentenceSelectorGenerator.SelectorType.TEXTRANK, Language.ENGLISH);
-		rankeBuilder.stemWords(true)
-				.ignoreStopwords(true)
-				.useSynsets(false)
-				.source(DocumentSentenceSelector.Source.DOCUMENT)
-				.granularity(DocumentSentenceSelector.Granularity.SENTENCE)
-				.mainDocument(dc.get(0));
 
-		int i = 0;
-		for (AbstractDocument itr : dc) {
-			if (i == 0)
-				rankeBuilder.mainDocument(itr);
-			else
-				rankeBuilder.copusDocument(itr);
-			i++;
-		}
-
-		DocumentSentenceSelector sel = rankeBuilder.build();
-
-		System.out.println("\nDocument: " + dc.get(0).getDescription());
-		System.out.println("\nSentences:\n");
-
-		i = 1;
-		for (ParserAnnotations.Sentence itr : dc.get(0).getParserAnnotations().sentences()) {
-			StringBuilder line = new StringBuilder();
-			line.append(i).append(": ").append(itr.text());
-			System.out.println(line.toString());
-			i++;
-		}
-
-		System.out.println("\nRanked:\n");
-
-		i = 1;
-		for (DocumentSentenceSelector.SelectedSentence itr : sel.topK(10)) {
-			StringBuilder line = new StringBuilder();
-			line.append(i).append(": [").append(itr.getScore()).append("] ").append(itr.getText());
-			System.out.println(line.toString());
-			i++;
-		}
 	}
 
 	public static void main(String[] args)

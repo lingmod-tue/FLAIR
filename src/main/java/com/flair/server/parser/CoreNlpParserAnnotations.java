@@ -4,6 +4,8 @@ import com.flair.server.parser.corenlp.StopwordAnnotator;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
+import edu.stanford.nlp.trees.Tree;
+import edu.stanford.nlp.trees.TreeCoreAnnotations;
 import edu.stanford.nlp.util.CoreMap;
 import edu.stanford.nlp.util.Lazy;
 import edu.stanford.nlp.util.Pair;
@@ -15,11 +17,15 @@ import java.util.stream.Collectors;
  * Thin wrapper around the Stanford CoreNLP annotations
  */
 public class CoreNlpParserAnnotations implements ParserAnnotations {
-	static final class Token implements ParserAnnotations.Token {
+	public static final class Token implements ParserAnnotations.Token {
 		final CoreLabel source;
 
 		Token(CoreLabel source) {
 			this.source = source;
+		}
+
+		CoreLabel coreLabel() {
+			return source;
 		}
 
 		@Override
@@ -42,15 +48,29 @@ public class CoreNlpParserAnnotations implements ParserAnnotations {
 			Pair<Boolean, Boolean> stopword = source.get(StopwordAnnotator.class);
 			return stopword.first || stopword.second;
 		}
+		@Override
+		public <T extends ParserAnnotations.Token> T data(Class<T> typeClass) {
+			if (typeClass != this.getClass())
+				throw new IllegalArgumentException("Couldn't convert " + this.getClass().getSimpleName() + " into " + typeClass.getSimpleName());
+
+			return typeClass.cast(this);
+		}
 	}
 
-	static final class Sentence implements ParserAnnotations.Sentence {
+	public static final class Sentence implements ParserAnnotations.Sentence {
 		final CoreMap source;
 		final Lazy<List<Token>> tokenCache;
 
 		Sentence(CoreMap source) {
 			this.source = source;
 			tokenCache = Lazy.cache(() -> source.get(CoreAnnotations.TokensAnnotation.class).stream().map(Token::new).collect(Collectors.toList()));
+		}
+
+		public CoreMap coreMap() {
+			return source;
+		}
+		public Tree parseTree() {
+			return source.get(TreeCoreAnnotations.TreeAnnotation.class);
 		}
 
 		@Override
@@ -72,6 +92,13 @@ public class CoreNlpParserAnnotations implements ParserAnnotations {
 		@Override
 		public int tokenCount() {
 			return tokenCache.get().size();
+		}
+		@Override
+		public <T extends ParserAnnotations.Sentence> T data(Class<T> typeClass) {
+			if (typeClass != this.getClass())
+				throw new IllegalArgumentException("Couldn't convert " + this.getClass().getSimpleName() + " into " + typeClass.getSimpleName());
+
+			return typeClass.cast(this);
 		}
 	}
 

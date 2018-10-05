@@ -1,9 +1,9 @@
-package com.flair.server.questgen.selection;
+package com.flair.server.pipelines.questgen;
 
 import com.flair.server.document.AbstractDocument;
+import com.flair.server.parser.ParserAnnotations;
 import com.flair.server.utilities.ServerLogger;
 import com.flair.server.utilities.SparseDoubleVector;
-import com.flair.server.utilities.TextSegment;
 import com.flair.shared.grammar.Language;
 import com.github.dakusui.combinatoradix.Combinator;
 import org.jgrapht.Graph;
@@ -12,6 +12,7 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,15 +20,13 @@ import java.util.stream.Collectors;
 /*
  * Implements the TextRank algorithm to select salient sentences
  */
-public class TextRankSentenceSelector implements DocumentSentenceSelector {
-	private static final int MAX_ITERATIONS = 1000;
-
+public class TextRankSentenceSelector implements SentenceSelector {
 	// represents the concept of a document wrt the inverted index
 	private static final class BaseDocument {
-		final PreprocessedSentence sent;
+		final SentenceSelectorPreprocessor.PreprocessedSentence sent;
 		final AbstractDocument doc;
 
-		BaseDocument(PreprocessedSentence sent) {
+		BaseDocument(SentenceSelectorPreprocessor.PreprocessedSentence sent) {
 			this.sent = sent;
 			this.doc = null;
 		}
@@ -52,10 +51,10 @@ public class TextRankSentenceSelector implements DocumentSentenceSelector {
 	}
 
 	private static final class Node {
-		final PreprocessedSentence source;
+		final SentenceSelectorPreprocessor.PreprocessedSentence source;
 		final SparseDoubleVector vector;
 
-		Node(PreprocessedSentence s, SparseDoubleVector v) {
+		Node(SentenceSelectorPreprocessor.PreprocessedSentence s, SparseDoubleVector v) {
 			source = s;
 			vector = v;
 		}
@@ -71,52 +70,48 @@ public class TextRankSentenceSelector implements DocumentSentenceSelector {
 	}
 
 	private static final class RankedSentence implements SelectedSentence {
-		final PreprocessedSentence sent;
+		final SentenceSelectorPreprocessor.PreprocessedSentence sent;
 		final double score;
 
-		RankedSentence(PreprocessedSentence sent, double score) {
+		RankedSentence(SentenceSelectorPreprocessor.PreprocessedSentence sent, double score) {
 			this.sent = sent;
 			this.score = score;
 		}
 
 		@Override
-		public TextSegment getSpan() {
-			return sent.span;
-		}
-		@Override
-		public AbstractDocument getSource() {
-			return sent.source;
-		}
-		@Override
-		public double getScore() {
+		public double score() {
 			return score;
+		}
+		@Override
+		public ParserAnnotations.Sentence annotation() {
+			return sent.annotation;
 		}
 	}
 
-	private final InvertedIndex<PreprocessedSentence.Token, BaseDocument> index;
+	private final InvertedIndex<SentenceSelectorPreprocessor.PreprocessedSentence.Token, BaseDocument> index;
 	private final Graph<Node, DefaultWeightedEdge> graph;
 	private final List<RankedSentence> rankedOutput;
 
-	private BaseDocument getBaseDocument(PreprocessedSentence sent, DocumentSentenceSelectorParams params) {
+	private BaseDocument getBaseDocument(SentenceSelectorPreprocessor.PreprocessedSentence sent, SentenceSelectorParams params) {
 		switch (params.granularity) {
 		case SENTENCE:
 			return new BaseDocument(sent);
 		case DOCUMENT:
-			return new BaseDocument(sent.source);
+			return new BaseDocument(sent.sourceDoc);
 		}
 
 		return null;
 	}
 
-	private void init(DocumentSentenceSelectorParams params) {
-		List<PreprocessedSentence> allSents = new ArrayList<>();
+	private void init(SentenceSelectorParams params) {
+		List<SentenceSelectorPreprocessor.PreprocessedSentence> allSents = new ArrayList<>();
 
 		// add terms to the index
 		if (params.main != null)
 			params.corpus.add(params.main);
 
 		for (AbstractDocument doc : params.corpus) {
-			List<PreprocessedSentence> docSents = Preprocessor.preprocess(doc, params);
+			List<SentenceSelectorPreprocessor.PreprocessedSentence> docSents = params.preprocessor.preprocess(doc, params);
 			docSents.forEach(sent -> sent.tokens.forEach(tok -> index.addTerm(tok, getBaseDocument(sent, params))));
 
 			switch (params.source) {
@@ -142,7 +137,7 @@ public class TextRankSentenceSelector implements DocumentSentenceSelector {
 			double cosineSimilarity = first.vector.dot(second.vector) / (first.vector.magnitude() * second.vector.magnitude());
 			if (!Double.isFinite(cosineSimilarity)) {
 				ServerLogger.get().trace("Invalid cosine similarity between sentences " + first.source.id +
-						" and " + second.source.id + " in document " + first.source.source.getDescription());
+						" and " + second.source.id + " in document " + first.source.sourceDoc.getDescription());
 				continue;
 			} else if (cosineSimilarity == 0)
 				continue;
@@ -152,8 +147,8 @@ public class TextRankSentenceSelector implements DocumentSentenceSelector {
 
 			DefaultWeightedEdge edge = graph.addEdge(first, second);
 			if (edge == null) {
-				ServerLogger.get().warn("Couldn't add edge between sentences: Sentence " + first.source.id + " in " + first.source.source.getDescription()
-						+ " and Sentence " + second.source.id + " in " + second.source.source.getDescription());
+				ServerLogger.get().warn("Couldn't add edge between sentences: Sentence " + first.source.id + " in " + first.source.sourceDoc.getDescription()
+						+ " and Sentence " + second.source.id + " in " + second.source.sourceDoc.getDescription());
 			} else
 				graph.setEdgeWeight(edge, cosineSimilarity);
 		}
@@ -164,7 +159,7 @@ public class TextRankSentenceSelector implements DocumentSentenceSelector {
 		rankedOutput.sort(Comparator.comparingDouble(a -> -a.score));
 	}
 
-	private TextRankSentenceSelector(DocumentSentenceSelectorParams p) {
+	private TextRankSentenceSelector(SentenceSelectorParams p) {
 		index = new InvertedIndex<>();
 		graph = new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
 		rankedOutput = new ArrayList<>();
@@ -173,55 +168,59 @@ public class TextRankSentenceSelector implements DocumentSentenceSelector {
 	}
 
 	@Override
-	public Iterable<? extends SelectedSentence> topK(int k) {
+	public Collection<? extends SelectedSentence> topK(int k) {
 		return rankedOutput.subList(0, rankedOutput.size() < k ? rankedOutput.size() : k);
 	}
 
 
-	static class Builder implements DocumentSentenceSelector.Builder {
-		DocumentSentenceSelectorParams params;
+	static class Builder implements SentenceSelector.Builder {
+		static SentenceSelector.Builder factory(Language l, SentenceSelectorPreprocessor p) {
+			return new Builder(l, p);
+		}
 
-		Builder(Language l) {
-			params = new DocumentSentenceSelectorParams(l);
+		SentenceSelectorParams params;
+
+		private Builder(Language l, SentenceSelectorPreprocessor p) {
+			params = new SentenceSelectorParams(l, p);
 		}
 
 		@Override
-		public DocumentSentenceSelector.Builder stemWords(boolean val) {
+		public SentenceSelector.Builder stemWords(boolean val) {
 			params.stemWords = val;
 			return this;
 		}
 		@Override
-		public DocumentSentenceSelector.Builder ignoreStopwords(boolean val) {
+		public SentenceSelector.Builder ignoreStopwords(boolean val) {
 			params.ignoreStopwords = val;
 			return this;
 		}
 		@Override
-		public DocumentSentenceSelector.Builder useSynsets(boolean val) {
+		public SentenceSelector.Builder useSynsets(boolean val) {
 			params.useSynsets = val;
 			return this;
 		}
 		@Override
-		public DocumentSentenceSelector.Builder granularity(Granularity val) {
+		public SentenceSelector.Builder granularity(Granularity val) {
 			params.granularity = val;
 			return this;
 		}
 		@Override
-		public DocumentSentenceSelector.Builder source(Source val) {
+		public SentenceSelector.Builder source(Source val) {
 			params.source = val;
 			return this;
 		}
 		@Override
-		public DocumentSentenceSelector.Builder mainDocument(AbstractDocument doc) {
+		public SentenceSelector.Builder mainDocument(AbstractDocument doc) {
 			params.main = doc;
 			return this;
 		}
 		@Override
-		public DocumentSentenceSelector.Builder copusDocument(AbstractDocument doc) {
+		public SentenceSelector.Builder copusDocument(AbstractDocument doc) {
 			params.corpus.add(doc);
 			return this;
 		}
 		@Override
-		public DocumentSentenceSelector build() {
+		public SentenceSelector build() {
 			params.validate();
 			return new TextRankSentenceSelector(params);
 		}
