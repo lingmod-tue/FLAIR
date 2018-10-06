@@ -35,14 +35,14 @@ public class WhPhraseGenerator {
 		peoplePronouns = new HashSet<String>();
 		partitiveConstructionHeads = new HashSet<String>();
 
-		tokens = GlobalProperties.getProperties().getProperty("peoplePronouns",
+		tokens = GlobalProperties.getInstance().getProperties().getProperty("peoplePronouns",
 				"i|he|her|him|me|she|us|we|you|myself|yourself|ourselves").split(
 				"\\|");
 		for (int i = 0; i < tokens.length; i++) {
 			peoplePronouns.add(tokens[i]);
 		}
 
-		tokens = GlobalProperties.getProperties().getProperty(
+		tokens = GlobalProperties.getInstance().getProperties().getProperty(
 				"partitiveConstructionHeads",
 				"part|more|all|none|rest|much|most|some|one|many|any|either|%|percent|portion|half|third|quarter|fraction|quarter|best|worst|member|bulk|majority|minority").split(
 				"\\|");
@@ -345,7 +345,7 @@ public class WhPhraseGenerator {
 
 		setAnswer(phraseToMove, inputTreeYield);
 
-		if (GlobalProperties.getDebug())
+		if (GlobalProperties.getInstance().getDebug())
 			System.err.println("getWHPhraseSubtrees: phraseToMove: "
 					+ phraseToMove.toString());
 

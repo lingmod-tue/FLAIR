@@ -1,5 +1,7 @@
 package com.flair.server.pipelines.questgen;
 
+import com.flair.server.utilities.ServerLogger;
+
 class QuestionGeneratorParams {
 	boolean dropPronouns;
 	boolean downweighPronouns;
@@ -67,6 +69,9 @@ class QuestionGeneratorParams {
 			return this;
 		}
 		public QuestionGeneratorParams build() {
+			if (rankerModelPath.isEmpty())
+				ServerLogger.get().warn("No QuestionRanker model set. Generated questions will not be ranked!");
+
 			QuestionGeneratorParams questionGeneratorParams = new QuestionGeneratorParams();
 			questionGeneratorParams.doStemming = this.doStemming;
 			questionGeneratorParams.resolvePronounNPs = this.resolvePronounNPs;

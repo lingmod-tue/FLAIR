@@ -66,7 +66,7 @@ public class SuperSenseWrapper {
 		//add a bunch of blanks if necessary
 		while (result.size() < numleaves) result.add("0");
 
-		if (GlobalProperties.getDebug()) ServerLogger.get().info("annotateSentenceSST: " + result);
+		if (GlobalProperties.getInstance().getDebug()) ServerLogger.get().info("annotateSentenceSST: " + result);
 		return result;
 	}
 

@@ -65,7 +65,7 @@ public class DocParseTask implements AsyncTask<DocParseTask.Result> {
 
 		long endTime = System.currentTimeMillis();
 		if (!error)
-			ServerLogger.get().trace("Document " + output.getDescription() + " parsed in " + (endTime - startTime) + " ms");
+			ServerLogger.get().info("Document " + output.getDescription() + " parsed in " + (endTime - startTime) + " ms");
 
 		return new Result(output);
 	}

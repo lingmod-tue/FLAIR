@@ -36,10 +36,10 @@ public final class ServerLogger extends AbstractDebugLogger {
 	@Override
 	protected void print(Channel channel, String message) {
 		StringBuilder builder = new StringBuilder();
+		builder.append(prettyPrintCaller());
+
 		for (int i = 0; i < indentLevel; i++)
 			builder.append("\t");
-
-		builder.append(prettyPrintCaller());
 		builder.append(" ");
 		builder.append(message);
 

@@ -19,7 +19,7 @@ public class TestNPClarification extends TestCase {
 	 */
 	protected void setUp() {
 		npc = new NPClarification();
-		GlobalProperties.setDebug(true);
+		GlobalProperties.getInstance().setDebug(true);
 	}
 
 	/**

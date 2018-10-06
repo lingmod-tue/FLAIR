@@ -56,7 +56,7 @@ public class WekaLinearRegressionRanker extends BaseRanker implements IRanker {
 			return;
 		}
 
-		if (GlobalProperties.getDebug()) System.err.println(classifier.toString());
+		if (GlobalProperties.getInstance().getDebug()) System.err.println(classifier.toString());
 	}
 
 	public Classifier getClassifier() {

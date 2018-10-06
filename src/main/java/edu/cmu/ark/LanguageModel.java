@@ -115,7 +115,8 @@ public class LanguageModel {
 		backOffWeights = new HashMap<String, Double>();
 		frequencies.put("<unk>", 0.0);  //just in case nothing loads
 
-		if (GlobalProperties.getDebug()) ServerLogger.get().info("Loading language model from " + filename + "...");
+		if (GlobalProperties.getInstance().getDebug())
+			ServerLogger.get().info("Loading language model from " + filename + "...");
 
 		try {
 			String buf;
@@ -146,7 +147,7 @@ public class LanguageModel {
 			e.printStackTrace();
 		}
 
-		if (GlobalProperties.getDebug()) ServerLogger.get().info("done.");
+		if (GlobalProperties.getInstance().getDebug()) ServerLogger.get().info("done.");
 	}
 
 	public double unigramLogBase10Probability(String word) {

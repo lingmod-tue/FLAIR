@@ -36,8 +36,11 @@ public class QuestGenTask implements AsyncTask<QuestGenTask.Result> {
 		try {
 			QuestionTransducer questionTransducer = new QuestionTransducer();
 			InitialTransformationStep initTransformer = new InitialTransformationStep();
-			QuestionRanker questionRanker = new QuestionRanker();
-			questionRanker.loadModel(qgParams.rankerModelPath);
+			QuestionRanker questionRanker = null;
+			if (!qgParams.rankerModelPath.isEmpty()) {
+				questionRanker = new QuestionRanker();
+				questionRanker.loadModel(qgParams.rankerModelPath);
+			}
 
 			List<Tree> inputTrees = sourceSentChunk.stream().map(s -> s.data(CoreNlpParserAnnotations.Sentence.class).parseTree()).collect(Collectors.toList());
 			List<Question> transformationOutput = initTransformer.transform(inputTrees);
@@ -50,14 +53,17 @@ public class QuestGenTask implements AsyncTask<QuestGenTask.Result> {
 
 			QuestionTransducer.removeDuplicateQuestions(outputQuestionList);
 
-			questionRanker.scoreGivenQuestions(outputQuestionList);
-			QuestionRanker.adjustScores(outputQuestionList,
-					inputTrees,
-					qgParams.downweighFrequentWords,
-					qgParams.preferWHQuestions,
-					qgParams.downweighPronouns,
-					qgParams.doStemming);
-			QuestionRanker.sortQuestions(outputQuestionList, false);
+			if (questionRanker != null) {
+				questionRanker.scoreGivenQuestions(outputQuestionList);
+				QuestionRanker.adjustScores(outputQuestionList,
+						inputTrees,
+						qgParams.downweighFrequentWords,
+						qgParams.preferWHQuestions,
+						qgParams.downweighPronouns,
+						qgParams.doStemming);
+				QuestionRanker.sortQuestions(outputQuestionList, false);
+			}
+
 
 			for (Question question : outputQuestionList) {
 				if (question.getTree().getLeaves().size() > Constants.GENERATOR_MAX_GENERATED_TREE_LEAF_COUNT)
@@ -66,8 +72,14 @@ public class QuestGenTask implements AsyncTask<QuestGenTask.Result> {
 				if (qgParams.onlyWHQuestions && question.getFeatureValue("whQuestion") != 1.0)
 					continue;
 
-				String questionString = AnalysisUtilities.getCleanedUpYield(question.getSourceTree());
-				String answerString = AnalysisUtilities.getCleanedUpYield(question.getAnswerPhraseTree());
+				Tree questionTree = question.getTree();
+				Tree answerTree = question.getAnswerPhraseTree();
+
+				if (questionTree == null)
+					ServerLogger.get().warn("No question tree was generated! Dump: " + question.toString());
+
+				String questionString = AnalysisUtilities.getCleanedUpYield(questionTree);
+				String answerString = answerTree != null ? AnalysisUtilities.getCleanedUpYield(answerTree) : "";
 
 				out.generated.add(new GeneratedQuestion(qgParams.type, questionString, answerString));
 			}

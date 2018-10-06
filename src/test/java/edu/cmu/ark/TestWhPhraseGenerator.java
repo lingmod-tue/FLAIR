@@ -17,7 +17,7 @@ public class TestWhPhraseGenerator extends TestCase {
 	 */
 	protected void setUp() {
 		qt = new QuestionTransducer();
-		GlobalProperties.setDebug(true);
+		GlobalProperties.getInstance().setDebug(true);
 	}
 
 	/**

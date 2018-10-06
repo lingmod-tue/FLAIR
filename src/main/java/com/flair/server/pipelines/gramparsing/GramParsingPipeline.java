@@ -118,7 +118,7 @@ public final class GramParsingPipeline {
 	}
 
 
-	public final class SearchCrawlParseOpBuilder implements PipelineOp.PipelineOpBuilder {
+	public final class SearchCrawlParseOpBuilder implements PipelineOp.PipelineOpBuilder<SearchCrawlParseOp.Input, SearchCrawlParseOp.Output> {
 		Language lang;
 		String query;
 		int numResults;
@@ -165,7 +165,7 @@ public final class GramParsingPipeline {
 			return this;
 		}
 
-		public PipelineOp launch() {
+		public PipelineOp<SearchCrawlParseOp.Input, SearchCrawlParseOp.Output> launch() {
 			if (lang == null)
 				throw new IllegalStateException("Invalid lang");
 			else if (query == null || query.isEmpty())
@@ -174,9 +174,6 @@ public final class GramParsingPipeline {
 				throw new IllegalStateException("Invalid number of results");
 			else if (keywords == null)
 				throw new IllegalStateException("Invalid keyword data");
-
-			if (jobComplete == null)
-				throw new IllegalStateException("No completion handler set");
 
 			SearchCrawlParseOp.Input input = new SearchCrawlParseOp.Input(lang,
 					query,
@@ -197,7 +194,7 @@ public final class GramParsingPipeline {
 		}
 	}
 
-	public final class ParseOpBuilder implements PipelineOp.PipelineOpBuilder {
+	public final class ParseOpBuilder implements PipelineOp.PipelineOpBuilder<ParseOp.Input, ParseOp.Output> {
 		Language lang;
 		List<AbstractDocumentSource> sourceDocs;
 		KeywordSearcherInput keywords;
@@ -245,14 +242,11 @@ public final class GramParsingPipeline {
 			return this;
 		}
 
-		public PipelineOp launch() {
+		public PipelineOp<ParseOp.Input, ParseOp.Output> launch() {
 			if (lang == null)
 				throw new IllegalStateException("Invalid lang");
 			else if (sourceDocs.isEmpty())
 				throw new IllegalStateException("No document sources to parse");
-
-			if (jobComplete == null)
-				throw new IllegalStateException("No completion handler set");
 
 			ParseOp.Input input = new ParseOp.Input(lang,
 					sourceDocs,

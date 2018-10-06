@@ -49,7 +49,7 @@ public final class QuestionGenerationPipeline {
 		// nothing else to do here
 	}
 
-	public final class QuestionGenerationOpBuilder implements PipelineOp.PipelineOpBuilder {
+	public final class QuestionGenerationOpBuilder implements PipelineOp.PipelineOpBuilder<QuestionGenerationOp.Input, QuestionGenerationOp.Output> {
 		AbstractDocument sourceDoc;
 		int numSelectedSentences;
 
@@ -74,7 +74,7 @@ public final class QuestionGenerationPipeline {
 			return this;
 		}
 
-		public QuestionGenerationOpBuilder selectionComplete(QuestionGenerationOp.SentenceSelectionComplete handler) {
+		public QuestionGenerationOpBuilder onSelectionComplete(QuestionGenerationOp.SentenceSelectionComplete handler) {
 			this.selectionComplete = handler;
 			return this;
 		}
@@ -84,16 +84,11 @@ public final class QuestionGenerationPipeline {
 			return this;
 		}
 
-		public PipelineOp launch() {
+		public PipelineOp<QuestionGenerationOp.Input, QuestionGenerationOp.Output> launch() {
 			if (sourceDoc == null)
 				throw new IllegalStateException("Invalid source document");
-			else if (qgParams.rankerModelPath.isEmpty())
-				throw new IllegalStateException("Invalid question ranker model");
 			else if (numSelectedSentences == 0)
 				throw new IllegalStateException("Invalid number of source sentences");
-
-			if (jobComplete == null)
-				throw new IllegalStateException("No completion handler set");
 
 			QuestionGenerationOp.Input input = new QuestionGenerationOp.Input(sourceDoc,
 					sentenceSelExecutor,

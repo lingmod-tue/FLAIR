@@ -8,9 +8,10 @@ public abstract class PipelineOp<I, O> implements Cancellable {
 		void handle(E event);
 	}
 
-	public interface PipelineOpBuilder {
-		PipelineOp launch();
+	public interface PipelineOpBuilder<I, O> {
+		PipelineOp<I, O> launch();
 	}
+
 
 	protected AsyncJob job;
 	protected final I input;
@@ -54,5 +55,9 @@ public abstract class PipelineOp<I, O> implements Cancellable {
 			return name + "was cancelled";
 		else
 			return desc();
+	}
+	public O yield() {
+		await();
+		return output;
 	}
 }

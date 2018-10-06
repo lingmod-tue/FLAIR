@@ -359,7 +359,7 @@ public class AnalysisUtilities {
 	public static String getCleanedUpYield(Tree inputTree) {
 		Tree copyTree = inputTree.deepCopy();
 
-		//if(GlobalProperties.getDebug()) System.err.println("yield:"+copyTree.toString());
+		//if(GlobalProperties.getInstance().getDebug()) System.err.println("yield:"+copyTree.toString());
 
 		return cleanUpSentenceString(copyTree.yield().stream().map(Label::value).collect(Collectors.toList()));
 	}
@@ -519,7 +519,7 @@ public class AnalysisUtilities {
 
 	private AnalysisUtilities() {
 		conjugator = new VerbConjugator();
-		conjugator.load(ResourceLoader.path(GlobalProperties.getProperties().getProperty(
+		conjugator.load(ResourceLoader.path(GlobalProperties.getInstance().getProperties().getProperty(
 				"verbConjugationsFile",
 				"config/verbConjugations.txt")));
 		headfinder = new CollinsHeadFinder();

@@ -47,20 +47,20 @@ public class SearchCrawlParseOp extends PipelineOp<SearchCrawlParseOp.Input, Sea
 		final SearchCrawlParseOp.ParseComplete parseComplete;
 		final SearchCrawlParseOp.JobComplete jobComplete;
 
-		public Input(Language sourceLanguage,
-		             String query,
-		             int numResults,
-		             AsyncExecutorService webSearchExecutor,
-		             AsyncExecutorService webCrawlExecutor,
-		             AsyncExecutorService docParseExecutor,
-		             AbstractDocumentFactory docFactory,
-		             CoreNlpParser docParser,
-		             ParsingStrategy.Factory strategy,
-		             AbstractKeywordSearcher.Factory keywordSearcher,
-		             KeywordSearcherInput keywordSearcherInput,
-		             CrawlComplete crawlComplete,
-		             ParseComplete parseComplete,
-		             JobComplete jobComplete) {
+		Input(Language sourceLanguage,
+		      String query,
+		      int numResults,
+		      AsyncExecutorService webSearchExecutor,
+		      AsyncExecutorService webCrawlExecutor,
+		      AsyncExecutorService docParseExecutor,
+		      AbstractDocumentFactory docFactory,
+		      CoreNlpParser docParser,
+		      ParsingStrategy.Factory strategy,
+		      AbstractKeywordSearcher.Factory keywordSearcher,
+		      KeywordSearcherInput keywordSearcherInput,
+		      CrawlComplete crawlComplete,
+		      ParseComplete parseComplete,
+		      JobComplete jobComplete) {
 			this.sourceLanguage = sourceLanguage;
 			this.query = query;
 			this.numResults = numResults;
@@ -77,15 +77,15 @@ public class SearchCrawlParseOp extends PipelineOp<SearchCrawlParseOp.Input, Sea
 
 			this.crawlComplete = crawlComplete != null ? crawlComplete : e -> {};
 			this.parseComplete = parseComplete != null ? parseComplete : e -> {};
-			this.jobComplete = jobComplete;
+			this.jobComplete = jobComplete != null ? jobComplete : e -> {};
 		}
 	}
 
-	static final class Output {
-		final List<SearchResult> searchResults;
-		final DocumentCollection parsedDocs;
+	public static final class Output {
+		public final List<SearchResult> searchResults;
+		public final DocumentCollection parsedDocs;
 
-		public Output(Language sourceLang) {
+		Output(Language sourceLang) {
 			this.searchResults = new ArrayList<>();
 			this.parsedDocs = new DocumentCollection(sourceLang);
 		}

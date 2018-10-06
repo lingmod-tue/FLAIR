@@ -215,34 +215,37 @@ public class Question implements Comparable<Question>, Serializable {
 
 	public static List<String> getFeatureNames() {
 		if (featureNames == null) {
-			featureNames = new ArrayList<String>();
+			synchronized (Question.class) {
+				if (featureNames == null) {
+					featureNames = new ArrayList<>();
 
-			String defaultFeatureNames = "performedNPClarification;questionLength;sourceLength;answerPhraseLength;negation;whQuestion;whQuestionPrep;whQuestionWho;whQuestionWhat;whQuestionWhere;whQuestionWhen;whQuestionWhose;whQuestionHowMuch;whQuestionHowMany;isSubjectMovement;removedLeadConjunctions;removedAsides;removedLeadModifyingPhrases;extractedFromAppositive;extractedFromFiniteClause;extractedFromParticipial;extractedFromRelativeClause;mainVerbPast;mainVerbPresent;mainVerbFuture;mainVerbCopula;meanWordFreqSource;meanWordFreqAnswer;numNPsQuestion;numProperNounsQuestion;numQuantitiesQuestion;numAdjectivesQuestion;numAdverbsQuestion;numPPsQuestion;numSubordinateClausesQuestion;numConjunctionsQuestion;numPronounsQuestion;numNPsAnswer;numProperNounsAnswer;numQuantitiesAnswer;numAdjectivesAnswer;numAdverbsAnswer;numPPsAnswer;numSubordinateClausesAnswer;numConjunctionsAnswer;numPronounsAnswer;numVagueNPsSource;numVagueNPsQuestion;numVagueNPsAnswer;numLeadingModifiersQuestion";
-			String[] names = GlobalProperties.getProperties().getProperty(
-					"featureNames", defaultFeatureNames).split(";");
+					String defaultFeatureNames = "performedNPClarification;questionLength;sourceLength;answerPhraseLength;negation;whQuestion;whQuestionPrep;whQuestionWho;whQuestionWhat;whQuestionWhere;whQuestionWhen;whQuestionWhose;whQuestionHowMuch;whQuestionHowMany;isSubjectMovement;removedLeadConjunctions;removedAsides;removedLeadModifyingPhrases;extractedFromAppositive;extractedFromFiniteClause;extractedFromParticipial;extractedFromRelativeClause;mainVerbPast;mainVerbPresent;mainVerbFuture;mainVerbCopula;meanWordFreqSource;meanWordFreqAnswer;numNPsQuestion;numProperNounsQuestion;numQuantitiesQuestion;numAdjectivesQuestion;numAdverbsQuestion;numPPsQuestion;numSubordinateClausesQuestion;numConjunctionsQuestion;numPronounsQuestion;numNPsAnswer;numProperNounsAnswer;numQuantitiesAnswer;numAdjectivesAnswer;numAdverbsAnswer;numPPsAnswer;numSubordinateClausesAnswer;numConjunctionsAnswer;numPronounsAnswer;numVagueNPsSource;numVagueNPsQuestion;numVagueNPsAnswer;numLeadingModifiersQuestion";
+					String[] names = GlobalProperties.getInstance().getProperties().getProperty(
+							"featureNames", defaultFeatureNames).split(";");
 
-			boolean includeGreaterThanFeatures = new Boolean(
-					GlobalProperties.getProperties().getProperty(
-							"includeGreaterThanFeatures", "true"));
+					boolean includeGreaterThanFeatures = new Boolean(
+							GlobalProperties.getInstance().getProperties().getProperty(
+									"includeGreaterThanFeatures", "true"));
 
-			Arrays.sort(names);
+					Arrays.sort(names);
 
-			for (int i = 0; i < names.length; i++) {
-				featureNames.add(names[i]);
-				if (includeGreaterThanFeatures && names[i].matches("num.+")) {
-					for (int j = 0; j < 5; j++) {
-						featureNames.add(names[i] + "GreaterThan" + j);
+					for (int i = 0; i < names.length; i++) {
+						featureNames.add(names[i]);
+						if (includeGreaterThanFeatures && names[i].matches("num.+")) {
+							for (int j = 0; j < 5; j++) {
+								featureNames.add(names[i] + "GreaterThan" + j);
+							}
+						} else if (includeGreaterThanFeatures
+								&& names[i].matches("length.+")) {
+							for (int j = 0; j < 32; j += 4) {
+								featureNames.add(names[i] + "GreaterThan" + j);
+							}
+						}
 					}
-				} else if (includeGreaterThanFeatures
-						&& names[i].matches("length.+")) {
-					for (int j = 0; j < 32; j += 4) {
-						featureNames.add(names[i] + "GreaterThan" + j);
-					}
+
+					Collections.sort(featureNames);
 				}
 			}
-
-			Collections.sort(featureNames);
-
 		}
 
 		return featureNames;

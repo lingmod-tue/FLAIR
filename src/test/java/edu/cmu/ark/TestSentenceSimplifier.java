@@ -41,7 +41,7 @@ public class TestSentenceSimplifier extends TestCase {
 		simp = new SentenceSimplifier();
 		simp.setBreakNPs(true);
 		simp.setExtractFromVerbComplements(true);
-		GlobalProperties.setDebug(true);
+		GlobalProperties.getInstance().setDebug(true);
 	}
 
 	/**

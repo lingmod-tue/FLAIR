@@ -34,16 +34,16 @@ public class ParseOp extends PipelineOp<ParseOp.Input, ParseOp.Output> {
 		final ParseOp.ParseComplete parseComplete;
 		final ParseOp.JobComplete jobComplete;
 
-		public Input(Language sourceLanguage,
-		             List<AbstractDocumentSource> sourceDocs,
-		             AsyncExecutorService docParseExecutor,
-		             AbstractDocumentFactory docFactory,
-		             CoreNlpParser docParser,
-		             ParsingStrategy.Factory strategy,
-		             AbstractKeywordSearcher.Factory keywordSearcher,
-		             KeywordSearcherInput keywordSearcherInput,
-		             ParseComplete parseComplete,
-		             JobComplete jobComplete) {
+		Input(Language sourceLanguage,
+		      List<AbstractDocumentSource> sourceDocs,
+		      AsyncExecutorService docParseExecutor,
+		      AbstractDocumentFactory docFactory,
+		      CoreNlpParser docParser,
+		      ParsingStrategy.Factory strategy,
+		      AbstractKeywordSearcher.Factory keywordSearcher,
+		      KeywordSearcherInput keywordSearcherInput,
+		      ParseComplete parseComplete,
+		      JobComplete jobComplete) {
 			this.sourceLanguage = sourceLanguage;
 			this.sourceDocs = sourceDocs;
 
@@ -56,14 +56,14 @@ public class ParseOp extends PipelineOp<ParseOp.Input, ParseOp.Output> {
 			this.keywordSearcherInput = keywordSearcherInput;
 
 			this.parseComplete = parseComplete != null ? parseComplete : e -> {};
-			this.jobComplete = jobComplete;
+			this.jobComplete = jobComplete != null ? jobComplete : e -> {};
 		}
 	}
 
-	static final class Output {
+	public static final class Output {
 		public final DocumentCollection parsedDocs;
 
-		public Output(Language sourceLang) {
+		Output(Language sourceLang) {
 			this.parsedDocs = new DocumentCollection(sourceLang);
 		}
 	}

@@ -344,7 +344,7 @@ public class QuestionRanker implements Serializable {
 			List<String> wordTokens = bagOfWordsExtractor.extractNounTokensFromTrees(parsedSentences);
 			Map<String, Double> typeCounts = bagOfWordsExtractor.extractCounts(wordTokens);
 
-			if (GlobalProperties.getDebug())
+			if (GlobalProperties.getInstance().getDebug())
 				System.err.println("Frequent Words: " + findFrequentWords(typeCounts, wordTokens.size()).toString());
 
 			//downweight any questions whose answer's syntactic head word (or for PPs, the pp-object's head)
@@ -360,7 +360,7 @@ public class QuestionRanker implements Serializable {
 				if (typeCounts.containsKey(headWord) && typeCounts.get(headWord) >= threshold) {
 					q.setScore(q.getScore() - 1.0);
 					q.setFeatureValue("answerIsFrequentWord", 1.0);
-					if (GlobalProperties.getDebug())
+					if (GlobalProperties.getInstance().getDebug())
 						System.err.println("Question Ranker: downweighting due to frequent word (" + headWord + ") in answer: " + q.yield());
 				}
 			}
@@ -378,13 +378,13 @@ public class QuestionRanker implements Serializable {
 			for (Question q : questions) {
 				Tree answerTree = q.getAnswerPhraseTree();
 				if (QuestionTransducer.containsUnresolvedPronounsOrDemonstratives(q)) {
-					if (GlobalProperties.getDebug())
+					if (GlobalProperties.getInstance().getDebug())
 						System.err.println("Question Ranker: downweighting due to pronoun in question: " + q.yield());
 					q.setScore(q.getScore() - 1.0);
 				} else if (answerTree != null && isHeadedByPronoun(answerTree)) {
 					q.setScore(q.getScore() - 1.0);
 					q.setFeatureValue("answerIsHeadedByPronoun", 1.0);
-					if (GlobalProperties.getDebug())
+					if (GlobalProperties.getInstance().getDebug())
 						System.err.println("Question Ranker: downweighting due to pronoun answer (" + answerTree.yield() + "): " + q.yield());
 				}
 
@@ -470,8 +470,6 @@ public class QuestionRanker implements Serializable {
 			} else if (args[i].equals("--testfile")) {
 				testFile = args[i + 1];
 				i++;
-			} else if (args[i].equals("--debug")) {
-				GlobalProperties.setDebug(true);
 			} else if (args[i].equals("--load-model")) {
 				loadModelPath = args[i + 1];
 				i++;
@@ -483,8 +481,6 @@ public class QuestionRanker implements Serializable {
 			} else if (args[i].equals("--min")) {
 				minimumAcceptability = new Double(args[i + 1]);
 				i++;
-			} else if (args[i].equals("--properties")) {
-				GlobalProperties.loadProperties(args[i + 1]);
 			} else if (args[i].equals("--save-questions")) {
 				saveQuestionsPath = args[i + 1];
 				i++;

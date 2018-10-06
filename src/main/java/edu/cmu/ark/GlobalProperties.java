@@ -25,52 +25,54 @@ package edu.cmu.ark;
 
 import com.flair.server.utilities.ServerLogger;
 
-import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Properties;
 
 public class GlobalProperties {
-	public static Properties getProperties() {
-		if (properties == null) {
-			String defaultPath = ResourceLoader.path("GlobalProperties.properties");
-			loadProperties(defaultPath);
+	public static GlobalProperties getInstance() {
+		if (instance == null) {
+			synchronized (GlobalProperties.class) {
+				if (instance == null)
+					instance = new GlobalProperties();
+			}
 		}
-		return properties;
+		return instance;
 	}
 
-	public static void loadProperties(String propertiesFile) {
-		if (!(new File(propertiesFile).exists())) {
-			ServerLogger.get().info("properties file not found at the location, " + propertiesFile + ".  Please specify with --properties PATH.");
-			System.exit(0);
-		}
-
-		properties = new Properties();
-		try {
-			properties.load(new FileInputStream(propertiesFile));
-		} catch (Exception e) {
-			e.printStackTrace();
-			System.exit(0);
-		}
+	public void setDebug(boolean debug) {
+		this.debug = debug;
 	}
 
-	public static void setDebug(boolean debug) {
-		DEBUG = debug;
+	public boolean getDebug() {
+		return debug;
 	}
 
-	public static boolean getDebug() {
-		return DEBUG;
-	}
-
-	public static void setComputeFeatures(boolean b) {
+	public void setComputeFeatures(boolean b) {
 		computeFeatures = b;
 	}
 
-
-	public static boolean getComputeFeatures() {
+	public boolean getComputeFeatures() {
 		return computeFeatures;
 	}
 
-	private static Properties properties;
-	private static boolean DEBUG;
-	private static boolean computeFeatures = true;
+	public Properties getProperties() { return properties; }
+
+	private GlobalProperties() {
+		properties = new Properties();
+		try {
+			properties.load(new FileInputStream(ResourceLoader.path("GlobalProperties.properties")));
+		} catch (IOException e) {
+			ServerLogger.get().error(e, "Couldn't load global properties for the question generator!");
+		}
+
+		this.debug = false;
+		this.computeFeatures = true;
+	}
+
+	private final Properties properties;
+	private boolean debug;
+	private boolean computeFeatures;
+
+	private static GlobalProperties instance;
 }

@@ -81,13 +81,11 @@ public class QuestionAsker {
 		boolean dropPro = true;
 		boolean justWH = false;
 
-		GlobalProperties.setDebug(true);
+		GlobalProperties.getInstance().setDebug(true);
 
 
 		for (int i = 0; i < args.length; i++) {
-			if (args[i].equals("--debug")) {
-				GlobalProperties.setDebug(true);
-			} else if (args[i].equals("--verbose")) {
+			if (args[i].equals("--verbose")) {
 				printVerbose = true;
 			} else if (args[i].equals("--model")) { //ranking model path
 				modelPath = args[i + 1];
@@ -99,8 +97,6 @@ public class QuestionAsker {
 				downweightPronouns = true;
 			} else if (args[i].equals("--downweight-frequent-answers")) {
 				avoidFreqWords = true;
-			} else if (args[i].equals("--properties")) {
-				GlobalProperties.loadProperties(args[i + 1]);
 			} else if (args[i].equals("--prefer-wh")) {
 				preferWH = true;
 			} else if (args[i].equals("--just-wh")) {
@@ -128,7 +124,7 @@ public class QuestionAsker {
 		try {
 			BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-			if (GlobalProperties.getDebug()) System.err.println("\nInput Text:");
+			if (GlobalProperties.getInstance().getDebug()) System.err.println("\nInput Text:");
 			String doc;
 
 
@@ -165,13 +161,14 @@ public class QuestionAsker {
 				List<Tree> inputTrees = new ArrayList<Tree>();
 
 				for (String sentence : sentences) {
-					if (GlobalProperties.getDebug()) System.err.println("Question Asker: sentence: " + sentence);
+					if (GlobalProperties.getInstance().getDebug())
+						System.err.println("Question Asker: sentence: " + sentence);
 
 					parsed = AnalysisUtilities.getInstance().parseSentence(sentence).parse;
 					inputTrees.add(parsed);
 				}
 
-				if (GlobalProperties.getDebug())
+				if (GlobalProperties.getInstance().getDebug())
 					System.err.println("Seconds Elapsed Parsing:\t" + ((System.currentTimeMillis() - startTime) / 1000.0));
 
 				//step 1 transformations
@@ -179,7 +176,7 @@ public class QuestionAsker {
 
 				//step 2 question transducer
 				for (Question t : transformationOutput) {
-					if (GlobalProperties.getDebug())
+					if (GlobalProperties.getInstance().getDebug())
 						System.err.println("Stage 2 Input: " + t.getIntermediateTree().yield().toString());
 					qt.generateQuestionsFromParse(t);
 					outputQuestionList.addAll(qt.getQuestions());
@@ -220,10 +217,10 @@ public class QuestionAsker {
 					System.out.println();
 				}
 
-				if (GlobalProperties.getDebug())
+				if (GlobalProperties.getInstance().getDebug())
 					System.err.println("Seconds Elapsed Total:\t" + ((System.currentTimeMillis() - startTime) / 1000.0));
 				//prompt for another piece of input text
-				if (GlobalProperties.getDebug()) System.err.println("\nInput Text:");
+				if (GlobalProperties.getInstance().getDebug()) System.err.println("\nInput Text:");
 			}
 
 

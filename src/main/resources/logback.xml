@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- For assistance related to logback-translator or configuration  -->
+<!-- files in general, please contact the logback user mailing list -->
+<!-- at http://www.qos.ch/mailman/listinfo/logback-user             -->
+<!--                                                                -->
+<!-- For professional support please see                            -->
+<!--    http://www.qos.ch/shop/products/professionalSupport         -->
+<!--                                                                -->
+<configuration>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss,SSS} %-5p [%t|%c]- %m%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <File>${catalina.base}/logs/flair.out</File>
+        <encoder>
+            <pattern>%d{HH:mm:ss,SSS} %-5p [%t|%c]- %m%n</pattern>
+        </encoder>
+    </appender>
+    <logger name="FLAIR-ServerLogger" level="TRACE">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </logger>
+    <logger name="com.gargoylesoftware.htmlunit" level="ERROR"/>
+    <root level="DEBUG"/>
+</configuration>

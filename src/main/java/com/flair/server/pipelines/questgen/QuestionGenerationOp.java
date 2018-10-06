@@ -43,13 +43,13 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 			this.qgParams = qgParams;
 			this.sentSelPreprocessor = sentSelPreprocessor;
 			this.numSelectedSentences = numSelectedSentences;
-			this.selectionComplete = selectionComplete;
-			this.jobComplete = jobComplete;
+			this.selectionComplete = selectionComplete != null ? selectionComplete : e -> {};
+			this.jobComplete = jobComplete != null ? jobComplete : e -> {};
 		}
 	}
 
-	static final class Output {
-		final List<GeneratedQuestion> generatedQuestions;
+	public static final class Output {
+		public final List<GeneratedQuestion> generatedQuestions;
 
 		Output() {
 			this.generatedQuestions = new ArrayList<>();
@@ -85,10 +85,12 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 
 		taskLinker.addHandler(QuestGenTask.Result.class, (j, r) -> {
 			// pick one of the top-k questions randomly
-			int numGeneratedQuestions = r.generated.size();
-			GeneratedQuestion randomPick = r.generated.get(ThreadLocalRandom.current().nextInt(0,
-					Constants.QUESTGEN_BESTQPOOL_SIZE > numGeneratedQuestions ? numGeneratedQuestions : Constants.QUESTGEN_BESTQPOOL_SIZE));
-			output.generatedQuestions.add(randomPick);
+			if (!r.generated.isEmpty()) {
+				int numGeneratedQuestions = r.generated.size();
+				GeneratedQuestion randomPick = r.generated.get(ThreadLocalRandom.current().nextInt(0,
+						Constants.QUESTGEN_BESTQPOOL_SIZE > numGeneratedQuestions ? numGeneratedQuestions : Constants.QUESTGEN_BESTQPOOL_SIZE));
+				output.generatedQuestions.add(randomPick);
+			}
 		});
 	}
 
@@ -107,6 +109,7 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 				.source(SentenceSelector.Source.DOCUMENT)
 				.mainDocument(input.sourceDoc)
 				.granularity(SentenceSelector.Granularity.SENTENCE)
+				.stemWords(true)
 				.ignoreStopwords(true)
 				.useSynsets(false);
 
