@@ -1,0 +1,1643 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="BookmarkManager">
+    <bookmark url="file://$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/GenericWeightSlider.java" line="20" mnemonic="2" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="c89ab379-5832-4084-9720-767029c011ce" name="Default" comment="Integrate question generation into the frontend&#10;Misc changes, additions and fixes" />
+    <ignored path="$PROJECT_DIR$/target/" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CodeInsightWorkspaceSettings">
+    <option name="optimizeImportsOnTheFly" value="true" />
+  </component>
+  <component name="CompilerWorkspaceConfiguration">
+    <option name="PARALLEL_COMPILATION" value="true" />
+  </component>
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_DATA_SOURCES" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+    <option name="HIDDEN_KINDS">
+      <set />
+    </option>
+    <expand />
+    <select />
+  </component>
+  <component name="ErrorTreeViewConfiguration">
+    <option name="hideWarnings" value="true" />
+    <option name="HIDE_WARNINGS" value="true" />
+  </component>
+  <component name="FUSProjectUsageTrigger">
+    <session id="-547897214">
+      <usages-collector id="statistics.lifecycle.project">
+        <counts>
+          <entry key="project.closed" value="23" />
+          <entry key="project.open.time.11" value="1" />
+          <entry key="project.open.time.13" value="1" />
+          <entry key="project.open.time.17" value="1" />
+          <entry key="project.open.time.18" value="1" />
+          <entry key="project.open.time.21" value="1" />
+          <entry key="project.open.time.22" value="1" />
+          <entry key="project.open.time.24" value="3" />
+          <entry key="project.open.time.25" value="2" />
+          <entry key="project.open.time.27" value="1" />
+          <entry key="project.open.time.29" value="1" />
+          <entry key="project.open.time.30" value="1" />
+          <entry key="project.open.time.31" value="1" />
+          <entry key="project.open.time.32" value="1" />
+          <entry key="project.open.time.33" value="1" />
+          <entry key="project.open.time.35" value="1" />
+          <entry key="project.open.time.36" value="1" />
+          <entry key="project.open.time.37" value="1" />
+          <entry key="project.open.time.40" value="1" />
+          <entry key="project.open.time.41" value="1" />
+          <entry key="project.open.time.6" value="1" />
+          <entry key="project.opened" value="23" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.open">
+        <counts>
+          <entry key="class" value="17" />
+          <entry key="java" value="696" />
+          <entry key="md" value="2" />
+          <entry key="properties" value="13" />
+          <entry key="tsv" value="7" />
+          <entry key="txt" value="1" />
+          <entry key="xml" value="34" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.open">
+        <counts>
+          <entry key="CLASS" value="17" />
+          <entry key="Enforced Plain Text" value="1" />
+          <entry key="JAVA" value="696" />
+          <entry key="Markdown" value="2" />
+          <entry key="Properties" value="13" />
+          <entry key="Scratch" value="1" />
+          <entry key="TSV" value="6" />
+          <entry key="XML" value="34" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.extensions.edit">
+        <counts>
+          <entry key="dummy" value="67" />
+          <entry key="java" value="33566" />
+          <entry key="properties" value="132" />
+          <entry key="tsv" value="222" />
+          <entry key="txt" value="1306" />
+          <entry key="xml" value="579" />
+        </counts>
+      </usages-collector>
+      <usages-collector id="statistics.file.types.edit">
+        <counts>
+          <entry key="JAVA" value="33566" />
+          <entry key="PLAIN_TEXT" value="1373" />
+          <entry key="Properties" value="132" />
+          <entry key="TSV" value="222" />
+          <entry key="XML" value="579" />
+        </counts>
+      </usages-collector>
+    </session>
+  </component>
+  <component name="FavoritesManager">
+    <favorites_list name="FLAIR">
+      <favorite_root url="file://$PROJECT_DIR$/src/main/java/com/flair/server/questgen/selection/DocumentSentenceSelectorGenerator.java" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+    </favorites_list>
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/QuestionGeneratorPreview.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="652">
+              <caret line="64" column="62" selection-start-line="64" selection-start-column="62" selection-end-line="64" selection-end-column="62" />
+              <folding>
+                <element signature="e#4099#4100#0" expanded="true" />
+                <element signature="e#4127#4128#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/QuestionGeneratorPreview.ui.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="119">
+              <caret line="7" column="78" selection-start-line="7" selection-start-column="78" selection-end-line="7" selection-end-column="78" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/DocumentPreviewPane.ui.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="213">
+              <caret line="69" column="43" lean-forward="true" selection-start-line="68" selection-start-column="71" selection-end-line="69" selection-end-column="43" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="jar://$MAVEN_REPOSITORY$/com/github/gwtmaterialdesign/gwt-material/2.0-rc7/gwt-material-2.0-rc7-sources.jar!/gwt/material/design/client/ui/MaterialCardReveal.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="306">
+              <caret line="38" column="25" selection-start-line="38" selection-start-column="25" selection-end-line="38" selection-end-column="25" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="jar://$MAVEN_REPOSITORY$/com/github/gwtmaterialdesign/gwt-material/2.0-rc7/gwt-material-2.0-rc7-sources.jar!/gwt/material/design/client/ui/MaterialCard.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="311">
+              <caret line="102" column="11" selection-start-line="102" selection-start-column="11" selection-end-line="102" selection-end-column="11" />
+              <folding>
+                <element signature="e#4358#4359#0" expanded="true" />
+                <element signature="e#4428#4429#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>AnalysisUtilities.readTreeFromString</find>
+      <find>GlobalProperties.prop</find>
+      <find>getInstance()</find>
+      <find>verb.yiel</find>
+      <find>move qc</find>
+      <find>prune answer</find>
+      <find>extractver</find>
+      <find>getlemma</find>
+      <find>synchro</find>
+      <find>system.ex</find>
+      <find>getForwardLM()</find>
+      <find>usable sen</find>
+      <find>GramParsingPipeline</find>
+      <find>answer</find>
+      <find>crawlco</find>
+      <find>license</find>
+      <find>GlobalProperties.getProperties()</find>
+      <find>GlobalProperties.getComputeFeatures()</find>
+      <find>GlobalProperties.setDebug(true)</find>
+      <find>GlobalProperties.getDebug()</find>
+      <find>4j</find>
+      <find>MaterialModal</find>
+      <find>fireevent(</find>
+      <find>languageModelFile</find>
+      <find>questi</find>
+      <find>AboutPage</find>
+      <find>generateQue</find>
+      <find>pipelineCacheOp.hasActiveOp</find>
+      <find>wait</find>
+      <find>blim</find>
+    </findStrings>
+    <replaceStrings>
+      <replace>deepCopy()</replace>
+      <replace>*/</replace>
+      <replace />
+      <replace>deepCopy</replace>
+      <replace>new CollinsHeadFinder()</replace>
+      <replace>AnalysisUtilities</replace>
+      <replace>addPeriodIfNeeded</replace>
+      <replace>AnalysisUtilities.</replace>
+      <replace>ServerLogger.get().trace</replace>
+      <replace>ServerLogger.get().info</replace>
+      <replace>AnalysisUtilities.getInstance().getHeadFinder()</replace>
+      <replace>AnalysisUtilities.getInstance().readTreeFromString</replace>
+      <replace>forwardLM</replace>
+      <replace>QuestionGenerationPipeline</replace>
+      <replace>GlobalProperties.getInstance().getDebug()</replace>
+      <replace>GlobalProperties.getInstance().getProperties()</replace>
+      <replace>GlobalProperties.getInstance().getComputeFeatures()</replace>
+      <replace>GlobalProperties.getInstance().setDebug(true)</replace>
+      <replace>MaterialDialog</replace>
+      <replace>QuestionGeneratorPreview</replace>
+      <replace>pipelineOpCache.hasActiveOp</replace>
+    </replaceStrings>
+    <dirStrings>
+      <dir>C:\Users\shadeMe\Documents\FLAIR\Heilman-QG\src</dir>
+      <dir>C:\Users\shadeMe\Documents\FLAIR\GitHub\src\main\java\edu\cmu\ark</dir>
+      <dir>C:\Users\shadeMe\Documents\FLAIR\GitHub\src\main\java\arkref\ace</dir>
+      <dir>C:\Users\shadeMe\Documents\FLAIR\GitHub\src\main\java\arkref\</dir>
+    </dirStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="ROOT_SYNC" value="DONT_SYNC" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/gramparsing/SearchCrawlParseOp.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/gramparsing/GramParsingPipeline.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/gramparsing/DocParseTask.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/QuestionGenerationPipeline.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/gramparsing/ParseOp.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/QuestionGenerationOp.java" />
+        <option value="$PROJECT_DIR$/src/main/java/edu/cmu/ark/GlobalProperties.java" />
+        <option value="$PROJECT_DIR$/src/main/java/edu/cmu/ark/QuestionTransducer.java" />
+        <option value="$PROJECT_DIR$/src/main/java/edu/cmu/ark/QuestionAsker.java" />
+        <option value="$PROJECT_DIR$/src/test/java/edu/cmu/ark/TestWhPhraseGenerator.java" />
+        <option value="$PROJECT_DIR$/src/main/java/edu/cmu/ark/Question.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/QuestGenTask.java" />
+        <option value="$PROJECT_DIR$/src/main/webapp/WEB-INF/weblogic.xml" />
+        <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/AboutPage.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/server/utilities/ServerLogger.java" />
+        <option value="$PROJECT_DIR$/src/test/java/com/flair/server/QuestionGeneratorTest.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/QuestionGeneratorParams.java" />
+        <option value="$PROJECT_DIR$/src/main/resources/logback.xml" />
+        <option value="$PROJECT_DIR$/src/main/java/edu/cmu/ark/QuestionRanker.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/DocumentPreviewPane.ui.xml" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/client/presentation/interfaces/AbstractWebRankerPresenter.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/shared/interop/AuthToken.java" />
+        <option value="$PROJECT_DIR$/target/generated-sources/gwt/com/flair/shared/interop/services/WebRankerServiceAsync.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/shared/interop/QuestionDTO.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/shared/interop/services/WebRankerService.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/client/presentation/interfaces/AbstractDocumentPreviewPane.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/DocumentPreviewPane.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/shared/interop/DocumentDTO.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/shared/interop/UploadedDocumentImpl.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/shared/interop/RankableWebSearchResultImpl.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/shared/interop/RankableDocumentImpl.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/shared/interop/RankableDocument.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/shared/interop/RankableWebSearchResult.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/shared/interop/ServerMessage.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/server/interop/services/WebRankerServiceImpl.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/client/presentation/interfaces/QuestionGeneratorPreviewService.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/client/model/interfaces/WebRankerAnalysis.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/client/model/interfaces/AbstractWebRankerCore.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/client/presentation/MainViewport.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/client/FLAIR.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/client/localization/resources/strings-en-general.tsv" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/client/localization/resources/strings-de-general.tsv" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/client/localization/BasicLocalizationProvider.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/client/localization/CommonLocalizationTags.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/server/interop/session/SessionState.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/client/model/WebRankerCore.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/client/presentation/MainViewport.ui.xml" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/QuestionGeneratorPreview.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/AboutPage.ui.xml" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/QuestionGeneratorPreview.ui.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="threads" value="4" />
+      </MavenGeneralSettings>
+    </option>
+    <option name="importingSettings">
+      <MavenImportingSettings>
+        <option name="importAutomatically" value="true" />
+      </MavenImportingSettings>
+    </option>
+  </component>
+  <component name="MavenProjectNavigator">
+    <treeState>
+      <expand>
+        <path>
+          <item name="" type="16c1761:MavenProjectsStructure$RootNode" />
+          <item name="FLAIR" type="9519ce18:MavenProjectsStructure$ProjectNode" />
+        </path>
+        <path>
+          <item name="" type="16c1761:MavenProjectsStructure$RootNode" />
+          <item name="FLAIR" type="9519ce18:MavenProjectsStructure$ProjectNode" />
+          <item name="Lifecycle" type="58874e2:MavenProjectsStructure$LifecycleNode" />
+        </path>
+        <path>
+          <item name="" type="16c1761:MavenProjectsStructure$RootNode" />
+          <item name="FLAIR" type="9519ce18:MavenProjectsStructure$ProjectNode" />
+          <item name="Dependencies" type="f4be9f2a:MavenProjectsStructure$DependenciesNode" />
+        </path>
+      </expand>
+      <select />
+    </treeState>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="296" />
+    <option name="y" value="162" />
+    <option name="width" value="1403" />
+    <option name="height" value="748" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="1" id="Add" />
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <flattenPackages ProjectPane="true" />
+      <hideEmptyPackages ProjectPane="true" />
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="PackagesPane" />
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="FLAIR" type="b2602c69:ProjectViewProjectNode" />
+              <item name="GitHub" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="FLAIR" type="b2602c69:ProjectViewProjectNode" />
+              <item name="GitHub" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="FLAIR" type="b2602c69:ProjectViewProjectNode" />
+              <item name="GitHub" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="FLAIR" type="b2602c69:ProjectViewProjectNode" />
+              <item name="GitHub" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="FLAIR" type="b2602c69:ProjectViewProjectNode" />
+              <item name="GitHub" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="FLAIR" type="b2602c69:ProjectViewProjectNode" />
+              <item name="GitHub" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="model" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="FLAIR" type="b2602c69:ProjectViewProjectNode" />
+              <item name="GitHub" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="questgen" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ChangesTree.GroupingKeys" value="" />
+    <property name="GWT.GenerateCompileReport.Module" value="com.flair.FLAIR" />
+    <property name="SearchEverywhereHistoryKey" value="about&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/client/presentation/widgets/AboutPage.ui.xml&#10;docpre&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/client/presentation/widgets/DocumentPreviewPane.ui.xml&#10;overlay&#9;PSI&#9;JAVA://com.flair.client.presentation.MainViewport.BasicOverlay&#10;mainv&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/client/presentation/MainViewport.ui.xml&#10;questgenop&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/server/pipelines/questgen/QuestionGenerationOp.java&#10;grampar&#9;PSI&#9;JAVA://com.flair.server.pipelines.gramparsing.GramParsingPipeline&#10;sess&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/server/interop/session/SessionState.java&#10;quesge&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/client/presentation/widgets/QuestionGeneratorPreview.ui.xml&#10;webrac&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/client/model/WebRankerCore.java&#10;docprev&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/client/presentation/widgets/DocumentPreviewPane.java&#10;basiclo&#9;PSI&#9;JAVA://com.flair.client.localization.BasicLocalizationProvider&#10;webrankec&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/client/model/WebRankerCore.java&#10;doc&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/client/presentation/widgets/DocumentPreviewPane.java&#10;bindto&#9;PSI&#9;JAVA://com.flair.client.model.WebRankerCore#bindToPresenter&#10;relationallocator&#9;FILE&#9;jar://C:/Users/shadeMe/.m2/repository/nz/ac/waikato/cms/weka/weka-stable/3.8.0/weka-stable-3.8.0.jar!/weka/core/RelationalLocator.class&#10;pom&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/pom.xml&#10;querank&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/edu/cmu/ark/QuestionRanker.java&#10;qran&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/edu/cmu/ark/QuestionRanker.java&#10;server&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/server/utilities/ServerLogger.java&#10;pom.xm&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/pom.xml&#10;questgen&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/server/pipelines/questgen/QuestGenTask.java&#10;clientlo&#9;PSI&#9;JAVA://com.flair.client.utilities.ClientLogger&#10;asker&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/edu/cmu/ark/QuestionAsker.java&#10;parseo&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/server/pipelines/gramparsing/ParseOp.java&#10;search&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/server/pipelines/gramparsing/SearchCrawlParseOp.java&#10;parsera&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/server/parser/ParserAnnotations.java&#10;arraylist&#9;PSI&#9;JAVA://java.util.ArrayList&#10;corenlp&#9;PSI&#9;JAVA://com.flair.server.parser.CoreNlpParserAnnotations&#10;docparse&#9;PSI&#9;JAVA://com.flair.server.pipelines.gramparsing.DocParseTask&#10;que&#9;PSI&#9;JAVA://edu.cmu.ark.QuestionAsker&#10;question&#9;PSI&#9;JAVA://edu.cmu.ark.Question&#10;document&#9;PSI&#9;JAVA://com.flair.server.document.Document&#10;analy&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/arkref/parsestuff/AnalysisUtilities.java&#10;questiontra&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/edu/cmu/ark/QuestionTransducer.java&#10;sentences&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/edu/cmu/ark/SentenceSimplifier.java&#10;initials&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/edu/cmu/ark/InitialTransformationStep.java&#10;analysi&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/arkref/parsestuff/AnalysisUtilities.java&#10;questionas&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/edu/cmu/ark/QuestionAsker.java&#10;anal&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/arkref/parsestuff/AnalysisUtilities.java&#10;reso&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/edu/cmu/ark/ResourceLoader.java&#10;ana&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/arkref/parsestuff/AnalysisUtilities.java&#10;analysis&#9;PSI&#9;JAVA://edu.cmu.ark.AnalysisUtilities&#10;superse&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/edu/cmu/ark/SuperSenseWrapper.java&#10;npcl&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/edu/cmu/ark/NPClarification.java&#10;analys&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/edu/cmu/ark/AnalysisUtilities.java&#10;global&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/edu/cmu/ark/GlobalProperties.java&#10;serverlog&#9;PSI&#9;JAVA://com.flair.server.utilities.ServerLogger&#10;session&#9;PSI&#9;JAVA://com.flair.server.interop.session.SessionManager&#10;po&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/pom.xml&#10;bingsea&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/server/crawler/BingSearchAgent.java" />
+    <property name="add_unversioned_files" value="$PROJECT_DIR$/src/main/resources/com/flair/server/crawler/BingSearchAgent.properties&#10;C:/Users/shadeMe/Documents/FLAIR/GitHub/target/generated-sources/gwt/com/flair/shared/interop/services/WebRankerServiceAsync.java" />
+    <property name="last_directory_selection" value="$PROJECT_DIR$/src/test/java" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../Heilman-QG/src" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
+    <property name="restartRequiresConfirmation" value="false" />
+    <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
+    <property name="settings.editor.selected.configurable" value="preferences.sourceCode" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\shadeMe\Documents\FLAIR\GitHub\src\main\resources" />
+      <recent name="C:\Users\shadeMe\Documents\FLAIR\GitHub\src\main\resources\com\flair\server\resources" />
+    </key>
+    <key name="MoveInnerDialog.RECENTS_KEY">
+      <recent name="com.flair.server.pipelines.questgen" />
+      <recent name="com.flair.server.scheduler" />
+      <recent name="com.flair.server.pipelines.gramparsing" />
+      <recent name="com.flair.server.pipelines.documentparsing" />
+    </key>
+    <key name="MoveMembersDialog.RECENTS_KEY">
+      <recent name="com.flair.server.pipelines.questgen.Constants" />
+    </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="arkref" />
+      <recent name="edu.cmu.ark" />
+      <recent name="edu.cmu.ark.tests" />
+      <recent name="" />
+      <recent name="com.flair.server.utilities" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="edu.cmu.ark" />
+      <recent name="com.flair.server.pipelines.gramparsing" />
+      <recent name="com.flair.server.parser.corenlp" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\shadeMe\Documents\FLAIR\GitHub\src\main\java\com\flair\client\presentation\widgets" />
+    </key>
+    <key name="CreateBuilderDialog.RecentsKey">
+      <recent name="com.flair.server.pipelines.questgen" />
+      <recent name="" />
+    </key>
+    <key name="GwtCreateUiBinderDialog.RecentRootElementType">
+      <recent name="com.google.gwt.user.client.ui.HTMLPanel" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="GWT Configuration.SuperDev Mode">
+    <configuration name="&lt;template&gt;" type="TestNG" default="true" selected="false">
+      <option name="VM_PARAMETERS" value="-ea" />
+      <option name="WORKING_DIRECTORY" value="%MODULE_WORKING_DIR%" />
+    </configuration>
+    <configuration name="QuestionAsker" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="edu.cmu.ark.QuestionAsker" />
+      <module name="GitHub" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="QuestionGeneratorTest" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.flair.server.QuestionGeneratorTest" />
+      <module name="GitHub" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="QuestionRanker" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="edu.cmu.ark.QuestionRanker" />
+      <module name="GitHub" />
+      <option name="PROGRAM_PARAMETERS" value="--regularizer 500" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="Application" factoryName="Application">
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SuperDev Mode" type="GWT.ConfigurationType" factoryName="GWT Configuration" singleton="true">
+      <option name="VM_PARAMETERS" value="-Xms1g -Xmx4g" />
+      <option name="SHELL_PARAMETERS" value="-war &quot;C:\Users\shadeMe\Documents\FLAIR\GitHub\target\flair-2.1&quot;" />
+      <option name="RUN_PAGE" value="FLAIR.html" />
+      <option name="START_JAVASCRIPT_DEBUGGER" value="true" />
+      <option name="BROWSER" value="98ca6316-2f89-46d9-a9e5-fa9e2b0625b3" />
+      <option name="UPDATE_RESOURCES_ON_FRAME_DEACTIVATION" value="true" />
+      <option name="USE_SUPER_DEV_MODE" value="true" />
+      <option name="WORKING_DIRECTORY" value="C:\Users\shadeMe\Documents\FLAIR\GitHub\target\flair-2.1" />
+      <module name="GitHub" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="GWT.ConfigurationType" factoryName="GWT Configuration">
+      <option name="VM_PARAMETERS" value="-Xms1g -Xmx4g" />
+      <option name="RUN_PAGE" value="FLAIR.html" />
+      <option name="START_JAVASCRIPT_DEBUGGER" value="true" />
+      <option name="BROWSER" value="a7bb68e0-33c0-4d6f-a81a-aac1fdb870c8" />
+      <option name="USE_SUPER_DEV_MODE" value="true" />
+      <option name="WORKING_DIRECTORY" value="$MAVEN_REPOSITORY$" />
+      <module name="flair" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TestNPClarification" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="GitHub" />
+      <option name="PACKAGE_NAME" value="edu.cmu.ark" />
+      <option name="MAIN_CLASS_NAME" value="edu.cmu.ark.TestNPClarification" />
+      <option name="WORKING_DIRECTORY" value="%MODULE_WORKING_DIR%" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="JUnit" factoryName="JUnit">
+      <option name="WORKING_DIRECTORY" value="%MODULE_WORKING_DIR%" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="edu.cmu.ark in GitHub" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="GitHub" />
+      <option name="PACKAGE_NAME" value="edu.cmu.ark" />
+      <option name="TEST_OBJECT" value="package" />
+      <option name="WORKING_DIRECTORY" value="%MODULE_WORKING_DIR%" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="SuperDev Mode JavaScript" type="JavascriptDebugType" factoryName="JavaScript Debug" engineId="98ca6316-2f89-46d9-a9e5-fa9e2b0625b3" uri="http://127.0.0.1:8888/FLAIR.html" useFirstLineBreakpoints="true">
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="GWT Configuration.SuperDev Mode" />
+      <item itemvalue="JavaScript Debug.SuperDev Mode JavaScript" />
+      <item itemvalue="Application.QuestionAsker" />
+      <item itemvalue="Application.QuestionGeneratorTest" />
+      <item itemvalue="Application.QuestionRanker" />
+      <item itemvalue="JUnit.TestNPClarification" />
+      <item itemvalue="JUnit.edu.cmu.ark in GitHub" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.QuestionGeneratorTest" />
+        <item itemvalue="Application.QuestionRanker" />
+        <item itemvalue="JUnit.TestNPClarification" />
+        <item itemvalue="Application.QuestionAsker" />
+        <item itemvalue="JUnit.edu.cmu.ark in GitHub" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="StructureViewFactory">
+    <option name="ACTIVE_ACTIONS" value=",VISIBILITY_SORTER" />
+  </component>
+  <component name="SvnConfiguration" cleanupOnStartRun="true">
+    <configuration>C:\Users\shadeMe\AppData\Roaming\Subversion</configuration>
+    <supportedVersion>125</supportedVersion>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c89ab379-5832-4084-9720-767029c011ce" name="Default" comment="" />
+      <created>1524759650438</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1524759650438</updated>
+      <workItem from="1524759655436" duration="1535000" />
+      <workItem from="1524769383777" duration="1653000" />
+      <workItem from="1524772471685" duration="1110000" />
+      <workItem from="1524773648622" duration="43000" />
+      <workItem from="1524773743897" duration="241000" />
+      <workItem from="1524774050655" duration="545000" />
+      <workItem from="1524774672021" duration="58000" />
+      <workItem from="1524775887594" duration="1286000" />
+      <workItem from="1528041115343" duration="214000" />
+      <workItem from="1528041828287" duration="444000" />
+      <workItem from="1529857901998" duration="66000" />
+      <workItem from="1529858578121" duration="72000" />
+      <workItem from="1529858970797" duration="6136000" />
+      <workItem from="1530356837086" duration="104000" />
+      <workItem from="1530357083467" duration="37000" />
+      <workItem from="1530901604667" duration="2588000" />
+      <workItem from="1530977041540" duration="4559000" />
+      <workItem from="1530982235450" duration="17101000" />
+      <workItem from="1531056724860" duration="11677000" />
+      <workItem from="1531071100350" duration="13218000" />
+      <workItem from="1531216083014" duration="30503000" />
+      <workItem from="1531434170552" duration="49000" />
+      <workItem from="1531434353262" duration="9933000" />
+      <workItem from="1531584323407" duration="29404000" />
+      <workItem from="1531934828394" duration="28890000" />
+      <workItem from="1532800203008" duration="193000" />
+      <workItem from="1532800850334" duration="48000" />
+      <workItem from="1532800980098" duration="306000" />
+      <workItem from="1532801369876" duration="3177000" />
+      <workItem from="1533232930543" duration="1546000" />
+      <workItem from="1533739514359" duration="295000" />
+      <workItem from="1533740064185" duration="1828000" />
+      <workItem from="1534004855350" duration="42500000" />
+      <workItem from="1534200292355" duration="6026000" />
+      <workItem from="1534208686673" duration="4557000" />
+      <workItem from="1535478664858" duration="52000" />
+      <workItem from="1535478858234" duration="3231000" />
+      <workItem from="1535807797785" duration="30716000" />
+      <workItem from="1536075908385" duration="12983000" />
+      <workItem from="1536092939852" duration="3580000" />
+      <workItem from="1536096569693" duration="1752000" />
+      <workItem from="1536101300028" duration="244000" />
+      <workItem from="1538206903441" duration="895000" />
+      <workItem from="1538435069224" duration="95000" />
+      <workItem from="1538435214824" duration="1561000" />
+      <workItem from="1538591488653" duration="12377000" />
+      <workItem from="1538757373862" duration="22438000" />
+      <workItem from="1538843999692" duration="27982000" />
+      <workItem from="1538941033257" duration="8917000" />
+    </task>
+    <task id="LOCAL-00001" summary="Hide weight sliders on disable&#10;Minor fixes">
+      <created>1529865179221</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1529865179221</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Begin work on QG, sentence selection&#10;Remove redundant TRegex dependency (already bundled with CoreNLP)&#10;Minor fixes">
+      <created>1530983310365</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1530983310365</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Reformatted all Java code for consistency">
+      <created>1530984730256</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1530984730256</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Initial implementation of TextRank sentence selector&#10;Use canonical directory structure for resources">
+      <created>1531086446303</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1531086446303</updated>
+    </task>
+    <task id="LOCAL-00005" summary="More work on the sentence selector&#10;Move the Bing API key out of the code&#10;Minor refactoring">
+      <created>1531432798512</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1531432798512</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Fix TextRank sentence selector implementation&#10;Catergorize resource files&#10;Minor refactoring">
+      <created>1531660492225</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1531660492225</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Expose parser annotations to users of AbstractDocument to remove the &#10;need to parse a document multiple times&#10;Related refactoring and fixes">
+      <created>1531671797549</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1531671797549</updated>
+    </task>
+    <task id="LOCAL-00008" summary="Implement WordNet SynSet lookup for sentence selection (needs more work)&#10;Disable NER in CoreNLP (too slow)&#10;Misc changes">
+      <created>1531694972106</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1531694972106</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Make preprocessing of web page text more robust&#10;Revert to using the default Boilerpipe extractor (the article extractor isn't reliable)&#10;Tweaks to the sentence selector's preprocessor to improve robustness">
+      <created>1531949125439</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1531949125439</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Rewrite parsing and job scheduling framework&#10;Refactor pipeline paradigm&#10;Minor changes and fixes">
+      <created>1534207872160</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1534207872160</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Remove lemma/pos requirement from StopwordAnnotator&#10;Minor fixes">
+      <created>1534243059245</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1534243059245</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Enable the favicon that's been around for ages now&#10;Minor changes">
+      <created>1535826089581</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1535826089581</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Remove copyright headers&#10;Remove author mentions in comments">
+      <created>1535901259317</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1535901259317</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Remove copyright headers&#10;Remove author mentions in comments">
+      <created>1535901361237</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1535901361237</updated>
+    </task>
+    <task id="LOCAL-00015" summary="Remove support for the Faroo search backend (was never used anyway)">
+      <created>1535901527499</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1535901527499</updated>
+    </task>
+    <task id="LOCAL-00016" summary="Minor changes and cleanup">
+      <created>1536082435849</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1536082435849</updated>
+    </task>
+    <task id="LOCAL-00017" summary="Initial commit of the Smith/Heilman question generator code and its&#10;libraries (not working yet)&#10;Add README">
+      <created>1536082566930</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1536082566930</updated>
+    </task>
+    <task id="LOCAL-00018" summary="QG component patched up to a minimally working state - Still fails most of&#10;the tests spectacularly, but the QuestionAsker seems to (ostensibly) work&#10;Based on https://github.com/kutschkem/SmithHeilmann_fork">
+      <created>1536086925513</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1536086925513</updated>
+    </task>
+    <task id="LOCAL-00019" summary="Update citation in the readMe">
+      <created>1536087460005</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1536087460005</updated>
+    </task>
+    <task id="LOCAL-00020" summary="Initial implementation of the question generation pipeline&#10;Related refactoring, changes, fixes and additions">
+      <created>1538768694975</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1538768694975</updated>
+    </task>
+    <task id="LOCAL-00021" summary="Question generation related fixes&#10;Switch to sl4j binding to logback&#10;Misc additions">
+      <created>1538843245475</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1538843245475</updated>
+    </task>
+    <task id="LOCAL-00022" summary="Integrate question generation into the frontend&#10;Misc changes, additions and fixes">
+      <created>1538950068628</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1538950068629</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
+    <servers />
+  </component>
+  <component name="TestHistory">
+    <history-entry file="TestNPClarification - 2018.09.04 at 18h 38m 28s.xml">
+      <configuration name="TestNPClarification" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="TestNPClarification - 2018.09.04 at 18h 40m 07s.xml">
+      <configuration name="TestNPClarification" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="TestNPClarification - 2018.09.04 at 18h 47m 45s.xml">
+      <configuration name="TestNPClarification" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="TestNPClarification - 2018.09.04 at 19h 04m 16s.xml">
+      <configuration name="TestNPClarification" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="TestArkref - 2018.09.04 at 19h 06m 00s.xml">
+      <configuration name="TestArkref" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="TestArkref - 2018.09.04 at 19h 07m 03s.xml">
+      <configuration name="TestArkref" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="edu_cmu_ark_in_GitHub - 2018.09.04 at 19h 07m 44s.xml">
+      <configuration name="edu.cmu.ark in GitHub" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="edu_cmu_ark_in_GitHub - 2018.09.04 at 20h 14m 42s.xml">
+      <configuration name="edu.cmu.ark in GitHub" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="TestNPClarification - 2018.09.04 at 20h 58m 33s.xml">
+      <configuration name="TestNPClarification" configurationId="JUnit" />
+    </history-entry>
+    <history-entry file="TestNPClarification - 2018.09.04 at 20h 58m 59s.xml">
+      <configuration name="TestNPClarification" configurationId="JUnit" />
+    </history-entry>
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="348765000" />
+  </component>
+  <component name="TodoView" selected-index="2">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-8" y="-8" width="1936" height="1096" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info content_ui="combo" x="160" y="168" width="311" height="654" id="Project" order="0" sideWeight="0.5641822" visible="true" weight="0.18763326" />
+      <window_info id="Structure" order="1" sideWeight="0.3478261" side_tool="true" weight="0.26012793" />
+      <window_info id="Web" order="2" sideWeight="0.4358178" side_tool="true" weight="0.18550107" />
+      <window_info id="Learn" order="3" show_stripe_button="false" weight="0.3295302" />
+      <window_info id="Favorites" order="4" sideWeight="0.5007752" side_tool="true" weight="0.17004265" />
+      <window_info id="Designer" order="5" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32091096" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49737534" weight="0.44927537" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.5026247" weight="0.32194617" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.32642487" />
+      <window_info anchor="bottom" id="Problems" order="7" sideWeight="0.49932885" weight="0.32841823" />
+      <window_info anchor="bottom" id="Database Changes" order="8" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Terminal" order="9" weight="0.32953367" />
+      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.50201344" side_tool="true" weight="0.29813665" />
+      <window_info anchor="bottom" id="Version Control" order="11" sideWeight="0.4986577" weight="0.41614908" />
+      <window_info anchor="bottom" id="Java Enterprise" order="12" show_stripe_button="false" weight="0.32868022" />
+      <window_info anchor="bottom" id="Messages" order="13" sideWeight="0.49934384" weight="0.3064182" />
+      <window_info anchor="bottom" id="Run with VisualVM" order="14" weight="1.0" />
+      <window_info anchor="bottom" id="Debug with VisualVM" order="15" weight="1.0" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.24966443" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Bean Validation" order="3" show_stripe_button="false" weight="0.3295302" />
+      <window_info anchor="right" id="Palette&#9;" order="4" />
+      <window_info anchor="right" id="Database" order="5" weight="0.32942432" />
+      <window_info anchor="right" id="Maven Projects" order="6" weight="0.22441365" />
+    </layout>
+    <layout-to-restore>
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4958592" visible="true" weight="0.20469798" />
+      <window_info id="Structure" order="1" sideWeight="0.5041408" side_tool="true" weight="0.19402985" />
+      <window_info id="Web" order="2" sideWeight="0.5007752" side_tool="true" weight="0.1704698" />
+      <window_info id="Learn" order="3" show_stripe_button="false" weight="0.3295302" />
+      <window_info id="Favorites" order="4" sideWeight="0.5007752" side_tool="true" weight="0.17004265" />
+      <window_info id="Designer" order="5" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32352942" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.4986577" weight="0.41787943" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49946696" weight="0.45218295" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.32642487" />
+      <window_info anchor="bottom" id="Problems" order="7" sideWeight="0.49932885" weight="0.32841823" />
+      <window_info anchor="bottom" id="Database Changes" order="8" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Terminal" order="9" weight="0.32953367" />
+      <window_info anchor="bottom" id="Event Log" order="10" sideWeight="0.5013423" side_tool="true" weight="0.6689008" />
+      <window_info anchor="bottom" id="Version Control" order="11" weight="0.41865286" />
+      <window_info anchor="bottom" id="Java Enterprise" order="12" show_stripe_button="false" weight="0.32868022" />
+      <window_info anchor="bottom" id="Messages" order="13" weight="0.32401657" />
+      <window_info anchor="bottom" id="Run with VisualVM" order="14" weight="1.0" />
+      <window_info anchor="bottom" id="Debug with VisualVM" order="15" weight="1.0" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.24966443" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="right" id="Database" order="3" weight="0.3295302" />
+      <window_info anchor="right" id="Bean Validation" order="4" show_stripe_button="false" weight="0.3295302" />
+      <window_info anchor="right" id="Palette&#9;" order="5" />
+      <window_info anchor="right" id="Maven Projects" order="6" weight="0.32885906" />
+    </layout-to-restore>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ORDER">
+      <list>
+        <option value="0" />
+        <option value="2" />
+        <option value="3" />
+        <option value="1" />
+      </list>
+    </option>
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="RECENTLY_FILTERED_USER_GROUPS">
+                <collection />
+              </option>
+              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+                <collection />
+              </option>
+              <option name="COLUMN_ORDER">
+                <list>
+                  <option value="0" />
+                  <option value="1" />
+                  <option value="2" />
+                  <option value="3" />
+                </list>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
+    <option name="CHECK_NEW_TODO" value="false" />
+    <ignored-roots>
+      <path value="$PROJECT_DIR$" />
+    </ignored-roots>
+    <MESSAGE value="Hide weight sliders on disable&#10;Minor fixes" />
+    <MESSAGE value="Begin work on QG, sentence selection&#10;Remove redundant TRegex dependency (already bundled with CoreNLP)&#10;Minor fixes" />
+    <MESSAGE value="Reformatted all Java code for consistency" />
+    <MESSAGE value="Initial implementation of TextRank sentence selector&#10;Use canonical directory structure for resources" />
+    <MESSAGE value="More work on the sentence selector&#10;Move the Bing API key out of the code&#10;Minor refactoring" />
+    <MESSAGE value="Fix TextRank sentence selector implementation&#10;Catergorize resource files&#10;Minor refactoring" />
+    <MESSAGE value="Expose parser annotations to users of AbstractDocument to remove the &#10;need to parse a document multiple times&#10;Related refactoring and fixes" />
+    <MESSAGE value="Implement WordNet SynSet lookup for sentence selection (needs more work)&#10;Disable NER in CoreNLP (too slow)&#10;Misc changes" />
+    <MESSAGE value="Make preprocessing of web page text more robust&#10;Revert to using the default Boilerpipe extractor (the article extractor isn't reliable)&#10;Tweaks to the sentence selector's preprocessor to improve robustness" />
+    <MESSAGE value="Rewrite parsing and job scheduling framework&#10;Refactor pipeline paradigm&#10;Minor changes and fixes" />
+    <MESSAGE value="Remove lemma/pos requirement from StopwordAnnotator&#10;Minor fixes" />
+    <MESSAGE value="Enable the favicon that's been around for ages now&#10;Minor changes" />
+    <MESSAGE value="Remove copyright headers&#10;Remove author mentions in comments" />
+    <MESSAGE value="Remove support for the Faroo search backend (was never used anyway)" />
+    <MESSAGE value="Minor changes and cleanup" />
+    <MESSAGE value="Initial commit of the Smith/Heilman question generator code and its&#10;libraries (not working yet)&#10;Add README" />
+    <MESSAGE value="QG component patched up to a minimally working state - Still fails most of&#10;the tests spectacularly, but the QuestionAsker seems to (ostensibly) work&#10;Based on https://github.com/kutschkem/SmithHeilmann_fork" />
+    <MESSAGE value="Update citation in the readMe" />
+    <MESSAGE value="Initial implementation of the question generation pipeline&#10;Related refactoring, changes, fixes and additions" />
+    <MESSAGE value="Question generation related fixes&#10;Switch to sl4j binding to logback&#10;Misc additions" />
+    <MESSAGE value="Integrate question generation into the frontend&#10;Misc changes, additions and fixes" />
+    <option name="LAST_COMMIT_MESSAGE" value="Integrate question generation into the frontend&#10;Misc changes, additions and fixes" />
+    <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <breakpoint type="java-exception">
+          <properties class="java.util.concurrent.ExecutionException" package="java.util.concurrent" />
+          <option name="timeStamp" value="12" />
+        </breakpoint>
+        <breakpoint enabled="true" type="java-exception">
+          <properties class="java.lang.NullPointerException" package="java.lang" />
+          <option name="timeStamp" value="13" />
+        </breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/com/flair/server/interop/session/SessionState.java</url>
+          <line>492</line>
+          <properties />
+          <option name="timeStamp" value="19" />
+        </line-breakpoint>
+      </breakpoints>
+      <breakpoints-dialog>
+        <breakpoints-dialog />
+      </breakpoints-dialog>
+      <default-breakpoints>
+        <breakpoint enabled="true" type="java-exception">
+          <properties>
+            <option name="NOTIFY_CAUGHT" value="false" />
+          </properties>
+        </breakpoint>
+        <breakpoint type="javascript-exception">
+          <properties uncaughtOnly="true" />
+        </breakpoint>
+      </default-breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="antWorkspaceConfiguration">
+    <option name="IS_AUTOSCROLL_TO_SOURCE" value="false" />
+    <option name="FILTER_TARGETS" value="false" />
+  </component>
+  <component name="debuggerHistoryManager">
+    <expressions id="breakpointCondition">
+      <expression>
+        <expression-string>concepts.isEmpty() == false</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>Double.isFinite(vNewValue) == false</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>i == 5</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>Double.isNaN(cosineDist) == true</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>Double.isNaN(ie.weight) == true</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>Double.isNaN(val) || Double.isInfinite(val)</expression-string>
+        <language-id>JAVA</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+    </expressions>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/shared/interop/UploadedDocumentImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="884">
+          <caret line="72" column="5" selection-start-line="72" selection-start-column="5" selection-end-line="72" selection-end-column="5" />
+          <folding>
+            <element signature="e#1093#1094#0" expanded="true" />
+            <element signature="e#1118#1119#0" expanded="true" />
+            <element signature="e#1168#1169#0" expanded="true" />
+            <element signature="e#1205#1206#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/shared/interop/RankableDocument.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="15" column="8" selection-start-line="15" selection-start-column="8" selection-end-line="15" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/shared/interop/RankableWebSearchResult.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="8" column="4" selection-start-line="8" selection-start-column="4" selection-end-line="8" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/shared/interop/RankableWebSearchResultImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="7" column="63" lean-forward="true" selection-start-line="7" selection-start-column="63" selection-end-line="7" selection-end-column="63" />
+          <folding>
+            <element signature="e#1551#1552#0" expanded="true" />
+            <element signature="e#1576#1577#0" expanded="true" />
+            <element signature="e#1626#1627#0" expanded="true" />
+            <element signature="e#1663#1664#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/shared/interop/RankableDocumentImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4505">
+          <caret line="372" column="5" selection-start-line="372" selection-start-column="5" selection-end-line="372" selection-end-column="5" />
+          <folding>
+            <element signature="e#7643#7644#0" expanded="true" />
+            <element signature="e#7668#7669#0" expanded="true" />
+            <element signature="e#7718#7719#0" expanded="true" />
+            <element signature="e#7755#7756#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/shared/interop/DocumentDTO.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="8" column="17" selection-start-line="8" selection-start-column="17" selection-end-line="8" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/com/flair/server/QuestionGeneratorTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="420">
+          <caret line="36" column="44" selection-start-line="33" selection-start-column="51" selection-end-line="36" selection-end-column="44" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/server/interop/session/SessionManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="530">
+          <caret line="207" column="12" selection-start-line="207" selection-start-column="12" selection-end-line="207" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/shared/interop/services/WebRankerService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="357">
+          <caret line="27" column="19" lean-forward="true" selection-start-line="27" selection-start-column="19" selection-end-line="27" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/model/interfaces/WebRankerAnalysis.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="13" column="14" lean-forward="true" selection-start-line="13" selection-start-column="14" selection-end-line="13" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/HistoryViewer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="805">
+          <caret line="75" column="54" selection-start-line="75" selection-start-column="54" selection-end-line="75" selection-end-column="54" />
+          <folding>
+            <element signature="e#4034#4035#0" expanded="true" />
+            <element signature="e#4080#4081#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/model/interfaces/AbstractWebRankerCore.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-196">
+          <caret line="31" selection-start-line="31" selection-end-line="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/presentation/interfaces/QuestionGeneratorPreviewService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="8" column="16" selection-start-line="8" selection-start-column="16" selection-end-line="8" selection-end-column="16" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1440" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/localization/resources/strings-en-general.tsv">
+      <provider selected="true" editor-type-id="text-editor" />
+      <provider editor-type-id="csv-text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/FLAIR.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="15" selection-start-line="15" selection-end-line="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/localization/DefaultLocalizationProviders.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="7" column="40" selection-start-line="7" selection-start-column="12" selection-end-line="7" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/localization/BasicLocalizationProvider.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="64" column="36" selection-start-line="64" selection-start-column="36" selection-end-line="64" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/QuestionGenerationPipeline.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="371">
+          <caret line="101" selection-start-line="101" selection-end-line="101" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/QuestGenTask.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="536">
+          <caret line="50" column="46" selection-start-line="50" selection-start-column="46" selection-end-line="50" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/edu/stanford/nlp/stanford-corenlp/3.8.0/stanford-corenlp-3.8.0-sources.jar!/edu/stanford/nlp/trees/TreeCoreAnnotations.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="29" column="22" selection-start-line="29" selection-start-column="22" selection-end-line="29" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/cmu/ark/QuestionTransducer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="287">
+          <caret line="585" column="30" selection-start-line="585" selection-start-column="30" selection-end-line="585" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/cmu/ark/WhPhraseGenerator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="413" selection-start-line="413" selection-end-line="413" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/localization/resources/strings-de-constructions.tsv">
+      <provider selected="true" editor-type-id="csv-text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/localization/CommonLocalizationTags.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="256">
+          <caret line="32" column="25" selection-start-line="32" selection-start-column="4" selection-end-line="32" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="http://127.0.0.1:9876/sourcemaps/flair/com/google/gwt/dev/jjs/intrinsic/com/google/gwt/lang/Runtime.java">
+      <provider selected="true" editor-type-id="httpFileEditor" />
+    </entry>
+    <entry file="http://127.0.0.1:9876/sourcemaps/flair/com/google/gwt/dev/jjs/intrinsic/com/google/gwt/lang/Cast.java">
+      <provider selected="true" editor-type-id="httpFileEditor" />
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/google/gwt/gwt-servlet/2.8.0/gwt-servlet-2.8.0-sources.jar!/com/google/gwt/user/client/ui/UIObject.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="118">
+          <caret line="560" selection-start-line="560" selection-end-line="560" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/google/gwt/gwt-servlet/2.8.0/gwt-servlet-2.8.0-sources.jar!/com/google/gwt/user/client/ui/ComplexPanel.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="254">
+          <caret line="93" column="82" lean-forward="true" selection-start-line="93" selection-start-column="82" selection-end-line="93" selection-end-column="82" />
+          <folding>
+            <element signature="e#2274#2275#0" expanded="true" />
+            <element signature="e#2316#2317#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/github/gwtmaterialdesign/gwt-material/2.0-rc7/gwt-material-2.0-rc7-sources.jar!/gwt/material/design/client/base/MaterialWidget.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="202" selection-start-line="202" selection-end-line="202" />
+          <folding>
+            <element signature="e#7022#7023#0" expanded="true" />
+            <element signature="e#7078#7079#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/gramparsing/GramParsingPipeline.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3337">
+          <caret line="22" column="19" selection-start-line="22" selection-start-column="19" selection-end-line="22" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/google/gwt/gwt-dev/2.8.0/gwt-dev-2.8.0.jar!/org/eclipse/jdt/internal/compiler/ast/MessageSend.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="288">
+          <caret line="75" selection-start-line="75" selection-end-line="75" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/shared/interop/ServerMessage.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="147">
+          <caret line="168" column="15" selection-start-line="168" selection-start-column="15" selection-end-line="168" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/google/gwt/gwt-servlet/2.8.0/gwt-servlet-2.8.0-sources.jar!/com/google/gwt/user/server/rpc/RPC.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="188">
+          <caret line="586" selection-start-line="586" selection-end-line="586" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/server/interop/services/WebRankerServiceImpl.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="125">
+          <caret line="20" column="5" lean-forward="true" selection-start-line="20" selection-start-column="5" selection-end-line="20" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/QuestionGenerationOp.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="167">
+          <caret line="88" column="52" selection-start-line="88" selection-start-column="52" selection-end-line="88" selection-end-column="52" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_144/src.zip!/java/lang/Object.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="381" column="29" selection-start-line="381" selection-start-column="29" selection-end-line="381" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/DocumentPreviewPane.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-8">
+          <caret line="388" column="31" selection-start-line="388" selection-start-column="31" selection-end-line="388" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/localization/resources/strings-de-general.tsv">
+      <provider selected="true" editor-type-id="text-editor" />
+      <provider editor-type-id="csv-text-editor" />
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/github/gwtmaterialdesign/gwt-material/2.0-rc7/gwt-material-2.0-rc7-sources.jar!/gwt/material/design/client/ui/MaterialTitle.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="208">
+          <caret line="49" column="13" selection-start-line="49" selection-start-column="13" selection-end-line="49" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/presentation/MainViewport.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="43" column="23" selection-start-line="43" selection-start-column="23" selection-end-line="43" selection-end-column="23" />
+          <folding>
+            <element signature="e#11382#11383#0" expanded="true" />
+            <element signature="e#11409#11410#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/server/interop/session/SessionState.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1586">
+          <caret line="494" lean-forward="true" selection-start-line="494" selection-end-line="494" />
+          <folding>
+            <element signature="docComment;class#SessionState#0" />
+            <element signature="class#TemporaryCache#0;class#SessionState#0" />
+            <element signature="class#CustomCorpus#0;class#TemporaryCache#0;class#SessionState#0" />
+            <element signature="method#CustomCorpus#0;class#CustomCorpus#0;class#TemporaryCache#0;class#SessionState#0" />
+            <element signature="class#UploadedFileDocumentSource#0;class#SessionState#0" />
+            <element signature="method#UploadedFileDocumentSource#0;class#UploadedFileDocumentSource#0;class#SessionState#0" />
+            <element signature="class#PipelineOpCache#0;class#SessionState#0" />
+            <element signature="method#PipelineOpCache#0;class#PipelineOpCache#0;class#SessionState#0" />
+            <element signature="method#newOp#0;class#PipelineOpCache#0;class#SessionState#0" />
+            <element signature="method#endActiveOp#0;class#PipelineOpCache#0;class#SessionState#0" />
+            <element signature="method#activeOp#0;class#PipelineOpCache#0;class#SessionState#0" />
+            <element signature="method#activeOpId#0;class#PipelineOpCache#0;class#SessionState#0" />
+            <element signature="class#DocumentLinkingData#0;class#SessionState#0" />
+            <element signature="method#put#0;class#DocumentLinkingData#0;class#SessionState#0" />
+            <element signature="method#get#0;class#DocumentLinkingData#0;class#SessionState#0" />
+            <element signature="method#SessionState#0;class#SessionState#0" />
+            <element signature="method#cancelOperation#0;class#SessionState#0" />
+            <element signature="method#generateRankableDocument#0;class#SessionState#0" />
+            <element signature="method#generateRankableWebSearchResult#0;class#SessionState#0" />
+            <element signature="method#generateUploadedDocs#0;class#SessionState#0" />
+            <element signature="method#sendMessageToClient#0;class#SessionState#0" />
+            <element signature="method#handleCrawlComplete#0;class#SessionState#0" />
+            <element signature="method#handleParseComplete#0;class#SessionState#0" />
+            <element signature="method#handleParseJobComplete#0;class#SessionState#0" />
+            <element signature="method#handleGenerateQuestionsJobComplete#0;class#SessionState#0" />
+            <element signature="method#sendErrorResponse#0;class#SessionState#0" />
+            <element signature="method#handleCorpusUpload#0;class#SessionState#0" />
+            <element signature="method#searchCrawlParse#0;class#SessionState#0" />
+            <element signature="method#beginCustomCorpusUpload#0;class#SessionState#0" />
+            <element signature="e#14483#14527#0" />
+            <element signature="method#generateQuestions#0;class#SessionState#0" />
+            <element signature="method#release#0;class#SessionState#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://C:/Program Files/Java/jdk1.8.0_144/src.zip!/java/net/URL.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="531" selection-start-line="531" selection-end-line="531" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/model/WebRankerCore.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="108">
+          <caret line="1697" selection-start-line="1697" selection-end-line="1697" />
+          <folding>
+            <element signature="e#1831#2723#0" />
+            <element signature="e#2159#2340#0" />
+            <element signature="e#2726#3134#0" />
+            <element signature="e#2891#3056#0" />
+            <element signature="e#3137#3676#0" />
+            <element signature="e#3251#3371#0" />
+            <element signature="e#3375#3673#0" />
+            <element signature="e#3679#6977#0" />
+            <element signature="e#3742#6545#0" />
+            <element signature="e#3937#4016#0" />
+            <element signature="e#5352#5523#0" />
+            <element signature="e#5712#5968#0" />
+            <element signature="e#5796#5888#0" />
+            <element signature="e#6549#6915#0" />
+            <element signature="e#6980#7071#0" />
+            <element signature="e#7074#7169#0" />
+            <element signature="e#7172#8520#0" />
+            <element signature="e#7382#7534#0" />
+            <element signature="e#8343#8517#0" />
+            <element signature="e#8523#9839#0" />
+            <element signature="e#8684#8773#0" />
+            <element signature="e#8777#8859#0" />
+            <element signature="e#9000#9118#0" />
+            <element signature="e#9122#9224#0" />
+            <element signature="e#9228#9332#0" />
+            <element signature="e#9336#9454#0" />
+            <element signature="e#9458#9582#0" />
+            <element signature="e#9842#20295#0" />
+            <element signature="e#9884#11783#0" />
+            <element signature="e#10416#10680#0" />
+            <element signature="e#10685#10954#0" />
+            <element signature="e#11632#11779#0" />
+            <element signature="e#11787#15265#0" />
+            <element signature="e#12548#13353#0" />
+            <element signature="e#12831#12931#0" />
+            <element signature="e#13701#13855#0" />
+            <element signature="e#14068#14242#0" />
+            <element signature="e#15269#15618#0" />
+            <element signature="e#15622#16311#0" />
+            <element signature="e#16455#16591#0" />
+            <element signature="e#16595#16690#0" />
+            <element signature="e#16694#16905#0" />
+            <element signature="e#16909#17120#0" />
+            <element signature="e#17124#17278#0" />
+            <element signature="e#17409#18083#0" />
+            <element signature="e#18087#18830#0" />
+            <element signature="e#18834#19831#0" />
+            <element signature="e#19907#20017#0" />
+            <element signature="e#20021#20292#0" />
+            <element signature="e#20298#21387#0" />
+            <element signature="e#20463#20714#0" />
+            <element signature="e#20718#21109#0" />
+            <element signature="e#21113#21344#0" />
+            <element signature="e#21348#21384#0" />
+            <element signature="e#21445#21661#0" />
+            <element signature="e#21545#21657#0" />
+            <element signature="e#48874#48875#0" expanded="true" />
+            <element signature="e#48943#48944#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/presentation/MainViewport.ui.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="120" column="27" lean-forward="true" selection-start-line="120" selection-start-column="27" selection-end-line="120" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/github/gwtmaterialdesign/gwt-material/2.0-rc7/gwt-material-2.0-rc7-sources.jar!/gwt/material/design/client/ui/MaterialCard.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="311">
+          <caret line="102" column="11" selection-start-line="102" selection-start-column="11" selection-end-line="102" selection-end-column="11" />
+          <folding>
+            <element signature="e#4358#4359#0" expanded="true" />
+            <element signature="e#4428#4429#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/github/gwtmaterialdesign/gwt-material/2.0-rc7/gwt-material-2.0-rc7-sources.jar!/gwt/material/design/client/ui/MaterialCardReveal.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="38" column="25" selection-start-line="38" selection-start-column="25" selection-end-line="38" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/QuestionGeneratorPreview.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="652">
+          <caret line="64" column="62" selection-start-line="64" selection-start-column="62" selection-end-line="64" selection-end-column="62" />
+          <folding>
+            <element signature="e#4099#4100#0" expanded="true" />
+            <element signature="e#4127#4128#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/DocumentPreviewPane.ui.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="213">
+          <caret line="69" column="43" lean-forward="true" selection-start-line="68" selection-start-column="71" selection-end-line="69" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/AboutPage.ui.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1310">
+          <caret line="194" column="37" selection-start-line="194" selection-start-column="37" selection-end-line="194" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/QuestionGeneratorPreview.ui.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="7" column="78" selection-start-line="7" selection-start-column="78" selection-end-line="7" selection-end-column="78" />
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ArtifactsStructureConfigurable.UI">
+        <settings>
+          <artifact-editor />
+          <last-edited>GitHub:war</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+                <option value="0.5" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="Copyright.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="FacetStructureConfigurable.UI">
+        <settings>
+          <last-edited>GWT</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="GlobalLibrariesConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="JdkListConfigurable.UI">
+        <settings>
+          <last-edited>1.8</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ModuleStructureConfigurable.UI">
+        <settings>
+          <last-edited>Web|GitHub</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ProjectLibrariesConfigurable.UI">
+        <settings>
+          <last-edited>Maven: ant:ant:1.6.5</last-edited>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+      <state key="ScopeChooserConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.780303" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>

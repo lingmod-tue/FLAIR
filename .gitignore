@@ -34,8 +34,6 @@ buildNumber.properties
 .mvn/wrapper/maven-wrapper.jar
 src/main/webapp/WEB-INF/lib/
 
-# IDEA
-.idea/
 
 # Sekrit stuff
 BingSearchAgent.properties
