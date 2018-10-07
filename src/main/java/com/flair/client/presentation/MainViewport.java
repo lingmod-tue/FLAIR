@@ -158,6 +158,8 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	@UiField
 	HistoryViewer mdlHistoryUI;
 	@UiField
+	QuestionGeneratorPreview mdlQuestGenUI;
+	@UiField
 	AboutPage mdlAboutUI;
 	ToastNotifications notificationService;
 	BasicOverlay overlayService;
@@ -387,6 +389,10 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	@Override
 	public HistoryViewerService getHistoryViewerService() {
 		return mdlHistoryUI;
+	}
+	@Override
+	public QuestionGeneratorPreviewService getQuestionGeneratorPreviewService() {
+		return mdlQuestGenUI;
 	}
 
 	@Override

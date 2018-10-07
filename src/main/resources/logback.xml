@@ -10,19 +10,13 @@
 <configuration>
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{HH:mm:ss,SSS} %-5p [%t|%c]- %m%n</pattern>
+            <pattern>[%c] %d{HH:mm:ss,SSS} [%yellow(%t)] %highlight(%-5level) - %m%n</pattern>
+            <charset>UTF-8</charset>
         </encoder>
     </appender>
-    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <File>${catalina.base}/logs/flair.out</File>
-        <encoder>
-            <pattern>%d{HH:mm:ss,SSS} %-5p [%t|%c]- %m%n</pattern>
-        </encoder>
-    </appender>
-    <logger name="FLAIR-ServerLogger" level="TRACE">
+
+    <logger name="FLAIR-Log" level="INFO">
         <appender-ref ref="CONSOLE"/>
-        <appender-ref ref="FILE"/>
     </logger>
-    <logger name="com.gargoylesoftware.htmlunit" level="ERROR"/>
     <root level="DEBUG"/>
 </configuration>

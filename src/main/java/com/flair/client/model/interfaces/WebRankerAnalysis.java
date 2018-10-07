@@ -10,11 +10,11 @@ import java.util.List;
  * Represents a executing or completed analysis operation
  */
 public interface WebRankerAnalysis {
-	public OperationType getType();
-	public String getName();        // web search - <query>
+	OperationType getType();
+	String getName();        // web search - <query>
 	// corpus - <list of file names>
 
-	public Language getLanguage();
-	public List<RankableDocument> getParsedDocs();
-	public boolean inProgress();
+	Language getLanguage();
+	List<RankableDocument> getParsedDocs();
+	boolean inProgress();
 }

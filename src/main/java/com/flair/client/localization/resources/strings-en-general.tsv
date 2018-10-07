@@ -24,7 +24,8 @@ _common-strings_	LANGUAGE_GERMAN	German
 _common-strings_	ACADEMIC_VOCAB	Academic Vocabulary
 _common-strings_	KEYWORDS	Keywords
 _common-strings_	CUSTOM_VOCAB	Custom Vocabulary
-		
+_common-strings_	FEATURE_NOT_SUPPORTED	This feature is not supported yet.
+
 _webrankercore_	ANALYSIS_COMPLETE	Analysis complete.
 _webrankercore_	SELECTED_FOR_COMPARISON	Selected for comparison
 _webrankercore_	CUSTOM_CORPUS_TITLE	Uploaded Files
@@ -79,6 +80,7 @@ DocumentLengthConfigPane	chkShorterTextsUI	Prefer shorter texts.
 		
 DocumentPreviewPane	icoHelpTextUI	Highlights may overlap - Mouse over a highlight to see a tooltip with the names of all embedded constructions
 DocumentPreviewPane	btnShowAllConstUI	All Constructions
+DocumentPreviewPane	btnGenerateQuestionsUI	Generate Questions
 DocumentPreviewPane	NUM_WORDS	Word(s)
 DocumentPreviewPane	NUM_SENTENCES	Sentence(s)
 DocumentPreviewPane	COLUMN_CONSTRUCTION	Construction
@@ -119,7 +121,10 @@ WebSearchModal	selResultCountItm20UI	20 Results
 WebSearchModal	selResultCountItm30UI	30 Results
 WebSearchModal	selResultCountItm40UI	40 Results
 WebSearchModal	selResultCountItm50UI	50 Results
-		
+
+QuestionGeneratorPreview	lblTitleUI	Questions
+QuestionGeneratorPreview	lblPlaceholderUI	No suitable questions could be generated.
+
 ConstructionSliderBundleEnglish	pnlSentencesUI	Sentences
 ConstructionSliderBundleEnglish	pnlQuestionsUI	Questions
 ConstructionSliderBundleEnglish	pnlSentenceTypesUI	Sentence Types

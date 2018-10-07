@@ -4,21 +4,24 @@ package com.flair.server.interop.session;
 import com.flair.server.crawler.SearchResult;
 import com.flair.server.document.*;
 import com.flair.server.grammar.DefaultVocabularyList;
-import com.flair.server.interop.MessagePipeline;
+import com.flair.server.interop.MessagePipe;
 import com.flair.server.parser.KeywordSearcherInput;
 import com.flair.server.parser.KeywordSearcherOutput;
 import com.flair.server.pipelines.PipelineOp;
 import com.flair.server.pipelines.gramparsing.GramParsingPipeline;
+import com.flair.server.pipelines.questgen.GeneratedQuestion;
+import com.flair.server.pipelines.questgen.QuestionGenerationPipeline;
 import com.flair.server.utilities.ServerLogger;
 import com.flair.server.utilities.TextSegment;
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
 import com.flair.shared.interop.*;
 import com.flair.shared.interop.ServerMessage.Type;
+import edu.stanford.nlp.util.Pair;
 
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Stores the state of a client
@@ -58,58 +61,124 @@ public class SessionState {
 		}
 	}
 
+	static final class PipelineOpCache {
+		Map<String, PipelineOp<?, ?>> id2op;      // string UUID > op
+		Pair<PipelineOp<?, ?>, String> currentOp;
+
+		PipelineOpCache() {
+			id2op = new HashMap<>();
+			currentOp = null;
+		}
+
+		void newOp(PipelineOp<?, ?> op) {
+			if (hasActiveOp())
+				throw new RuntimeException("Previous state not cleared");
+
+			String uuid = UUID.randomUUID().toString();
+			if (id2op.containsKey(uuid)) {
+				ServerLogger.get().warn("Pipeline op ID '" + uuid + "' has a hash collision!");
+			}
+
+			id2op.put(uuid, op);
+			currentOp = new Pair<>(op, uuid);
+
+			ServerLogger.get().info("Pipeline operation '" + op.name() + "' has begun");
+		}
+
+		void endActiveOp(boolean cancel) {
+			if (!hasActiveOp())
+				throw new RuntimeException("No operation running");
+
+			if (cancel) {
+				currentOp.first.cancel();
+				ServerLogger.get().info("Pipeline operation '" + currentOp.first.name() + "' was cancelled");
+			} else
+				ServerLogger.get().info("Pipeline operation '" + currentOp.first.name() + "' has ended");
+
+			currentOp = null;
+		}
+
+		PipelineOp<?, ?> lookupOp(String uuid) {
+			return id2op.get(uuid);
+		}
+
+		PipelineOp<?, ?> activeOp() {
+			if (currentOp != null)
+				return currentOp.first;
+			else
+				return null;
+		}
+
+		String activeOpId() {
+			if (currentOp != null)
+				return currentOp.second;
+			else
+				return null;
+		}
+
+		boolean hasActiveOp() {
+			return currentOp != null;
+		}
+	}
+
+	static final class DocumentLinkingData {
+		Map<PipelineOp<?, ?>, Map<Integer, AbstractDocument>> dataStore = new HashMap<>();      // op > (linking id > document)
+
+		void put(PipelineOp<?, ?> op, AbstractDocument source, DocumentDTO dto) {
+			Map<Integer, AbstractDocument> match = dataStore.computeIfAbsent(op, k -> new HashMap<>());
+			if (match.containsKey(dto.getLinkingId()))
+				ServerLogger.get().error("Linking ID collision for document '" + source.getDescription() + "'!");
+			else
+				match.put(dto.getLinkingId(), source);
+		}
+
+		AbstractDocument get(PipelineOp<?, ?> op, DocumentDTO dto) {
+			Map<Integer, AbstractDocument> match = dataStore.get(op);
+			if (match == null)
+				return null;
+			else
+				return match.get(dto.getLinkingId());
+		}
+	}
+
 	private final ServerAuthenticationToken token;
-	private final AbstractMesageSender messagePipeline;
-	private PipelineOp currentOp;
-	private TemporaryCache cache;
+	private final AbstractMesageSender messagePipe;
+	private final PipelineOpCache pipelineOpCache;
+	private final DocumentLinkingData docLinkingData;
+	private TemporaryCache temporaryCache;
 
-	public SessionState(ServerAuthenticationToken tok) {
+	SessionState(ServerAuthenticationToken tok) {
 		token = tok;
-		messagePipeline = MessagePipeline.get().createSender();
-		currentOp = null;
-		cache = new TemporaryCache();
+		messagePipe = MessagePipe.get().createSender();
+		pipelineOpCache = new PipelineOpCache();
+		docLinkingData = new DocumentLinkingData();
+		temporaryCache = new TemporaryCache();
 
-		messagePipeline.open(token);
+		messagePipe.open(token);
 	}
 
-	private void beginOperation(PipelineOp.PipelineOpBuilder opBuilder) {
-		if (hasActiveOp())
-			throw new RuntimeException("Previous state not cleared");
-
+	private void beginNewOperation(PipelineOp.PipelineOpBuilder opBuilder) {
 		// clear the message queue just in case any old messages ended up there
-		messagePipeline.clearPendingMessages();
+		messagePipe.clearPendingMessages();
 
-		currentOp = opBuilder.launch();
-		ServerLogger.get().info("Pipeline operation '" + currentOp.name() + "' has begun");
+		pipelineOpCache.newOp(opBuilder.launch());
 	}
 
-	private void endOperation(boolean cancel) {
-		if (!hasActiveOp())
-			throw new RuntimeException("No operation running");
-
-		if (cancel) {
-			currentOp.cancel();
-			ServerLogger.get().info("Pipeline operation '" + currentOp.name() + "' was cancelled");
-		} else
-			ServerLogger.get().info("Pipeline operation '" + currentOp.name() + "' has ended");
-
-		currentOp = null;
+	private void endActiveOperation(boolean cancel) {
+		pipelineOpCache.endActiveOp(cancel);
 	}
 
-	private boolean hasActiveOp() {
-		return currentOp != null;
-	}
 
 	public synchronized void cancelOperation() {
-		if (!hasActiveOp()) {
+		if (!pipelineOpCache.hasActiveOp()) {
 			sendErrorResponse("No active operation to cancel");
 			return;
 		}
 
-		endOperation(true);
+		endActiveOperation(true);
 	}
 
-	private RankableDocumentImpl generateRankableDocument(AbstractDocument source) {
+	private RankableDocumentImpl generateRankableDocument(AbstractDocument source, String opId) {
 		RankableDocumentImpl out = new RankableDocumentImpl();
 		final int snippetMaxLen = 100;
 
@@ -117,6 +186,7 @@ public class SessionState {
 			throw new IllegalStateException("Document not flagged as parsed");
 
 		out.setLanguage(source.getLanguage());
+		out.setOperationId(opId);
 		if (source.getDocumentSource() instanceof SearchResultDocumentSource) {
 			SearchResultDocumentSource searchSource = (SearchResultDocumentSource) source.getDocumentSource();
 			SearchResult searchResult = searchSource.getSearchResult();
@@ -126,7 +196,7 @@ public class SessionState {
 			out.setDisplayUrl(searchResult.getDisplayURL());
 			out.setSnippet(searchResult.getSnippet());
 			out.setRank(searchResult.getRank());
-			out.setIdentifier(searchResult.getRank());        // ranks don't overlap, so we can use them as ids
+			out.setLinkingId(searchResult.getRank());        // ranks don't overlap, so we can use them as ids
 		} else if (source.getDocumentSource() instanceof UploadedFileDocumentSource) {
 			UploadedFileDocumentSource localSource = (UploadedFileDocumentSource) source.getDocumentSource();
 
@@ -138,7 +208,7 @@ public class SessionState {
 			else
 				out.setSnippet(textSnip);
 
-			out.setIdentifier(localSource.getId());        // use the id generated earlier
+			out.setLinkingId(localSource.getId());        // use the id generated earlier
 			out.setRank(localSource.getId());            // in the same order the files were uploaded to the server
 		}
 
@@ -177,12 +247,14 @@ public class SessionState {
 		out.setReadabilityLevel(source.getReadabilityLevel());
 		out.setReadabilityScore(source.getReadabilityScore());
 
+		docLinkingData.put(pipelineOpCache.lookupOp(opId), source, out);
 		return out;
 	}
 
-	private RankableWebSearchResultImpl generateRankableWebSearchResult(SearchResult sr) {
+	private RankableWebSearchResultImpl generateRankableWebSearchResult(SearchResult sr, String opId) {
 		RankableWebSearchResultImpl out = new RankableWebSearchResultImpl();
 
+		out.setOperationId(opId);
 		out.setRank(sr.getRank());
 		out.setTitle(sr.getTitle());
 		out.setLang(sr.getLanguage());
@@ -190,12 +262,12 @@ public class SessionState {
 		out.setDisplayUrl(sr.getDisplayURL());
 		out.setSnippet(sr.getSnippet());
 		out.setText(sr.getPageText());
-		out.setIdentifier(sr.getRank());
+		out.setLinkingId(sr.getRank());
 
 		return out;
 	}
 
-	private ArrayList<UploadedDocument> generateUploadedDocs(Iterable<AbstractDocumentSource> source) {
+	private ArrayList<UploadedDocument> generateUploadedDocs(Iterable<AbstractDocumentSource> source, String opId) {
 		ArrayList<UploadedDocument> out = new ArrayList<>();
 
 		for (AbstractDocumentSource itr : source) {
@@ -205,11 +277,12 @@ public class SessionState {
 			if (snippet.length() > 100)
 				snippet = snippet.substring(0, 100);
 
+			u.setOperationId(opId);
 			u.setLanguage(itr.getLanguage());
 			u.setTitle(sdr.getName());
 			u.setSnippet(snippet);
 			u.setText(itr.getSourceText());
-			u.setIdentifier(sdr.getId());
+			u.setLinkingId(sdr.getId());
 
 			out.add(u);
 		}
@@ -219,17 +292,17 @@ public class SessionState {
 
 	private void sendMessageToClient(ServerMessage msg) {
 		ServerLogger.get().info("Sent message to client: " + msg.toString());
-		messagePipeline.send(msg);
+		messagePipe.send(msg);
 	}
 
 	private synchronized void handleCorpusJobBegin(Iterable<AbstractDocumentSource> source) {
-		if (hasActiveOp() == false) {
+		if (!pipelineOpCache.hasActiveOp()) {
 			ServerLogger.get().error("Invalid corpus job begin event");
 			return;
 		}
 
 		ServerMessage msg = new ServerMessage(token);
-		ServerMessage.CustomCorpus d = new ServerMessage.CustomCorpus(generateUploadedDocs(source));
+		ServerMessage.CustomCorpus d = new ServerMessage.CustomCorpus(generateUploadedDocs(source, pipelineOpCache.activeOpId()));
 		msg.setCustomCorpus(d);
 		msg.setType(ServerMessage.Type.CUSTOM_CORPUS);
 
@@ -237,13 +310,13 @@ public class SessionState {
 	}
 
 	private synchronized void handleCrawlComplete(SearchResult sr) {
-		if (hasActiveOp() == false) {
+		if (!pipelineOpCache.hasActiveOp()) {
 			ServerLogger.get().error("Invalid crawl complete event");
 			return;
 		}
 
 		ServerMessage msg = new ServerMessage(token);
-		ServerMessage.SearchCrawlParse d = new ServerMessage.SearchCrawlParse(generateRankableWebSearchResult(sr));
+		ServerMessage.SearchCrawlParse d = new ServerMessage.SearchCrawlParse(generateRankableWebSearchResult(sr, pipelineOpCache.activeOpId()));
 		msg.setSearchCrawlParse(d);
 		msg.setType(ServerMessage.Type.SEARCH_CRAWL_PARSE);
 
@@ -251,7 +324,7 @@ public class SessionState {
 	}
 
 	private synchronized void handleParseComplete(ServerMessage.Type t, AbstractDocument doc) {
-		if (hasActiveOp() == false) {
+		if (!pipelineOpCache.hasActiveOp()) {
 			ServerLogger.get().error("Invalid parse complete event for " + t);
 			return;
 		}
@@ -259,10 +332,10 @@ public class SessionState {
 		ServerMessage msg = new ServerMessage(token);
 		switch (t) {
 		case CUSTOM_CORPUS:
-			msg.setCustomCorpus(new ServerMessage.CustomCorpus(generateRankableDocument(doc)));
+			msg.setCustomCorpus(new ServerMessage.CustomCorpus(generateRankableDocument(doc, pipelineOpCache.activeOpId())));
 			break;
 		case SEARCH_CRAWL_PARSE:
-			msg.setSearchCrawlParse(new ServerMessage.SearchCrawlParse(generateRankableDocument(doc)));
+			msg.setSearchCrawlParse(new ServerMessage.SearchCrawlParse(generateRankableDocument(doc, pipelineOpCache.activeOpId())));
 			break;
 		}
 
@@ -270,8 +343,8 @@ public class SessionState {
 		sendMessageToClient(msg);
 	}
 
-	private synchronized void handleJobComplete(ServerMessage.Type t, DocumentCollection docs) {
-		if (hasActiveOp() == false) {
+	private synchronized void handleParseJobComplete(ServerMessage.Type t, DocumentCollection docs) {
+		if (!pipelineOpCache.hasActiveOp()) {
 			ServerLogger.get().error("Invalid job complete event for " + t);
 			return;
 		}
@@ -290,7 +363,24 @@ public class SessionState {
 		sendMessageToClient(msg);
 
 		// reset operation state
-		endOperation(false);
+		endActiveOperation(false);
+	}
+
+	private synchronized void handleGenerateQuestionsJobComplete(Collection<GeneratedQuestion> questions) {
+		if (!pipelineOpCache.hasActiveOp()) {
+			ServerLogger.get().error("Invalid generate questions job complete event!");
+			return;
+		}
+
+		ServerMessage msg = new ServerMessage(token);
+		msg.setType(Type.GENERATE_QUESTIONS);
+		msg.setGenerateQuestions(new ServerMessage.GenerateQuestions(ServerMessage.GenerateQuestions.Type.JOB_COMPLETE));
+		msg.getGenerateQuestions().setGeneratedQuestions(new ArrayList<>(questions.stream().map(q -> new QuestionDTO(q.question, q.answer)).collect(Collectors.toList())));
+
+		sendMessageToClient(msg);
+
+		// reset operation state
+		endActiveOperation(false);
 	}
 
 	private void sendErrorResponse(String err) {
@@ -307,23 +397,22 @@ public class SessionState {
 	public synchronized void handleCorpusUpload(List<CustomCorpusFile> corpus) {
 		ServerLogger.get().info("Received custom corpus from client");
 
-		if (hasActiveOp()) {
+		if (pipelineOpCache.hasActiveOp()) {
 			sendErrorResponse("Another operation still running");
 			return;
-		} else if (cache.corpusData == null) {
+		} else if (temporaryCache.corpusData == null) {
 			sendErrorResponse("Invalid params for custom corpus");
 			return;
 		}
 
 		// save the uploaded file for later
-		for (CustomCorpusFile itr : corpus)
-			cache.corpusData.uploaded.add(itr);
+		temporaryCache.corpusData.uploaded.addAll(corpus);
 	}
 
 	public synchronized void searchCrawlParse(String query, Language lang, int numResults, List<String> keywords) {
 		ServerLogger.get().info("Begin search-crawl-parse -> Query: " + query + ", Language: " + lang.toString() + ", Results: " + numResults);
 
-		if (hasActiveOp()) {
+		if (pipelineOpCache.hasActiveOp()) {
 			sendErrorResponse("Another operation still running");
 			return;
 		}
@@ -341,36 +430,36 @@ public class SessionState {
 				.keywords(keywordInput)
 				.onCrawl(this::handleCrawlComplete)
 				.onParse(e -> handleParseComplete(ServerMessage.Type.SEARCH_CRAWL_PARSE, e))
-				.onComplete(e -> handleJobComplete(ServerMessage.Type.SEARCH_CRAWL_PARSE, e));
+				.onComplete(e -> handleParseJobComplete(ServerMessage.Type.SEARCH_CRAWL_PARSE, e));
 
-		beginOperation(builder);
+		beginNewOperation(builder);
 	}
 
 	public synchronized void beginCustomCorpusUpload(Language lang, List<String> keywords) {
 		ServerLogger.get().info("Begin custom corpus uploading -> Language: " + lang.toString());
 
-		if (hasActiveOp()) {
+		if (pipelineOpCache.hasActiveOp()) {
 			ServerLogger.get().info("Another operation is in progress - Discarding file");
 			return;
 		}
 
 		// cache params and await the upload servlet
 		// discard the previous cache, if any
-		cache.corpusData = new TemporaryCache.CustomCorpus(lang, keywords);
+		temporaryCache.corpusData = new TemporaryCache.CustomCorpus(lang, keywords);
 		ServerLogger.get().info("Cached corpus parse parameters");
 	}
 
 	public synchronized void endCustomCorpusUpload(boolean success) {
 		ServerLogger.get().info("End custom corpus uploading | Success: " + success);
 
-		if (hasActiveOp()) {
+		if (pipelineOpCache.hasActiveOp()) {
 			sendErrorResponse("Another operation still running");
 			return;
 		}
 
 		if (!success) {
 			// don't begin the parse op
-			cache.corpusData = null;
+			temporaryCache.corpusData = null;
 			return;
 		}
 
@@ -378,10 +467,10 @@ public class SessionState {
 		List<AbstractDocumentSource> sources = new ArrayList<>();
 		try {
 			int i = 1;        // assign identifiers to the files for later use
-			for (CustomCorpusFile itr : cache.corpusData.uploaded) {
+			for (CustomCorpusFile itr : temporaryCache.corpusData.uploaded) {
 				sources.add(new UploadedFileDocumentSource(itr.getStream(),
 						itr.getFilename(),
-						cache.corpusData.lang,
+						temporaryCache.corpusData.lang,
 						i));
 				i++;
 			}
@@ -391,27 +480,55 @@ public class SessionState {
 
 
 		GramParsingPipeline.ParseOpBuilder builder = GramParsingPipeline.get().documentParse();
-		builder.lang(cache.corpusData.lang)
+		builder.lang(temporaryCache.corpusData.lang)
 				.docSource(sources)
-				.keywords(cache.corpusData.keywords)
+				.keywords(temporaryCache.corpusData.keywords)
 				.onParse(e -> handleParseComplete(ServerMessage.Type.CUSTOM_CORPUS, e))
-				.onComplete(e -> handleJobComplete(ServerMessage.Type.CUSTOM_CORPUS, e));
+				.onComplete(e -> handleParseJobComplete(ServerMessage.Type.CUSTOM_CORPUS, e));
 
-		beginOperation(builder);
+		beginNewOperation(builder);
 
 		// reset cache
-		cache.corpusData = null;
+		temporaryCache.corpusData = null;
+		handleCorpusJobBegin(sources);
+	}
+
+	public synchronized void generateQuestions(RankableDocument doc, int numQuestions) {
+		PipelineOp<?, ?> sourceOp = pipelineOpCache.lookupOp(doc.getOperationId());
+		if (sourceOp == null) {
+			sendErrorResponse("Couldn't find pipeline op with id " + doc.getOperationId());
+			return;
+		}
+		AbstractDocument sourceDoc = docLinkingData.get(sourceOp, doc);
+		if (sourceDoc == null) {
+			sendErrorResponse("Couldn't find source doc with linking id " + doc.getLinkingId() + " and pipeline op id " + doc.getOperationId());
+			return;
+		}
+
+		ServerLogger.get().info("Begin question generation -> Doc: " + sourceDoc.getDescription() + ", Questions: " + numQuestions);
+
+		if (pipelineOpCache.hasActiveOp()) {
+			sendErrorResponse("Another operation still running");
+			return;
+		}
+
+		QuestionGenerationPipeline.QuestionGenerationOpBuilder builder = QuestionGenerationPipeline.get().generateQuestions()
+				.sourceDoc(sourceDoc)
+				.numSelectedSentences(numQuestions)
+				.onComplete(this::handleGenerateQuestionsJobComplete);
+
+		beginNewOperation(builder);
 	}
 
 	public synchronized void release() {
-		if (hasActiveOp()) {
+		if (pipelineOpCache.hasActiveOp()) {
 			ServerLogger.get().warn("Pipeline operation is still executing at the time of shutdown. Status: "
-					+ currentOp.toString());
+					+ pipelineOpCache.activeOp().toString());
 
-			endOperation(true);
+			endActiveOperation(true);
 		}
 
-		if (messagePipeline.isOpen())
-			messagePipeline.close();
+		if (messagePipe.isOpen())
+			messagePipe.close();
 	}
 }

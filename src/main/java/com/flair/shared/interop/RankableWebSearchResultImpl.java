@@ -6,7 +6,8 @@ import com.flair.shared.grammar.Language;
  * Serializable version of a web search result
  */
 public class RankableWebSearchResultImpl implements RankableWebSearchResult {
-	int identifier;
+	String operationId;
+	int linkingId;
 	Language language;
 	String title;
 	String url;
@@ -16,7 +17,7 @@ public class RankableWebSearchResultImpl implements RankableWebSearchResult {
 	String text;
 
 	public RankableWebSearchResultImpl() {
-		identifier = 0;
+		linkingId = 0;
 		rank = -1;
 		language = null;
 		title = url = displayUrl = snippet = text = "";
@@ -86,11 +87,19 @@ public class RankableWebSearchResultImpl implements RankableWebSearchResult {
 	}
 
 	@Override
-	public int getIdentifier() {
-		return identifier;
+	public int getLinkingId() {
+		return linkingId;
 	}
 
-	public void setIdentifier(int id) {
-		identifier = id;
+	public void setLinkingId(int id) {
+		linkingId = id;
+	}
+
+	@Override
+	public String getOperationId() {
+		return operationId;
+	}
+	public void setOperationId(String operationId) {
+		this.operationId = operationId;
 	}
 }

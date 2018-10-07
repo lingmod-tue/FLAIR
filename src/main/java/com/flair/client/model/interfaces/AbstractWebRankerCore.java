@@ -15,14 +15,14 @@ public interface AbstractWebRankerCore {
 	 * Transient operations have explicit begin and end events
 	 * Non-transient operations only have an end event
 	 */
-	public static enum OperationType {
+	enum OperationType {
 		NONE,
 		// Transient
 		WEB_SEARCH,
 		CUSTOM_CORPUS,
 		// Non-transient
 		COMPARE,            // compare documents
-		RESTORE                // restore a previous operation
+		RESTORE             // restore a previous operation
 		;
 
 		public static boolean isTransient(OperationType t) {
@@ -36,7 +36,7 @@ public interface AbstractWebRankerCore {
 		}
 	}
 
-	public static class BeginOperation {
+	class BeginOperation {
 		public final OperationType op;
 		public final Language lang;
 
@@ -46,7 +46,7 @@ public interface AbstractWebRankerCore {
 		}
 	}
 
-	public static class EndOperation {
+	class EndOperation {
 		public final OperationType op;
 		public final Language lang;
 		public final boolean success;
@@ -58,12 +58,12 @@ public interface AbstractWebRankerCore {
 		}
 	}
 
-	public void init(AuthToken token, AbstractWebRankerPresenter presenter);
+	void init(AuthToken token, AbstractWebRankerPresenter presenter);
 
-	public WebRankerAnalysis getCurrentOperation();
-	public void cancelCurrentOperation();
-	public boolean isOperationInProgress();
+	WebRankerAnalysis getCurrentOperation();
+	void cancelCurrentOperation();
+	boolean isOperationInProgress();
 
-	public void addBeginOperationHandler(GenericEventSource.EventHandler<BeginOperation> handler);
-	public void addEndOperationHandler(GenericEventSource.EventHandler<EndOperation> handler);
+	void addBeginOperationHandler(GenericEventSource.EventHandler<BeginOperation> handler);
+	void addEndOperationHandler(GenericEventSource.EventHandler<EndOperation> handler);
 }

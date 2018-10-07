@@ -450,11 +450,11 @@ public class QuestionRanker implements Serializable {
 	public static void main(String[] args) throws IOException {
 		QuestionRanker r;
 
-		String trainFile = null;
+		String trainFile = ResourceLoader.path("qg-training-31-aug-2010.dat");
 		String testFile = null;
 		BufferedReader br;
 		String loadModelPath = null;
-		String saveModelPath = null;
+		String saveModelPath = "C:\\Users\\shadeMe\\Documents\\FLAIR\\GitHub\\src\\main\\resources\\edu\\cmu\\ark\\linear-regression-ranker-reg500.ser.gz";
 		boolean crossValidate = false;
 		double minimumAcceptability = 3.5;
 		String saveQuestionsPath = null;
@@ -497,7 +497,6 @@ public class QuestionRanker implements Serializable {
 			}
 
 		}
-
 
 		r = new QuestionRanker();
 		if (loadModelPath != null) {

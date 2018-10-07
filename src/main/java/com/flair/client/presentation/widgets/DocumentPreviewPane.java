@@ -84,6 +84,9 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 	@LocalizedField(type = LocalizedFieldType.TEXT_BUTTON)
 	MaterialButton btnShowAllConstUI;
 	@UiField
+	@LocalizedField(type = LocalizedFieldType.TEXT_BUTTON)
+	MaterialButton btnGenerateQuestionsUI;
+	@UiField
 	MaterialIcon icoCloseModalUI;
 	@UiField
 	MaterialColumn pnlAllConstCol1UI;
@@ -94,6 +97,7 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 
 	State state;
 	ShowHideHandler showhideHandler;
+	GenerateQuestionsHandler generateQuestionsHandler;
 	boolean visible;
 
 	private enum TableType {
@@ -393,6 +397,7 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 			// reset component visibility
 			pnlWeightSelectionUI.setVisible(true);
 			btnShowAllConstUI.setVisible(true);
+			btnGenerateQuestionsUI.setVisible(true);
 
 			lblDocTitleUI.setVisible(true);
 			lblDocLevelUI.setVisible(true);
@@ -437,6 +442,7 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 				// hide unused widgets
 				pnlWeightSelectionUI.setVisible(false);
 				btnShowAllConstUI.setVisible(false);
+				btnGenerateQuestionsUI.setVisible(false);
 				lblDocLevelUI.setVisible(false);
 				lblDocNumSentencesUI.setVisible(false);
 				lblDocNumWordsUI.setVisible(false);
@@ -474,6 +480,7 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 
 			overlay.show(btnShowAllConstUI, pnlAllConstUI);
 		});
+		btnGenerateQuestionsUI.addClickHandler(e -> generateQuestionsHandler.handle(state.rankable.getDocument()));
 	}
 
 	private void initUI() {
@@ -529,6 +536,10 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 	@Override
 	public void setShowHideEventHandler(ShowHideHandler handler) {
 		showhideHandler = handler;
+	}
+	@Override
+	public void setGenerateQuestionsHandler(GenerateQuestionsHandler handler) {
+		generateQuestionsHandler = handler;
 	}
 
 	@Override

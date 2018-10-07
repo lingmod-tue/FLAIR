@@ -11,14 +11,14 @@ import java.util.Queue;
 /*
  * Endpoint for message handling requests
  */
-public class MessagePipeline {
-	private static MessagePipeline SINGLETON = null;
+public class MessagePipe {
+	private static MessagePipe SINGLETON = null;
 
-	public static MessagePipeline get() {
+	public static MessagePipe get() {
 		if (SINGLETON == null) {
-			synchronized (MessagePipeline.class) {
+			synchronized (MessagePipe.class) {
 				if (SINGLETON == null)
-					SINGLETON = new MessagePipeline();
+					SINGLETON = new MessagePipe();
 			}
 		}
 
@@ -136,7 +136,7 @@ public class MessagePipeline {
 	}
 
 
-	private MessagePipeline() {
+	private MessagePipe() {
 		type = MessagePipelineType.PULL;
 		token2Pull = new HashMap<>();
 		pull2Token = new HashMap<>();

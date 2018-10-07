@@ -101,7 +101,8 @@ public final class RankableDocumentImpl implements RankableDocument {
 		}
 	}
 
-	int identifier;
+	String operationId;
+	int linkingId;
 	Language language;
 	int rank;
 
@@ -127,7 +128,7 @@ public final class RankableDocumentImpl implements RankableDocument {
 	double readabilityScore;
 
 	public RankableDocumentImpl() {
-		identifier = 0;
+		linkingId = 0;
 		language = null;
 		rank = -1;
 
@@ -346,12 +347,12 @@ public final class RankableDocumentImpl implements RankableDocument {
 	}
 
 	@Override
-	public int getIdentifier() {
-		return identifier;
+	public int getLinkingId() {
+		return linkingId;
 	}
 
-	public void setIdentifier(int id) {
-		identifier = id;
+	public void setLinkingId(int id) {
+		linkingId = id;
 	}
 
 	@Override
@@ -361,5 +362,13 @@ public final class RankableDocumentImpl implements RankableDocument {
 
 	public void setReadabilityScore(double val) {
 		readabilityScore = val;
+	}
+
+	@Override
+	public String getOperationId() {
+		return operationId;
+	}
+	public void setOperationId(String operationId) {
+		this.operationId = operationId;
 	}
 }

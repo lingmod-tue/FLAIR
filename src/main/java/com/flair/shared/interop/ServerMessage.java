@@ -12,7 +12,8 @@ public class ServerMessage implements IsSerializable {
 	public enum Type {
 		ERROR,
 		SEARCH_CRAWL_PARSE,
-		CUSTOM_CORPUS
+		CUSTOM_CORPUS,
+		GENERATE_QUESTIONS
 	}
 
 	public static final class Error implements IsSerializable {
@@ -129,9 +130,9 @@ public class ServerMessage implements IsSerializable {
 			StringBuilder sb = new StringBuilder();
 			sb.append("SEARCH-CRAWL-PARSE: ").append(type).append("\n");
 			if (type == Type.CRAWL_COMPLETE)
-				sb.append("Search Result: " + crawled.getTitle() + ", " + crawled.getDisplayUrl() + " | ID =" + crawled.getIdentifier());
+				sb.append("Search Result: " + crawled.getTitle() + ", " + crawled.getDisplayUrl() + " | ID =" + crawled.getLinkingId());
 			else if (type == Type.PARSE_COMPLETE)
-				sb.append("Parsed Doc: " + parsed.getTitle() + ", " + parsed.getDisplayUrl() + " | ID =" + parsed.getIdentifier());
+				sb.append("Parsed Doc: " + parsed.getTitle() + ", " + parsed.getDisplayUrl() + " | ID =" + parsed.getLinkingId());
 			return sb.toString();
 		}
 	}
@@ -202,7 +203,65 @@ public class ServerMessage implements IsSerializable {
 			if (type == Type.UPLOAD_COMPLETE)
 				sb.append("Uploaded files: " + uploaded.size());
 			else if (type == Type.PARSE_COMPLETE)
-				sb.append("Parsed Doc: " + parsed.getTitle() + " | ID =" + parsed.getIdentifier());
+				sb.append("Parsed Doc: " + parsed.getTitle() + " | ID =" + parsed.getLinkingId());
+			return sb.toString();
+		}
+	}
+
+	public static final class GenerateQuestions implements IsSerializable {
+		public enum Type {
+			SENTENCE_SELECTION_COMPLETE,
+			JOB_COMPLETE
+		}
+
+		Type type;
+		ArrayList<String> selectedSentences;
+		ArrayList<QuestionDTO> generatedQuestions;
+
+		public GenerateQuestions() {
+			type = null;
+			selectedSentences = null;
+			generatedQuestions = null;
+		}
+
+		public GenerateQuestions(Type t) {
+			type = t;
+			selectedSentences = null;
+			generatedQuestions = null;
+		}
+
+		public Type getType() {
+			return type;
+		}
+
+		public void setType(Type type) {
+			this.type = type;
+		}
+
+		public ArrayList<String> getSelectedSentences() {
+			return selectedSentences;
+		}
+
+		public void setSelectedSentences(ArrayList<String> selectedSentences) {
+			this.selectedSentences = selectedSentences;
+		}
+
+		public ArrayList<QuestionDTO> getGeneratedQuestions() {
+			return generatedQuestions;
+		}
+
+		public void setGeneratedQuestions(ArrayList<QuestionDTO> generatedQuestions) {
+			this.generatedQuestions = generatedQuestions;
+		}
+
+		@Override
+		public String toString() {
+			StringBuilder sb = new StringBuilder();
+			sb.append("GENERATE-QUESTIONS: ").append(type).append("\n");
+			if (type == Type.SENTENCE_SELECTION_COMPLETE)
+				sb.append("Selected sentences: " + selectedSentences.size());
+			else if (type == Type.JOB_COMPLETE)
+				sb.append("Generated questions: " + generatedQuestions.size());
 			return sb.toString();
 		}
 	}
@@ -212,6 +271,7 @@ public class ServerMessage implements IsSerializable {
 	Error error;
 	SearchCrawlParse searchCrawlParse;
 	CustomCorpus customCorpus;
+	GenerateQuestions generateQuestions;
 
 	public ServerMessage() {
 		receiverToken = null;
@@ -219,6 +279,7 @@ public class ServerMessage implements IsSerializable {
 		error = null;
 		searchCrawlParse = null;
 		customCorpus = null;
+		generateQuestions = null;
 	}
 
 	public ServerMessage(AuthToken t) {
@@ -227,6 +288,7 @@ public class ServerMessage implements IsSerializable {
 		error = null;
 		searchCrawlParse = null;
 		customCorpus = null;
+		generateQuestions = null;
 	}
 
 	public AuthToken getReceiverToken() {
@@ -269,6 +331,14 @@ public class ServerMessage implements IsSerializable {
 		this.customCorpus = customCorpus;
 	}
 
+	public GenerateQuestions getGenerateQuestions() {
+		return generateQuestions;
+	}
+
+	public void setGenerateQuestions(GenerateQuestions generateQuestions) {
+		this.generateQuestions = generateQuestions;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -277,8 +347,10 @@ public class ServerMessage implements IsSerializable {
 			sb.append("\t").append(error.toString());
 		else if (type == Type.SEARCH_CRAWL_PARSE)
 			sb.append("\t").append(searchCrawlParse.toString());
-		else
+		else if (type == Type.CUSTOM_CORPUS)
 			sb.append("\t").append(customCorpus.toString());
+		else if (type == Type.GENERATE_QUESTIONS)
+			sb.append("\t").append(generateQuestions.toString());
 
 		return sb.toString();
 	}

@@ -32,7 +32,7 @@ import java.util.*;
  * Monolithic controller component for the various widgets and services
  */
 public class WebRankerCore implements AbstractWebRankerCore {
-	static enum LocalizationTags {
+	enum LocalizationTags {
 		ANALYSIS_COMPLETE,
 		SELECTED_FOR_COMPARISON,
 		CUSTOM_CORPUS_TITLE,
@@ -141,6 +141,9 @@ public class WebRankerCore implements AbstractWebRankerCore {
 				doc = d;
 				rank = -1;
 			}
+			ComparisonWrapper() {
+				doc = null;
+			}
 
 			@Override
 			public Language getLanguage() {
@@ -161,10 +164,14 @@ public class WebRankerCore implements AbstractWebRankerCore {
 			public String getText() {
 				return doc.getText();
 			}
+			@Override
+			public String getOperationId() {
+				return doc.getOperationId();
+			}
 
 			@Override
-			public int getIdentifier() {
-				return doc.getIdentifier();
+			public int getLinkingId() {
+				return doc.getLinkingId();
 			}
 
 			@Override
@@ -376,7 +383,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 			u = ud;
 		}
 
-		public BasicDocumentTransferObject getDTO() {
+		public DocumentDTO getDTO() {
 			return s != null ? s : u;
 		}
 
@@ -649,9 +656,9 @@ public class WebRankerCore implements AbstractWebRankerCore {
 		}
 
 		final class PreviewUnrankableInput implements DocumentPreviewPaneInput.UnRankable {
-			private final BasicDocumentTransferObject dto;
+			private final DocumentDTO dto;
 
-			public PreviewUnrankableInput(BasicDocumentTransferObject dto) {
+			public PreviewUnrankableInput(DocumentDTO dto) {
 				this.dto = dto;
 			}
 
@@ -842,39 +849,88 @@ public class WebRankerCore implements AbstractWebRankerCore {
 		}
 	}
 
-	private final class TransientProcessManager {
+	private final class ServerMessagePoller {
 		private static final int TIMEOUT_MS = 10 * 60 * 1000;
-		private static final int PING_TIMEOUT_MS = 30 * 1000;
 
+		Timer timeout;
+		Runnable timeoutHandler;
+		boolean running;
+
+		ServerMessagePoller() {
+			timeout = new Timer() {
+				@Override
+				public void run() {
+					if (timeoutHandler != null)
+						timeoutHandler.run();
+
+					if (running)
+						endPolling();
+				}
+			};
+
+			timeoutHandler = null;
+			running = false;
+		}
+
+		void beginPolling(AbstractMessageReceiver.MessageHandler messageHandler, Runnable timeoutHandler, boolean timeoutEnabled) {
+			if (running)
+				throw new RuntimeException("Message poller is busy");
+
+			running = true;
+			this.timeoutHandler = timeoutHandler;
+			messagePipe.setHandler(messageHandler);
+			messagePipe.open(token);
+
+			if (timeoutEnabled)
+				timeout.schedule(TIMEOUT_MS);
+		}
+
+		void endPolling() {
+			if (!running)
+				throw new RuntimeException("Message poller is inactive");
+
+			running = false;
+			this.timeoutHandler = null;
+
+			if (messagePipe.isOpen())
+				messagePipe.close();
+
+			timeout.cancel();
+		}
+
+		boolean isBusy() { return running; }
+	}
+
+	private final class TransientParsingProcessManager {
 		final class InProgressData {
-			BasicDocumentTransferObject inProgressItem;
+			DocumentDTO inProgressItem;
 			InProgressResultItem resultItem;
 
-			InProgressData(BasicDocumentTransferObject dto, InProgressResultItem itm) {
+			InProgressData(DocumentDTO dto, InProgressResultItem itm) {
 				inProgressItem = dto;
 				resultItem = itm;
 			}
 		}
 
 		final class ServerMessageHandler implements AbstractMessageReceiver.MessageHandler {
-			void addInProgressItem(InProgressResultItem item, BasicDocumentTransferObject dto) {
-				if (inProgress.containsKey(dto.getIdentifier())) {
+			void addInProgressItem(InProgressResultItem item, DocumentDTO dto) {
+				if (inProgress.containsKey(dto.getLinkingId())) {
 					ClientLogger.get().error("DTO hash collision!");
 					return;
 				}
 
-				inProgress.put(dto.getIdentifier(), new InProgressData(dto, item));
+				inProgress.put(dto.getLinkingId(), new InProgressData(dto, item));
 				results.addInProgress(item);
 				numReceivedInprogress++;
 			}
 
 			void addParsedDoc(RankableDocument doc) {
 				// remove the corresponding inprogress item
-				if (inProgress.containsKey(doc.getIdentifier()) == false)
+				if (!inProgress.containsKey(doc.getLinkingId()))
 					ClientLogger.get().error("DTO hash miss!");
 				else {
-					InProgressResultItem item = inProgress.get(doc.getIdentifier()).resultItem;
-					inProgress.remove(doc.getIdentifier());
+					InProgressResultItem item = inProgress.get(doc.getLinkingId()).resultItem;
+					inProgress.remove(doc.getLinkingId());
 					results.removeInProgress(item);
 				}
 
@@ -983,27 +1039,15 @@ public class WebRankerCore implements AbstractWebRankerCore {
 		}
 
 		ProcessData data;
-		Timer timeout;
 		Map<Integer, InProgressData> inProgress;            // DTO ids -> result items
 		int numReceivedInprogress;
 		SuccessfulParseEventHandler parseHandler;
 		ProcessCompletionEventHandler completionHandler;
 
-		TransientProcessManager() {
+		TransientParsingProcessManager() {
 			data = null;
 			inProgress = new HashMap<>();
 			numReceivedInprogress = 0;
-
-			timeout = new Timer() {
-				@Override
-				public void run() {
-					if (data != null) {
-						cancel();
-						notification.notify(getLocalizedString(LocalizationTags.OP_TIMEDOUT.toString()), 5000);
-						ClientLogger.get().error("The current operation timed-out!");
-					}
-				}
-			};
 
 			parseHandler = null;
 			completionHandler = null;
@@ -1014,7 +1058,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 				throw new RuntimeException("Process manager is busy");
 			else if (d.complete)
 				throw new RuntimeException("Process is already complete");
-			else if (OperationType.isTransient(d.type) == false)
+			else if (!OperationType.isTransient(d.type))
 				throw new RuntimeException("Process " + d.type + " is not transient");
 
 			// init and set up message pipeline
@@ -1034,16 +1078,19 @@ public class WebRankerCore implements AbstractWebRankerCore {
 			settings.hide();
 			preview.hide();
 
-			messagePipeline.setHandler(new ServerMessageHandler());
-			messagePipeline.open(token);
+			// no timeout for the upload op as the corpus uploader manages its own state (that needs cleanup)
+			messagePoller.beginPolling(new ServerMessageHandler(), () -> {
+				if (data != null) {
+					cancel();
+					notification.notify(getLocalizedString(LocalizationTags.OP_TIMEDOUT.toString()), 5000);
+					ClientLogger.get().error("The current operation timed-out!");
+				}
+			}, data.type == OperationType.WEB_SEARCH);
 
-			if (data.type == OperationType.WEB_SEARCH) {
-				timeout.schedule(TIMEOUT_MS);
+			if (data.type == OperationType.WEB_SEARCH)
 				results.setPanelTitle("'" + ((WebSearchProcessData) data).query + "'");
-			} else {
-				// no timeout for the upload op as the corpus uploader manages its own state (that needs cleanup)
+			else
 				results.setPanelTitle(getLocalizedString(LocalizationTags.CUSTOM_CORPUS_TITLE.toString()));
-			}
 		}
 
 		void reset(boolean success) {
@@ -1052,7 +1099,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 				presenter.showCancelPane(false);
 				presenter.showProgressBar(false);
 
-				if (GwtUtil.isSmallScreen() == false)
+				if (!GwtUtil.isSmallScreen())
 					settings.show();
 
 				// rerank the parsed docs as their original ranks can be discontinuous
@@ -1083,12 +1130,9 @@ public class WebRankerCore implements AbstractWebRankerCore {
 				upload.hide();
 			}
 
-			if (messagePipeline.isOpen())
-				messagePipeline.close();
-
+			messagePoller.endPolling();
 			data.complete = true;
 			data.invalid = success == false;
-			timeout.cancel();
 			completionHandler.handle(data, success);
 
 			data = null;
@@ -1099,7 +1143,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 		}
 
 		void cancel() {
-			if (isBusy() == false)
+			if (!isBusy())
 				return;
 
 			service.cancelCurrentOperation(token, FuncCallback.get(e -> {}));
@@ -1107,7 +1151,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 		}
 
 		boolean isBusy() {
-			return data != null;
+			return messagePoller.isBusy();
 		}
 	}
 
@@ -1322,11 +1366,12 @@ public class WebRankerCore implements AbstractWebRankerCore {
 		}
 	}
 
+
 	private AuthToken token;
 	private AbstractWebRankerPresenter presenter;
 	private final AbstractDocumentRanker ranker;
 	private final AbstractDocumentAnnotator annotator;
-	private final AbstractMessageReceiver messagePipeline;
+	private final AbstractMessageReceiver messagePipe;
 	private final SettingsExportService exporter;
 	private AbstractRankerSettingsPane settings;
 	private AbstractDocumentResultsPane results;
@@ -1341,9 +1386,11 @@ public class WebRankerCore implements AbstractWebRankerCore {
 	private SettingsUrlExporterView urlExport;
 	private DocumentCompareService comparer;
 	private HistoryViewerService history;
+	private QuestionGeneratorPreviewService questgenpreview;
 	private final WebRankerServiceAsync service;
+	private final ServerMessagePoller messagePoller;
 	private final RankPreviewModule rankPreviewModule;
-	private final TransientProcessManager transientProcessManager;
+	private final TransientParsingProcessManager transientParsingProcessManager;
 	private final ProcessHistory processHistory;
 	private ConstructionSettingsProfile importedSettings;
 	private final WebSearchCooldownTimer searchCooldown;
@@ -1358,7 +1405,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 
 		ranker = r;
 		annotator = a;
-		messagePipeline = m;
+		messagePipe = m;
 		exporter = new SettingsUrlExporter();
 
 		settings = null;
@@ -1376,8 +1423,9 @@ public class WebRankerCore implements AbstractWebRankerCore {
 		history = null;
 
 		service = WebRankerServiceAsync.Util.getInstance();
+		messagePoller = new ServerMessagePoller();
 		rankPreviewModule = new RankPreviewModule();
-		transientProcessManager = new TransientProcessManager();
+		transientParsingProcessManager = new TransientParsingProcessManager();
 		processHistory = new ProcessHistory();
 		searchCooldown = new WebSearchCooldownTimer();
 
@@ -1402,13 +1450,14 @@ public class WebRankerCore implements AbstractWebRankerCore {
 		urlExport = presenter.getSettingsUrlExporterView();
 		comparer = presenter.getDocumentCompareService();
 		history = presenter.getHistoryViewerService();
+		questgenpreview = presenter.getQuestionGeneratorPreviewService();
 
 		settings.setExportSettingsHandler(() -> {
 			String url = exporter.exportSettings(settings.generateSettingsProfile());
 			urlExport.show(url);
 		});
 		settings.setVisualizeHandler(() -> {
-			if (transientProcessManager.isBusy())
+			if (transientParsingProcessManager.isBusy())
 				notification.notify(getLocalizedString(DefaultLocalizationProviders.COMMON.toString(), CommonLocalizationTags.WAIT_TILL_COMPLETION.toString()));
 			else
 				rankPreviewModule.visualize();
@@ -1421,6 +1470,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 			if (!v)
 				results.clearSelection();
 		});
+		preview.setGenerateQuestionsHandler(e -> onGenerateQuestions(e));
 		upload.setUploadBeginHandler(e -> onUploadBegin(e));
 		upload.setUploadCompleteHandler((n, s) -> onUploadComplete(n, s));
 		visualizer.setApplyFilterHandler(d -> {
@@ -1472,7 +1522,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 	private void onCompare(Language lang, List<RankableDocument> docs) {
 		if (docs.isEmpty())
 			return;
-		else if (transientProcessManager.isBusy()) {
+		else if (transientParsingProcessManager.isBusy()) {
 			notification.notify(getLocalizedString(DefaultLocalizationProviders.COMMON.toString(), CommonLocalizationTags.WAIT_TILL_COMPLETION.toString()));
 			return;
 		}
@@ -1564,7 +1614,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 					// ### otherwise, the progress bar doesn't show
 					presenter.showLoaderOverlay(false);
 					processHistory.push(proc);
-					transientProcessManager.begin(proc,
+					transientParsingProcessManager.begin(proc,
 							(p, s) -> onTransientProcessEnd(p, s),
 							(p, d) -> {
 								// refresh the parsed results
@@ -1617,7 +1667,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 			throw new RuntimeException("Invalid process data");
 
 		if (success) {
-			transientProcessManager.begin(proc,
+			transientParsingProcessManager.begin(proc,
 					(p, s) -> onTransientProcessEnd(p, s),
 					(p, d) -> {
 						// refresh the parsed results
@@ -1634,6 +1684,46 @@ public class WebRankerCore implements AbstractWebRankerCore {
 			processHistory.pop();
 			ClientLogger.get().info("Upload operation was cancelled");
 		}
+	}
+
+	private void onGenerateQuestions(RankableDocument doc) {
+		if (messagePoller.isBusy()) {
+			notification.notify(getLocalizedString(DefaultLocalizationProviders.COMMON.toString(), CommonLocalizationTags.WAIT_TILL_COMPLETION.toString()));
+			return;
+		} else if (Language.ENGLISH != doc.getLanguage()) {
+			notification.notify(getLocalizedString(DefaultLocalizationProviders.COMMON.toString(), CommonLocalizationTags.FEATURE_NOT_SUPPORTED.toString()));
+			return;
+		}
+
+		presenter.showLoaderOverlay(true);
+
+		service.generateQuestions(token, doc, 5,
+				FuncCallback.get(e -> messagePoller.beginPolling(msg -> {
+							if (msg.getType() != ServerMessage.Type.GENERATE_QUESTIONS)
+								throw new RuntimeException("Invalid message type for generate questions operation: " + msg.getType());
+
+							switch (msg.getGenerateQuestions().getType()) {
+							case SENTENCE_SELECTION_COMPLETE:
+								break;
+							case JOB_COMPLETE:
+								presenter.showLoaderOverlay(false);
+
+								questgenpreview.previewQuestions(msg.getGenerateQuestions().getGeneratedQuestions());
+								messagePoller.endPolling();
+								break;
+							}
+						}, () -> {
+							notification.notify(getLocalizedString(LocalizationTags.OP_TIMEDOUT.toString()), 5000);
+							presenter.showLoaderOverlay(false);
+						}, true),
+						e -> {
+							ClientLogger.get().error(e, "Couldn't begin question generation operation");
+							notification.notify(getLocalizedString(LocalizationTags.SERVER_ERROR.toString()));
+							presenter.showLoaderOverlay(false);
+
+							if (e instanceof InvalidAuthTokenException)
+								ClientEndPoint.get().fatalServerError();
+						}));
 	}
 
 	private void onCancelOp() {
@@ -1673,12 +1763,12 @@ public class WebRankerCore implements AbstractWebRankerCore {
 
 	@Override
 	public void cancelCurrentOperation() {
-		transientProcessManager.cancel();
+		transientParsingProcessManager.cancel();
 	}
 
 	@Override
 	public boolean isOperationInProgress() {
-		return transientProcessManager.isBusy();
+		return transientParsingProcessManager.isBusy();
 	}
 
 	@Override

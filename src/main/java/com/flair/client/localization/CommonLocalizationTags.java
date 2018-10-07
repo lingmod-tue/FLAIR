@@ -30,4 +30,5 @@ public enum CommonLocalizationTags {
 	ACADEMIC_VOCAB,
 	CUSTOM_VOCAB,
 	KEYWORDS,
+	FEATURE_NOT_SUPPORTED,
 }

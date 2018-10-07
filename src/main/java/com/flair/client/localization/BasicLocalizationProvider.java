@@ -64,6 +64,9 @@ public class BasicLocalizationProvider implements LocalizationProvider {
 			for (Language l : Language.values()) {
 				// naive replacement
 				String toReplace = entry.get(l);
+				if (toReplace == null)
+					throw new RuntimeException("Missing localized string for tag '" + tag + "', language " + l);
+
 				int start = 0, end = 0;
 				do {
 					start = toReplace.indexOf("${");

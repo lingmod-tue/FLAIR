@@ -2,6 +2,7 @@ package com.flair.shared.interop.services;
 
 import com.flair.shared.grammar.Language;
 import com.flair.shared.interop.AuthToken;
+import com.flair.shared.interop.RankableDocument;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -12,18 +13,22 @@ import java.util.ArrayList;
  */
 @RemoteServiceRelativePath("WebRanker")
 public interface WebRankerService extends RemoteService {
-	public void beginWebSearch(AuthToken token,
-	                           Language lang,
-	                           String query,
-	                           int numResults,
-	                           ArrayList<String> keywords);
+	void beginWebSearch(AuthToken token,
+	                    Language lang,
+	                    String query,
+	                    int numResults,
+	                    ArrayList<String> keywords);
 
-	public void beginCorpusUpload(AuthToken token,
-	                              Language lang,
-	                              ArrayList<String> keywords);        // signals the start of the upload operation and caches params
-	public void endCorpusUpload(AuthToken token,
-	                            boolean success);                    // signals the end of the uploading process, begins the parsing op if successful
+	void beginCorpusUpload(AuthToken token,
+	                       Language lang,
+	                       ArrayList<String> keywords);        // signals the start of the upload operation and caches params
+	void endCorpusUpload(AuthToken token,
+	                     boolean success);                    // signals the end of the uploading process, begins the parsing op if successful
 
-	public void cancelCurrentOperation(AuthToken token);
+	void generateQuestions(AuthToken token,
+	                       RankableDocument doc,
+	                       int numQuestions);
+
+	void cancelCurrentOperation(AuthToken token);
 }
 

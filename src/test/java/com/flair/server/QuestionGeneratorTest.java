@@ -15,7 +15,7 @@ import java.util.Arrays;
 public class QuestionGeneratorTest {
 	public static void main(String[] args) {
 		String query = "world cup 2018";
-		int numResults = 10;
+		int numResults = 5;
 		Language lang = Language.ENGLISH;
 		String[] keywords = new String[]{
 				"keywords", "to", "highlight"

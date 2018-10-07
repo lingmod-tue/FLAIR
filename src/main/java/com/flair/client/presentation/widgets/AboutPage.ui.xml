@@ -1,7 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:m="urn:import:gwt.material.design.client.ui" xmlns:m.html="urn:import:gwt.material.design.client.ui.html">
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:m="urn:import:gwt.material.design.client.ui">
 	<ui:style>
 	.brand-logo {
 		padding: 1px 1px 1px 1px;
@@ -42,9 +42,9 @@
 							<span style="color:darkorange">@</span>
 							University of Tübingen, Germany
 							<span style="color:darkorange">|</span>
-							2015-2017
+                            2015-2018
 							<br />
-							Version 2.0
+                            Version 2.1
 						</p>
 					</center>
 
@@ -192,9 +192,9 @@
 							<span style="color:darkorange">@</span>
 							Universität Tübingen, Deutschland
 							<span style="color:darkorange">|</span>
-							2015-2017
+                            2015-2018
 							<br />
-							Version 2.0
+                            Version 2.11
 						</p>
 					</center>
 

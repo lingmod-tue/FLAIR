@@ -4,25 +4,26 @@ package com.flair.client.presentation.interfaces;
  * Interface between the web ranker core and the UI
  */
 public interface AbstractWebRankerPresenter {
-	public AbstractRankerSettingsPane getRankerSettingsPane();
-	public AbstractDocumentResultsPane getDocumentResultsPane();
-	public AbstractDocumentPreviewPane getDocumentPreviewPane();
+	AbstractRankerSettingsPane getRankerSettingsPane();
+	AbstractDocumentResultsPane getDocumentResultsPane();
+	AbstractDocumentPreviewPane getDocumentPreviewPane();
 
-	public WebSearchService getWebSearchService();
-	public CorpusUploadService getCorpusUploadService();
-	public CustomKeywordService getCustomKeywordsService();
-	public UserPromptService getPromptService();
-	public NotificationService getNotificationService();
-	public VisualizerService getVisualizerService();
-	public OperationCancelService getCancelService();
-	public OverlayService getOverlayService();
-	public SettingsUrlExporterView getSettingsUrlExporterView();
-	public DocumentCompareService getDocumentCompareService();
-	public HistoryViewerService getHistoryViewerService();
+	WebSearchService getWebSearchService();
+	CorpusUploadService getCorpusUploadService();
+	CustomKeywordService getCustomKeywordsService();
+	UserPromptService getPromptService();
+	NotificationService getNotificationService();
+	VisualizerService getVisualizerService();
+	OperationCancelService getCancelService();
+	OverlayService getOverlayService();
+	SettingsUrlExporterView getSettingsUrlExporterView();
+	DocumentCompareService getDocumentCompareService();
+	HistoryViewerService getHistoryViewerService();
+	QuestionGeneratorPreviewService getQuestionGeneratorPreviewService();
 
-	public void showLoaderOverlay(boolean visible);        // over the entire viewport
-	public void showProgressBar(boolean visible);
+	void showLoaderOverlay(boolean visible);        // over the entire viewport
+	void showProgressBar(boolean visible);
 
-	public void showCancelPane(boolean visible);
-	public void showDefaultPane(boolean visible);
+	void showCancelPane(boolean visible);
+	void showDefaultPane(boolean visible);
 }

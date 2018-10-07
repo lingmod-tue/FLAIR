@@ -24,6 +24,7 @@ _common-strings_	LANGUAGE_GERMAN	Deutsch
 _common-strings_	ACADEMIC_VOCAB	Akademisches Vokabular
 _common-strings_	KEYWORDS	Schlüsselwörter
 _common-strings_	CUSTOM_VOCAB	Benutzerdefiniertes Vokabular
+_common-strings_	FEATURE_NOT_SUPPORTED	Dieses Feature ist im Moment noch nicht unterstützt.
 		
 _webrankercore_	ANALYSIS_COMPLETE	Analyse abgeschlossen
 _webrankercore_	SELECTED_FOR_COMPARISON	Zum Vergleichen ausgewählt
@@ -79,6 +80,7 @@ DocumentLengthConfigPane	chkShorterTextsUI	Kurzere Texte bevorzugen
 		
 DocumentPreviewPane	icoHelpTextUI	Hervorhebungen können sich überlappen - Bewegen Sie die Maus über eine Hervorhebung, um eine Liste der Namen aller eingebetteten Konstruktionen zu sehen.
 DocumentPreviewPane	btnShowAllConstUI	Alle Konstruktionen
+DocumentPreviewPane	btnGenerateQuestionsUI	Fragen Generieren
 DocumentPreviewPane	NUM_WORDS	Wörter
 DocumentPreviewPane	NUM_SENTENCES	Sätze
 DocumentPreviewPane	COLUMN_CONSTRUCTION	Konstruktion
@@ -119,7 +121,10 @@ WebSearchModal	selResultCountItm20UI	20 Ergebnisse
 WebSearchModal	selResultCountItm30UI	30 Ergebnisse
 WebSearchModal	selResultCountItm40UI	40 Ergebnisse
 WebSearchModal	selResultCountItm50UI	50 Ergebnisse
-		
+
+QuestionGeneratorPreview	lblTitleUI	Fragen
+QuestionGeneratorPreview	lblPlaceholderUI	Keine passenden Fragen konnte generiert werden.
+
 ConstructionSliderBundleEnglish	pnlSentencesUI	Sätze
 ConstructionSliderBundleEnglish	pnlQuestionsUI	Fragen
 ConstructionSliderBundleEnglish	pnlSentenceTypesUI	Satztypen

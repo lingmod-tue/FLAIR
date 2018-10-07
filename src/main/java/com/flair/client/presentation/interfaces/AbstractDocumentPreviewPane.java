@@ -1,18 +1,25 @@
 package com.flair.client.presentation.interfaces;
 
+import com.flair.shared.interop.RankableDocument;
+
 /*
  * Implemented by document preview panes
  */
 public interface AbstractDocumentPreviewPane {
-	public interface ShowHideHandler {
-		public void handle(boolean visible);
+	interface ShowHideHandler {
+		void handle(boolean visible);
 	}
 
-	public void preview(DocumentPreviewPaneInput.Rankable input);
-	public void preview(DocumentPreviewPaneInput.UnRankable input);
+	interface GenerateQuestionsHandler {
+		void handle(RankableDocument doc);
+	}
 
-	public void show();
-	public void hide();
-	public boolean isVisible();
-	public void setShowHideEventHandler(ShowHideHandler handler);
+	void preview(DocumentPreviewPaneInput.Rankable input);
+	void preview(DocumentPreviewPaneInput.UnRankable input);
+
+	void show();
+	void hide();
+	boolean isVisible();
+	void setShowHideEventHandler(ShowHideHandler handler);
+	void setGenerateQuestionsHandler(GenerateQuestionsHandler handler);
 }

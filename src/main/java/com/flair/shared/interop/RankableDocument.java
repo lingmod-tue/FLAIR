@@ -9,39 +9,39 @@ import java.util.HashSet;
 /*
  * Represents a document that's rankable
  */
-public interface RankableDocument extends BasicDocumentTransferObject {
-	public interface ConstructionRange {
-		public int getStart();
-		public int getEnd();
-		public GrammaticalConstruction getConstruction();
+public interface RankableDocument extends DocumentDTO {
+	interface ConstructionRange {
+		int getStart();
+		int getEnd();
+		GrammaticalConstruction getConstruction();
 	}
 
-	public interface KeywordRange {
-		public int getStart();
-		public int getEnd();
-		public String getKeyword();
+	interface KeywordRange {
+		int getStart();
+		int getEnd();
+		String getKeyword();
 	}
 
-	public int getRank();            // original rank of the document (in its collection)
-	public void setRank(int rank);
+	int getRank();            // original rank of the document (in its collection)
+	void setRank(int rank);
 
-	public String getUrl();
-	public String getDisplayUrl();
+	String getUrl();
+	String getDisplayUrl();
 
-	public HashSet<GrammaticalConstruction> getConstructions();        // constructions found in this document
-	public boolean hasConstruction(GrammaticalConstruction gram);
-	public double getConstructionFreq(GrammaticalConstruction gram);
-	public double getConstructionRelFreq(GrammaticalConstruction gram);
-	public ArrayList<? extends ConstructionRange> getConstructionOccurrences(GrammaticalConstruction gram);
+	HashSet<GrammaticalConstruction> getConstructions();        // constructions found in this document
+	boolean hasConstruction(GrammaticalConstruction gram);
+	double getConstructionFreq(GrammaticalConstruction gram);
+	double getConstructionRelFreq(GrammaticalConstruction gram);
+	ArrayList<? extends ConstructionRange> getConstructionOccurrences(GrammaticalConstruction gram);
 
-	public double getKeywordCount();        // total number of hits
-	public double getKeywordRelFreq();    // relative to the number of words in the doc
-	public ArrayList<? extends KeywordRange> getKeywordOccurrences();
+	double getKeywordCount();        // total number of hits
+	double getKeywordRelFreq();    // relative to the number of words in the doc
+	ArrayList<? extends KeywordRange> getKeywordOccurrences();
 
-	public int getRawTextLength();        // wrapper around getText().size()
-	public double getNumWords();            // also the "length" of the document
-	public double getNumSentences();
-	public double getNumDependencies();
-	public DocumentReadabilityLevel getReadabilityLevel();
-	public double getReadablilityScore();
+	int getRawTextLength();        // wrapper around getText().size()
+	double getNumWords();            // also the "length" of the document
+	double getNumSentences();
+	double getNumDependencies();
+	DocumentReadabilityLevel getReadabilityLevel();
+	double getReadablilityScore();
 }

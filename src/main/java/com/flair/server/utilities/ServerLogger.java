@@ -15,28 +15,33 @@ public final class ServerLogger extends AbstractDebugLogger {
 	private static final ServerLogger SINGLETON = new ServerLogger();
 
 	private final Logger pipeline;
+	private boolean callerDecorator;
 
 	private ServerLogger() {
-		super("FLAIR-ServerLogger");
+		super("FLAIR-Log");
 		this.pipeline = LoggerFactory.getLogger(loggerName);
+		this.callerDecorator = false;
 	}
 
 	public static ServerLogger get() {
 		return SINGLETON;
 	}
 
+	public void callerDecorator(boolean state) { callerDecorator = state; }
+
 	private String prettyPrintCaller() {
 		StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
 
 		// the calling method would be the fifth element in the array (the first would be the call to getStackTrace())
 		StackTraceElement caller = stackTrace[4];
-		return "{" + caller.getClassName().substring(10) + "." + caller.getMethodName() + "()}";
+		return "{" + caller.getClassName().substring(10) + "." + caller.getMethodName() + "()} ";
 	}
 
 	@Override
 	protected void print(Channel channel, String message) {
 		StringBuilder builder = new StringBuilder();
-		builder.append(prettyPrintCaller());
+		if (callerDecorator)
+			builder.append(prettyPrintCaller());
 
 		for (int i = 0; i < indentLevel; i++)
 			builder.append("\t");

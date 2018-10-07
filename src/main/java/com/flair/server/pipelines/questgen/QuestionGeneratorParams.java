@@ -1,6 +1,7 @@
 package com.flair.server.pipelines.questgen;
 
 import com.flair.server.utilities.ServerLogger;
+import edu.cmu.ark.ResourceLoader;
 
 class QuestionGeneratorParams {
 	boolean dropPronouns;
@@ -23,7 +24,7 @@ class QuestionGeneratorParams {
 		boolean resolveNonPronounNPs = false;
 		boolean resolvePronounNPs = true;
 		boolean doStemming = true;
-		String rankerModelPath = "";
+		String rankerModelPath = ResourceLoader.path("linear-regression-ranker-reg500.ser.gz");
 		QuestionKind type = QuestionKind.READING_COMPREHENSION;
 
 		private Builder() {}
