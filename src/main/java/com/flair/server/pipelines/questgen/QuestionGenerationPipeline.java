@@ -51,7 +51,7 @@ public final class QuestionGenerationPipeline {
 
 	public final class QuestionGenerationOpBuilder implements PipelineOp.PipelineOpBuilder<QuestionGenerationOp.Input, QuestionGenerationOp.Output> {
 		AbstractDocument sourceDoc;
-		int numSelectedSentences;
+		int numQuestions;
 
 		QuestionGenerationOp.SentenceSelectionComplete selectionComplete;
 		QuestionGenerationOp.JobComplete jobComplete;
@@ -69,8 +69,8 @@ public final class QuestionGenerationPipeline {
 			return qgParams;
 		}
 
-		public QuestionGenerationOpBuilder numSelectedSentences(int numSelectedSentences) {
-			this.numSelectedSentences = numSelectedSentences;
+		public QuestionGenerationOpBuilder numQuestions(int numQuestions) {
+			this.numQuestions = numQuestions;
 			return this;
 		}
 
@@ -87,7 +87,7 @@ public final class QuestionGenerationPipeline {
 		public PipelineOp<QuestionGenerationOp.Input, QuestionGenerationOp.Output> launch() {
 			if (sourceDoc == null)
 				throw new IllegalStateException("Invalid source document");
-			else if (numSelectedSentences == 0)
+			else if (numQuestions == 0)
 				throw new IllegalStateException("Invalid number of source sentences");
 
 			QuestionGenerationOp.Input input = new QuestionGenerationOp.Input(sourceDoc,
@@ -95,7 +95,7 @@ public final class QuestionGenerationPipeline {
 					questGenExecutor,
 					qgParams.build(),
 					sentSelPreprocessor,
-					numSelectedSentences,
+					numQuestions,
 					selectionComplete,
 					jobComplete);
 

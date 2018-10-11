@@ -1,34 +1,33 @@
 package com.flair.server.crawler;
 
+import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.grammar.Language;
 
-import java.util.ArrayList;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Properties;
+import java.util.stream.Collectors;
 
 /**
  * Abstract base class for a web search executor
  */
 public abstract class WebSearchAgent {
-	protected static boolean isBlacklistPopulated() {
-		return BLACKLISTED_URLS.isEmpty() == false;
-	}
+	private static final Properties PROPERTIES = new Properties();
+	private static List<String> BLACKLISTED_URLS;
 
-	protected static void populateBlacklist() {
-		if (BLACKLISTED_URLS.isEmpty() == true) {
-			BLACKLISTED_URLS.add("tmz.com");
-			BLACKLISTED_URLS.add("thefreedictionary.com");
-			BLACKLISTED_URLS.add("imdb.com");
-			BLACKLISTED_URLS.add("facebook.com");
-			BLACKLISTED_URLS.add("buzzfeed.com");
-			BLACKLISTED_URLS.add("youtube.com");
-			BLACKLISTED_URLS.add("twitter.com");
+	static {
+		try {
+			PROPERTIES.load(WebSearchAgent.class.getResourceAsStream("WebSearchAgent.properties"));
+		} catch (IOException e) {
+			ServerLogger.get().error(e, "Couldn't load properties for BingSearchAgent");
 		}
+
+		BLACKLISTED_URLS = Collections.unmodifiableList(Arrays.stream(PROPERTIES.getProperty("blacklist", "").split(";")).distinct().collect(Collectors.toList()));
 	}
 
 	protected static boolean isURLBlacklisted(String URL) {
-		if (isBlacklistPopulated() == false)
-			populateBlacklist();
-
 		for (String itr : BLACKLISTED_URLS) {
 			if (URL.contains(itr))
 				return true;
@@ -38,7 +37,6 @@ public abstract class WebSearchAgent {
 	}
 
 
-	public static final ArrayList<String> BLACKLISTED_URLS = new ArrayList<>();
 
 	protected final Language lang;
 	protected final String query;

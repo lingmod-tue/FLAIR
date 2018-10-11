@@ -38,6 +38,6 @@ interface SentenceSelector {
 		ParserAnnotations.Sentence annotation();
 	}
 
-	Collection<? extends SelectedSentence> topK(int k);    // returns a ranked list of the top-k sentences
+	Collection<? extends SelectedSentence> topK(int k);    // returns a ranked list of the top-k sentences. returns all sentences if k == -1
 }
 

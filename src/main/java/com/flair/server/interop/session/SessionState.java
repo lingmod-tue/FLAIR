@@ -514,7 +514,7 @@ public class SessionState {
 
 		QuestionGenerationPipeline.QuestionGenerationOpBuilder builder = QuestionGenerationPipeline.get().generateQuestions()
 				.sourceDoc(sourceDoc)
-				.numSelectedSentences(numQuestions)
+				.numQuestions(numQuestions)
 				.onComplete(this::handleGenerateQuestionsJobComplete);
 
 		beginNewOperation(builder);

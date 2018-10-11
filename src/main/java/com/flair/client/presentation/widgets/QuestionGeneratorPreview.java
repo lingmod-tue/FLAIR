@@ -15,6 +15,8 @@ import com.google.gwt.user.client.ui.Widget;
 import gwt.material.design.addins.client.emptystate.MaterialEmptyState;
 import gwt.material.design.addins.client.overlay.MaterialOverlay;
 import gwt.material.design.client.constants.Color;
+import gwt.material.design.client.constants.IconPosition;
+import gwt.material.design.client.constants.IconType;
 import gwt.material.design.client.ui.*;
 import gwt.material.design.client.ui.animate.MaterialAnimation;
 import gwt.material.design.client.ui.animate.Transition;
@@ -56,19 +58,29 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 		MaterialCardTitle answer = new MaterialCardTitle();
 
 		QuestionCard(QuestionDTO generatedQuestion) {
-			wrapper.setGrid("l4 m4 s4");
+			wrapper.setGrid("l4 m6 s12");
+			wrapper.setPadding(2.5);
 			card.setBackgroundColor(Color.BLUE_GREY_DARKEN_1);
 			question.setTextColor(Color.WHITE);
 			question.setText(generatedQuestion.getQuestion());
 
-			reveal.add(answer);
-			reveal.setBackgroundColor(Color.BLUE_GREY_DARKEN_1);
-			answer.setText(generatedQuestion.getAnswer());
 
-			card.add(reveal);
+			reveal.setBackgroundColor(Color.BLUE_GREY_LIGHTEN_1);
+			answer.setText(generatedQuestion.getAnswer());
+			answer.setTextColor(Color.WHITE);
+			answer.setIconType(IconType.CLOSE);
+			answer.setIconPosition(IconPosition.RIGHT);
+			reveal.add(answer);
+
 			MaterialCardContent questionWrapper = new MaterialCardContent();
 			questionWrapper.add(question);
 			card.add(questionWrapper);
+
+			if (!generatedQuestion.getAnswer().isEmpty()) {
+				question.setIconType(IconType.DONE);
+				question.setIconPosition(IconPosition.RIGHT);
+				card.add(reveal);
+			}
 
 			wrapper.add(card);
 		}
@@ -116,7 +128,7 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 		mdlQuestGenUI.open(btnCloseUI);
 		MaterialAnimation gridAnimation = new MaterialAnimation();
 		gridAnimation.setTransition(Transition.SHOW_GRID);
-		gridAnimation.delay(350).duration(6000);
+		gridAnimation.delay(350).duration(5000);
 		gridAnimation.animate(pnlCardContainerUI);
 	}
 

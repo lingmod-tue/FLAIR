@@ -169,7 +169,7 @@ public class TextRankSentenceSelector implements SentenceSelector {
 
 	@Override
 	public Collection<? extends SelectedSentence> topK(int k) {
-		return rankedOutput.subList(0, rankedOutput.size() < k ? rankedOutput.size() : k);
+		return rankedOutput.subList(0, rankedOutput.size() < k || k == -1 ? rankedOutput.size() : k);
 	}
 
 

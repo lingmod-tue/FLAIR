@@ -34,7 +34,7 @@ public class QuestionGeneratorTest {
 			QuestionGenerationOp.Output qgOutput = QuestionGenerationPipeline.get()
 					.generateQuestions()
 					.sourceDoc(doc)
-					.numSelectedSentences(3)
+					.numQuestions(3)
 					.launch()
 					.yield();
 

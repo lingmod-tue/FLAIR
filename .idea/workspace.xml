@@ -4,7 +4,19 @@
     <bookmark url="file://$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/GenericWeightSlider.java" line="20" mnemonic="2" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c89ab379-5832-4084-9720-767029c011ce" name="Default" comment="Integrate question generation into the frontend&#10;Misc changes, additions and fixes" />
+    <list default="true" id="c89ab379-5832-4084-9720-767029c011ce" name="Default" comment="Integrate question generation into the frontend&#10;Misc changes, additions and fixes">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/flair/client/model/WebRankerCore.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/flair/client/model/WebRankerCore.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/QuestionGeneratorPreview.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/QuestionGeneratorPreview.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/QuestionGeneratorPreview.ui.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/QuestionGeneratorPreview.ui.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/flair/server/crawler/WebSearchAgent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/flair/server/crawler/WebSearchAgent.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/flair/server/interop/session/SessionState.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/flair/server/interop/session/SessionState.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/QuestionGenerationOp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/QuestionGenerationOp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/QuestionGenerationPipeline.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/QuestionGenerationPipeline.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/SentenceSelector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/SentenceSelector.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/TextRankSentenceSelector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/TextRankSentenceSelector.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/flair/server/QuestionGeneratorTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/flair/server/QuestionGeneratorTest.java" afterDir="false" />
+    </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -16,6 +28,7 @@
     <option name="optimizeImportsOnTheFly" value="true" />
   </component>
   <component name="CompilerWorkspaceConfiguration">
+    <option name="MAKE_PROJECT_ON_SAVE" value="true" />
     <option name="PARALLEL_COMPILATION" value="true" />
   </component>
   <component name="DatabaseView">
@@ -40,7 +53,7 @@
     <session id="-547897214">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="23" />
+          <entry key="project.closed" value="25" />
           <entry key="project.open.time.11" value="1" />
           <entry key="project.open.time.13" value="1" />
           <entry key="project.open.time.17" value="1" />
@@ -51,25 +64,27 @@
           <entry key="project.open.time.25" value="2" />
           <entry key="project.open.time.27" value="1" />
           <entry key="project.open.time.29" value="1" />
-          <entry key="project.open.time.30" value="1" />
+          <entry key="project.open.time.30" value="2" />
           <entry key="project.open.time.31" value="1" />
           <entry key="project.open.time.32" value="1" />
           <entry key="project.open.time.33" value="1" />
+          <entry key="project.open.time.34" value="1" />
           <entry key="project.open.time.35" value="1" />
           <entry key="project.open.time.36" value="1" />
           <entry key="project.open.time.37" value="1" />
+          <entry key="project.open.time.38" value="1" />
           <entry key="project.open.time.40" value="1" />
           <entry key="project.open.time.41" value="1" />
           <entry key="project.open.time.6" value="1" />
-          <entry key="project.opened" value="23" />
+          <entry key="project.opened" value="26" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="class" value="17" />
-          <entry key="java" value="696" />
+          <entry key="java" value="707" />
           <entry key="md" value="2" />
-          <entry key="properties" value="13" />
+          <entry key="properties" value="15" />
           <entry key="tsv" value="7" />
           <entry key="txt" value="1" />
           <entry key="xml" value="34" />
@@ -79,9 +94,9 @@
         <counts>
           <entry key="CLASS" value="17" />
           <entry key="Enforced Plain Text" value="1" />
-          <entry key="JAVA" value="696" />
+          <entry key="JAVA" value="707" />
           <entry key="Markdown" value="2" />
-          <entry key="Properties" value="13" />
+          <entry key="Properties" value="15" />
           <entry key="Scratch" value="1" />
           <entry key="TSV" value="6" />
           <entry key="XML" value="34" />
@@ -90,20 +105,20 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="67" />
-          <entry key="java" value="33566" />
-          <entry key="properties" value="132" />
+          <entry key="java" value="34893" />
+          <entry key="properties" value="282" />
           <entry key="tsv" value="222" />
           <entry key="txt" value="1306" />
-          <entry key="xml" value="579" />
+          <entry key="xml" value="607" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JAVA" value="33566" />
+          <entry key="JAVA" value="34893" />
           <entry key="PLAIN_TEXT" value="1373" />
-          <entry key="Properties" value="132" />
+          <entry key="Properties" value="282" />
           <entry key="TSV" value="222" />
-          <entry key="XML" value="579" />
+          <entry key="XML" value="607" />
         </counts>
       </usages-collector>
     </session>
@@ -116,53 +131,115 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/QuestionGeneratorPreview.java">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/server/crawler/CachingSearchAgent.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="652">
-              <caret line="64" column="62" selection-start-line="64" selection-start-column="62" selection-end-line="64" selection-end-column="62" />
-              <folding>
-                <element signature="e#4099#4100#0" expanded="true" />
-                <element signature="e#4127#4128#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="136">
+              <caret line="13" column="15" selection-start-line="13" selection-start-column="15" selection-end-line="13" selection-end-column="15" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/QuestionGeneratorPreview.ui.xml">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/server/crawler/WebSearchAgent.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="119">
-              <caret line="7" column="78" selection-start-line="7" selection-start-column="78" selection-end-line="7" selection-end-column="78" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/DocumentPreviewPane.ui.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="213">
-              <caret line="69" column="43" lean-forward="true" selection-start-line="68" selection-start-column="71" selection-end-line="69" selection-end-column="43" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="jar://$MAVEN_REPOSITORY$/com/github/gwtmaterialdesign/gwt-material/2.0-rc7/gwt-material-2.0-rc7-sources.jar!/gwt/material/design/client/ui/MaterialCardReveal.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="306">
-              <caret line="38" column="25" selection-start-line="38" selection-start-column="25" selection-end-line="38" selection-end-column="25" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="jar://$MAVEN_REPOSITORY$/com/github/gwtmaterialdesign/gwt-material/2.0-rc7/gwt-material-2.0-rc7-sources.jar!/gwt/material/design/client/ui/MaterialCard.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="311">
-              <caret line="102" column="11" selection-start-line="102" selection-start-column="11" selection-end-line="102" selection-end-column="11" />
+            <state relative-caret-position="340">
+              <caret line="24" column="5" lean-forward="true" selection-start-line="24" selection-start-column="5" selection-end-line="24" selection-end-column="5" />
               <folding>
-                <element signature="e#4358#4359#0" expanded="true" />
-                <element signature="e#4428#4429#0" expanded="true" />
+                <element signature="e#1222#1223#0" expanded="true" />
+                <element signature="e#1241#1242#0" expanded="true" />
+                <element signature="e#1275#1276#0" expanded="true" />
+                <element signature="e#1293#1294#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/server/crawler/BingSearchAgent.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="493">
+              <caret line="37" column="27" lean-forward="true" selection-start-line="37" selection-start-column="27" selection-end-line="37" selection-end-column="27" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/QuestionGenerationOp.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1955">
+              <caret line="126" column="71" lean-forward="true" selection-start-line="126" selection-start-column="71" selection-end-line="126" selection-end-column="71" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/edu/cmu/ark/WhPhraseGenerator.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="6834">
+              <caret line="413" selection-start-line="413" selection-end-line="413" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/server/interop/session/SessionState.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="2057">
+              <caret line="534" selection-start-line="534" selection-end-line="534" />
+              <folding>
+                <element signature="docComment;class#SessionState#0" />
+                <element signature="class#TemporaryCache#0;class#SessionState#0" />
+                <element signature="class#CustomCorpus#0;class#TemporaryCache#0;class#SessionState#0" />
+                <element signature="method#CustomCorpus#0;class#CustomCorpus#0;class#TemporaryCache#0;class#SessionState#0" />
+                <element signature="class#UploadedFileDocumentSource#0;class#SessionState#0" />
+                <element signature="method#UploadedFileDocumentSource#0;class#UploadedFileDocumentSource#0;class#SessionState#0" />
+                <element signature="class#PipelineOpCache#0;class#SessionState#0" />
+                <element signature="method#PipelineOpCache#0;class#PipelineOpCache#0;class#SessionState#0" />
+                <element signature="method#newOp#0;class#PipelineOpCache#0;class#SessionState#0" />
+                <element signature="method#endActiveOp#0;class#PipelineOpCache#0;class#SessionState#0" />
+                <element signature="method#activeOp#0;class#PipelineOpCache#0;class#SessionState#0" />
+                <element signature="method#activeOpId#0;class#PipelineOpCache#0;class#SessionState#0" />
+                <element signature="class#DocumentLinkingData#0;class#SessionState#0" />
+                <element signature="method#put#0;class#DocumentLinkingData#0;class#SessionState#0" />
+                <element signature="method#get#0;class#DocumentLinkingData#0;class#SessionState#0" />
+                <element signature="method#SessionState#0;class#SessionState#0" />
+                <element signature="method#cancelOperation#0;class#SessionState#0" />
+                <element signature="method#generateRankableDocument#0;class#SessionState#0" />
+                <element signature="method#generateRankableWebSearchResult#0;class#SessionState#0" />
+                <element signature="method#generateUploadedDocs#0;class#SessionState#0" />
+                <element signature="method#sendMessageToClient#0;class#SessionState#0" />
+                <element signature="method#handleCrawlComplete#0;class#SessionState#0" />
+                <element signature="method#handleParseComplete#0;class#SessionState#0" />
+                <element signature="method#handleParseJobComplete#0;class#SessionState#0" />
+                <element signature="method#handleGenerateQuestionsJobComplete#0;class#SessionState#0" />
+                <element signature="method#sendErrorResponse#0;class#SessionState#0" />
+                <element signature="method#handleCorpusUpload#0;class#SessionState#0" />
+                <element signature="method#searchCrawlParse#0;class#SessionState#0" />
+                <element signature="method#beginCustomCorpusUpload#0;class#SessionState#0" />
+                <element signature="e#14483#14527#0" />
+                <element signature="method#generateQuestions#0;class#SessionState#0" />
+                <element signature="method#release#0;class#SessionState#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/TextRankSentenceSelector.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="2584">
+              <caret line="171" column="100" selection-start-line="171" selection-start-column="15" selection-end-line="171" selection-end-column="100" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/QuestionGenerationPipeline.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1139">
+              <caret line="72" column="44" selection-start-line="72" selection-start-column="44" selection-end-line="72" selection-end-column="44" />
+              <folding>
+                <element signature="imports" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -180,7 +257,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>AnalysisUtilities.readTreeFromString</find>
       <find>GlobalProperties.prop</find>
       <find>getInstance()</find>
       <find>verb.yiel</find>
@@ -210,6 +286,7 @@
       <find>pipelineCacheOp.hasActiveOp</find>
       <find>wait</find>
       <find>blim</find>
+      <find>opac</find>
     </findStrings>
     <replaceStrings>
       <replace>deepCopy()</replace>
@@ -248,13 +325,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/gramparsing/SearchCrawlParseOp.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/gramparsing/GramParsingPipeline.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/gramparsing/DocParseTask.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/QuestionGenerationPipeline.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/gramparsing/ParseOp.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/QuestionGenerationOp.java" />
-        <option value="$PROJECT_DIR$/src/main/java/edu/cmu/ark/GlobalProperties.java" />
         <option value="$PROJECT_DIR$/src/main/java/edu/cmu/ark/QuestionTransducer.java" />
         <option value="$PROJECT_DIR$/src/main/java/edu/cmu/ark/QuestionAsker.java" />
         <option value="$PROJECT_DIR$/src/test/java/edu/cmu/ark/TestWhPhraseGenerator.java" />
@@ -294,11 +364,18 @@
         <option value="$PROJECT_DIR$/src/main/java/com/flair/client/localization/BasicLocalizationProvider.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/flair/client/localization/CommonLocalizationTags.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/flair/server/interop/session/SessionState.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/flair/client/model/WebRankerCore.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/flair/client/presentation/MainViewport.ui.xml" />
-        <option value="$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/QuestionGeneratorPreview.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/AboutPage.ui.xml" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/QuestionGenerationPipeline.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/SentenceSelector.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/TextRankSentenceSelector.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/QuestionGenerationOp.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/client/model/WebRankerCore.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/QuestionGeneratorPreview.ui.xml" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/QuestionGeneratorPreview.java" />
+        <option value="$PROJECT_DIR$/src/main/resources/com/flair/server/crawler/WebSearchAgent.properties" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/server/crawler/BingSearchAgent.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/flair/server/crawler/WebSearchAgent.java" />
       </list>
     </option>
   </component>
@@ -357,8 +434,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -406,18 +481,43 @@
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="main" type="462c0819:PsiDirectoryNode" />
               <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="crawler" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="FLAIR" type="b2602c69:ProjectViewProjectNode" />
+              <item name="GitHub" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
               <item name="questgen" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="FLAIR" type="b2602c69:ProjectViewProjectNode" />
+              <item name="GitHub" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="FLAIR" type="b2602c69:ProjectViewProjectNode" />
+              <item name="GitHub" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="resources" type="462c0819:PsiDirectoryNode" />
+              <item name="crawler" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="ChangesTree.GroupingKeys" value="" />
     <property name="GWT.GenerateCompileReport.Module" value="com.flair.FLAIR" />
-    <property name="SearchEverywhereHistoryKey" value="about&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/client/presentation/widgets/AboutPage.ui.xml&#10;docpre&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/client/presentation/widgets/DocumentPreviewPane.ui.xml&#10;overlay&#9;PSI&#9;JAVA://com.flair.client.presentation.MainViewport.BasicOverlay&#10;mainv&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/client/presentation/MainViewport.ui.xml&#10;questgenop&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/server/pipelines/questgen/QuestionGenerationOp.java&#10;grampar&#9;PSI&#9;JAVA://com.flair.server.pipelines.gramparsing.GramParsingPipeline&#10;sess&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/server/interop/session/SessionState.java&#10;quesge&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/client/presentation/widgets/QuestionGeneratorPreview.ui.xml&#10;webrac&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/client/model/WebRankerCore.java&#10;docprev&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/client/presentation/widgets/DocumentPreviewPane.java&#10;basiclo&#9;PSI&#9;JAVA://com.flair.client.localization.BasicLocalizationProvider&#10;webrankec&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/client/model/WebRankerCore.java&#10;doc&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/client/presentation/widgets/DocumentPreviewPane.java&#10;bindto&#9;PSI&#9;JAVA://com.flair.client.model.WebRankerCore#bindToPresenter&#10;relationallocator&#9;FILE&#9;jar://C:/Users/shadeMe/.m2/repository/nz/ac/waikato/cms/weka/weka-stable/3.8.0/weka-stable-3.8.0.jar!/weka/core/RelationalLocator.class&#10;pom&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/pom.xml&#10;querank&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/edu/cmu/ark/QuestionRanker.java&#10;qran&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/edu/cmu/ark/QuestionRanker.java&#10;server&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/server/utilities/ServerLogger.java&#10;pom.xm&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/pom.xml&#10;questgen&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/server/pipelines/questgen/QuestGenTask.java&#10;clientlo&#9;PSI&#9;JAVA://com.flair.client.utilities.ClientLogger&#10;asker&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/edu/cmu/ark/QuestionAsker.java&#10;parseo&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/server/pipelines/gramparsing/ParseOp.java&#10;search&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/server/pipelines/gramparsing/SearchCrawlParseOp.java&#10;parsera&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/server/parser/ParserAnnotations.java&#10;arraylist&#9;PSI&#9;JAVA://java.util.ArrayList&#10;corenlp&#9;PSI&#9;JAVA://com.flair.server.parser.CoreNlpParserAnnotations&#10;docparse&#9;PSI&#9;JAVA://com.flair.server.pipelines.gramparsing.DocParseTask&#10;que&#9;PSI&#9;JAVA://edu.cmu.ark.QuestionAsker&#10;question&#9;PSI&#9;JAVA://edu.cmu.ark.Question&#10;document&#9;PSI&#9;JAVA://com.flair.server.document.Document&#10;analy&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/arkref/parsestuff/AnalysisUtilities.java&#10;questiontra&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/edu/cmu/ark/QuestionTransducer.java&#10;sentences&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/edu/cmu/ark/SentenceSimplifier.java&#10;initials&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/edu/cmu/ark/InitialTransformationStep.java&#10;analysi&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/arkref/parsestuff/AnalysisUtilities.java&#10;questionas&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/edu/cmu/ark/QuestionAsker.java&#10;anal&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/arkref/parsestuff/AnalysisUtilities.java&#10;reso&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/edu/cmu/ark/ResourceLoader.java&#10;ana&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/arkref/parsestuff/AnalysisUtilities.java&#10;analysis&#9;PSI&#9;JAVA://edu.cmu.ark.AnalysisUtilities&#10;superse&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/edu/cmu/ark/SuperSenseWrapper.java&#10;npcl&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/edu/cmu/ark/NPClarification.java&#10;analys&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/edu/cmu/ark/AnalysisUtilities.java&#10;global&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/edu/cmu/ark/GlobalProperties.java&#10;serverlog&#9;PSI&#9;JAVA://com.flair.server.utilities.ServerLogger&#10;session&#9;PSI&#9;JAVA://com.flair.server.interop.session.SessionManager&#10;po&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/pom.xml&#10;bingsea&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/server/crawler/BingSearchAgent.java" />
+    <property name="SearchEverywhereHistoryKey" value="webra&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/client/model/WebRankerCore.java&#10;textrank&#9;PSI&#9;JAVA://com.flair.server.pipelines.questgen.TextRankSentenceSelector&#10;about&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/client/presentation/widgets/AboutPage.ui.xml&#10;docpre&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/client/presentation/widgets/DocumentPreviewPane.ui.xml&#10;overlay&#9;PSI&#9;JAVA://com.flair.client.presentation.MainViewport.BasicOverlay&#10;mainv&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/client/presentation/MainViewport.ui.xml&#10;questgenop&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/server/pipelines/questgen/QuestionGenerationOp.java&#10;grampar&#9;PSI&#9;JAVA://com.flair.server.pipelines.gramparsing.GramParsingPipeline&#10;sess&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/server/interop/session/SessionState.java&#10;quesge&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/client/presentation/widgets/QuestionGeneratorPreview.ui.xml&#10;webrac&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/client/model/WebRankerCore.java&#10;docprev&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/client/presentation/widgets/DocumentPreviewPane.java&#10;basiclo&#9;PSI&#9;JAVA://com.flair.client.localization.BasicLocalizationProvider&#10;webrankec&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/client/model/WebRankerCore.java&#10;doc&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/client/presentation/widgets/DocumentPreviewPane.java&#10;bindto&#9;PSI&#9;JAVA://com.flair.client.model.WebRankerCore#bindToPresenter&#10;relationallocator&#9;FILE&#9;jar://C:/Users/shadeMe/.m2/repository/nz/ac/waikato/cms/weka/weka-stable/3.8.0/weka-stable-3.8.0.jar!/weka/core/RelationalLocator.class&#10;pom&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/pom.xml&#10;querank&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/edu/cmu/ark/QuestionRanker.java&#10;qran&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/edu/cmu/ark/QuestionRanker.java&#10;server&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/server/utilities/ServerLogger.java&#10;pom.xm&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/pom.xml&#10;questgen&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/server/pipelines/questgen/QuestGenTask.java&#10;clientlo&#9;PSI&#9;JAVA://com.flair.client.utilities.ClientLogger&#10;asker&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/edu/cmu/ark/QuestionAsker.java&#10;parseo&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/server/pipelines/gramparsing/ParseOp.java&#10;search&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/server/pipelines/gramparsing/SearchCrawlParseOp.java&#10;parsera&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/com/flair/server/parser/ParserAnnotations.java&#10;arraylist&#9;PSI&#9;JAVA://java.util.ArrayList&#10;corenlp&#9;PSI&#9;JAVA://com.flair.server.parser.CoreNlpParserAnnotations&#10;docparse&#9;PSI&#9;JAVA://com.flair.server.pipelines.gramparsing.DocParseTask&#10;que&#9;PSI&#9;JAVA://edu.cmu.ark.QuestionAsker&#10;question&#9;PSI&#9;JAVA://edu.cmu.ark.Question&#10;document&#9;PSI&#9;JAVA://com.flair.server.document.Document&#10;analy&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/arkref/parsestuff/AnalysisUtilities.java&#10;questiontra&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/edu/cmu/ark/QuestionTransducer.java&#10;sentences&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/edu/cmu/ark/SentenceSimplifier.java&#10;initials&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/edu/cmu/ark/InitialTransformationStep.java&#10;analysi&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/arkref/parsestuff/AnalysisUtilities.java&#10;questionas&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/edu/cmu/ark/QuestionAsker.java&#10;anal&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/arkref/parsestuff/AnalysisUtilities.java&#10;reso&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/edu/cmu/ark/ResourceLoader.java&#10;ana&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/arkref/parsestuff/AnalysisUtilities.java&#10;analysis&#9;PSI&#9;JAVA://edu.cmu.ark.AnalysisUtilities&#10;superse&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/edu/cmu/ark/SuperSenseWrapper.java&#10;npcl&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/edu/cmu/ark/NPClarification.java&#10;analys&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/edu/cmu/ark/AnalysisUtilities.java&#10;global&#9;FILE&#9;file://C:/Users/shadeMe/Documents/FLAIR/GitHub/src/main/java/edu/cmu/ark/GlobalProperties.java&#10;serverlog&#9;PSI&#9;JAVA://com.flair.server.utilities.ServerLogger&#10;session&#9;PSI&#9;JAVA://com.flair.server.interop.session.SessionManager" />
     <property name="add_unversioned_files" value="$PROJECT_DIR$/src/main/resources/com/flair/server/crawler/BingSearchAgent.properties&#10;C:/Users/shadeMe/Documents/FLAIR/GitHub/target/generated-sources/gwt/com/flair/shared/interop/services/WebRankerServiceAsync.java" />
     <property name="last_directory_selection" value="$PROJECT_DIR$/src/test/java" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../Heilman-QG/src" />
@@ -426,7 +526,7 @@
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="restartRequiresConfirmation" value="false" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
-    <property name="settings.editor.selected.configurable" value="preferences.sourceCode" />
+    <property name="settings.editor.selected.configurable" value="project.propCompiler" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -645,6 +745,9 @@
       <workItem from="1538757373862" duration="22438000" />
       <workItem from="1538843999692" duration="27982000" />
       <workItem from="1538941033257" duration="8917000" />
+      <workItem from="1539077635885" duration="9043000" />
+      <workItem from="1539255551349" duration="606000" />
+      <workItem from="1539256511957" duration="1716000" />
     </task>
     <task id="LOCAL-00001" summary="Hide weight sliders on disable&#10;Minor fixes">
       <created>1529865179221</created>
@@ -836,7 +939,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="348765000" />
+    <option name="totallyTimeSpent" value="360130000" />
   </component>
   <component name="TodoView" selected-index="2">
     <todo-panel id="selected-file">
@@ -851,7 +954,7 @@
     <frame x="-8" y="-8" width="1936" height="1096" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" x="160" y="168" width="311" height="654" id="Project" order="0" sideWeight="0.5641822" visible="true" weight="0.18763326" />
+      <window_info active="true" content_ui="combo" x="160" y="168" width="311" height="654" id="Project" order="0" sideWeight="0.5641822" visible="true" weight="0.19402985" />
       <window_info id="Structure" order="1" sideWeight="0.3478261" side_tool="true" weight="0.26012793" />
       <window_info id="Web" order="2" sideWeight="0.4358178" side_tool="true" weight="0.18550107" />
       <window_info id="Learn" order="3" show_stripe_button="false" weight="0.3295302" />
@@ -860,7 +963,7 @@
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32091096" />
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49737534" weight="0.44927537" />
-      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.5026247" weight="0.32194617" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.5026247" weight="0.4358178" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32642487" />
@@ -997,12 +1100,6 @@
           <properties class="java.lang.NullPointerException" package="java.lang" />
           <option name="timeStamp" value="13" />
         </breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/flair/server/interop/session/SessionState.java</url>
-          <line>492</line>
-          <properties />
-          <option name="timeStamp" value="19" />
-        </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
@@ -1058,83 +1155,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/shared/interop/UploadedDocumentImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="884">
-          <caret line="72" column="5" selection-start-line="72" selection-start-column="5" selection-end-line="72" selection-end-column="5" />
-          <folding>
-            <element signature="e#1093#1094#0" expanded="true" />
-            <element signature="e#1118#1119#0" expanded="true" />
-            <element signature="e#1168#1169#0" expanded="true" />
-            <element signature="e#1205#1206#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/shared/interop/RankableDocument.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="187">
-          <caret line="15" column="8" selection-start-line="15" selection-start-column="8" selection-end-line="15" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/shared/interop/RankableWebSearchResult.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="8" column="4" selection-start-line="8" selection-start-column="4" selection-end-line="8" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/shared/interop/RankableWebSearchResultImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="7" column="63" lean-forward="true" selection-start-line="7" selection-start-column="63" selection-end-line="7" selection-end-column="63" />
-          <folding>
-            <element signature="e#1551#1552#0" expanded="true" />
-            <element signature="e#1576#1577#0" expanded="true" />
-            <element signature="e#1626#1627#0" expanded="true" />
-            <element signature="e#1663#1664#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/shared/interop/RankableDocumentImpl.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4505">
-          <caret line="372" column="5" selection-start-line="372" selection-start-column="5" selection-end-line="372" selection-end-column="5" />
-          <folding>
-            <element signature="e#7643#7644#0" expanded="true" />
-            <element signature="e#7668#7669#0" expanded="true" />
-            <element signature="e#7718#7719#0" expanded="true" />
-            <element signature="e#7755#7756#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/shared/interop/DocumentDTO.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="8" column="17" selection-start-line="8" selection-start-column="17" selection-end-line="8" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/flair/server/QuestionGeneratorTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="420">
-          <caret line="36" column="44" selection-start-line="33" selection-start-column="51" selection-end-line="36" selection-end-column="44" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/server/interop/session/SessionManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="530">
-          <caret line="207" column="12" selection-start-line="207" selection-start-column="12" selection-end-line="207" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/shared/interop/services/WebRankerService.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="357">
@@ -1153,10 +1173,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="805">
           <caret line="75" column="54" selection-start-line="75" selection-start-column="54" selection-end-line="75" selection-end-column="54" />
-          <folding>
-            <element signature="e#4034#4035#0" expanded="true" />
-            <element signature="e#4080#4081#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1171,9 +1187,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="119">
           <caret line="8" column="16" selection-start-line="8" selection-start-column="16" selection-end-line="8" selection-end-column="16" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1183,8 +1196,8 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/localization/resources/strings-en-general.tsv">
-      <provider selected="true" editor-type-id="text-editor" />
       <provider editor-type-id="csv-text-editor" />
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/FLAIR.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -1207,16 +1220,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/QuestionGenerationPipeline.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="371">
-          <caret line="101" selection-start-line="101" selection-end-line="101" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/QuestGenTask.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="536">
@@ -1235,13 +1238,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="287">
           <caret line="585" column="30" selection-start-line="585" selection-start-column="30" selection-end-line="585" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/edu/cmu/ark/WhPhraseGenerator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="413" selection-start-line="413" selection-end-line="413" />
         </state>
       </provider>
     </entry>
@@ -1272,10 +1268,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="254">
           <caret line="93" column="82" lean-forward="true" selection-start-line="93" selection-start-column="82" selection-end-line="93" selection-end-column="82" />
-          <folding>
-            <element signature="e#2274#2275#0" expanded="true" />
-            <element signature="e#2316#2317#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1283,10 +1275,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="135">
           <caret line="202" selection-start-line="202" selection-end-line="202" />
-          <folding>
-            <element signature="e#7022#7023#0" expanded="true" />
-            <element signature="e#7078#7079#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1325,13 +1313,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/QuestionGenerationOp.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="167">
-          <caret line="88" column="52" selection-start-line="88" selection-start-column="52" selection-end-line="88" selection-end-column="52" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_144/src.zip!/java/lang/Object.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="150">
@@ -1347,8 +1328,8 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/localization/resources/strings-de-general.tsv">
-      <provider selected="true" editor-type-id="text-editor" />
       <provider editor-type-id="csv-text-editor" />
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="jar://$MAVEN_REPOSITORY$/com/github/gwtmaterialdesign/gwt-material/2.0-rc7/gwt-material-2.0-rc7-sources.jar!/gwt/material/design/client/ui/MaterialTitle.java">
       <provider selected="true" editor-type-id="text-editor">
@@ -1368,47 +1349,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/server/interop/session/SessionState.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1586">
-          <caret line="494" lean-forward="true" selection-start-line="494" selection-end-line="494" />
-          <folding>
-            <element signature="docComment;class#SessionState#0" />
-            <element signature="class#TemporaryCache#0;class#SessionState#0" />
-            <element signature="class#CustomCorpus#0;class#TemporaryCache#0;class#SessionState#0" />
-            <element signature="method#CustomCorpus#0;class#CustomCorpus#0;class#TemporaryCache#0;class#SessionState#0" />
-            <element signature="class#UploadedFileDocumentSource#0;class#SessionState#0" />
-            <element signature="method#UploadedFileDocumentSource#0;class#UploadedFileDocumentSource#0;class#SessionState#0" />
-            <element signature="class#PipelineOpCache#0;class#SessionState#0" />
-            <element signature="method#PipelineOpCache#0;class#PipelineOpCache#0;class#SessionState#0" />
-            <element signature="method#newOp#0;class#PipelineOpCache#0;class#SessionState#0" />
-            <element signature="method#endActiveOp#0;class#PipelineOpCache#0;class#SessionState#0" />
-            <element signature="method#activeOp#0;class#PipelineOpCache#0;class#SessionState#0" />
-            <element signature="method#activeOpId#0;class#PipelineOpCache#0;class#SessionState#0" />
-            <element signature="class#DocumentLinkingData#0;class#SessionState#0" />
-            <element signature="method#put#0;class#DocumentLinkingData#0;class#SessionState#0" />
-            <element signature="method#get#0;class#DocumentLinkingData#0;class#SessionState#0" />
-            <element signature="method#SessionState#0;class#SessionState#0" />
-            <element signature="method#cancelOperation#0;class#SessionState#0" />
-            <element signature="method#generateRankableDocument#0;class#SessionState#0" />
-            <element signature="method#generateRankableWebSearchResult#0;class#SessionState#0" />
-            <element signature="method#generateUploadedDocs#0;class#SessionState#0" />
-            <element signature="method#sendMessageToClient#0;class#SessionState#0" />
-            <element signature="method#handleCrawlComplete#0;class#SessionState#0" />
-            <element signature="method#handleParseComplete#0;class#SessionState#0" />
-            <element signature="method#handleParseJobComplete#0;class#SessionState#0" />
-            <element signature="method#handleGenerateQuestionsJobComplete#0;class#SessionState#0" />
-            <element signature="method#sendErrorResponse#0;class#SessionState#0" />
-            <element signature="method#handleCorpusUpload#0;class#SessionState#0" />
-            <element signature="method#searchCrawlParse#0;class#SessionState#0" />
-            <element signature="method#beginCustomCorpusUpload#0;class#SessionState#0" />
-            <element signature="e#14483#14527#0" />
-            <element signature="method#generateQuestions#0;class#SessionState#0" />
-            <element signature="method#release#0;class#SessionState#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_144/src.zip!/java/net/URL.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="238">
@@ -1416,10 +1356,66 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/presentation/MainViewport.ui.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="216">
+          <caret line="120" column="27" lean-forward="true" selection-start-line="120" selection-start-column="27" selection-end-line="120" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/AboutPage.ui.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1310">
+          <caret line="194" column="37" selection-start-line="194" selection-start-column="37" selection-end-line="194" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/github/gwtmaterialdesign/gwt-material/2.0-rc7/gwt-material-2.0-rc7-sources.jar!/gwt/material/design/client/ui/MaterialCardReveal.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="38" column="25" selection-start-line="38" selection-start-column="25" selection-end-line="38" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/com/github/gwtmaterialdesign/gwt-material/2.0-rc7/gwt-material-2.0-rc7-sources.jar!/gwt/material/design/client/ui/MaterialCard.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="311">
+          <caret line="102" column="11" selection-start-line="102" selection-start-column="11" selection-end-line="102" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/DocumentPreviewPane.ui.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="213">
+          <caret line="69" column="43" selection-start-line="68" selection-start-column="71" selection-end-line="69" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/SentenceSelectionTask.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="68">
+          <caret line="8" column="13" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/SentenceSelector.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="629">
+          <caret line="40" column="140" lean-forward="true" selection-start-line="40" selection-start-column="140" selection-end-line="40" selection-end-column="140" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/QuestionGeneratorPreview.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="901">
+          <caret line="75" column="42" selection-start-line="75" selection-start-column="42" selection-end-line="75" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/model/WebRankerCore.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="108">
-          <caret line="1697" selection-start-line="1697" selection-end-line="1697" />
+        <state relative-caret-position="14076">
+          <caret line="1712" column="38" selection-start-line="1712" selection-start-column="38" selection-end-line="1712" selection-end-column="38" />
           <folding>
             <element signature="e#1831#2723#0" />
             <element signature="e#2159#2340#0" />
@@ -1477,66 +1473,123 @@
             <element signature="e#21348#21384#0" />
             <element signature="e#21445#21661#0" />
             <element signature="e#21545#21657#0" />
-            <element signature="e#48874#48875#0" expanded="true" />
-            <element signature="e#48943#48944#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/presentation/MainViewport.ui.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="120" column="27" lean-forward="true" selection-start-line="120" selection-start-column="27" selection-end-line="120" selection-end-column="27" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/com/github/gwtmaterialdesign/gwt-material/2.0-rc7/gwt-material-2.0-rc7-sources.jar!/gwt/material/design/client/ui/MaterialCard.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="311">
-          <caret line="102" column="11" selection-start-line="102" selection-start-column="11" selection-end-line="102" selection-end-column="11" />
-          <folding>
-            <element signature="e#4358#4359#0" expanded="true" />
-            <element signature="e#4428#4429#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/com/github/gwtmaterialdesign/gwt-material/2.0-rc7/gwt-material-2.0-rc7-sources.jar!/gwt/material/design/client/ui/MaterialCardReveal.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="38" column="25" selection-start-line="38" selection-start-column="25" selection-end-line="38" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/QuestionGeneratorPreview.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="652">
-          <caret line="64" column="62" selection-start-line="64" selection-start-column="62" selection-end-line="64" selection-end-column="62" />
-          <folding>
-            <element signature="e#4099#4100#0" expanded="true" />
-            <element signature="e#4127#4128#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/DocumentPreviewPane.ui.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="213">
-          <caret line="69" column="43" lean-forward="true" selection-start-line="68" selection-start-column="71" selection-end-line="69" selection-end-column="43" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/AboutPage.ui.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1310">
-          <caret line="194" column="37" selection-start-line="194" selection-start-column="37" selection-end-line="194" selection-end-column="37" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/QuestionGeneratorPreview.ui.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="7" column="78" selection-start-line="7" selection-start-column="78" selection-end-line="7" selection-end-column="78" />
+        <state relative-caret-position="340">
+          <caret line="20" column="26" selection-start-line="20" selection-start-column="15" selection-end-line="20" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/edu/cmu/ark/WhPhraseGenerator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="6834">
+          <caret line="413" selection-start-line="413" selection-end-line="413" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/server/interop/session/SessionState.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2057">
+          <caret line="534" selection-start-line="534" selection-end-line="534" />
+          <folding>
+            <element signature="docComment;class#SessionState#0" />
+            <element signature="class#TemporaryCache#0;class#SessionState#0" />
+            <element signature="class#CustomCorpus#0;class#TemporaryCache#0;class#SessionState#0" />
+            <element signature="method#CustomCorpus#0;class#CustomCorpus#0;class#TemporaryCache#0;class#SessionState#0" />
+            <element signature="class#UploadedFileDocumentSource#0;class#SessionState#0" />
+            <element signature="method#UploadedFileDocumentSource#0;class#UploadedFileDocumentSource#0;class#SessionState#0" />
+            <element signature="class#PipelineOpCache#0;class#SessionState#0" />
+            <element signature="method#PipelineOpCache#0;class#PipelineOpCache#0;class#SessionState#0" />
+            <element signature="method#newOp#0;class#PipelineOpCache#0;class#SessionState#0" />
+            <element signature="method#endActiveOp#0;class#PipelineOpCache#0;class#SessionState#0" />
+            <element signature="method#activeOp#0;class#PipelineOpCache#0;class#SessionState#0" />
+            <element signature="method#activeOpId#0;class#PipelineOpCache#0;class#SessionState#0" />
+            <element signature="class#DocumentLinkingData#0;class#SessionState#0" />
+            <element signature="method#put#0;class#DocumentLinkingData#0;class#SessionState#0" />
+            <element signature="method#get#0;class#DocumentLinkingData#0;class#SessionState#0" />
+            <element signature="method#SessionState#0;class#SessionState#0" />
+            <element signature="method#cancelOperation#0;class#SessionState#0" />
+            <element signature="method#generateRankableDocument#0;class#SessionState#0" />
+            <element signature="method#generateRankableWebSearchResult#0;class#SessionState#0" />
+            <element signature="method#generateUploadedDocs#0;class#SessionState#0" />
+            <element signature="method#sendMessageToClient#0;class#SessionState#0" />
+            <element signature="method#handleCrawlComplete#0;class#SessionState#0" />
+            <element signature="method#handleParseComplete#0;class#SessionState#0" />
+            <element signature="method#handleParseJobComplete#0;class#SessionState#0" />
+            <element signature="method#handleGenerateQuestionsJobComplete#0;class#SessionState#0" />
+            <element signature="method#sendErrorResponse#0;class#SessionState#0" />
+            <element signature="method#handleCorpusUpload#0;class#SessionState#0" />
+            <element signature="method#searchCrawlParse#0;class#SessionState#0" />
+            <element signature="method#beginCustomCorpusUpload#0;class#SessionState#0" />
+            <element signature="e#14483#14527#0" />
+            <element signature="method#generateQuestions#0;class#SessionState#0" />
+            <element signature="method#release#0;class#SessionState#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/TextRankSentenceSelector.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2584">
+          <caret line="171" column="100" selection-start-line="171" selection-start-column="15" selection-end-line="171" selection-end-column="100" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/QuestionGenerationPipeline.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1139">
+          <caret line="72" column="44" selection-start-line="72" selection-start-column="44" selection-end-line="72" selection-end-column="44" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/com/flair/server/crawler/BingSearchAgent.properties">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/server/crawler/CachingSearchAgent.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="13" column="15" selection-start-line="13" selection-start-column="15" selection-end-line="13" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/QuestionGenerationOp.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1955">
+          <caret line="126" column="71" lean-forward="true" selection-start-line="126" selection-start-column="71" selection-end-line="126" selection-end-column="71" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/server/crawler/BingSearchAgent.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="493">
+          <caret line="37" column="27" lean-forward="true" selection-start-line="37" selection-start-column="27" selection-end-line="37" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/resources/com/flair/server/crawler/WebSearchAgent.properties">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="1" column="112" selection-start-line="1" selection-start-column="112" selection-end-line="1" selection-end-column="112" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/server/crawler/WebSearchAgent.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="24" column="5" lean-forward="true" selection-start-line="24" selection-start-column="5" selection-end-line="24" selection-end-column="5" />
+          <folding>
+            <element signature="e#1222#1223#0" expanded="true" />
+            <element signature="e#1241#1242#0" expanded="true" />
+            <element signature="e#1275#1276#0" expanded="true" />
+            <element signature="e#1293#1294#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
