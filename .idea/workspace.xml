@@ -4,18 +4,18 @@
     <bookmark url="file://$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/GenericWeightSlider.java" line="20" mnemonic="2" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c89ab379-5832-4084-9720-767029c011ce" name="Default" comment="Integrate question generation into the frontend&#10;Misc changes, additions and fixes">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/flair/client/model/WebRankerCore.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/flair/client/model/WebRankerCore.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/QuestionGeneratorPreview.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/QuestionGeneratorPreview.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/QuestionGeneratorPreview.ui.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/flair/client/presentation/widgets/QuestionGeneratorPreview.ui.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/flair/server/crawler/WebSearchAgent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/flair/server/crawler/WebSearchAgent.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/flair/server/interop/session/SessionState.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/flair/server/interop/session/SessionState.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/QuestionGenerationOp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/QuestionGenerationOp.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/QuestionGenerationPipeline.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/QuestionGenerationPipeline.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/SentenceSelector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/SentenceSelector.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/TextRankSentenceSelector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/flair/server/pipelines/questgen/TextRankSentenceSelector.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/flair/server/QuestionGeneratorTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/flair/server/QuestionGeneratorTest.java" afterDir="false" />
+    <list default="true" id="c89ab379-5832-4084-9720-767029c011ce" name="Default" comment="Fix answer reveal card&#10;Generate questions exhaustively&#10;Minor changes">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/GitHub.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/kotlinc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -82,6 +82,7 @@
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="class" value="17" />
+          <entry key="gitignore" value="2" />
           <entry key="java" value="707" />
           <entry key="md" value="2" />
           <entry key="properties" value="15" />
@@ -94,6 +95,7 @@
         <counts>
           <entry key="CLASS" value="17" />
           <entry key="Enforced Plain Text" value="1" />
+          <entry key="Git file" value="2" />
           <entry key="JAVA" value="707" />
           <entry key="Markdown" value="2" />
           <entry key="Properties" value="15" />
@@ -105,17 +107,19 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="67" />
+          <entry key="gitignore" value="14" />
           <entry key="java" value="34893" />
           <entry key="properties" value="282" />
           <entry key="tsv" value="222" />
-          <entry key="txt" value="1306" />
+          <entry key="txt" value="1380" />
           <entry key="xml" value="607" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
+          <entry key="Git file" value="14" />
           <entry key="JAVA" value="34893" />
-          <entry key="PLAIN_TEXT" value="1373" />
+          <entry key="PLAIN_TEXT" value="1447" />
           <entry key="Properties" value="282" />
           <entry key="TSV" value="222" />
           <entry key="XML" value="607" />
@@ -139,17 +143,26 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/server/crawler/WebSearchAgent.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="340">
-              <caret line="24" column="5" lean-forward="true" selection-start-line="24" selection-start-column="5" selection-end-line="24" selection-end-column="5" />
+            <state relative-caret-position="359">
+              <caret line="62" lean-forward="true" selection-start-line="62" selection-end-line="62" />
               <folding>
                 <element signature="e#1222#1223#0" expanded="true" />
                 <element signature="e#1241#1242#0" expanded="true" />
                 <element signature="e#1275#1276#0" expanded="true" />
                 <element signature="e#1293#1294#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/.gitignore">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="277">
+              <caret line="30" column="26" lean-forward="true" selection-start-line="30" selection-start-column="26" selection-end-line="30" selection-end-column="26" />
             </state>
           </provider>
         </entry>
@@ -325,7 +338,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/main/java/edu/cmu/ark/QuestionTransducer.java" />
         <option value="$PROJECT_DIR$/src/main/java/edu/cmu/ark/QuestionAsker.java" />
         <option value="$PROJECT_DIR$/src/test/java/edu/cmu/ark/TestWhPhraseGenerator.java" />
         <option value="$PROJECT_DIR$/src/main/java/edu/cmu/ark/Question.java" />
@@ -376,6 +388,7 @@
         <option value="$PROJECT_DIR$/src/main/resources/com/flair/server/crawler/WebSearchAgent.properties" />
         <option value="$PROJECT_DIR$/src/main/java/com/flair/server/crawler/BingSearchAgent.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/flair/server/crawler/WebSearchAgent.java" />
+        <option value="$PROJECT_DIR$/.gitignore" />
       </list>
     </option>
   </component>
@@ -747,7 +760,7 @@
       <workItem from="1538941033257" duration="8917000" />
       <workItem from="1539077635885" duration="9043000" />
       <workItem from="1539255551349" duration="606000" />
-      <workItem from="1539256511957" duration="1716000" />
+      <workItem from="1539256511957" duration="1930000" />
     </task>
     <task id="LOCAL-00001" summary="Hide weight sliders on disable&#10;Minor fixes">
       <created>1529865179221</created>
@@ -903,7 +916,14 @@
       <option name="project" value="LOCAL" />
       <updated>1538950068629</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="Fix answer reveal card&#10;Generate questions exhaustively&#10;Minor changes">
+      <created>1539259464254</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1539259464254</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -939,7 +959,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="360130000" />
+    <option name="totallyTimeSpent" value="360344000" />
   </component>
   <component name="TodoView" selected-index="2">
     <todo-panel id="selected-file">
@@ -954,7 +974,7 @@
     <frame x="-8" y="-8" width="1936" height="1096" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" x="160" y="168" width="311" height="654" id="Project" order="0" sideWeight="0.5641822" visible="true" weight="0.19402985" />
+      <window_info content_ui="combo" x="160" y="168" width="311" height="654" id="Project" order="0" sideWeight="0.5641822" visible="true" weight="0.19402985" />
       <window_info id="Structure" order="1" sideWeight="0.3478261" side_tool="true" weight="0.26012793" />
       <window_info id="Web" order="2" sideWeight="0.4358178" side_tool="true" weight="0.18550107" />
       <window_info id="Learn" order="3" show_stripe_button="false" weight="0.3295302" />
@@ -1085,7 +1105,8 @@
     <MESSAGE value="Initial implementation of the question generation pipeline&#10;Related refactoring, changes, fixes and additions" />
     <MESSAGE value="Question generation related fixes&#10;Switch to sl4j binding to logback&#10;Misc additions" />
     <MESSAGE value="Integrate question generation into the frontend&#10;Misc changes, additions and fixes" />
-    <option name="LAST_COMMIT_MESSAGE" value="Integrate question generation into the frontend&#10;Misc changes, additions and fixes" />
+    <MESSAGE value="Fix answer reveal card&#10;Generate questions exhaustively&#10;Minor changes" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix answer reveal card&#10;Generate questions exhaustively&#10;Minor changes" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
   </component>
@@ -1155,13 +1176,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/shared/interop/services/WebRankerService.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="27" column="19" lean-forward="true" selection-start-line="27" selection-start-column="19" selection-end-line="27" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/client/model/interfaces/WebRankerAnalysis.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="153">
@@ -1582,14 +1596,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/flair/server/crawler/WebSearchAgent.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="24" column="5" lean-forward="true" selection-start-line="24" selection-start-column="5" selection-end-line="24" selection-end-column="5" />
+        <state relative-caret-position="359">
+          <caret line="62" lean-forward="true" selection-start-line="62" selection-end-line="62" />
           <folding>
             <element signature="e#1222#1223#0" expanded="true" />
             <element signature="e#1241#1242#0" expanded="true" />
             <element signature="e#1275#1276#0" expanded="true" />
             <element signature="e#1293#1294#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/.gitignore">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="277">
+          <caret line="30" column="26" lean-forward="true" selection-start-line="30" selection-start-column="26" selection-end-line="30" selection-end-column="26" />
         </state>
       </provider>
     </entry>
