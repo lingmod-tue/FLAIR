@@ -127,14 +127,15 @@ public class TextRankSentenceSelector implements SentenceSelector {
 		// create tf-idf sentence vectors
 		List<Node> nodes = allSents.stream().map(sent -> {
 			Node newNode = new Node(sent, new SparseDoubleVector(index.size()));
-			sent.tokens.forEach(tok -> newNode.vector.set(index.getTermId(tok), index.getTermTfIdf(tok, getBaseDocument(sent, params), false)));
+			sent.tokens.forEach(tok -> newNode.vector.set(index.getTermId(tok), index.getTermTfIdf(tok, getBaseDocument(sent, params), true)));
+			newNode.vector.normalize();
 			return newNode;
 		}).collect(Collectors.toList());
 
 		// generate sentence graph
 		for (List<Node> pair : new Combinator<>(nodes, 2)) {
 			Node first = pair.get(0), second = pair.get(1);
-			double cosineSimilarity = first.vector.dot(second.vector) / (first.vector.magnitude() * second.vector.magnitude());
+			double cosineSimilarity = first.vector.dot(second.vector);
 			if (!Double.isFinite(cosineSimilarity)) {
 				ServerLogger.get().trace("Invalid cosine similarity between sentences " + first.source.id +
 						" and " + second.source.id + " in document " + first.source.sourceDoc.getDescription());

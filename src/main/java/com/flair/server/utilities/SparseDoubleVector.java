@@ -3,6 +3,8 @@ package com.flair.server.utilities;
 import gnu.trove.map.TIntDoubleMap;
 import gnu.trove.map.hash.TIntDoubleHashMap;
 
+import java.util.Arrays;
+
 /*
  * A very basic implementation of a sparse array/vector of double precision floating point values
  */
@@ -58,5 +60,10 @@ public class SparseDoubleVector {
 		for (double itr : backingStore.values())
 			out += itr * itr;
 		return Math.sqrt(out);
+	}
+
+	public void normalize() {
+		double magnitude = magnitude();
+		Arrays.stream(backingStore.keys()).forEach(k -> backingStore.put(k, magnitude * backingStore.get(k)));
 	}
 }

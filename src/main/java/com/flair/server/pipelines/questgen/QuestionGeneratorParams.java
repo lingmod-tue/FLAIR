@@ -18,10 +18,10 @@ class QuestionGeneratorParams {
 	public static final class Builder {
 		boolean dropPronouns = true;
 		boolean downweighPronouns = false;
-		boolean downweighFrequentWords = false;
+		boolean downweighFrequentWords = true;
 		boolean preferWHQuestions = false;
 		boolean onlyWHQuestions = false;
-		boolean resolveNonPronounNPs = false;
+		boolean resolveNonPronounNPs = true;
 		boolean resolvePronounNPs = true;
 		boolean doStemming = true;
 		String rankerModelPath = ResourceLoader.path("linear-regression-ranker-reg500.ser.gz");
