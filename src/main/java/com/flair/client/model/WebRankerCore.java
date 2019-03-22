@@ -1104,9 +1104,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 
 				// rerank the parsed docs as their original ranks can be discontinuous
 				// sort the parsed docs by their original rank first and then rerank them
-				Collections.sort(data.parsedDocs, (a, b) -> {
-					return Integer.compare(a.getRank(), b.getRank());
-				});
+				data.parsedDocs.sort(Comparator.comparingInt(RankableDocument::getRank));
 				int i = 1;
 				for (RankableDocument itr : data.parsedDocs) {
 					itr.setRank(i);
@@ -1463,16 +1461,16 @@ public class WebRankerCore implements AbstractWebRankerCore {
 				rankPreviewModule.visualize();
 		});
 
-		settings.setSettingsChangedHandler(() -> onSettingsChanged());
-		settings.setResetAllHandler(() -> onSettingsReset());
-		search.setSearchHandler((l, q, n) -> onWebSearch(l, q, n));
+		settings.setSettingsChangedHandler(this::onSettingsChanged);
+		settings.setResetAllHandler(this::onSettingsReset);
+		search.setSearchHandler(this::onWebSearch);
 		preview.setShowHideEventHandler(v -> {
 			if (!v)
 				results.clearSelection();
 		});
-		preview.setGenerateQuestionsHandler(e -> onGenerateQuestions(e));
-		upload.setUploadBeginHandler(e -> onUploadBegin(e));
-		upload.setUploadCompleteHandler((n, s) -> onUploadComplete(n, s));
+		preview.setGenerateQuestionsHandler(this::onGenerateQuestions);
+		upload.setUploadBeginHandler(this::onUploadBegin);
+		upload.setUploadCompleteHandler(this::onUploadComplete);
 		visualizer.setApplyFilterHandler(d -> {
 			for (RankableDocument itr : d)
 				rankPreviewModule.addToFilter(itr);
@@ -1486,14 +1484,12 @@ public class WebRankerCore implements AbstractWebRankerCore {
 			settings.getSliderBundle().resetState(false);
 			onSettingsChanged();
 		});
-		cancel.setCancelHandler(() -> onCancelOp());
+		cancel.setCancelHandler(this::onCancelOp);
 
-		comparer.setCompareHandler((l, d) -> onCompare(l, d));
+		comparer.setCompareHandler(this::onCompare);
 		comparer.bindToWebRankerCore(this);
-		history.setFetchAnalysesHandler(() -> {
-			return processHistory.asList();
-		});
-		history.setRestoreAnalysisHandler(p -> onRestoreProcess(p));
+		history.setFetchAnalysesHandler(processHistory::asList);
+		history.setRestoreAnalysisHandler(this::onRestoreProcess);
 
 		LocalizationEngine.get().addLanguageChangeHandler(l -> rankPreviewModule.refreshLocalization(l.newLang));
 
@@ -1563,7 +1559,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 		// this handler can be spammed under certain circumstances
 		// to prevent the rerank calls from accumulating, defer the execution until the browser event loop returns
 		rerankFlag = true;
-		Scheduler.get().scheduleDeferred(() -> doDeferredReranking());
+		Scheduler.get().scheduleDeferred(this::doDeferredReranking);
 	}
 
 	private void onSettingsReset() {

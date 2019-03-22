@@ -2,10 +2,7 @@ package com.flair.client.presentation;
 
 
 import com.flair.client.ClientEndPoint;
-import com.flair.client.localization.CommonLocalizationTags;
-import com.flair.client.localization.LocalizationEngine;
-import com.flair.client.localization.LocalizedComposite;
-import com.flair.client.localization.LocalizedFieldType;
+import com.flair.client.localization.*;
 import com.flair.client.localization.annotations.LocalizedCommonField;
 import com.flair.client.localization.annotations.LocalizedField;
 import com.flair.client.localization.interfaces.LocalizationBinder;
@@ -167,8 +164,8 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	private void invokeAtomicOperation(Runnable handler) {
 		if (ClientEndPoint.get().getWebRanker().isOperationInProgress()) {
 			// prompt the user if they want to cancel the currently running operation
-			String title = getLocalizedString(CommonLocalizationTags.OPERATION_INPROGRESS_CONFIRM_TITLE.toString());
-			String caption = getLocalizedString(CommonLocalizationTags.OPERATION_INPROGRESS_CONFIRM_CAPTION.toString());
+			String title = getLocalizedString(DefaultLocalizationProviders.COMMON.toString(), CommonLocalizationTags.OPERATION_INPROGRESS_CONFIRM_TITLE.toString());
+			String caption = getLocalizedString(DefaultLocalizationProviders.COMMON.toString(), CommonLocalizationTags.OPERATION_INPROGRESS_CONFIRM_CAPTION.toString());
 
 			mdlPromptUI.yesNo(title, caption, () -> {
 				ClientEndPoint.get().getWebRanker().cancelCurrentOperation();

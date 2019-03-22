@@ -58,8 +58,8 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 		MaterialCardTitle answer = new MaterialCardTitle();
 
 		QuestionCard(QuestionDTO generatedQuestion) {
-			wrapper.setGrid("l4 m6 s12");
-			wrapper.setPadding(2.5);
+			wrapper.setGrid("l12 m12 s12");
+			wrapper.setPadding(3);
 			card.setBackgroundColor(Color.BLUE_GREY_DARKEN_1);
 			question.setTextColor(Color.WHITE);
 			question.setText(generatedQuestion.getQuestion());
