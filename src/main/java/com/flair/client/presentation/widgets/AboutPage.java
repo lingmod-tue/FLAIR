@@ -8,7 +8,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
 import gwt.material.design.client.ui.MaterialButton;
-import gwt.material.design.client.ui.MaterialModal;
+import gwt.material.design.client.ui.MaterialDialog;
 
 public class AboutPage extends LocalizedComposite {
 
@@ -22,11 +22,11 @@ public class AboutPage extends LocalizedComposite {
 	interface AboutPageLocalizationBinder extends LocalizationBinder<AboutPage> {}
 
 	@UiField
-	MaterialModal mdlAboutEnUI;
+	MaterialDialog mdlAboutEnUI;
 	@UiField
 	MaterialButton btnAboutEnCloseUI;
 	@UiField
-	MaterialModal mdlAboutDeUI;
+	MaterialDialog mdlAboutDeUI;
 	@UiField
 	MaterialButton btnAboutDeCloseUI;
 

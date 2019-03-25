@@ -10,8 +10,8 @@
 	</ui:style>
 
 	<m:MaterialContainer>
-		<m:MaterialModal ui:field="mdlAboutEnUI" dismissible="true">
-			<m:MaterialModalContent>
+        <m:MaterialDialog ui:field="mdlAboutEnUI" dismissible="true">
+            <m:MaterialDialogContent>
 				<g:HTML>
 					<center>
 						<h3 class="modal-title">
@@ -151,16 +151,16 @@
 						Attribution-NonCommercial-ShareAlike 4.0 International License</a>
 					.
 				</g:HTML>
-			</m:MaterialModalContent>
+            </m:MaterialDialogContent>
 
-			<m:MaterialModalFooter>
+            <m:MaterialDialogFooter>
 				<m:MaterialButton ui:field="btnAboutEnCloseUI"
 					text="Close" type="FLAT" />
-			</m:MaterialModalFooter>
-		</m:MaterialModal>
-		
-		<m:MaterialModal ui:field="mdlAboutDeUI" dismissible="true">
-			<m:MaterialModalContent>
+            </m:MaterialDialogFooter>
+        </m:MaterialDialog>
+
+        <m:MaterialDialog ui:field="mdlAboutDeUI" dismissible="true">
+            <m:MaterialDialogContent>
 				<g:HTML>
 					<center>
 						<h3 class="modal-title">
@@ -291,12 +291,12 @@
 						Internationalen Lizenz</a>
 					.
 				</g:HTML>
-			</m:MaterialModalContent>
+            </m:MaterialDialogContent>
 
-			<m:MaterialModalFooter>
+            <m:MaterialDialogFooter>
 				<m:MaterialButton ui:field="btnAboutDeCloseUI"
 					text="Schliessen" type="FLAT" />
-			</m:MaterialModalFooter>
-		</m:MaterialModal>
+            </m:MaterialDialogFooter>
+        </m:MaterialDialog>
 	</m:MaterialContainer>
 </ui:UiBinder> 

@@ -34,7 +34,7 @@ public class CustomKeywordsEditor extends LocalizedComposite implements CustomKe
 	}
 
 	@UiField
-	MaterialModal mdlKeywordEditorUI;
+	MaterialDialog mdlKeywordEditorUI;
 	@UiField
 	@LocalizedField(type = LocalizedFieldType.TEXT_TITLE)
 	MaterialTitle lblTitleUI;

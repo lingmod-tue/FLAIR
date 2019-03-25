@@ -15,7 +15,6 @@ public interface AbstractWebRankerPresenter {
 	NotificationService getNotificationService();
 	VisualizerService getVisualizerService();
 	OperationCancelService getCancelService();
-	OverlayService getOverlayService();
 	SettingsUrlExporterView getSettingsUrlExporterView();
 	DocumentCompareService getDocumentCompareService();
 	HistoryViewerService getHistoryViewerService();

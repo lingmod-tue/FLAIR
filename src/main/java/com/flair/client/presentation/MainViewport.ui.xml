@@ -3,17 +3,12 @@
 			 xmlns:g="urn:import:com.google.gwt.user.client.ui"
 			 xmlns:m="urn:import:gwt.material.design.client.ui"
 			 xmlns:flair="urn:import:com.flair.client.presentation.widgets"
-			 xmlns:m.overlay="urn:import:gwt.material.design.addins.client.overlay"
 			 xmlns:m.morph="urn:import:gwt.material.design.addins.client.iconmorph">
 	
 	<ui:style>
 	.brand-logo {
 		padding: 1px 1px 1px 1px;
 		height: 200px;
-	}
-	
-	.panel-navSearch {
-		padding-top: 4px;
 	}
 	
 	.panel-defaultPlaceholder {
@@ -110,9 +105,6 @@
 		<!-- Prompt Modal -->
 		<flair:ModalPrompt ui:field="mdlPromptUI"/>
 	
-		<!-- Overlay Modal -->
-		<m.overlay:MaterialOverlay ui:field="mdlOverlayUI"/>
-		
 		<!-- Default Pane -->
 		<m:MaterialRow ui:field="pnlDefaultPlaceholderUI" visible="false" 
 			marginTop="70" padding="20" grid="l12 m12 s12"

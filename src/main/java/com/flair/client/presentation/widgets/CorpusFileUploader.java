@@ -20,7 +20,7 @@ import gwt.material.design.addins.client.fileuploader.base.UploadFile;
 import gwt.material.design.addins.client.stepper.MaterialStep;
 import gwt.material.design.addins.client.stepper.MaterialStepper;
 import gwt.material.design.client.ui.MaterialButton;
-import gwt.material.design.client.ui.MaterialModal;
+import gwt.material.design.client.ui.MaterialDialog;
 import gwt.material.design.client.ui.MaterialRadioButton;
 import gwt.material.design.client.ui.MaterialToast;
 
@@ -41,7 +41,7 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 	}
 
 	@UiField
-	MaterialModal mdlUploadUI;
+	MaterialDialog mdlUploadUI;
 	@UiField
 	MaterialFileUploader uplUploaderUI;
 	@UiField

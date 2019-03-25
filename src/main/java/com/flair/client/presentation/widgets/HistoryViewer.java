@@ -35,7 +35,7 @@ public class HistoryViewer extends LocalizedComposite implements HistoryViewerSe
 	}
 
 	@UiField
-	MaterialModal mdlRootUI;
+	MaterialDialog mdlRootUI;
 	@UiField
 	@LocalizedField
 	MaterialLabel lblTitleUI;

@@ -14,8 +14,8 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
 import gwt.material.design.client.ui.MaterialButton;
+import gwt.material.design.client.ui.MaterialDialog;
 import gwt.material.design.client.ui.MaterialListBox;
-import gwt.material.design.client.ui.MaterialModal;
 import gwt.material.design.client.ui.MaterialTextBox;
 import gwt.material.design.client.ui.html.Option;
 
@@ -32,7 +32,7 @@ public class WebSearchModal extends LocalizedComposite implements WebSearchServi
 
 
 	@UiField
-	MaterialModal mdlWebSearchUI;
+	MaterialDialog mdlWebSearchUI;
 	@UiField
 	@LocalizedField(type = LocalizedFieldType.TEXTBOX_LABEL)
 	MaterialTextBox txtSearchBoxUI;

@@ -12,7 +12,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
 import gwt.material.design.client.ui.MaterialButton;
-import gwt.material.design.client.ui.MaterialModal;
+import gwt.material.design.client.ui.MaterialDialog;
 import gwt.material.design.client.ui.MaterialTextBox;
 import gwt.material.design.client.ui.MaterialTitle;
 
@@ -29,7 +29,7 @@ public class SettingsExporter extends LocalizedComposite implements SettingsUrlE
 
 
 	@UiField
-	MaterialModal mdlExporterUI;
+	MaterialDialog mdlExporterUI;
 	@UiField
 	@LocalizedField(type = LocalizedFieldType.TEXT_TITLE)
 	@LocalizedField(tag = "lblTitleUI_Desc", type = LocalizedFieldType.TEXT_DESCRIPTION)

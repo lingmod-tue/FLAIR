@@ -1,13 +1,14 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:m="urn:import:gwt.material.design.client.ui"
-	xmlns:m.html="urn:import:gwt.material.design.client.ui.html" xmlns:ma="urn:import:gwt.material.design.addins.client"
-	xmlns:ma.stepper="urn:import:gwt.material.design.addins.client.stepper"
-	xmlns:ma.fileuploader="urn:import:gwt.material.design.addins.client.fileuploader">
+             xmlns:m="urn:import:gwt.material.design.client.ui"
+             xmlns:m.html="urn:import:gwt.material.design.client.ui.html"
+             xmlns:ma="urn:import:gwt.material.design.addins.client"
+             xmlns:ma.stepper="urn:import:gwt.material.design.addins.client.stepper"
+             xmlns:ma.fileuploader="urn:import:gwt.material.design.addins.client.fileuploader">
 
-	<m:MaterialModal ui:field="mdlUploadUI" type="BOTTOM_SHEET"
+    <m:MaterialDialog ui:field="mdlUploadUI" type="BOTTOM_SHEET"
 		dismissible="false">
-		<m:MaterialModalContent>
+        <m:MaterialDialogContent>
 			<m:MaterialPanel height="300px" width="100%">
 				<ma.stepper:MaterialStepper ui:field="stprUploaderUI" shadow="0"
 					stepSkippingAllowed="false" detectOrientation="true">
@@ -49,7 +50,7 @@
 						</m:MaterialRow>
 					</ma:stepper.MaterialStep>
 				</ma.stepper:MaterialStepper>
-			</m:MaterialPanel>				
-		</m:MaterialModalContent>
-	</m:MaterialModal>
+			</m:MaterialPanel>
+        </m:MaterialDialogContent>
+    </m:MaterialDialog>
 </ui:UiBinder> 

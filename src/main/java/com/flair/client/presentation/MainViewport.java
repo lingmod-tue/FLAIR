@@ -17,8 +17,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 import gwt.material.design.addins.client.iconmorph.MaterialIconMorph;
-import gwt.material.design.addins.client.overlay.MaterialOverlay;
-import gwt.material.design.client.base.MaterialWidget;
 import gwt.material.design.client.constants.Position;
 import gwt.material.design.client.ui.*;
 import gwt.material.design.client.ui.animate.MaterialAnimation;
@@ -35,31 +33,6 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		@Override
 		public void notify(String text, int timeout) {
 			MaterialToast.fireToast(text, timeout, "rounded");
-		}
-	}
-
-	static final class BasicOverlay implements OverlayService {
-		private final MaterialOverlay overlay;
-
-		public BasicOverlay(MaterialOverlay o) {
-			overlay = o;
-		}
-
-		@Override
-		public MaterialWidget getOverlay() {
-			return overlay;
-		}
-
-		@Override
-		public void show(MaterialWidget source, Widget content) {
-			overlay.clear();
-			overlay.add(content);
-			overlay.open(source);
-		}
-
-		@Override
-		public void hide() {
-			overlay.close();
 		}
 	}
 
@@ -147,8 +120,6 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	@LocalizedField
 	MaterialLabel lblDefaultUploadCaptionUI;
 	@UiField
-	MaterialOverlay mdlOverlayUI;
-	@UiField
 	SettingsExporter mdlExporterUI;
 	@UiField
 	DocumentComparer mdlComparerUI;
@@ -159,7 +130,6 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	@UiField
 	AboutPage mdlAboutUI;
 	ToastNotifications notificationService;
-	BasicOverlay overlayService;
 
 	private void invokeAtomicOperation(Runnable handler) {
 		if (ClientEndPoint.get().getWebRanker().isOperationInProgress()) {
@@ -257,7 +227,6 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		initLocale(localeBinder.bind(this));
 
 		notificationService = new ToastNotifications();
-		overlayService = new BasicOverlay(mdlOverlayUI);
 
 		initHandlers();
 		initUI();
@@ -366,11 +335,6 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	@Override
 	public OperationCancelService getCancelService() {
 		return pnlDocResultsUI;
-	}
-
-	@Override
-	public OverlayService getOverlayService() {
-		return overlayService;
 	}
 
 	@Override

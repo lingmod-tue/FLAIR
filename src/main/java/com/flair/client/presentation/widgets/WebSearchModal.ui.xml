@@ -1,14 +1,13 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:m="urn:import:gwt.material.design.client.ui"
-	xmlns:m.html="urn:import:gwt.material.design.client.ui.html">
+             xmlns:m="urn:import:gwt.material.design.client.ui"
+             xmlns:m.html="urn:import:gwt.material.design.client.ui.html">
 	<ui:style>
 	
 	</ui:style>
-	
-	<m:MaterialModal ui:field="mdlWebSearchUI" type="BOTTOM_SHEET" dismissible="false">
-		<m:MaterialModalContent>
+
+    <m:MaterialDialog ui:field="mdlWebSearchUI" type="BOTTOM_SHEET" dismissible="false">
+        <m:MaterialDialogContent>
 			<!-- Minimum absolute height to prevent the result count dropdown from clipping -->
 			<m:MaterialRow height="170px">
 				<m:MaterialColumn grid="l6 m6 s12">
@@ -31,12 +30,12 @@
 						<m.html:Option ui:field="selResultCountItm50UI" text="50" value="50" />
 					</m:MaterialListBox>
 				</m:MaterialColumn>
-			</m:MaterialRow>				
-		
-			<m:MaterialModalFooter>
+			</m:MaterialRow>
+
+            <m:MaterialDialogFooter>
 				<m:MaterialButton ui:field="btnSearchUI" text="Search" backgroundColor="ORANGE" textColor="WHITE" waves="DEFAULT" />
 				<m:MaterialButton ui:field="btnCancelUI" text="Cancel" type="FLAT" waves="DEFAULT" />
-			</m:MaterialModalFooter>			
-		</m:MaterialModalContent>
-	</m:MaterialModal>
+            </m:MaterialDialogFooter>
+        </m:MaterialDialogContent>
+    </m:MaterialDialog>
 </ui:UiBinder> 

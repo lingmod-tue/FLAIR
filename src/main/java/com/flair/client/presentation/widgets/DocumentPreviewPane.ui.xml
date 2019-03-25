@@ -1,8 +1,9 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:m="urn:import:gwt.material.design.client.ui"
-	xmlns:m.html="urn:import:gwt.material.design.client.ui.html">
+             xmlns:g="urn:import:com.google.gwt.user.client.ui"
+             xmlns:m="urn:import:gwt.material.design.client.ui"
+             xmlns:ma="urn:import:gwt.material.design.addins.client"
+             xmlns:m.html="urn:import:gwt.material.design.client.ui.html">
 	
 	<ui:style>
 	.docText-preview {
@@ -65,7 +66,8 @@
 		</m:MaterialRow>
 		
 		<!-- Construction Details Container -->
-		<m:MaterialPanel visible="false">
+        <ma:overlay.MaterialOverlay ui:field="mdlAllConstUI" textAlign="CENTER" textColor="BLACK"
+                                    backgroundColor="ORANGE_ACCENT_1">
 			<m:MaterialRow ui:field="pnlAllConstUI" grid="l12 m12 s12" overflow="AUTO" layoutPosition="FIXED"
 				width="100%" height="100vh">
 				<m:MaterialRow textAlign="RIGHT">
@@ -77,7 +79,7 @@
 					<m:MaterialColumn ui:field="pnlAllConstCol2UI" grid="l4" textAlign="CENTER"/>
 					<m:MaterialColumn ui:field="pnlAllConstCol3UI" grid="l4" textAlign="RIGHT"/>
 				</m:MaterialRow>
-			</m:MaterialRow>		
-		</m:MaterialPanel>
+			</m:MaterialRow>
+        </ma:overlay.MaterialOverlay>
 	</m:MaterialPanel>
 </ui:UiBinder> 

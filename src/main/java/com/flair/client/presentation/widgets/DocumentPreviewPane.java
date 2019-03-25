@@ -1,6 +1,5 @@
 package com.flair.client.presentation.widgets;
 
-import com.flair.client.ClientEndPoint;
 import com.flair.client.localization.*;
 import com.flair.client.localization.annotations.LocalizedField;
 import com.flair.client.localization.interfaces.LocalizationBinder;
@@ -8,7 +7,6 @@ import com.flair.client.presentation.interfaces.AbstractDocumentPreviewPane;
 import com.flair.client.presentation.interfaces.DocumentPreviewPaneInput;
 import com.flair.client.presentation.interfaces.DocumentPreviewPaneInput.Rankable;
 import com.flair.client.presentation.interfaces.DocumentPreviewPaneInput.UnRankable;
-import com.flair.client.presentation.interfaces.OverlayService;
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
 import com.google.gwt.core.client.GWT;
@@ -21,8 +19,8 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
+import gwt.material.design.addins.client.overlay.MaterialOverlay;
 import gwt.material.design.client.constants.Color;
-import gwt.material.design.client.constants.TextAlign;
 import gwt.material.design.client.ui.*;
 import gwt.material.design.client.ui.html.Br;
 
@@ -70,6 +68,8 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 	MaterialIcon icoHelpTextUI;
 	@UiField
 	ScrollPanel pnlDocTextPreviewUI;
+	@UiField
+	MaterialOverlay mdlAllConstUI;
 	@UiField
 	MaterialRow pnlAllConstUI;
 	@UiField
@@ -471,15 +471,8 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 
 	private void initHandlers() {
 		icoCloseUI.addClickHandler(e -> hide());
-		icoCloseModalUI.addClickHandler(e -> ClientEndPoint.get().getViewport().getOverlayService().hide());
-		btnShowAllConstUI.addClickHandler(e -> {
-			OverlayService overlay = ClientEndPoint.get().getViewport().getOverlayService();
-			overlay.getOverlay().setTextAlign(TextAlign.CENTER);
-			overlay.getOverlay().setBackgroundColor(Color.ORANGE_ACCENT_1);
-			overlay.getOverlay().setTextColor(Color.BLACK);
-
-			overlay.show(btnShowAllConstUI, pnlAllConstUI);
-		});
+		icoCloseModalUI.addClickHandler(e -> mdlAllConstUI.close());
+		btnShowAllConstUI.addClickHandler(e -> mdlAllConstUI.open(btnShowAllConstUI));
 		btnGenerateQuestionsUI.addClickHandler(e -> generateQuestionsHandler.handle(state.rankable.getDocument()));
 	}
 

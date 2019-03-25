@@ -47,7 +47,7 @@ public class DocumentComparer extends LocalizedComposite implements DocumentComp
 	}
 
 	@UiField
-	MaterialModal mdlRootUI;
+	MaterialDialog mdlRootUI;
 	@UiField
 	@LocalizedField
 	MaterialLabel lblTitleUI;
