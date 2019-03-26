@@ -21,7 +21,7 @@ import java.util.Set;
  * @author Michael Heilman (mheilman@cs.cmu.edu)
  */
 // 9-2012 Michael Kutschke: fixed compatibility issues
-// 							- replaced label().toString() with label().value()
+// 							- replaced label().value() with label().value()
 //							- replaced Tree.yield().toString() with AnalysisUtilities.originalSentence(Tree.yield())
 public class WhPhraseGenerator {
 

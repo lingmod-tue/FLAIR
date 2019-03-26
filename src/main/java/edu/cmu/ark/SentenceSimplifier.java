@@ -390,7 +390,7 @@ public class SentenceSimplifier {
 			//These can have labels NP, NN, ..., PRP for pronouns, CC, "," for commas, ":" for semi-colons
 			for (int j = 0; j < parent.numChildren(); j++) {
 				if (parent.getChild(j) == conjoinedNode) continue;
-				siblingLabel = parent.getChild(j).label().toString();
+				siblingLabel = parent.getChild(j).label().value();
 				if (siblingLabel.matches("^[NCP,:S].*")) {
 					parent.removeChild(j);
 					j--;
@@ -435,12 +435,12 @@ public class SentenceSimplifier {
 			//if the node is a subject (i.e., its uncle is a VP), then check
 			//to see if its tense needs to be changed
 			String headPOS = subject.headPreTerminal(
-					AnalysisUtilities.getInstance().getHeadFinder()).label().toString();
-			if (uncle.label().toString().equals("VP") && !headPOS.endsWith("S")) {
+					AnalysisUtilities.getInstance().getHeadFinder()).label().value();
+			if (uncle.label().value().equals("VP") && !headPOS.endsWith("S")) {
 				verbPreterminal = uncle.headPreTerminal(AnalysisUtilities.getInstance().getHeadFinder());
 				//original main verb was plural but the conjoined subject word is singular
 				//e.g., John (and Mary) like Bill.  -> John like Bill.
-				if ((verbPreterminal.label().toString().equals("VB") || verbPreterminal.label().toString().equals(
+				if ((verbPreterminal.label().value().equals("VB") || verbPreterminal.label().value().equals(
 						"VBP"))) { //the parser confuses VBP with VB
 					if (subject.yield().toString().equals("I")
 							|| subject.yield().toString().equals("you")) {
@@ -449,7 +449,7 @@ public class SentenceSimplifier {
 						newVerbPOS = "VBZ";
 					}
 					needToModifyVerb = true;
-				} else if (verbPreterminal.label().toString().equals("VBD")) {
+				} else if (verbPreterminal.label().value().equals("VBD")) {
 					newVerbPOS = "VBD";
 					needToModifyVerb = true;
 				}
@@ -457,12 +457,12 @@ public class SentenceSimplifier {
 			//if needed, change the tense of the verb
 			if (needToModifyVerb) {
 				String verbLemma = AnalysisUtilities.getInstance().getLemma(
-						verbPreterminal.getChild(0).label().toString(),
-						verbPreterminal.label().toString());
+						verbPreterminal.getChild(0).label().value(),
+						verbPreterminal.label().value());
 				String newVerb;
 				//special cases
 				if (verbLemma.equals("be") && newVerbPOS.equals("VBD")) {
-					if (subject.label().toString().endsWith("S"))
+					if (subject.label().value().endsWith("S"))
 						newVerb = "were";
 					else
 						newVerb = "was";
@@ -564,7 +564,7 @@ public class SentenceSimplifier {
 		//rather than only allowing VP nodes to be conjoined.
 		//e.g., John walked and played.
 		//So, we add an extra VP node in between if necessary
-		if (child.label().toString().startsWith("VB")) {
+		if (child.label().value().startsWith("VB")) {
 			gparent.removeChild(parentIdx);
 			Tree newTree = factory.newTreeNode("VP", new ArrayList<Tree>());
 			newTree.addChild(child);
@@ -854,8 +854,8 @@ public class SentenceSimplifier {
 			makeDeterminerDefinite(nountree);
 
 			//if both are proper nouns, do not extract because this is not an appositive(e.g., "Pittsburgh, PA")
-			/*if(nountree.headPreTerminal(AnalysisUtilities.getInstance().getHeadFinder()).label().toString().equals("NNP")
-					&& appositivetree.headPreTerminal(AnalysisUtilities.getInstance().getHeadFinder()).label().toString().equals("NNP"))
+			/*if(nountree.headPreTerminal(AnalysisUtilities.getInstance().getHeadFinder()).label().value().equals("NNP")
+					&& appositivetree.headPreTerminal(AnalysisUtilities.getInstance().getHeadFinder()).label().value().equals("NNP"))
 			{
 				continue;
 			}*/
@@ -1248,7 +1248,7 @@ public class SentenceSimplifier {
 
 	protected boolean isPlural(Tree nountree) {
 		String headTerminalLabel = nountree.headPreTerminal(
-				AnalysisUtilities.getInstance().getHeadFinder()).label().toString();
+				AnalysisUtilities.getInstance().getHeadFinder()).label().value();
 		return (headTerminalLabel.equals("NNS") || headTerminalLabel.equals("NPS"));
 	}
 

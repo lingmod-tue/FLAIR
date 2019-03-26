@@ -3,8 +3,8 @@ package arkref.parsestuff;
 import arkref.sent.SentenceBreaker;
 import com.flair.server.utilities.ServerLogger;
 import com.flair.server.utilities.WordNetDictionary;
-import edu.cmu.ark.*;
 import edu.cmu.ark.TregexPatternFactory;
+import edu.cmu.ark.*;
 import edu.stanford.nlp.ling.HasWord;
 import edu.stanford.nlp.ling.Label;
 import edu.stanford.nlp.process.DocumentPreprocessor;
@@ -257,9 +257,9 @@ public class AnalysisUtilities {
 	public static String abbrevTree(Tree tree) {
 		ArrayList<String> toks = new ArrayList<String>();
 		for (Tree L : tree.getLeaves()) {
-			toks.add(L.label().toString());
+			toks.add(L.label().value());
 		}
-		return tree.label().toString() + "[" + StringUtils.join(toks, " ")
+		return tree.label().value() + "[" + StringUtils.join(toks, " ")
 				+ "]";
 	}
 

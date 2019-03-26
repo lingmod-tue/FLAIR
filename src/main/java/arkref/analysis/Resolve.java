@@ -427,8 +427,8 @@ public class Resolve {
 
 		//both must be proper nouns
 		HeadFinder headFinder = AnalysisUtilities.getInstance().getHeadFinder();
-		if (mention.node().headPreTerminal(headFinder).label().toString().indexOf("NNP") != 0
-				&& cand.node().headPreTerminal(headFinder).label().toString().indexOf("NNP") != 0) {
+		if (mention.node().headPreTerminal(headFinder).label().value().indexOf("NNP") != 0
+				&& cand.node().headPreTerminal(headFinder).label().value().indexOf("NNP") != 0) {
 			return false;
 		}
 

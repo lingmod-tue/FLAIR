@@ -39,10 +39,10 @@ public class BagOfWordsExtractor {
 		List<String> res = new ArrayList<String>();
 
 		for (Tree leaf : parsedSentence.getLeaves()) {
-			String word = leaf.label().toString().toLowerCase();
+			String word = leaf.label().value().toLowerCase();
 			if (stopWordList.contains(word)) continue;
 			Tree pos = leaf.parent(parsedSentence);
-			if (pos.label().toString().matches("^N.*")) {
+			if (pos.label().value().matches("^N.*")) {
 				res.add(word);
 			}
 		}

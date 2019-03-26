@@ -282,7 +282,7 @@ public class Question implements Comparable<Question>, Serializable {
 		Tree pred = intermediateTree.getChild(0).headPreTerminal(
 				AnalysisUtilities.getInstance().getHeadFinder());
 		String lemma = AnalysisUtilities.getInstance().getLemma(
-				pred.yield().toString(), pred.label().toString());
+				pred.yield().toString(), pred.label().value());
 
 		String tregexOpStr;
 		TregexPattern matchPattern;
@@ -292,7 +292,7 @@ public class Question implements Comparable<Question>, Serializable {
 		for (Tree leaf : sourceTree.getLeaves()) {
 			Tree tmp = leaf.parent(sourceTree);
 			String sourceLemma = AnalysisUtilities.getInstance().getLemma(
-					leaf.label().toString(), tmp.label().toString());
+					leaf.label().value(), tmp.label().value());
 			if (sourceLemma.equals(lemma)) {
 				sourcePred = tmp;
 				break;

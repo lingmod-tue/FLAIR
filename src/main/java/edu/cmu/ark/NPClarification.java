@@ -489,7 +489,7 @@ public class NPClarification {
 		boolean hasCommaSubtree = false;
 		boolean hasParenthesesSubtree = false;
 		for (Tree subtree : input.getChildrenAsList()) {
-			if (subtree.label().toString().equals(",")) {
+			if (subtree.label().value().equals(",")) {
 				hasCommaSubtree = true;
 			}
 		}
@@ -530,8 +530,8 @@ public class NPClarification {
 		}
 
 		//if there is a comma, choose the subtree that has the proper noun as the head
-		if (!newHead.label().toString().equals("NNP")
-				&& !newHead.label().toString().equals("NNPS")) {
+		if (!newHead.label().value().equals("NNP")
+				&& !newHead.label().value().equals("NNPS")) {
 
 			tregexOpStr = "__=mention !> __ < /,/=comma << NP=np";
 
@@ -541,8 +541,8 @@ public class NPClarification {
 			while (m.find()) {
 				np = m.getNode("np");
 				Tree subtreeHead = np.headPreTerminal(AnalysisUtilities.getInstance().getHeadFinder());
-				if (subtreeHead.label().toString().equals("NNP")
-						|| subtreeHead.label().toString().equals("NNPS")) {
+				if (subtreeHead.label().value().equals("NNP")
+						|| subtreeHead.label().value().equals("NNPS")) {
 					newHead = subtreeHead;
 					break;
 				}

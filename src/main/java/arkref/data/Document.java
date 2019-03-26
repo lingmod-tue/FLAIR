@@ -47,7 +47,7 @@ public class Document implements Serializable {
 			Sentence sent = new Sentence(i);
 			Tree t = trees.get(i);
 			String entityString = entityStrings.get(i);
-			boolean parseSuccess = !t.getChild(0).label().toString().equals(".");
+			boolean parseSuccess = !t.getChild(0).label().value().equals(".");
 			sent.setStuff(t, entityString, parseSuccess);
 			sentences.add(sent);
 		}

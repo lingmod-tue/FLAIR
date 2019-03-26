@@ -109,7 +109,7 @@ public class Sentence implements Serializable {
 		// oops we don't have original anymore.  but maybe we don't want it.
 		ArrayList<String> toks = new ArrayList<String>();
 		for (Tree L : rootNode().getLeaves()) {
-			toks.add(L.label().toString());
+			toks.add(L.label().value());
 		}
 		return StringUtils.join(toks, " ");
 	}

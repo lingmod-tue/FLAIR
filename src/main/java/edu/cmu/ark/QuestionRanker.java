@@ -428,7 +428,7 @@ public class QuestionRanker implements Serializable {
 		matchPattern = TregexPatternFactory.getPattern(tregexOpStr);
 		TregexMatcher matcher = matchPattern.matcher(tree);
 		if (matcher.find()) {
-			res = matcher.getNode("head").label().toString();
+			res = matcher.getNode("head").label().value();
 		}
 
 		return res;

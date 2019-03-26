@@ -29,9 +29,9 @@ public class SuperSenseWrapper {
 		List<Tree> leaves = sentence.getLeaves();
 
 		for (Tree leave : leaves) {
-			String word = leave.label().toString();
+			String word = leave.label().value();
 			Tree preterm = leave.parent(sentence);
-			String pos = preterm.label().toString();
+			String pos = preterm.label().value();
 			String stem = AnalysisUtilities.getLemma(word, pos);
 			res.addToken(word, stem, pos, "0");
 		}

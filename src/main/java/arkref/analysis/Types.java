@@ -161,7 +161,7 @@ public class Types {
 	public static String pronoun(Tree PRP) {
 		Tree c = PRP.getChild(0);
 		assert c.isLeaf();
-		String p = c.label().toString().toLowerCase();
+		String p = c.label().value().toLowerCase();
 		return p;
 	}
 
@@ -314,7 +314,7 @@ public class Types {
 		} else {
 			HeadFinder hf = AnalysisUtilities.getInstance().getHeadFinder();
 			Tree head = m.node().headPreTerminal(hf);
-			String tag = head.label().toString();
+			String tag = head.label().value();
 
 			// Disable the organization type check -- gives only slim gains on ACE eval
 			// and potentially complicates other analysis.
