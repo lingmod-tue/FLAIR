@@ -9,6 +9,7 @@ import com.flair.client.localization.interfaces.LocalizationBinder;
 import com.flair.client.presentation.interfaces.QuestionGeneratorPreviewService;
 import com.flair.client.utilities.GlobalWidgetAnimator;
 import com.flair.client.utilities.GwtUtil;
+import com.flair.shared.grammar.Language;
 import com.flair.shared.interop.QuestionDTO;
 import com.flair.shared.interop.RankableDocument;
 import com.google.gwt.core.client.GWT;
@@ -27,6 +28,7 @@ import gwt.material.design.client.constants.IconType;
 import gwt.material.design.client.ui.*;
 import gwt.material.design.client.ui.animate.Transition;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -66,6 +68,9 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 	MaterialRow pnlPreviewFrameUI;
 	@UiField
 	Frame pnlPreviewTargetUI;
+	@UiField
+	@LocalizedField(type = LocalizedFieldType.TEXT_TITLE)
+	MaterialEmptyState lblPreviewTargetPlaceholderUI;
 	@UiField
 	MaterialRow pnlPlaceholderUI;
 	@UiField
@@ -269,8 +274,10 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 	DisplayState displayState;
 
 
-	private void resetUI(String title, String url) {
+	private void resetUI() {
 		pnlPreviewFrameUI.setVisible(false);
+		pnlPreviewTargetUI.setVisible(false);
+		lblPreviewTargetPlaceholderUI.setVisible(false);
 		pnlPlaceholderUI.setVisible(false);
 		pnlQuestFormUI.setVisible(false);
 		pnlScorecardUI.setVisible(false);
@@ -281,12 +288,25 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 		lblPlaceholderUI.setTitle("");
 		lblPlaceholderUI.setDescription("");
 		lblPlaceholderUI.setIconColor(Color.ORANGE);
+	}
+
+	private void loadUI() {
+		String title = previewDocument.getTitle();
+		String url = previewDocument.getUrl();
 
 		if (title.length() > MAX_TITLE_LENGTH)
 			title = title.substring(0, MAX_TITLE_LENGTH) + "...";
 
 		lblTitleUI.setTitle(title);
-		pnlPreviewTargetUI.setUrl(url);
+
+		if (!url.isEmpty()) {
+			pnlPreviewTargetUI.setUrl(url);
+			pnlPreviewTargetUI.setVisible(true);
+			refreshLocale();    // reload the string for the title's description
+		} else {
+			lblPreviewTargetPlaceholderUI.setVisible(true);
+			lblTitleUI.setDescription("");
+		}
 
 		GlobalWidgetAnimator.get().seqAnimateWithStart(pnlPreviewFrameUI,
 				Transition.FADEINUP, 0, 650, () -> pnlPreviewFrameUI.setVisible(true));
@@ -302,6 +322,8 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 					pnlPreviewFrameUI.setVisible(false);
 					GlobalWidgetAnimator.get().seqAnimateWithStart(pnlPlaceholderUI,
 							Transition.FADEINRIGHT, 0, 500, () -> {
+								if (!generationInProgress)
+									return;
 								lblPlaceholderUI.setIconType(IconType.QUESTION_ANSWER);
 								lblPlaceholderUI.setLoading(true);
 								lblPlaceholderUI.setTitle(getLocalizedString(LocalizationTags.IN_PROGRESS.toString()));
@@ -315,6 +337,8 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 	private void interruptGeneration() {
 		if (generationInProgress) {
 			interruptHandler.handle();
+			resetUI();
+			display(new ArrayList<>());
 			generationInProgress = false;
 		}
 	}
@@ -322,7 +346,6 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 	private void displayQuestions(List<QuestionDTO> questions) {
 		if (!generationInProgress) {
 			// the preview modal is closed, do nothing
-			generationInProgress = false;
 			return;
 		}
 
@@ -333,6 +356,7 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 			lblPlaceholderUI.setTitle(getLocalizedString(LocalizationTags.NO_QUESTIONS_TITLE.toString()));
 			lblPlaceholderUI.setDescription(getLocalizedString(LocalizationTags.NO_QUESTIONS_DESC.toString()));
 			lblPlaceholderUI.setIconType(IconType.SENTIMENT_DISSATISFIED);
+			lblPlaceholderUI.setIconColor(Color.RED);
 			GlobalWidgetAnimator.get().animateWithStop(lblPlaceholderUI, Transition.BOUNCE, 0, 750, () -> {});
 		} else
 			displayState.init(questions);
@@ -354,6 +378,7 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 				Window.open(url, "_blank", "");
 		});
 		lblTitleUI.getElement().getStyle().setCursor(Style.Cursor.POINTER);
+
 	}
 
 	public QuestionGeneratorPreview() {
@@ -368,13 +393,14 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 
 	@Override
 	public void show(RankableDocument document, Element origin) {
-		// TODO add support for non-URL documents
 		if (generationInProgress)
 			throw new RuntimeException("Previous generation operation is still in progress");
+		else if (document.getLanguage() != Language.ENGLISH)
+			throw new RuntimeException("Question generation not supported for language " + document.getLanguage());
 
 		previewDocument = document;
-
-		resetUI(previewDocument.getTitle(), previewDocument.getUrl());
+		resetUI();
+		loadUI();
 		mdlRootUI.open(origin);
 	}
 

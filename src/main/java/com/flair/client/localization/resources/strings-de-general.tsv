@@ -124,6 +124,7 @@ WebSearchModal	selResultCountItm50UI	50 Ergebnisse
 
 QuestionGeneratorPreview	lblTitleUI	Falls die Webseite unten nicht geladen wird, klicken Sie bitte auf den obigen Text, um sie in einem neuen Fenster zu öffnen
 QuestionGeneratorPreview	btnGenerateQuestUI	Fragen generieren
+QuestionGeneratorPreview	lblPreviewTargetPlaceholderUI	Keine Vorschau möglich
 QuestionGeneratorPreview	IN_PROGRESS	Fragen werden generiert...
 QuestionGeneratorPreview	NO_QUESTIONS_TITLE	Schade!
 QuestionGeneratorPreview	NO_QUESTIONS_DESC	Keine Fragen konnte generiert weden. Bitte versuchen Sie mit einem anderen Text.

@@ -14,7 +14,7 @@
         }
     </ui:style>
 
-    <ma:overlay.MaterialOverlay ui:field="mdlRootUI" backgroundColor="GREY_LIGHTEN_5">
+    <ma:overlay.MaterialOverlay ui:field="mdlRootUI" backgroundColor="GREY_LIGHTEN_5" duration="600">
         <m:MaterialPanel backgroundColor="BLUE_DARKEN_3" textColor="WHITE" padding="35" shadow="3">
             <m:MaterialRow marginBottom="5" marginTop="-20" marginRight="-15" textAlign="RIGHT">
                 <m:MaterialIcon ui:field="btnCloseUI" iconType="CLOSE"/>
@@ -26,7 +26,7 @@
                 </m:MaterialColumn>
                 <m:MaterialColumn grid="l4 m5 s6" textAlign="RIGHT" paddingTop="20">
                     <m:MaterialButton ui:field="btnGenerateQuestUI" text="Generate Questions" iconType="QUESTION_ANSWER"
-                                      waves="LIGHT" backgroundColor="ORANGE"/>
+                                      waves="LIGHT" backgroundColor="ORANGE" iconPosition="RIGHT" size="LARGE"/>
                 </m:MaterialColumn>
             </m:MaterialRow>
         </m:MaterialPanel>
@@ -34,10 +34,10 @@
 
         <m:MaterialRow ui:field="pnlPreviewFrameUI" marginTop="-25" textAlign="CENTER"
                        textColor="WHITE" width="100%" height="100vh" visible="false">
-            <m:MaterialPanel width="100%" height="100%" shadow="4">
-                <g:Frame ui:field="pnlPreviewTargetUI" url="https://gwtmaterialdesign.github.io/gwt-material-demo/"
-                         addStyleNames="{style.target-iframe}"/>
-            </m:MaterialPanel>
+            <g:Frame ui:field="pnlPreviewTargetUI" addStyleNames="{style.target-iframe}"/>
+            <ma:emptystate.MaterialEmptyState ui:field="lblPreviewTargetPlaceholderUI" marginTop="250"
+                                              backgroundColor="GREY_LIGHTEN_5"
+                                              iconType="WARNING" textColor="BLACK" iconColor="ORANGE"/>
         </m:MaterialRow>
 
 

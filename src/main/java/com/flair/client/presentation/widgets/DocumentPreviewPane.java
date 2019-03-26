@@ -501,7 +501,6 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 	@Override
 	public void preview(UnRankable input) {
 		state.init(input);
-
 	}
 
 	@Override

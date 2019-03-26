@@ -357,12 +357,12 @@ public class WebRankerCore implements AbstractWebRankerCore {
 		public void selectItem(SelectionType selectionType, Element parentWidget) {
 			switch (selectionType) {
 			case TITLE:
-				if (hasUrl()) {
-					if (doc.getLanguage() == Language.ENGLISH)
-						questgenpreview.show(doc, parentWidget);
-					else
-						Window.open(getUrl(), "_blank", "");
-				}
+				if (doc.getLanguage() == Language.ENGLISH)
+					questgenpreview.show(doc, parentWidget);
+				else if (hasUrl())
+					Window.open(getUrl(), "_blank", "");
+				else
+					rankPreviewModule.preview(this);
 				break;
 			case DEFAULT:
 				rankPreviewModule.preview(this);
