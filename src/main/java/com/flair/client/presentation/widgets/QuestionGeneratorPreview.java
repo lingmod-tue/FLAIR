@@ -1,24 +1,34 @@
 package com.flair.client.presentation.widgets;
 
+import com.flair.client.localization.CommonLocalizationTags;
 import com.flair.client.localization.LocalizedComposite;
+import com.flair.client.localization.LocalizedFieldType;
+import com.flair.client.localization.annotations.LocalizedCommonField;
+import com.flair.client.localization.annotations.LocalizedField;
 import com.flair.client.localization.interfaces.LocalizationBinder;
 import com.flair.client.presentation.interfaces.QuestionGeneratorPreviewService;
 import com.flair.client.utilities.GlobalWidgetAnimator;
+import com.flair.client.utilities.GwtUtil;
 import com.flair.shared.interop.QuestionDTO;
 import com.flair.shared.interop.RankableDocument;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Random;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Frame;
 import com.google.gwt.user.client.ui.Widget;
 import gwt.material.design.addins.client.emptystate.MaterialEmptyState;
 import gwt.material.design.addins.client.overlay.MaterialOverlay;
+import gwt.material.design.client.constants.Color;
+import gwt.material.design.client.constants.IconType;
 import gwt.material.design.client.ui.*;
 import gwt.material.design.client.ui.animate.Transition;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class QuestionGeneratorPreview extends LocalizedComposite implements QuestionGeneratorPreviewService {
@@ -31,13 +41,26 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 
 	interface QuestionGeneratorPreviewLocalizationBinder extends LocalizationBinder<QuestionGeneratorPreview> {}
 
+	enum LocalizationTags {
+		IN_PROGRESS,
+		NO_QUESTIONS_TITLE,
+		NO_QUESTIONS_DESC,
+		ALL_ANSWERS_INCORRECT_TITLE,
+		ALL_ANSWERS_INCORRECT_DESC,
+		SOME_ANSWERS_CORRECT_TITLE,
+		SOME_ANSWERS_CORRECT_DESC,
+	}
+
 	@UiField
 	MaterialOverlay mdlRootUI;
 	@UiField
+	@LocalizedField(type = LocalizedFieldType.TEXT_DESCRIPTION)
 	MaterialTitle lblTitleUI;
 	@UiField
+	@LocalizedCommonField(tag = CommonLocalizationTags.CLOSE, type = LocalizedFieldType.TOOLTIP_MATERIAL)
 	MaterialIcon btnCloseUI;
 	@UiField
+	@LocalizedField(type = LocalizedFieldType.TEXT_BUTTON)
 	MaterialButton btnGenerateQuestUI;
 	@UiField
 	MaterialRow pnlPreviewFrameUI;
@@ -61,20 +84,33 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 	GenerateHandler generateHandler;
 	InterruptHandler interruptHandler;
 
+	private static final int MAX_TITLE_LENGTH = 35;
+	private static final int MAX_ANSWER_OPTIONS = 4;
+
 	static class QuestionWidget {
 		QuestionGeneratorPreviewCard container;
 		QuestionDTO parent;
 		boolean correctAnswerSelected;
+		int answerIndex;
 
 		QuestionWidget(QuestionDTO question) {
 			parent = question;
 			correctAnswerSelected = false;
+			answerIndex = Random.nextInt(MAX_ANSWER_OPTIONS);
 
-			List<String> options = Arrays.asList(
-					"Answer 1 - The quick brown fox jumped over the lazy dog.",
-					"Answer 2 - Twinkle twinkle little star",
-					"Answer 3 - Shut up, Ned!",
-					"Answer 4 - Respect mah authoratah!");
+			if (parent.getDistractors().size() < MAX_ANSWER_OPTIONS - 1)
+				throw new RuntimeException("Too few distractors (" + parent.getDistractors().size() + ") for question '" + parent.getQuestion() + "'");
+
+			String[] options = new String[MAX_ANSWER_OPTIONS];
+			for (int i = 0, j = 0; i < MAX_ANSWER_OPTIONS; ++i) {
+				if (i == answerIndex)
+					options[i] = parent.getAnswer();
+				else {
+					options[i] = parent.getDistractors().get(j);
+					++j;
+				}
+			}
+
 			container = new QuestionGeneratorPreviewCard(parent.getQuestion(), options);
 			container.setVisible(false);
 		}
@@ -101,10 +137,8 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 			QuestionWidget currentlyDisplayed = currentDisplayIndex < questionForms.size() && currentDisplayIndex >= 0 ?
 					questionForms.get(currentDisplayIndex) : null;
 
-			if (currentlyDisplayed != null) {
-				// TODO fix this logic to check the selection
-				currentlyDisplayed.correctAnswerSelected = currentAnswerIndex == 1;
-			}
+			if (currentlyDisplayed != null)
+				currentlyDisplayed.correctAnswerSelected = currentAnswerIndex == currentlyDisplayed.answerIndex;
 
 			++currentDisplayIndex;
 			QuestionWidget nextToBeDisplayed = currentDisplayIndex < questionForms.size() ? questionForms.get(currentDisplayIndex) : null;
@@ -140,8 +174,21 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 									() -> {
 										pnlQuestCardsUI.add(pnlScorecardUI);
 
-										pnlScorecardUI.setTitle("Score!");
-										pnlScorecardUI.setDescription("You answered " + getScore() + " question(s) out of " + questionForms.size() + " correctly!");
+										int score = getScore(), maxScore = questionForms.size();
+										if (score == 0) {
+											pnlScorecardUI.setIconType(IconType.SENTIMENT_VERY_DISSATISFIED);
+											pnlScorecardUI.setIconColor(Color.RED);
+											pnlScorecardUI.setTitle(getLocalizedString(LocalizationTags.ALL_ANSWERS_INCORRECT_TITLE.toString()));
+											pnlScorecardUI.setDescription(getLocalizedString(LocalizationTags.ALL_ANSWERS_INCORRECT_DESC.toString()));
+										} else {
+											pnlScorecardUI.setIconType(IconType.DONE);
+											pnlScorecardUI.setIconColor(Color.GREEN_DARKEN_2);
+											pnlScorecardUI.setTitle(getLocalizedString(LocalizationTags.SOME_ANSWERS_CORRECT_TITLE.toString()));
+											String scorecard = GwtUtil.formatString(getLocalizedString(LocalizationTags.SOME_ANSWERS_CORRECT_DESC.toString()),
+													score, maxScore);
+											pnlScorecardUI.setDescription(scorecard);
+										}
+
 										pnlScorecardUI.setVisible(true);
 									});
 
@@ -176,32 +223,40 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 
 		void init(List<QuestionDTO> questions) {
 			questionForms = questions.stream().map(v -> {
+				if (v.getDistractors().size() < MAX_ANSWER_OPTIONS - 1)
+					return null;
+
 				QuestionWidget qw = new QuestionWidget(v);
 				qw.container.setAnswerHandler(this::nextQuestion);
 				return qw;
-			}).collect(Collectors.toList());
+			}).filter(Objects::nonNull).collect(Collectors.toList());
 			currentDisplayIndex = -1;
 
 			// set up progress bar
 			lblQuestProgressUI.setPercent(0);
 
 			// hide the placeholder
-			GlobalWidgetAnimator.get().seqAnimateWithStop(pnlPlaceholderUI,
-					Transition.FADEOUTLEFT, 0, 500, () ->
-					{
-						pnlPlaceholderUI.setVisible(false);
+			GlobalWidgetAnimator.get().seqAnimateWithStartStop(pnlPlaceholderUI,
+					Transition.PULSE, 0, 1000, () -> {
+						lblPlaceholderUI.setIconType(IconType.DONE);
+						lblPlaceholderUI.setIconColor(Color.GREEN_DARKEN_2);
+					}, () -> {
+						GlobalWidgetAnimator.get().seqAnimateWithStop(pnlPlaceholderUI,
+								Transition.FADEOUTLEFT, 0, 500, () -> {
+									pnlPlaceholderUI.setVisible(false);
 
-						GlobalWidgetAnimator.get().animateWithStartStop(pnlQuestFormUI,
-								Transition.FADEINRIGHT,
-								0,
-								500,
-								() -> pnlQuestFormUI.setVisible(true),
-								() -> {
-									GlobalWidgetAnimator.get().animateWithStart(lblQuestProgressUI,
-											Transition.FADEINDOWN,
+									GlobalWidgetAnimator.get().animateWithStartStop(pnlQuestFormUI,
+											Transition.FADEINRIGHT,
 											0,
-											750,
-											() -> lblQuestProgressUI.setOpacity(1));
+											500,
+											() -> pnlQuestFormUI.setVisible(true),
+											() -> {
+												GlobalWidgetAnimator.get().animateWithStart(lblQuestProgressUI,
+														Transition.FADEINDOWN,
+														0,
+														750,
+														() -> lblQuestProgressUI.setOpacity(1));
+											});
 								});
 					});
 
@@ -213,7 +268,6 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 	boolean generationInProgress;
 	DisplayState displayState;
 
-	private static int MAX_TITLE_LENGTH = 35;
 
 	private void resetUI(String title, String url) {
 		pnlPreviewFrameUI.setVisible(false);
@@ -224,12 +278,14 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 		pnlQuestCardsUI.clear();
 		btnGenerateQuestUI.setVisible(true);
 		lblQuestProgressUI.setOpacity(0);
+		lblPlaceholderUI.setTitle("");
+		lblPlaceholderUI.setDescription("");
+		lblPlaceholderUI.setIconColor(Color.ORANGE);
 
 		if (title.length() > MAX_TITLE_LENGTH)
 			title = title.substring(0, MAX_TITLE_LENGTH) + "...";
 
 		lblTitleUI.setTitle(title);
-		lblTitleUI.setDescription("If the website does not display correctly, click on the title above to open it in a new tab.");
 		pnlPreviewTargetUI.setUrl(url);
 
 		GlobalWidgetAnimator.get().seqAnimateWithStart(pnlPreviewFrameUI,
@@ -242,15 +298,14 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 
 		generationInProgress = true;
 		GlobalWidgetAnimator.get().seqAnimateWithStop(pnlPreviewFrameUI,
-				Transition.FADEOUTLEFT, 0, 500, () ->
-				{
+				Transition.FADEOUTLEFT, 0, 500, () -> {
 					pnlPreviewFrameUI.setVisible(false);
 					GlobalWidgetAnimator.get().seqAnimateWithStart(pnlPlaceholderUI,
-							Transition.FADEINRIGHT, 0, 500, () ->
-							{
-								pnlPlaceholderUI.setVisible(true);
+							Transition.FADEINRIGHT, 0, 500, () -> {
+								lblPlaceholderUI.setIconType(IconType.QUESTION_ANSWER);
 								lblPlaceholderUI.setLoading(true);
-								lblPlaceholderUI.setTitle("Generating questions...");
+								lblPlaceholderUI.setTitle(getLocalizedString(LocalizationTags.IN_PROGRESS.toString()));
+								pnlPlaceholderUI.setVisible(true);
 							});
 				});
 
@@ -274,13 +329,16 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 		generationInProgress = false;
 		lblPlaceholderUI.setLoading(false);
 
-		if (questions.isEmpty())
-			lblPlaceholderUI.setDescription("No questions :(");
-		else
+		if (questions.isEmpty()) {
+			lblPlaceholderUI.setTitle(getLocalizedString(LocalizationTags.NO_QUESTIONS_TITLE.toString()));
+			lblPlaceholderUI.setDescription(getLocalizedString(LocalizationTags.NO_QUESTIONS_DESC.toString()));
+			lblPlaceholderUI.setIconType(IconType.SENTIMENT_DISSATISFIED);
+			GlobalWidgetAnimator.get().animateWithStop(lblPlaceholderUI, Transition.BOUNCE, 0, 750, () -> {});
+		} else
 			displayState.init(questions);
 	}
 
-	private void initHandlers() {
+	private void initUIAndHandlers() {
 		btnGenerateQuestUI.addClickHandler(e -> {
 			generateQuestions();
 		});
@@ -289,6 +347,13 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 			interruptGeneration();
 			mdlRootUI.close();
 		});
+
+		lblTitleUI.addClickHandler(e -> {
+			String url = previewDocument.getUrl();
+			if (!url.isEmpty())
+				Window.open(url, "_blank", "");
+		});
+		lblTitleUI.getElement().getStyle().setCursor(Style.Cursor.POINTER);
 	}
 
 	public QuestionGeneratorPreview() {
@@ -298,7 +363,7 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 		displayState = new DisplayState();
 		generationInProgress = false;
 
-		initHandlers();
+		initUIAndHandlers();
 	}
 
 	@Override
@@ -311,7 +376,6 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 
 		resetUI(previewDocument.getTitle(), previewDocument.getUrl());
 		mdlRootUI.open(origin);
-
 	}
 
 	@Override

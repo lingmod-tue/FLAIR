@@ -139,12 +139,6 @@ public class QuestionTransducer {
 		return res;
 	}
 
-	public void generateQuestionsFromParse(String inputParseStr) {
-		Tree inputTree = AnalysisUtilities.getInstance().readTreeFromString(
-				inputParseStr);
-		generateQuestionsFromParse(inputTree);
-	}
-
 	public void generateQuestionsFromParse(Tree inputTree) {
 		Question q = new Question();
 		q.setSourceTree(inputTree);

@@ -357,7 +357,12 @@ public class WebRankerCore implements AbstractWebRankerCore {
 		public void selectItem(SelectionType selectionType, Element parentWidget) {
 			switch (selectionType) {
 			case TITLE:
-				questgenpreview.show(doc, parentWidget);
+				if (hasUrl()) {
+					if (doc.getLanguage() == Language.ENGLISH)
+						questgenpreview.show(doc, parentWidget);
+					else
+						Window.open(getUrl(), "_blank", "");
+				}
 				break;
 			case DEFAULT:
 				rankPreviewModule.preview(this);
@@ -1716,8 +1721,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 			return false;
 		}
 
-
-		service.generateQuestions(token, doc, 15,
+		service.generateQuestions(token, doc, 5,
 				FuncCallback.get(e -> messagePoller.beginPolling(msg -> {
 							if (msg.getType() != ServerMessage.Type.GENERATE_QUESTIONS)
 								throw new RuntimeException("Invalid message type for generate questions operation: " + msg.getType());

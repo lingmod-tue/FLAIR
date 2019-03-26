@@ -16,8 +16,9 @@ public class StringTableReader {
 	public void parse(TextResource stringTable, ReadLineHandler handler) {
 		String input = stringTable.getText();
 		String[] splits = input.split("\n");
-		int lineno = 1;
+		int lineno = 0;
 		for (String line : splits) {
+			lineno++;
 			line = line.trim();
 			if (line.isEmpty())
 				continue;
@@ -29,7 +30,6 @@ public class StringTableReader {
 				throw new RuntimeException("Invalid entry @ line " + lineno + " in string table '" + stringTable.getName() + "'");
 
 			handler.readLine(tabs[0], tabs[1], tabs[2]);
-			lineno++;
 		}
 	}
 }

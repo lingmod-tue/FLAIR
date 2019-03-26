@@ -11,7 +11,9 @@ import gwt.material.design.client.ui.MaterialCard;
 import gwt.material.design.client.ui.MaterialLabel;
 import gwt.material.design.client.ui.MaterialRow;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class QuestionGeneratorPreviewCard extends LocalizedComposite {
 	interface AnswerHandler {
@@ -45,26 +47,34 @@ public class QuestionGeneratorPreviewCard extends LocalizedComposite {
 
 	AnswerHandler answerHandler;
 
-	public QuestionGeneratorPreviewCard(String question, List<String> options) {
+	static final int MAX_OPTION_LENGTH = 50;
+
+	public QuestionGeneratorPreviewCard(String question, String[] options) {
 		initWidget(uiBinder.createAndBindUi(this));
 		initLocale(localeBinder.bind(this));
 
-		if (options.size() != 4)
+		if (options.length != 4)
 			throw new RuntimeException("Unexpected number of options received");
 
+		List<String> preprocessed = Arrays.asList(options).stream().map(v -> {
+			if (v.length() > MAX_OPTION_LENGTH)
+				return v.substring(0, MAX_OPTION_LENGTH) + "...";
+			else
+				return v;
+		}).collect(Collectors.toList());
 		lblQuestionUI.setText(question);
 
-		btnAnswer1.setText(options.get(0));
-		btnAnswer1.addClickHandler(e -> answerHandler.handle(1));
+		btnAnswer1.setText(preprocessed.get(0));
+		btnAnswer1.addClickHandler(e -> answerHandler.handle(0));
 
-		btnAnswer2.setText(options.get(1));
-		btnAnswer2.addClickHandler(e -> answerHandler.handle(2));
+		btnAnswer2.setText(preprocessed.get(1));
+		btnAnswer2.addClickHandler(e -> answerHandler.handle(1));
 
-		btnAnswer3.setText(options.get(2));
-		btnAnswer3.addClickHandler(e -> answerHandler.handle(3));
+		btnAnswer3.setText(preprocessed.get(2));
+		btnAnswer3.addClickHandler(e -> answerHandler.handle(2));
 
-		btnAnswer4.setText(options.get(3));
-		btnAnswer4.addClickHandler(e -> answerHandler.handle(4));
+		btnAnswer4.setText(preprocessed.get(3));
+		btnAnswer4.addClickHandler(e -> answerHandler.handle(3));
 	}
 
 	public void setAnswerHandler(AnswerHandler handler) {

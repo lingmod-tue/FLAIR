@@ -10,11 +10,7 @@ import com.flair.client.presentation.interfaces.*;
 import com.flair.client.presentation.widgets.*;
 import com.flair.client.utilities.GlobalWidgetAnimator;
 import com.flair.shared.grammar.Language;
-import com.flair.shared.interop.QuestionDTO;
-import com.flair.shared.interop.RankableDocument;
-import com.flair.shared.interop.RankableDocumentImpl;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.uibinder.client.UiField;
@@ -25,9 +21,6 @@ import gwt.material.design.client.constants.Position;
 import gwt.material.design.client.ui.*;
 import gwt.material.design.client.ui.animate.MaterialAnimation;
 import gwt.material.design.client.ui.animate.Transition;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainViewport extends LocalizedComposite implements AbstractWebRankerPresenter {
 	static final class ToastNotifications implements NotificationService {
@@ -309,25 +302,6 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		if (visible) {
 			GlobalWidgetAnimator.get().animateWithStart(pnlDefaultPlaceholderUI,
 					Transition.ZOOMINUP, 10, 800, () -> pnlDefaultPlaceholderUI.setVisible(true));
-
-			RankableDocument testDoc = new RankableDocumentImpl();
-			List<QuestionDTO> testQuests = new ArrayList<>();
-			testQuests.add(new QuestionDTO("Who is Bob upload custom documetn sand corpora. FLAIR will analusee?", "Ans 1"));
-			testQuests.add(new QuestionDTO("Who is Dick?", "Ans 2"));
-			testQuests.add(new QuestionDTO("Who is Izar?", "Ans 3"));
-
-			mdlQuestGenUI.setGenerateHandler((v) -> {
-				Scheduler.get().scheduleFixedDelay(() -> {
-							mdlQuestGenUI.display(testQuests);
-							return false;
-						},
-						500);
-				return true;
-			});
-			mdlQuestGenUI.setInterruptHandler(() -> {});
-			((RankableDocumentImpl) testDoc).setTitle("Test title very long title imsoserious omgodrays");
-			((RankableDocumentImpl) testDoc).setUrl("https://www.google.com");
-			mdlQuestGenUI.show(testDoc, btnUploadUI.getElement());
 		} else {
 			GlobalWidgetAnimator.get().animateWithStartStop(pnlDefaultPlaceholderUI,
 					Transition.ZOOMOUTUP, 10, 800,

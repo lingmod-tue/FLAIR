@@ -10,4 +10,7 @@ class Constants {
 
 	// how many of the generated questions should be considered when selecting the final question
 	static final int QUESTGEN_BESTQPOOL_SIZE = 3;
+
+	// used to determine the minimum number of questions to generate
+	static final int QUESTGEN_NUM_DISTRACTOR = 3;
 }

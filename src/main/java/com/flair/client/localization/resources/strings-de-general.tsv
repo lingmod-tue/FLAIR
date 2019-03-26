@@ -106,7 +106,7 @@ GrammaticalConstructionWeightSlider	sldWeightUI	Nach rechts bewegen, um Texte mi
 HistoryViewer	lblTitleUI	Analysechronik
 HistoryViewer	lblPlaceholderUI	Keine Analysen bisher
 HistoryViewer	NUM_ANALYSES	Analysen
-		
+
 KeywordWeightSlider	chkToggleUI	Auswählen, um Schlüsselwörter hervorzuheben.
 KeywordWeightSlider	sldWeightUI	Nach rechts bewegen, um Texte mit dieser Konstruktion zu priorisieren.
 KeywordWeightSlider	btnEditKeywordsUI	Vokabular bearbeiten
@@ -122,8 +122,15 @@ WebSearchModal	selResultCountItm30UI	30 Ergebnisse
 WebSearchModal	selResultCountItm40UI	40 Ergebnisse
 WebSearchModal	selResultCountItm50UI	50 Ergebnisse
 
-QuestionGeneratorPreview	lblTitleUI	Fragen
-QuestionGeneratorPreview	lblPlaceholderUI	Keine passenden Fragen konnte generiert werden.
+QuestionGeneratorPreview	lblTitleUI	Falls die Webseite unten nicht geladen wird, klicken Sie bitte auf den obigen Text, um sie in einem neuen Fenster zu öffnen
+QuestionGeneratorPreview	btnGenerateQuestUI	Fragen generieren
+QuestionGeneratorPreview	IN_PROGRESS	Fragen werden generiert...
+QuestionGeneratorPreview	NO_QUESTIONS_TITLE	Schade!
+QuestionGeneratorPreview	NO_QUESTIONS_DESC	Keine Fragen konnte generiert weden. Bitte versuchen Sie mit einem anderen Text.
+QuestionGeneratorPreview	ALL_ANSWERS_INCORRECT_TITLE	Ups!
+QuestionGeneratorPreview	ALL_ANSWERS_INCORRECT_DESC	Leider haben Sie keine der Fragen richtig beantwortet.
+QuestionGeneratorPreview	SOME_ANSWERS_CORRECT_TITLE	Gut gemacht!
+QuestionGeneratorPreview	SOME_ANSWERS_CORRECT_DESC	Sie haben %d von %d Fragen richtig beantwortet.
 
 ConstructionSliderBundleEnglish	pnlSentencesUI	Sätze
 ConstructionSliderBundleEnglish	pnlQuestionsUI	Fragen

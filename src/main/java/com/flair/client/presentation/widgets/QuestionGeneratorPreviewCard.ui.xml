@@ -21,7 +21,7 @@
 
     <m:MaterialRow ui:field="pnlRootUI" grid="l12 m12 s12" addStyleNames="{style.card-container}">
         <m:MaterialCard ui:field="pnlCardUI" addStyleNames="{style.card}" hoverable="true"
-                        backgroundColor="GREY_LIGHTEN_5">
+                        backgroundColor="GREY_LIGHTEN_5" textColor="BLACK">
             <m:MaterialCardContent textAlign="LEFT" backgroundColor="GREY_LIGHTEN_5">
                 <m:MaterialRow>
                     <m:MaterialLabel ui:field="lblQuestionUI" fontSize="1.9em"/>
@@ -29,38 +29,38 @@
 
                 <m:MaterialRow marginTop="25">
                     <m:MaterialRow grid="l12 m12 s12">
-                        <m:MaterialColumn grid="l1 m1 s1" marginRight="-15" paddingTop="5">
-                            <m:MaterialIcon iconType="LOOKS_ONE" iconColor="GREY_DARKEN_3"/>
+                        <m:MaterialColumn grid="l1 m1 s1" marginRight="-15" paddingTop="12">
+                            <m:MaterialIcon iconType="LOOKS_ONE" iconSize="SMALL" iconColor="GREY_DARKEN_3"/>
                         </m:MaterialColumn>
                         <m:MaterialColumn grid="l11 m11 s11">
-                            <m:MaterialButton ui:field="btnAnswer1" type="FLAT" text="Placeholder 1"/>
+                            <m:MaterialButton ui:field="btnAnswer1" type="FLAT" size="LARGE" text="Placeholder 1"/>
                         </m:MaterialColumn>
                     </m:MaterialRow>
 
                     <m:MaterialRow grid="l12 m12 s12">
-                        <m:MaterialColumn grid="l1 m1 s1" marginRight="-15" paddingTop="5">
-                            <m:MaterialIcon iconType="LOOKS_TWO" iconColor="GREY_DARKEN_3"/>
+                        <m:MaterialColumn grid="l1 m1 s1" marginRight="-15" paddingTop="12">
+                            <m:MaterialIcon iconType="LOOKS_TWO" iconSize="SMALL" iconColor="GREY_DARKEN_3"/>
                         </m:MaterialColumn>
                         <m:MaterialColumn grid="l11 m11 s11">
-                            <m:MaterialButton ui:field="btnAnswer2" type="FLAT" text="Placeholder 2"/>
+                            <m:MaterialButton ui:field="btnAnswer2" type="FLAT" size="LARGE" text="Placeholder 2"/>
                         </m:MaterialColumn>
                     </m:MaterialRow>
 
                     <m:MaterialRow grid="l12 m12 s12">
-                        <m:MaterialColumn grid="l1 m1 s1" marginRight="-15" paddingTop="5">
-                            <m:MaterialIcon iconType="LOOKS_3" iconColor="GREY_DARKEN_3"/>
+                        <m:MaterialColumn grid="l1 m1 s1" marginRight="-15" paddingTop="12">
+                            <m:MaterialIcon iconType="LOOKS_3" iconSize="SMALL" iconColor="GREY_DARKEN_3"/>
                         </m:MaterialColumn>
                         <m:MaterialColumn grid="l11 m11 s11">
-                            <m:MaterialButton ui:field="btnAnswer3" type="FLAT" text="Placeholder 3"/>
+                            <m:MaterialButton ui:field="btnAnswer3" type="FLAT" size="LARGE" text="Placeholder 3"/>
                         </m:MaterialColumn>
                     </m:MaterialRow>
 
                     <m:MaterialRow grid="l12 m12 s12">
-                        <m:MaterialColumn grid="l1 m1 s1" marginRight="-15" paddingTop="5">
-                            <m:MaterialIcon iconType="LOOKS_4" iconColor="GREY_DARKEN_3"/>
+                        <m:MaterialColumn grid="l1 m1 s1" marginRight="-15" paddingTop="12">
+                            <m:MaterialIcon iconType="LOOKS_4" iconSize="SMALL" iconColor="GREY_DARKEN_3"/>
                         </m:MaterialColumn>
                         <m:MaterialColumn grid="l11 m11 s11">
-                            <m:MaterialButton ui:field="btnAnswer4" type="FLAT" text="Placeholder 4"/>
+                            <m:MaterialButton ui:field="btnAnswer4" type="FLAT" size="LARGE" text="Placeholder 4"/>
                         </m:MaterialColumn>
                     </m:MaterialRow>
                 </m:MaterialRow>

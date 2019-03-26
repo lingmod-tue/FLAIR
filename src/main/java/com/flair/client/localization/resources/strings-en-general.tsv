@@ -106,7 +106,7 @@ GrammaticalConstructionWeightSlider	sldWeightUI	Move right to rank texts with th
 HistoryViewer	lblTitleUI	Analysis History
 HistoryViewer	lblPlaceholderUI	No analyses so far.
 HistoryViewer	NUM_ANALYSES	Analyses
-		
+
 KeywordWeightSlider	chkToggleUI	Check to highlight keywords
 KeywordWeightSlider	sldWeightUI	Move right to rank texts with this construct higher
 KeywordWeightSlider	btnEditKeywordsUI	Edit vocabulary
@@ -122,8 +122,15 @@ WebSearchModal	selResultCountItm30UI	30 Results
 WebSearchModal	selResultCountItm40UI	40 Results
 WebSearchModal	selResultCountItm50UI	50 Results
 
-QuestionGeneratorPreview	lblTitleUI	Questions
-QuestionGeneratorPreview	lblPlaceholderUI	No suitable questions could be generated.
+QuestionGeneratorPreview	lblTitleUI	If the website does not load correctly below, click on the title above to open it in a new window.
+QuestionGeneratorPreview	btnGenerateQuestUI	Generate Questions
+QuestionGeneratorPreview	IN_PROGRESS	Generating Questions...
+QuestionGeneratorPreview	NO_QUESTIONS_TITLE	Whoops!
+QuestionGeneratorPreview	NO_QUESTIONS_DESC	We couldn't generate any questions. Please try again with another document.
+QuestionGeneratorPreview	ALL_ANSWERS_INCORRECT_TITLE	Oh Dear...
+QuestionGeneratorPreview	ALL_ANSWERS_INCORRECT_DESC	Sorry, none of your answers were correct.
+QuestionGeneratorPreview	SOME_ANSWERS_CORRECT_TITLE	Good Job!
+QuestionGeneratorPreview	SOME_ANSWERS_CORRECT_DESC	You answered %d of %d questions correctly.
 
 ConstructionSliderBundleEnglish	pnlSentencesUI	Sentences
 ConstructionSliderBundleEnglish	pnlQuestionsUI	Questions

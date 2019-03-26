@@ -42,7 +42,7 @@
 
 
         <m:MaterialRow ui:field="pnlPlaceholderUI" marginTop="250" textAlign="CENTER"
-                       backgroundColor="GREY_LIGHTEN_5" textColor="BLACK" visible="false">
+                       backgroundColor="GREY_LIGHTEN_5" visible="false">
             <ma:emptystate.MaterialEmptyState ui:field="lblPlaceholderUI" backgroundColor="GREY_LIGHTEN_5"
                                               iconType="QUESTION_ANSWER" textColor="BLACK" iconColor="ORANGE"
                                               loading="true"/>

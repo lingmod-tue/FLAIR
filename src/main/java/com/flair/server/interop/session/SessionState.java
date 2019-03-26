@@ -375,7 +375,7 @@ public class SessionState {
 		ServerMessage msg = new ServerMessage(token);
 		msg.setType(Type.GENERATE_QUESTIONS);
 		msg.setGenerateQuestions(new ServerMessage.GenerateQuestions(ServerMessage.GenerateQuestions.Type.JOB_COMPLETE));
-		msg.getGenerateQuestions().setGeneratedQuestions(new ArrayList<>(questions.stream().map(q -> new QuestionDTO(q.question, q.answer)).collect(Collectors.toList())));
+		msg.getGenerateQuestions().setGeneratedQuestions(new ArrayList<>(questions.stream().map(q -> new QuestionDTO(q.question, q.answer, q.distractors)).collect(Collectors.toList())));
 
 		sendMessageToClient(msg);
 

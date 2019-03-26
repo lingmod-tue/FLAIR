@@ -64,7 +64,6 @@ public class QuestGenTask implements AsyncTask<QuestGenTask.Result> {
 				QuestionRanker.sortQuestions(outputQuestionList, false);
 			}
 
-
 			for (Question question : outputQuestionList) {
 				if (question.getTree().getLeaves().size() > Constants.GENERATOR_MAX_GENERATED_TREE_LEAF_COUNT)
 					continue;
