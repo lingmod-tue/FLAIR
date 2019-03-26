@@ -72,7 +72,7 @@ public class Mention implements Serializable {
 			// for now, bailing...
 			return "NO_HEAD_WORD";
 		}
-		return headTerminalNode.yield().toString();
+		return AnalysisUtilities.orginialSentence(headTerminalNode.yield());
 
 	}
 

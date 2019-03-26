@@ -442,8 +442,8 @@ public class SentenceSimplifier {
 				//e.g., John (and Mary) like Bill.  -> John like Bill.
 				if ((verbPreterminal.label().value().equals("VB") || verbPreterminal.label().value().equals(
 						"VBP"))) { //the parser confuses VBP with VB
-					if (subject.yield().toString().equals("I")
-							|| subject.yield().toString().equals("you")) {
+					if (AnalysisUtilities.orginialSentence(subject.yield()).equals("I")
+							|| AnalysisUtilities.orginialSentence(subject.yield()).equals("you")) {
 						newVerbPOS = "VBP";
 					} else {
 						newVerbPOS = "VBZ";
@@ -467,7 +467,7 @@ public class SentenceSimplifier {
 					else
 						newVerb = "was";
 				} else if (verbLemma.equals("be")
-						&& subject.yield().toString().equals("I")
+						&& AnalysisUtilities.orginialSentence(subject.yield()).equals("I")
 						&& newVerbPOS.equals("VBP")) {
 					newVerb = "am";
 				} else { //default
@@ -686,7 +686,7 @@ public class SentenceSimplifier {
 		matcher = matchPattern.matcher(input.getIntermediateTree());
 		while (matcher.find()) {
 			String verbPOS = findTense(matcher.getNode("tense"));
-			Tree p = matcher.getNode("participial").deepCopy();
+			Tree p = matcher.getNode("participial");
 			Tree verb = matcher.getNode("verb");
 			String verbLemma = AnalysisUtilities.getInstance().getLemma(
 					verb.getChild(0).label().value(),
@@ -694,6 +694,16 @@ public class SentenceSimplifier {
 			String newVerb = AnalysisUtilities.getInstance().getSurfaceForm(
 					verbLemma, verbPOS);
 			int verbIndex = p.objectIndexOf(verb);
+			if (verbIndex == -1) {
+				//	verbIndex = p.objectIndexOf(verb);
+				if (GlobalProperties.getInstance().getDebug()) {
+					System.err.println("verb (lemma: '" + verbLemma + "') replacement with '" + newVerb + "' failed!");
+					System.err.println("\tverb tree: " + verb.toString());
+					System.err.println("\tverb participle tree: " + p.toString());
+				}
+				continue;
+			}
+
 			p.removeChild(verbIndex);
 			p.addChild(
 					verbIndex,

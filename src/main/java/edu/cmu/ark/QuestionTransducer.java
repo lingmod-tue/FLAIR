@@ -67,7 +67,7 @@ public class QuestionTransducer {
 			if (q.getFeatureValue("performedNPClarification") == 0.0) {
 				continue;
 			}
-			yield = q.getTree().yield().toString();
+			yield = AnalysisUtilities.orginialSentence(q.getTree().yield());
 			if (yieldMap.containsKey(yield)) {
 				if (GlobalProperties.getInstance().getDebug())
 					System.err.println("Removing duplicate: " + yield);
@@ -82,7 +82,7 @@ public class QuestionTransducer {
 			if (q.getFeatureValue("performedNPClarification") == 1.0) {
 				continue;
 			}
-			yield = q.getTree().yield().toString();
+			yield = AnalysisUtilities.orginialSentence(q.getTree().yield());
 			if (yieldMap.containsKey(yield)) {
 				if (GlobalProperties.getInstance().getDebug())
 					System.err.println("Removing duplicate: " + yield);

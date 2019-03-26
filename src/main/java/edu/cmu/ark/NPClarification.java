@@ -296,8 +296,8 @@ public class NPClarification {
 			//find best mention to replace this with
 			Mention replacement = findReplacementByFirstMention(m);
 			//don't replace if the replacement is identical
-			if (replacement.node().yield().toString().equalsIgnoreCase(
-					mentionNode.yield().toString())) {
+			if (AnalysisUtilities.orginialSentence(replacement.node().yield()).equalsIgnoreCase(
+					AnalysisUtilities.orginialSentence(mentionNode.yield()))) {
 				continue;
 			}
 

@@ -458,7 +458,7 @@ public class AnalysisUtilities {
 	 */
 	public static String orginialSentence(List<Label> l) {
 		String text = StringUtils.join(Arrays.asList(stringArrayFromLabels(l)), " ");
-		text = text.replaceAll("\\s(?=\\p{Punct})", "");
+		//	text = text.replaceAll("\\s(?=\\p{Punct})", "");
 		return text;
 	}
 
