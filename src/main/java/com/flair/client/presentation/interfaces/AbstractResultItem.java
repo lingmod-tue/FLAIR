@@ -1,23 +1,30 @@
 package com.flair.client.presentation.interfaces;
 
+import com.google.gwt.dom.client.Element;
+
 /*
  * Represents a basic item displayed in the results pane
  */
 public interface AbstractResultItem {
-	public enum Type {
+	enum Type {
 		IN_PROGRESS,
 		COMPLETED
 	}
 
-	public Type getType();
-	public String getTitle();
-	public boolean hasUrl();
-	public String getUrl();
-	public String getDisplayUrl();
-	public String getSnippet();
+	enum SelectionType {
+		TITLE,      // Clicked on the title text
+		DEFAULT     // Clicked anywhere else
+	}
 
-	public void selectItem();
+	Type getType();
+	String getTitle();
+	boolean hasUrl();
+	String getUrl();
+	String getDisplayUrl();
+	String getSnippet();
 
-	public boolean hasOverflowMenu();
-	public void addToCompare();
+	void selectItem(SelectionType selectionType, Element parentWidget);
+
+	boolean hasOverflowMenu();
+	void addToCompare();
 }

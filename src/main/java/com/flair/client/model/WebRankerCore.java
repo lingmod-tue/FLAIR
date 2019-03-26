@@ -20,6 +20,7 @@ import com.flair.shared.utilities.GenericEventSource;
 import com.flair.shared.utilities.GenericEventSource.EventHandler;
 import com.google.gwt.core.client.Duration;
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.Timer;
@@ -353,8 +354,15 @@ public class WebRankerCore implements AbstractWebRankerCore {
 		}
 
 		@Override
-		public void selectItem() {
-			rankPreviewModule.preview(this);
+		public void selectItem(SelectionType selectionType, Element parentWidget) {
+			switch (selectionType) {
+			case TITLE:
+				questgenpreview.show(doc, parentWidget);
+				break;
+			case DEFAULT:
+				rankPreviewModule.preview(this);
+				break;
+			}
 		}
 
 		@Override
@@ -434,8 +442,17 @@ public class WebRankerCore implements AbstractWebRankerCore {
 
 
 		@Override
-		public void selectItem() {
-			rankPreviewModule.preview(this);
+		public void selectItem(SelectionType selectionType, Element parentWidget) {
+			switch (selectionType) {
+			case TITLE:
+				if (hasUrl())
+					Window.open(getUrl(), "_blank", "");
+
+				break;
+			case DEFAULT:
+				rankPreviewModule.preview(this);
+				break;
+			}
 		}
 
 
@@ -1490,6 +1507,14 @@ public class WebRankerCore implements AbstractWebRankerCore {
 		comparer.bindToWebRankerCore(this);
 		history.setFetchAnalysesHandler(processHistory::asList);
 		history.setRestoreAnalysisHandler(this::onRestoreProcess);
+		questgenpreview.setGenerateHandler(this::onGenerateQuestions);
+		questgenpreview.setInterruptHandler(() -> {
+			if (!messagePoller.isBusy())
+				return;
+
+			messagePoller.endPolling();
+			service.cancelCurrentOperation(token, FuncCallback.get(e -> {}));
+		});
 
 		LocalizationEngine.get().addLanguageChangeHandler(l -> rankPreviewModule.refreshLocalization(l.newLang));
 
@@ -1682,16 +1707,15 @@ public class WebRankerCore implements AbstractWebRankerCore {
 		}
 	}
 
-	private void onGenerateQuestions(RankableDocument doc) {
+	private boolean onGenerateQuestions(RankableDocument doc) {
 		if (messagePoller.isBusy()) {
 			notification.notify(getLocalizedString(DefaultLocalizationProviders.COMMON.toString(), CommonLocalizationTags.WAIT_TILL_COMPLETION.toString()));
-			return;
+			return false;
 		} else if (Language.ENGLISH != doc.getLanguage()) {
 			notification.notify(getLocalizedString(DefaultLocalizationProviders.COMMON.toString(), CommonLocalizationTags.FEATURE_NOT_SUPPORTED.toString()));
-			return;
+			return false;
 		}
 
-		presenter.showLoaderOverlay(true);
 
 		service.generateQuestions(token, doc, 15,
 				FuncCallback.get(e -> messagePoller.beginPolling(msg -> {
@@ -1702,24 +1726,22 @@ public class WebRankerCore implements AbstractWebRankerCore {
 							case SENTENCE_SELECTION_COMPLETE:
 								break;
 							case JOB_COMPLETE:
-								presenter.showLoaderOverlay(false);
-
-								questgenpreview.previewQuestions(msg.getGenerateQuestions().getGeneratedQuestions());
 								messagePoller.endPolling();
+								questgenpreview.display(msg.getGenerateQuestions().getGeneratedQuestions());
 								break;
 							}
 						}, () -> {
 							notification.notify(getLocalizedString(LocalizationTags.OP_TIMEDOUT.toString()), 5000);
-							presenter.showLoaderOverlay(false);
 						}, true),
 						e -> {
 							ClientLogger.get().error(e, "Couldn't begin question generation operation");
 							notification.notify(getLocalizedString(LocalizationTags.SERVER_ERROR.toString()));
-							presenter.showLoaderOverlay(false);
+							questgenpreview.display(new ArrayList<>());
 
 							if (e instanceof InvalidAuthTokenException)
 								ClientEndPoint.get().fatalServerError();
 						}));
+		return true;
 	}
 
 	private void onCancelOp() {

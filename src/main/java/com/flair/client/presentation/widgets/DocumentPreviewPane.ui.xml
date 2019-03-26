@@ -57,9 +57,6 @@
 				<m:MaterialRow textAlign="CENTER" marginTop="10" marginBottom="30">
 					<m:MaterialButton ui:field="btnShowAllConstUI" backgroundColor="ORANGE" textColor="WHITE"/>
 				</m:MaterialRow>
-				<m:MaterialRow textAlign="CENTER" marginTop="10" marginBottom="30">
-					<m:MaterialButton ui:field="btnGenerateQuestionsUI" backgroundColor="BLUE" textColor="WHITE"/>
-				</m:MaterialRow>
 			</m:MaterialRow>
 			
 			<m.html:Br/>

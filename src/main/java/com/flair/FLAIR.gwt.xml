@@ -13,11 +13,12 @@
 	<!-- Other module inherits -->
 	<inherits name="gwt.material.design.GwtMaterialWithJQuery" />
 	<inherits name="gwt.material.design.addins.GwtMaterialAddins" />
+    <inherits name="gwt.material.design.incubator.AddinsIncubator"/>
 	<inherits name="gwt.material.design.GwtMaterialDesignBasic" />
 	<inherits name="gwt.material.design.themes.ThemeBlue" />
 	<inherits name="com.github.gwtd3.D3" />
 
-	<!-- Specify the app entry point class. -->
+    <!-- Specify the app entry point class. -->
 	<entry-point class='com.flair.client.FLAIR' />
 
 	<!-- Specify the paths for translatable code -->
