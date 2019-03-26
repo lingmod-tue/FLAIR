@@ -34,11 +34,6 @@ public class SyntacticPaths {
 		int tmp;
 		for (int i = 0; i < pathLengths.size(); i++) {
 			tmp = pathLengths.get(i);
-			String tmpS = "";
-			if (candidates.get(i).node() != null) {
-				tmpS = candidates.get(i).node().yield().toString();
-			}
-			//			U.pl("distance:"+tmp+"\t"+tmpS);
 
 			if (tmp < minLength) {
 				minLength = tmp;

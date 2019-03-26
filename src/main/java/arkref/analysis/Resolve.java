@@ -416,9 +416,7 @@ public class Resolve {
 	private static boolean substringMatch(Mention mention, Mention cand) {
 		String mHead = mention.getHeadWord();
 		String cHead = cand.getHeadWord();
-		String mYield = mention.node().yield().toString();
-		String cYield = cand.node().yield().toString();
-		
+
 		/*if(mHead.length() >= 5 && cHead.length() >= 5){
 			if(mHead.subSequence(0, 5).equals(cHead.subSequence(0, 5))){
 				return true;
