@@ -63,14 +63,14 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 				+ "\nOutput\n\t\n\tGenerated Questions: " + output.generatedQuestions.size();
 	}
 
-	private boolean queueQuestGenTask(AsyncJob jerb) {
+	private void queueQuestGenTask(AsyncJob jerb) {
 		if (numQuestGenTasks > 0)
-			return false;
+			return;
 
 		// keep generating questions until we exhaust our source sentences or have generated enough
 		// generate at least as many questions as there are distractors (plus one)
 		if (rankedQuestions.size() > Constants.QUESTGEN_NUM_DISTRACTOR && output.generatedQuestions.size() >= input.numQuestions)
-			return false;
+			return;
 
 		AsyncJob.Scheduler scheduler = AsyncJob.Scheduler.existingJob(jerb);
 		int delta = input.numQuestions - output.generatedQuestions.size();
@@ -90,9 +90,13 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 
 		if (scheduler.hasTasks())
 			scheduler.fire();
-
-		return scheduler.hasTasks();
 	}
+
+	/*
+		Clean up answers:
+			> Remove 'of' from the head
+			> Filter answers with pronouns (downweight them?)
+	 */
 
 	private void initTaskSyncHandlers() {
 		taskLinker.addHandler(SentenceSelectionTask.Result.class, (j, r) -> {
@@ -178,7 +182,7 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 				.mainDocument(input.sourceDoc)
 				.granularity(SentenceSelector.Granularity.SENTENCE)
 				.stemWords(true)
-				.ignoreStopwords(true)
+				.ignoreStopwords(false)
 				.useSynsets(false);
 
 		scheduler.newTask(SentenceSelectionTask.factory(ssBuilder, -1))

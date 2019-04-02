@@ -133,11 +133,11 @@ public class WhPhraseGenerator {
 			matcher = matchPattern.matcher(ans);
 			if (matcher.find()) {
 				answerNP = matcher.getNode("object");
-				answerPreposition = AnalysisUtilities.orginialSentence(matcher.getNode("preposition").yield());
+				answerPreposition = AnalysisUtilities.originalSentence(matcher.getNode("preposition").yield());
 				Tree answerPreposition2 = matcher.getNode("preposition2");
 				if (answerPreposition2 != null) {
 					answerPreposition += " "
-							+ AnalysisUtilities.orginialSentence(answerPreposition2.yield());
+							+ AnalysisUtilities.originalSentence(answerPreposition2.yield());
 				}
 				answerPrepositionModifier = matcher.getNode("adverb");
 			} else {
@@ -382,7 +382,7 @@ public class WhPhraseGenerator {
 				//e.g., John left IMMEDIATELY after the meeting -> What did John leave IMMEDIATELY after?
 				//Note: such modifiers could probably just be dropped to simplify things...
 				if (answerPrepositionModifier != null) {
-					prepositionModifierStr = AnalysisUtilities.orginialSentence(answerPrepositionModifier.yield());
+					prepositionModifierStr = AnalysisUtilities.originalSentence(answerPrepositionModifier.yield());
 				}
 
 				leftOverPrepositions.add("(PP " + prepositionModifierStr

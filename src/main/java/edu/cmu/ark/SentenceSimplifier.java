@@ -442,8 +442,8 @@ public class SentenceSimplifier {
 				//e.g., John (and Mary) like Bill.  -> John like Bill.
 				if ((verbPreterminal.label().value().equals("VB") || verbPreterminal.label().value().equals(
 						"VBP"))) { //the parser confuses VBP with VB
-					if (AnalysisUtilities.orginialSentence(subject.yield()).equals("I")
-							|| AnalysisUtilities.orginialSentence(subject.yield()).equals("you")) {
+					if (AnalysisUtilities.originalSentence(subject.yield()).equals("I")
+							|| AnalysisUtilities.originalSentence(subject.yield()).equals("you")) {
 						newVerbPOS = "VBP";
 					} else {
 						newVerbPOS = "VBZ";
@@ -467,7 +467,7 @@ public class SentenceSimplifier {
 					else
 						newVerb = "was";
 				} else if (verbLemma.equals("be")
-						&& AnalysisUtilities.orginialSentence(subject.yield()).equals("I")
+						&& AnalysisUtilities.originalSentence(subject.yield()).equals("I")
 						&& newVerbPOS.equals("VBP")) {
 					newVerb = "am";
 				} else { //default
@@ -733,7 +733,7 @@ public class SentenceSimplifier {
 
 	private String findTense(Tree node) {
 		if (node.label().value().equals("MD")) {
-			if (AnalysisUtilities.orginialSentence(node.yield()).matches("^(would|could)$")) {
+			if (AnalysisUtilities.originalSentence(node.yield()).matches("^(would|could)$")) {
 				return "VBD";
 			}
 		}
@@ -798,7 +798,7 @@ public class SentenceSimplifier {
 			subord = matcher.getNode("sub");
 			Tree verb = matcher.getNode("verb");
 			String verbLemma = AnalysisUtilities.getInstance().getLemma(
-					AnalysisUtilities.orginialSentence(verb.yield()), verb.label().value());
+					AnalysisUtilities.originalSentence(verb.yield()), verb.label().value());
 
 			if (!verbImpliesComplement(verbLemma)) {
 				continue;
@@ -1028,7 +1028,7 @@ public class SentenceSimplifier {
 					subjectMovement = false;
 				} else if (matcher.getNode("preposition") != null) {
 					String tmp = "(PP (IN "
-							+ AnalysisUtilities.orginialSentence(matcher.getNode("preposition").yield())
+							+ AnalysisUtilities.originalSentence(matcher.getNode("preposition").yield())
 							+ ") " + missingArgumentTree.toString() + ")";
 					missingArgumentTree = AnalysisUtilities.getInstance().readTreeFromString(
 							tmp);

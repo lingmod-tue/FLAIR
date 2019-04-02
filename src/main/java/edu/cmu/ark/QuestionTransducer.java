@@ -67,7 +67,7 @@ public class QuestionTransducer {
 			if (q.getFeatureValue("performedNPClarification") == 0.0) {
 				continue;
 			}
-			yield = AnalysisUtilities.orginialSentence(q.getTree().yield());
+			yield = AnalysisUtilities.originalSentence(q.getTree().yield());
 			if (yieldMap.containsKey(yield)) {
 				if (GlobalProperties.getInstance().getDebug())
 					System.err.println("Removing duplicate: " + yield);
@@ -82,7 +82,7 @@ public class QuestionTransducer {
 			if (q.getFeatureValue("performedNPClarification") == 1.0) {
 				continue;
 			}
-			yield = AnalysisUtilities.orginialSentence(q.getTree().yield());
+			yield = AnalysisUtilities.originalSentence(q.getTree().yield());
 			if (yieldMap.containsKey(yield)) {
 				if (GlobalProperties.getInstance().getDebug())
 					System.err.println("Removing duplicate: " + yield);
@@ -578,6 +578,8 @@ public class QuestionTransducer {
 		TregexMatcher matcher = matchPattern.matcher(inputTree);
 		matcher.find();
 		Tree phraseToMove = matcher.getNode("answer");
+		if (phraseToMove == null)
+			return res;
 
 		String whPhraseSubtree;
 		String leftOverPreposition;
@@ -983,7 +985,7 @@ public class QuestionTransducer {
 		matcher = matchPattern.matcher(inputTree);
 		if (matcher.find()) {
 			subjectTree = matcher.getMatch();
-			subjectString = AnalysisUtilities.orginialSentence(subjectTree.yield());
+			subjectString = AnalysisUtilities.originalSentence(subjectTree.yield());
 			if (subjectString.equalsIgnoreCase("I")
 					|| subjectString.equalsIgnoreCase("you")) {
 				tregexOpStr = "ROOT=root < (S=mainclause < (VP=verbphrase < (/VB.?/=tensedverb)))";

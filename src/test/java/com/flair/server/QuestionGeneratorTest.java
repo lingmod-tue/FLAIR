@@ -14,11 +14,11 @@ import java.util.Arrays;
 
 public class QuestionGeneratorTest {
 	public static void main(String[] args) {
-		String query = "rem band";
-		int numResults = 5;
+		String query = "site:theguardian.com net neutrality";
+		int numResults = 2;
 		Language lang = Language.ENGLISH;
 		String[] keywords = new String[]{
-				"keywords", "to", "highlight"
+			"keywords", "to", "highlight"
 		};
 
 		SearchCrawlParseOp.Output output = GramParsingPipeline.get()
@@ -34,11 +34,11 @@ public class QuestionGeneratorTest {
 			QuestionGenerationOp.Output qgOutput = QuestionGenerationPipeline.get()
 					.generateQuestions()
 					.sourceDoc(doc)
-					.numQuestions(3)
+					.numQuestions(5)
 					.launch()
 					.yield();
 
-			ServerLogger.get().info("Document: " + doc.getDescription());
+			ServerLogger.get().info("\n\nDocument: " + doc.getDescription());
 			ServerLogger.get().indent();
 			for (GeneratedQuestion gq : qgOutput.generatedQuestions) {
 				ServerLogger.get().info("Question: '" + gq.question + "'");

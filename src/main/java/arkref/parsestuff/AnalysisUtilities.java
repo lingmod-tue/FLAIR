@@ -456,7 +456,7 @@ public class AnalysisUtilities {
 	 *
 	 * @author Michael Kutschke 9/2012
 	 */
-	public static String orginialSentence(List<Label> l) {
+	public static String originalSentence(List<Label> l) {
 		String text = StringUtils.join(Arrays.asList(stringArrayFromLabels(l)), " ");
 		//	text = text.replaceAll("\\s(?=\\p{Punct})", "");
 		return text;
