@@ -1721,7 +1721,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 			return false;
 		}
 
-		service.generateQuestions(token, doc, 10,
+		service.generateQuestions(token, doc, 5,
 				FuncCallback.get(e -> messagePoller.beginPolling(msg -> {
 							if (msg.getType() != ServerMessage.Type.GENERATE_QUESTIONS)
 								throw new RuntimeException("Invalid message type for generate questions operation: " + msg.getType());

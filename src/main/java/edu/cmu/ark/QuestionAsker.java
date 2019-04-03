@@ -61,7 +61,7 @@ public class QuestionAsker {
 		QuestionRanker qr = null;
 
 
-		qt.setAvoidPronounsAndDemonstratives(false);
+		qt.setAvoidPronouns(false);
 
 		//pre-load
 		AnalysisUtilities.getInstance();
@@ -111,7 +111,7 @@ public class QuestionAsker {
 			}
 		}
 
-		qt.setAvoidPronounsAndDemonstratives(dropPro);
+		qt.setAvoidPronouns(dropPro);
 		trans.setDoPronounNPC(doPronounNPC);
 		trans.setDoNonPronounNPC(doNonPronounNPC);
 

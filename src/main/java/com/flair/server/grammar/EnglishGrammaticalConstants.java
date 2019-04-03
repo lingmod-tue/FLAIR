@@ -2,7 +2,9 @@
 package com.flair.server.grammar;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Stable constants for the English language grammar
@@ -27,4 +29,7 @@ public class EnglishGrammaticalConstants {
 	public static final List<String> POSSESSIVE_PRONOUNS = Arrays.asList("my", "your", "his", "her", "their", "our", "its");
 	public static final List<String> POSSESSIVE_ABSOLUTE_PRONOUNS = Arrays.asList("mine", "yours", "hers", "theirs", "ours"); // his and its omitted
 	public static final List<String> REFLEXIVE_PRONOUNS = Arrays.asList("myself", "yourself", "himself", "herself", "themselves", "ourselves", "itself", "yourselves");
+
+	public static final Set<String> CONTRACTIONS = new HashSet<>(Arrays.asList("n't", "'ll", "'s", "'m", "'re", "'ve", "'d"));
+
 }

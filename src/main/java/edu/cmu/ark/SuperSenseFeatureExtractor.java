@@ -421,7 +421,7 @@ public class SuperSenseFeatureExtractor {
 
 
 	private void loadClusters() {
-		ServerLogger.get().info("loading word cluster information...");
+		ServerLogger.get().trace("loading word cluster information...");
 		clusterMap = new HashMap<String, Integer>();
 
 		try {
@@ -444,7 +444,7 @@ public class SuperSenseFeatureExtractor {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		ServerLogger.get().info("done.");
+		ServerLogger.get().trace("done.");
 	}
 
 
@@ -453,7 +453,7 @@ public class SuperSenseFeatureExtractor {
 	 * Supersense tagger release from SourceForge
 	 */
 	public void loadSenseDataNewFormat() {
-		ServerLogger.get().info("loading most frequent sense information...");
+		ServerLogger.get().trace("loading most frequent sense information...");
 
 		senseMap = new HashMap<String, Map<String, String>>();
 		possibleSensesMap = new HashMap<String, Set<String>>();
@@ -511,7 +511,7 @@ public class SuperSenseFeatureExtractor {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		ServerLogger.get().info("done.");
+		ServerLogger.get().trace("done.");
 	}
 
 
@@ -519,7 +519,7 @@ public class SuperSenseFeatureExtractor {
 	 * load data from the original SST release
 	 */
 	public void loadSenseDataOriginalFormat() {
-		ServerLogger.get().info("loading most frequent sense information (old format)...");
+		ServerLogger.get().trace("loading most frequent sense information (old format)...");
 
 		Properties props = DiscriminativeTagger.getProperties();
 		possibleSensesMap = new HashMap<String, Set<String>>();
@@ -533,12 +533,12 @@ public class SuperSenseFeatureExtractor {
 		String verbFile = props.getProperty("verbFile", "data/oldgaz/VERBS_WS_SS.gz");
 		loadSenseFileOriginalFormat(verbFile, "V");
 
-		ServerLogger.get().info("done.");
+		ServerLogger.get().trace("done.");
 	}
 
 
 	private void loadMorphDataOriginalFormat() {
-		ServerLogger.get().info("loading morphology information (old format)...");
+		ServerLogger.get().trace("loading morphology information (old format)...");
 
 		morphMap = new HashMap<String, Map<String, String>>();
 		try {
@@ -561,7 +561,7 @@ public class SuperSenseFeatureExtractor {
 
 
 	private void loadMorphDataNewFormat() {
-		ServerLogger.get().info("loading morphology information...");
+		ServerLogger.get().trace("loading morphology information...");
 
 		morphMap = new HashMap<String, Map<String, String>>();
 		try {

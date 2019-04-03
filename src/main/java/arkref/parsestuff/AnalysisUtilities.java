@@ -364,8 +364,7 @@ public class AnalysisUtilities {
 		return cleanUpSentenceString(copyTree.yield().stream().map(Label::value).collect(Collectors.toList()));
 	}
 
-	public static String cleanUpSentenceString(List<String> s) {
-		String res = String.join(" ", s);
+	public static String cleanUpSentenceString(String res) {
 		//if(res.length() > 1){
 		//	res = res.substring(0,1).toUpperCase() + res.substring(1);
 		//}
@@ -390,6 +389,10 @@ public class AnalysisUtilities {
 		res = res.trim();
 
 		return res;
+	}
+
+	public static String cleanUpSentenceString(List<String> s) {
+		return cleanUpSentenceString(String.join(" ", s));
 	}
 
 	public static boolean cCommands(Tree root, Tree n1, Tree n2) {

@@ -296,7 +296,7 @@ public class TestQuestions extends TestCase {
 	public void testAvoidDemonstratives() {
 		Tree parse = AnalysisUtilities.parseSentence("John liked that book.").parse;
 		List<String> res;
-		qt.setAvoidPronounsAndDemonstratives(true);
+		qt.setAvoidPronouns(true);
 		res = getQuestionOutputStringsFromParse(qt, parse);
 		assertTrue(res.toString(), res.contains("What did John like?"));
 		assertFalse(res.toString(), res.contains("Who liked that book?"));

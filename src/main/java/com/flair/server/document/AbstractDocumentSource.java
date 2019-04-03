@@ -19,10 +19,10 @@ public abstract class AbstractDocumentSource implements Comparable<AbstractDocum
 		language = lang;
 	}
 
-	protected final String preprocessText(String input, PreprocessingHandler customHandler) {
+	final String preprocessText(String input, PreprocessingHandler customHandler) {
 		// fix up common formatting issues
 		input = input.trim().replaceAll("\\n{3,}", "\n\n")
-				.replaceAll("\\u0020|\\u00A0", " ");
+				.replaceAll("[\\u0020\\u00A0]", " ");
 
 		StringBuilder out = new StringBuilder();
 		Arrays.stream(input.split("\n")).forEach(e -> {
@@ -56,7 +56,7 @@ public abstract class AbstractDocumentSource implements Comparable<AbstractDocum
 		return recomposed;
 	}
 
-	protected final String preprocessText(String input) {
+	final String preprocessText(String input) {
 		return preprocessText(input, null);
 	}
 

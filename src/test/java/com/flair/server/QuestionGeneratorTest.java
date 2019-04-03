@@ -14,8 +14,8 @@ import java.util.Arrays;
 
 public class QuestionGeneratorTest {
 	public static void main(String[] args) {
-		String query = "site:theguardian.com net neutrality";
-		int numResults = 2;
+		String query = "site:theguardian.com brexit mayhem";
+		int numResults = 5;
 		Language lang = Language.ENGLISH;
 		String[] keywords = new String[]{
 			"keywords", "to", "highlight"
@@ -34,15 +34,16 @@ public class QuestionGeneratorTest {
 			QuestionGenerationOp.Output qgOutput = QuestionGenerationPipeline.get()
 					.generateQuestions()
 					.sourceDoc(doc)
-					.numQuestions(5)
+					.numQuestions(10)
 					.launch()
 					.yield();
 
 			ServerLogger.get().info("\n\nDocument: " + doc.getDescription());
 			ServerLogger.get().indent();
 			for (GeneratedQuestion gq : qgOutput.generatedQuestions) {
-				ServerLogger.get().info("Question: '" + gq.question + "'");
+				ServerLogger.get().info("Sentence: '" + gq.sourceSentence + "'");
 				ServerLogger.get().indent();
+				ServerLogger.get().info("Question: '" + gq.question + "'");
 				ServerLogger.get().info("Answer: '" + gq.answer + "'");
 				ServerLogger.get().exdent();
 			}

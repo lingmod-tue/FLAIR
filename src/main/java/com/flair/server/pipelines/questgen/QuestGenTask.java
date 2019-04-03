@@ -1,6 +1,7 @@
 package com.flair.server.pipelines.questgen;
 
 import arkref.parsestuff.AnalysisUtilities;
+import com.flair.server.grammar.EnglishGrammaticalConstants;
 import com.flair.server.parser.CoreNlpParserAnnotations;
 import com.flair.server.parser.ParserAnnotations;
 import com.flair.server.scheduler.AsyncTask;
@@ -9,29 +10,64 @@ import edu.cmu.ark.InitialTransformationStep;
 import edu.cmu.ark.Question;
 import edu.cmu.ark.QuestionRanker;
 import edu.cmu.ark.QuestionTransducer;
+import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.trees.Tree;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class QuestGenTask implements AsyncTask<QuestGenTask.Result> {
-	static QuestGenTask factory(List<ParserAnnotations.Sentence> sentenceChunk, QuestionGeneratorParams qgParams) {
-		return new QuestGenTask(sentenceChunk, qgParams);
+	static QuestGenTask factory(ParserAnnotations.Sentence sourceSentence, QuestionGeneratorParams qgParams) {
+		return new QuestGenTask(sourceSentence, qgParams);
 	}
 
-	private final List<ParserAnnotations.Sentence> sourceSentChunk;
+	private final ParserAnnotations.Sentence sourceSentence;
 	private final QuestionGeneratorParams qgParams;
 
-	private QuestGenTask(List<ParserAnnotations.Sentence> sentenceChunk, QuestionGeneratorParams qgParams) {
-		this.sourceSentChunk = sentenceChunk;
+	private QuestGenTask(ParserAnnotations.Sentence sourceSentence, QuestionGeneratorParams qgParams) {
+		this.sourceSentence = sourceSentence;
 		this.qgParams = qgParams;
 	}
 
+	private GeneratedQuestion postProcess(Question q) {
+		/*
+		Sentence selection:
+			> Prefer shorter sentences (avg of 15 tokens)
+		Clean up answers:
+			> Remove 'prepositions from the head
+			> Filter answers with pronouns (downweight them?)
+			> Fix case
+			> Remove substrings that are found in the question
+			> Remove possessive marker
+			> Ignore yes/no questions
+	 */
+		Tree questionTree = q.getTree();
+		Tree answerTree = q.getAnswerPhraseTree();
+
+		String questionString = AnalysisUtilities.getCleanedUpYield(questionTree);
+		StringBuilder answerBuilder = new StringBuilder();
+		List<CoreLabel> answerTokens = answerTree.yield().stream().map(CoreLabel.class::cast).collect(Collectors.toList());
+
+		for (CoreLabel token : answerTokens) {
+			if (EnglishGrammaticalConstants.OBJECTIVE_PRONOUNS.stream().anyMatch(e -> token.word().equalsIgnoreCase(e)))
+				continue;
+
+			answerBuilder.append(token.word()).append(" ");
+		}
+
+		String answerString = AnalysisUtilities.cleanUpSentenceString(answerBuilder.toString().trim());
+		if (!answerString.isEmpty() && Character.isLowerCase(answerString.codePointAt(0)))
+			answerString = answerString.substring(0, 1).toUpperCase() + answerString.substring(1);
+
+		return new GeneratedQuestion(qgParams.type, sourceSentence.text(),
+				questionString, answerString, q.getScore(), questionTree, answerTree);
+	}
 
 	@Override
 	public Result run() {
-		Result out = new Result(qgParams, sourceSentChunk);
+		Result out = new Result(qgParams, sourceSentence);
 
 		try {
 			QuestionTransducer questionTransducer = new QuestionTransducer();
@@ -42,7 +78,12 @@ public class QuestGenTask implements AsyncTask<QuestGenTask.Result> {
 				questionRanker.loadModel(qgParams.rankerModelPath);
 			}
 
-			List<Tree> inputTrees = sourceSentChunk.stream().map(s -> s.data(CoreNlpParserAnnotations.Sentence.class).parseTree()).collect(Collectors.toList());
+			questionTransducer.setAvoidPronouns(qgParams.dropPronouns);
+			questionTransducer.setAvoidDemonstratives(qgParams.avoidDemonstratives);
+			initTransformer.setDoPronounNPC(qgParams.resolvePronounNPs);
+			initTransformer.setDoNonPronounNPC(qgParams.resolveNonPronounNPs);
+
+			List<Tree> inputTrees = Collections.singletonList(sourceSentence.data(CoreNlpParserAnnotations.Sentence.class).parseTree());
 			List<Question> transformationOutput = initTransformer.transform(inputTrees);
 			List<Question> outputQuestionList = new ArrayList<>();
 
@@ -53,7 +94,7 @@ public class QuestGenTask implements AsyncTask<QuestGenTask.Result> {
 
 			QuestionTransducer.removeDuplicateQuestions(outputQuestionList);
 
-			if (questionRanker != null) {
+			if (questionRanker != null && !outputQuestionList.isEmpty()) {
 				questionRanker.scoreGivenQuestions(outputQuestionList);
 				QuestionRanker.adjustScores(outputQuestionList,
 						inputTrees,
@@ -74,13 +115,15 @@ public class QuestGenTask implements AsyncTask<QuestGenTask.Result> {
 				Tree questionTree = question.getTree();
 				Tree answerTree = question.getAnswerPhraseTree();
 
-				if (questionTree == null)
+				if (questionTree == null) {
 					ServerLogger.get().warn("No question tree was generated! Dump: " + question.toString());
+					continue;
+				} else if (answerTree == null) {
+					ServerLogger.get().warn("No answer tree was generated! Dump: " + question.toString());
+					continue;
+				}
 
-				String questionString = AnalysisUtilities.getCleanedUpYield(questionTree);
-				String answerString = answerTree != null ? AnalysisUtilities.getCleanedUpYield(answerTree) : "";
-
-				out.generated.add(new GeneratedQuestion(qgParams.type, questionString, answerString));
+				out.generated.add(postProcess(question));
 			}
 		} catch (Throwable ex) {
 			ServerLogger.get().error(ex, "Question generation task encountered an error. Exception: " + ex.toString());
@@ -91,12 +134,12 @@ public class QuestGenTask implements AsyncTask<QuestGenTask.Result> {
 
 	static final class Result {
 		final QuestionGeneratorParams qgParams;
-		final List<ParserAnnotations.Sentence> sourceSentChunk;
+		final ParserAnnotations.Sentence sourceSentence;
 		final List<GeneratedQuestion> generated;        // ordered by their rank (highest first)
 
-		Result(QuestionGeneratorParams qgParams, List<ParserAnnotations.Sentence> s) {
+		Result(QuestionGeneratorParams qgParams, ParserAnnotations.Sentence sourceSentence) {
 			this.qgParams = qgParams;
-			this.sourceSentChunk = s;
+			this.sourceSentence = sourceSentence;
 			this.generated = new ArrayList<>();
 		}
 	}

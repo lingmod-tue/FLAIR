@@ -4,6 +4,7 @@ import com.flair.server.utilities.ServerLogger;
 import edu.cmu.ark.ResourceLoader;
 
 class QuestionGeneratorParams {
+	boolean avoidDemonstratives;
 	boolean dropPronouns;
 	boolean downweighPronouns;
 	boolean downweighFrequentWords;
@@ -16,19 +17,24 @@ class QuestionGeneratorParams {
 	QuestionKind type;
 
 	public static final class Builder {
-		boolean dropPronouns = true;
-		boolean downweighPronouns = false;
+		boolean avoidDemonstratives = true;
+		boolean dropPronouns = false;
+		boolean downweighPronouns = true;
 		boolean downweighFrequentWords = true;
-		boolean preferWHQuestions = false;
+		boolean preferWHQuestions = true;
 		boolean onlyWHQuestions = false;
-		boolean resolveNonPronounNPs = true;
-		boolean resolvePronounNPs = true;
+		boolean resolveNonPronounNPs = false;
+		boolean resolvePronounNPs = false;
 		boolean doStemming = true;
 		String rankerModelPath = ResourceLoader.path("linear-regression-ranker-reg500.ser.gz");
 		QuestionKind type = QuestionKind.READING_COMPREHENSION;
 
 		private Builder() {}
 		public static Builder factory() { return new Builder(); }
+		public Builder avoidDemonstratives(boolean dropPronouns) {
+			this.avoidDemonstratives = dropPronouns;
+			return this;
+		}
 		public Builder dropPronouns(boolean dropPronouns) {
 			this.dropPronouns = dropPronouns;
 			return this;
@@ -74,6 +80,7 @@ class QuestionGeneratorParams {
 				ServerLogger.get().warn("No QuestionRanker model set. Generated questions will not be ranked!");
 
 			QuestionGeneratorParams questionGeneratorParams = new QuestionGeneratorParams();
+			questionGeneratorParams.avoidDemonstratives = this.avoidDemonstratives;
 			questionGeneratorParams.doStemming = this.doStemming;
 			questionGeneratorParams.resolvePronounNPs = this.resolvePronounNPs;
 			questionGeneratorParams.type = this.type;

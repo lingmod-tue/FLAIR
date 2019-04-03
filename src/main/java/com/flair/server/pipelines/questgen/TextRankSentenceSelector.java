@@ -124,6 +124,9 @@ public class TextRankSentenceSelector implements SentenceSelector {
 			}
 		}
 
+		if (allSents.isEmpty())
+			return;
+
 		// create tf-idf sentence vectors
 		List<Node> nodes = allSents.stream().map(sent -> {
 			Node newNode = new Node(sent, new SparseDoubleVector(index.size()));

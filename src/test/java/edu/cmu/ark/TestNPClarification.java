@@ -307,7 +307,7 @@ public class TestNPClarification extends TestCase {
 		QuestionTransducer qt = new QuestionTransducer();
 		InitialTransformationStep s1 = new InitialTransformationStep();
 
-		qt.setAvoidPronounsAndDemonstratives(true);
+		qt.setAvoidPronouns(true);
 
 		sentence = "He was a prince, but had no children of his own.";
 		res.clear();
@@ -346,7 +346,7 @@ public class TestNPClarification extends TestCase {
 		QuestionTransducer qt = new QuestionTransducer();
 		InitialTransformationStep s1 = new InitialTransformationStep();
 
-		qt.setAvoidPronounsAndDemonstratives(true);
+		qt.setAvoidPronouns(true);
 
 		sentence = "Her car was old.  The car still ran.";
 		res.clear();
@@ -376,7 +376,7 @@ public class TestNPClarification extends TestCase {
 		//FIRST: test that all the mentions are replaced when NPC is fully enabled 
 		s1.setDoPronounNPC(true);
 		s1.setDoNonPronounNPC(true);
-		qt.setAvoidPronounsAndDemonstratives(true);
+		qt.setAvoidPronouns(true);
 
 		res.clear();
 		sentence = "Talking birds are rare.  Mary gave John a book that was about birds.  He liked the book.  John kept it.  ";
@@ -394,7 +394,7 @@ public class TestNPClarification extends TestCase {
 		//SECOND: test that non-pronoun mentions are not replaced when that feature is disabled
 		s1.setDoPronounNPC(true);
 		s1.setDoNonPronounNPC(false);
-		qt.setAvoidPronounsAndDemonstratives(true);
+		qt.setAvoidPronouns(true);
 
 		res.clear();
 		questions = s1.transform(doc);
@@ -423,7 +423,7 @@ public class TestNPClarification extends TestCase {
 		InitialTransformationStep s1 = new InitialTransformationStep();
 		s1.setDoPronounNPC(false);
 		s1.setDoNonPronounNPC(false);
-		qt.setAvoidPronounsAndDemonstratives(true);
+		qt.setAvoidPronouns(true);
 
 		res.clear();
 		sentence = "Mary gave John a book that was about birds.  He liked the book.  John kept it.";
@@ -452,7 +452,7 @@ public class TestNPClarification extends TestCase {
 		InitialTransformationStep s1 = new InitialTransformationStep();
 		s1.setDoPronounNPC(true);
 		s1.setDoNonPronounNPC(true);
-		qt.setAvoidPronounsAndDemonstratives(true);
+		qt.setAvoidPronouns(true);
 
 		res.clear();
 		sentence = "John ran.  Because of the rain, his clothes were wet.";

@@ -1,6 +1,7 @@
 package com.flair.server.pipelines.questgen;
 
 import com.flair.server.document.AbstractDocument;
+import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.ParserAnnotations;
 import com.flair.server.pipelines.PipelineOp;
 import com.flair.server.scheduler.AsyncExecutorService;
@@ -19,6 +20,10 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 	static final class Input {
 		final AbstractDocument sourceDoc;
 
+		final ParsingStrategy parsingStrategy;
+		final CoreNlpParser parser;
+
+		final AsyncExecutorService parseExecutor;
 		final AsyncExecutorService sentSelExecutor;
 		final AsyncExecutorService qgExecutor;
 
@@ -30,6 +35,9 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 		final JobComplete jobComplete;
 
 		Input(AbstractDocument sourceDoc,
+		      ParsingStrategy parsingStrategy,
+		      CoreNlpParser parser,
+		      AsyncExecutorService parseExecutor,
 		      AsyncExecutorService sentSelExecutor,
 		      AsyncExecutorService qgExecutor,
 		      QuestionGeneratorParams qgParams,
@@ -38,6 +46,9 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 		      SentenceSelectionComplete selectionComplete,
 		      JobComplete jobComplete) {
 			this.sourceDoc = sourceDoc;
+			this.parsingStrategy = parsingStrategy;
+			this.parser = parser;
+			this.parseExecutor = parseExecutor;
 			this.sentSelExecutor = sentSelExecutor;
 			this.qgExecutor = qgExecutor;
 			this.qgParams = qgParams;
@@ -63,6 +74,25 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 				+ "\nOutput\n\t\n\tGenerated Questions: " + output.generatedQuestions.size();
 	}
 
+	private void queueSentenceSelTask(AsyncJob jerb, AbstractDocument sourceDoc) {
+		AsyncJob.Scheduler scheduler = AsyncJob.Scheduler.existingJob(jerb);
+		SentenceSelector.Builder ssBuilder = TextRankSentenceSelector.Builder.factory(sourceDoc.getLanguage(),
+				input.sentSelPreprocessor)
+				.source(SentenceSelector.Source.DOCUMENT)
+				.mainDocument(sourceDoc)
+				.granularity(SentenceSelector.Granularity.SENTENCE)
+				.stemWords(true)
+				.ignoreStopwords(true)
+				.useSynsets(true);
+
+		scheduler.newTask(SentenceSelectionTask.factory(ssBuilder, -1))
+				.with(input.sentSelExecutor)
+				.then(this::linkTasks)
+				.queue();
+
+		scheduler.fire();
+	}
+
 	private void queueQuestGenTask(AsyncJob jerb) {
 		if (numQuestGenTasks > 0)
 			return;
@@ -75,11 +105,7 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 		AsyncJob.Scheduler scheduler = AsyncJob.Scheduler.existingJob(jerb);
 		int delta = input.numQuestions - output.generatedQuestions.size();
 		for (int i = 0; i < delta && nextSentenceIndex < rankedSentences.size(); i++) {
-			// ### we only support single sentences currently
-			List<ParserAnnotations.Sentence> chunks = new ArrayList<>();
-			chunks.add(rankedSentences.get(nextSentenceIndex).annotation());
-
-			scheduler.newTask(QuestGenTask.factory(chunks, input.qgParams))
+			scheduler.newTask(QuestGenTask.factory(rankedSentences.get(nextSentenceIndex).annotation(), input.qgParams))
 					.with(input.qgExecutor)
 					.then(this::linkTasks)
 					.queue();
@@ -92,13 +118,12 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 			scheduler.fire();
 	}
 
-	/*
-		Clean up answers:
-			> Remove 'of' from the head
-			> Filter answers with pronouns (downweight them?)
-	 */
-
 	private void initTaskSyncHandlers() {
+		taskLinker.addHandler(NerCorefParseTask.Result.class, (j, r) -> {
+			if (r.output != null)
+				queueSentenceSelTask(j, r.output);
+		});
+
 		taskLinker.addHandler(SentenceSelectionTask.Result.class, (j, r) -> {
 			rankedSentences = new ArrayList<>(r.selection);
 			rankedSentenceAnnotations = rankedSentences.stream().map(SentenceSelector.SelectedSentence::annotation).collect(Collectors.toList());
@@ -110,7 +135,7 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 		taskLinker.addHandler(QuestGenTask.Result.class, (j, r) -> {
 			numQuestGenTasks--;
 
-			ParserAnnotations.Sentence source = r.sourceSentChunk.get(0);
+			ParserAnnotations.Sentence source = r.sourceSentence;
 			List<GeneratedQuestion> questions = new ArrayList<>();
 			for (GeneratedQuestion q : r.generated) {
 				// skip questions that don't have an answer
@@ -177,16 +202,9 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 			input.jobComplete.handle(output.generatedQuestions);
 		});
 
-		SentenceSelector.Builder ssBuilder = TextRankSentenceSelector.Builder.factory(input.sourceDoc.getLanguage(), input.sentSelPreprocessor)
-				.source(SentenceSelector.Source.DOCUMENT)
-				.mainDocument(input.sourceDoc)
-				.granularity(SentenceSelector.Granularity.SENTENCE)
-				.stemWords(true)
-				.ignoreStopwords(false)
-				.useSynsets(false);
 
-		scheduler.newTask(SentenceSelectionTask.factory(ssBuilder, -1))
-				.with(input.sentSelExecutor)
+		scheduler.newTask(NerCorefParseTask.factory(input.parsingStrategy, input.parser))
+				.with(input.parseExecutor)
 				.then(this::linkTasks)
 				.queue();
 

@@ -54,8 +54,10 @@ final class SentenceSelectorPreprocessor {
 			int i = 0;
 			for (ParserAnnotations.Sentence sent : doc.getParserAnnotations().sentences()) {
 				++i;
-				PreprocessedSentence preprocSent = new PreprocessedSentence(doc, sent, i);
+				if (sent.tokenCount() > Constants.SELECTOR_MAX_TOKEN_COUNT)
+					continue;
 
+				PreprocessedSentence preprocSent = new PreprocessedSentence(doc, sent, i);
 				for (ParserAnnotations.Token token : sent.tokens()) {
 					String lemma = token.lemma().replaceAll("\\p{P}", "").trim().toLowerCase();
 					String word = token.word().replaceAll("\\p{P}", "").trim().toLowerCase();

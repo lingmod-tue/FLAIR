@@ -231,7 +231,7 @@ public class QuestionTransducer {
 					QuestionFeatureExtractor.getInstance().extractFinalFeatures(
 							tmp2);
 
-				if (avoidPronounsAndDemonstratives
+				if (avoidPronouns
 						&& (containsUnresolvedPronounsOrDemonstratives(tmp2))) {
 					if (GlobalProperties.getInstance().getDebug())
 						System.err.println("generateQuestionsFromParse: skipping due to pronouns");
@@ -244,35 +244,36 @@ public class QuestionTransducer {
 		}
 
 		//add a yes-no question by performing subject auxiliary inversion
-		tmp2 = tmp1.deeperCopy();
-		tmp2.setTree(decomposePredicate(tmp2.getTree()));
-		if (canInvert(tmp2.getTree())) {
-			tmp2.setTree(removeMarkersFromTree(tmp2.getTree()));
-			tmp2.setTree(subjectAuxiliaryInversion(tmp2.getTree()));
-			tmp2.setTree(relabelMainClause(tmp2.getTree()));
-			tmp2.setTree(moveLeadingAdjuncts(tmp2.getTree()));
-			relabelPunctuationAsQuestionMark(tmp2.getTree());
-			AnalysisUtilities.upcaseFirstToken(tmp2.getTree());
-			tmp2.setAnswerPhraseTree(null);
-			if (GlobalProperties.getInstance().getComputeFeatures())
-				tmp2.setFeatureValue("isSubjectMovement", 0.0);
-			if (GlobalProperties.getInstance().getComputeFeatures())
-				tmp2.setFeatureValue("whQuestion", 0.0);
-			if (GlobalProperties.getInstance().getComputeFeatures())
-				QuestionFeatureExtractor.getInstance().extractFinalFeatures(
-						tmp2);
+		if (!avoidDemonstratives) {
+			tmp2 = tmp1.deeperCopy();
+			tmp2.setTree(decomposePredicate(tmp2.getTree()));
+			if (canInvert(tmp2.getTree())) {
+				tmp2.setTree(removeMarkersFromTree(tmp2.getTree()));
+				tmp2.setTree(subjectAuxiliaryInversion(tmp2.getTree()));
+				tmp2.setTree(relabelMainClause(tmp2.getTree()));
+				tmp2.setTree(moveLeadingAdjuncts(tmp2.getTree()));
+				relabelPunctuationAsQuestionMark(tmp2.getTree());
+				AnalysisUtilities.upcaseFirstToken(tmp2.getTree());
+				tmp2.setAnswerPhraseTree(null);
+				if (GlobalProperties.getInstance().getComputeFeatures())
+					tmp2.setFeatureValue("isSubjectMovement", 0.0);
+				if (GlobalProperties.getInstance().getComputeFeatures())
+					tmp2.setFeatureValue("whQuestion", 0.0);
+				if (GlobalProperties.getInstance().getComputeFeatures())
+					QuestionFeatureExtractor.getInstance().extractFinalFeatures(
+							tmp2);
 
-			if (avoidPronounsAndDemonstratives
-					&& containsUnresolvedPronounsOrDemonstratives(tmp2)) {
-				if (GlobalProperties.getInstance().getDebug())
-					System.err.println("generateQuestionsFromParse: skipping due to pronouns");
-			} else {
-				questions.add(tmp2);
+				if (avoidPronouns
+						&& containsUnresolvedPronounsOrDemonstratives(tmp2)) {
+					if (GlobalProperties.getInstance().getDebug())
+						System.err.println("generateQuestionsFromParse: skipping due to pronouns");
+				} else {
+					questions.add(tmp2);
+				}
+
+				if (GlobalProperties.getInstance().getDebug()) System.err.println();
 			}
-
-			if (GlobalProperties.getInstance().getDebug()) System.err.println();
 		}
-
 	}
 
 	private void relabelPunctuationAsQuestionMark(Tree inputTree) {
@@ -1114,12 +1115,12 @@ public class QuestionTransducer {
 		printExtractedPhrases = b;
 	}
 
-	public void setAvoidPronounsAndDemonstratives(boolean b) {
-		avoidPronounsAndDemonstratives = b;
+	public void setAvoidPronouns(boolean b) {
+		avoidPronouns = b;
 	}
 
-	public boolean getAvoidPronounsAndDemonstratives() {
-		return avoidPronounsAndDemonstratives;
+	public boolean getAvoidPronouns() {
+		return avoidPronouns;
 	}
 
 	public List<Question> getQuestions() {
@@ -1134,10 +1135,18 @@ public class QuestionTransducer {
 		return noAnswerPhraseMarking;
 	}
 
+	public boolean getAvoidDemonstratives() {
+		return avoidDemonstratives;
+	}
+	public void setAvoidDemonstratives(boolean avoidDemonstratives) {
+		this.avoidDemonstratives = avoidDemonstratives;
+	}
 
 	int numWHPhrases; //the number of possible answer phrases identified in the source sentence.
 
-	private boolean avoidPronounsAndDemonstratives; //don't produce questions with pronouns
+	private boolean avoidPronouns; //don't produce questions with pronouns
+
+	private boolean avoidDemonstratives;
 	private List<Question> questions; //output questions, co-indexed with sourceTrees and featureValueLists
 
 	private WhPhraseGenerator whGen;
