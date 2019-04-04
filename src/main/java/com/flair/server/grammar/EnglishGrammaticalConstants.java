@@ -12,7 +12,7 @@ import java.util.Set;
 public class EnglishGrammaticalConstants {
 	public static final List<String> QUESTION_WORDS = Arrays.asList("what", "who", "how", "why", "where", "when", "whose", "whom", "which");
 
-	public static final List<String> SIMPLE_PREPOSITIONS = Arrays.asList("in", "at", "on", "with", "after", "to");
+	public static final List<String> SIMPLE_PREPOSITIONS = Arrays.asList("in", "at", "on", "with", "after", "to", "for", "from", "of", "as", "by");
 
 	public static final List<String> NEGATION = Arrays.asList("neither", "nobody", "none", "nothing", "nor", "nowhere"); // "never" is counted along with "n't" and "not" in neg() dependency , "neither...nor" will be counted as 2 negations
 	public static final List<String> PARTIAL_NEGATION = Arrays.asList("hardly", "scarcely", "rarely", "seldom", "barely");
@@ -31,5 +31,4 @@ public class EnglishGrammaticalConstants {
 	public static final List<String> REFLEXIVE_PRONOUNS = Arrays.asList("myself", "yourself", "himself", "herself", "themselves", "ourselves", "itself", "yourselves");
 
 	public static final Set<String> CONTRACTIONS = new HashSet<>(Arrays.asList("n't", "'ll", "'s", "'m", "'re", "'ve", "'d"));
-
 }

@@ -10,6 +10,7 @@ import edu.cmu.ark.InitialTransformationStep;
 import edu.cmu.ark.Question;
 import edu.cmu.ark.QuestionRanker;
 import edu.cmu.ark.QuestionTransducer;
+import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.trees.Tree;
 
@@ -33,15 +34,8 @@ public class QuestGenTask implements AsyncTask<QuestGenTask.Result> {
 
 	private GeneratedQuestion postProcess(Question q) {
 		/*
-		Sentence selection:
-			> Prefer shorter sentences (avg of 15 tokens)
 		Clean up answers:
-			> Remove 'prepositions from the head
-			> Filter answers with pronouns (downweight them?)
-			> Fix case
 			> Remove substrings that are found in the question
-			> Remove possessive marker
-			> Ignore yes/no questions
 	 */
 		Tree questionTree = q.getTree();
 		Tree answerTree = q.getAnswerPhraseTree();
@@ -50,8 +44,13 @@ public class QuestGenTask implements AsyncTask<QuestGenTask.Result> {
 		StringBuilder answerBuilder = new StringBuilder();
 		List<CoreLabel> answerTokens = answerTree.yield().stream().map(CoreLabel.class::cast).collect(Collectors.toList());
 
-		for (CoreLabel token : answerTokens) {
-			if (EnglishGrammaticalConstants.OBJECTIVE_PRONOUNS.stream().anyMatch(e -> token.word().equalsIgnoreCase(e)))
+		for (int i = 0; i < answerTokens.size(); ++i) {
+			CoreLabel token = answerTokens.get(i);
+
+			// strip common prepositions and pronouns from the head
+			if (i == 0 && EnglishGrammaticalConstants.OBJECTIVE_PRONOUNS.stream().anyMatch(e -> token.word().equalsIgnoreCase(e)))
+				continue;
+			else if (i == 0 && EnglishGrammaticalConstants.SIMPLE_PREPOSITIONS.stream().anyMatch(e -> token.word().equalsIgnoreCase(e)))
 				continue;
 
 			answerBuilder.append(token.word()).append(" ");
@@ -61,7 +60,8 @@ public class QuestGenTask implements AsyncTask<QuestGenTask.Result> {
 		if (!answerString.isEmpty() && Character.isLowerCase(answerString.codePointAt(0)))
 			answerString = answerString.substring(0, 1).toUpperCase() + answerString.substring(1);
 
-		return new GeneratedQuestion(qgParams.type, sourceSentence.text(),
+		String sourceSentOrg = sourceSentence.data(CoreNlpParserAnnotations.Sentence.class).coreMap().get(CoreAnnotations.DocIDAnnotation.class);
+		return new GeneratedQuestion(qgParams.type, sourceSentence.text(), sourceSentOrg != null ? sourceSentOrg : "",
 				questionString, answerString, q.getScore(), questionTree, answerTree);
 	}
 

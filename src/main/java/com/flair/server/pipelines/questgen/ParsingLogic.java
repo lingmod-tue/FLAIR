@@ -160,8 +160,10 @@ class ParsingLogic {
 				continue;
 			}
 
-			ServerLogger.get().trace("Coref replacement:\n\tOld: " + oldSentAnnotation.toString() + "\n\tNew: " + newSentAnnotation.toString());
+			// add the old sentence as an annotation for debugging
+			newSentAnnotation.set(CoreAnnotations.DocIDAnnotation.class, oldSentAnnotation.toString());
 			oldSentences.set(oldSentIndex, newSentAnnotation);
+			ServerLogger.get().trace("Coref replacement:\n\tOld: " + oldSentAnnotation.toString() + "\n\tNew: " + newSentAnnotation.toString());
 		}
 	}
 

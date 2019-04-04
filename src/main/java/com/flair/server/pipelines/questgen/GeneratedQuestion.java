@@ -8,6 +8,7 @@ import java.util.Collection;
 public class GeneratedQuestion {
 	public final QuestionKind type;
 	public final String sourceSentence;
+	public final String sourceSentenceOriginal;     // untransformed source sentence, if any
 	public final String question;
 	public final String answer;
 	public final ArrayList<String> distractors;
@@ -17,12 +18,14 @@ public class GeneratedQuestion {
 
 	GeneratedQuestion(QuestionKind type,
 	                  String sourceSentence,
+	                  String sourceSentenceOriginal,
 	                  String question, String answer,
 	                  double score,
 	                  Tree questionTree,
 	                  Tree answerTree) {
 		this.type = type;
 		this.sourceSentence = sourceSentence;
+		this.sourceSentenceOriginal = sourceSentenceOriginal;
 		this.question = question;
 		this.answer = answer;
 		this.distractors = new ArrayList<>();

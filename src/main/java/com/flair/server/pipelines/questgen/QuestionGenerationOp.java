@@ -83,7 +83,7 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 				.granularity(SentenceSelector.Granularity.SENTENCE)
 				.stemWords(true)
 				.ignoreStopwords(true)
-				.useSynsets(true);
+				.useSynsets(false);
 
 		scheduler.newTask(SentenceSelectionTask.factory(ssBuilder, -1))
 				.with(input.sentSelExecutor)

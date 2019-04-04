@@ -1,6 +1,7 @@
 package com.flair.server;
 
 import com.flair.server.document.AbstractDocument;
+import com.flair.server.document.SearchResultDocumentSource;
 import com.flair.server.parser.KeywordSearcherInput;
 import com.flair.server.pipelines.gramparsing.GramParsingPipeline;
 import com.flair.server.pipelines.gramparsing.SearchCrawlParseOp;
@@ -14,7 +15,7 @@ import java.util.Arrays;
 
 public class QuestionGeneratorTest {
 	public static void main(String[] args) {
-		String query = "site:theguardian.com brexit mayhem";
+		String query = "site:nytimes.com donald trump";
 		int numResults = 5;
 		Language lang = Language.ENGLISH;
 		String[] keywords = new String[]{
@@ -39,8 +40,11 @@ public class QuestionGeneratorTest {
 					.yield();
 
 			ServerLogger.get().info("\n\nDocument: " + doc.getDescription());
+			ServerLogger.get().info("\n\nURL: " + ((SearchResultDocumentSource) doc.getDocumentSource()).getSearchResult().getURL());
 			ServerLogger.get().indent();
 			for (GeneratedQuestion gq : qgOutput.generatedQuestions) {
+				if (!gq.sourceSentenceOriginal.isEmpty())
+					ServerLogger.get().info("Sentence (org): '" + gq.sourceSentenceOriginal + "'");
 				ServerLogger.get().info("Sentence: '" + gq.sourceSentence + "'");
 				ServerLogger.get().indent();
 				ServerLogger.get().info("Question: '" + gq.question + "'");
