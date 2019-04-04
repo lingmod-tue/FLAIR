@@ -226,6 +226,14 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 			updateProgressBar();
 		}
 
+		void showNoQuestionsPlaceholder() {
+			lblPlaceholderUI.setTitle(getLocalizedString(LocalizationTags.NO_QUESTIONS_TITLE.toString()));
+			lblPlaceholderUI.setDescription(getLocalizedString(LocalizationTags.NO_QUESTIONS_DESC.toString()));
+			lblPlaceholderUI.setIconType(IconType.SENTIMENT_DISSATISFIED);
+			lblPlaceholderUI.setIconColor(Color.RED);
+			GlobalWidgetAnimator.get().animateWithStop(lblPlaceholderUI, Transition.BOUNCE, 0, 750, () -> {});
+		}
+
 		void init(List<QuestionDTO> questions) {
 			questionForms = questions.stream().map(v -> {
 				if (v.getDistractors().size() < MAX_ANSWER_OPTIONS - 1)
@@ -236,6 +244,11 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 				return qw;
 			}).filter(Objects::nonNull).collect(Collectors.toList());
 			currentDisplayIndex = -1;
+
+			if (questionForms.isEmpty()) {
+				showNoQuestionsPlaceholder();
+				return;
+			}
 
 			// set up progress bar
 			lblQuestProgressUI.setPercent(0);
@@ -352,13 +365,9 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 		generationInProgress = false;
 		lblPlaceholderUI.setLoading(false);
 
-		if (questions.isEmpty()) {
-			lblPlaceholderUI.setTitle(getLocalizedString(LocalizationTags.NO_QUESTIONS_TITLE.toString()));
-			lblPlaceholderUI.setDescription(getLocalizedString(LocalizationTags.NO_QUESTIONS_DESC.toString()));
-			lblPlaceholderUI.setIconType(IconType.SENTIMENT_DISSATISFIED);
-			lblPlaceholderUI.setIconColor(Color.RED);
-			GlobalWidgetAnimator.get().animateWithStop(lblPlaceholderUI, Transition.BOUNCE, 0, 750, () -> {});
-		} else
+		if (questions.isEmpty())
+			displayState.showNoQuestionsPlaceholder();
+		else
 			displayState.init(questions);
 	}
 

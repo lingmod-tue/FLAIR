@@ -15,7 +15,7 @@
         </encoder>
     </appender>
 
-    <logger name="FLAIR-Log" level="INFO">
+    <logger name="FLAIR-Log" level="TRACE">
         <appender-ref ref="CONSOLE"/>
     </logger>
     <root level="DEBUG"/>

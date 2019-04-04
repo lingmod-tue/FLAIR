@@ -32,6 +32,7 @@ public class NerCorefParseTask implements AsyncTask<NerCorefParseTask.Result> {
 		try {
 			startTime = System.currentTimeMillis();
 			output = ThreadPool.get().invokeAndWait(new FutureTask<>(() -> {
+				ServerLogger.get().trace("NER/Coref parsing task has begun for " + strategy.input().source.getDescription());
 				strategy.apply(parser);
 				if (!strategy.output().valid())
 					throw new IllegalStateException("Parser didn't set the document's parsed flag");

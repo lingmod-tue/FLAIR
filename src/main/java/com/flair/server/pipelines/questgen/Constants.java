@@ -8,7 +8,7 @@ class Constants {
 	static final int QUESTGEN_TASK_THREADPOOL_SIZE = 50;
 
 	static final TimeUnit TIMEOUT_UNIT = TimeUnit.SECONDS;
-	static final int NERCOREF_PARSE_TASK_TIMEOUT = 120;
+	static final int NERCOREF_PARSE_TASK_TIMEOUT = 300;
 
 	// sentences that have fewer unique tokens than this will be discarded
 	static final int SELECTOR_MIN_UNIQUE_TOKEN_COUNT = 5;

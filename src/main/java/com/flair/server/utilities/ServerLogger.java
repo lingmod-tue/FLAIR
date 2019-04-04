@@ -65,10 +65,11 @@ public final class ServerLogger extends AbstractDebugLogger {
 	}
 
 	@Override
-	public void error(Throwable ex, String message) {
+	public AbstractDebugLogger error(Throwable ex, String message) {
 		StringWriter sw = new StringWriter();
 		ex.printStackTrace(new PrintWriter(sw));
 		error(message);
 		error("Stacktrace: " + sw.toString());
+		return this;
 	}
 }

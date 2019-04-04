@@ -56,7 +56,8 @@ public class QuestionGeneratorPreviewCard extends LocalizedComposite {
 		if (options.length != 4)
 			throw new RuntimeException("Unexpected number of options received");
 
-		List<String> preprocessed = Arrays.asList(options).stream().map(v -> {
+		List<String> originalOptions = Arrays.asList(options);
+		List<String> preprocessedOptions = originalOptions.stream().map(v -> {
 			if (v.length() > MAX_OPTION_LENGTH)
 				return v.substring(0, MAX_OPTION_LENGTH) + "...";
 			else
@@ -64,17 +65,18 @@ public class QuestionGeneratorPreviewCard extends LocalizedComposite {
 		}).collect(Collectors.toList());
 		lblQuestionUI.setText(question);
 
-		btnAnswer1.setText(preprocessed.get(0));
-		btnAnswer1.addClickHandler(e -> answerHandler.handle(0));
+		List<MaterialButton> buttons = Arrays.asList(btnAnswer1, btnAnswer2, btnAnswer3, btnAnswer4);
+		for (int i = 0; i < options.length; ++i) {
+			MaterialButton button = buttons.get(i);
+			String answer = preprocessedOptions.get(i);
 
-		btnAnswer2.setText(preprocessed.get(1));
-		btnAnswer2.addClickHandler(e -> answerHandler.handle(1));
+			if (answer.length() == MAX_OPTION_LENGTH + 4 /* elipses */)
+				button.setTooltip(originalOptions.get(i));
 
-		btnAnswer3.setText(preprocessed.get(2));
-		btnAnswer3.addClickHandler(e -> answerHandler.handle(2));
-
-		btnAnswer4.setText(preprocessed.get(3));
-		btnAnswer4.addClickHandler(e -> answerHandler.handle(3));
+			button.setText(preprocessedOptions.get(i));
+			int selectionIndex = i;
+			button.addClickHandler(e -> answerHandler.handle(selectionIndex));
+		}
 	}
 
 	public void setAnswerHandler(AnswerHandler handler) {

@@ -29,6 +29,8 @@ public class EnglishGrammaticalConstants {
 	public static final List<String> POSSESSIVE_PRONOUNS = Arrays.asList("my", "your", "his", "her", "their", "our", "its");
 	public static final List<String> POSSESSIVE_ABSOLUTE_PRONOUNS = Arrays.asList("mine", "yours", "hers", "theirs", "ours"); // his and its omitted
 	public static final List<String> REFLEXIVE_PRONOUNS = Arrays.asList("myself", "yourself", "himself", "herself", "themselves", "ourselves", "itself", "yourselves");
+	public static final List<String> RELATIVE_PRONOUNS = Arrays.asList("who", "which", "that", "whose", "whom");
 
+	public static final List<String> DEMONSTRATIVES = Arrays.asList("this", "that", "these", "those", "here", "there");
 	public static final Set<String> CONTRACTIONS = new HashSet<>(Arrays.asList("n't", "'ll", "'s", "'m", "'re", "'ve", "'d"));
 }

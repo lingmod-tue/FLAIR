@@ -10,7 +10,6 @@ import edu.cmu.ark.InitialTransformationStep;
 import edu.cmu.ark.Question;
 import edu.cmu.ark.QuestionRanker;
 import edu.cmu.ark.QuestionTransducer;
-import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.trees.Tree;
 
@@ -44,15 +43,22 @@ public class QuestGenTask implements AsyncTask<QuestGenTask.Result> {
 		StringBuilder answerBuilder = new StringBuilder();
 		List<CoreLabel> answerTokens = answerTree.yield().stream().map(CoreLabel.class::cast).collect(Collectors.toList());
 
+		boolean strippedHead = false;
 		for (int i = 0; i < answerTokens.size(); ++i) {
 			CoreLabel token = answerTokens.get(i);
+			// strip common prepositions, demonstratives and pronouns from the head
+			if (!strippedHead) {
+				if (EnglishGrammaticalConstants.OBJECTIVE_PRONOUNS.stream().anyMatch(e -> token.word().equalsIgnoreCase(e)))
+					continue;
+				else if (EnglishGrammaticalConstants.SIMPLE_PREPOSITIONS.stream().anyMatch(e -> token.word().equalsIgnoreCase(e)))
+					continue;
+				else if (EnglishGrammaticalConstants.RELATIVE_PRONOUNS.stream().anyMatch(e -> token.word().equalsIgnoreCase(e)))
+					continue;
+				else if (EnglishGrammaticalConstants.DEMONSTRATIVES.stream().anyMatch(e -> token.word().equalsIgnoreCase(e)))
+					continue;
+			}
 
-			// strip common prepositions and pronouns from the head
-			if (i == 0 && EnglishGrammaticalConstants.OBJECTIVE_PRONOUNS.stream().anyMatch(e -> token.word().equalsIgnoreCase(e)))
-				continue;
-			else if (i == 0 && EnglishGrammaticalConstants.SIMPLE_PREPOSITIONS.stream().anyMatch(e -> token.word().equalsIgnoreCase(e)))
-				continue;
-
+			strippedHead = true;
 			answerBuilder.append(token.word()).append(" ");
 		}
 
@@ -60,9 +66,21 @@ public class QuestGenTask implements AsyncTask<QuestGenTask.Result> {
 		if (!answerString.isEmpty() && Character.isLowerCase(answerString.codePointAt(0)))
 			answerString = answerString.substring(0, 1).toUpperCase() + answerString.substring(1);
 
-		String sourceSentOrg = sourceSentence.data(CoreNlpParserAnnotations.Sentence.class).coreMap().get(CoreAnnotations.DocIDAnnotation.class);
-		return new GeneratedQuestion(qgParams.type, sourceSentence.text(), sourceSentOrg != null ? sourceSentOrg : "",
-				questionString, answerString, q.getScore(), questionTree, answerTree);
+		NerCorefAnnotation corefAnnotation = sourceSentence.data(CoreNlpParserAnnotations.Sentence.class).coreMap().get(NerCorefAnnotation.class);
+		return new GeneratedQuestion(qgParams.type,
+				corefAnnotation != null ? corefAnnotation.resolvedText() : sourceSentence.text(),
+				corefAnnotation != null ? corefAnnotation.originalText() : "",
+				questionString, answerString,
+				q.getScore(),
+				questionTree, answerTree);
+	}
+
+	private Tree getQuestionTree() {
+		NerCorefAnnotation corefAnnotation = sourceSentence.data(CoreNlpParserAnnotations.Sentence.class).coreMap().get(NerCorefAnnotation.class);
+		if (corefAnnotation != null)
+			return corefAnnotation.parseTree();
+		else
+			return sourceSentence.data(CoreNlpParserAnnotations.Sentence.class).parseTree();
 	}
 
 	@Override
@@ -83,7 +101,7 @@ public class QuestGenTask implements AsyncTask<QuestGenTask.Result> {
 			initTransformer.setDoPronounNPC(qgParams.resolvePronounNPs);
 			initTransformer.setDoNonPronounNPC(qgParams.resolveNonPronounNPs);
 
-			List<Tree> inputTrees = Collections.singletonList(sourceSentence.data(CoreNlpParserAnnotations.Sentence.class).parseTree());
+			List<Tree> inputTrees = Collections.singletonList(getQuestionTree());
 			List<Question> transformationOutput = initTransformer.transform(inputTrees);
 			List<Question> outputQuestionList = new ArrayList<>();
 

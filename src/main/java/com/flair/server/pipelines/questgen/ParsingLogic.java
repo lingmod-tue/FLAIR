@@ -140,30 +140,19 @@ class ParsingLogic {
 		}));
 	}
 
-	private void reparseAndUpdateOldAnnotations(Map<CoreMap, String> resolvedSentences, List<CoreMap> oldSentences,
-	                                            CoreNlpParser parser) {
+	private void updateOriginalAnnotations(Map<CoreMap, String> resolvedSentences, CoreNlpParser parser) {
 		for (Entry<CoreMap, String> sentPair : resolvedSentences.entrySet()) {
-			Annotation sentAnnotationWrapper = new Annotation(sentPair.getValue());
 			CoreMap oldSentAnnotation = sentPair.getKey();
-			parser.pipeline().annotate(sentAnnotationWrapper);
+			String resolvedText = sentPair.getValue();
 
-			List<CoreMap> singletonList = sentAnnotationWrapper.get(CoreAnnotations.SentencesAnnotation.class);
-			if (singletonList.size() != 1) {
-				ServerLogger.get().warn("Reparsing resolved sentence '" + oldSentAnnotation.toString() + "' generated multiple resultant sentences!");
-				continue;
-			}
+			NerCorefAnnotation nerCorefAnnotation = new NerCorefAnnotation(oldSentAnnotation, resolvedText, text -> {
+				Annotation wrapper = new Annotation(text);
+				parser.pipeline().annotate(wrapper);
+				return wrapper;
+			});
 
-			CoreMap newSentAnnotation = singletonList.get(0);
-			int oldSentIndex = oldSentAnnotation.get(CoreAnnotations.SentenceIndexAnnotation.class);
-			if (oldSentIndex < 0 || oldSentIndex >= oldSentences.size() || oldSentences.get(oldSentIndex) != oldSentAnnotation) {
-				ServerLogger.get().warn("Unresolved sentence index " + oldSentIndex + " is invalid!");
-				continue;
-			}
-
-			// add the old sentence as an annotation for debugging
-			newSentAnnotation.set(CoreAnnotations.DocIDAnnotation.class, oldSentAnnotation.toString());
-			oldSentences.set(oldSentIndex, newSentAnnotation);
-			ServerLogger.get().trace("Coref replacement:\n\tOld: " + oldSentAnnotation.toString() + "\n\tNew: " + newSentAnnotation.toString());
+			//	nerCorefAnnotation.parseTree();
+			oldSentAnnotation.set(NerCorefAnnotation.class, nerCorefAnnotation);
 		}
 	}
 
@@ -177,13 +166,16 @@ class ParsingLogic {
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
 		Map<CoreMap, List<CorefReplacementSpan>> modifiedSentences = new HashMap<>();
 
-		// collect replacement spans for the sentences with coreferences
+		ServerLogger.get().trace("NER/Coref parsing logic: Coref chains = " + corefs.size());
 		for (CorefChain coref : corefs.values()) {
 			CorefChain.CorefMention mostRepresentative = coref.getRepresentativeMention();
 			String mostRepresentativeString = getCorefMentionString(mostRepresentative, sentences, true)
 					.replaceAll("(^((\\p{Punct}|\\s)*\\b))|(\\b(\\p{Punct}|\\s)*$)", "");   // leading and trailing punctuation/whitespace
+			ServerLogger.get().trace("NER/Coref parsing logic: Most representative mention: " + mostRepresentativeString);
 
-			for (CorefChain.CorefMention mention : coref.getMentionsInTextualOrder()) {
+			List<CorefChain.CorefMention> corefMentions = coref.getMentionsInTextualOrder();
+			ServerLogger.get().trace("NER/Coref parsing logic: Secondary mentions: " + corefMentions.size());
+			for (CorefChain.CorefMention mention : corefMentions) {
 				if (mention == mostRepresentative)
 					continue;
 				else if (getCorefMentionString(mention, sentences, true).equals(mostRepresentativeString))
@@ -193,8 +185,10 @@ class ParsingLogic {
 			}
 		}
 
+		ServerLogger.get().trace("NER/Coref parsing logic: Resolving mentions...");
 		Map<CoreMap, String> resolvedSents = reconstructCorefSentences(modifiedSentences);
-		reparseAndUpdateOldAnnotations(resolvedSents, sentences, parser);
+		ServerLogger.get().trace("NER/Coref parsing logic: Updating annotations...");
+		updateOriginalAnnotations(resolvedSents, parser);
 
 		workingDoc.flagAsParsed(parser.createAnnotations(docAnnotation));
 	}

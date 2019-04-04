@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input, QuestionGenerationOp.Output> {
 	public interface SentenceSelectionComplete extends EventHandler<Collection<? extends SentenceSelector.SelectedSentence>> {}
 
-	public interface JobComplete extends EventHandler<Collection<GeneratedQuestion>> {}
+	public interface JobComplete extends EventHandler<QuestionGenerationOp.Output> {}
 
 	static final class Input {
 		final AbstractDocument sourceDoc;
@@ -60,9 +60,11 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 	}
 
 	public static final class Output {
+		public final AbstractDocument sourceDoc;
 		public final List<GeneratedQuestion> generatedQuestions;
 
-		Output() {
+		Output(AbstractDocument sourceDoc) {
+			this.sourceDoc = sourceDoc;
 			this.generatedQuestions = new ArrayList<>();
 		}
 	}
@@ -189,7 +191,7 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 	private int numQuestGenTasks;
 
 	QuestionGenerationOp(Input input) {
-		super("QuestionGenerationOp", input, new Output());
+		super("QuestionGenerationOp", input, new Output(input.sourceDoc));
 		nextSentenceIndex = 0;
 		numQuestGenTasks = 0;
 		rankedQuestions = new HashMap<>();
@@ -199,7 +201,7 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 			if (j.isCancelled())
 				return;
 
-			input.jobComplete.handle(output.generatedQuestions);
+			input.jobComplete.handle(output);
 		});
 
 

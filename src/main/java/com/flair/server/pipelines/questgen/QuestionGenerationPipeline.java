@@ -61,15 +61,15 @@ public final class QuestionGenerationPipeline {
 		docFactory = Document.factory();
 
 		Properties pipelineProps = new Properties();
-		pipelineProps.put("annotators", "tokenize, ssplit, pos, lemma, stopword, parse, ner, coref");
+		pipelineProps.put("annotators", "tokenize, ssplit, pos, lemma, stopword, parse, ner, mention, coref");
 		pipelineProps.put("tokenize.options", "tokenizePerLine");
 		pipelineProps.put("ssplit.newlineIsSentenceBreak", "two");
 		pipelineProps.put("parse.originalDependencies", "true");
 		pipelineProps.put("parse.model", com.flair.server.parser.corenlp.Constants.ENGLISH_SR_PARSER_MODEL);
 		pipelineProps.put("ner.applyFineGrained", "false");
 		pipelineProps.put("coref.algorithm", "neural");
-		pipelineProps.put("coref.maxMentionDistance", "25");
-		pipelineProps.put("coref.maxMentionDistanceWithStringMatch", "250");
+		pipelineProps.put("coref.maxMentionDistance", "20");
+		pipelineProps.put("coref.maxMentionDistanceWithStringMatch", "200");
 		StringBuilder stopwords = new StringBuilder();
 		StopwordsList.get(Language.ENGLISH).forEach(e -> stopwords.append(e).append(","));
 		pipelineProps.setProperty("customAnnotatorClass.stopword", "com.flair.server.parser.corenlp.StopwordAnnotator");

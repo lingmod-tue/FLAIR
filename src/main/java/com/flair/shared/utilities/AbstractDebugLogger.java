@@ -18,33 +18,41 @@ public abstract class AbstractDebugLogger {
 
 	protected abstract void print(Channel channel, String message);
 
-	public void error(String message) {
+	public AbstractDebugLogger error(String message) {
 		print(Channel.ERROR, message);
+		return this;
 	}
 
-	public void error(Throwable ex, String message) {
+	public AbstractDebugLogger error(Throwable ex, String message) {
 		error(message + ". Exception: " + ex.toString());
+		return this;
 	}
 
-	public void info(String message) {
+	public AbstractDebugLogger info(String message) {
 		print(Channel.INFO, message);
+		return this;
 	}
 
-	public void trace(String message) {
+	public AbstractDebugLogger trace(String message) {
 		print(Channel.TRACE, message);
+		return this;
 	}
 
-	public void warn(String message) {
+	public AbstractDebugLogger warn(String message) {
 		print(Channel.WARN, message);
+		return this;
 	}
 
-	public void indent() {
+	public AbstractDebugLogger indent() {
 		indentLevel++;
+		return this;
 	}
 
-	public void exdent() {
+	public AbstractDebugLogger exdent() {
 		indentLevel--;
 		if (indentLevel < 0)
 			indentLevel = 0;
+
+		return this;
 	}
 }
