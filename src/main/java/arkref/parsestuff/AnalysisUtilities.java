@@ -2,7 +2,7 @@ package arkref.parsestuff;
 
 import arkref.sent.SentenceBreaker;
 import com.flair.server.utilities.ServerLogger;
-import com.flair.server.utilities.WordNetDictionary;
+import com.flair.server.utilities.dictionary.WordNetDictionary;
 import edu.cmu.ark.TregexPatternFactory;
 import edu.cmu.ark.*;
 import edu.stanford.nlp.ling.HasWord;

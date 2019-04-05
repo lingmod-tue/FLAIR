@@ -1,9 +1,8 @@
 
 package com.flair.server.document;
 
-import com.flair.server.utilities.AbstractTextExtractor;
-import com.flair.server.utilities.TextExtractorFactory;
-import com.flair.server.utilities.TextExtractorType;
+import com.flair.server.utilities.textextraction.AbstractTextExtractor;
+import com.flair.server.utilities.textextraction.TextExtractorFactory;
 import com.flair.shared.grammar.Language;
 
 import java.io.InputStream;
@@ -19,7 +18,7 @@ public class StreamDocumentSource extends AbstractDocumentSource {
 		super(lang);
 		this.name = name;
 
-		AbstractTextExtractor extractor = TextExtractorFactory.create(TextExtractorType.TIKA);
+		AbstractTextExtractor extractor = TextExtractorFactory.create(TextExtractorFactory.Type.TIKA);
 		AbstractTextExtractor.Output output = extractor.extractText(new AbstractTextExtractor.Input(source, lang));
 
 		if (output.success == false)

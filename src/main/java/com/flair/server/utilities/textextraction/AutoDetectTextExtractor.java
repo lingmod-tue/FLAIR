@@ -1,11 +1,13 @@
-package com.flair.server.utilities;
+package com.flair.server.utilities.textextraction;
+
+import com.flair.server.utilities.ServerLogger;
 
 /**
  * Auto-detects the target content type and picks an applicable implementation
  */
 class AutoDetectTextExtractor extends AbstractTextExtractor {
 	public AutoDetectTextExtractor() {
-		super(TextExtractorType.AUTODETECT);
+		super(TextExtractorFactory.Type.AUTODETECT);
 	}
 
 	@Override

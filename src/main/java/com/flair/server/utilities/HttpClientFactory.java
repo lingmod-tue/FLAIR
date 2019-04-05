@@ -65,7 +65,7 @@ public class HttpClientFactory {
 		switch (type) {
 		case FULL_TRUST: {
 			/*
-			 * Hack to ignore SSL self-signed certificate errors
+			 * ### HACK to ignore SSL self-signed certificate errors
 			 * NOTE: ONLY USE THIS ON ENTIRELY TRUSTED NETWORKS
 			 */
 			try {

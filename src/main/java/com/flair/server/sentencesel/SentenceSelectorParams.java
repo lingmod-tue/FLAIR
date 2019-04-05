@@ -1,4 +1,4 @@
-package com.flair.server.pipelines.questgen;
+package com.flair.server.sentencesel;
 
 import com.flair.server.document.AbstractDocument;
 import com.flair.shared.grammar.Language;
@@ -19,14 +19,14 @@ class SentenceSelectorParams {
 
 	SentenceSelectorPreprocessor preprocessor;
 
-	SentenceSelectorParams(Language l, SentenceSelectorPreprocessor p) {
-		lang = l;
+	SentenceSelectorParams() {
+		lang = null;
 		source = SentenceSelector.Source.DOCUMENT;
 		granularity = SentenceSelector.Granularity.SENTENCE;
 		stemWords = ignoreStopwords = useSynsets = false;
 		main = null;
 		corpus = new ArrayList<>();
-		preprocessor = p;
+		preprocessor = SentenceSelectorPreprocessor.defaultInstance();
 	}
 
 	void validate() {
@@ -37,10 +37,14 @@ class SentenceSelectorParams {
 			else if (granularity == SentenceSelector.Granularity.DOCUMENT && corpus.size() < 2)
 				throw new IllegalStateException("Corpus size is too small for document-level granularity");
 
+			lang = main.getLanguage();
 			for (AbstractDocument itr : corpus) {
 				if (main == itr)
 					throw new IllegalStateException("Primary document also found in optional corpus");
+				else if (lang != itr.getLanguage())
+					throw new IllegalStateException("Documents are not of the same language. Expected " + lang + "but found " + itr.getLanguage());
 			}
+
 			break;
 		}
 		case CORPUS: {
@@ -48,6 +52,13 @@ class SentenceSelectorParams {
 				throw new IllegalStateException("Cannot use a primary document source when selecting from a corpus");
 			else if (corpus.isEmpty())
 				throw new IllegalStateException("No documents found in corpus");
+
+			lang = corpus.get(0).getLanguage();
+			for (AbstractDocument doc : corpus) {
+				if (lang != doc.getLanguage())
+					throw new IllegalStateException("Documents are not of the same language. Expected " + lang + "but found " + doc.getLanguage());
+			}
+
 			break;
 		}
 		}

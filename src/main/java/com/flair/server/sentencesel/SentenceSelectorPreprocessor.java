@@ -1,10 +1,10 @@
-package com.flair.server.pipelines.questgen;
+package com.flair.server.sentencesel;
 
 import com.flair.server.document.AbstractDocument;
 import com.flair.server.parser.ParserAnnotations;
 import com.flair.server.utilities.ServerLogger;
-import com.flair.server.utilities.SynSetDictionary;
-import com.flair.server.utilities.WordNetDictionary;
+import com.flair.server.utilities.dictionary.SynSetDictionary;
+import com.flair.server.utilities.dictionary.WordNetDictionary;
 import com.flair.shared.grammar.Language;
 
 import java.util.*;
@@ -13,6 +13,11 @@ import java.util.*;
  * Performs various preprocessing tasks for sentence selectors
  */
 final class SentenceSelectorPreprocessor {
+	private static final SentenceSelectorPreprocessor DEFAULT_INSTANCE = new SentenceSelectorPreprocessor();
+	public static SentenceSelectorPreprocessor defaultInstance() {
+		return DEFAULT_INSTANCE;
+	}
+
 	private static final class LanguageSpecificData {
 		final SynSetDictionary synsetDict;
 
@@ -23,7 +28,7 @@ final class SentenceSelectorPreprocessor {
 
 	private Map<Language, LanguageSpecificData> languageSpecificData;
 
-	SentenceSelectorPreprocessor() {
+	private SentenceSelectorPreprocessor() {
 		languageSpecificData = new EnumMap<>(Language.class);
 
 		LanguageSpecificData eng = new LanguageSpecificData(WordNetDictionary.defaultInstance());

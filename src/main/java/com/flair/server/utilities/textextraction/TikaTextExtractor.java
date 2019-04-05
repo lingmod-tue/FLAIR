@@ -1,6 +1,7 @@
 
-package com.flair.server.utilities;
+package com.flair.server.utilities.textextraction;
 
+import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.grammar.Language;
 import org.apache.tika.Tika;
 import org.apache.tika.io.TikaInputStream;
@@ -21,7 +22,7 @@ import java.net.URISyntaxException;
  */
 class TikaTextExtractor extends AbstractTextExtractor {
 	public TikaTextExtractor() {
-		super(TextExtractorType.TIKA);
+		super(TextExtractorFactory.Type.TIKA);
 	}
 
 	@Override

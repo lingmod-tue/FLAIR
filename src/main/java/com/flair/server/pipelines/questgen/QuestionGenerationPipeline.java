@@ -9,6 +9,7 @@ import com.flair.server.parser.corenlp.StopwordAnnotator;
 import com.flair.server.pipelines.PipelineOp;
 import com.flair.server.scheduler.AsyncExecutorService;
 import com.flair.server.scheduler.ThreadPool;
+import com.flair.server.sentencesel.SentenceSelectorFactory;
 import com.flair.shared.grammar.Language;
 import edu.stanford.nlp.util.Lazy;
 
@@ -38,7 +39,6 @@ public final class QuestionGenerationPipeline {
 	private final AsyncExecutorService nerCorefParseExecutor;
 	private final AsyncExecutorService sentenceSelExecutor;
 	private final AsyncExecutorService questGenExecutor;
-	private final SentenceSelectorPreprocessor sentSelPreprocessor;
 	private final AbstractDocumentFactory docFactory;
 	private final Lazy<CoreNlpParser> nerCorefParser;
 
@@ -57,7 +57,6 @@ public final class QuestionGenerationPipeline {
 				.poolName("Question Gen")
 				.build();
 
-		sentSelPreprocessor = new SentenceSelectorPreprocessor();
 		docFactory = Document.factory();
 
 		Properties pipelineProps = new Properties();
@@ -88,6 +87,8 @@ public final class QuestionGenerationPipeline {
 		AbstractDocument sourceDoc;
 		int numQuestions;
 
+		SentenceSelectorFactory.Type sentSelType = SentenceSelectorFactory.Type.TEXTRANK;
+
 		QuestionGenerationOp.SentenceSelectionComplete selectionComplete;
 		QuestionGenerationOp.JobComplete jobComplete;
 
@@ -106,6 +107,11 @@ public final class QuestionGenerationPipeline {
 
 		public QuestionGenerationOpBuilder numQuestions(int numQuestions) {
 			this.numQuestions = numQuestions;
+			return this;
+		}
+
+		public QuestionGenerationOpBuilder sentenceSelectorType(SentenceSelectorFactory.Type type) {
+			this.sentSelType = type;
 			return this;
 		}
 
@@ -136,7 +142,7 @@ public final class QuestionGenerationPipeline {
 					sentenceSelExecutor,
 					questGenExecutor,
 					qgParams.build(),
-					sentSelPreprocessor,
+					SentenceSelectorFactory.create(sentSelType),
 					numQuestions,
 					selectionComplete,
 					jobComplete);

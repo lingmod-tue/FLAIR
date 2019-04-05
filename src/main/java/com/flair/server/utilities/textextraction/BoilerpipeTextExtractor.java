@@ -1,6 +1,7 @@
 
-package com.flair.server.utilities;
+package com.flair.server.utilities.textextraction;
 
+import com.flair.server.utilities.ServerLogger;
 import de.l3s.boilerpipe.extractors.ArticleExtractor;
 import de.l3s.boilerpipe.extractors.DefaultExtractor;
 import org.xml.sax.InputSource;
@@ -10,7 +11,7 @@ import org.xml.sax.InputSource;
  */
 class BoilerpipeTextExtractor extends AbstractTextExtractor {
 	public BoilerpipeTextExtractor() {
-		super(TextExtractorType.BOILERPIPE);
+		super(TextExtractorFactory.Type.BOILERPIPE);
 	}
 
 	@Override

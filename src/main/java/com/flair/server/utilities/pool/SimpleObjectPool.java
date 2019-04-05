@@ -1,5 +1,5 @@
 
-package com.flair.server.utilities;
+package com.flair.server.utilities.pool;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,5 +1,6 @@
-package com.flair.server.utilities;
+package com.flair.server.utilities.dictionary;
 
+import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.grammar.Language;
 import net.sf.extjwnl.data.IndexWord;
 import net.sf.extjwnl.data.POS;
@@ -52,7 +53,7 @@ public class WordNetDictionary implements SynSetDictionary {
 
 	private Dictionary dict;
 
-	public WordNetDictionary() {
+	private WordNetDictionary() {
 		try {
 			this.dict = Dictionary.getDefaultResourceInstance();
 		} catch (Throwable e) {

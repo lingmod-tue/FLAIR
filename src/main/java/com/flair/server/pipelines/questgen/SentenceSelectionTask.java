@@ -1,6 +1,7 @@
 package com.flair.server.pipelines.questgen;
 
 import com.flair.server.scheduler.AsyncTask;
+import com.flair.server.sentencesel.SentenceSelector;
 import com.flair.server.utilities.ServerLogger;
 
 import java.util.ArrayList;

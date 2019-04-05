@@ -1,4 +1,4 @@
-package com.flair.server.utilities;
+package com.flair.server.utilities.dictionary;
 
 import com.flair.shared.grammar.Language;
 

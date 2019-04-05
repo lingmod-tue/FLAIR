@@ -1,8 +1,7 @@
 package com.flair.server.crawler;
 
-import com.flair.server.utilities.AbstractTextExtractor;
-import com.flair.server.utilities.TextExtractorFactory;
-import com.flair.server.utilities.TextExtractorType;
+import com.flair.server.utilities.textextraction.AbstractTextExtractor;
+import com.flair.server.utilities.textextraction.TextExtractorFactory;
 import com.flair.shared.grammar.Language;
 
 /**
@@ -73,7 +72,7 @@ public class SearchResult implements Comparable<SearchResult> {
 		if (isTextFetched() == true && forceFetch == false)
 			return false;
 
-		AbstractTextExtractor extractor = TextExtractorFactory.create(TextExtractorType.AUTODETECT);
+		AbstractTextExtractor extractor = TextExtractorFactory.create(TextExtractorFactory.Type.AUTODETECT);
 		AbstractTextExtractor.Output output = extractor.extractText(new AbstractTextExtractor.Input(URL, lang));
 
 		if (output.success == false)

@@ -1,10 +1,10 @@
-package com.flair.server.pipelines.questgen;
+package com.flair.server.sentencesel;
 
 import com.flair.server.document.AbstractDocument;
 import com.flair.server.parser.ParserAnnotations;
+import com.flair.server.utilities.InvertedIndex;
 import com.flair.server.utilities.ServerLogger;
 import com.flair.server.utilities.SparseDoubleVector;
-import com.flair.shared.grammar.Language;
 import com.github.dakusui.combinatoradix.Combinator;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.scoring.PageRank;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 /*
  * Implements the TextRank algorithm to select salient sentences
  */
-public class TextRankSentenceSelector implements SentenceSelector {
+class TextRankSentenceSelector implements SentenceSelector {
 	// represents the concept of a document wrt the inverted index
 	private static final class BaseDocument {
 		final SentenceSelectorPreprocessor.PreprocessedSentence sent;
@@ -178,14 +178,10 @@ public class TextRankSentenceSelector implements SentenceSelector {
 
 
 	static class Builder implements SentenceSelector.Builder {
-		static SentenceSelector.Builder factory(Language l, SentenceSelectorPreprocessor p) {
-			return new Builder(l, p);
-		}
-
 		SentenceSelectorParams params;
 
-		private Builder(Language l, SentenceSelectorPreprocessor p) {
-			params = new SentenceSelectorParams(l, p);
+		Builder() {
+			params = new SentenceSelectorParams();
 		}
 
 		@Override

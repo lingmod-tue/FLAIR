@@ -1,5 +1,5 @@
 
-package com.flair.server.utilities;
+package com.flair.server.utilities.pool;
 
 /**
  * Represents a resource stored in a SimpleObjectPool that has been acquired for use

@@ -1,6 +1,7 @@
 
-package com.flair.server.utilities;
+package com.flair.server.utilities.textextraction;
 
+import com.flair.server.utilities.HttpClientFactory;
 import com.flair.shared.grammar.Language;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -14,13 +15,13 @@ import java.net.URISyntaxException;
  * Extracts plain text from a given source
  */
 public abstract class AbstractTextExtractor {
-	private final TextExtractorType type;
+	private final TextExtractorFactory.Type type;
 
-	public AbstractTextExtractor(TextExtractorType type) {
+	public AbstractTextExtractor(TextExtractorFactory.Type type) {
 		this.type = type;
 	}
 
-	public TextExtractorType getType() {
+	public TextExtractorFactory.Type getType() {
 		return type;
 	}
 

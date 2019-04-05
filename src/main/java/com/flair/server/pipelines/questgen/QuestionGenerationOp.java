@@ -6,6 +6,7 @@ import com.flair.server.parser.ParserAnnotations;
 import com.flair.server.pipelines.PipelineOp;
 import com.flair.server.scheduler.AsyncExecutorService;
 import com.flair.server.scheduler.AsyncJob;
+import com.flair.server.sentencesel.SentenceSelector;
 import com.flair.server.utilities.ServerLogger;
 
 import java.util.*;
@@ -28,7 +29,7 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 		final AsyncExecutorService qgExecutor;
 
 		final QuestionGeneratorParams qgParams;
-		final SentenceSelectorPreprocessor sentSelPreprocessor;
+		final SentenceSelector.Builder sentSelBuilder;
 		final int numQuestions;
 
 		final SentenceSelectionComplete selectionComplete;
@@ -41,7 +42,7 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 		      AsyncExecutorService sentSelExecutor,
 		      AsyncExecutorService qgExecutor,
 		      QuestionGeneratorParams qgParams,
-		      SentenceSelectorPreprocessor sentSelPreprocessor,
+		      SentenceSelector.Builder sentSelBuilder,
 		      int numQuestions,
 		      SentenceSelectionComplete selectionComplete,
 		      JobComplete jobComplete) {
@@ -52,7 +53,7 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 			this.sentSelExecutor = sentSelExecutor;
 			this.qgExecutor = qgExecutor;
 			this.qgParams = qgParams;
-			this.sentSelPreprocessor = sentSelPreprocessor;
+			this.sentSelBuilder = sentSelBuilder;
 			this.numQuestions = numQuestions;
 			this.selectionComplete = selectionComplete != null ? selectionComplete : e -> {};
 			this.jobComplete = jobComplete != null ? jobComplete : e -> {};
@@ -78,8 +79,7 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 
 	private void queueSentenceSelTask(AsyncJob jerb, AbstractDocument sourceDoc) {
 		AsyncJob.Scheduler scheduler = AsyncJob.Scheduler.existingJob(jerb);
-		SentenceSelector.Builder ssBuilder = TextRankSentenceSelector.Builder.factory(sourceDoc.getLanguage(),
-				input.sentSelPreprocessor)
+		input.sentSelBuilder
 				.source(SentenceSelector.Source.DOCUMENT)
 				.mainDocument(sourceDoc)
 				.granularity(SentenceSelector.Granularity.SENTENCE)
@@ -87,7 +87,7 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 				.ignoreStopwords(true)
 				.useSynsets(false);
 
-		scheduler.newTask(SentenceSelectionTask.factory(ssBuilder, -1))
+		scheduler.newTask(SentenceSelectionTask.factory(input.sentSelBuilder, -1))
 				.with(input.sentSelExecutor)
 				.then(this::linkTasks)
 				.queue();

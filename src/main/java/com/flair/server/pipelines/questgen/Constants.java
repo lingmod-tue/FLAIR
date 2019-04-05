@@ -10,10 +10,6 @@ class Constants {
 	static final TimeUnit TIMEOUT_UNIT = TimeUnit.SECONDS;
 	static final int NERCOREF_PARSE_TASK_TIMEOUT = 300;
 
-	// sentences that have fewer unique tokens than this will be discarded
-	static final int SELECTOR_MIN_UNIQUE_TOKEN_COUNT = 5;
-	// sentences that have more tokens than this will be discarded
-	static final int SELECTOR_MAX_TOKEN_COUNT = 25;
 	static final int GENERATOR_MAX_GENERATED_TREE_LEAF_COUNT = 1000;
 
 	// how many of the generated questions should be considered when selecting the final question

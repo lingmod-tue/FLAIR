@@ -1,4 +1,4 @@
-package com.flair.server.pipelines.questgen;
+package com.flair.server.utilities;
 
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.TObjectIntMap;
@@ -12,8 +12,8 @@ import java.util.HashSet;
  * Represents an inverted index of postings that map terms (words) to their
  * occurrence frequencies in a collection of documents
  */
-class InvertedIndex<T, D> {
-	static final class Frequency {
+public class InvertedIndex<T, D> {
+	private static final class Frequency {
 		int frequency;
 
 		Frequency() {
@@ -29,7 +29,7 @@ class InvertedIndex<T, D> {
 		}
 	}
 
-	static final class Posting<D> {
+	private static final class Posting<D> {
 		final HashMap<D, Frequency> doc2Freq;
 
 		Posting() {
@@ -66,7 +66,7 @@ class InvertedIndex<T, D> {
 	private final HashSet<D> sourceDocs;
 	private int nextId;
 
-	InvertedIndex() {
+	public InvertedIndex() {
 		term2id = new TObjectIntHashMap<>();
 		id2posting = new TIntObjectHashMap<>();
 		sourceDocs = new HashSet<>();
@@ -84,11 +84,11 @@ class InvertedIndex<T, D> {
 			return id2posting.get(termId);
 	}
 
-	boolean hasTerm(T term) {
+	public boolean hasTerm(T term) {
 		return term2id.get(term) != term2id.getNoEntryValue();
 	}
 
-	int getTermId(T term) {
+	public int getTermId(T term) {
 		int id = term2id.get(term);
 		if (id == term2id.getNoEntryValue())
 			throw new IllegalArgumentException("Term '" + term + "' not found in index");
@@ -96,7 +96,7 @@ class InvertedIndex<T, D> {
 	}
 
 
-	void addTerm(T term, D sourceDoc) {
+	public void addTerm(T term, D sourceDoc) {
 		Posting<D> existing = getPosting(term);
 		if (existing == null) {
 			existing = new Posting<>();
@@ -111,7 +111,7 @@ class InvertedIndex<T, D> {
 		sourceDocs.add(sourceDoc);
 	}
 
-	int getTermFrequency(T term, D source) {
+	public int getTermFrequency(T term, D source) {
 		Posting<D> existing = getPosting(term);
 		int out = 0;
 		if (existing != null) {
@@ -125,7 +125,7 @@ class InvertedIndex<T, D> {
 		return out;
 	}
 
-	int getTermDocumentFrequency(T term) {
+	public int getTermDocumentFrequency(T term) {
 		Posting existing = getPosting(term);
 		if (existing != null)
 			return existing.getDocumentFrequency();
@@ -133,7 +133,7 @@ class InvertedIndex<T, D> {
 			return 0;
 	}
 
-	double getTermTfIdf(T term, D source, boolean logTf) {
+	public double getTermTfIdf(T term, D source, boolean logTf) {
 		double tf = getTermFrequency(term, source);
 		double df = getTermDocumentFrequency(term);
 
@@ -143,7 +143,7 @@ class InvertedIndex<T, D> {
 		return tf * Math.log(sourceDocs.size() / df);
 	}
 
-	int size() {
+	public int size() {
 		return nextId;
 	}
 }

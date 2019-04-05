@@ -1,4 +1,4 @@
-package com.flair.server.pipelines.questgen;
+package com.flair.server.sentencesel;
 
 import com.flair.server.document.AbstractDocument;
 import com.flair.server.parser.ParserAnnotations;
@@ -8,7 +8,7 @@ import java.util.Collection;
 /*
  * Selects sentences from one or more documents based on some criteria
  */
-interface SentenceSelector {
+public interface SentenceSelector {
 	enum Granularity {
 		SENTENCE,      // (default) the model is trained exclusively on individual sentences
 		DOCUMENT       // the model is trained on both sentences and the documents they occur in

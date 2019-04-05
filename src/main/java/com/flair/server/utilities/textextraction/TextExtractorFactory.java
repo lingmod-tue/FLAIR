@@ -1,11 +1,17 @@
 
-package com.flair.server.utilities;
+package com.flair.server.utilities.textextraction;
 
 /**
  * Factory class for text extractors
  */
 public class TextExtractorFactory {
-	public static AbstractTextExtractor create(TextExtractorType type) {
+	public enum Type {
+		AUTODETECT,
+		BOILERPIPE,
+		TIKA
+	}
+
+	public static AbstractTextExtractor create(Type type) {
 		switch (type) {
 		case AUTODETECT:
 			return new AutoDetectTextExtractor();
