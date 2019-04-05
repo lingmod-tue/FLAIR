@@ -151,7 +151,6 @@ class ParsingLogic {
 				return wrapper;
 			});
 
-			//	nerCorefAnnotation.parseTree();
 			oldSentAnnotation.set(NerCorefAnnotation.class, nerCorefAnnotation);
 		}
 	}

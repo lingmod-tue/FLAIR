@@ -60,7 +60,7 @@ public final class QuestionGenerationPipeline {
 		docFactory = Document.factory();
 
 		Properties pipelineProps = new Properties();
-		pipelineProps.put("annotators", "tokenize, ssplit, pos, lemma, stopword, parse, ner, mention, coref");
+		pipelineProps.put("annotators", "tokenize, ssplit, pos, lemma, stopword, parse, ner, coref");
 		pipelineProps.put("tokenize.options", "tokenizePerLine");
 		pipelineProps.put("ssplit.newlineIsSentenceBreak", "two");
 		pipelineProps.put("parse.originalDependencies", "true");

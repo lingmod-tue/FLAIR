@@ -66,6 +66,13 @@
             <artifactId>gwt-user</artifactId>
             <scope>provided</scope>
         </dependency>
+
+        <!-- The Jetty library dependency of com.google.gwt is buggy.                               -->
+        <!-- It breaks SuperDev mode when any of the project's dependencies, transient or otherwise -->
+        <!-- has Java 9+ metadata in its JAR files. This prevents us from updating certain          -->
+        <!-- dependencies such as CoreNLP (3.9.2+) and Tika (1.19+).                                -->
+        <!-- We could potentially update them before deployment but it's too much of a hassle and   -->
+        <!-- can open up a whole new can of bugs.                                                   -->
         <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-dev</artifactId>
@@ -79,6 +86,18 @@
                     <groupId>org.eclipse.jetty</groupId>
                     <artifactId>apache-jsp</artifactId>
                 </exclusion>
+                <!--                <exclusion>-->
+                <!--                    <groupId>org.eclipse.jetty</groupId>-->
+                <!--                    <artifactId>jetty-webapp</artifactId>-->
+                <!--                </exclusion>-->
+                <!--                <exclusion>-->
+                <!--                    <groupId>org.eclipse.jetty</groupId>-->
+                <!--                    <artifactId>jetty-servlets</artifactId>-->
+                <!--                </exclusion>-->
+                <!--                <exclusion>-->
+                <!--                    <groupId>org.eclipse.jetty</groupId>-->
+                <!--                    <artifactId>jetty-annotations</artifactId>-->
+                <!--                </exclusion>-->
             </exclusions>
         </dependency>
         <dependency>
@@ -104,12 +123,12 @@
         <dependency>
             <groupId>org.apache.tika</groupId>
             <artifactId>tika-core</artifactId>
-            <version>1.14</version>
+            <version>1.18</version>
         </dependency>
         <dependency>
             <groupId>org.apache.tika</groupId>
             <artifactId>tika-parsers</artifactId>
-            <version>1.14</version>
+            <version>1.18</version>
         </dependency>
         <dependency>
             <groupId>com.github.gwtd3</groupId>
@@ -119,18 +138,18 @@
         <dependency>
             <groupId>edu.stanford.nlp</groupId>
             <artifactId>stanford-corenlp</artifactId>
-            <version>3.8.0</version>
+            <version>3.9.1</version>
         </dependency>
         <dependency>
             <groupId>edu.stanford.nlp</groupId>
             <artifactId>stanford-corenlp</artifactId>
-            <version>3.8.0</version>
+            <version>3.9.1</version>
             <classifier>models-english</classifier>
         </dependency>
         <dependency>
             <groupId>edu.stanford.nlp</groupId>
             <artifactId>stanford-corenlp</artifactId>
-            <version>3.8.0</version>
+            <version>3.9.1</version>
             <classifier>models-german</classifier>
         </dependency>
         <dependency>
@@ -186,6 +205,33 @@
         <outputDirectory>${project.build.directory}/${project.build.finalName}/WEB-INF/classes</outputDirectory>
 
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.0.0-M2</version>
+                <executions>
+                    <execution>
+                        <id>enforce-banned-dependencies</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <bannedDependencies>
+                                    <excludes>
+                                        <exclude>org.eclipse.jetty:jetty-annotations:(,9.4.9]</exclude>
+                                    </excludes>
+                                    <includes>
+                                        <include>org.eclipse.jetty:jetty*:[9.5,)</include>
+                                    </includes>
+                                </bannedDependencies>
+                            </rules>
+                            <fail>false</fail>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
 

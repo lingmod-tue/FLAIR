@@ -23,15 +23,9 @@
 
 package edu.cmu.ark;
 
-import net.didion.jwnl.data.IndexWord;
-import net.didion.jwnl.data.POS;
-import net.didion.jwnl.dictionary.Dictionary;
-
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class VerbConjugator {
 
@@ -134,47 +128,6 @@ public class VerbConjugator {
 		}
 
 		return result.intValue();
-	}
-
-	public void readFromTreebankFile(String path) {
-		try {
-			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(path)));
-			String buf;
-			while ((buf = br.readLine()) != null) {
-				Pattern p = Pattern.compile("\\((VB\\w*) (\\w+)\\)");
-				Matcher m = p.matcher(buf);
-				while (m.find()) {
-					String pos = m.group(1);
-					String token = m.group(2);
-					if (pos.equals("VB")) {
-						Long count = baseFormCountMap.get(token);
-						if (count == null) {
-							count = new Long(0);
-						}
-						count++;
-						baseFormCountMap.put(token, count);
-					} else {
-						String lemma = "";
-						try {
-							IndexWord iw = Dictionary.getInstance().lookupIndexWord(POS.VERB, token);
-							if (iw == null) {
-								continue;
-							}
-							lemma = iw.getLemma();
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-
-						String key = lemma + "/" + pos;
-						System.err.println("adding\t" + key + "\t" + token);
-						conjugationMap.put(key, token);
-					}
-				}
-
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	//map from lemma+pos to surface form (e.g., walk+VBZ => walks)

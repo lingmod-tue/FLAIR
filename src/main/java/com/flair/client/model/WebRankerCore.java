@@ -1721,6 +1721,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 			return false;
 		}
 
+		// ### TODO breaks when called from the compare view
 		service.generateQuestions(token, doc, 5,
 				FuncCallback.get(e -> messagePoller.beginPolling(msg -> {
 							if (msg.getType() != ServerMessage.Type.GENERATE_QUESTIONS)

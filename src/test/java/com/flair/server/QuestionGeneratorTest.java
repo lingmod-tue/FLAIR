@@ -42,7 +42,7 @@ public class QuestionGeneratorTest {
 
 	public static void main(String[] args) {
 		String query = "site:nytimes.com donald trump";
-		int numResults = 5;
+		int numResults = 3;
 		Language lang = Language.ENGLISH;
 		String[] keywords = new String[]{
 			"keywords", "to", "highlight"
