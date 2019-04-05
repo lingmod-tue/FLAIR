@@ -74,6 +74,10 @@ public class CoreNlpParserAnnotations implements ParserAnnotations {
 		}
 
 		@Override
+		public int index() {
+			return source.get(CoreAnnotations.SentenceIndexAnnotation.class);
+		}
+		@Override
 		public int start() {
 			return source.get(CoreAnnotations.CharacterOffsetBeginAnnotation.class);
 		}

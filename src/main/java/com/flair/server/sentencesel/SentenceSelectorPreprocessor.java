@@ -14,7 +14,7 @@ import java.util.*;
  */
 final class SentenceSelectorPreprocessor {
 	private static final SentenceSelectorPreprocessor DEFAULT_INSTANCE = new SentenceSelectorPreprocessor();
-	public static SentenceSelectorPreprocessor defaultInstance() {
+	static SentenceSelectorPreprocessor defaultInstance() {
 		return DEFAULT_INSTANCE;
 	}
 
@@ -33,8 +33,6 @@ final class SentenceSelectorPreprocessor {
 
 		LanguageSpecificData eng = new LanguageSpecificData(WordNetDictionary.defaultInstance());
 		languageSpecificData.put(Language.ENGLISH, eng);
-
-		// ensure immutablity
 		languageSpecificData = Collections.unmodifiableMap(languageSpecificData);
 	}
 
@@ -42,7 +40,7 @@ final class SentenceSelectorPreprocessor {
 		return languageSpecificData.get(lang) != null;
 	}
 
-	List<PreprocessedSentence> preprocess(AbstractDocument doc, SentenceSelectorParams params) {
+	Collection<PreprocessedSentence> preprocess(AbstractDocument doc, SentenceSelectorParams params) {
 		List<PreprocessedSentence> out = new ArrayList<>();
 
 		if (!doc.isParsed())
@@ -76,20 +74,23 @@ final class SentenceSelectorPreprocessor {
 					boolean synsetFound = false;
 					if (params.useSynsets && !lemma.isEmpty()) {
 						List<? extends SynSetDictionary.SynSet> concepts = data.synsetDict.lookup(lemma, token.pos());
-						concepts.forEach(e -> preprocSent.tokens.add(new PreprocessedSentence.Token(e)));
+						concepts.forEach(e -> preprocSent.terms.add(new InvIdxTerm(e)));
 						synsetFound = !concepts.isEmpty();
 					}
 
 					if (!synsetFound) {
 						if (params.stemWords && !lemma.isEmpty())
-							preprocSent.tokens.add(new PreprocessedSentence.Token(lemma));
+							preprocSent.terms.add(new InvIdxTerm(lemma));
 						else
-							preprocSent.tokens.add(new PreprocessedSentence.Token(word));
+							preprocSent.terms.add(new InvIdxTerm(word));
 					}
 				}
 
-				if (preprocSent.tokens.size() >= Constants.SELECTOR_MIN_UNIQUE_TOKEN_COUNT)
-					out.add(preprocSent);
+				if (preprocSent.terms.stream().distinct().count() >= Constants.SELECTOR_MIN_UNIQUE_TOKEN_COUNT) {
+					// filter out duplicate sentences
+					if (!out.contains(preprocSent))
+						out.add(preprocSent);
+				}
 
 			}
 		} catch (Throwable e) {
@@ -100,49 +101,28 @@ final class SentenceSelectorPreprocessor {
 	}
 
 	static final class PreprocessedSentence {
-		// a unique, atomic unit of a sentence
-		static final class Token {
-			final String word;
-			final SynSetDictionary.SynSet concept;
-
-			Token(String word) {
-				this.word = word;
-				this.concept = null;
-			}
-
-			Token(SynSetDictionary.SynSet concept) {
-				this.word = null;
-				this.concept = concept;
-			}
-
-			@Override
-			public boolean equals(Object o) {
-				if (this == o) return true;
-				if (o == null || getClass() != o.getClass()) return false;
-
-				Token token = (Token) o;
-
-				if (word != null ? !word.equals(token.word) : token.word != null) return false;
-				return concept != null ? concept == token.concept : token.concept == null;
-			}
-			@Override
-			public int hashCode() {
-				int result = word != null ? word.hashCode() : 0;
-				result = 31 * result + (concept != null ? concept.hashCode() : 0);
-				return result;
-			}
-		}
-
 		final AbstractDocument sourceDoc;
 		final ParserAnnotations.Sentence annotation;
-		final int id;               // sentence number as found in the source
-		final Set<Token> tokens;    // unique tokens only
+		final int id;                       // sentence number as found in the source
+		final List<InvIdxTerm> terms;
 
 		PreprocessedSentence(AbstractDocument sourceDoc, ParserAnnotations.Sentence annotation, int id) {
 			this.sourceDoc = sourceDoc;
 			this.annotation = annotation;
 			this.id = id;
-			this.tokens = new HashSet<>();
+			this.terms = new ArrayList<>();
+		}
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+			PreprocessedSentence that = (PreprocessedSentence) o;
+			return sourceDoc.equals(that.sourceDoc) &&
+					terms.equals(that.terms);
+		}
+		@Override
+		public int hashCode() {
+			return Objects.hash(sourceDoc, terms);
 		}
 	}
 }

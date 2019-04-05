@@ -5,8 +5,9 @@ import gnu.trove.map.TObjectIntMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.List;
 
 /*
  * Represents an inverted index of postings that map terms (words) to their
@@ -46,16 +47,36 @@ public class InvertedIndex<T, D> {
 				existing.increment();
 		}
 
-		int getDocumentFrequency() {
+		int documentFrequency() {
 			return doc2Freq.size();
 		}
 
-		int getTermFrequency(D doc) {
+		int termFrequency(D doc) {
 			Frequency existing = doc2Freq.get(doc);
 			if (existing == null)
 				return 0;
 			else
 				return existing.get();
+		}
+
+		double inverseDocumentFrequency(int numTotalDocs) {
+			return Math.log(numTotalDocs / documentFrequency());
+		}
+	}
+
+	private static final class DocumentData<T> {
+		final List<T> terms;
+
+		DocumentData() {
+			terms = new ArrayList<>();
+		}
+
+		void addTerm(T term) {
+			terms.add(term);
+		}
+
+		int numTerms() {
+			return terms.size();
 		}
 	}
 
@@ -63,14 +84,18 @@ public class InvertedIndex<T, D> {
 
 	private final TObjectIntMap<T> term2id;
 	private final TIntObjectMap<Posting<D>> id2posting;
-	private final HashSet<D> sourceDocs;
+	private final HashMap<D, DocumentData<T>> sourceDocs;
 	private int nextId;
+	private double avgDocLength;
+	private double avgIdf;
 
 	public InvertedIndex() {
 		term2id = new TObjectIntHashMap<>();
 		id2posting = new TIntObjectHashMap<>();
-		sourceDocs = new HashSet<>();
+		sourceDocs = new HashMap<>();
 		nextId = TERM_ID_BEGIN;
+		avgDocLength = -1;
+		avgIdf = Double.MAX_VALUE;
 
 		if (term2id.getNoEntryValue() == TERM_ID_BEGIN || id2posting.getNoEntryKey() == TERM_ID_BEGIN)
 			throw new IllegalStateException("Invalid no entry key/value sentinel!");
@@ -88,13 +113,12 @@ public class InvertedIndex<T, D> {
 		return term2id.get(term) != term2id.getNoEntryValue();
 	}
 
-	public int getTermId(T term) {
+	public int termId(T term) {
 		int id = term2id.get(term);
 		if (id == term2id.getNoEntryValue())
 			throw new IllegalArgumentException("Term '" + term + "' not found in index");
 		return id;
 	}
-
 
 	public void addTerm(T term, D sourceDoc) {
 		Posting<D> existing = getPosting(term);
@@ -108,10 +132,15 @@ public class InvertedIndex<T, D> {
 		} else
 			existing.increment(sourceDoc);
 
-		sourceDocs.add(sourceDoc);
+		DocumentData<T> docData = sourceDocs.computeIfAbsent(sourceDoc, k -> new DocumentData<>());
+		docData.addTerm(term);
+
+		// flag for recalculation
+		avgDocLength = -1;
+		avgIdf = Double.MAX_VALUE;
 	}
 
-	public int getTermFrequency(T term, D source) {
+	public int termFrequency(T term, D source) {
 		Posting<D> existing = getPosting(term);
 		int out = 0;
 		if (existing != null) {
@@ -119,23 +148,23 @@ public class InvertedIndex<T, D> {
 				for (Frequency f : existing.doc2Freq.values())
 					out += f.get();
 			} else
-				out = existing.getTermFrequency(source);
+				out = existing.termFrequency(source);
 		}
 
 		return out;
 	}
 
-	public int getTermDocumentFrequency(T term) {
+	public int termDocumentFrequency(T term) {
 		Posting existing = getPosting(term);
 		if (existing != null)
-			return existing.getDocumentFrequency();
+			return existing.documentFrequency();
 		else
 			return 0;
 	}
 
-	public double getTermTfIdf(T term, D source, boolean logTf) {
-		double tf = getTermFrequency(term, source);
-		double df = getTermDocumentFrequency(term);
+	public double termTfIdf(T term, D source, boolean logTf) {
+		double tf = termFrequency(term, source);
+		double df = termDocumentFrequency(term);
 
 		if (logTf)
 			tf = 1 + Math.log(tf);
@@ -143,7 +172,24 @@ public class InvertedIndex<T, D> {
 		return tf * Math.log(sourceDocs.size() / df);
 	}
 
-	public int size() {
+	public int numTerms() {
 		return nextId;
+	}
+	public int numDocuments() {
+		return sourceDocs.size();
+	}
+	public double avgDocLength(boolean recalculate) {
+		if (avgDocLength < 0 || recalculate)
+			avgDocLength = sourceDocs.values().stream().mapToInt(DocumentData::numTerms).average().orElse(0);
+
+		return avgDocLength;
+	}
+	public double avgIdf(boolean recalculate) {
+		if (avgIdf == Double.MAX_VALUE || recalculate) {
+			int numTotalDocs = numDocuments();
+			avgIdf = id2posting.valueCollection().stream().mapToDouble(e -> e.inverseDocumentFrequency(numTotalDocs)).average().orElse(0);
+		}
+
+		return avgIdf;
 	}
 }

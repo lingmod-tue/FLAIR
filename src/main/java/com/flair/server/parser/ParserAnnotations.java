@@ -13,6 +13,7 @@ public interface ParserAnnotations {
 	}
 
 	interface Sentence {
+		int index();
 		int start();
 		int end();
 		String text();

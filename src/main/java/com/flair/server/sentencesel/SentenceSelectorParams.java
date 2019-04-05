@@ -8,6 +8,7 @@ import java.util.List;
 
 class SentenceSelectorParams {
 	Language lang;
+	SentenceSelector.SimilarityMeasure similarityMeasure;
 	SentenceSelector.Source source;
 	SentenceSelector.Granularity granularity;
 	boolean stemWords;
@@ -21,6 +22,7 @@ class SentenceSelectorParams {
 
 	SentenceSelectorParams() {
 		lang = null;
+		similarityMeasure = SentenceSelector.SimilarityMeasure.COSINE;
 		source = SentenceSelector.Source.DOCUMENT;
 		granularity = SentenceSelector.Granularity.SENTENCE;
 		stemWords = ignoreStopwords = useSynsets = false;
@@ -29,13 +31,28 @@ class SentenceSelectorParams {
 		preprocessor = SentenceSelectorPreprocessor.defaultInstance();
 	}
 
+	SentenceSelectorParams copy() {
+		SentenceSelectorParams out = new SentenceSelectorParams();
+		out.lang = lang;
+		out.similarityMeasure = similarityMeasure;
+		out.source = source;
+		out.granularity = granularity;
+		out.stemWords = stemWords;
+		out.ignoreStopwords = ignoreStopwords;
+		out.useSynsets = useSynsets;
+		out.main = main;
+		out.corpus = new ArrayList<>(corpus);
+		out.preprocessor = preprocessor;
+		return out;
+	}
+
 	void validate() {
 		switch (source) {
 		case DOCUMENT: {
 			if (main == null)
 				throw new IllegalStateException("Primary document source missing");
 			else if (granularity == SentenceSelector.Granularity.DOCUMENT && corpus.size() < 2)
-				throw new IllegalStateException("Corpus size is too small for document-level granularity");
+				throw new IllegalStateException("Corpus numTerms is too small for document-level granularity");
 
 			lang = main.getLanguage();
 			for (AbstractDocument itr : corpus) {

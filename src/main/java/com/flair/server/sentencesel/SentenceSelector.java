@@ -19,8 +19,14 @@ public interface SentenceSelector {
 		CORPUS,       // the final sentences are selected from the entire corpus of documents
 	}
 
+	enum SimilarityMeasure {
+		COSINE,       // (default)
+		BM25
+	}
+
 	// all boolean parameters default to false
 	interface Builder {
+		Builder similarityMeasure(SimilarityMeasure val);
 		Builder stemWords(boolean val);
 		Builder ignoreStopwords(boolean val);
 		Builder useSynsets(boolean val);
@@ -28,7 +34,7 @@ public interface SentenceSelector {
 		Builder source(Source val);
 
 		Builder mainDocument(AbstractDocument doc);     // document from which sentences are selected
-		Builder copusDocument(AbstractDocument doc);    // additional corpus that can be used the selector
+		Builder corpusDocument(AbstractDocument doc);    // additional corpus that can be used the selector
 
 		SentenceSelector build();
 	}

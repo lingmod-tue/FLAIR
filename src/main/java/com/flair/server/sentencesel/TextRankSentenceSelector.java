@@ -21,42 +21,18 @@ import java.util.stream.Collectors;
  * Implements the TextRank algorithm to select salient sentences
  */
 class TextRankSentenceSelector implements SentenceSelector {
-	// represents the concept of a document wrt the inverted index
-	private static final class BaseDocument {
-		final SentenceSelectorPreprocessor.PreprocessedSentence sent;
-		final AbstractDocument doc;
-
-		BaseDocument(SentenceSelectorPreprocessor.PreprocessedSentence sent) {
-			this.sent = sent;
-			this.doc = null;
-		}
-		BaseDocument(AbstractDocument doc) {
-			this.doc = doc;
-			this.sent = null;
-		}
-
-		@Override
-		public boolean equals(Object o) {
-			if (this == o) return true;
-			if (o == null || getClass() != o.getClass()) return false;
-			BaseDocument that = (BaseDocument) o;
-			return sent == that.sent && doc == that.doc;
-		}
-		@Override
-		public int hashCode() {
-			int result = sent != null ? sent.hashCode() : 0;
-			result = 31 * result + (doc != null ? doc.hashCode() : 0);
-			return result;
-		}
-	}
-
-	private static final class Node {
+	private static final class Node implements SentenceSimilarityScorer.HasVector, SentenceSimilarityScorer.HasTerms {
 		final SentenceSelectorPreprocessor.PreprocessedSentence source;
 		final SparseDoubleVector vector;
 
-		Node(SentenceSelectorPreprocessor.PreprocessedSentence s, SparseDoubleVector v) {
+		Node(SentenceSelectorPreprocessor.PreprocessedSentence s, int vecDim) {
 			source = s;
-			vector = v;
+			vector = new SparseDoubleVector(vecDim);
+		}
+
+		Node(SentenceSelectorPreprocessor.PreprocessedSentence s) {
+			source = s;
+			vector = null;
 		}
 
 		@Override
@@ -66,6 +42,14 @@ class TextRankSentenceSelector implements SentenceSelector {
 
 			Node node = (Node) o;
 			return source == node.source;
+		}
+		@Override
+		public SparseDoubleVector vec() {
+			return vector;
+		}
+		@Override
+		public Collection<InvIdxTerm> terms() {
+			return source.terms;
 		}
 	}
 
@@ -88,31 +72,36 @@ class TextRankSentenceSelector implements SentenceSelector {
 		}
 	}
 
-	private final InvertedIndex<SentenceSelectorPreprocessor.PreprocessedSentence.Token, BaseDocument> index;
+	private final SentenceSelectorParams params;
+	private final InvertedIndex<InvIdxTerm, InvIdxDocument> invertedIndex;
 	private final Graph<Node, DefaultWeightedEdge> graph;
 	private final List<RankedSentence> rankedOutput;
+	private boolean initialized;
 
-	private BaseDocument getBaseDocument(SentenceSelectorPreprocessor.PreprocessedSentence sent, SentenceSelectorParams params) {
+	private InvIdxDocument getBaseDocument(SentenceSelectorPreprocessor.PreprocessedSentence sent, SentenceSelectorParams params) {
 		switch (params.granularity) {
 		case SENTENCE:
-			return new BaseDocument(sent);
+			return new InvIdxDocument(sent);
 		case DOCUMENT:
-			return new BaseDocument(sent.sourceDoc);
+			return new InvIdxDocument(sent.sourceDoc);
 		}
 
 		return null;
 	}
 
-	private void init(SentenceSelectorParams params) {
+	private void rank() {
+		if (initialized)
+			return;
+
 		List<SentenceSelectorPreprocessor.PreprocessedSentence> allSents = new ArrayList<>();
 
-		// add terms to the index
+		// add terms to the invertedIndex
 		if (params.main != null)
 			params.corpus.add(params.main);
 
 		for (AbstractDocument doc : params.corpus) {
-			List<SentenceSelectorPreprocessor.PreprocessedSentence> docSents = params.preprocessor.preprocess(doc, params);
-			docSents.forEach(sent -> sent.tokens.forEach(tok -> index.addTerm(tok, getBaseDocument(sent, params))));
+			Collection<SentenceSelectorPreprocessor.PreprocessedSentence> docSents = params.preprocessor.preprocess(doc, params);
+			docSents.forEach(sent -> sent.terms.forEach(tok -> invertedIndex.addTerm(tok, getBaseDocument(sent, params))));
 
 			switch (params.source) {
 			case DOCUMENT:
@@ -124,26 +113,47 @@ class TextRankSentenceSelector implements SentenceSelector {
 			}
 		}
 
-		if (allSents.isEmpty())
+		if (allSents.isEmpty()) {
+			initialized = true;
 			return;
+		}
 
-		// create tf-idf sentence vectors
+		// create vertices for the sentence graph
 		List<Node> nodes = allSents.stream().map(sent -> {
-			Node newNode = new Node(sent, new SparseDoubleVector(index.size()));
-			sent.tokens.forEach(tok -> newNode.vector.set(index.getTermId(tok), index.getTermTfIdf(tok, getBaseDocument(sent, params), true)));
-			newNode.vector.normalize();
+			Node newNode;
+			switch (params.similarityMeasure) {
+			case COSINE:
+				newNode = new Node(sent, invertedIndex.numTerms());
+				sent.terms.forEach(tok -> newNode.vector.set(invertedIndex.termId(tok), invertedIndex.termTfIdf(tok, getBaseDocument(sent, params), true)));
+				newNode.vector.normalize();
+				break;
+			case BM25:
+			default:
+				newNode = new Node(sent);
+				break;
+			}
 			return newNode;
 		}).collect(Collectors.toList());
 
 		// generate sentence graph
+		SentenceSimilarityScorer scorer = new SentenceSimilarityScorer(invertedIndex);
 		for (List<Node> pair : new Combinator<>(nodes, 2)) {
 			Node first = pair.get(0), second = pair.get(1);
-			double cosineSimilarity = first.vector.dot(second.vector);
-			if (!Double.isFinite(cosineSimilarity)) {
-				ServerLogger.get().trace("Invalid cosine similarity between sentences " + first.source.id +
+			double similarityScore = 0;
+			switch (params.similarityMeasure) {
+			case COSINE:
+				similarityScore = scorer.cosine(first, second);
+				break;
+			case BM25:
+				similarityScore = scorer.bm25(first, second);
+				break;
+			}
+
+			if (!Double.isFinite(similarityScore)) {
+				ServerLogger.get().trace("Invalid similarity score between sentences " + first.source.id +
 						" and " + second.source.id + " in document " + first.source.sourceDoc.getDescription());
 				continue;
-			} else if (cosineSimilarity == 0)
+			} else if (similarityScore == 0)
 				continue;
 
 			graph.addVertex(first);
@@ -154,25 +164,27 @@ class TextRankSentenceSelector implements SentenceSelector {
 				ServerLogger.get().warn("Couldn't add edge between sentences: Sentence " + first.source.id + " in " + first.source.sourceDoc.getDescription()
 						+ " and Sentence " + second.source.id + " in " + second.source.sourceDoc.getDescription());
 			} else
-				graph.setEdgeWeight(edge, cosineSimilarity);
+				graph.setEdgeWeight(edge, similarityScore);
 		}
 
 		// execute PageRank and rank results
 		PageRank<Node, DefaultWeightedEdge> pageRank = new PageRank<>(graph);
 		pageRank.getScores().forEach((n, s) -> rankedOutput.add(new RankedSentence(n.source, s)));
 		rankedOutput.sort(Comparator.comparingDouble(a -> -a.score));
+		initialized = true;
 	}
 
 	private TextRankSentenceSelector(SentenceSelectorParams p) {
-		index = new InvertedIndex<>();
+		params = p;
+		invertedIndex = new InvertedIndex<>();
 		graph = new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
 		rankedOutput = new ArrayList<>();
-
-		init(p);
+		initialized = false;
 	}
 
 	@Override
 	public Collection<? extends SelectedSentence> topK(int k) {
+		rank();
 		return rankedOutput.subList(0, rankedOutput.size() < k || k == -1 ? rankedOutput.size() : k);
 	}
 
@@ -184,6 +196,11 @@ class TextRankSentenceSelector implements SentenceSelector {
 			params = new SentenceSelectorParams();
 		}
 
+		@Override
+		public SentenceSelector.Builder similarityMeasure(SimilarityMeasure val) {
+			params.similarityMeasure = val;
+			return this;
+		}
 		@Override
 		public SentenceSelector.Builder stemWords(boolean val) {
 			params.stemWords = val;
@@ -215,14 +232,14 @@ class TextRankSentenceSelector implements SentenceSelector {
 			return this;
 		}
 		@Override
-		public SentenceSelector.Builder copusDocument(AbstractDocument doc) {
+		public SentenceSelector.Builder corpusDocument(AbstractDocument doc) {
 			params.corpus.add(doc);
 			return this;
 		}
 		@Override
 		public SentenceSelector build() {
 			params.validate();
-			return new TextRankSentenceSelector(params);
+			return new TextRankSentenceSelector(params.copy());
 		}
 	}
 }

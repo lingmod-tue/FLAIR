@@ -11,10 +11,12 @@ import java.util.Arrays;
 public class SparseDoubleVector {
 	private final TIntDoubleMap backingStore;
 	private final int length;
+	private boolean normalized;
 
 	public SparseDoubleVector(int length) {
 		this.backingStore = new TIntDoubleHashMap();
 		this.length = length;
+		this.normalized = true;
 	}
 
 	public double get(int index) {
@@ -33,13 +35,14 @@ public class SparseDoubleVector {
 			throw new IndexOutOfBoundsException("Index " + index + " must be less than " + length);
 
 		backingStore.put(index, val);
+		normalized = false;
 	}
 
 	public boolean isZero(int index) {
 		if (index >= length)
 			throw new IndexOutOfBoundsException("Index " + index + " must be less than " + length);
 
-		return backingStore.containsKey(index) == false;
+		return !backingStore.containsKey(index);
 	}
 
 	public double dot(SparseDoubleVector rhs) {
@@ -65,5 +68,10 @@ public class SparseDoubleVector {
 	public void normalize() {
 		double magnitude = magnitude();
 		Arrays.stream(backingStore.keys()).forEach(k -> backingStore.put(k, magnitude * backingStore.get(k)));
+		normalized = true;
+	}
+
+	public boolean isNormalized() {
+		return normalized;
 	}
 }
