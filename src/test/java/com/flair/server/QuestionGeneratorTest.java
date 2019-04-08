@@ -17,6 +17,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class QuestionGeneratorTest {
+	static final List<QuestionGenerationOp.Output> outputs = new ArrayList<>();
+
 	private static void printResults(QuestionGenerationOp.Output qgOutput) {
 		AbstractDocument doc = qgOutput.sourceDoc;
 
@@ -34,6 +36,7 @@ public class QuestionGeneratorTest {
 					.indent()
 					.info("Question: '" + gq.question + "'")
 					.info("Answer: '" + gq.answer + "'")
+					.info("Answer Tree: '" + gq.answerTree.toString() + "'")
 					.exdent();
 		}
 
@@ -64,7 +67,7 @@ public class QuestionGeneratorTest {
 					.generateQuestions()
 					.sourceDoc(doc)
 					.numQuestions(10)
-					.onComplete(QuestionGeneratorTest::printResults)
+					.onComplete(outputs::add)
 					.launch());
 		}
 
@@ -72,6 +75,9 @@ public class QuestionGeneratorTest {
 			jerb.await();
 
 		long end = System.currentTimeMillis();
+
+		for (QuestionGenerationOp.Output itr : outputs)
+			printResults(itr);
 
 		ServerLogger.get().info("QG Operation Complete in " + (end - start) / 1000. + " seconds");
 		System.exit(0);
