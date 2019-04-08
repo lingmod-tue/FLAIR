@@ -1,7 +1,10 @@
 package edu.cmu.ark;
 
 import arkref.parsestuff.AnalysisUtilities;
+import edu.stanford.nlp.ling.CoreAnnotations;
+import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.trees.Tree;
+import edu.stanford.nlp.trees.TreeCoreAnnotations;
 import edu.stanford.nlp.trees.tregex.TregexMatcher;
 import edu.stanford.nlp.trees.tregex.TregexPattern;
 import edu.stanford.nlp.trees.tregex.tsurgeon.Tsurgeon;
@@ -12,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Class for generating WH phrases (e.g., which dog) from noun and prepositional phrases (e.g., the
@@ -83,6 +87,7 @@ public class WhPhraseGenerator {
 			tmp1.setIntermediateTreeSupersenses(supersenseTags);
 		}
 
+		sentenceTreeNodes = tmp1.getIntermediateTree().yield().stream().map(CoreLabel.class::cast).collect(Collectors.toList());
 		sentenceTokens = new ArrayList<String>();
 		String[] origTokenArray = AnalysisUtilities.stringArrayFromLabels(tmp1.getIntermediateTree().yield());
 		for (int i = 0; i < origTokenArray.length; i++) {
@@ -166,11 +171,12 @@ public class WhPhraseGenerator {
 				+ leaves.indexOf(answerNP.headTerminal(AnalysisUtilities.getInstance().getHeadFinder()));
 		headSupersenseTag = supersenseTags.get(answerNPHeadTokenIdx);
 		headWord = sentenceTokens.get(answerNPHeadTokenIdx);
+		headTreeNode = sentenceTreeNodes.get(answerNPHeadTokenIdx);
 	}
 
 	protected void addIfAllowedWhat(Tree phraseToMove) {
-		if (isPerson(headWord, headSupersenseTag)
-				|| isTime(headWord, headSupersenseTag)) {
+		if (isPerson(headWord, headSupersenseTag, headTreeNode)
+				|| isTime(headWord, headSupersenseTag, headTreeNode)) {
 			return;
 		}
 
@@ -212,8 +218,8 @@ public class WhPhraseGenerator {
 	}
 
 	protected void addIfAllowedWho(Tree phraseToMove) {
-		if (isPerson(headWord, headSupersenseTag)
-				//|| isGroup(headWord, headSupersenseTag)
+		if (isPerson(headWord, headSupersenseTag, headTreeNode)
+				|| isGroup(headWord, headSupersenseTag, headTreeNode)
 				|| headWord.toLowerCase().matches("^(they|them|themselves)$")) //might be a person (these aren't included in isPerson)
 		{
 			whPhraseSubtrees.add("(WHNP (WRB who))");
@@ -221,7 +227,7 @@ public class WhPhraseGenerator {
 	}
 
 	protected void addIfAllowedWhen(Tree phraseToMove) {
-		if (isTime(headWord, headSupersenseTag)) {// && !answerPreposition.matches("on|in|at|over")){ // don't want "in when"
+		if (isTime(headWord, headSupersenseTag, headTreeNode)) {// && !answerPreposition.matches("on|in|at|over")){ // don't want "in when"
 			whPhraseSubtrees.add("(WHADVP (WRB when))");
 		}
 	}
@@ -230,7 +236,7 @@ public class WhPhraseGenerator {
 		//if(locationPrepositions.contains(answerPreposition) && isLocation()){
 		if (answerPreposition.length() > 0
 				&& answerPreposition.matches("on|in|at|over|to")
-				&& isLocation(headWord, headSupersenseTag)) {
+				&& isLocation(headWord, headSupersenseTag, headTreeNode)) {
 			whPhraseSubtrees.add("(WHADVP (WRB where))");
 		}
 	}
@@ -310,7 +316,9 @@ public class WhPhraseGenerator {
 				int possIndex = sentenceTokens.indexOf(possessorToken);
 				if (possIndex == -1) return;
 				String sst = supersenseTags.get(possIndex);
-				if (!isPerson(possessorToken, sst)) return;// && !isGroup(possessorToken, sst)) return;
+				CoreLabel node = sentenceTreeNodes.get(possIndex);
+				if (!isPerson(possessorToken, sst, node) && !isGroup(possessorToken, sst, node))
+					return;
 
 				//make a copy and use that
 				copyTree = matcher.getNode("np").deepCopy();
@@ -391,29 +399,39 @@ public class WhPhraseGenerator {
 		}
 	}
 
-	protected boolean isTime(String word, String sst) {
+	private String getNamedEntityTag(CoreLabel treeNode) {
+		CoreLabel hw = treeNode.get(TreeCoreAnnotations.HeadWordLabelAnnotation.class);
+		if (hw != null)
+			return hw.get(CoreAnnotations.NamedEntityTagAnnotation.class);
+		else return "";
+	}
+
+	protected boolean isTime(String word, String sst, CoreLabel node) {
 		if (sst.endsWith("noun.time")) return true;
 
+		String neTag = getNamedEntityTag(node);
+		if (neTag.equals("DATE") || neTag.equals("TIME")) return true;
+
 		//special case for years 1000-present (which are fairly common)
-		if (word.matches("[1|2]\\d\\d\\d")) return true;
+		return word.matches("[1|2]\\d\\d\\d");
 
-		return false;
 	}
 
-	protected boolean isLocation(String word, String sst) {
+	protected boolean isLocation(String word, String sst, CoreLabel node) {
 		if (sst.endsWith("noun.location")) return true;
-		return false;
+		return getNamedEntityTag(node).equals("LOCATION");
 	}
 
-	protected boolean isGroup(String word, String sst) {
+	protected boolean isGroup(String word, String sst, CoreLabel node) {
 		if (sst.endsWith("noun.group")) return true;
-		return false;
+		String neTag = getNamedEntityTag(node);
+		return neTag.equals("ORGANIZATION")/* || neTag.equals("MISC")*/;
 	}
 
-	protected boolean isPerson(String word, String sst) {
+	protected boolean isPerson(String word, String sst, CoreLabel node) {
 		if (peoplePronouns.contains(word.toLowerCase())) return true;
 		if (sst.endsWith("noun.person")) return true;
-		return false;
+		return getNamedEntityTag(node).equals("PERSON");
 	}
 
 	public boolean isFirstTokenNamedEntity() {
@@ -436,9 +454,11 @@ public class WhPhraseGenerator {
 	private Tree answerTree; //current answer tree that is being processed
 	private List<String> supersenseTags; //supersense tags for the sentence that is being processed
 	private List<String> sentenceTokens;
+	private List<CoreLabel> sentenceTreeNodes;
 	private int answerNPHeadTokenIdx;
 	private String headWord;
 	private String headSupersenseTag;
+	private CoreLabel headTreeNode;
 	private String answerPreposition;
 	private Tree answerPrepositionModifier;
 	private Set<String> peoplePronouns; //list of personal pronouns to consider as PERSON entities
