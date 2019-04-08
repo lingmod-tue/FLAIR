@@ -14,6 +14,8 @@ class SentenceSelectorParams {
 	boolean stemWords;
 	boolean ignoreStopwords;
 	boolean useSynsets;
+	boolean dropDuplicates;
+	double duplicateCooccurrenceThreshold;
 
 	AbstractDocument main;
 	List<AbstractDocument> corpus;
@@ -25,7 +27,8 @@ class SentenceSelectorParams {
 		similarityMeasure = SentenceSelector.SimilarityMeasure.COSINE;
 		source = SentenceSelector.Source.DOCUMENT;
 		granularity = SentenceSelector.Granularity.SENTENCE;
-		stemWords = ignoreStopwords = useSynsets = false;
+		stemWords = ignoreStopwords = useSynsets = dropDuplicates = false;
+		duplicateCooccurrenceThreshold = 0.6;
 		main = null;
 		corpus = new ArrayList<>();
 		preprocessor = SentenceSelectorPreprocessor.defaultInstance();
@@ -40,6 +43,8 @@ class SentenceSelectorParams {
 		out.stemWords = stemWords;
 		out.ignoreStopwords = ignoreStopwords;
 		out.useSynsets = useSynsets;
+		out.dropDuplicates = dropDuplicates;
+		out.duplicateCooccurrenceThreshold = duplicateCooccurrenceThreshold;
 		out.main = main;
 		out.corpus = new ArrayList<>(corpus);
 		out.preprocessor = preprocessor;

@@ -3,7 +3,7 @@ package com.flair.server.sentencesel;
 import com.flair.server.document.AbstractDocument;
 import com.flair.server.parser.ParserAnnotations;
 
-import java.util.Collection;
+import java.util.List;
 
 /*
  * Selects sentences from one or more documents based on some criteria
@@ -21,7 +21,8 @@ public interface SentenceSelector {
 
 	enum SimilarityMeasure {
 		COSINE,       // (default)
-		BM25
+		BM25,
+		JACCARD_COEFFICIENT
 	}
 
 	// all boolean parameters default to false
@@ -30,10 +31,13 @@ public interface SentenceSelector {
 		Builder stemWords(boolean val);
 		Builder ignoreStopwords(boolean val);
 		Builder useSynsets(boolean val);
+		Builder dropDuplicates(boolean val);                    // filter out lower-ranked sentences that are similar to higher-ranked ones
+		Builder duplicateCooccurrenceThreshold(double val);     // lower-ranked sentences with a term-cooccurrence ratio larger than this value are dropped if 'dropDuplicates' is true
+		// default value: 0.6
 		Builder granularity(Granularity val);
 		Builder source(Source val);
 
-		Builder mainDocument(AbstractDocument doc);     // document from which sentences are selected
+		Builder mainDocument(AbstractDocument doc);      // document from which sentences are selected
 		Builder corpusDocument(AbstractDocument doc);    // additional corpus that can be used the selector
 
 		SentenceSelector build();
@@ -44,6 +48,6 @@ public interface SentenceSelector {
 		ParserAnnotations.Sentence annotation();
 	}
 
-	Collection<? extends SelectedSentence> topK(int k);    // returns a ranked list of the top-k sentences. returns all sentences if k == -1
+	List<? extends SelectedSentence> topK(int k);    // returns a ranked list of the top-k sentences. returns all sentences if k == -1
 }
 

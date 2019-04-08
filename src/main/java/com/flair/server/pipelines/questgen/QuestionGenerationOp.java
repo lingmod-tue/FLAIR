@@ -85,7 +85,9 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 				.granularity(SentenceSelector.Granularity.SENTENCE)
 				.stemWords(true)
 				.ignoreStopwords(true)
-				.useSynsets(false);
+				.useSynsets(false)
+				.dropDuplicates(true)
+				.duplicateCooccurrenceThreshold(Constants.SENTENCESEL_DUPLICATE_COOCCURRENCE_THRESHOLD);
 
 		scheduler.newTask(SentenceSelectionTask.factory(input.sentSelBuilder, -1))
 				.with(input.sentSelExecutor)
@@ -120,68 +122,72 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 			scheduler.fire();
 	}
 
-	private void initTaskSyncHandlers() {
-		taskLinker.addHandler(NerCorefParseTask.Result.class, (j, r) -> {
-			if (r.output != null)
-				queueSentenceSelTask(j, r.output);
-		});
+	private void onParseComplete(AsyncJob j, NerCorefParseTask.Result r) {
+		if (r.output != null)
+			queueSentenceSelTask(j, r.output);
+	}
 
-		taskLinker.addHandler(SentenceSelectionTask.Result.class, (j, r) -> {
-			rankedSentences = new ArrayList<>(r.selection);
-			rankedSentenceAnnotations = rankedSentences.stream().map(SentenceSelector.SelectedSentence::annotation).collect(Collectors.toList());
-			input.selectionComplete.handle(rankedSentences.subList(0, rankedSentences.size() < input.numQuestions ? rankedSentences.size() : input.numQuestions));
+	private void onSentenceSelectionComplete(AsyncJob j, SentenceSelectionTask.Result r) {
+		rankedSentences = new ArrayList<>(r.selection);
+		rankedSentenceAnnotations = rankedSentences.stream().map(SentenceSelector.SelectedSentence::annotation).collect(Collectors.toList());
+		input.selectionComplete.handle(rankedSentences);
 
-			queueQuestGenTask(j);
-		});
+		queueQuestGenTask(j);
+	}
 
-		taskLinker.addHandler(QuestGenTask.Result.class, (j, r) -> {
-			numQuestGenTasks--;
+	private void onQuestGenComplete(AsyncJob j, QuestGenTask.Result r) {
+		numQuestGenTasks--;
 
-			ParserAnnotations.Sentence source = r.sourceSentence;
-			List<GeneratedQuestion> questions = new ArrayList<>();
-			for (GeneratedQuestion q : r.generated) {
-				// skip questions that don't have an answer
-				if (q.answer.isEmpty())
+		ParserAnnotations.Sentence source = r.sourceSentence;
+		List<GeneratedQuestion> questions = new ArrayList<>();
+		for (GeneratedQuestion q : r.generated) {
+			// skip questions that don't have an answer
+			if (q.answer.isEmpty())
+				continue;
+			questions.add(q);
+		}
+
+		if (!questions.isEmpty()) {
+			List<GeneratedQuestion> existing = rankedQuestions.put(source, questions);
+			if (existing != null)
+				ServerLogger.get().warn("Multiple QuestGen tasks were spawned for sentence '" + source.toString() + "'. Overwriting old values");
+		}
+
+		queueQuestGenTask(j);
+		if (numQuestGenTasks == 0) {
+			// no more questgen tasks queued, collect generated questions and their distractors
+			Set<String> distractors = rankedQuestions.values().stream().flatMap(v -> v.stream().map(w -> w.answer)).collect(Collectors.toSet());
+			for (ParserAnnotations.Sentence sent : rankedSentenceAnnotations) {
+				if (output.generatedQuestions.size() >= input.numQuestions)
+					break;
+
+				questions = rankedQuestions.get(sent);
+				if (questions == null)
 					continue;
-				questions.add(q);
+
+				// randomly pick one of the generated questions for the sentence
+				// ### TODO rank the questions correctly and pick the top one
+				int numGeneratedQuestions = questions.size();
+				int randomIndex = ThreadLocalRandom.current().nextInt(0,
+						Constants.QUESTGEN_BESTQPOOL_SIZE > numGeneratedQuestions ? numGeneratedQuestions : Constants.QUESTGEN_BESTQPOOL_SIZE);
+				GeneratedQuestion randomPick = questions.get(randomIndex);
+
+				// randomly pick unique distractors from candidates collected from all generated sentences (with an answer)
+				List<String> candidateDistractors = distractors.stream().filter(v -> !v.equalsIgnoreCase(randomPick.answer)).collect(Collectors.toList());
+				Collections.shuffle(candidateDistractors);
+				randomPick.setDistractors(candidateDistractors.subList(0, Constants.QUESTGEN_NUM_DISTRACTOR > candidateDistractors.size() ? candidateDistractors.size() : Constants.QUESTGEN_NUM_DISTRACTOR));
+				if (randomPick.distractors.size() < Constants.QUESTGEN_NUM_DISTRACTOR)
+					ServerLogger.get().warn("Question '" + randomPick.question + "' has only " + randomPick.distractors.size() + "/" + Constants.QUESTGEN_NUM_DISTRACTOR + " distractors!");
+
+				output.generatedQuestions.add(randomPick);
 			}
+		}
+	}
 
-			if (!questions.isEmpty()) {
-				List<GeneratedQuestion> existing = rankedQuestions.put(source, questions);
-				if (existing != null)
-					ServerLogger.get().warn("Multiple QuestGen tasks were spawned for sentence '" + source.toString() + "'. Overwriting old values");
-			}
-
-			queueQuestGenTask(j);
-			if (numQuestGenTasks == 0) {
-				// no more questgen tasks queued, collect generated questions and their distractors
-				Set<String> distractors = rankedQuestions.values().stream().flatMap(v -> v.stream().map(w -> w.answer)).collect(Collectors.toSet());
-				for (ParserAnnotations.Sentence sent : rankedSentenceAnnotations) {
-					if (output.generatedQuestions.size() >= input.numQuestions)
-						break;
-
-					questions = rankedQuestions.get(sent);
-					if (questions == null)
-						continue;
-
-					// randomly pick one of the generated questions for the sentence
-					// ### TODO rank the questions correctly and pick the top one
-					int numGeneratedQuestions = questions.size();
-					int randomIndex = ThreadLocalRandom.current().nextInt(0,
-							Constants.QUESTGEN_BESTQPOOL_SIZE > numGeneratedQuestions ? numGeneratedQuestions : Constants.QUESTGEN_BESTQPOOL_SIZE);
-					GeneratedQuestion randomPick = questions.get(randomIndex);
-
-					// randomly pick unique distractors from candidates collected from all generated sentences (with an answer)
-					List<String> candidateDistractors = distractors.stream().filter(v -> !v.equalsIgnoreCase(randomPick.answer)).collect(Collectors.toList());
-					Collections.shuffle(candidateDistractors);
-					randomPick.setDistractors(candidateDistractors.subList(0, Constants.QUESTGEN_NUM_DISTRACTOR > candidateDistractors.size() ? candidateDistractors.size() : Constants.QUESTGEN_NUM_DISTRACTOR));
-					if (randomPick.distractors.size() < Constants.QUESTGEN_NUM_DISTRACTOR)
-						ServerLogger.get().warn("Question '" + randomPick.question + "' has only " + randomPick.distractors.size() + "/" + Constants.QUESTGEN_NUM_DISTRACTOR + " distractors!");
-
-					output.generatedQuestions.add(randomPick);
-				}
-			}
-		});
+	private void initTaskSyncHandlers() {
+		taskLinker.addHandler(NerCorefParseTask.Result.class, this::onParseComplete);
+		taskLinker.addHandler(SentenceSelectionTask.Result.class, this::onSentenceSelectionComplete);
+		taskLinker.addHandler(QuestGenTask.Result.class, this::onQuestGenComplete);
 	}
 
 	private List<? extends SentenceSelector.SelectedSentence> rankedSentences;

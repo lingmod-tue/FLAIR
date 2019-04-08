@@ -43,12 +43,6 @@ class NerCorefAnnotation implements TypesafeMap.Key<NerCorefAnnotation> {
 		}
 
 		resolvedSentAnnotation = singletonList.get(0);
-		//		ServerLogger.get()
-		//				.trace("NerCorefAnnotation lazy-parsing result:")
-		//				.indent()
-		//					.trace("Original: " + originalSentAnnotation.toString())
-		//					.trace("Resolved: " + resolvedSentText)
-		//				.exdent();
 	}
 
 	NerCorefAnnotation(CoreMap originalSentAnnotation, String resolvedSentText, LazyParseHandler parseHandler) {

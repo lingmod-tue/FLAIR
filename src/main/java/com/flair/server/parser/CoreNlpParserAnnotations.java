@@ -10,6 +10,7 @@ import edu.stanford.nlp.util.CoreMap;
 import edu.stanford.nlp.util.Lazy;
 import edu.stanford.nlp.util.Pair;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,6 +37,13 @@ public class CoreNlpParserAnnotations implements ParserAnnotations {
 		public String lemma() {
 			if (source.lemma() == null)
 				return "";
+			else
+				return source.lemma();
+		}
+		@Override
+		public String lemmaOrWord() {
+			if (source.lemma() == null)
+				return source.word();
 			else
 				return source.lemma();
 		}
@@ -90,7 +98,7 @@ public class CoreNlpParserAnnotations implements ParserAnnotations {
 			return source.get(CoreAnnotations.TextAnnotation.class);
 		}
 		@Override
-		public Iterable<? extends ParserAnnotations.Token> tokens() {
+		public Collection<? extends ParserAnnotations.Token> tokens() {
 			return tokenCache.get();
 		}
 		@Override
@@ -119,7 +127,7 @@ public class CoreNlpParserAnnotations implements ParserAnnotations {
 	}
 
 	@Override
-	public Iterable<? extends ParserAnnotations.Sentence> sentences() {
+	public Collection<? extends ParserAnnotations.Sentence> sentences() {
 		return sentenceCache.get();
 	}
 

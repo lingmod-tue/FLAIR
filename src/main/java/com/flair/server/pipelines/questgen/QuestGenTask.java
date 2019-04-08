@@ -56,6 +56,8 @@ public class QuestGenTask implements AsyncTask<QuestGenTask.Result> {
 					continue;
 				else if (EnglishGrammaticalConstants.DEMONSTRATIVES.stream().anyMatch(e -> token.word().equalsIgnoreCase(e)))
 					continue;
+				else if (EnglishGrammaticalConstants.ARTICLES.stream().anyMatch(e -> token.word().equalsIgnoreCase(e)))
+					continue;
 			}
 
 			strippedHead = true;
@@ -98,8 +100,6 @@ public class QuestGenTask implements AsyncTask<QuestGenTask.Result> {
 
 			questionTransducer.setAvoidPronouns(qgParams.dropPronouns);
 			questionTransducer.setAvoidDemonstratives(qgParams.avoidDemonstratives);
-			initTransformer.setDoPronounNPC(qgParams.resolvePronounNPs);
-			initTransformer.setDoNonPronounNPC(qgParams.resolveNonPronounNPs);
 
 			List<Tree> inputTrees = Collections.singletonList(getQuestionTree());
 			List<Question> transformationOutput = initTransformer.transform(inputTrees);

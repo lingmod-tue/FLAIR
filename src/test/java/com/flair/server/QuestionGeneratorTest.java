@@ -41,8 +41,8 @@ public class QuestionGeneratorTest {
 	}
 
 	public static void main(String[] args) {
-		String query = "site:nytimes.com donald trump";
-		int numResults = 3;
+		String query = "jethro tull band wiki";
+		int numResults = 1;
 		Language lang = Language.ENGLISH;
 		String[] keywords = new String[]{
 			"keywords", "to", "highlight"

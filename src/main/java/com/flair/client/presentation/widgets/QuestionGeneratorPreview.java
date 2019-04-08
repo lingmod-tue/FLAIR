@@ -357,7 +357,7 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 	}
 
 	private void displayQuestions(List<QuestionDTO> questions) {
-		if (!generationInProgress) {
+		if (!generationInProgress && !mdlRootUI.isOpen()) {
 			// the preview modal is closed, do nothing
 			return;
 		}

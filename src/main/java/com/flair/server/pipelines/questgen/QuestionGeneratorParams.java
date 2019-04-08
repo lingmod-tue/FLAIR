@@ -10,8 +10,6 @@ class QuestionGeneratorParams {
 	boolean downweighFrequentWords;
 	boolean preferWHQuestions;
 	boolean onlyWHQuestions;
-	boolean resolveNonPronounNPs;
-	boolean resolvePronounNPs;
 	boolean doStemming;
 	String rankerModelPath;
 	QuestionKind type;
@@ -23,8 +21,6 @@ class QuestionGeneratorParams {
 		boolean downweighFrequentWords = true;
 		boolean preferWHQuestions = true;
 		boolean onlyWHQuestions = false;
-		boolean resolveNonPronounNPs = false;
-		boolean resolvePronounNPs = false;
 		boolean doStemming = true;
 		String rankerModelPath = ResourceLoader.path("linear-regression-ranker-reg500.ser.gz");
 		QuestionKind type = QuestionKind.READING_COMPREHENSION;
@@ -55,14 +51,6 @@ class QuestionGeneratorParams {
 			this.onlyWHQuestions = onlyWHQuestions;
 			return this;
 		}
-		public Builder resolveNonPronounNPs(boolean resolveNonPronounNPs) {
-			this.resolveNonPronounNPs = resolveNonPronounNPs;
-			return this;
-		}
-		public Builder resolvePronounNPs(boolean resolvePronounNPs) {
-			this.resolvePronounNPs = resolvePronounNPs;
-			return this;
-		}
 		public Builder doStemming(boolean doStemming) {
 			this.doStemming = doStemming;
 			return this;
@@ -82,10 +70,8 @@ class QuestionGeneratorParams {
 			QuestionGeneratorParams questionGeneratorParams = new QuestionGeneratorParams();
 			questionGeneratorParams.avoidDemonstratives = this.avoidDemonstratives;
 			questionGeneratorParams.doStemming = this.doStemming;
-			questionGeneratorParams.resolvePronounNPs = this.resolvePronounNPs;
 			questionGeneratorParams.type = this.type;
 			questionGeneratorParams.dropPronouns = this.dropPronouns;
-			questionGeneratorParams.resolveNonPronounNPs = this.resolveNonPronounNPs;
 			questionGeneratorParams.downweighPronouns = this.downweighPronouns;
 			questionGeneratorParams.preferWHQuestions = this.preferWHQuestions;
 			questionGeneratorParams.downweighFrequentWords = this.downweighFrequentWords;
