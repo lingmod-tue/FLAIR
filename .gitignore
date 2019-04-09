@@ -36,6 +36,8 @@ src/main/webapp/WEB-INF/lib/
 
 # IDEA
 .idea/
+.attach_*
+*.iml
 
 # Sekrit stuff
 BingSearchAgent.properties
