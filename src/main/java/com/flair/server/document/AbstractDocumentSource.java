@@ -24,6 +24,8 @@ public abstract class AbstractDocumentSource implements Comparable<AbstractDocum
 		input = input.trim().replaceAll("\\n{3,}", "\n\n")
 				.replaceAll("[\\u0020\\u00A0]", " ");
 
+		//	ServerLogger.get().info("INPUT:  " + input);
+
 		StringBuilder out = new StringBuilder();
 		Arrays.stream(input.split("\n")).forEach(e -> {
 			e = e.trim();
@@ -40,19 +42,30 @@ public abstract class AbstractDocumentSource implements Comparable<AbstractDocum
 			}
 		});
 
+		//	ServerLogger.get().info("FIRST PASS:  " + out.toString());
+
+
 		String recomposed = out.toString();
+		//	ServerLogger.get().info("RECOMPOSED:  " + recomposed);
+
 		if (customHandler != null)
 			recomposed = customHandler.preprocess(recomposed);
 
+		//	ServerLogger.get().info("CUSTOM HANDLER: " + recomposed);
+
+
 		recomposed = recomposed.replaceAll("\\.\\n\\.\\n", ".\n")
-				.replaceAll("\\. \\.\\n", "")
-				.replaceAll("\\n \\.\\n", "\n")
+				.replaceAll("\\.\\s\\.\\n", ".\n")
+				.replaceAll("\\n\\s\\.\\n", "\n")
 				.replaceAll("\\n\\.\\n", "\n")
-				.replaceAll(" {2,}", " ")
-				.replaceAll("\\.{2}", ", ")
-				.replaceAll(" , ", ", ")
-				.replaceAll(" \\. ", ". ")
+				.replaceAll("\\s{2,}", " ")
+				.replaceAll("\\s,\\s", ", ")
+				.replaceAll("\\s\\.\\s", ". ")
+				.replaceAll("\\s\\.\\n", ".\n")
 				.replaceAll("\\n{3,}", "\n\n");
+
+		//	ServerLogger.get().info("FINAL PREPROC RESULT: " + recomposed);
+
 		return recomposed;
 	}
 

@@ -15,7 +15,7 @@ public class InitialTransformationStep {
 		simplifier.setExtractFromVerbComplements(false);
 		simplifier.setBreakNPs(false);
 		doNonPronounNPC = false;
-		doPronounNPC = true;
+		doPronounNPC = false;
 
 	}
 

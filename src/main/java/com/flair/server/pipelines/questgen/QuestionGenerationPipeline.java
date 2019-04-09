@@ -65,10 +65,13 @@ public final class QuestionGenerationPipeline {
 		pipelineProps.put("ssplit.newlineIsSentenceBreak", "two");
 		pipelineProps.put("parse.originalDependencies", "true");
 		pipelineProps.put("parse.model", com.flair.server.parser.corenlp.Constants.ENGLISH_SR_PARSER_MODEL);
+		pipelineProps.put("ner.applyNumericClassifiers", "false");
 		pipelineProps.put("ner.applyFineGrained", "false");
+		pipelineProps.put("ner.useSUTime", "false");
+		pipelineProps.put("ner.buildEntityMentions", "true");
 		pipelineProps.put("coref.algorithm", "neural");
-		pipelineProps.put("coref.maxMentionDistance", "20");
-		pipelineProps.put("coref.maxMentionDistanceWithStringMatch", "200");
+		pipelineProps.put("coref.maxMentionDistance", Constants.COREF_MAX_MENTION_DISTANCE);
+		pipelineProps.put("coref.maxMentionDistanceWithStringMatch", Constants.COREF_MAX_MENTION_DISTANCE_STRING_MATCH);
 		StringBuilder stopwords = new StringBuilder();
 		StopwordsList.get(Language.ENGLISH).forEach(e -> stopwords.append(e).append(","));
 		pipelineProps.setProperty("customAnnotatorClass.stopword", "com.flair.server.parser.corenlp.StopwordAnnotator");

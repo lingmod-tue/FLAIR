@@ -3,6 +3,11 @@ package com.flair.server.pipelines.questgen;
 import java.util.concurrent.TimeUnit;
 
 class Constants {
+	static final int COREF_MAX_MENTION_DISTANCE = 20;
+	static final int COREF_MAX_MENTION_DISTANCE_STRING_MATCH = 50;
+	static final int COREF_MAX_REPRESENTATIVE_MENTION_TOKEN_COUNT = 5;
+	static final boolean COREF_ONLY_REPLACE_FIRST_MENTION_IN_SENTENCE = true;
+
 	static final int PARSE_TASK_THREADPOOL_SIZE = 50;
 	static final int SENTENCESEL_TASK_THREADPOOL_SIZE = 50;
 	static final int QUESTGEN_TASK_THREADPOOL_SIZE = 50;
@@ -12,9 +17,15 @@ class Constants {
 
 	static final int GENERATOR_MAX_GENERATED_TREE_LEAF_COUNT = 1000;
 
-	// how many of the generated questions should be considered when selecting the final question
+	// the pool of generated questions from which the final question for a given sentence is selected
 	static final int QUESTGEN_BESTQPOOL_SIZE = 5;
+	// percentage of input sentences from which to generate questions
+	// used to select distractors for the originally requested number of questions
+	static final double QUESTGEN_OVERGENERATION_PERCENTAGE = 0.75;
+	static final int QUESTGEN_NUM_DISTRACTORS = 3;
 
-	// used to determine the minimum number of questions to generate
-	static final int QUESTGEN_NUM_DISTRACTOR = 3;
+	// ratio of the number of tokens cooccuring in a higher-ranked sentence to the
+	// total number of tokens in the given sentence. if this ratio is higher than the
+	// one below, the sentence is dropped from the ranked list
+	static final double SENTENCESEL_DUPLICATE_COOCCURRENCE_THRESHOLD = 0.60;
 }

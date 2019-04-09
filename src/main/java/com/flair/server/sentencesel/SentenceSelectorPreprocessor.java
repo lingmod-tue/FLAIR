@@ -8,6 +8,7 @@ import com.flair.server.utilities.dictionary.WordNetDictionary;
 import com.flair.shared.grammar.Language;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /*
  * Performs various preprocessing tasks for sentence selectors
@@ -38,6 +39,13 @@ final class SentenceSelectorPreprocessor {
 
 	private boolean isLanguageSupported(Language lang) {
 		return languageSpecificData.get(lang) != null;
+	}
+
+	private long countIntersections(Set<?> set1, Set<?> set2) {
+		Set<?> larger = set1.size() > set2.size() ? set1 : set2;
+		Set<?> smaller = larger == set1 ? set2 : set1;
+
+		return smaller.stream().filter(larger::contains).count();
 	}
 
 	Collection<PreprocessedSentence> preprocess(AbstractDocument doc, SentenceSelectorParams params) {
@@ -95,6 +103,37 @@ final class SentenceSelectorPreprocessor {
 			}
 		} catch (Throwable e) {
 			ServerLogger.get().error(e, "Error while preprocessing document " + doc.toString());
+		}
+
+		return out;
+	}
+
+	List<SentenceSelector.SelectedSentence> dropDuplicates(List<? extends SentenceSelector.SelectedSentence> rankedSents,
+	                                                       double dropCooccurrentThreshold) {
+		List<SentenceSelector.SelectedSentence> out = new ArrayList<>();
+		for (int i = 0; i < rankedSents.size(); ++i) {
+			SentenceSelector.SelectedSentence currentSent = rankedSents.get(i);
+			Set<String> currentTokens = currentSent.annotation().tokens().stream()
+					.map(f -> f.lemmaOrWord().replaceAll("\\p{P}", "").trim().toLowerCase())
+					.filter(f -> !f.isEmpty())
+					.collect(Collectors.toSet());
+
+			boolean dropSentence = rankedSents
+					.subList(0, i)
+					.stream()
+					.map(e -> e.annotation().tokens().stream()
+							.map(f -> f.lemmaOrWord().replaceAll("\\p{P}", "").trim().toLowerCase())
+							.filter(f -> !f.isEmpty())
+							.collect(Collectors.toSet()))
+					.mapToDouble(e -> countIntersections(currentTokens, e) / (double) currentTokens.size())
+					.anyMatch(e -> e >= dropCooccurrentThreshold);
+
+			ServerLogger.get().exdent();
+
+			if (!dropSentence)
+				out.add(currentSent);
+			else
+				ServerLogger.get().trace("Dropping duplicate sentence '" + currentSent.annotation().text() + "' during selection");
 		}
 
 		return out;

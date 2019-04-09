@@ -37,11 +37,13 @@ public class SentenceSelectorTest {
 			AbstractDocument currentDoc = output.parsedDocs.get(i);
 			SentenceSelector.Builder builder = SentenceSelectorFactory.create(SentenceSelectorFactory.Type.TEXTRANK);
 
-			builder.similarityMeasure(SentenceSelector.SimilarityMeasure.COSINE)
+			builder.similarityMeasure(SentenceSelector.SimilarityMeasure.JACCARD_COEFFICIENT)
 					.granularity(SentenceSelector.Granularity.SENTENCE)
 					.ignoreStopwords(true)
 					.stemWords(true)
 					.useSynsets(false)
+					.dropDuplicates(true)
+					.duplicateCooccurrenceThreshold(0.6)
 					.mainDocument(currentDoc);
 
 			if (USE_CORPUS) {

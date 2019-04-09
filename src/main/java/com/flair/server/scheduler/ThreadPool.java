@@ -7,6 +7,7 @@ import org.threadly.concurrent.SubmitterExecutor;
 import org.threadly.concurrent.wrapper.limiter.SchedulerServiceLimiter;
 import org.threadly.concurrent.wrapper.traceability.ThreadRenamingSchedulerService;
 
+import java.lang.management.ManagementFactory;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
@@ -59,6 +60,11 @@ public class ThreadPool {
 		}
 	}
 
+	private boolean isDebuggerAttached() {
+		// not 100% fool-proof but does the job
+		return ManagementFactory.getRuntimeMXBean().getInputArguments().toString().indexOf("-agentlib:jdwp") > 0;
+	}
+
 	public Builder builder() {
 		return new Builder();
 	}
@@ -69,6 +75,12 @@ public class ThreadPool {
 		// unfortunately, Java currently provides no way to assign a timeout to a task on submission
 		// ### TODO rename the thread with the caller's name for the duration of the task
 		timeoutThreadPool.submit(task);
+		if (isDebuggerAttached()) {
+			// disable timeouts when debugging
+			timeout = 1000000;
+			unit = TimeUnit.DAYS;
+		}
+
 		return task.get(timeout, unit);
 	}
 

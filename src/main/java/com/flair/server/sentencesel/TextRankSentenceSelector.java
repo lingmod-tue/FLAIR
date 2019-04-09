@@ -11,17 +11,14 @@ import org.jgrapht.alg.scoring.PageRank;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /*
  * Implements the TextRank algorithm to select salient sentences
  */
 class TextRankSentenceSelector implements SentenceSelector {
-	private static final class Node implements SentenceSimilarityScorer.HasVector, SentenceSimilarityScorer.HasTerms {
+	private static final class Node implements SimilarityScorer.HasVector, SimilarityScorer.HasInvertedIndexTerms {
 		final SentenceSelectorPreprocessor.PreprocessedSentence source;
 		final SparseDoubleVector vector;
 
@@ -75,7 +72,7 @@ class TextRankSentenceSelector implements SentenceSelector {
 	private final SentenceSelectorParams params;
 	private final InvertedIndex<InvIdxTerm, InvIdxDocument> invertedIndex;
 	private final Graph<Node, DefaultWeightedEdge> graph;
-	private final List<RankedSentence> rankedOutput;
+	private List<RankedSentence> rankedOutput;
 	private boolean initialized;
 
 	private InvIdxDocument getBaseDocument(SentenceSelectorPreprocessor.PreprocessedSentence sent, SentenceSelectorParams params) {
@@ -127,7 +124,6 @@ class TextRankSentenceSelector implements SentenceSelector {
 				sent.terms.forEach(tok -> newNode.vector.set(invertedIndex.termId(tok), invertedIndex.termTfIdf(tok, getBaseDocument(sent, params), true)));
 				newNode.vector.normalize();
 				break;
-			case BM25:
 			default:
 				newNode = new Node(sent);
 				break;
@@ -136,7 +132,7 @@ class TextRankSentenceSelector implements SentenceSelector {
 		}).collect(Collectors.toList());
 
 		// generate sentence graph
-		SentenceSimilarityScorer scorer = new SentenceSimilarityScorer(invertedIndex);
+		SimilarityScorer scorer = new SimilarityScorer(invertedIndex);
 		for (List<Node> pair : new Combinator<>(nodes, 2)) {
 			Node first = pair.get(0), second = pair.get(1);
 			double similarityScore = 0;
@@ -146,6 +142,9 @@ class TextRankSentenceSelector implements SentenceSelector {
 				break;
 			case BM25:
 				similarityScore = scorer.bm25(first, second);
+				break;
+			case JACCARD_COEFFICIENT:
+				similarityScore = scorer.jaccardCoefficient(new HashSet<>(first.source.terms), new HashSet<>(second.source.terms));
 				break;
 			}
 
@@ -171,6 +170,12 @@ class TextRankSentenceSelector implements SentenceSelector {
 		PageRank<Node, DefaultWeightedEdge> pageRank = new PageRank<>(graph);
 		pageRank.getScores().forEach((n, s) -> rankedOutput.add(new RankedSentence(n.source, s)));
 		rankedOutput.sort(Comparator.comparingDouble(a -> -a.score));
+		if (params.dropDuplicates) {
+			rankedOutput = params.preprocessor.dropDuplicates(rankedOutput, params.duplicateCooccurrenceThreshold).stream()
+					.map(RankedSentence.class::cast)
+					.collect(Collectors.toList());
+		}
+
 		initialized = true;
 	}
 
@@ -183,7 +188,7 @@ class TextRankSentenceSelector implements SentenceSelector {
 	}
 
 	@Override
-	public Collection<? extends SelectedSentence> topK(int k) {
+	public List<? extends SelectedSentence> topK(int k) {
 		rank();
 		return rankedOutput.subList(0, rankedOutput.size() < k || k == -1 ? rankedOutput.size() : k);
 	}
@@ -214,6 +219,16 @@ class TextRankSentenceSelector implements SentenceSelector {
 		@Override
 		public SentenceSelector.Builder useSynsets(boolean val) {
 			params.useSynsets = val;
+			return this;
+		}
+		@Override
+		public SentenceSelector.Builder dropDuplicates(boolean val) {
+			params.dropDuplicates = val;
+			return this;
+		}
+		@Override
+		public SentenceSelector.Builder duplicateCooccurrenceThreshold(double val) {
+			params.duplicateCooccurrenceThreshold = val;
 			return this;
 		}
 		@Override
