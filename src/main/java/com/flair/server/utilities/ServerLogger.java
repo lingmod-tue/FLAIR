@@ -12,22 +12,31 @@ import java.io.StringWriter;
  * Thread-safe logger for server code
  */
 public final class ServerLogger extends AbstractDebugLogger {
-	private static final ServerLogger SINGLETON = new ServerLogger();
+	private static ServerLogger SINGLETON = null;
+
+	public static ServerLogger get() {
+		if (SINGLETON == null) {
+			synchronized (ServerLogger.class) {
+				if (SINGLETON == null)
+					SINGLETON = new ServerLogger();
+			}
+		}
+
+		return SINGLETON;
+	}
 
 	private final Logger pipeline;
+	private int indentLevel;
 	private boolean callerDecorator;
 
 	private ServerLogger() {
 		super("FLAIR-Log");
 		this.pipeline = LoggerFactory.getLogger(loggerName);
+		this.indentLevel = 0;
 		this.callerDecorator = false;
 	}
 
-	public static ServerLogger get() {
-		return SINGLETON;
-	}
-
-	public void callerDecorator(boolean state) { callerDecorator = state; }
+	public synchronized void callerDecorator(boolean state) { callerDecorator = state; }
 
 	private String prettyPrintCaller() {
 		StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
@@ -70,6 +79,19 @@ public final class ServerLogger extends AbstractDebugLogger {
 		ex.printStackTrace(new PrintWriter(sw));
 		error(message);
 		error("Stacktrace: " + sw.toString());
+		return this;
+	}
+
+	public synchronized AbstractDebugLogger indent() {
+		indentLevel++;
+		return this;
+	}
+
+	public synchronized AbstractDebugLogger exdent() {
+		indentLevel--;
+		if (indentLevel < 0)
+			indentLevel = 0;
+
 		return this;
 	}
 }

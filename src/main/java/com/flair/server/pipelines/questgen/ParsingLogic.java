@@ -69,7 +69,7 @@ class ParsingLogic {
 		// <Entity Mention>
 		representativeMentionPatterns.add(TokenSequencePattern.compile("^([!{ner:O}]+)$"));
 		// [DT] NN* <Entity Mention>
-		representativeMentionPatterns.add(TokenSequencePattern.compile("[{tag:DT}]? [{tag:/NN.?/}]*? ([!{ner:O}]+)"));
+		representativeMentionPatterns.add(TokenSequencePattern.compile("[{tag:DT}]? ([{tag:/NN.?/}]*? [!{ner:O}]+ [{tag:/NN.?/}]*)"));
 		// <Entity Mention> CC <Entity Mention>
 		representativeMentionPatterns.add(TokenSequencePattern.compile("([!{ner:O}]+ [{tag:/CC/}]{1} [!{ner:O}]{1,})"));
 		// <Entity Mention>, ...
@@ -85,9 +85,9 @@ class ParsingLogic {
 		// DT [JJ*] NN* [VB*] NN*
 		representativeMentionPatterns.add(TokenSequencePattern.compile("[{tag:DT}] [{tag:/JJ.?/}]* ([{tag:/NN.?/}]+ [{tag:/VB.?/}]? [{tag:/NN.?/}]+)"));
 		// DT NN*
-		representativeMentionPatterns.add(TokenSequencePattern.compile("^([{tag:DT}] [{tag:/NN.?|POS/}]+)"));
+		//	representativeMentionPatterns.add(TokenSequencePattern.compile("^([{tag:DT}] [{tag:/NN.?|POS/}]+)"));
 		// NN*
-		representativeMentionPatterns.add(TokenSequencePattern.compile("^([{tag:/NN.?|POS/}]+) [!{tag:/NN.?/}]"));
+		//	representativeMentionPatterns.add(TokenSequencePattern.compile("^([{tag:/NN.?|POS/}]+) [!{tag:/NN.?/}]"));
 	}
 
 	private String extractRepresentativeMention(CorefChain.CorefMention mention, List<CoreMap> sentences) {
@@ -133,7 +133,7 @@ class ParsingLogic {
 
 		if ((foundMatch && matchedNodes.size() > Constants.COREF_MAX_REPRESENTATIVE_MENTION_TOKEN_COUNT) ||
 				(!foundMatch && mentionTokens.size() > Constants.COREF_MAX_REPRESENTATIVE_MENTION_TOKEN_COUNT)) {
-			ServerLogger.get().warn("Mention is too long!").exdent();
+			ServerLogger.get().warn("Mention '" + mention.mentionSpan + "' is too long!").exdent();
 			return "";
 		}
 
@@ -148,9 +148,6 @@ class ParsingLogic {
 		}
 
 		String extractedSubject = sb.toString().trim();
-		if (!extractedSubject.isEmpty())
-			extractedSubject = Character.toUpperCase(extractedSubject.charAt(0)) + extractedSubject.substring(1);
-
 		if (!extractedSubject.isEmpty())
 			ServerLogger.get().trace("Representative mention: " + extractedSubject);
 		if (!matchedPatternString.isEmpty())
@@ -168,7 +165,10 @@ class ParsingLogic {
 		List<CorefReplacementSpan> replacementData = sentencesToResolve.computeIfAbsent(corefSentence, e -> new HashMap<>())
 				.computeIfAbsent(representativeMention, e -> new ArrayList<>());
 
-		if (Constants.COREF_ONLY_REPLACE_FIRST_MENTION_IN_SENTENCE && replacementData.size() > 0) {
+		if (representativeMention.sentNum == nonRepresentativeMention.sentNum)
+			// don't replace any secondary mentions in the same sentence as the primary
+			return;
+		else if (Constants.COREF_ONLY_REPLACE_FIRST_MENTION_IN_SENTENCE && replacementData.size() > 0) {
 			ServerLogger.get().trace("Mention '" + replacement + "' has already been replaced in sentence " + nonRepresentativeMention.sentNum);
 			return;
 		}
@@ -177,6 +177,10 @@ class ParsingLogic {
 		int sentBegin = corefSentence.get(CoreAnnotations.CharacterOffsetBeginAnnotation.class);
 
 		CorefReplacementSpan span = new CorefReplacementSpan();
+		if (nonRepresentativeMention.startIndex == 1 && !replacement.isEmpty())
+			// capitalize the first letter if at the beginning of a sentence
+			replacement = Character.toUpperCase(replacement.charAt(0)) + replacement.substring(1);
+
 		span.replacement = replacement;
 
 		if (nonRepresentativeMention.startIndex == nonRepresentativeMention.endIndex - 1) {

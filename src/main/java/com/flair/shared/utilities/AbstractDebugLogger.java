@@ -5,11 +5,9 @@ package com.flair.shared.utilities;
  */
 public abstract class AbstractDebugLogger {
 	protected final String loggerName;
-	protected int indentLevel;
 
 	protected AbstractDebugLogger(String name) {
 		this.loggerName = name;
-		this.indentLevel = 0;
 	}
 
 	protected enum Channel {
@@ -43,16 +41,6 @@ public abstract class AbstractDebugLogger {
 		return this;
 	}
 
-	public AbstractDebugLogger indent() {
-		indentLevel++;
-		return this;
-	}
-
-	public AbstractDebugLogger exdent() {
-		indentLevel--;
-		if (indentLevel < 0)
-			indentLevel = 0;
-
-		return this;
-	}
+	abstract public AbstractDebugLogger indent();
+	abstract public AbstractDebugLogger exdent();
 }

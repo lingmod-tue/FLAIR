@@ -12,10 +12,12 @@ public final class ClientLogger extends AbstractDebugLogger {
 	private static final ClientLogger SINGLETON = new ClientLogger();
 
 	private final Logger pipeline;
+	private int indentLevel;
 
 	public ClientLogger() {
 		super("FLAIR-ClientLogger");
 		this.pipeline = Logger.getLogger(loggerName);
+		this.indentLevel = 0;
 	}
 
 	public static ClientLogger get() {
@@ -44,5 +46,18 @@ public final class ClientLogger extends AbstractDebugLogger {
 		case INFO:
 			pipeline.log(Level.INFO, builder.toString());
 		}
+	}
+
+	public AbstractDebugLogger indent() {
+		indentLevel++;
+		return this;
+	}
+
+	public AbstractDebugLogger exdent() {
+		indentLevel--;
+		if (indentLevel < 0)
+			indentLevel = 0;
+
+		return this;
 	}
 }

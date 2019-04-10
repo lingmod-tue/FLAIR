@@ -5,6 +5,7 @@ import org.threadly.concurrent.PriorityScheduler;
 import org.threadly.concurrent.SchedulerService;
 import org.threadly.concurrent.SubmitterExecutor;
 import org.threadly.concurrent.wrapper.limiter.SchedulerServiceLimiter;
+import org.threadly.concurrent.wrapper.traceability.ThreadRenamingRunnable;
 import org.threadly.concurrent.wrapper.traceability.ThreadRenamingSchedulerService;
 
 import java.lang.management.ManagementFactory;
@@ -73,8 +74,8 @@ public class ThreadPool {
 			throws InterruptedException, ExecutionException, TimeoutException {
 		// a rather wasteful way of implementing timeouts for executing tasks
 		// unfortunately, Java currently provides no way to assign a timeout to a task on submission
-		// ### TODO rename the thread with the caller's name for the duration of the task
-		timeoutThreadPool.submit(task);
+		String callingThreadName = Thread.currentThread().getName();
+		timeoutThreadPool.submit(new ThreadRenamingRunnable(task, callingThreadName, true));
 		if (isDebuggerAttached()) {
 			// disable timeouts when debugging
 			timeout = 1000000;

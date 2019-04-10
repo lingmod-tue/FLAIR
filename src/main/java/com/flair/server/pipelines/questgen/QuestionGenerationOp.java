@@ -174,6 +174,10 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 			}
 
 			output.generatedQuestions.add(randomPick);
+			ServerLogger.get().info("Question Selection:").indent()
+					.info("Sentence: " + randomPick.sourceSentence)
+					.info("Question: " + randomPick.question)
+					.info("Answer: " + randomPick.answer).exdent();
 		}
 	}
 

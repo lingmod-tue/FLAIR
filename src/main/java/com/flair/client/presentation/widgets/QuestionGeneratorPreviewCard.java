@@ -70,7 +70,7 @@ public class QuestionGeneratorPreviewCard extends LocalizedComposite {
 			MaterialButton button = buttons.get(i);
 			String answer = preprocessedOptions.get(i);
 
-			if (answer.length() == MAX_OPTION_LENGTH + 4 /* elipses */)
+			if (answer.length() == MAX_OPTION_LENGTH + 3 /* elipses */)
 				button.setTooltip(originalOptions.get(i));
 
 			button.setText(preprocessedOptions.get(i));
