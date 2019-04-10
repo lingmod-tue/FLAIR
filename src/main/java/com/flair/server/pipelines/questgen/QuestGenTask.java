@@ -31,32 +31,97 @@ public class QuestGenTask implements AsyncTask<QuestGenTask.Result> {
 		this.qgParams = qgParams;
 	}
 
+	private boolean tokenRegionMatches(List<CoreLabel> lhs, int toffset, List<CoreLabel> rhs, int ooffset, int len) {
+		// copy of String.regionMatches
+		int to = toffset;
+		int po = ooffset;
+		// Note: toffset, ooffset, or len might be near -1>>>1.
+		if ((ooffset < 0) || (toffset < 0)
+				|| (toffset > (long) lhs.size() - len)
+				|| (ooffset > (long) rhs.size() - len)) {
+			return false;
+		}
+
+		while (len-- > 0) {
+			CoreLabel t1 = lhs.get(to++);
+			CoreLabel t2 = rhs.get(po++);
+
+			String w1 = t1.word();
+			String w2 = t2.word();
+			if (!w1.equals(w2))
+				return false;
+		}
+
+		return true;
+	}
+
+	private List<String> longestCommonTokenSequence(List<CoreLabel> lhs, List<CoreLabel> rhs) {
+		List<CoreLabel> lcs = new ArrayList<>();
+		if (lhs.isEmpty() || rhs.isEmpty())
+			return new ArrayList<>();
+		else if (lhs.size() > rhs.size())
+			return longestCommonTokenSequence(rhs, lhs);
+
+		for (int ai = 0; ai < lhs.size(); ai++) {
+			for (int len = lhs.size() - ai; len > 0; len--) {
+				for (int bi = 0; bi < rhs.size() - len; bi++) {
+					if (tokenRegionMatches(lhs, ai, rhs, bi, len) && len > lcs.size())
+						lcs = lhs.subList(ai, ai + len);
+				}
+			}
+		}
+
+		if (lcs.isEmpty())
+			return new ArrayList<>();
+		else
+			return lcs.stream().map(CoreLabel::word).collect(Collectors.toList());
+	}
+
 	private GeneratedQuestion postProcess(Question q) {
-		/*
-		Clean up answers:
-			> Remove substrings that are found in the question
-	 */
 		Tree questionTree = q.getTree();
 		Tree answerTree = q.getAnswerPhraseTree();
 
 		String questionString = AnalysisUtilities.getCleanedUpYield(questionTree);
+		String answerString = AnalysisUtilities.getCleanedUpYield(answerTree);
 		StringBuilder answerBuilder = new StringBuilder();
+
+		List<CoreLabel> questionTokens = questionTree.yield().stream().map(CoreLabel.class::cast).collect(Collectors.toList());
 		List<CoreLabel> answerTokens = answerTree.yield().stream().map(CoreLabel.class::cast).collect(Collectors.toList());
 
+		if (Constants.QUESTGEN_REMOVE_QUESTION_COMMON_TOKEN_SEQUENCE_FROM_ANSWER) {
+			// remove common token sequences from the answer string
+			List<String> commonTokens = longestCommonTokenSequence(questionTokens, answerTokens);
+			String lcs = String.join(" ", commonTokens);
+			if (commonTokens.size() > Constants.QUESTGEN_MIN_QUESTION_COMMON_TOKEN_SEQUENCE_LENGTH) {
+				int subseqIndex = Collections.indexOfSubList(answerTokens.stream().map(CoreLabel::word).collect(Collectors.toList()), commonTokens);
+
+				if (subseqIndex == -1)
+					ServerLogger.get().warn("Question substring '" + lcs + "' unexpectedly missing in answer string '" + answerString + "' (question: " + questionString + ")");
+				else {
+					List<CoreLabel> substringFreeAnswerTokens = new ArrayList<>(answerTokens.subList(0, subseqIndex));
+					substringFreeAnswerTokens.addAll(answerTokens.subList(subseqIndex + commonTokens.size(), answerTokens.size()));
+					answerTokens = substringFreeAnswerTokens;
+
+					ServerLogger.get().trace("Removed question substring '" + lcs + "' from answer string '" + answerString + "' (question: " + questionString + ")");
+				}
+			}
+		}
+
 		boolean strippedHead = false;
-		for (int i = 0; i < answerTokens.size(); ++i) {
-			CoreLabel token = answerTokens.get(i);
+		for (CoreLabel token : answerTokens) {
 			// strip common prepositions, demonstratives and pronouns from the head
 			if (!strippedHead) {
-				if (EnglishGrammaticalConstants.OBJECTIVE_PRONOUNS.stream().anyMatch(e -> token.word().equalsIgnoreCase(e)))
+				if (EnglishGrammaticalConstants.OBJECTIVE_PRONOUNS.contains(token.word().toLowerCase()))
 					continue;
-				else if (EnglishGrammaticalConstants.SIMPLE_PREPOSITIONS.stream().anyMatch(e -> token.word().equalsIgnoreCase(e)))
+				else if (EnglishGrammaticalConstants.SUBJECTIVE_PRONOUNS.contains(token.word().toLowerCase()))
 					continue;
-				else if (EnglishGrammaticalConstants.RELATIVE_PRONOUNS.stream().anyMatch(e -> token.word().equalsIgnoreCase(e)))
+				else if (EnglishGrammaticalConstants.SIMPLE_PREPOSITIONS.contains(token.word().toLowerCase()))
 					continue;
-				else if (EnglishGrammaticalConstants.DEMONSTRATIVES.stream().anyMatch(e -> token.word().equalsIgnoreCase(e)))
+				else if (EnglishGrammaticalConstants.RELATIVE_PRONOUNS.contains(token.word().toLowerCase()))
 					continue;
-				else if (EnglishGrammaticalConstants.ARTICLES.stream().anyMatch(e -> token.word().equalsIgnoreCase(e)))
+				else if (EnglishGrammaticalConstants.DEMONSTRATIVES.contains(token.word().toLowerCase()))
+					continue;
+				else if (EnglishGrammaticalConstants.ARTICLES.contains(token.word().toLowerCase()))
 					continue;
 			}
 
@@ -64,7 +129,7 @@ public class QuestGenTask implements AsyncTask<QuestGenTask.Result> {
 			answerBuilder.append(token.word()).append(" ");
 		}
 
-		String answerString = AnalysisUtilities.cleanUpSentenceString(answerBuilder.toString().trim());
+		answerString = AnalysisUtilities.cleanUpSentenceString(answerBuilder.toString().trim());
 		if (!answerString.isEmpty() && Character.isLowerCase(answerString.codePointAt(0)))
 			answerString = answerString.substring(0, 1).toUpperCase() + answerString.substring(1);
 

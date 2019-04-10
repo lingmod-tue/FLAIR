@@ -138,6 +138,9 @@ public final class QuestionGenerationPipeline {
 
 			// create a copy of the source doc for the NER/Coref parsing
 			AbstractDocument newDoc = docFactory.create(sourceDoc.getDocumentSource());
+			newDoc.setNumSentences(sourceDoc.getNumSentences());
+			newDoc.setNumWords(sourceDoc.getNumWords());
+
 			QuestionGenerationOp.Input input = new QuestionGenerationOp.Input(newDoc,
 					ParsingStrategy.factory().create(new ParsingStrategy.ParserInput(newDoc)),
 					nerCorefParser.get(),

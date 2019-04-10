@@ -36,7 +36,7 @@ public class QuestionGeneratorTest {
 					.indent()
 					.info("Question: '" + gq.question + "'")
 					.info("Answer: '" + gq.answer + "'")
-					.info("Answer Tree: '" + gq.answerTree.toString() + "'")
+					//		.info("Answer Tree: '" + gq.answerTree.toString() + "'")
 					.exdent();
 		}
 

@@ -111,7 +111,7 @@ public class Document implements AbstractDocument {
 
 	@Override
 	public String getDescription() {
-		return "{" + source.getDescription() + " | S[" + numSentences + "], C[" + numCharacters + "]" + "}";
+		return "{" + source.getDescription() + " | S[" + numSentences + "], W[" + numWords + "]" + "}";
 	}
 
 	@Override
