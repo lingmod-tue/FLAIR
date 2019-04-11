@@ -68,8 +68,10 @@ class ParsingLogic {
 		representativeMentionPatterns = new ArrayList<>();
 		// <Entity Mention>
 		representativeMentionPatterns.add(TokenSequencePattern.compile("^([!{ner:O}]+)$"));
-		// [DT] NN* <Entity Mention>
-		representativeMentionPatterns.add(TokenSequencePattern.compile("[{tag:DT}]? ([{tag:/NN.?/}]*? [!{ner:O}]+ [{tag:/NN.?/}]*)"));
+		// NN* ['s] [JJ]* [NN]* <Entity Mention>
+		representativeMentionPatterns.add(TokenSequencePattern.compile("[{tag:/NN.?/}] [{tag:POS}]? [{tag:JJ}]* [{tag:/NN.?/}]*? ([!{ner:O}]+)"));
+		// [DT] [JJ]* NN* <Entity Mention>
+		representativeMentionPatterns.add(TokenSequencePattern.compile("[{tag:DT}]? [{tag:JJ}]* ([{tag:/NN.?/}]*? [!{ner:O}]+ [{tag:/NN.?/}]*)"));
 		// <Entity Mention> CC <Entity Mention>
 		representativeMentionPatterns.add(TokenSequencePattern.compile("([!{ner:O}]+ [{tag:/CC/}]{1} [!{ner:O}]{1,})"));
 		// <Entity Mention>, ...
@@ -84,10 +86,6 @@ class ParsingLogic {
 		representativeMentionPatterns.add(TokenSequencePattern.compile("[]*? ([!{ner:O}]+)$"));
 		// DT [JJ*] NN* [VB*] NN*
 		representativeMentionPatterns.add(TokenSequencePattern.compile("[{tag:DT}] [{tag:/JJ.?/}]* ([{tag:/NN.?/}]+ [{tag:/VB.?/}]? [{tag:/NN.?/}]+)"));
-		// DT NN*
-		//	representativeMentionPatterns.add(TokenSequencePattern.compile("^([{tag:DT}] [{tag:/NN.?|POS/}]+)"));
-		// NN*
-		//	representativeMentionPatterns.add(TokenSequencePattern.compile("^([{tag:/NN.?|POS/}]+) [!{tag:/NN.?/}]"));
 	}
 
 	private String extractRepresentativeMention(CorefChain.CorefMention mention, List<CoreMap> sentences) {
@@ -266,24 +264,33 @@ class ParsingLogic {
 		Map<Integer, CorefChain> corefs = docAnnotation.get(CorefCoreAnnotations.CorefChainAnnotation.class)
 				.entrySet().stream().filter((e) -> e.getValue().getMentionsInTextualOrder().size() > 1)
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue));
-		Map<CoreMap, Map<CorefChain.CorefMention, List<CorefReplacementSpan>>> modifiedSentences = new HashMap<>();     // sent -> mention -> replacements
+
+		// maps sentences -> representative mention -> secondary mention replacements
+		Map<CoreMap, Map<CorefChain.CorefMention, List<CorefReplacementSpan>>> modifiedSentences = new HashMap<>();
+		Set<CorefChain.CorefMention> representativeMentions = corefs.values().stream().map(CorefChain::getRepresentativeMention).collect(Collectors.toSet());
 
 		ServerLogger.get().trace("Coref chains = " + corefs.size());
 		for (CorefChain coref : corefs.values()) {
-			CorefChain.CorefMention mostRepresentative = coref.getRepresentativeMention();
-			String mostRepresentativeString = extractRepresentativeMention(mostRepresentative, sentences).trim()
+			CorefChain.CorefMention representative = coref.getRepresentativeMention();
+			String representativeString = extractRepresentativeMention(representative, sentences).trim()
 					.replaceAll("(^((\\p{Punct}|\\s)*\\b))|(\\b(\\p{Punct}|\\s)*$)", "");   // leading and trailing punctuation/whitespace
 
-			if (mostRepresentativeString.isEmpty())
+			if (representativeString.isEmpty())
 				continue;
-			else if (mentionBlacklist.contains(mostRepresentativeString.toLowerCase()))
+			else if (mentionBlacklist.contains(representativeString.toLowerCase()))
 				continue;
 
 			List<CorefChain.CorefMention> corefMentions = coref.getMentionsInTextualOrder();
 			ServerLogger.get().trace("Secondary mentions: " + corefMentions.size());
 			for (CorefChain.CorefMention mention : corefMentions) {
-				if (mention != mostRepresentative)
-					collateCorefReplacements(mention, mostRepresentative, mostRepresentativeString, sentences, modifiedSentences);
+				if (mention == representative)
+					continue;
+				else if (representativeMentions.contains(mention)) {
+					ServerLogger.get().warn("Secondary mention '" + mention.mentionSpan + "' is actually a primary mention");
+					continue;
+				}
+
+				collateCorefReplacements(mention, representative, representativeString, sentences, modifiedSentences);
 			}
 		}
 

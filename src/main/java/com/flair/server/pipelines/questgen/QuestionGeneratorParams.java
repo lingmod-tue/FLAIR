@@ -11,6 +11,7 @@ class QuestionGeneratorParams {
 	boolean preferWHQuestions;
 	boolean onlyWHQuestions;
 	boolean doStemming;
+	boolean avoidSimpleQuestions;   // of the form "W* VB* *?"
 	String rankerModelPath;
 	QuestionKind type;
 
@@ -22,6 +23,7 @@ class QuestionGeneratorParams {
 		boolean preferWHQuestions = true;
 		boolean onlyWHQuestions = false;
 		boolean doStemming = true;
+		boolean avoidSimpleQuestions = true;
 		String rankerModelPath = ResourceLoader.path("linear-regression-ranker-reg500.ser.gz");
 		QuestionKind type = QuestionKind.READING_COMPREHENSION;
 
@@ -55,6 +57,10 @@ class QuestionGeneratorParams {
 			this.doStemming = doStemming;
 			return this;
 		}
+		public Builder avoidSimpleQuestions(boolean avoidSimpleQuestions) {
+			this.avoidSimpleQuestions = avoidSimpleQuestions;
+			return this;
+		}
 		public Builder rankerModelPath(String rankerModelPath) {
 			this.rankerModelPath = rankerModelPath;
 			return this;
@@ -76,6 +82,7 @@ class QuestionGeneratorParams {
 			questionGeneratorParams.preferWHQuestions = this.preferWHQuestions;
 			questionGeneratorParams.downweighFrequentWords = this.downweighFrequentWords;
 			questionGeneratorParams.onlyWHQuestions = this.onlyWHQuestions;
+			questionGeneratorParams.avoidSimpleQuestions = this.avoidSimpleQuestions;
 			questionGeneratorParams.rankerModelPath = this.rankerModelPath;
 			return questionGeneratorParams;
 		}

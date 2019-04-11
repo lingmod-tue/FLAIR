@@ -139,6 +139,7 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 				continue;
 
 			// randomly pick one of the generated questions for the sentence
+			// using the ranking scores is not desirable given the preponderance of What-questions that top the ranking
 			// ### TODO can we do better here?
 			int numGeneratedQuestions = questions.size();
 			int randomIndex = ThreadLocalRandom.current().nextInt(0,

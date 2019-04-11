@@ -11,6 +11,7 @@ import edu.cmu.ark.Question;
 import edu.cmu.ark.QuestionRanker;
 import edu.cmu.ark.QuestionTransducer;
 import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.ling.tokensregex.TokenSequencePattern;
 import edu.stanford.nlp.trees.Tree;
 
 import java.util.ArrayList;
@@ -25,10 +26,12 @@ public class QuestGenTask implements AsyncTask<QuestGenTask.Result> {
 
 	private final ParserAnnotations.Sentence sourceSentence;
 	private final QuestionGeneratorParams qgParams;
+	private final TokenSequencePattern simpleQuestionPattern;
 
 	private QuestGenTask(ParserAnnotations.Sentence sourceSentence, QuestionGeneratorParams qgParams) {
 		this.sourceSentence = sourceSentence;
 		this.qgParams = qgParams;
+		this.simpleQuestionPattern = TokenSequencePattern.compile("^[{tag:/W.?.?/}] [{tag:/VB.?/}] [] [{tag:/\\./}]$");
 	}
 
 	private boolean tokenRegionMatches(List<CoreLabel> lhs, int toffset, List<CoreLabel> rhs, int ooffset, int len) {
@@ -77,7 +80,7 @@ public class QuestGenTask implements AsyncTask<QuestGenTask.Result> {
 			return lcs.stream().map(CoreLabel::word).collect(Collectors.toList());
 	}
 
-	private GeneratedQuestion postProcess(Question q) {
+	private GeneratedQuestion validateAndPostprocess(Question q) {
 		Tree questionTree = q.getTree();
 		Tree answerTree = q.getAnswerPhraseTree();
 
@@ -87,6 +90,15 @@ public class QuestGenTask implements AsyncTask<QuestGenTask.Result> {
 
 		List<CoreLabel> questionTokens = questionTree.yield().stream().map(CoreLabel.class::cast).collect(Collectors.toList());
 		List<CoreLabel> answerTokens = answerTree.yield().stream().map(CoreLabel.class::cast).collect(Collectors.toList());
+
+		if (questionTree.getLeaves().size() > Constants.GENERATOR_MAX_GENERATED_TREE_LEAF_COUNT)
+			return null;
+		else if (qgParams.onlyWHQuestions && q.getFeatureValue("whQuestion") != 1.0)
+			return null;
+		else if (qgParams.avoidSimpleQuestions && simpleQuestionPattern.getMatcher(questionTokens).matches()) {
+			ServerLogger.get().trace("Skipped simple question '" + questionString + "'");
+			return null;
+		}
 
 		if (Constants.QUESTGEN_REMOVE_QUESTION_COMMON_TOKEN_SEQUENCE_FROM_ANSWER) {
 			// remove common token sequences from the answer string
@@ -121,8 +133,6 @@ public class QuestGenTask implements AsyncTask<QuestGenTask.Result> {
 					continue;
 				else if (EnglishGrammaticalConstants.DEMONSTRATIVES.contains(token.word().toLowerCase()))
 					continue;
-				else if (EnglishGrammaticalConstants.ARTICLES.contains(token.word().toLowerCase()))
-					continue;
 			}
 
 			strippedHead = true;
@@ -132,6 +142,10 @@ public class QuestGenTask implements AsyncTask<QuestGenTask.Result> {
 		answerString = AnalysisUtilities.cleanUpSentenceString(answerBuilder.toString().trim());
 		if (!answerString.isEmpty() && Character.isLowerCase(answerString.codePointAt(0)))
 			answerString = answerString.substring(0, 1).toUpperCase() + answerString.substring(1);
+
+		// fix mangled quotes
+		questionString = questionString.replaceAll("``", "\"").replaceAll("''", "\"");
+		answerString = answerString.replaceAll("``", "\"").replaceAll("''", "\"");
 
 		NerCorefAnnotation corefAnnotation = sourceSentence.data(CoreNlpParserAnnotations.Sentence.class).coreMap().get(NerCorefAnnotation.class);
 		return new GeneratedQuestion(qgParams.type,
@@ -189,12 +203,6 @@ public class QuestGenTask implements AsyncTask<QuestGenTask.Result> {
 			}
 
 			for (Question question : outputQuestionList) {
-				if (question.getTree().getLeaves().size() > Constants.GENERATOR_MAX_GENERATED_TREE_LEAF_COUNT)
-					continue;
-
-				if (qgParams.onlyWHQuestions && question.getFeatureValue("whQuestion") != 1.0)
-					continue;
-
 				Tree questionTree = question.getTree();
 				Tree answerTree = question.getAnswerPhraseTree();
 
@@ -206,7 +214,9 @@ public class QuestGenTask implements AsyncTask<QuestGenTask.Result> {
 					continue;
 				}
 
-				out.generated.add(postProcess(question));
+				GeneratedQuestion gq = validateAndPostprocess(question);
+				if (gq != null)
+					out.generated.add(gq);
 			}
 		} catch (Throwable ex) {
 			ServerLogger.get().error(ex, "Question generation task encountered an error. Exception: " + ex.toString());
