@@ -126,6 +126,7 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 			return;
 		}
 
+		// ### TODO make handlers return false on failure
 		if (uploadInProgress && completeHandler != null)
 			completeHandler.handle(numUploaded, success);
 

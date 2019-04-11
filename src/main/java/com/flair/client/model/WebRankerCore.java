@@ -1678,6 +1678,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 					notification.notify(getLocalizedString(LocalizationTags.SERVER_ERROR.toString()));
 					presenter.showLoaderOverlay(false);
 
+					// ### TODO this does not work, need to check the contents of the wrapping expression
 					if (e instanceof InvalidAuthTokenException)
 						ClientEndPoint.get().fatalServerError();
 				}));

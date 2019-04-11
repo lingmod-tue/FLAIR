@@ -4,7 +4,7 @@
               http://java.sun.com/xml/ns/javaee/web-app_3.1.xsd"
 	version="2.5" xmlns="http://java.sun.com/xml/ns/javaee">
 
-	<display-name>FLAIR 2.0</display-name>
+	<display-name>FLAIR 2.1</display-name>
 
 	<!-- Filters -->
 	<filter>
