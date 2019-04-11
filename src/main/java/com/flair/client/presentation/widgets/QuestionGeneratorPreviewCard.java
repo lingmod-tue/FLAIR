@@ -52,6 +52,7 @@ public class QuestionGeneratorPreviewCard extends LocalizedComposite {
 	public QuestionGeneratorPreviewCard(String question, String[] options) {
 		initWidget(uiBinder.createAndBindUi(this));
 		initLocale(localeBinder.bind(this));
+		// ### TODO show visual feedback for correct and wrong answers
 
 		if (options.length != 4)
 			throw new RuntimeException("Unexpected number of options received");
