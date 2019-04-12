@@ -40,7 +40,7 @@ public class BasicLocalizationProvider implements LocalizationProvider {
 			e = new Entry();
 			data.put(tag, e);
 		} else if (e.containsKey(lang))
-			throw new RuntimeException("Localized string already exists for tag '" + tag + "' in langauge '" + lang + "'");
+			throw new RuntimeException("Localized string already exists for tag '" + tag + "' in language '" + lang + "'");
 
 		e.put(lang, localizedStr);
 	}
@@ -51,7 +51,7 @@ public class BasicLocalizationProvider implements LocalizationProvider {
 		if (e != null && e.containsKey(lang))
 			return e.get(lang);
 		else {
-			ClientLogger.get().error(new RuntimeException("Localization error"), "No localized string for tag '" + tag + "' in langauge '" + lang + "'");
+			ClientLogger.get().error(new RuntimeException("Localization error"), "No localized string for tag '" + tag + "' in language '" + lang + "'");
 			return PLACEHOLDER_STRING;
 		}
 	}
