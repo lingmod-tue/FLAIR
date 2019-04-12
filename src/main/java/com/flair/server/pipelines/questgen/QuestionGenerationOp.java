@@ -15,6 +15,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input, QuestionGenerationOp.Output> {
+	public interface ParseComplete extends EventHandler<AbstractDocument> {}
+
 	public interface SentenceSelectionComplete extends EventHandler<Collection<? extends SentenceSelector.SelectedSentence>> {}
 
 	public interface JobComplete extends EventHandler<QuestionGenerationOp.Output> {}
@@ -34,6 +36,7 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 		final int numQuestions;
 		final boolean randomizedSelection;
 
+		final ParseComplete parseComplete;
 		final SentenceSelectionComplete selectionComplete;
 		final JobComplete jobComplete;
 
@@ -47,6 +50,7 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 		      SentenceSelector.Builder sentSelBuilder,
 		      int numQuestions,
 		      boolean randomizedSelection,
+		      ParseComplete parseComplete,
 		      SentenceSelectionComplete selectionComplete,
 		      JobComplete jobComplete) {
 			this.sourceDoc = sourceDoc;
@@ -59,6 +63,7 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 			this.sentSelBuilder = sentSelBuilder;
 			this.numQuestions = numQuestions;
 			this.randomizedSelection = randomizedSelection;
+			this.parseComplete = parseComplete != null ? parseComplete : e -> {};
 			this.selectionComplete = selectionComplete != null ? selectionComplete : e -> {};
 			this.jobComplete = jobComplete != null ? jobComplete : e -> {};
 		}
@@ -186,8 +191,10 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 	}
 
 	private void onParseComplete(AsyncJob j, NerCorefParseTask.Result r) {
-		if (r.output != null)
+		if (r.output != null) {
+			input.parseComplete.handle(r.output);
 			queueSentenceSelTask(j, r.output);
+		}
 	}
 
 	private void onSentenceSelectionComplete(AsyncJob j, SentenceSelectionTask.Result r) {

@@ -1731,8 +1731,6 @@ public class WebRankerCore implements AbstractWebRankerCore {
 								throw new RuntimeException("Invalid message type for generate questions operation: " + msg.getType());
 
 							switch (msg.getGenerateQuestions().getType()) {
-							case SENTENCE_SELECTION_COMPLETE:
-								break;
 							case JOB_COMPLETE:
 								messagePoller.endPolling();
 								questgenpreview.display(msg.getGenerateQuestions().getGeneratedQuestions());

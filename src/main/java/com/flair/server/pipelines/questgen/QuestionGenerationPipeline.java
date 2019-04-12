@@ -93,10 +93,12 @@ public final class QuestionGenerationPipeline {
 
 		SentenceSelectorFactory.Type sentSelType = SentenceSelectorFactory.Type.TEXTRANK;
 
+		QuestionGenerationOp.ParseComplete parseComplete;
 		QuestionGenerationOp.SentenceSelectionComplete selectionComplete;
 		QuestionGenerationOp.JobComplete jobComplete;
 
 		QuestionGeneratorParams.Builder qgParams = QuestionGeneratorParams.Builder.factory();
+		boolean sourceDocParsed = false;
 
 		private QuestionGenerationOpBuilder() {}
 
@@ -119,12 +121,22 @@ public final class QuestionGenerationPipeline {
 			return this;
 		}
 
+		public QuestionGenerationOpBuilder sourceDocParsed(boolean sourceDocParsed) {
+			this.sourceDocParsed = sourceDocParsed;
+			return this;
+		}
+
 		public QuestionGenerationOpBuilder sentenceSelectorType(SentenceSelectorFactory.Type type) {
 			this.sentSelType = type;
 			return this;
 		}
 
-		public QuestionGenerationOpBuilder onSelectionComplete(QuestionGenerationOp.SentenceSelectionComplete handler) {
+		public QuestionGenerationOpBuilder onParseComplete(QuestionGenerationOp.ParseComplete handler) {
+			this.parseComplete = handler;
+			return this;
+		}
+
+		public QuestionGenerationOpBuilder onSentenceSelectionComplete(QuestionGenerationOp.SentenceSelectionComplete handler) {
 			this.selectionComplete = handler;
 			return this;
 		}
@@ -142,10 +154,18 @@ public final class QuestionGenerationPipeline {
 			else if (numQuestions == 0)
 				throw new IllegalStateException("Invalid number of source sentences");
 
-			// create a copy of the source doc for the NER/Coref parsing
-			AbstractDocument newDoc = docFactory.create(sourceDoc.getDocumentSource());
-			newDoc.setNumSentences(sourceDoc.getNumSentences());
-			newDoc.setNumWords(sourceDoc.getNumWords());
+			AbstractDocument newDoc;
+			if (!sourceDocParsed) {
+				// create a copy of the source doc for the NER/Coref parsing
+				newDoc = docFactory.create(sourceDoc.getDocumentSource());
+				newDoc.setNumSentences(sourceDoc.getNumSentences());
+				newDoc.setNumWords(sourceDoc.getNumWords());
+			} else {
+				if (!sourceDoc.isParsed())
+					throw new IllegalStateException("Source document has yet to be parsed");
+
+				newDoc = sourceDoc;
+			}
 
 			QuestionGenerationOp.Input input = new QuestionGenerationOp.Input(newDoc,
 					ParsingStrategy.factory().create(new ParsingStrategy.ParserInput(newDoc)),
@@ -157,6 +177,7 @@ public final class QuestionGenerationPipeline {
 					SentenceSelectorFactory.create(sentSelType),
 					numQuestions,
 					randomizeSelection,
+					parseComplete,
 					selectionComplete,
 					jobComplete);
 

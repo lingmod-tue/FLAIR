@@ -49,7 +49,6 @@ public final class GramParsingPipeline {
 	private final AbstractKeywordSearcher.Factory keywordSearchers;
 	private final Map<Language, Lazy<CoreNlpParser>> parsers;
 
-
 	private GramParsingPipeline() {
 		ThreadPool.Builder threadPoolBuilder = ThreadPool.get().builder();
 		webSearchExecutor = threadPoolBuilder

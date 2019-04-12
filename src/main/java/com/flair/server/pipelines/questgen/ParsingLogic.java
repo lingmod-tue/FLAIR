@@ -257,6 +257,10 @@ class ParsingLogic {
 	}
 
 	public void apply(CoreNlpParser parser) {
+		// the source document could have already been parsed if it was reused from a cache
+		if (workingDoc.isParsed())
+			return;
+
 		Annotation docAnnotation = new Annotation(workingDoc.getText());
 		parser.pipeline().annotate(docAnnotation);
 

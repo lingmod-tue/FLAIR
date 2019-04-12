@@ -120,7 +120,15 @@ public class QuestGenTask implements AsyncTask<QuestGenTask.Result> {
 		}
 
 		boolean strippedHead = false;
-		for (CoreLabel token : answerTokens) {
+		for (int i = 0; i < answerTokens.size(); ++i) {
+			CoreLabel token = answerTokens.get(i);
+			if (i == 0) {
+				// remove first token if it's the same as the last token in the question
+				// can happen with prepositional phrases
+				if (token.word().equalsIgnoreCase(questionTokens.get(questionTokens.size() - 2).word()))
+					continue;
+			}
+
 			// strip common prepositions, demonstratives and pronouns from the head
 			if (!strippedHead) {
 				if (EnglishGrammaticalConstants.OBJECTIVE_PRONOUNS.contains(token.word().toLowerCase()))

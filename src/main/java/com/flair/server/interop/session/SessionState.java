@@ -144,14 +144,16 @@ public class SessionState {
 	private final ServerAuthenticationToken token;
 	private final AbstractMesageSender messagePipe;
 	private final PipelineOpCache pipelineOpCache;
-	private final DocumentLinkingData docLinkingData;
-	private TemporaryCache temporaryCache;
+	private final DocumentLinkingData gramParsingLinkingData;   // GramParsingPipelineOp -> DocumentDTO -> Document (parsed by the GramParsingPipeline)
+	private final DocumentLinkingData questGenLinkingData;      // GramParsingPipelineOp -> DocumentDTO -> Document (parsed by the QuestionGenerationPipeline)
+	private final TemporaryCache temporaryCache;
 
 	SessionState(ServerAuthenticationToken tok) {
 		token = tok;
 		messagePipe = MessagePipe.get().createSender();
 		pipelineOpCache = new PipelineOpCache();
-		docLinkingData = new DocumentLinkingData();
+		gramParsingLinkingData = new DocumentLinkingData();
+		questGenLinkingData = new DocumentLinkingData();
 		temporaryCache = new TemporaryCache();
 
 		messagePipe.open(token);
@@ -247,7 +249,7 @@ public class SessionState {
 		out.setReadabilityLevel(source.getReadabilityLevel());
 		out.setReadabilityScore(source.getReadabilityScore());
 
-		docLinkingData.put(pipelineOpCache.lookupOp(opId), source, out);
+		gramParsingLinkingData.put(pipelineOpCache.lookupOp(opId), source, out);
 		return out;
 	}
 
@@ -364,6 +366,20 @@ public class SessionState {
 
 		// reset operation state
 		endActiveOperation(false);
+	}
+
+	private synchronized void handleGenerateQuestionsParseComplete(AbstractDocument parsedDoc, DocumentDTO linkingDoc, boolean usingCachedDoc) {
+		if (!pipelineOpCache.hasActiveOp()) {
+			ServerLogger.get().error("Invalid generate questions parse complete event!");
+			return;
+		}
+
+		if (usingCachedDoc)
+			return;
+
+		// add to cache so that future QG requests for this document (in this session)
+		// won't have to parse it anew
+		questGenLinkingData.put(pipelineOpCache.lookupOp(linkingDoc.getOperationId()), parsedDoc, linkingDoc);
 	}
 
 	private synchronized void handleGenerateQuestionsJobComplete(Collection<GeneratedQuestion> questions) {
@@ -499,23 +515,32 @@ public class SessionState {
 			sendErrorResponse("Couldn't find pipeline op with id " + doc.getOperationId());
 			return;
 		}
-		AbstractDocument sourceDoc = docLinkingData.get(sourceOp, doc);
-		if (sourceDoc == null) {
-			sendErrorResponse("Couldn't find source doc with linking id " + doc.getLinkingId() + " and pipeline op id " + doc.getOperationId());
-			return;
-		}
 
-		ServerLogger.get().info("Begin question generation -> Doc: " + sourceDoc.getDescription() + ", Questions: " + numQuestions);
+		boolean usingCachedDoc = false;
+		AbstractDocument sourceDoc = questGenLinkingData.get(sourceOp, doc);
+		if (sourceDoc == null) {
+			sourceDoc = gramParsingLinkingData.get(sourceOp, doc);
+			if (sourceDoc == null) {
+				sendErrorResponse("Couldn't find source doc with linking id " + doc.getLinkingId() + " and pipeline op id " + doc.getOperationId());
+				return;
+			}
+		} else
+			usingCachedDoc = true;
+
+		ServerLogger.get().info("Begin question generation -> Doc" + (usingCachedDoc ? " (cached)" : "") + ": " + sourceDoc.getDescription() + ", Questions: " + numQuestions);
 
 		if (pipelineOpCache.hasActiveOp()) {
 			sendErrorResponse("Another operation still running");
 			return;
 		}
 
+		boolean captureThrowaway = usingCachedDoc;
 		QuestionGenerationPipeline.QuestionGenerationOpBuilder builder = QuestionGenerationPipeline.get().generateQuestions()
 				.sourceDoc(sourceDoc)
+				.sourceDocParsed(usingCachedDoc)
 				.numQuestions(numQuestions)
 				.randomizeSelection(randomizeSelection)
+				.onParseComplete(e -> handleGenerateQuestionsParseComplete(e, doc, captureThrowaway))
 				.onComplete(e -> handleGenerateQuestionsJobComplete(e.generatedQuestions));
 
 		beginNewOperation(builder);

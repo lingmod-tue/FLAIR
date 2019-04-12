@@ -210,23 +210,19 @@ public class ServerMessage implements IsSerializable {
 
 	public static final class GenerateQuestions implements IsSerializable {
 		public enum Type {
-			SENTENCE_SELECTION_COMPLETE,
 			JOB_COMPLETE
 		}
 
 		Type type;
-		ArrayList<String> selectedSentences;
 		ArrayList<QuestionDTO> generatedQuestions;
 
 		public GenerateQuestions() {
 			type = null;
-			selectedSentences = null;
 			generatedQuestions = null;
 		}
 
 		public GenerateQuestions(Type t) {
 			type = t;
-			selectedSentences = null;
 			generatedQuestions = null;
 		}
 
@@ -236,14 +232,6 @@ public class ServerMessage implements IsSerializable {
 
 		public void setType(Type type) {
 			this.type = type;
-		}
-
-		public ArrayList<String> getSelectedSentences() {
-			return selectedSentences;
-		}
-
-		public void setSelectedSentences(ArrayList<String> selectedSentences) {
-			this.selectedSentences = selectedSentences;
 		}
 
 		public ArrayList<QuestionDTO> getGeneratedQuestions() {
@@ -258,9 +246,7 @@ public class ServerMessage implements IsSerializable {
 		public String toString() {
 			StringBuilder sb = new StringBuilder();
 			sb.append("GENERATE-QUESTIONS: ").append(type).append("\n");
-			if (type == Type.SENTENCE_SELECTION_COMPLETE)
-				sb.append("Selected sentences: " + selectedSentences.size());
-			else if (type == Type.JOB_COMPLETE)
+			if (type == Type.JOB_COMPLETE)
 				sb.append("Generated questions: " + generatedQuestions.size());
 			return sb.toString();
 		}
