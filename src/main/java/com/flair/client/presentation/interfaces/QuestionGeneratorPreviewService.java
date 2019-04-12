@@ -12,7 +12,7 @@ public interface QuestionGeneratorPreviewService {
 	}
 
 	interface GenerateHandler {
-		boolean handle(RankableDocument document);
+		boolean handle(RankableDocument document, int numQuestions, boolean randomize);
 	}
 
 	void show(RankableDocument document, Element origin);

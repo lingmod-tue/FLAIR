@@ -28,7 +28,8 @@ public interface WebRankerService extends RemoteService {
 
 	void generateQuestions(AuthToken token,
 	                       RankableDocument doc,
-	                       int numQuestions) throws InvalidAuthTokenException;
+	                       int numQuestions,
+	                       boolean randomizeSelection) throws InvalidAuthTokenException;
 
 	void cancelCurrentOperation(AuthToken token) throws InvalidAuthTokenException;
 }

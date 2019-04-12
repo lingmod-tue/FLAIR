@@ -493,7 +493,7 @@ public class SessionState {
 		handleCorpusJobBegin(sources);
 	}
 
-	public synchronized void generateQuestions(RankableDocument doc, int numQuestions) {
+	public synchronized void generateQuestions(RankableDocument doc, int numQuestions, boolean randomizeSelection) {
 		PipelineOp<?, ?> sourceOp = pipelineOpCache.lookupOp(doc.getOperationId());
 		if (sourceOp == null) {
 			sendErrorResponse("Couldn't find pipeline op with id " + doc.getOperationId());
@@ -515,6 +515,7 @@ public class SessionState {
 		QuestionGenerationPipeline.QuestionGenerationOpBuilder builder = QuestionGenerationPipeline.get().generateQuestions()
 				.sourceDoc(sourceDoc)
 				.numQuestions(numQuestions)
+				.randomizeSelection(randomizeSelection)
 				.onComplete(e -> handleGenerateQuestionsJobComplete(e.generatedQuestions));
 
 		beginNewOperation(builder);

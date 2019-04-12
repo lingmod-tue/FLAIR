@@ -17,6 +17,11 @@
             margin-bottom: 3px !important;
             padding-bottom: 3px !important;
         }
+
+        .option-button {
+            display: inline-block;
+            text-align: left !important;
+        }
     </ui:style>
 
     <m:MaterialRow ui:field="pnlRootUI" grid="l12 m12 s12" addStyleNames="{style.card-container}">
@@ -30,37 +35,45 @@
                 <m:MaterialRow marginTop="25">
                     <m:MaterialRow grid="l12 m12 s12">
                         <m:MaterialColumn grid="l1 m1 s1" marginRight="-15" paddingTop="12">
-                            <m:MaterialIcon iconType="LOOKS_ONE" iconSize="SMALL" iconColor="GREY_DARKEN_3"/>
+                            <m:MaterialIcon ui:field="icoAnswer1" iconType="LOOKS_ONE" iconSize="SMALL"
+                                            iconColor="GREY_DARKEN_3"/>
                         </m:MaterialColumn>
                         <m:MaterialColumn grid="l11 m11 s11">
-                            <m:MaterialButton ui:field="btnAnswer1" type="FLAT" size="LARGE" text="Placeholder 1"/>
+                            <m:MaterialButton ui:field="btnAnswer1" grid="l11 m11 s11" type="FLAT" size="LARGE"
+                                              text="Placeholder 1" addStyleNames="{style.option-button}"/>
                         </m:MaterialColumn>
                     </m:MaterialRow>
 
                     <m:MaterialRow grid="l12 m12 s12">
                         <m:MaterialColumn grid="l1 m1 s1" marginRight="-15" paddingTop="12">
-                            <m:MaterialIcon iconType="LOOKS_TWO" iconSize="SMALL" iconColor="GREY_DARKEN_3"/>
+                            <m:MaterialIcon ui:field="icoAnswer2" iconType="LOOKS_TWO" iconSize="SMALL"
+                                            iconColor="GREY_DARKEN_3"/>
                         </m:MaterialColumn>
                         <m:MaterialColumn grid="l11 m11 s11">
-                            <m:MaterialButton ui:field="btnAnswer2" type="FLAT" size="LARGE" text="Placeholder 2"/>
+                            <m:MaterialButton ui:field="btnAnswer2" grid="l11 m11 s11" type="FLAT" size="LARGE"
+                                              text="Placeholder 2" addStyleNames="{style.option-button}"/>
                         </m:MaterialColumn>
                     </m:MaterialRow>
 
                     <m:MaterialRow grid="l12 m12 s12">
                         <m:MaterialColumn grid="l1 m1 s1" marginRight="-15" paddingTop="12">
-                            <m:MaterialIcon iconType="LOOKS_3" iconSize="SMALL" iconColor="GREY_DARKEN_3"/>
+                            <m:MaterialIcon ui:field="icoAnswer3" iconType="LOOKS_3" iconSize="SMALL"
+                                            iconColor="GREY_DARKEN_3"/>
                         </m:MaterialColumn>
                         <m:MaterialColumn grid="l11 m11 s11">
-                            <m:MaterialButton ui:field="btnAnswer3" type="FLAT" size="LARGE" text="Placeholder 3"/>
+                            <m:MaterialButton ui:field="btnAnswer3" grid="l11 m11 s11" type="FLAT" size="LARGE"
+                                              text="Placeholder 3" addStyleNames="{style.option-button}"/>
                         </m:MaterialColumn>
                     </m:MaterialRow>
 
                     <m:MaterialRow grid="l12 m12 s12">
                         <m:MaterialColumn grid="l1 m1 s1" marginRight="-15" paddingTop="12">
-                            <m:MaterialIcon iconType="LOOKS_4" iconSize="SMALL" iconColor="GREY_DARKEN_3"/>
+                            <m:MaterialIcon ui:field="icoAnswer4" iconType="LOOKS_4" iconSize="SMALL"
+                                            iconColor="GREY_DARKEN_3"/>
                         </m:MaterialColumn>
                         <m:MaterialColumn grid="l11 m11 s11">
-                            <m:MaterialButton ui:field="btnAnswer4" type="FLAT" size="LARGE" text="Placeholder 4"/>
+                            <m:MaterialButton ui:field="btnAnswer4" grid="l11 m11 s11" type="FLAT" size="LARGE"
+                                              text="Placeholder 4" addStyleNames="{style.option-button}"/>
                         </m:MaterialColumn>
                     </m:MaterialRow>
                 </m:MaterialRow>

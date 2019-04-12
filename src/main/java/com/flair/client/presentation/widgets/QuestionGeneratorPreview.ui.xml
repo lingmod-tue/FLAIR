@@ -25,10 +25,19 @@
                     <m:MaterialTitle ui:field="lblTitleUI" title="Title goes here"/>
                 </m:MaterialColumn>
                 <m:MaterialColumn grid="l4 m5 s6" textAlign="RIGHT" paddingTop="20">
-                    <m:MaterialButton ui:field="btnGenerateQuestUI" text="Generate Questions" iconType="QUESTION_ANSWER"
-                                      waves="LIGHT" backgroundColor="ORANGE" iconPosition="RIGHT" size="LARGE"/>
+                    <m:MaterialButton ui:field="btnGenerateQuestUI" text="Generate Questions" iconType="ARROW_DROP_DOWN"
+                                      waves="LIGHT" backgroundColor="ORANGE_DARKEN_1" iconPosition="RIGHT" size="LARGE"
+                                      activates="num-questions-selector"/>
                 </m:MaterialColumn>
             </m:MaterialRow>
+
+            <m:MaterialDropDown ui:field="pnlQuestGenDropdown" activator="num-questions-selector" constrainWidth="true"
+                                belowOrigin="true" hover="true">
+                <m:MaterialLink ui:field="btnGenerate5QuestsUI" waves="DEFAULT" text="5 Questions"/>
+                <m:MaterialLink ui:field="btnGenerate10QuestsUI" waves="DEFAULT" text="10 Questions"/>
+                <m:MaterialLink ui:field="btnGenerate15QuestsUI" waves="DEFAULT" text="15 Questions" separator="true"/>
+                <m:MaterialCheckBox ui:field="chkRandomQuestsUI" text="Randomize"/>
+            </m:MaterialDropDown>
         </m:MaterialPanel>
 
 
@@ -51,7 +60,7 @@
         <m:MaterialRow ui:field="pnlQuestFormUI" marginTop="100" textAlign="CENTER"
                        backgroundColor="GREY_LIGHTEN_5" textColor="BLACK" visible="false" width="70%">
             <m:MaterialRow margin="50" textAlign="CENTER">
-                <m:MaterialProgress ui:field="lblQuestProgressUI" type="DETERMINATE"/>
+                <m:MaterialProgress ui:field="lblQuestProgressUI" type="DETERMINATE" textColor="GREEN_LIGHTEN_3"/>
             </m:MaterialRow>
             <m:MaterialRow ui:field="pnlQuestCardsUI" textAlign="CENTER"/>
         </m:MaterialRow>

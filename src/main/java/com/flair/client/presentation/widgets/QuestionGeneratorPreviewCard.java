@@ -6,11 +6,9 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
-import gwt.material.design.client.constants.*;
-import gwt.material.design.client.ui.MaterialButton;
-import gwt.material.design.client.ui.MaterialCard;
-import gwt.material.design.client.ui.MaterialLabel;
-import gwt.material.design.client.ui.MaterialRow;
+import gwt.material.design.client.constants.Color;
+import gwt.material.design.client.constants.IconType;
+import gwt.material.design.client.ui.*;
 import gwt.material.design.client.ui.animate.MaterialAnimation;
 import gwt.material.design.client.ui.animate.Transition;
 
@@ -47,46 +45,37 @@ public class QuestionGeneratorPreviewCard extends LocalizedComposite {
 	MaterialButton btnAnswer3;
 	@UiField
 	MaterialButton btnAnswer4;
+	@UiField
+	MaterialIcon icoAnswer1;
+	@UiField
+	MaterialIcon icoAnswer2;
+	@UiField
+	MaterialIcon icoAnswer3;
+	@UiField
+	MaterialIcon icoAnswer4;
 
 	AnswerHandler answerHandler;
 	boolean selectionComplete;
 
 	static final int MAX_OPTION_LENGTH = 50;
 
-	private void animateCorrectAnswer(MaterialButton correct) {
-		MaterialAnimation correctAnim = new MaterialAnimation(correct).delay(0).duration(1250).infinite(false).transition(Transition.PULSE);
-		correct.setType(ButtonType.RAISED);
-		correct.setTextColor(Color.WHITE);
-		correct.setBackgroundColor(Color.GREEN);
-		correct.setIconPosition(IconPosition.RIGHT);
-		correct.setIconSize(IconSize.MEDIUM);
-		correct.setIconColor(Color.WHITE);
+	private void animateCorrectAnswer(MaterialIcon correct) {
+		MaterialAnimation correctAnim = new MaterialAnimation(correct).delay(0).duration(800).infinite(false).transition(Transition.BOUNCE);
+		correct.setIconColor(Color.GREEN);
 		correct.setIconType(IconType.CHECK);
-		correct.setShadow(3);
 		correctAnim.animate();
 	}
 
-	private void animateIncorrectAnswer(MaterialButton incorrect, MaterialButton correct) {
-		MaterialAnimation correctAnim = new MaterialAnimation(correct).delay(0).duration(1500).infinite(false).transition(Transition.BOUNCE);
-		correct.setType(ButtonType.RAISED);
-		correct.setTextColor(Color.WHITE);
-		correct.setBackgroundColor(Color.GREEN);
-		correct.setIconPosition(IconPosition.RIGHT);
-		correct.setIconSize(IconSize.MEDIUM);
-		correct.setIconColor(Color.WHITE);
+	private void animateIncorrectAnswer(MaterialIcon incorrect, MaterialIcon correct) {
+		MaterialAnimation correctAnim = new MaterialAnimation(correct).delay(300).duration(800).infinite(false).transition(Transition.BOUNCE);
+		correct.setIconColor(Color.GREEN);
 		correct.setIconType(IconType.CHECK);
-		correct.setShadow(3);
 		correctAnim.animate();
 
-		MaterialAnimation incorrectAnim = new MaterialAnimation(incorrect).delay(0).duration(1500).infinite(false).transition(Transition.SHAKE);
-		incorrect.setType(ButtonType.RAISED);
-		incorrect.setTextColor(Color.WHITE);
-		incorrect.setBackgroundColor(Color.RED);
-		incorrect.setIconPosition(IconPosition.RIGHT);
-		incorrect.setIconSize(IconSize.MEDIUM);
-		incorrect.setIconColor(Color.WHITE);
+		MaterialAnimation incorrectAnim = new MaterialAnimation(incorrect).delay(0).duration(800).infinite(false).transition(Transition.HEADSHAKE);
+		incorrect.setIconColor(Color.RED);
 		incorrect.setIconType(IconType.HIGHLIGHT_OFF);
-		//	incorrectAnim.animate();
+		incorrectAnim.animate();
 	}
 
 	public QuestionGeneratorPreviewCard(String question, String[] options) {
@@ -107,8 +96,10 @@ public class QuestionGeneratorPreviewCard extends LocalizedComposite {
 		lblQuestionUI.setText(question);
 
 		List<MaterialButton> buttons = Arrays.asList(btnAnswer1, btnAnswer2, btnAnswer3, btnAnswer4);
+		List<MaterialIcon> icons = Arrays.asList(icoAnswer1, icoAnswer2, icoAnswer3, icoAnswer4);
 		for (int i = 0; i < options.length; ++i) {
 			MaterialButton button = buttons.get(i);
+			MaterialIcon icon = icons.get(i);
 			String answer = preprocessedOptions.get(i);
 
 			if (answer.length() == MAX_OPTION_LENGTH + 3 /* elipses */)
@@ -123,9 +114,18 @@ public class QuestionGeneratorPreviewCard extends LocalizedComposite {
 				selectionComplete = true;
 				int correctIndex = answerHandler.handle(selectionIndex);
 				if (correctIndex == selectionIndex)
-					animateCorrectAnswer(button);
+					animateCorrectAnswer(icon);
 				else
-					animateIncorrectAnswer(button, buttons.get(correctIndex));
+					animateIncorrectAnswer(icon, icons.get(correctIndex));
+			});
+
+			button.addMouseOverHandler(e -> {
+				button.setBackgroundColor(Color.BLUE_DARKEN_2);
+				button.setTextColor(Color.WHITE);
+			});
+			button.addMouseOutHandler(e -> {
+				button.setBackgroundColor(Color.TRANSPARENT);
+				button.setTextColor(Color.BLACK);
 			});
 		}
 	}

@@ -94,7 +94,6 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 
 	State state;
 	ShowHideHandler showhideHandler;
-	GenerateQuestionsHandler generateQuestionsHandler;
 	boolean visible;
 
 	private enum TableType {
@@ -522,10 +521,6 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 	@Override
 	public void setShowHideEventHandler(ShowHideHandler handler) {
 		showhideHandler = handler;
-	}
-	@Override
-	public void setGenerateQuestionsHandler(GenerateQuestionsHandler handler) {
-		generateQuestionsHandler = handler;
 	}
 
 	@Override

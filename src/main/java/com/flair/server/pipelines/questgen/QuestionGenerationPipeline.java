@@ -89,6 +89,7 @@ public final class QuestionGenerationPipeline {
 	public final class QuestionGenerationOpBuilder implements PipelineOp.PipelineOpBuilder<QuestionGenerationOp.Input, QuestionGenerationOp.Output> {
 		AbstractDocument sourceDoc;
 		int numQuestions;
+		boolean randomizeSelection;
 
 		SentenceSelectorFactory.Type sentSelType = SentenceSelectorFactory.Type.TEXTRANK;
 
@@ -110,6 +111,11 @@ public final class QuestionGenerationPipeline {
 
 		public QuestionGenerationOpBuilder numQuestions(int numQuestions) {
 			this.numQuestions = numQuestions;
+			return this;
+		}
+
+		public QuestionGenerationOpBuilder randomizeSelection(boolean randomize) {
+			this.randomizeSelection = randomize;
 			return this;
 		}
 
@@ -150,6 +156,7 @@ public final class QuestionGenerationPipeline {
 					qgParams.build(),
 					SentenceSelectorFactory.create(sentSelType),
 					numQuestions,
+					randomizeSelection,
 					selectionComplete,
 					jobComplete);
 

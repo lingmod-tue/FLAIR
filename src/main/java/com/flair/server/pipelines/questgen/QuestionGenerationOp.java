@@ -32,6 +32,7 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 		final QuestionGeneratorParams qgParams;
 		final SentenceSelector.Builder sentSelBuilder;
 		final int numQuestions;
+		final boolean randomizedSelection;
 
 		final SentenceSelectionComplete selectionComplete;
 		final JobComplete jobComplete;
@@ -45,6 +46,7 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 		      QuestionGeneratorParams qgParams,
 		      SentenceSelector.Builder sentSelBuilder,
 		      int numQuestions,
+		      boolean randomizedSelection,
 		      SentenceSelectionComplete selectionComplete,
 		      JobComplete jobComplete) {
 			this.sourceDoc = sourceDoc;
@@ -56,6 +58,7 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 			this.qgParams = qgParams;
 			this.sentSelBuilder = sentSelBuilder;
 			this.numQuestions = numQuestions;
+			this.randomizedSelection = randomizedSelection;
 			this.selectionComplete = selectionComplete != null ? selectionComplete : e -> {};
 			this.jobComplete = jobComplete != null ? jobComplete : e -> {};
 		}
@@ -189,6 +192,8 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 
 	private void onSentenceSelectionComplete(AsyncJob j, SentenceSelectionTask.Result r) {
 		rankedSentences = new ArrayList<>(r.selection);
+		if (input.randomizedSelection)
+			Collections.shuffle(rankedSentences);
 		rankedSentenceAnnotations = rankedSentences.stream().map(SentenceSelector.SelectedSentence::annotation).collect(Collectors.toList());
 		input.selectionComplete.handle(rankedSentences);
 

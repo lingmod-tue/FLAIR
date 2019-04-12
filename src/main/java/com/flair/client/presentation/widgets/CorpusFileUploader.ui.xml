@@ -33,12 +33,12 @@
 					<ma:stepper.MaterialStep ui:field="stpUploadUI"
 						step="2" title="Upload Files">
 						<ma.fileuploader:MaterialFileUploader
-							ui:field="uplUploaderUI" url="flair/CustomCorpus" maxFileSize="10"
-							shadow="0" height="150px" backgroundColor="GREY_LIGHTEN_5">
+                                ui:field="uplUploaderUI" url="flair/CustomCorpus" maxFileSize="10"
+                                shadow="0" height="150px" backgroundColor="TRANSPARENT">
 	
 							<ma.fileuploader:MaterialUploadLabel
-								ui:field="lblUploadTextUI" backgroundColor="GREY_LIGHTEN_5"
-								description="Click here or drag-and-drop files" />
+                                    ui:field="lblUploadTextUI" backgroundColor="TRANSPARENT"
+                                    description="Click here or drag-and-drop files" />
 						</ma.fileuploader:MaterialFileUploader>
 	
 						<m:MaterialRow marginTop="20" marginBottom="3">

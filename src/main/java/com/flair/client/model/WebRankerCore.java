@@ -1490,7 +1490,6 @@ public class WebRankerCore implements AbstractWebRankerCore {
 			if (!v)
 				results.clearSelection();
 		});
-		preview.setGenerateQuestionsHandler(this::onGenerateQuestions);
 		upload.setUploadBeginHandler(this::onUploadBegin);
 		upload.setUploadCompleteHandler(this::onUploadComplete);
 		visualizer.setApplyFilterHandler(d -> {
@@ -1714,7 +1713,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 		}
 	}
 
-	private boolean onGenerateQuestions(RankableDocument doc) {
+	private boolean onGenerateQuestions(RankableDocument doc, int numQuestions, boolean randomizeSelection) {
 		if (messagePoller.isBusy()) {
 			notification.notify(getLocalizedString(DefaultLocalizationProviders.COMMON.toString(), CommonLocalizationTags.WAIT_TILL_COMPLETION.toString()));
 			return false;
@@ -1726,7 +1725,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 		if (doc instanceof CompareProcessData.ComparisonWrapper)
 			doc = ((CompareProcessData.ComparisonWrapper) doc).doc;
 
-		service.generateQuestions(token, doc, 5,
+		service.generateQuestions(token, doc, numQuestions, randomizeSelection,
 				FuncCallback.get(e -> messagePoller.beginPolling(msg -> {
 							if (msg.getType() != ServerMessage.Type.GENERATE_QUESTIONS)
 								throw new RuntimeException("Invalid message type for generate questions operation: " + msg.getType());

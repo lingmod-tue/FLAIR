@@ -34,9 +34,9 @@ public class WebRankerServiceImpl extends AbstractRemoteService implements WebRa
 	}
 
 	@Override
-	public void generateQuestions(AuthToken token, RankableDocument doc, int numQuestions) throws InvalidAuthTokenException {
+	public void generateQuestions(AuthToken token, RankableDocument doc, int numQuestions, boolean randomizeSelection) throws InvalidAuthTokenException {
 		ServerAuthenticationToken authToken = validateToken(token);
-		SessionManager.get().getSessionState(authToken).generateQuestions(doc, numQuestions);
+		SessionManager.get().getSessionState(authToken).generateQuestions(doc, numQuestions, randomizeSelection);
 	}
 
 	@Override

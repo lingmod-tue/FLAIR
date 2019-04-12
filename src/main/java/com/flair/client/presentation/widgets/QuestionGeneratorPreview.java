@@ -65,6 +65,20 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 	@LocalizedField(type = LocalizedFieldType.TEXT_BUTTON)
 	MaterialButton btnGenerateQuestUI;
 	@UiField
+	MaterialDropDown pnlQuestGenDropdown;
+	@UiField
+	@LocalizedField(type = LocalizedFieldType.TEXT_BUTTON)
+	MaterialLink btnGenerate5QuestsUI;
+	@UiField
+	@LocalizedField(type = LocalizedFieldType.TEXT_BUTTON)
+	MaterialLink btnGenerate10QuestsUI;
+	@UiField
+	@LocalizedField(type = LocalizedFieldType.TEXT_BUTTON)
+	MaterialLink btnGenerate15QuestsUI;
+	@UiField
+	@LocalizedField(type = LocalizedFieldType.TEXT_BASIC)
+	MaterialCheckBox chkRandomQuestsUI;
+	@UiField
 	MaterialRow pnlPreviewFrameUI;
 	@UiField
 	Frame pnlPreviewTargetUI;
@@ -168,7 +182,7 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 				// show score card
 				GlobalWidgetAnimator.get().seqAnimateWithStop(currentlyDisplayed.container,
 						Transition.FADEOUTLEFT,
-						2100,
+						1000,
 						500,
 						() -> {
 							currentlyDisplayed.container.setVisible(false);
@@ -207,7 +221,7 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 				// show intermediate card
 				GlobalWidgetAnimator.get().seqAnimateWithStop(currentlyDisplayed.container,
 						Transition.FADEOUTLEFT,
-						2100,
+						1000,
 						500,
 						() -> {
 							currentlyDisplayed.container.setVisible(false);
@@ -326,8 +340,10 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 				Transition.FADEINUP, 0, 650, () -> pnlPreviewFrameUI.setVisible(true));
 	}
 
-	private void generateQuestions() {
-		if (!generateHandler.handle(previewDocument))
+	private void generateQuestions(int numQuestions, boolean randomizeSelection) {
+		if (generationInProgress)
+			return;
+		else if (!generateHandler.handle(previewDocument, numQuestions, randomizeSelection))
 			return;
 
 		generationInProgress = true;
@@ -373,8 +389,17 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 	}
 
 	private void initUIAndHandlers() {
-		btnGenerateQuestUI.addClickHandler(e -> {
-			generateQuestions();
+		btnGenerate5QuestsUI.addClickHandler(e -> {
+			generateQuestions(5, chkRandomQuestsUI.getValue());
+			pnlQuestGenDropdown.reload();
+		});
+		btnGenerate10QuestsUI.addClickHandler(e -> {
+			generateQuestions(10, chkRandomQuestsUI.getValue());
+			pnlQuestGenDropdown.reload();
+		});
+		btnGenerate15QuestsUI.addClickHandler(e -> {
+			generateQuestions(15, chkRandomQuestsUI.getValue());
+			pnlQuestGenDropdown.reload();
 		});
 
 		btnCloseUI.addClickHandler(e -> {
