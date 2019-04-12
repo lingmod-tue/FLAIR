@@ -1,9 +1,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:m="urn:import:gwt.material.design.client.ui"
-	xmlns:m.html="urn:import:gwt.material.design.client.ui.html"
-	xmlns:flair="urn:import:com.flair.client.presentation.widgets">
+             xmlns:m="urn:import:gwt.material.design.client.ui"
+>
 		
 	<ui:style>
 	.global-animation {
@@ -13,12 +11,12 @@
 	}
 	</ui:style>
 	
-	<m:MaterialPanel ui:field="pnlRootUI" depth="700" backgroundColor="WHITE" overflow="HIDDEN" 
-		grid="l6 m6 s12" height="100%" padding="15" top="68"
-		addStyleNames="{style.global-animation}" textAlign="CENTER">
-		
-		<m:MaterialTitle ui:field="lblTitleUI" marginBottom="10"
-			title="" description=""/>
+	<m:MaterialPanel ui:field="pnlRootUI" depth="700" backgroundColor="WHITE" overflow="HIDDEN"
+                     grid="l6 m6 s12" height="100%" paddingTop="30" top="72"
+                     addStyleNames="{style.global-animation}" textAlign="CENTER">
+
+        <m:MaterialTitle ui:field="lblTitleUI" marginBottom="15" marginTop="10"
+                         title="" description=""/>
 		<m:MaterialButton ui:field="btnCancelOpUI" marginBottom="20" type="FLAT" textColor="RED" iconType="CANCEL" iconPosition="RIGHT"
 			text="Cancel Analysis" visible="false"/>
 		

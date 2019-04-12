@@ -407,10 +407,9 @@ public class WhPhraseGenerator {
 	}
 
 	protected boolean isTime(String word, String sst, CoreLabel node) {
-		if (sst.endsWith("noun.time")) return true;
-
 		String neTag = getNamedEntityTag(node);
 		if (neTag.equals("DATE") || neTag.equals("TIME")) return true;
+		if (!neTag.isEmpty() && sst.endsWith("noun.time")) return true;
 
 		//special case for years 1000-present (which are fairly common)
 		return word.matches("[1|2]\\d\\d\\d");
@@ -418,20 +417,25 @@ public class WhPhraseGenerator {
 	}
 
 	protected boolean isLocation(String word, String sst, CoreLabel node) {
-		if (sst.endsWith("noun.location")) return true;
-		return getNamedEntityTag(node).equals("LOCATION");
+		String neTag = getNamedEntityTag(node);
+		if (neTag.equals("LOCATION")) return true;
+		if (!neTag.isEmpty() && sst.endsWith("noun.location")) return true;
+		return false;
 	}
 
 	protected boolean isGroup(String word, String sst, CoreLabel node) {
-		if (sst.endsWith("noun.group")) return true;
 		String neTag = getNamedEntityTag(node);
-		return neTag.equals("ORGANIZATION")/* || neTag.equals("MISC")*/;
+		if (neTag.equals("ORGANIZATION")/* || neTag.equals("MISC")*/) return true;
+		if (!neTag.isEmpty() && sst.endsWith("noun.group")) return true;
+		return false;
 	}
 
 	protected boolean isPerson(String word, String sst, CoreLabel node) {
+		String neTag = getNamedEntityTag(node);
 		if (peoplePronouns.contains(word.toLowerCase())) return true;
-		if (sst.endsWith("noun.person")) return true;
-		return getNamedEntityTag(node).equals("PERSON");
+		if (neTag.equals("PERSON")) return true;
+		if (!neTag.isEmpty() && sst.endsWith("noun.person")) return true;
+		return false;
 	}
 
 	public boolean isFirstTokenNamedEntity() {

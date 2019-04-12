@@ -14,21 +14,21 @@
         }
     </ui:style>
 
-    <ma:overlay.MaterialOverlay ui:field="mdlRootUI" backgroundColor="GREY_LIGHTEN_5" duration="600">
-        <m:MaterialPanel backgroundColor="BLUE_DARKEN_3" textColor="WHITE" padding="35" shadow="3">
+    <ma:overlay.MaterialOverlay ui:field="mdlRootUI" backgroundColor="GREY_LIGHTEN_5" duration="400">
+        <m:MaterialPanel backgroundColor="BLUE_DARKEN_3" textColor="WHITE" padding="35" shadow="1">
             <m:MaterialRow marginBottom="5" marginTop="-20" marginRight="-15" textAlign="RIGHT">
                 <m:MaterialIcon ui:field="btnCloseUI" iconType="CLOSE"/>
             </m:MaterialRow>
 
             <m:MaterialRow grid="l12 m12 s12" textAlign="LEFT">
                 <m:MaterialColumn grid="l8 m7 s6">
-                    <m:MaterialTitle ui:field="lblTitleUI" title="Title goes here" addStyleNames="valign-wrapper"/>
+                    <m:MaterialTitle ui:field="lblTitleUI" title="Title goes here"/>
                 </m:MaterialColumn>
                 <m:MaterialColumn grid="l4 m5 s6" textAlign="RIGHT" paddingTop="20">
                     <m:MaterialButton ui:field="btnGenerateQuestUI" text="Generate Questions"
                                       iconType="KEYBOARD_ARROW_DOWN"
                                       waves="LIGHT" backgroundColor="ORANGE_DARKEN_1" iconPosition="RIGHT"
-                                      size="LARGE" fontSize="1.1em" iconFontSize="2em"
+                                      size="LARGE" fontSize="1.2em" iconFontSize="2em"
                                       activates="num-questions-selector"/>
                 </m:MaterialColumn>
             </m:MaterialRow>
@@ -46,7 +46,7 @@
         <m:MaterialRow ui:field="pnlPreviewFrameUI" marginTop="-25" textAlign="CENTER"
                        textColor="WHITE" width="100%" height="100vh" visible="false">
             <g:Frame ui:field="pnlPreviewTargetUI" addStyleNames="{style.target-iframe}"/>
-            <ma:emptystate.MaterialEmptyState ui:field="lblPreviewTargetPlaceholderUI" marginTop="250"
+            <ma:emptystate.MaterialEmptyState ui:field="lblPreviewTargetPlaceholderUI" marginTop="275"
                                               backgroundColor="GREY_LIGHTEN_5"
                                               iconType="WARNING" textColor="BLACK" iconColor="ORANGE"/>
         </m:MaterialRow>
@@ -62,7 +62,7 @@
         <m:MaterialRow ui:field="pnlQuestFormUI" marginTop="100" textAlign="CENTER"
                        backgroundColor="GREY_LIGHTEN_5" textColor="BLACK" visible="false" width="70%">
             <m:MaterialRow margin="50" textAlign="CENTER">
-                <m:MaterialProgress ui:field="lblQuestProgressUI" type="DETERMINATE" textColor="GREEN_LIGHTEN_3"/>
+                <m:MaterialProgress ui:field="lblQuestProgressUI" type="DETERMINATE"/>
             </m:MaterialRow>
             <m:MaterialRow ui:field="pnlQuestCardsUI" textAlign="CENTER"/>
         </m:MaterialRow>
