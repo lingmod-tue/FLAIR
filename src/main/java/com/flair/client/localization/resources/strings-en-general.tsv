@@ -127,7 +127,7 @@ QuestionGeneratorPreview	btnGenerateQuestUI	Generate Questions
 QuestionGeneratorPreview	btnGenerate5QuestsUI	5 Questions
 QuestionGeneratorPreview	btnGenerate10QuestsUI	10 Questions
 QuestionGeneratorPreview	btnGenerate15QuestsUI	15 Questions
-QuestionGeneratorPreview	chkRandomQuestsUI	Randomize
+QuestionGeneratorPreview	chkRandomQuestsUI	Random Selection
 QuestionGeneratorPreview	lblPreviewTargetPlaceholderUI	No preview available
 QuestionGeneratorPreview	IN_PROGRESS	Generating Questions...
 QuestionGeneratorPreview	NO_QUESTIONS_TITLE	Whoops!
