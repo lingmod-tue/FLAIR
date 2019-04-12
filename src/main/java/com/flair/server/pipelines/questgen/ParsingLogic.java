@@ -213,11 +213,21 @@ class ParsingLogic {
 			List<CorefReplacementSpan> delinquentSpans = new ArrayList<>();
 
 			CorefReplacementSpan previous = null;
+			HashSet<String> replacementStrings = new HashSet<>();
 			for (CorefReplacementSpan current : uniqueSpans) {
-				if (previous != null && current.begin < previous.end)
+				if (previous != null && current.begin < previous.end) {
 					delinquentSpans.add(current);
-				else
-					previous = current;
+					continue;
+				} else if (replacementStrings.contains(current.replacement.toLowerCase())) {
+					// multiple mentions of the same entity in the same sentence are redundant
+					// this can happen if there are multiple representative mentions of the same entity
+					// given a sentence with 2 secondary mentions, the first could be linked to one representative mention
+					// and the second to another
+					continue;
+				}
+
+				previous = current;
+				replacementStrings.add(current.replacement.toLowerCase());
 			}
 
 			if (!delinquentSpans.isEmpty()) {

@@ -22,11 +22,13 @@
 
             <m:MaterialRow grid="l12 m12 s12" textAlign="LEFT">
                 <m:MaterialColumn grid="l8 m7 s6">
-                    <m:MaterialTitle ui:field="lblTitleUI" title="Title goes here"/>
+                    <m:MaterialTitle ui:field="lblTitleUI" title="Title goes here" addStyleNames="valign-wrapper"/>
                 </m:MaterialColumn>
                 <m:MaterialColumn grid="l4 m5 s6" textAlign="RIGHT" paddingTop="20">
-                    <m:MaterialButton ui:field="btnGenerateQuestUI" text="Generate Questions" iconType="ARROW_DROP_DOWN"
-                                      waves="LIGHT" backgroundColor="ORANGE_DARKEN_1" iconPosition="RIGHT" size="LARGE"
+                    <m:MaterialButton ui:field="btnGenerateQuestUI" text="Generate Questions"
+                                      iconType="KEYBOARD_ARROW_DOWN"
+                                      waves="LIGHT" backgroundColor="ORANGE_DARKEN_1" iconPosition="RIGHT"
+                                      size="LARGE" fontSize="1.1em" iconFontSize="2em"
                                       activates="num-questions-selector"/>
                 </m:MaterialColumn>
             </m:MaterialRow>
