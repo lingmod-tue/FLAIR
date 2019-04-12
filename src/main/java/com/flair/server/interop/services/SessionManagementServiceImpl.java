@@ -2,6 +2,7 @@ package com.flair.server.interop.services;
 
 import com.flair.server.interop.session.SessionManager;
 import com.flair.shared.interop.AuthToken;
+import com.flair.shared.interop.InvalidAuthTokenException;
 import com.flair.shared.interop.ServerAuthenticationToken;
 import com.flair.shared.interop.services.SessionManagementService;
 
@@ -16,7 +17,7 @@ public class SessionManagementServiceImpl extends AbstractRemoteService implemen
 	}
 
 	@Override
-	public void endSession(AuthToken token) {
+	public void endSession(AuthToken token) throws InvalidAuthTokenException {
 		ServerAuthenticationToken authToken = validateToken(token);
 		SessionManager.get().removeSession(authToken);
 	}

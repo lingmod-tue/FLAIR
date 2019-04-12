@@ -243,7 +243,7 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		if (visible)
 			splSplashUI.show();
 		else {
-			GlobalWidgetAnimator.get().animateWithStop(splSplashUI, Transition.FADEOUT, 0, 800,
+			GlobalWidgetAnimator.get().animateWithStop(splSplashUI, Transition.FADEOUT, 0, 1000,
 					() -> splSplashUI.hide());
 		}
 	}

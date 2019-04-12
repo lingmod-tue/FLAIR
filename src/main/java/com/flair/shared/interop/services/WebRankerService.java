@@ -2,6 +2,7 @@ package com.flair.shared.interop.services;
 
 import com.flair.shared.grammar.Language;
 import com.flair.shared.interop.AuthToken;
+import com.flair.shared.interop.InvalidAuthTokenException;
 import com.flair.shared.interop.RankableDocument;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -17,18 +18,18 @@ public interface WebRankerService extends RemoteService {
 	                    Language lang,
 	                    String query,
 	                    int numResults,
-	                    ArrayList<String> keywords);
+	                    ArrayList<String> keywords) throws InvalidAuthTokenException;
 
 	void beginCorpusUpload(AuthToken token,
 	                       Language lang,
-	                       ArrayList<String> keywords);        // signals the start of the upload operation and caches params
+	                       ArrayList<String> keywords) throws InvalidAuthTokenException;        // signals the start of the upload operation and caches params
 	void endCorpusUpload(AuthToken token,
-	                     boolean success);                    // signals the end of the uploading process, begins the parsing op if successful
+	                     boolean success) throws InvalidAuthTokenException;                    // signals the end of the uploading process, begins the parsing op if successful
 
 	void generateQuestions(AuthToken token,
 	                       RankableDocument doc,
-	                       int numQuestions);
+	                       int numQuestions) throws InvalidAuthTokenException;
 
-	void cancelCurrentOperation(AuthToken token);
+	void cancelCurrentOperation(AuthToken token) throws InvalidAuthTokenException;
 }
 

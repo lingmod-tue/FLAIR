@@ -138,7 +138,7 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 			return score;
 		}
 
-		void nextQuestion(int currentAnswerIndex) {
+		int nextQuestion(int currentAnswerIndex) {
 			QuestionWidget currentlyDisplayed = currentDisplayIndex < questionForms.size() && currentDisplayIndex >= 0 ?
 					questionForms.get(currentDisplayIndex) : null;
 
@@ -168,7 +168,7 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 				// show score card
 				GlobalWidgetAnimator.get().seqAnimateWithStop(currentlyDisplayed.container,
 						Transition.FADEOUTLEFT,
-						0,
+						2100,
 						500,
 						() -> {
 							currentlyDisplayed.container.setVisible(false);
@@ -207,7 +207,7 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 				// show intermediate card
 				GlobalWidgetAnimator.get().seqAnimateWithStop(currentlyDisplayed.container,
 						Transition.FADEOUTLEFT,
-						0,
+						2100,
 						500,
 						() -> {
 							currentlyDisplayed.container.setVisible(false);
@@ -224,6 +224,7 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 			}
 
 			updateProgressBar();
+			return currentlyDisplayed != null ? currentlyDisplayed.answerIndex : -1;
 		}
 
 		void showNoQuestionsPlaceholder() {

@@ -1,6 +1,7 @@
 package com.flair.shared.interop.services;
 
 import com.flair.shared.interop.AuthToken;
+import com.flair.shared.interop.InvalidAuthTokenException;
 import com.flair.shared.interop.ServerMessage;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -10,5 +11,5 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  */
 @RemoteServiceRelativePath("PullMessage")
 public interface PullMessageEndpointService extends RemoteService {
-	public ServerMessage[] dequeueMessages(AuthToken token);
+	public ServerMessage[] dequeueMessages(AuthToken token) throws InvalidAuthTokenException;
 }

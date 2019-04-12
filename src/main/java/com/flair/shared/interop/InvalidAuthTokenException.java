@@ -1,9 +1,11 @@
 package com.flair.shared.interop;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 /*
  * Indicates a fatal client-server interop error
  */
-public class InvalidAuthTokenException extends RuntimeException {
+public class InvalidAuthTokenException extends RuntimeException implements IsSerializable {
 
 	/**
 	 *

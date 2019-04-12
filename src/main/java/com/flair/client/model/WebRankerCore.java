@@ -1678,7 +1678,6 @@ public class WebRankerCore implements AbstractWebRankerCore {
 					notification.notify(getLocalizedString(LocalizationTags.SERVER_ERROR.toString()));
 					presenter.showLoaderOverlay(false);
 
-					// ### TODO this does not work, need to check the contents of the wrapping expression
 					if (e instanceof InvalidAuthTokenException)
 						ClientEndPoint.get().fatalServerError();
 				}));
@@ -1690,8 +1689,10 @@ public class WebRankerCore implements AbstractWebRankerCore {
 	private void onUploadComplete(int numUploaded, boolean success) {
 		// signal the end of the upload operation
 		ProcessData proc = processHistory.poll();
-		if (proc instanceof CorpusUploadProcessData == false)
-			throw new RuntimeException("Invalid process data");
+		if (!(proc instanceof CorpusUploadProcessData)) {
+			// the upload operation did not complete successfully
+			return;
+		}
 
 		if (success) {
 			transientParsingProcessManager.begin(proc,

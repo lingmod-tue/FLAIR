@@ -6,17 +6,17 @@ import com.flair.shared.grammar.Language;
  * Uploads custom files to the server for analysis
  */
 public interface CorpusUploadService {
-	public interface UploadBeginHandler {
-		public void handle(Language lang);
+	interface UploadBeginHandler {
+		void handle(Language lang);
 	}
 
-	public interface UploadCompleteHandler {
-		public void handle(int numUploaded, boolean success);
+	interface UploadCompleteHandler {
+		void handle(int numUploaded, boolean success);
 	}
 
-	public void show();
-	public void hide();
+	void show();
+	void hide();
 
-	public void setUploadBeginHandler(UploadBeginHandler handler);
-	public void setUploadCompleteHandler(UploadCompleteHandler handler);
+	void setUploadBeginHandler(UploadBeginHandler handler);
+	void setUploadCompleteHandler(UploadCompleteHandler handler);
 }

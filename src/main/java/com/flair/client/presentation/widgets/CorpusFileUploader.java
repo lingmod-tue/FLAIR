@@ -100,7 +100,7 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 
 	private void onBeginUpload(Language lang) {
 		// deferred init to ensure that we have a valid token
-		if (initialized == false) {
+		if (!initialized) {
 			initialized = true;
 			setupDropzone(ClientEndPoint.get().getClientToken(), uplUploaderUI);
 		}
@@ -119,14 +119,13 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 	}
 
 	private void onEndUpload(boolean success) {
-		if (uploadInProgress == false && success)
+		if (!uploadInProgress && success)
 			throw new RuntimeException("Upload hasn't started yet");
 		else if (hasPendingUploads(uplUploaderUI)) {
 			MaterialToast.fireToast(getLocalizedString(LocalizationTags.UPLOAD_INPROGRESS.toString()));
 			return;
 		}
 
-		// ### TODO make handlers return false on failure
 		if (uploadInProgress && completeHandler != null)
 			completeHandler.handle(numUploaded, success);
 

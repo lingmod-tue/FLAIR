@@ -1,6 +1,7 @@
 package com.flair.shared.interop.services;
 
 import com.flair.shared.interop.AuthToken;
+import com.flair.shared.interop.InvalidAuthTokenException;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
@@ -9,6 +10,6 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
  */
 @RemoteServiceRelativePath("SessionManagement")
 public interface SessionManagementService extends RemoteService {
-	public AuthToken beginSession();                    // invoked before all other server communications, returns the client's token
-	public void endSession(AuthToken token);    // invoked when the client ends their session
+	AuthToken beginSession();                                           // invoked before all other server communication, returns the client's token
+	void endSession(AuthToken token) throws InvalidAuthTokenException;  // invoked when the client ends their session
 }
