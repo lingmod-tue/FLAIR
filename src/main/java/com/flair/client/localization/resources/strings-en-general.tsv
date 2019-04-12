@@ -124,10 +124,10 @@ WebSearchModal	selResultCountItm50UI	50 Results
 
 QuestionGeneratorPreview	lblTitleUI	If the website does not load correctly below, click on the title above to open it in a new window.
 QuestionGeneratorPreview	btnGenerateQuestUI	Generate Questions
-QuestionGeneratorPreview           	btnGenerate5QuestsUI                	5 Questions
-QuestionGeneratorPreview           	btnGenerate10QuestsUI               	10 Questions
-QuestionGeneratorPreview           	btnGenerate15QuestsUI               	15 Questions
-QuestionGeneratorPreview           	chkRandomQuestsUI                   	Randomize
+QuestionGeneratorPreview	btnGenerate5QuestsUI	5 Questions
+QuestionGeneratorPreview	btnGenerate10QuestsUI	10 Questions
+QuestionGeneratorPreview	btnGenerate15QuestsUI	15 Questions
+QuestionGeneratorPreview	chkRandomQuestsUI	Randomize
 QuestionGeneratorPreview	lblPreviewTargetPlaceholderUI	No preview available
 QuestionGeneratorPreview	IN_PROGRESS	Generating Questions...
 QuestionGeneratorPreview	NO_QUESTIONS_TITLE	Whoops!
