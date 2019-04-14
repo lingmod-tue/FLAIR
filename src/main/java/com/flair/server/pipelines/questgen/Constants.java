@@ -18,7 +18,7 @@ class Constants {
 	static final int GENERATOR_MAX_GENERATED_TREE_LEAF_COUNT = 1000;
 
 	// the pool of generated questions from which the final question for a given sentence is selected
-	static final int QUESTGEN_BESTQPOOL_SIZE = 2;
+	static final int QUESTGEN_BESTQPOOL_SIZE = 1;
 	// percentage of input sentences from which to generate questions
 	// used to select distractors for the originally requested number of questions
 	static final double QUESTGEN_OVERGENERATION_PERCENTAGE = 0.75;
