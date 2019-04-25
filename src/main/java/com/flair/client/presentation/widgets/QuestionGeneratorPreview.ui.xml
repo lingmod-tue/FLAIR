@@ -7,17 +7,23 @@
 
     <ui:style>
         .target-iframe {
-            width: 85%;
-            height: 85%;
-            box-shadow: 0 0 15px rgb(238, 178, 124);
-            border: 1px solid rgb(238, 172, 82);
+            width: 100%;
+            box-shadow: 0 0 18px rgb(238, 178, 124);
+            border-top: 2px solid rgb(238, 172, 82);
+            border-bottom: 0;
+            border-left: 0;
+            border-right: 0;
+            overflow: auto;
+            z-index: 990;
         }
     </ui:style>
 
-    <ma:overlay.MaterialOverlay ui:field="mdlRootUI" backgroundColor="GREY_LIGHTEN_5" duration="400">
-        <m:MaterialPanel backgroundColor="BLUE_DARKEN_3" textColor="WHITE" padding="35" shadow="1">
+    <ma:overlay.MaterialOverlay ui:field="mdlRootUI" backgroundColor="GREY_LIGHTEN_5" duration="400" overflow="HIDDEN">
+        <m:MaterialPanel ui:field="pnlHeaderUI" backgroundColor="BLUE_DARKEN_3" textColor="WHITE" padding="35" shadow="1"
+                        grid="l12 m12 s12">
             <m:MaterialRow marginBottom="5" marginTop="-20" marginRight="-15" textAlign="RIGHT">
-                <m:MaterialIcon ui:field="btnCloseUI" iconType="CLOSE"/>
+                <m:MaterialIcon ui:field="icoHelpTextUI" iconType="HELP"/>
+                <m:MaterialIcon ui:field="btnCloseUI" iconType="CLOSE" float="RIGHT"/>
             </m:MaterialRow>
 
             <m:MaterialRow grid="l12 m12 s12" textAlign="LEFT">
@@ -26,25 +32,26 @@
                 </m:MaterialColumn>
                 <m:MaterialColumn grid="l4 m5 s6" textAlign="RIGHT" paddingTop="20">
                     <m:MaterialButton ui:field="btnGenerateQuestUI" text="Generate Questions"
-                                      iconType="KEYBOARD_ARROW_DOWN"
-                                      waves="LIGHT" backgroundColor="ORANGE_DARKEN_1" iconPosition="RIGHT"
-                                      size="LARGE" fontSize="1.2em" iconFontSize="2em"
-                                      activates="num-questions-selector"/>
+                                      waves="LIGHT" backgroundColor="ORANGE_DARKEN_1"
+                                      iconType="QUESTION_ANSWER" iconColor="WHITE"/>
+                    <m:MaterialIcon ui:field="btnGenerateQuestPrefsUI" iconType="MORE_VERT"
+                                    iconColor="WHITE" iconFontSize="2em" paddingTop="4" paddingRight="4"
+                                    activates="question-gen-prefs" float="RIGHT"/>
                 </m:MaterialColumn>
             </m:MaterialRow>
 
-            <m:MaterialDropDown ui:field="pnlQuestGenDropdown" activator="num-questions-selector" constrainWidth="true"
-                                belowOrigin="true" hover="true">
-                <m:MaterialLink ui:field="btnGenerate5QuestsUI" waves="DEFAULT" text="5 Questions"/>
-                <m:MaterialLink ui:field="btnGenerate10QuestsUI" waves="DEFAULT" text="10 Questions"/>
-                <m:MaterialLink ui:field="btnGenerate15QuestsUI" waves="DEFAULT" text="15 Questions" separator="true"/>
+            <m:MaterialDropDown ui:field="pnlQuestGenDropdown" activator="question-gen-prefs" constrainWidth="false"
+                                belowOrigin="false" hover="true">
+                <m:MaterialRadioButton ui:field="rdoGenerate5QuestsUI" name="num-questions-rdo" value="true" text="5 Questions"/>
+                <m:MaterialRadioButton ui:field="rdoGenerate10QuestsUI" name="num-questions-rdo" text="10 Questions"/>
+                <m:MaterialRadioButton ui:field="rdoGenerate15QuestsUI" name="num-questions-rdo" text="15 Questions"/>
                 <m:MaterialCheckBox ui:field="chkRandomQuestsUI" text="Randomize"/>
             </m:MaterialDropDown>
         </m:MaterialPanel>
 
 
-        <m:MaterialRow ui:field="pnlPreviewFrameUI" marginTop="-25" textAlign="CENTER"
-                       textColor="WHITE" width="100%" height="100vh" visible="false">
+        <m:MaterialRow ui:field="pnlPreviewFrameUI" textAlign="CENTER"
+                       textColor="WHITE" grid="l12 m12 s12" depth="1000" visible="false">
             <g:Frame ui:field="pnlPreviewTargetUI" addStyleNames="{style.target-iframe}"/>
             <ma:emptystate.MaterialEmptyState ui:field="lblPreviewTargetPlaceholderUI" marginTop="275"
                                               backgroundColor="GREY_LIGHTEN_5"
@@ -59,16 +66,16 @@
                                               loading="true"/>
         </m:MaterialRow>
 
-        <m:MaterialRow ui:field="pnlQuestFormUI" marginTop="100" textAlign="CENTER"
+        <m:MaterialRow ui:field="pnlQuestFormUI" marginTop="50" textAlign="CENTER"
                        backgroundColor="GREY_LIGHTEN_5" textColor="BLACK" visible="false" width="70%">
-            <m:MaterialRow margin="50" textAlign="CENTER">
+            <m:MaterialRow margin="30" textAlign="CENTER">
                 <m:MaterialProgress ui:field="lblQuestProgressUI" type="DETERMINATE"/>
             </m:MaterialRow>
             <m:MaterialRow ui:field="pnlQuestCardsUI" textAlign="CENTER"/>
         </m:MaterialRow>
 
         <m:MaterialRow ui:field="pnlHiddenUI" visible="false">
-            <ma:emptystate.MaterialEmptyState ui:field="pnlScorecardUI" marginTop="150" backgroundColor="GREY_LIGHTEN_5"
+            <ma:emptystate.MaterialEmptyState ui:field="pnlScorecardUI" marginTop="50" backgroundColor="GREY_LIGHTEN_5"
                                               iconType="DONE" iconColor="GREEN" textColor="BLACK"/>
         </m:MaterialRow>
     </ma:overlay.MaterialOverlay>

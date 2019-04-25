@@ -56,8 +56,12 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 	@UiField
 	MaterialOverlay mdlRootUI;
 	@UiField
-	@LocalizedField(type = LocalizedFieldType.TEXT_DESCRIPTION)
+	MaterialPanel pnlHeaderUI;
+	@UiField
 	MaterialTitle lblTitleUI;
+	@UiField
+	@LocalizedField(type = LocalizedFieldType.TOOLTIP_MATERIAL)
+	MaterialIcon icoHelpTextUI;
 	@UiField
 	@LocalizedCommonField(tag = CommonLocalizationTags.CLOSE, type = LocalizedFieldType.TOOLTIP_MATERIAL)
 	MaterialIcon btnCloseUI;
@@ -65,16 +69,18 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 	@LocalizedField(type = LocalizedFieldType.TEXT_BUTTON)
 	MaterialButton btnGenerateQuestUI;
 	@UiField
+	MaterialIcon btnGenerateQuestPrefsUI;
+	@UiField
 	MaterialDropDown pnlQuestGenDropdown;
 	@UiField
-	@LocalizedField(type = LocalizedFieldType.TEXT_BUTTON)
-	MaterialLink btnGenerate5QuestsUI;
+	@LocalizedField(type = LocalizedFieldType.TEXT_BASIC)
+	MaterialRadioButton rdoGenerate5QuestsUI;
 	@UiField
-	@LocalizedField(type = LocalizedFieldType.TEXT_BUTTON)
-	MaterialLink btnGenerate10QuestsUI;
+	@LocalizedField(type = LocalizedFieldType.TEXT_BASIC)
+	MaterialRadioButton rdoGenerate10QuestsUI;
 	@UiField
-	@LocalizedField(type = LocalizedFieldType.TEXT_BUTTON)
-	MaterialLink btnGenerate15QuestsUI;
+	@LocalizedField(type = LocalizedFieldType.TEXT_BASIC)
+	MaterialRadioButton rdoGenerate15QuestsUI;
 	@UiField
 	@LocalizedField(type = LocalizedFieldType.TEXT_BASIC)
 	MaterialCheckBox chkRandomQuestsUI;
@@ -303,6 +309,8 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 
 
 	private void resetUI() {
+		mdlRootUI.setOverflow(Style.Overflow.HIDDEN);
+		icoHelpTextUI.setVisible(true);
 		pnlPreviewFrameUI.setVisible(false);
 		pnlPreviewTargetUI.setVisible(false);
 		lblPreviewTargetPlaceholderUI.setVisible(false);
@@ -312,6 +320,7 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 		pnlHiddenUI.add(pnlScorecardUI);
 		pnlQuestCardsUI.clear();
 		btnGenerateQuestUI.setVisible(true);
+		btnGenerateQuestPrefsUI.setVisible(true);
 		lblQuestProgressUI.setOpacity(0);
 		lblPlaceholderUI.setTitle("");
 		lblPlaceholderUI.setDescription("");
@@ -333,17 +342,30 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 			refreshLocale();    // reload the string for the title's description
 		} else {
 			lblPreviewTargetPlaceholderUI.setVisible(true);
-			lblTitleUI.setDescription("");
+			icoHelpTextUI.setVisible(false);
 		}
 
 		GlobalWidgetAnimator.get().seqAnimateWithStart(pnlPreviewFrameUI,
-				Transition.FADEINUP, 0, 650, () -> pnlPreviewFrameUI.setVisible(true));
+				Transition.FADEINUP, 0, 1000, () -> {
+					pnlPreviewTargetUI.setHeight((Window.getClientHeight() - pnlHeaderUI.getElement().getOffsetHeight()) + "px");
+					pnlPreviewFrameUI.setVisible(true);
+				});
 	}
 
-	private void generateQuestions(int numQuestions, boolean randomizeSelection) {
+	private void generateQuestions() {
 		if (generationInProgress)
 			return;
-		else if (!generateHandler.handle(previewDocument, numQuestions, randomizeSelection))
+
+		int numQuestions;
+		boolean randomizeSelection = chkRandomQuestsUI.getValue();
+		if (rdoGenerate10QuestsUI.getValue())
+			numQuestions = 10;
+		else if (rdoGenerate15QuestsUI.getValue())
+			numQuestions = 15;
+		else
+			numQuestions = 5;
+
+		if (!generateHandler.handle(previewDocument, numQuestions, randomizeSelection))
 			return;
 
 		generationInProgress = true;
@@ -358,10 +380,12 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 								lblPlaceholderUI.setLoading(true);
 								lblPlaceholderUI.setTitle(getLocalizedString(LocalizationTags.IN_PROGRESS.toString()));
 								pnlPlaceholderUI.setVisible(true);
+								mdlRootUI.setOverflow(Style.Overflow.AUTO);
 							});
 				});
 
 		GlobalWidgetAnimator.get().animateWithStop(btnGenerateQuestUI, Transition.ZOOMOUT, 10, 800, () -> btnGenerateQuestUI.setVisible(false));
+		GlobalWidgetAnimator.get().animateWithStop(btnGenerateQuestPrefsUI, Transition.ZOOMOUT, 10, 800, () -> btnGenerateQuestPrefsUI.setVisible(false));
 	}
 
 	private void interruptGeneration() {
@@ -389,16 +413,8 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 	}
 
 	private void initUIAndHandlers() {
-		btnGenerate5QuestsUI.addClickHandler(e -> {
-			generateQuestions(5, chkRandomQuestsUI.getValue());
-			pnlQuestGenDropdown.reload();
-		});
-		btnGenerate10QuestsUI.addClickHandler(e -> {
-			generateQuestions(10, chkRandomQuestsUI.getValue());
-			pnlQuestGenDropdown.reload();
-		});
-		btnGenerate15QuestsUI.addClickHandler(e -> {
-			generateQuestions(15, chkRandomQuestsUI.getValue());
+		btnGenerateQuestUI.addClickHandler(e -> {
+			generateQuestions();
 			pnlQuestGenDropdown.reload();
 		});
 
@@ -413,7 +429,6 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 				Window.open(url, "_blank", "");
 		});
 		lblTitleUI.getElement().getStyle().setCursor(Style.Cursor.POINTER);
-
 	}
 
 	public QuestionGeneratorPreview() {

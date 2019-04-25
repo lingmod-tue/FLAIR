@@ -122,11 +122,11 @@ WebSearchModal	selResultCountItm30UI	30 Ergebnisse
 WebSearchModal	selResultCountItm40UI	40 Ergebnisse
 WebSearchModal	selResultCountItm50UI	50 Ergebnisse
 
-QuestionGeneratorPreview	lblTitleUI	Falls die Webseite unten nicht geladen wird, klicken Sie bitte auf den obigen Text, um sie in einem neuen Fenster zu öffnen
+QuestionGeneratorPreview	icoHelpTextUI	Falls die Webseite unten nicht geladen wird, klicken Sie bitte auf den obigen Text, um sie in einem neuen Fenster zu öffnen
 QuestionGeneratorPreview	btnGenerateQuestUI	Fragen generieren
-QuestionGeneratorPreview	btnGenerate5QuestsUI	5 Fragen
-QuestionGeneratorPreview	btnGenerate10QuestsUI	10 Fragen
-QuestionGeneratorPreview	btnGenerate15QuestsUI	15 Fragen
+QuestionGeneratorPreview	rdoGenerate5QuestsUI	5 Fragen
+QuestionGeneratorPreview	rdoGenerate10QuestsUI	10 Fragen
+QuestionGeneratorPreview	rdoGenerate15QuestsUI	15 Fragen
 QuestionGeneratorPreview	chkRandomQuestsUI	Zufällig anordnen
 QuestionGeneratorPreview	lblPreviewTargetPlaceholderUI	Keine Vorschau möglich
 QuestionGeneratorPreview	IN_PROGRESS	Fragen werden generiert...
