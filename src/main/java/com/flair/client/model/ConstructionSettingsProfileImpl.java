@@ -1,5 +1,6 @@
-package com.flair.shared.interop;
+package com.flair.client.model;
 
+import com.flair.client.model.interfaces.ConstructionSettingsProfile;
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
 import com.flair.shared.parser.DocumentReadabilityLevel;

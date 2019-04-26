@@ -13,10 +13,13 @@ import com.flair.server.pipelines.questgen.GeneratedQuestion;
 import com.flair.server.pipelines.questgen.QuestionGenerationPipeline;
 import com.flair.server.utilities.ServerLogger;
 import com.flair.server.utilities.TextSegment;
+import com.flair.shared.exceptions.ServerRuntimeException;
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
 import com.flair.shared.interop.*;
-import com.flair.shared.interop.ServerMessage.Type;
+import com.flair.shared.interop.messages.AbstractMesageSender;
+import com.flair.shared.interop.messages.ServerMessage;
+import com.flair.shared.interop.messages.ServerMessage.Type;
 import edu.stanford.nlp.util.Pair;
 
 import java.io.InputStream;

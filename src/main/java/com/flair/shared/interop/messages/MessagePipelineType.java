@@ -1,4 +1,4 @@
-package com.flair.shared.interop;
+package com.flair.shared.interop.messages;
 
 /*
  * Supported message pipelines

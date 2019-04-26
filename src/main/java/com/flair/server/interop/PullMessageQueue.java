@@ -1,6 +1,6 @@
 package com.flair.server.interop;
 
-import com.flair.shared.interop.ServerMessage;
+import com.flair.shared.interop.messages.ServerMessage;
 
 /*
  * Provides an interface for retrieving messages from the message queue

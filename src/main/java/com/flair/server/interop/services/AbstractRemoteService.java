@@ -1,8 +1,8 @@
 package com.flair.server.interop.services;
 
 import com.flair.server.interop.session.SessionManager;
+import com.flair.shared.exceptions.InvalidAuthTokenException;
 import com.flair.shared.interop.AuthToken;
-import com.flair.shared.interop.InvalidAuthTokenException;
 import com.flair.shared.interop.ServerAuthenticationToken;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 

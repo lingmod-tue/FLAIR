@@ -1,10 +1,9 @@
 package com.flair.client.model;
 
+import com.flair.client.model.interfaces.ConstructionSettingsProfile;
 import com.flair.client.model.interfaces.SettingsExportService;
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
-import com.flair.shared.interop.ConstructionSettingsProfile;
-import com.flair.shared.interop.ConstructionSettingsProfileImpl;
 import com.flair.shared.parser.DocumentReadabilityLevel;
 import com.google.gwt.http.client.URL;
 import com.google.gwt.user.client.Window;

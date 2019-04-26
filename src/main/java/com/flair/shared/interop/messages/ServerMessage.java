@@ -1,5 +1,6 @@
-package com.flair.shared.interop;
+package com.flair.shared.interop.messages;
 
+import com.flair.shared.interop.*;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 import java.util.ArrayList;

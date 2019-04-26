@@ -1,7 +1,11 @@
 package com.flair.client.interop;
 
 import com.flair.client.utilities.ClientLogger;
-import com.flair.shared.interop.*;
+import com.flair.shared.exceptions.InvalidAuthTokenException;
+import com.flair.shared.interop.AuthToken;
+import com.flair.shared.interop.messages.AbstractMessageReceiver;
+import com.flair.shared.interop.messages.MessagePipelineType;
+import com.flair.shared.interop.messages.ServerMessage;
 import com.flair.shared.interop.services.PullMessageEndpointServiceAsync;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;

@@ -11,9 +11,12 @@ import com.flair.client.presentation.widgets.GrammaticalConstructionWeightSlider
 import com.flair.client.presentation.widgets.LanguageSpecificConstructionSliderBundle;
 import com.flair.client.utilities.ClientLogger;
 import com.flair.client.utilities.GwtUtil;
+import com.flair.shared.exceptions.InvalidAuthTokenException;
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
 import com.flair.shared.interop.*;
+import com.flair.shared.interop.messages.AbstractMessageReceiver;
+import com.flair.shared.interop.messages.ServerMessage;
 import com.flair.shared.interop.services.WebRankerServiceAsync;
 import com.flair.shared.parser.DocumentReadabilityLevel;
 import com.flair.shared.utilities.GenericEventSource;
@@ -754,9 +757,9 @@ public class WebRankerCore implements AbstractWebRankerCore {
 			@Override
 			public void handle(ServerMessage msg) {
 				if (data.type == OperationType.WEB_SEARCH && msg.getType() != ServerMessage.Type.SEARCH_CRAWL_PARSE)
-					throw new RuntimeException("Invalid message type for web search operation: " + msg.getType());
+					throw new RuntimeException("Invalid messages type for web search operation: " + msg.getType());
 				else if (data.type == OperationType.CUSTOM_CORPUS && msg.getType() != ServerMessage.Type.CUSTOM_CORPUS)
-					throw new RuntimeException("Invalid message type for custom corpus operation: " + msg.getType());
+					throw new RuntimeException("Invalid messages type for custom corpus operation: " + msg.getType());
 
 				switch (msg.getType()) {
 				case SEARCH_CRAWL_PARSE: {
@@ -774,7 +777,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 						finalizeProcess();
 						break;
 					default:
-						ClientLogger.get().error("Unknown message from server: " + msg.getType());
+						ClientLogger.get().error("Unknown messages from server: " + msg.getType());
 					}
 
 					break;
@@ -797,7 +800,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 						finalizeProcess();
 						break;
 					default:
-						ClientLogger.get().error("Unknown message from server: " + msg.getType());
+						ClientLogger.get().error("Unknown messages from server: " + msg.getType());
 					}
 
 					break;

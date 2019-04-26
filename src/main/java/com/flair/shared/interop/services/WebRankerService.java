@@ -1,10 +1,10 @@
 package com.flair.shared.interop.services;
 
+import com.flair.shared.exceptions.InvalidAuthTokenException;
+import com.flair.shared.exceptions.ServerRuntimeException;
 import com.flair.shared.grammar.Language;
 import com.flair.shared.interop.AuthToken;
-import com.flair.shared.interop.InvalidAuthTokenException;
 import com.flair.shared.interop.RankableDocument;
-import com.flair.shared.interop.ServerRuntimeException;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 

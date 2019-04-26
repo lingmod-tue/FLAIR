@@ -3,8 +3,8 @@ package com.flair.server.interop.session;
 
 import com.flair.server.interop.AuthTokenGenerator;
 import com.flair.server.utilities.ServerLogger;
+import com.flair.shared.exceptions.InvalidAuthTokenException;
 import com.flair.shared.interop.AuthToken;
-import com.flair.shared.interop.InvalidAuthTokenException;
 import com.flair.shared.interop.ServerAuthenticationToken;
 
 import javax.servlet.ServletException;
@@ -163,7 +163,7 @@ public class SessionManager {
 		}
 	}
 
-	private String getUploadFileName(Part part) {
+	private static String getUploadFileName(Part part) {
 		String contentDisp = part.getHeader("content-disposition");
 		String[] tokens = contentDisp.split(";");
 		for (String token : tokens) {

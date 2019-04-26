@@ -1,8 +1,12 @@
 package com.flair.server.interop.services;
 
 import com.flair.server.interop.session.SessionManager;
+import com.flair.shared.exceptions.InvalidAuthTokenException;
+import com.flair.shared.exceptions.ServerRuntimeException;
 import com.flair.shared.grammar.Language;
-import com.flair.shared.interop.*;
+import com.flair.shared.interop.AuthToken;
+import com.flair.shared.interop.RankableDocument;
+import com.flair.shared.interop.ServerAuthenticationToken;
 import com.flair.shared.interop.services.WebRankerService;
 
 import java.util.ArrayList;

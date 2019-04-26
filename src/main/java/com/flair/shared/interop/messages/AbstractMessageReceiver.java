@@ -1,4 +1,6 @@
-package com.flair.shared.interop;
+package com.flair.shared.interop.messages;
+
+import com.flair.shared.interop.AuthToken;
 
 /*
  * Receives messages from the server
