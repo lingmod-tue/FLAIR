@@ -371,4 +371,28 @@ public final class RankableDocumentImpl implements RankableDocument {
 	public void setOperationId(String operationId) {
 		this.operationId = operationId;
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		RankableDocumentImpl that = (RankableDocumentImpl) o;
+
+		if (linkingId != that.linkingId) return false;
+		return operationId.equals(that.operationId);
+
+	}
+	@Override
+	public int hashCode() {
+		int result = operationId.hashCode();
+		result = 31 * result + linkingId;
+		return result;
+	}
+
+	@Override
+	public String toString() {
+		return "RankableDocument {" + title + " | " + operationId + ":" + linkingId + "}";
+	}
+
 }

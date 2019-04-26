@@ -24,7 +24,7 @@ _common-strings_	LANGUAGE_GERMAN	German
 _common-strings_	ACADEMIC_VOCAB	Academic Vocabulary
 _common-strings_	KEYWORDS	Keywords
 _common-strings_	CUSTOM_VOCAB	Custom Vocabulary
-_common-strings_	FEATURE_NOT_SUPPORTED	This feature is not supported yet.
+_common-strings_	FEATURE_NOT_SUPPORTED	This feature is not yet supported.
 
 _webrankercore_	ANALYSIS_COMPLETE	Analysis complete.
 _webrankercore_	SELECTED_FOR_COMPARISON	Selected for comparison

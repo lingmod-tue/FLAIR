@@ -1026,7 +1026,6 @@ public class WebRankerCore implements AbstractWebRankerCore {
 
 					break;
 				}
-
 				case CUSTOM_CORPUS: {
 					CorpusUploadProcessData uploadData = (CorpusUploadProcessData) data;
 					ServerMessage.CustomCorpus serverdata = msg.getCustomCorpus();
@@ -1050,7 +1049,6 @@ public class WebRankerCore implements AbstractWebRankerCore {
 
 					break;
 				}
-
 				case ERROR:
 					break;
 				default:
@@ -1512,13 +1510,8 @@ public class WebRankerCore implements AbstractWebRankerCore {
 		history.setFetchAnalysesHandler(processHistory::asList);
 		history.setRestoreAnalysisHandler(this::onRestoreProcess);
 		questgenpreview.setGenerateHandler(this::onGenerateQuestions);
-		questgenpreview.setInterruptHandler(() -> {
-			if (!messagePoller.isBusy())
-				return;
-
-			messagePoller.endPolling();
-			service.cancelCurrentOperation(token, FuncCallback.get(e -> {}));
-		});
+		questgenpreview.setInterruptHandler(this::onInterruptQuestionGen);
+		questgenpreview.setShowHandler(this::onQuestGenPreviewShow);
 
 		LocalizationEngine.get().addLanguageChangeHandler(l -> rankPreviewModule.refreshLocalization(l.newLang));
 
@@ -1748,6 +1741,17 @@ public class WebRankerCore implements AbstractWebRankerCore {
 								ClientEndPoint.get().fatalServerError();
 						}));
 		return true;
+	}
+
+	private void onInterruptQuestionGen() {
+		if (messagePoller.isBusy())
+			messagePoller.endPolling();
+
+		service.cancelCurrentOperation(token, FuncCallback.get(e -> {}));
+	}
+
+	private void onQuestGenPreviewShow(RankableDocument doc) {
+		service.eagerParseForQuestionGen(token, doc, FuncCallback.get(e -> {}));
 	}
 
 	private void onCancelOp() {

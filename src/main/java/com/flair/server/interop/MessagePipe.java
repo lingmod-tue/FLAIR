@@ -174,7 +174,7 @@ public class MessagePipe {
 	public synchronized ServerMessage[] getQueuedMessages(ServerAuthenticationToken token) {
 		PullMessageSender sender = token2Pull.get(token);
 		if (sender == null)
-			throw new IllegalArgumentException("Session token has no message sender. ID: " + token.getUuid());
+			throw new ServerRuntimeException("Session token has no message sender. ID: " + token.getUuid());
 
 		// return all the queued messages
 		return sender.dequeueAll();

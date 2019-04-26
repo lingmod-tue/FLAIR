@@ -33,7 +33,7 @@ public class SessionState {
 			KeywordSearcherInput keywords;
 			List<CustomCorpusFile> uploaded;
 
-			public CustomCorpus(Language l, List<String> k) {
+			CustomCorpus(Language l, List<String> k) {
 				lang = l;
 
 				if (k.isEmpty())
@@ -45,7 +45,22 @@ public class SessionState {
 			}
 		}
 
-		CustomCorpus corpusData;
+		static final class QuestionGen {
+			String eagerParsingOpId;
+			AbstractDocument eagerSourceDoc;
+			DocumentDTO eagerLinkingDoc;
+			PipelineOp.PipelineOpBuilder queuedOperation;
+
+			QuestionGen(AbstractDocument eagerSourceDoc, DocumentDTO eagerLinkingDoc) {
+				this.eagerParsingOpId = "";
+				this.eagerSourceDoc = eagerSourceDoc;
+				this.eagerLinkingDoc = eagerLinkingDoc;
+				this.queuedOperation = null;
+			}
+		}
+
+		CustomCorpus corpusData = null;
+		QuestionGen questGenData = null;
 	}
 
 	static final class UploadedFileDocumentSource extends StreamDocumentSource {
@@ -70,7 +85,7 @@ public class SessionState {
 			currentOp = null;
 		}
 
-		void newOp(PipelineOp<?, ?> op) {
+		String newOp(PipelineOp<?, ?> op) {
 			if (hasActiveOp())
 				throw new RuntimeException("Previous state not cleared");
 
@@ -83,6 +98,7 @@ public class SessionState {
 			currentOp = new Pair<>(op, uuid);
 
 			ServerLogger.get().info("Pipeline operation '" + op.name() + "' has begun");
+			return uuid;
 		}
 
 		void endActiveOp(boolean cancel) {
@@ -159,11 +175,11 @@ public class SessionState {
 		messagePipe.open(token);
 	}
 
-	private void beginNewOperation(PipelineOp.PipelineOpBuilder opBuilder) {
+	private String beginNewOperation(PipelineOp.PipelineOpBuilder opBuilder) {
 		// clear the message queue just in case any old messages ended up there
 		messagePipe.clearPendingMessages();
 
-		pipelineOpCache.newOp(opBuilder.launch());
+		return pipelineOpCache.newOp(opBuilder.launch());
 	}
 
 	private void endActiveOperation(boolean cancel) {
@@ -172,12 +188,13 @@ public class SessionState {
 
 
 	public synchronized void cancelOperation() {
-		if (!pipelineOpCache.hasActiveOp()) {
-			sendErrorResponse("No active operation to cancel");
-			return;
-		}
+		if (!pipelineOpCache.hasActiveOp())
+			logAndThrowException("No active operation to cancel");
 
 		endActiveOperation(true);
+
+		temporaryCache.questGenData = null;
+		temporaryCache.corpusData = null;
 	}
 
 	private RankableDocumentImpl generateRankableDocument(AbstractDocument source, String opId) {
@@ -297,6 +314,11 @@ public class SessionState {
 		messagePipe.send(msg);
 	}
 
+	private void logAndThrowException(String err) {
+		ServerLogger.get().error(err);
+		throw new ServerRuntimeException(err);
+	}
+
 	private synchronized void handleCorpusJobBegin(Iterable<AbstractDocumentSource> source) {
 		if (!pipelineOpCache.hasActiveOp()) {
 			ServerLogger.get().error("Invalid corpus job begin event");
@@ -368,6 +390,30 @@ public class SessionState {
 		endActiveOperation(false);
 	}
 
+	private synchronized void handleEagerParseForQuestionGenParseComplete(AbstractDocument parsedDoc, DocumentDTO linkingDoc) {
+		if (!pipelineOpCache.hasActiveOp()) {
+			ServerLogger.get().error("Invalid generate questions parse complete event!");
+			return;
+		}
+
+		// add to cache so that future QG requests for this document (in this session) won't have to parse it anew
+		questGenLinkingData.put(pipelineOpCache.lookupOp(linkingDoc.getOperationId()), parsedDoc, linkingDoc);
+	}
+
+	private synchronized void handleEagerParseForQuestionGenJobComplete(Collection<GeneratedQuestion> unused) {
+		if (!pipelineOpCache.hasActiveOp()) {
+			ServerLogger.get().error("Invalid generate questions parse complete event!");
+			return;
+		}
+
+		endActiveOperation(false);
+
+		if (temporaryCache.questGenData.queuedOperation != null)
+			beginNewOperation(temporaryCache.questGenData.queuedOperation);
+
+		temporaryCache.questGenData = null;
+	}
+
 	private synchronized void handleGenerateQuestionsParseComplete(AbstractDocument parsedDoc, DocumentDTO linkingDoc, boolean usingCachedDoc) {
 		if (!pipelineOpCache.hasActiveOp()) {
 			ServerLogger.get().error("Invalid generate questions parse complete event!");
@@ -377,8 +423,6 @@ public class SessionState {
 		if (usingCachedDoc)
 			return;
 
-		// add to cache so that future QG requests for this document (in this session)
-		// won't have to parse it anew
 		questGenLinkingData.put(pipelineOpCache.lookupOp(linkingDoc.getOperationId()), parsedDoc, linkingDoc);
 	}
 
@@ -399,27 +443,13 @@ public class SessionState {
 		endActiveOperation(false);
 	}
 
-	private void sendErrorResponse(String err) {
-		ServerLogger.get().error(err);
-
-		ServerMessage msg = new ServerMessage(token);
-		ServerMessage.Error d = new ServerMessage.Error(err);
-		msg.setError(d);
-		msg.setType(Type.ERROR);
-
-		sendMessageToClient(msg);
-	}
-
 	public synchronized void handleCorpusUpload(List<CustomCorpusFile> corpus) {
 		ServerLogger.get().info("Received custom corpus from client");
 
-		if (pipelineOpCache.hasActiveOp()) {
-			sendErrorResponse("Another operation still running");
-			return;
-		} else if (temporaryCache.corpusData == null) {
-			sendErrorResponse("Invalid params for custom corpus");
-			return;
-		}
+		if (pipelineOpCache.hasActiveOp())
+			logAndThrowException("Another operation still running");
+		else if (temporaryCache.corpusData == null)
+			logAndThrowException("Invalid params for custom corpus");
 
 		// save the uploaded file for later
 		temporaryCache.corpusData.uploaded.addAll(corpus);
@@ -428,10 +458,8 @@ public class SessionState {
 	public synchronized void searchCrawlParse(String query, Language lang, int numResults, List<String> keywords) {
 		ServerLogger.get().info("Begin search-crawl-parse -> Query: " + query + ", Language: " + lang.toString() + ", Results: " + numResults);
 
-		if (pipelineOpCache.hasActiveOp()) {
-			sendErrorResponse("Another operation still running");
-			return;
-		}
+		if (pipelineOpCache.hasActiveOp())
+			logAndThrowException("Another operation still running");
 
 		KeywordSearcherInput keywordInput;
 		if (keywords.isEmpty())
@@ -468,10 +496,8 @@ public class SessionState {
 	public synchronized void endCustomCorpusUpload(boolean success) {
 		ServerLogger.get().info("End custom corpus uploading | Success: " + success);
 
-		if (pipelineOpCache.hasActiveOp()) {
-			sendErrorResponse("Another operation still running");
-			return;
-		}
+		if (pipelineOpCache.hasActiveOp())
+			logAndThrowException("Another operation still running");
 
 		if (!success) {
 			// don't begin the parse op
@@ -491,9 +517,8 @@ public class SessionState {
 				i++;
 			}
 		} catch (Throwable ex) {
-			sendErrorResponse("Couldn't read custom corpus files. Exception: " + ex.getMessage());
+			ServerLogger.get().error(ex, "Couldn't read custom corpus files");
 		}
-
 
 		GramParsingPipeline.ParseOpBuilder builder = GramParsingPipeline.get().documentParse();
 		builder.lang(temporaryCache.corpusData.lang)
@@ -509,30 +534,62 @@ public class SessionState {
 		handleCorpusJobBegin(sources);
 	}
 
-	public synchronized void generateQuestions(RankableDocument doc, int numQuestions, boolean randomizeSelection) {
+	public synchronized void eagerParseForQuestionGen(RankableDocument doc) {
 		PipelineOp<?, ?> sourceOp = pipelineOpCache.lookupOp(doc.getOperationId());
-		if (sourceOp == null) {
-			sendErrorResponse("Couldn't find pipeline op with id " + doc.getOperationId());
-			return;
-		}
+		if (sourceOp == null)
+			logAndThrowException("Couldn't find pipeline op with id " + doc.getOperationId());
 
 		boolean usingCachedDoc = false;
 		AbstractDocument sourceDoc = questGenLinkingData.get(sourceOp, doc);
 		if (sourceDoc == null) {
 			sourceDoc = gramParsingLinkingData.get(sourceOp, doc);
-			if (sourceDoc == null) {
-				sendErrorResponse("Couldn't find source doc with linking id " + doc.getLinkingId() + " and pipeline op id " + doc.getOperationId());
-				return;
-			}
+			if (sourceDoc == null)
+				logAndThrowException("Couldn't find source doc with linking id " + doc.getLinkingId() + " and pipeline op id " + doc.getOperationId());
 		} else
 			usingCachedDoc = true;
 
-		ServerLogger.get().info("Begin question generation -> Doc" + (usingCachedDoc ? " (cached)" : "") + ": " + sourceDoc.getDescription() + ", Questions: " + numQuestions);
+		if (!usingCachedDoc) {
+			ServerLogger.get().info("Begin eager parsing for question generation -> Doc: " + sourceDoc.getDescription());
 
-		if (pipelineOpCache.hasActiveOp()) {
-			sendErrorResponse("Another operation still running");
-			return;
+			if (pipelineOpCache.hasActiveOp())
+				logAndThrowException("Another operation still running");
+
+			QuestionGenerationPipeline.QuestionGenerationOpBuilder builder = QuestionGenerationPipeline.get().generateQuestions()
+					.sourceDoc(sourceDoc)
+					.sourceDocParsed(false)
+					.numQuestions(5)
+					.randomizeSelection(false)
+					.onParseComplete(e -> handleEagerParseForQuestionGenParseComplete(e, doc))
+					.onComplete(e -> handleEagerParseForQuestionGenJobComplete(e.generatedQuestions));
+
+			// needs to be set first to prevent a race condition
+			temporaryCache.questGenData = new TemporaryCache.QuestionGen(sourceDoc, doc);
+			temporaryCache.questGenData.eagerParsingOpId = beginNewOperation(builder);
 		}
+	}
+
+	public synchronized void generateQuestions(RankableDocument doc, int numQuestions, boolean randomizeSelection) {
+		PipelineOp<?, ?> sourceOp = pipelineOpCache.lookupOp(doc.getOperationId());
+		if (sourceOp == null)
+			logAndThrowException("Couldn't find pipeline op with id " + doc.getOperationId());
+
+		boolean usingCachedDoc = false, eagerParsingInProgress = false;
+		AbstractDocument sourceDoc = questGenLinkingData.get(sourceOp, doc);
+		if (sourceDoc == null) {
+			if (temporaryCache.questGenData == null || !temporaryCache.questGenData.eagerLinkingDoc.equals(doc)) {
+				ServerLogger.get().warn(doc.toString() + " was not eagerly parsed for question generation!");
+				sourceDoc = gramParsingLinkingData.get(sourceOp, doc);
+			} else
+				eagerParsingInProgress = true;
+		} else
+			usingCachedDoc = true;
+
+		ServerLogger.get().info("Begin question generation -> Doc" + (usingCachedDoc ? " (cached)" : "") + ": "
+								+ (sourceDoc != null ? sourceDoc.getDescription() : temporaryCache.questGenData.eagerSourceDoc.getDescription())
+								+ ", Questions: " + numQuestions);
+
+		if (pipelineOpCache.hasActiveOp() && (!eagerParsingInProgress || !pipelineOpCache.activeOpId().equals(temporaryCache.questGenData.eagerParsingOpId)))
+			logAndThrowException("Another operation still running");
 
 		boolean captureThrowaway = usingCachedDoc;
 		QuestionGenerationPipeline.QuestionGenerationOpBuilder builder = QuestionGenerationPipeline.get().generateQuestions()
@@ -543,7 +600,13 @@ public class SessionState {
 				.onParseComplete(e -> handleGenerateQuestionsParseComplete(e, doc, captureThrowaway))
 				.onComplete(e -> handleGenerateQuestionsJobComplete(e.generatedQuestions));
 
-		beginNewOperation(builder);
+		if (eagerParsingInProgress) {
+			if (temporaryCache.questGenData.queuedOperation != null)
+				logAndThrowException("Multiple queued question generation operations!");
+
+			temporaryCache.questGenData.queuedOperation = builder;
+		} else
+			beginNewOperation(builder);
 	}
 
 	public synchronized void release() {

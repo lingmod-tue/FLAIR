@@ -25,52 +25,62 @@ public final class ServerLogger extends AbstractDebugLogger {
 		return SINGLETON;
 	}
 
+	private final class State {
+		int indentLevel;
+		StringBuilder accumulator;
+
+		State() {
+			indentLevel = 0;
+			accumulator = new StringBuilder();
+		}
+
+		void print(Channel channel, String message) {
+			StringBuilder builder = new StringBuilder();
+
+			for (int i = 0; i < indentLevel; i++)
+				builder.append("\t");
+
+			builder.append(" ");
+			builder.append(message);
+
+			switch (channel) {
+			case TRACE:
+				pipeline.trace(builder.toString());
+				break;
+			case ERROR:
+				pipeline.error(builder.toString());
+				break;
+			case WARN:
+				pipeline.warn(builder.toString());
+				break;
+			case INFO:
+			default:
+				pipeline.info(builder.toString());
+			}
+		}
+
+	    void indent() {
+			++indentLevel;
+		}
+
+		void exdent() {
+			if (indentLevel-- < 0)
+				indentLevel = 0;
+		}
+	}
+
 	private final Logger pipeline;
-	private int indentLevel;
-	private boolean callerDecorator;
+	private final ThreadLocal<State> state;
 
 	private ServerLogger() {
 		super("FLAIR-Log");
 		this.pipeline = LoggerFactory.getLogger(loggerName);
-		this.indentLevel = 0;
-		this.callerDecorator = false;
-	}
-
-	public synchronized void callerDecorator(boolean state) { callerDecorator = state; }
-
-	private String prettyPrintCaller() {
-		StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-
-		// the calling method would be the fifth element in the array (the first would be the call to getStackTrace())
-		StackTraceElement caller = stackTrace[4];
-		return "{" + caller.getClassName().substring(10) + "." + caller.getMethodName() + "()} ";
+		this.state = ThreadLocal.withInitial(State::new);
 	}
 
 	@Override
 	protected void print(Channel channel, String message) {
-		StringBuilder builder = new StringBuilder();
-		if (callerDecorator)
-			builder.append(prettyPrintCaller());
-
-		for (int i = 0; i < indentLevel; i++)
-			builder.append("\t");
-		builder.append(" ");
-		builder.append(message);
-
-		switch (channel) {
-		case TRACE:
-			pipeline.trace(builder.toString());
-			break;
-		case ERROR:
-			pipeline.error(builder.toString());
-			break;
-		case WARN:
-			pipeline.warn(builder.toString());
-			break;
-		case INFO:
-		default:
-			pipeline.info(builder.toString());
-		}
+		state.get().print(channel, message);
 	}
 
 	@Override
@@ -82,16 +92,12 @@ public final class ServerLogger extends AbstractDebugLogger {
 		return this;
 	}
 
-	public synchronized AbstractDebugLogger indent() {
-		indentLevel++;
+	public AbstractDebugLogger indent() {
+		state.get().indent();
 		return this;
 	}
-
-	public synchronized AbstractDebugLogger exdent() {
-		indentLevel--;
-		if (indentLevel < 0)
-			indentLevel = 0;
-
+	public AbstractDebugLogger exdent() {
+		state.get().exdent();
 		return this;
 	}
 }

@@ -108,6 +108,7 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 
 	GenerateHandler generateHandler;
 	InterruptHandler interruptHandler;
+	ShowHandler showHandler;
 
 	private static final int MAX_TITLE_LENGTH = 35;
 	private static final int MAX_ANSWER_OPTIONS = 4;
@@ -389,8 +390,11 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 	}
 
 	private void interruptGeneration() {
+		// called unconditionally as an eager parsing operation
+		// could potentially be running at this point
+		interruptHandler.handle();
+
 		if (generationInProgress) {
-			interruptHandler.handle();
 			resetUI();
 			display(new ArrayList<>());
 			generationInProgress = false;
@@ -452,6 +456,9 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 		resetUI();
 		loadUI();
 		mdlRootUI.open(origin);
+
+		if (showHandler != null)
+			showHandler.handle(document);
 	}
 
 	@Override
@@ -467,6 +474,10 @@ public class QuestionGeneratorPreview extends LocalizedComposite implements Ques
 	@Override
 	public void setInterruptHandler(InterruptHandler handler) {
 		interruptHandler = handler;
+	}
+	@Override
+	public void setShowHandler(ShowHandler handler) {
+		showHandler = handler;
 	}
 
 

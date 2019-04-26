@@ -15,9 +15,14 @@ public interface QuestionGeneratorPreviewService {
 		boolean handle(RankableDocument document, int numQuestions, boolean randomize);
 	}
 
+	interface ShowHandler {
+		void handle(RankableDocument document);
+	}
+
 	void show(RankableDocument document, Element origin);
 	void display(List<QuestionDTO> questions);
 
 	void setGenerateHandler(GenerateHandler handler);
 	void setInterruptHandler(InterruptHandler handler);
+	void setShowHandler(ShowHandler handler);
 }
