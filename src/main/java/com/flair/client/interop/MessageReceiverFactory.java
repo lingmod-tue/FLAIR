@@ -1,8 +1,5 @@
 package com.flair.client.interop;
 
-import com.flair.shared.interop.messages.AbstractMessageReceiver;
-import com.flair.shared.interop.messages.MessagePipelineType;
-
 /*
  * Factory class for message receivers
  */

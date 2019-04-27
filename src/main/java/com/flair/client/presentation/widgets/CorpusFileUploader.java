@@ -9,7 +9,6 @@ import com.flair.client.localization.annotations.LocalizedField;
 import com.flair.client.localization.interfaces.LocalizationBinder;
 import com.flair.client.presentation.interfaces.CorpusUploadService;
 import com.flair.shared.grammar.Language;
-import com.flair.shared.interop.AuthToken;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;

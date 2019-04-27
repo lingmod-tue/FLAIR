@@ -1,11 +1,7 @@
 package com.flair.client.interop;
 
 import com.flair.client.utilities.ClientLogger;
-import com.flair.shared.exceptions.InvalidAuthTokenException;
-import com.flair.shared.interop.AuthToken;
-import com.flair.shared.interop.messages.AbstractMessageReceiver;
-import com.flair.shared.interop.messages.MessagePipelineType;
-import com.flair.shared.interop.messages.ServerMessage;
+import com.flair.shared.exceptions.InvalidClientIdentificationTokenException;
 import com.flair.shared.interop.services.PullMessageEndpointServiceAsync;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -21,7 +17,7 @@ class PullMessageReceiver implements AbstractMessageReceiver {
 				ClientLogger.get().error(caught, "Couldn't fetch server messages");
 				callbackInProgess = false;
 
-				if (caught instanceof InvalidAuthTokenException)
+				if (caught instanceof InvalidClientIdentificationTokenException)
 					close();
 			}
 

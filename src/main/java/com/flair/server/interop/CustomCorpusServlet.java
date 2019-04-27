@@ -1,8 +1,6 @@
 
 package com.flair.server.interop;
 
-import com.flair.server.interop.session.SessionManager;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
@@ -34,7 +32,7 @@ public class CustomCorpusServlet extends HttpServlet {
 	 */
 	protected void processRequest(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		SessionManager.get().handleCorpusUpload(request);
+		ClientSessionManager.get().handleCorpusUpload(request);
 	}
 
 	// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on

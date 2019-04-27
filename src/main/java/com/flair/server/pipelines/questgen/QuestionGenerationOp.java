@@ -192,7 +192,8 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 
 	private void onParseComplete(AsyncJob j, NerCorefParseTask.Result r) {
 		if (r.output != null) {
-			input.parseComplete.handle(r.output);
+			safeInvoke(() -> input.parseComplete.handle(r.output),
+					"Exception in parse complete handler");
 			queueSentenceSelTask(j, r.output);
 		}
 	}
@@ -202,7 +203,8 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 		if (input.randomizedSelection)
 			Collections.shuffle(rankedSentences);
 		rankedSentenceAnnotations = rankedSentences.stream().map(SentenceSelector.SelectedSentence::annotation).collect(Collectors.toList());
-		input.selectionComplete.handle(rankedSentences);
+		safeInvoke(() -> input.selectionComplete.handle(rankedSentences),
+				"Exception in sentence selection complete handler");
 
 		queueQuestGenTask(j);
 	}
@@ -257,7 +259,8 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 			if (j.isCancelled())
 				return;
 
-			input.jobComplete.handle(output);
+			safeInvoke(() -> input.jobComplete.handle(output),
+					"Exception in job complete handler");
 		});
 
 

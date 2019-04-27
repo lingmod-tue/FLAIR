@@ -1,7 +1,7 @@
 
 package com.flair.server.interop;
 
-import com.flair.server.interop.session.SessionManager;
+import com.flair.server.interop.messaging.ServerMessagingSwitchboard;
 import com.flair.server.pipelines.gramparsing.GramParsingPipeline;
 import com.flair.server.pipelines.questgen.QuestionGenerationPipeline;
 import com.flair.server.scheduler.ThreadPool;
@@ -20,7 +20,8 @@ public class FlairWebAppContextListener implements ServletContextListener {
 		ServerLogger.get().indent();
 
 		ThreadPool.get();
-		SessionManager.get();
+		ServerMessagingSwitchboard.get();
+		ClientSessionManager.get();
 		GramParsingPipeline.get();
 		QuestionGenerationPipeline.get();
 
@@ -40,7 +41,8 @@ public class FlairWebAppContextListener implements ServletContextListener {
 
 		QuestionGenerationPipeline.dispose();
 		GramParsingPipeline.dispose();
-		SessionManager.dispose();
+		ClientSessionManager.dispose();
+		ServerMessagingSwitchboard.dispose();
 		ThreadPool.dispose();
 
 		ServerLogger.get().exdent();

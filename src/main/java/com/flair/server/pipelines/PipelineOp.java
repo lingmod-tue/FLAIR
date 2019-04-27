@@ -2,6 +2,7 @@ package com.flair.server.pipelines;
 
 import com.flair.server.scheduler.AsyncJob;
 import com.flair.server.scheduler.Cancellable;
+import com.flair.server.utilities.ServerLogger;
 
 public abstract class PipelineOp<I, O> implements Cancellable {
 	public interface EventHandler<E> {
@@ -30,6 +31,14 @@ public abstract class PipelineOp<I, O> implements Cancellable {
 		this.output = output;
 		this.taskLinker = new TaskSyncHelper();
 		this.name = name;
+	}
+
+	protected void safeInvoke(Runnable callee, String exceptionMessage) {
+		try {
+			callee.run();
+		} catch (Throwable ex) {
+			ServerLogger.get().error(ex, "(" + name() + ") " + exceptionMessage + ". Exception: " + ex);
+		}
 	}
 
 	public boolean isExecuting() {

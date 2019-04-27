@@ -78,7 +78,8 @@ public class ParseOp extends PipelineOp<ParseOp.Input, ParseOp.Output> {
 		taskLinker.addHandler(DocParseTask.Result.class, (j, r) -> {
 			// add the result to the doc collection
 			if (r.output != null) {
-				input.parseComplete.handle(r.output);
+				safeInvoke(() -> input.parseComplete.handle(r.output),
+						"Exception in parse complete handler");
 
 				output.parsedDocs.add(r.output, true);
 				output.parsedDocs.sort();
@@ -94,7 +95,8 @@ public class ParseOp extends PipelineOp<ParseOp.Input, ParseOp.Output> {
 			if (j.isCancelled())
 				return;
 
-			input.jobComplete.handle(output.parsedDocs);
+			safeInvoke(() -> input.jobComplete.handle(output.parsedDocs),
+					"Exception in job complete handler");
 		});
 
 		for (AbstractDocumentSource itr : input.sourceDocs) {

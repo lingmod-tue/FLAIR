@@ -10,8 +10,8 @@ import com.flair.client.presentation.interfaces.QuestionGeneratorPreviewService;
 import com.flair.client.utilities.GlobalWidgetAnimator;
 import com.flair.client.utilities.GwtUtil;
 import com.flair.shared.grammar.Language;
-import com.flair.shared.interop.QuestionDTO;
-import com.flair.shared.interop.RankableDocument;
+import com.flair.shared.interop.dtos.QuestionDTO;
+import com.flair.shared.interop.dtos.RankableDocument;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style;
@@ -25,7 +25,6 @@ import gwt.material.design.addins.client.emptystate.MaterialEmptyState;
 import gwt.material.design.addins.client.overlay.MaterialOverlay;
 import gwt.material.design.client.constants.Color;
 import gwt.material.design.client.constants.IconType;
-import gwt.material.design.client.ui.*;
 import gwt.material.design.client.ui.animate.Transition;
 
 import java.util.ArrayList;

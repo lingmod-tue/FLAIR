@@ -3,7 +3,6 @@ package com.flair.client.model.interfaces;
 
 import com.flair.client.presentation.interfaces.AbstractWebRankerPresenter;
 import com.flair.shared.grammar.Language;
-import com.flair.shared.interop.AuthToken;
 import com.flair.shared.utilities.GenericEventSource;
 
 /*

@@ -2,21 +2,19 @@ package com.flair.client.model;
 
 import com.flair.client.ClientEndPoint;
 import com.flair.client.interop.FuncCallback;
-import com.flair.client.localization.*;
-import com.flair.client.model.interfaces.*;
-import com.flair.client.presentation.interfaces.*;
 import com.flair.client.presentation.interfaces.AbstractResultItem.Type;
 import com.flair.client.presentation.widgets.GenericWeightSlider;
 import com.flair.client.presentation.widgets.GrammaticalConstructionWeightSlider;
 import com.flair.client.presentation.widgets.LanguageSpecificConstructionSliderBundle;
 import com.flair.client.utilities.ClientLogger;
 import com.flair.client.utilities.GwtUtil;
-import com.flair.shared.exceptions.InvalidAuthTokenException;
+import com.flair.shared.exceptions.InvalidClientIdentificationTokenException;
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
-import com.flair.shared.interop.*;
-import com.flair.shared.interop.messages.AbstractMessageReceiver;
-import com.flair.shared.interop.messages.ServerMessage;
+import com.flair.shared.interop.dtos.DocumentDTO;
+import com.flair.shared.interop.dtos.RankableDocument;
+import com.flair.shared.interop.dtos.RankableWebSearchResult;
+import com.flair.shared.interop.dtos.UploadedDocument;
 import com.flair.shared.interop.services.WebRankerServiceAsync;
 import com.flair.shared.parser.DocumentReadabilityLevel;
 import com.flair.shared.utilities.GenericEventSource;
@@ -1193,7 +1191,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 					notification.notify(getLocalizedString(LocalizationTags.SERVER_ERROR.toString()));
 					presenter.showLoaderOverlay(false);
 
-					if (e instanceof InvalidAuthTokenException)
+					if (e instanceof InvalidClientIdentificationTokenException)
 						ClientEndPoint.get().fatalServerError();
 				}));
 	}
@@ -1215,7 +1213,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 					notification.notify(getLocalizedString(LocalizationTags.SERVER_ERROR.toString()));
 					presenter.showLoaderOverlay(false);
 
-					if (e instanceof InvalidAuthTokenException)
+					if (e instanceof InvalidClientIdentificationTokenException)
 						ClientEndPoint.get().fatalServerError();
 				}));
 
@@ -1282,7 +1280,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 							notification.notify(getLocalizedString(LocalizationTags.SERVER_ERROR.toString()));
 							questgenpreview.display(new ArrayList<>());
 
-							if (e instanceof InvalidAuthTokenException)
+							if (e instanceof InvalidClientIdentificationTokenException)
 								ClientEndPoint.get().fatalServerError();
 						}));
 		return true;

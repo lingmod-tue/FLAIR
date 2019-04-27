@@ -2,7 +2,7 @@ package com.flair.client.model;
 
 import com.flair.client.model.interfaces.AbstractWebRankerCore;
 import com.flair.shared.grammar.Language;
-import com.flair.shared.interop.RankableWebSearchResult;
+import com.flair.shared.interop.dtos.RankableWebSearchResult;
 
 import java.util.ArrayList;
 import java.util.List;
