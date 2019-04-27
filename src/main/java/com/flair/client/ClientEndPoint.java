@@ -1,7 +1,6 @@
 package com.flair.client;
 
 import com.flair.client.interop.FuncCallback;
-import com.flair.client.interop.MessageReceiverFactory;
 import com.flair.client.localization.GrammaticalConstructionLocalizationProvider;
 import com.flair.client.localization.LocalizationStringTable;
 import com.flair.client.model.DocumentAnnotator;
@@ -11,6 +10,7 @@ import com.flair.client.model.interfaces.AbstractWebRankerCore;
 import com.flair.client.presentation.MainViewport;
 import com.flair.client.presentation.interfaces.AbstractWebRankerPresenter;
 import com.flair.client.utilities.ClientLogger;
+import com.flair.shared.interop.ClientIdentificationToken;
 import com.flair.shared.interop.services.SessionManagementServiceAsync;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -25,7 +25,7 @@ public class ClientEndPoint {
 		return INSTANCE;
 	}
 
-	private AuthToken clientToken;
+	private ClientIdentificationToken clientToken;
 	private MainViewport viewport;
 	private WebRankerCore webranker;
 	private SessionManagementServiceAsync sessionService;
@@ -109,7 +109,7 @@ public class ClientEndPoint {
 		ClientLogger.get().info("Client endpoint deinitialized");
 	}
 
-	public AuthToken getClientToken() {
+	public ClientIdentificationToken getClientIdentificationToken() {
 		return clientToken;
 	}
 

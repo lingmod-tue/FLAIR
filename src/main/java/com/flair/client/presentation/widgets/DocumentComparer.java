@@ -12,6 +12,7 @@ import com.flair.client.presentation.interfaces.DocumentCompareService;
 import com.flair.shared.grammar.Language;
 import com.flair.shared.interop.dtos.RankableDocument;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -21,6 +22,7 @@ import gwt.material.design.addins.client.subheader.MaterialSubHeader;
 import gwt.material.design.client.constants.Color;
 import gwt.material.design.client.constants.IconType;
 import gwt.material.design.client.constants.Position;
+import gwt.material.design.client.ui.*;
 import gwt.material.design.client.ui.animate.MaterialAnimation;
 import gwt.material.design.client.ui.animate.Transition;
 
@@ -112,7 +114,7 @@ public class DocumentComparer extends LocalizedComposite implements DocumentComp
 				removeFromSelection(itr);
 				reloadUI();
 			});
-			delButton.setFloat(Float.RIGHT);
+			delButton.setFloat(Style.Float.RIGHT);
 			buttonCont.add(delButton);
 			wrapper.add(title);
 			wrapper.add(url);

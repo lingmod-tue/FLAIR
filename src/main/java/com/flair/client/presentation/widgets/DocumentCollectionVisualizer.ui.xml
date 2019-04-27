@@ -1,11 +1,10 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:m="urn:import:gwt.material.design.client.ui"
-	xmlns:m.html="urn:import:gwt.material.design.client.ui.html"
-	xmlns:ma.window="urn:import:gwt.material.design.addins.client.window"
-	xmlns:ma.splitpanel="urn:import:gwt.material.design.addins.client.splitpanel"
-	xmlns:flair.pak="urn:import:com.flair.client.presentation.widgets.sliderbundles">
+			 xmlns:g="urn:import:com.google.gwt.user.client.ui"
+			 xmlns:m="urn:import:gwt.material.design.client.ui"
+			 xmlns:ma.window="urn:import:gwt.material.design.addins.client.window"
+			 xmlns:ma.splitpanel="urn:import:gwt.material.design.addins.client.splitpanel"
+			 xmlns:flair.pak="urn:import:com.flair.client.presentation.widgets.sliderbundles">
 	
 	<ui:style>
 	.panel-axes {

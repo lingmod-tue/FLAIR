@@ -6,7 +6,7 @@ public final class CustomCorpusFile {
 	private final InputStream stream;
 	private final String fileName;
 
-	public CustomCorpusFile(InputStream input, String fileName) {
+	CustomCorpusFile(InputStream input, String fileName) {
 		this.stream = input;
 		this.fileName = fileName;
 	}

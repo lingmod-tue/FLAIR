@@ -1,5 +1,6 @@
 package com.flair.client.presentation.widgets;
 
+import com.flair.client.localization.*;
 import com.flair.client.localization.annotations.LocalizedCommonField;
 import com.flair.client.localization.annotations.LocalizedField;
 import com.flair.client.localization.interfaces.LocalizationBinder;
@@ -35,6 +36,7 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import gwt.material.design.addins.client.splitpanel.MaterialSplitPanel;
 import gwt.material.design.addins.client.window.MaterialWindow;
+import gwt.material.design.client.ui.*;
 import gwt.material.design.client.ui.animate.MaterialAnimation;
 
 import java.util.*;

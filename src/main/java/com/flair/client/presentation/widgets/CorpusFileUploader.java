@@ -9,6 +9,7 @@ import com.flair.client.localization.annotations.LocalizedField;
 import com.flair.client.localization.interfaces.LocalizationBinder;
 import com.flair.client.presentation.interfaces.CorpusUploadService;
 import com.flair.shared.grammar.Language;
+import com.flair.shared.interop.ClientIdentificationToken;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -87,13 +88,13 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
         return dropzone.getUploadingFiles().length !== 0 || dropzone.getQueuedFiles().length !== 0;
     }-*/;
 
-	private native void setupDropzone(AuthToken t, MaterialFileUploader u) /*-{
+	private native void setupDropzone(ClientIdentificationToken t, MaterialFileUploader u) /*-{
         var dropzone = u.@gwt.material.design.addins.client.fileuploader.MaterialFileUploader::uploader;
         var uuid = t.toString();
 
         // tag uploaded files with the client token's uuid
         dropzone.on('sending', function (file, xhr, formData) {
-            formData.append('AuthToken', uuid);
+            formData.append('ClientIdentificationToken', uuid);
         });
     }-*/;
 
@@ -101,7 +102,7 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 		// deferred init to ensure that we have a valid token
 		if (!initialized) {
 			initialized = true;
-			setupDropzone(ClientEndPoint.get().getClientToken(), uplUploaderUI);
+			setupDropzone(ClientEndPoint.get().getClientIdentificationToken(), uplUploaderUI);
 		}
 
 		if (uploadInProgress)

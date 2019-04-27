@@ -10,10 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -165,7 +162,7 @@ public class ClientSessionManager {
 		if (parentHttpSession == null)
 			throw new IllegalStateException("Invalid HTTP Session");
 
-		String clientUuid = request.getParameter(AuthToken.class.getSimpleName());
+		String clientUuid = request.getParameter(ClientIdentificationToken.class.getSimpleName());
 		if (clientUuid == null)
 			throw new IllegalArgumentException("Request doesn't specify client identifier");
 

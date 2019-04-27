@@ -25,6 +25,7 @@ import gwt.material.design.addins.client.emptystate.MaterialEmptyState;
 import gwt.material.design.addins.client.overlay.MaterialOverlay;
 import gwt.material.design.client.constants.Color;
 import gwt.material.design.client.constants.IconType;
+import gwt.material.design.client.ui.*;
 import gwt.material.design.client.ui.animate.Transition;
 
 import java.util.ArrayList;

@@ -2,6 +2,9 @@ package com.flair.client.model;
 
 import com.flair.client.ClientEndPoint;
 import com.flair.client.interop.FuncCallback;
+import com.flair.client.localization.*;
+import com.flair.client.model.interfaces.*;
+import com.flair.client.presentation.interfaces.*;
 import com.flair.client.presentation.interfaces.AbstractResultItem.Type;
 import com.flair.client.presentation.widgets.GenericWeightSlider;
 import com.flair.client.presentation.widgets.GrammaticalConstructionWeightSlider;

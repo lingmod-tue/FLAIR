@@ -1,6 +1,7 @@
 package com.flair.server.interop;
 
 import com.flair.server.crawler.SearchResult;
+import com.flair.server.document.*;
 import com.flair.server.parser.KeywordSearcherOutput;
 import com.flair.server.utilities.TextSegment;
 import com.flair.shared.grammar.GrammaticalConstruction;
