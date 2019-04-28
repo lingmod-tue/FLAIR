@@ -11,6 +11,7 @@
 
     <properties>
         <!-- Convenience property to set the GWT version -->
+        <!--        ###TODO update to 2.8.2-->
         <gwtVersion>2.8.0</gwtVersion>
 
         <!-- GWT needs at least java 1.7 -->

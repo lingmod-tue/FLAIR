@@ -198,6 +198,7 @@ public final class GramParsingPipeline {
 		List<AbstractDocumentSource> sourceDocs;
 		KeywordSearcherInput keywords;
 
+		ParseOp.JobBegin jobBegin;
 		ParseOp.ParseComplete parseComplete;
 		ParseOp.JobComplete jobComplete;
 
@@ -231,6 +232,11 @@ public final class GramParsingPipeline {
 			return this;
 		}
 
+		public ParseOpBuilder onBegin(ParseOp.JobBegin handler) {
+			this.jobBegin = handler;
+			return this;
+		}
+
 		public ParseOpBuilder onParse(ParseOp.ParseComplete handler) {
 			this.parseComplete = handler;
 			return this;
@@ -255,6 +261,7 @@ public final class GramParsingPipeline {
 					ParsingStrategy.factory(),
 					keywordSearchers,
 					keywords,
+					jobBegin,
 					parseComplete,
 					jobComplete);
 

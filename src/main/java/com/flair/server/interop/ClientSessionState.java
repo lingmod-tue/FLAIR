@@ -20,9 +20,7 @@ import com.flair.shared.interop.dtos.DocumentDTO;
 import com.flair.shared.interop.dtos.QuestionDTO;
 import com.flair.shared.interop.dtos.RankableDocument;
 import com.flair.shared.interop.dtos.RankableDocumentImpl;
-import com.flair.shared.interop.messaging.Message;
 import com.flair.shared.interop.messaging.client.*;
-import com.flair.shared.interop.messaging.server.SmClientMessageConsumed;
 import com.flair.shared.interop.messaging.server.SmCustomCorpusEvent;
 import com.flair.shared.interop.messaging.server.SmQuestionGenEvent;
 import com.flair.shared.interop.messaging.server.SmWebSearchParseEvent;
@@ -61,17 +59,9 @@ class ClientSessionState {
 		messageChannel.addReceiveHandler(CmActiveOperationCancel.class, this::onCmActiveOperationCancel);
 	}
 
-	private void sendClientMessageConsumedResponse(long clientMsgId) {
-		SmClientMessageConsumed msg = new SmClientMessageConsumed();
-		msg.setClientMessageId(clientMsgId);
-		messageChannel.send(new Message<>(msg));
-
-		ServerLogger.get().trace("Consumed client message " + clientMsgId + " from client " + clientId);
-	}
-
 	private String beginNewOperation(PipelineOp.PipelineOpBuilder opBuilder) {
 		// clear the message queue just in case any old messages ended up there
-		messageChannel.clearPendingMessages(true);
+		messageChannel.clearPendingMessages();
 
 		return pipelineOpCache.newOp(opBuilder.launch());
 	}
@@ -80,7 +70,7 @@ class ClientSessionState {
 		pipelineOpCache.endActiveOp(cancel);
 	}
 
-	private synchronized void onCmWebSearchParseStart(long msgId, CmWebSearchParseStart msg) {
+	private synchronized void onCmWebSearchParseStart(CmWebSearchParseStart msg) {
 		ServerLogger.get().info("Begin search-crawl-parse -> Query: '" + msg.getQuery() +
 				"', Language: " + msg.getLanguage() + ", Results: " + msg.getNumResults());
 
@@ -103,11 +93,9 @@ class ClientSessionState {
 				.onComplete(this::onSearchCrawlParseOpJobComplete);
 
 		beginNewOperation(builder);
-
-		sendClientMessageConsumedResponse(msgId);
 	}
 
-	private synchronized void onCmCustomCorpusParseStart(long msgId, CmCustomCorpusParseStart msg) {
+	private synchronized void onCmCustomCorpusParseStart(CmCustomCorpusParseStart msg) {
 		List<CustomCorpusFile> uploadCache = temporaryClientData.customCorpusData.uploaded;
 		int numUploadedFiles = msg.getNumUploadedFiles();
 
@@ -157,16 +145,14 @@ class ClientSessionState {
 		builder.lang(msg.getLanguage())
 				.docSource(sources)
 				.keywords(keywordInput)
+				.onBegin(this::onParseOpJobBegin)
 				.onParse(this::onParseOpParseComplete)
 				.onComplete(this::onParseOpJobComplete);
 
 		beginNewOperation(builder);
-
-		sendClientMessageConsumedResponse(msgId);
-		onParseOpJobBegin(sources);
 	}
 
-	private synchronized void onCmQuestionGenEagerParse(long msgId, CmQuestionGenEagerParse msg) {
+	private synchronized void onCmQuestionGenEagerParse(CmQuestionGenEagerParse msg) {
 		RankableDocument doc = msg.getSourceDoc();
 		PipelineOp<?, ?> sourceOp = pipelineOpCache.lookupOp(doc.getOperationId());
 		if (sourceOp == null)
@@ -201,11 +187,9 @@ class ClientSessionState {
 			temporaryClientData.questGenData = new TemporaryClientData.QuestionGen(sourceDoc, doc);
 			temporaryClientData.questGenData.eagerParsingOpId = beginNewOperation(builder);
 		}
-
-		sendClientMessageConsumedResponse(msgId);
 	}
 
-	private synchronized void onCmQuestionGenStart(long msgId, CmQuestionGenStart msg) {
+	private synchronized void onCmQuestionGenStart(CmQuestionGenStart msg) {
 		RankableDocument doc = msg.getSourceDoc();
 		PipelineOp<?, ?> sourceOp = pipelineOpCache.lookupOp(doc.getOperationId());
 		if (sourceOp == null)
@@ -245,18 +229,14 @@ class ClientSessionState {
 			temporaryClientData.questGenData.queuedOperation = builder;
 		} else
 			beginNewOperation(builder);
-
-		sendClientMessageConsumedResponse(msgId);
 	}
 
-	private synchronized void onCmActiveOperationCancel(long msgId, CmActiveOperationCancel msg) {
+	private synchronized void onCmActiveOperationCancel(CmActiveOperationCancel msg) {
 		if (!pipelineOpCache.hasActiveOp())
 			throw new ServerRuntimeException("No active operation to cancel");
 
 		endActiveOperation(true);
 		temporaryClientData.questGenData = null;
-
-		sendClientMessageConsumedResponse(msgId);
 	}
 
 
@@ -267,7 +247,7 @@ class ClientSessionState {
 		SmCustomCorpusEvent msg = new SmCustomCorpusEvent();
 		msg.setEvent(SmCustomCorpusEvent.EventType.UPLOAD_COMPLETE);
 		msg.setUploadResult(DtoGenerator.uploadedDocs(source, pipelineOpCache.activeOpId()));
-		messageChannel.send(new Message<>(msg));
+		messageChannel.send(msg);
 	}
 
 	private synchronized void onParseOpParseComplete(AbstractDocument doc) {
@@ -280,7 +260,7 @@ class ClientSessionState {
 		SmCustomCorpusEvent msg = new SmCustomCorpusEvent();
 		msg.setEvent(SmCustomCorpusEvent.EventType.PARSE_COMPLETE);
 		msg.setParseResult(dto);
-		messageChannel.send(new Message<>(msg));
+		messageChannel.send(msg);
 	}
 
 	private synchronized void onParseOpJobComplete(DocumentCollection docs) {
@@ -289,7 +269,7 @@ class ClientSessionState {
 
 		SmCustomCorpusEvent msg = new SmCustomCorpusEvent();
 		msg.setEvent(SmCustomCorpusEvent.EventType.JOB_COMPLETE);
-		messageChannel.send(new Message<>(msg));
+		messageChannel.send(msg);
 
 		endActiveOperation(false);
 	}
@@ -301,7 +281,7 @@ class ClientSessionState {
 		SmWebSearchParseEvent msg = new SmWebSearchParseEvent();
 		msg.setEvent(SmWebSearchParseEvent.EventType.CRAWL_COMPLETE);
 		msg.setCrawlResult(DtoGenerator.rankableWebSearchResult(sr, pipelineOpCache.activeOpId()));
-		messageChannel.send(new Message<>(msg));
+		messageChannel.send(msg);
 	}
 
 	private synchronized void onSearchCrawlParseOpParseComplete(AbstractDocument doc) {
@@ -314,7 +294,7 @@ class ClientSessionState {
 		SmWebSearchParseEvent msg = new SmWebSearchParseEvent();
 		msg.setEvent(SmWebSearchParseEvent.EventType.PARSE_COMPLETE);
 		msg.setParseResult(dto);
-		messageChannel.send(new Message<>(msg));
+		messageChannel.send(msg);
 	}
 
 	private synchronized void onSearchCrawlParseOpJobComplete(DocumentCollection docs) {
@@ -323,7 +303,7 @@ class ClientSessionState {
 
 		SmWebSearchParseEvent msg = new SmWebSearchParseEvent();
 		msg.setEvent(SmWebSearchParseEvent.EventType.JOB_COMPLETE);
-		messageChannel.send(new Message<>(msg));
+		messageChannel.send(msg);
 
 		endActiveOperation(false);
 	}
@@ -365,7 +345,7 @@ class ClientSessionState {
 		SmQuestionGenEvent msg = new SmQuestionGenEvent();
 		msg.setEvent(SmQuestionGenEvent.EventType.JOB_COMPLETE);
 		msg.setGenerationResult(questions.stream().map(q -> new QuestionDTO(q.question, q.answer, q.distractors)).collect(Collectors.toCollection(ArrayList::new)));
-		messageChannel.send(new Message<>(msg));
+		messageChannel.send(msg);
 
 		// reset operation state
 		endActiveOperation(false);

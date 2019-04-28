@@ -15,6 +15,8 @@ import com.flair.shared.grammar.Language;
 import java.util.List;
 
 public class ParseOp extends PipelineOp<ParseOp.Input, ParseOp.Output> {
+	public interface JobBegin extends EventHandler<List<AbstractDocumentSource>> {}
+
 	public interface ParseComplete extends EventHandler<AbstractDocument> {}
 
 	public interface JobComplete extends EventHandler<DocumentCollection> {}
@@ -31,6 +33,7 @@ public class ParseOp extends PipelineOp<ParseOp.Input, ParseOp.Output> {
 		final AbstractKeywordSearcher.Factory keywordSearcher;
 		final KeywordSearcherInput keywordSearcherInput;
 
+		final ParseOp.JobBegin jobBegin;
 		final ParseOp.ParseComplete parseComplete;
 		final ParseOp.JobComplete jobComplete;
 
@@ -42,6 +45,7 @@ public class ParseOp extends PipelineOp<ParseOp.Input, ParseOp.Output> {
 		      ParsingStrategy.Factory strategy,
 		      AbstractKeywordSearcher.Factory keywordSearcher,
 		      KeywordSearcherInput keywordSearcherInput,
+		      JobBegin jobBegin,
 		      ParseComplete parseComplete,
 		      JobComplete jobComplete) {
 			this.sourceLanguage = sourceLanguage;
@@ -55,6 +59,7 @@ public class ParseOp extends PipelineOp<ParseOp.Input, ParseOp.Output> {
 			this.keywordSearcher = keywordSearcher;
 			this.keywordSearcherInput = keywordSearcherInput;
 
+			this.jobBegin = jobBegin != null ? jobBegin : e -> {};
 			this.parseComplete = parseComplete != null ? parseComplete : e -> {};
 			this.jobComplete = jobComplete != null ? jobComplete : e -> {};
 		}
@@ -113,5 +118,6 @@ public class ParseOp extends PipelineOp<ParseOp.Input, ParseOp.Output> {
 		}
 
 		this.job = scheduler.fire();
+		input.jobBegin.handle(input.sourceDocs);
 	}
 }

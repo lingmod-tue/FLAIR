@@ -4,6 +4,7 @@ import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.exceptions.InvalidClientIdentificationTokenException;
 import com.flair.shared.interop.ClientIdentificationToken;
 import com.flair.shared.interop.messaging.Message;
+import com.flair.shared.interop.messaging.MessageReceivedHandler;
 import com.flair.shared.interop.messaging.server.SmClientMessageConsumed;
 import com.flair.shared.interop.messaging.server.SmError;
 
@@ -55,12 +56,32 @@ public class ServerMessagingSwitchboard {
 		private long numOutOfOrderMessages;
 		private boolean channelOpen;
 
-		private void sendMessageHandlingFatalErrorResponse(Throwable ex, String msg) {
+		private void sendClientMessageConsumedFailure(long clientMsgId, Throwable ex, String msg) {
 			SmError error = new SmError();
 			error.setException(ex);
 			error.setFatal(true);
 			error.setMessage(msg);
-			send(new Message<>(error));
+
+			SmClientMessageConsumed consumed = new SmClientMessageConsumed();
+			consumed.setClientMessageId(clientMsgId);
+			consumed.setSuccess(false);
+			consumed.setError(error);
+			send(consumed);
+		}
+
+		private void sendClientMessageConsumedSuccess(long clientMsgId) {
+			SmClientMessageConsumed msg = new SmClientMessageConsumed();
+			msg.setClientMessageId(clientMsgId);
+			msg.setSuccess(true);
+			send(msg);
+		}
+
+		private void removeLastSentMessage() {
+			if (outbox.isEmpty())
+				return;
+
+			if (!outbox.removeIf(m -> m.getMessageId() == nextOutgoingMessageId - 1))
+				throw new IllegalStateException("Outbox is not empty but is missing the last message!?");
 		}
 
 		private <P extends Message.Payload> void handleMessage(Message<P> msg) {
@@ -71,20 +92,24 @@ public class ServerMessagingSwitchboard {
 
 			if (handler == null)
 				throw new IllegalArgumentException("No handler for message " + payload.name());
-			else {
-				ServerLogger.get().trace("New message:").indent()
-						.trace("Sender:" + sender.getUuid() + " (messageID:" + messageId + ")")
-						.trace("Name: " + payload.name())
-						.trace("Contents: " + payload.desc()).exdent();
 
-				try {
-					handler.read(messageId, payload);
-				} catch (Throwable ex) {
-					ServerLogger.get().error(ex, "Message handler raised an exception! Exception: " + ex);
-					sendMessageHandlingFatalErrorResponse(ex, "Exception raised when handling the following message: " + msg);
-				}
-				previousIncomingMessageId = messageId;
+			ServerLogger.get().trace("New message:").indent()
+					.trace("Sender:" + sender.getUuid() + " (messageID:" + messageId + ")")
+					.trace("Name: " + payload.name())
+					.trace("Contents: " + payload.desc()).exdent();
+
+			try {
+				// queue the success message ahead of time in case the handler sends its own messages
+				// this will preserve the expected order of the messages
+				sendClientMessageConsumedSuccess(messageId);
+				handler.read(payload);
+			} catch (Throwable ex) {
+				// replace the success message with one of failure
+				removeLastSentMessage();
+				sendClientMessageConsumedFailure(messageId, ex, "Exception raised when handling the following message: " + msg);
+				ServerLogger.get().error(ex, "Message handler raised an exception! Exception: " + ex);
 			}
+			previousIncomingMessageId = messageId;
 		}
 
 		private synchronized void onPushFromClient(Message<? extends Message.Payload> message) {
@@ -201,10 +226,11 @@ public class ServerMessagingSwitchboard {
 		}
 
 		@Override
-		public synchronized void send(Message<? extends Message.Payload> message) {
+		public synchronized void send(Message.Payload payload) {
 			if (!channelOpen)
 				throw new IllegalStateException("Broken message channel for client " + clientId);
 
+			Message<?> message = new Message<>(payload);
 			message.setClientId(clientId);
 			message.setMessageId(nextOutgoingMessageId++);
 			if (message.getPayload() == null)
@@ -214,16 +240,13 @@ public class ServerMessagingSwitchboard {
 		}
 
 		@Override
-		public synchronized void clearPendingMessages(boolean keepClientMessageConsumedMessages) {
+		public synchronized void clearPendingMessages() {
 			if (!channelOpen)
 				throw new IllegalStateException("Broken message channel for client " + clientId);
 
-			if (!keepClientMessageConsumedMessages)
-				outbox.clear();
-			else {
-				outbox = outbox.stream().filter(e -> !(e.getPayload() instanceof SmClientMessageConsumed))
+			// keep acknowledgement messages
+			outbox = outbox.stream().filter(e -> !(e.getPayload() instanceof SmClientMessageConsumed))
 						.sorted(Comparator.comparingLong(Message::getMessageId)).collect(Collectors.toCollection(ArrayDeque::new));
-			}
 		}
 	}
 

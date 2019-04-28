@@ -10,6 +10,7 @@ import com.flair.client.presentation.widgets.sliderbundles.ConstructionSliderBun
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
 import com.flair.shared.interop.dtos.RankableDocument;
+import com.github.gwtd3.api.Arrays;
 import com.github.gwtd3.api.Coords;
 import com.github.gwtd3.api.D3;
 import com.github.gwtd3.api.D3Event;

@@ -57,7 +57,7 @@ public interface AbstractWebRankerCore {
 		}
 	}
 
-	void init(AuthToken token, AbstractWebRankerPresenter presenter);
+	void init(AbstractWebRankerPresenter presenter);
 
 	WebRankerAnalysis getCurrentOperation();
 	void cancelCurrentOperation();

@@ -20,7 +20,7 @@ public class Message<P extends Message.Payload> implements IsSerializable {
 	// identification of the client that sent/is to receive the message
 	private ClientIdentificationToken clientId = null;
 
-	// a monotonically increasing number used to uniquely identify the message in a sequence (in a particular channel)
+	// a monotonically increasing number used to uniquely identify the message in a particular channel
 	private long messageId = INVALID_ID;
 
 	// the payload of the message
@@ -43,7 +43,23 @@ public class Message<P extends Message.Payload> implements IsSerializable {
 		return payload.name() + "{" + identifier() + "}[" + payload.desc() + "]";
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
 
+		Message<?> message = (Message<?>) o;
+
+		if (messageId != message.messageId) return false;
+		return clientId.equals(message.clientId);
+
+	}
+	@Override
+	public int hashCode() {
+		int result = clientId.hashCode();
+		result = 31 * result + (int) (messageId ^ (messageId >>> 32));
+		return result;
+	}
 	public ClientIdentificationToken getClientId() {
 		return clientId;
 	}

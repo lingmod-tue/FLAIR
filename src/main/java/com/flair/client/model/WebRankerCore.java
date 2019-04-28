@@ -1,7 +1,8 @@
 package com.flair.client.model;
 
 import com.flair.client.ClientEndPoint;
-import com.flair.client.interop.FuncCallback;
+import com.flair.client.interop.messaging.ClientsideInteropBus;
+import com.flair.client.interop.messaging.MessagePoller;
 import com.flair.client.localization.*;
 import com.flair.client.model.interfaces.*;
 import com.flair.client.presentation.interfaces.*;
@@ -18,14 +19,17 @@ import com.flair.shared.interop.dtos.DocumentDTO;
 import com.flair.shared.interop.dtos.RankableDocument;
 import com.flair.shared.interop.dtos.RankableWebSearchResult;
 import com.flair.shared.interop.dtos.UploadedDocument;
-import com.flair.shared.interop.services.WebRankerServiceAsync;
+import com.flair.shared.interop.messaging.client.*;
+import com.flair.shared.interop.messaging.server.SmCustomCorpusEvent;
+import com.flair.shared.interop.messaging.server.SmError;
+import com.flair.shared.interop.messaging.server.SmQuestionGenEvent;
+import com.flair.shared.interop.messaging.server.SmWebSearchParseEvent;
 import com.flair.shared.parser.DocumentReadabilityLevel;
 import com.flair.shared.utilities.GenericEventSource;
 import com.flair.shared.utilities.GenericEventSource.EventHandler;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import gwt.material.design.client.constants.Color;
 
@@ -233,7 +237,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 		final class RankerInput implements DocumentRankerInput.Rank {
 			private final Set<GrammaticalConstruction> langConstructions;
 
-			public RankerInput() {
+			RankerInput() {
 				langConstructions = GrammaticalConstruction.getForLanguage(getLanguage());
 			}
 
@@ -627,60 +631,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 		}
 	}
 
-	private final class ServerMessagePoller {
-		private static final int TIMEOUT_MS = 10 * 60 * 1000;
-
-		Timer timeout;
-		Runnable timeoutHandler;
-		boolean running;
-
-		ServerMessagePoller() {
-			timeout = new Timer() {
-				@Override
-				public void run() {
-					if (timeoutHandler != null)
-						timeoutHandler.run();
-
-					if (running)
-						endPolling();
-				}
-			};
-
-			timeoutHandler = null;
-			running = false;
-		}
-
-		void beginPolling(AbstractMessageReceiver.MessageHandler messageHandler, Runnable timeoutHandler, boolean timeoutEnabled) {
-			if (running)
-				throw new RuntimeException("Message poller is busy");
-
-			running = true;
-			this.timeoutHandler = timeoutHandler;
-			messagePipe.setHandler(messageHandler);
-			messagePipe.open(token);
-
-			if (timeoutEnabled)
-				timeout.schedule(TIMEOUT_MS);
-		}
-
-		void endPolling() {
-			if (!running)
-				throw new RuntimeException("Message poller is inactive");
-
-			running = false;
-			this.timeoutHandler = null;
-
-			if (messagePipe.isOpen())
-				messagePipe.close();
-
-			timeout.cancel();
-		}
-
-		boolean isBusy() { return running; }
-	}
-
 	private final class TransientParsingProcessManager {
-
 		final class InProgressData {
 			DocumentDTO inProgressItem;
 			InProgressResultItem resultItem;
@@ -691,128 +642,107 @@ public class WebRankerCore implements AbstractWebRankerCore {
 			}
 		}
 
-		final class ServerMessageHandler implements AbstractMessageReceiver.MessageHandler {
-			void addInProgressItem(InProgressResultItem item, DocumentDTO dto) {
-				if (inProgress.containsKey(dto.getLinkingId())) {
-					ClientLogger.get().error("DTO hash collision!");
-					return;
-				}
+		void onSmWebSearchParseEvent(SmWebSearchParseEvent msg) {
+			if (data.type != OperationType.WEB_SEARCH)
+				throw new RuntimeException("Unexpected web-search-parse event for operation " + data.type);
 
-				inProgress.put(dto.getLinkingId(), new InProgressData(dto, item));
-				results.addInProgress(item);
-				numReceivedInprogress++;
+			WebSearchProcessData websearchData = (WebSearchProcessData) data;
+			switch (msg.getEvent()) {
+			case CRAWL_COMPLETE:
+				websearchData.searchResults.add(msg.getCrawlResult());
+				addInProgressItem(new InProgressResultItemImpl(msg.getCrawlResult()), msg.getCrawlResult());
+				break;
+			case PARSE_COMPLETE:
+				addParsedDoc(msg.getParseResult());
+				break;
+			case JOB_COMPLETE:
+				finalizeProcess();
+				break;
+			}
+		}
+
+		void onSmCustomCorpusEvent(SmCustomCorpusEvent msg) {
+			if (data.type != OperationType.CUSTOM_CORPUS)
+				throw new RuntimeException("Unexpected custom corpus event for operation " + data.type);
+
+			CorpusUploadProcessData uploadData = (CorpusUploadProcessData) data;
+			switch (msg.getEvent()) {
+			case UPLOAD_COMPLETE:
+				for (UploadedDocument itr : msg.getUploadResult()) {
+					uploadData.uploadedDocs.add(itr);
+					addInProgressItem(new InProgressResultItemImpl(itr), itr);
+				}
+				break;
+			case PARSE_COMPLETE:
+				addParsedDoc(msg.getParseResult());
+				break;
+			case JOB_COMPLETE:
+				finalizeProcess();
+				break;
+			}
+		}
+
+		void addInProgressItem(InProgressResultItem item, DocumentDTO dto) {
+			if (inProgress.containsKey(dto.getLinkingId())) {
+				ClientLogger.get().error("DTO hash collision!");
+				return;
 			}
 
-			void addParsedDoc(RankableDocument doc) {
-				// remove the corresponding inprogress item
-				if (!inProgress.containsKey(doc.getLinkingId()))
-					ClientLogger.get().error("DTO hash miss!");
-				else {
-					InProgressResultItem item = inProgress.get(doc.getLinkingId()).resultItem;
-					inProgress.remove(doc.getLinkingId());
-					results.removeInProgress(item);
-				}
+			inProgress.put(dto.getLinkingId(), new InProgressData(dto, item));
+			results.addInProgress(item);
+			numReceivedInprogress++;
+		}
 
-				data.parsedDocs.add(doc);
-				parseHandler.handle(data, doc);
+		void addParsedDoc(RankableDocument doc) {
+			// remove the corresponding inprogress item
+			if (!inProgress.containsKey(doc.getLinkingId()))
+				ClientLogger.get().error("DTO hash miss!");
+			else {
+				InProgressResultItem item = inProgress.get(doc.getLinkingId()).resultItem;
+				inProgress.remove(doc.getLinkingId());
+				results.removeInProgress(item);
 			}
 
-			void finalizeProcess() {
-				boolean success = true;
+			data.parsedDocs.add(doc);
+			parseHandler.handle(data, doc);
+		}
 
-				if (inProgress.isEmpty() == false)
-					ClientLogger.get().error("Job completed with delinquent in-progress items. Count: " + inProgress.size());
+		void finalizeProcess() {
+			boolean success = true;
 
-				// check result counts
-				if (numReceivedInprogress == 0) {
-					if (data.type == OperationType.WEB_SEARCH)
-						notification.notify(getLocalizedString(LocalizationTags.NO_SEARCH_RESULTS.toString()));
-					else
-						notification.notify(getLocalizedString(LocalizationTags.NO_PARSED_DOCS.toString()));
+			if (!inProgress.isEmpty())
+				ClientLogger.get().error("Job completed with delinquent in-progress items. Count: " + inProgress.size());
 
-					if (data.parsedDocs.isEmpty() == false)
-						ClientLogger.get().error("Eh? We received no in-progress items but have parsed docs regardless?!");
-
-					success = false;
-				} else if (data.parsedDocs.isEmpty()) {
+			// check result counts
+			if (numReceivedInprogress == 0) {
+				if (data.type == OperationType.WEB_SEARCH)
+					notification.notify(getLocalizedString(LocalizationTags.NO_SEARCH_RESULTS.toString()));
+				else
 					notification.notify(getLocalizedString(LocalizationTags.NO_PARSED_DOCS.toString()));
-					success = false;
-				} else {
-					int expectedResults = 0;
-					switch (data.type) {
-					case WEB_SEARCH:
-						expectedResults = ((WebSearchProcessData) data).numResults;
-						break;
-					case CUSTOM_CORPUS:
-						expectedResults = ((CorpusUploadProcessData) data).uploadedDocs.size();
-						break;
-					}
 
-					if (data.parsedDocs.size() < expectedResults)
-						notification.notify(getLocalizedString(LocalizationTags.MISSING_DOCS.toString()));
+				if (!data.parsedDocs.isEmpty())
+					ClientLogger.get().error("Eh? We received no in-progress items but have parsed docs regardless?!");
+
+				success = false;
+			} else if (data.parsedDocs.isEmpty()) {
+				notification.notify(getLocalizedString(LocalizationTags.NO_PARSED_DOCS.toString()));
+				success = false;
+			} else {
+				int expectedResults = 0;
+				switch (data.type) {
+				case WEB_SEARCH:
+					expectedResults = ((WebSearchProcessData) data).numResults;
+					break;
+				case CUSTOM_CORPUS:
+					expectedResults = ((CorpusUploadProcessData) data).uploadedDocs.size();
+					break;
 				}
 
-				reset(success);
+				if (data.parsedDocs.size() < expectedResults)
+					notification.notify(getLocalizedString(LocalizationTags.MISSING_DOCS.toString()));
 			}
 
-			@Override
-			public void handle(ServerMessage msg) {
-				if (data.type == OperationType.WEB_SEARCH && msg.getType() != ServerMessage.Type.SEARCH_CRAWL_PARSE)
-					throw new RuntimeException("Invalid messages type for web search operation: " + msg.getType());
-				else if (data.type == OperationType.CUSTOM_CORPUS && msg.getType() != ServerMessage.Type.CUSTOM_CORPUS)
-					throw new RuntimeException("Invalid messages type for custom corpus operation: " + msg.getType());
-
-				switch (msg.getType()) {
-				case SEARCH_CRAWL_PARSE: {
-					WebSearchProcessData websearchData = (WebSearchProcessData) data;
-					ServerMessage.SearchCrawlParse serverdata = msg.getSearchCrawlParse();
-					switch (serverdata.getType()) {
-					case CRAWL_COMPLETE:
-						websearchData.searchResults.add(serverdata.getCrawled());
-						addInProgressItem(new InProgressResultItemImpl(serverdata.getCrawled()), serverdata.getCrawled());
-						break;
-					case PARSE_COMPLETE:
-						addParsedDoc(serverdata.getParsed());
-						break;
-					case JOB_COMPLETE:
-						finalizeProcess();
-						break;
-					default:
-						ClientLogger.get().error("Unknown messages from server: " + msg.getType());
-					}
-
-					break;
-				}
-				case CUSTOM_CORPUS: {
-					CorpusUploadProcessData uploadData = (CorpusUploadProcessData) data;
-					ServerMessage.CustomCorpus serverdata = msg.getCustomCorpus();
-					switch (serverdata.getType()) {
-					case UPLOAD_COMPLETE:
-						for (UploadedDocument itr : serverdata.getUploaded()) {
-							uploadData.uploadedDocs.add(itr);
-							addInProgressItem(new InProgressResultItemImpl(itr), itr);
-						}
-
-						break;
-					case PARSE_COMPLETE:
-						addParsedDoc(serverdata.getParsed());
-						break;
-					case JOB_COMPLETE:
-						finalizeProcess();
-						break;
-					default:
-						ClientLogger.get().error("Unknown messages from server: " + msg.getType());
-					}
-
-					break;
-				}
-				case ERROR:
-					break;
-				default:
-					break;
-
-				}
-			}
+			reset(success);
 		}
 
 		ProcessData data;
@@ -820,6 +750,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 		int numReceivedInprogress;
 		SuccessfulParseEventHandler parseHandler;
 		ProcessCompletionEventHandler completionHandler;
+		MessagePoller poller;
 
 		TransientParsingProcessManager() {
 			data = null;
@@ -828,6 +759,21 @@ public class WebRankerCore implements AbstractWebRankerCore {
 
 			parseHandler = null;
 			completionHandler = null;
+
+			poller = serverMessageChannel.messagePoller()
+					.interval(POLLING_INTERVAL)
+					.timeout(TIMEOUT_INTERVAL)
+					.onTimeout(() -> {
+						if (data != null) {
+							cancel();
+							notification.notify(getLocalizedString(LocalizationTags.OP_TIMEDOUT.toString()), 5000);
+							ClientLogger.get().error("The current operation timed-out!");
+						}
+					})
+					.onMessage(SmWebSearchParseEvent.class, this::onSmWebSearchParseEvent)
+					.onMessage(SmCustomCorpusEvent.class, this::onSmCustomCorpusEvent)
+					.onMessage(SmError.class, WebRankerCore.this::onSmError)
+					.build();
 		}
 
 		void begin(ProcessData d, ProcessCompletionEventHandler completion, SuccessfulParseEventHandler parse) {
@@ -855,14 +801,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 			settings.hide();
 			preview.hide();
 
-			// no timeout for the upload op as the corpus uploader manages its own state (that needs cleanup)
-			messagePoller.beginPolling(new ServerMessageHandler(), () -> {
-				if (data != null) {
-					cancel();
-					notification.notify(getLocalizedString(LocalizationTags.OP_TIMEDOUT.toString()), 5000);
-					ClientLogger.get().error("The current operation timed-out!");
-				}
-			}, data.type == OperationType.WEB_SEARCH);
+			poller.start();
 
 			if (data.type == OperationType.WEB_SEARCH)
 				results.setPanelTitle("'" + ((WebSearchProcessData) data).query + "'");
@@ -905,9 +844,9 @@ public class WebRankerCore implements AbstractWebRankerCore {
 				upload.hide();
 			}
 
-			messagePoller.endPolling();
+			poller.stop();
 			data.complete = true;
-			data.invalid = success == false;
+			data.invalid = !success;
 			completionHandler.handle(data, success);
 
 			data = null;
@@ -921,21 +860,22 @@ public class WebRankerCore implements AbstractWebRankerCore {
 			if (!isBusy())
 				return;
 
-			service.cancelCurrentOperation(token, FuncCallback.get(e -> {}));
+			serverMessageChannel.send(new CmActiveOperationCancel(), () -> {}, (e, m) -> {});
 			reset(false);
 		}
 
 		boolean isBusy() {
-			return messagePoller.isBusy();
+			return poller.isRunning();
 		}
 	}
 
+	private static final int POLLING_INTERVAL = 2;         // in seconds
+	private static final int TIMEOUT_INTERVAL = 5 * 60;    // in seconds
 
-	private AuthToken token;
+	private final ClientsideInteropBus serverMessageChannel;
 	private AbstractWebRankerPresenter presenter;
 	private final AbstractDocumentRanker ranker;
 	private final AbstractDocumentAnnotator annotator;
-	private final AbstractMessageReceiver messagePipe;
 	private final SettingsExportService exporter;
 	private AbstractRankerSettingsPane settings;
 	private AbstractDocumentResultsPane results;
@@ -951,25 +891,23 @@ public class WebRankerCore implements AbstractWebRankerCore {
 	private DocumentCompareService comparer;
 	private HistoryViewerService history;
 	private QuestionGeneratorPreviewService questgenpreview;
-	private final WebRankerServiceAsync service;
-	private final ServerMessagePoller messagePoller;
 	private final RankPreviewModule rankPreviewModule;
 	private final TransientParsingProcessManager transientParsingProcessManager;
 	private final ProcessHistory processHistory;
 	private ConstructionSettingsProfile importedSettings;
 	private final WebSearchCooldownTimer searchCooldown;
+	private final MessagePoller questionGenPoller;
 	private boolean rerankFlag;
 
 	private final GenericEventSource<BeginOperation> eventBeginProc;
 	private final GenericEventSource<EndOperation> eventEndProc;
 
-	public WebRankerCore(AbstractDocumentRanker r, AbstractDocumentAnnotator a, AbstractMessageReceiver m) {
-		token = null;
+	public WebRankerCore(ClientsideInteropBus m, AbstractDocumentRanker r, AbstractDocumentAnnotator a) {
+		serverMessageChannel = m;
 		presenter = null;
 
 		ranker = r;
 		annotator = a;
-		messagePipe = m;
 		exporter = new SettingsUrlExporter();
 
 		settings = null;
@@ -986,8 +924,6 @@ public class WebRankerCore implements AbstractWebRankerCore {
 		comparer = null;
 		history = null;
 
-		service = WebRankerServiceAsync.Util.getInstance();
-		messagePoller = new ServerMessagePoller();
 		rankPreviewModule = new RankPreviewModule();
 		transientParsingProcessManager = new TransientParsingProcessManager();
 		processHistory = new ProcessHistory();
@@ -995,6 +931,16 @@ public class WebRankerCore implements AbstractWebRankerCore {
 
 		importedSettings = null;
 		rerankFlag = false;
+		questionGenPoller = serverMessageChannel.messagePoller()
+				.interval(POLLING_INTERVAL)
+				.timeout(TIMEOUT_INTERVAL)
+				.onTimeout(() -> {
+					notification.notify(getLocalizedString(LocalizationTags.OP_TIMEDOUT.toString()), 5000);
+					questgenpreview.display(new ArrayList<>());
+				})
+				.onMessage(SmQuestionGenEvent.class, this::onSmQuestionGenEvent)
+				.onMessage(SmError.class, WebRankerCore.this::onSmError)
+				.build();
 
 		eventBeginProc = new GenericEventSource<>();
 		eventEndProc = new GenericEventSource<>();
@@ -1034,7 +980,6 @@ public class WebRankerCore implements AbstractWebRankerCore {
 			if (!v)
 				results.clearSelection();
 		});
-		upload.setUploadBeginHandler(this::onUploadBegin);
 		upload.setUploadCompleteHandler(this::onUploadComplete);
 		visualizer.setApplyFilterHandler(d -> {
 			for (RankableDocument itr : d)
@@ -1067,8 +1012,23 @@ public class WebRankerCore implements AbstractWebRankerCore {
 		searchCooldown.start();
 	}
 
+	private void onSmError(SmError msg) {
+		ClientLogger.get().error(msg.getException(), "Unexpected server error. Exception: " + msg.getMessage());
+		if (msg.isFatal())
+			ClientEndPoint.get().fatalServerError();
+	}
+
+	private void onSmQuestionGenEvent(SmQuestionGenEvent msg) {
+		switch (msg.getEvent()) {
+		case JOB_COMPLETE:
+			questionGenPoller.stop();
+			questgenpreview.display(msg.getGenerationResult());
+			break;
+		}
+	}
+
 	private void onRestoreProcess(WebRankerAnalysis p) {
-		if (p instanceof ProcessData == false)
+		if (!(p instanceof ProcessData))
 			throw new RuntimeException("Invalid analysis process");
 
 		doProcessHousekeeping();
@@ -1110,7 +1070,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 
 		// cleanup the previous non-transient processes, if any
 		ProcessData proc = processHistory.poll();
-		if (proc != null && OperationType.isTransient(proc.type) == false) {
+		if (proc != null && !OperationType.isTransient(proc.type)) {
 			processHistory.pop();
 		}
 	}
@@ -1161,7 +1121,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 		if (query.length() == 0) {
 			notification.notify(getLocalizedString(LocalizationTags.NO_SEARCH_RESULTS.toString()));
 			return;
-		} else if (searchCooldown.tryBeginOperation() == false) {
+		} else if (!searchCooldown.tryBeginOperation()) {
 			notification.notify(getLocalizedString(LocalizationTags.SEARCH_COOLDOWN.toString()));
 			return;
 		}
@@ -1172,14 +1132,21 @@ public class WebRankerCore implements AbstractWebRankerCore {
 		proc.setKeywords(keywords.getCustomKeywords());
 
 		presenter.showLoaderOverlay(true);
-		service.beginWebSearch(token, lang, query, numResults, new ArrayList<>(keywords.getCustomKeywords()),
-				FuncCallback.get(e -> {
+
+		CmWebSearchParseStart msg = new CmWebSearchParseStart();
+		msg.setQuery(query);
+		msg.setLanguage(lang);
+		msg.setNumResults(numResults);
+		msg.setKeywords(new ArrayList<>(keywords.getCustomKeywords()));
+
+		serverMessageChannel.send(msg,
+				() -> {
 					// ### hide the loader overlay before the process starts
 					// ### otherwise, the progress bar doesn't show
 					presenter.showLoaderOverlay(false);
 					processHistory.push(proc);
 					transientParsingProcessManager.begin(proc,
-							(p, s) -> onTransientProcessEnd(p, s),
+							this::onTransientProcessEnd,
 							(p, d) -> {
 								// refresh the parsed results
 								if (p.parsedDocs.size() != ((WebSearchProcessData) p).numResults) {
@@ -1189,71 +1156,62 @@ public class WebRankerCore implements AbstractWebRankerCore {
 							});
 
 					onTransientProcessBegin(proc);
-				}, e -> {
+				},
+				(e, m) -> {
 					ClientLogger.get().error(e, "Couldn't begin web search operation");
 					notification.notify(getLocalizedString(LocalizationTags.SERVER_ERROR.toString()));
 					presenter.showLoaderOverlay(false);
 
 					if (e instanceof InvalidClientIdentificationTokenException)
 						ClientEndPoint.get().fatalServerError();
-				}));
+				});
 	}
 
-	private void onUploadBegin(Language corpusLang) {
-		// begin operation and wait for the server
+	private void onUploadComplete(Language corpusLang, int numUploaded) {
+		// signal the end of the upload operation
+		if (numUploaded == 0)
+			return;
+
 		doProcessHousekeeping();
 
 		CorpusUploadProcessData proc = new CorpusUploadProcessData(corpusLang);
 		proc.setKeywords(keywords.getCustomKeywords());
 
 		presenter.showLoaderOverlay(true);
-		service.beginCorpusUpload(token, corpusLang, new ArrayList<>(keywords.getCustomKeywords()),
-				FuncCallback.get(e -> {
+
+		CmCustomCorpusParseStart msg = new CmCustomCorpusParseStart();
+		msg.setLanguage(corpusLang);
+		msg.setNumUploadedFiles(numUploaded);
+		msg.setKeywords(new ArrayList<>(keywords.getCustomKeywords()));
+
+		serverMessageChannel.send(msg,
+				() -> {
 					processHistory.push(proc);
 					presenter.showLoaderOverlay(false);
-				}, e -> {
+					transientParsingProcessManager.begin(proc,
+							this::onTransientProcessEnd,
+							(p, d) -> {
+								// refresh the parsed results
+								if (p.parsedDocs.size() != numUploaded) {
+									rankPreviewModule.rerank();
+									rankPreviewModule.refreshResults();
+								}
+							});
+
+					onTransientProcessBegin(proc);
+				},
+				(e, m) -> {
 					ClientLogger.get().error(e, "Couldn't begin corpus upload operation");
 					notification.notify(getLocalizedString(LocalizationTags.SERVER_ERROR.toString()));
 					presenter.showLoaderOverlay(false);
 
 					if (e instanceof InvalidClientIdentificationTokenException)
 						ClientEndPoint.get().fatalServerError();
-				}));
-
-
-		ClientLogger.get().info("Upload operation has begun...");
-	}
-
-	private void onUploadComplete(int numUploaded, boolean success) {
-		// signal the end of the upload operation
-		ProcessData proc = processHistory.poll();
-		if (!(proc instanceof CorpusUploadProcessData)) {
-			// the upload operation did not complete successfully
-			return;
-		}
-
-		if (success) {
-			transientParsingProcessManager.begin(proc,
-					(p, s) -> onTransientProcessEnd(p, s),
-					(p, d) -> {
-						// refresh the parsed results
-						if (p.parsedDocs.size() != numUploaded) {
-							rankPreviewModule.rerank();
-							rankPreviewModule.refreshResults();
-						}
-					});
-
-			onTransientProcessBegin(proc);
-			service.endCorpusUpload(token, success, FuncCallback.get(e -> {}));
-			ClientLogger.get().info("Upload operation has ended - Waiting for the server");
-		} else {
-			processHistory.pop();
-			ClientLogger.get().info("Upload operation was cancelled");
-		}
+				});
 	}
 
 	private boolean onGenerateQuestions(RankableDocument doc, int numQuestions, boolean randomizeSelection) {
-		if (messagePoller.isBusy()) {
+		if (questionGenPoller.isRunning()) {
 			notification.notify(getLocalizedString(DefaultLocalizationProviders.COMMON.toString(), CommonLocalizationTags.WAIT_TILL_COMPLETION.toString()));
 			return false;
 		} else if (Language.ENGLISH != doc.getLanguage()) {
@@ -1264,40 +1222,36 @@ public class WebRankerCore implements AbstractWebRankerCore {
 		if (doc instanceof CompareProcessData.ComparisonWrapper)
 			doc = ((CompareProcessData.ComparisonWrapper) doc).doc;
 
-		service.generateQuestions(token, doc, numQuestions, randomizeSelection,
-				FuncCallback.get(e -> messagePoller.beginPolling(msg -> {
-							if (msg.getType() != ServerMessage.Type.GENERATE_QUESTIONS)
-								throw new RuntimeException("Invalid message type for generate questions operation: " + msg.getType());
+		CmQuestionGenStart msg = new CmQuestionGenStart();
+		msg.setNumQuestions(numQuestions);
+		msg.setRandomizeSelection(randomizeSelection);
+		msg.setSourceDoc(doc);
 
-							switch (msg.getGenerateQuestions().getType()) {
-							case JOB_COMPLETE:
-								messagePoller.endPolling();
-								questgenpreview.display(msg.getGenerateQuestions().getGeneratedQuestions());
-								break;
-							}
-						}, () -> {
-							notification.notify(getLocalizedString(LocalizationTags.OP_TIMEDOUT.toString()), 5000);
-						}, true),
-						e -> {
-							ClientLogger.get().error(e, "Couldn't begin question generation operation");
-							notification.notify(getLocalizedString(LocalizationTags.SERVER_ERROR.toString()));
-							questgenpreview.display(new ArrayList<>());
+		serverMessageChannel.send(msg,
+				questionGenPoller::start,
+				(e, m) -> {
+					ClientLogger.get().error(e, "Couldn't begin question generation operation");
+					notification.notify(getLocalizedString(LocalizationTags.SERVER_ERROR.toString()));
+					questgenpreview.display(new ArrayList<>());
 
-							if (e instanceof InvalidClientIdentificationTokenException)
-								ClientEndPoint.get().fatalServerError();
-						}));
+					if (e instanceof InvalidClientIdentificationTokenException)
+						ClientEndPoint.get().fatalServerError();
+				});
+
 		return true;
 	}
 
 	private void onInterruptQuestionGen() {
-		if (messagePoller.isBusy())
-			messagePoller.endPolling();
+		if (questionGenPoller.isRunning())
+			questionGenPoller.stop();
 
-		service.cancelCurrentOperation(token, FuncCallback.get(e -> {}));
+		serverMessageChannel.send(new CmActiveOperationCancel(), () -> {}, (e, m) -> {});
 	}
 
 	private void onQuestGenPreviewShow(RankableDocument doc) {
-		service.eagerParseForQuestionGen(token, doc, FuncCallback.get(e -> {}));
+		CmQuestionGenEagerParse msg = new CmQuestionGenEagerParse();
+		msg.setSourceDoc(doc);
+		serverMessageChannel.send(msg, () -> {}, (e, m) -> {});
 	}
 
 	private void onCancelOp() {
@@ -1315,13 +1269,8 @@ public class WebRankerCore implements AbstractWebRankerCore {
 	}
 
 	@Override
-	public void init(AuthToken token, AbstractWebRankerPresenter presenter) {
-		if (this.token != null)
-			throw new RuntimeException("Token already set");
-
-		this.token = token;
+	public void init(AbstractWebRankerPresenter presenter) {
 		this.presenter = presenter;
-
 		bindToPresenter(this.presenter);
 
 		// load custom settings from url

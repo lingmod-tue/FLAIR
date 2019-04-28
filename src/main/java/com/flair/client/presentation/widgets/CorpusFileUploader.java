@@ -34,7 +34,7 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 
 	interface CorpusFileUploaderLocalizationBinder extends LocalizationBinder<CorpusFileUploader> {}
 
-	static enum LocalizationTags {
+	enum LocalizationTags {
 		UPLOAD_INPROGRESS,
 		UPLOAD_FAILED,
 		MAX_FILE_LIMIT
@@ -74,7 +74,6 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 	@LocalizedCommonField(tag = CommonLocalizationTags.CANCEL, type = LocalizedFieldType.TEXT_BUTTON)
 	MaterialButton btnCancel2UI;
 
-	UploadBeginHandler beginHandler;
 	UploadCompleteHandler completeHandler;
 
 	boolean uploadInProgress;
@@ -108,9 +107,6 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 		if (uploadInProgress)
 			throw new RuntimeException("Previous upload operation not complete");
 
-		if (beginHandler != null)
-			beginHandler.handle(lang);
-
 		uploadInProgress = true;
 		corpusLang = lang;
 		numUploaded = 0;
@@ -127,7 +123,7 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 		}
 
 		if (uploadInProgress && completeHandler != null)
-			completeHandler.handle(numUploaded, success);
+			completeHandler.handle(corpusLang, numUploaded);
 
 		uploadInProgress = false;
 		numUploaded = 0;
@@ -175,7 +171,6 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 		initWidget(uiBinder.createAndBindUi(this));
 		initLocale(localeBinder.bind(this));
 
-		beginHandler = null;
 		completeHandler = null;
 		uploadInProgress = false;
 		initialized = false;
@@ -197,11 +192,6 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 	public void hide() {
 		resetUI();
 		mdlUploadUI.close();
-	}
-
-	@Override
-	public void setUploadBeginHandler(UploadBeginHandler handler) {
-		beginHandler = handler;
 	}
 
 	@Override
