@@ -186,13 +186,17 @@ public class SearchCrawlParseOp extends PipelineOp<SearchCrawlParseOp.Input, Sea
 	SearchCrawlParseOp(Input input) {
 		super("SearchCrawlParseOp", input, new Output(input.sourceLanguage));
 		this.numValidResults = this.numActiveCrawlTasks = this.numTotalCrawlsQueued = 0;
-		initTaskSyncHandlers();
-
 		this.searchAgent = WebSearchAgentFactory.create(WebSearchAgentFactory.SearchAgent.BING,
 				input.sourceLanguage,
 				input.query);
+		initTaskSyncHandlers();
+	}
 
-		this.job = AsyncJob.Scheduler.newJob(j -> {
+	@Override
+	public void launch() {
+		super.launch();
+
+		AsyncJob.Scheduler scheduler = AsyncJob.Scheduler.newJob(j -> {
 			if (j.isCancelled())
 				return;
 
@@ -208,7 +212,8 @@ public class SearchCrawlParseOp extends PipelineOp<SearchCrawlParseOp.Input, Sea
 				.newTask(WebSearchTask.factory(searchAgent, input.numResults))
 				.with(input.webSearchExecutor)
 				.then(this::linkTasks)
-				.queue()
-				.fire();
+				.queue();
+
+		this.job = scheduler.fire();
 	}
 }

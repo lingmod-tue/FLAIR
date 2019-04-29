@@ -15,7 +15,7 @@ import com.flair.server.pipelines.questgen.GeneratedQuestion;
 import com.flair.server.pipelines.questgen.QuestionGenerationPipeline;
 import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.exceptions.ServerRuntimeException;
-import com.flair.shared.interop.ClientIdentificationToken;
+import com.flair.shared.interop.ClientIdToken;
 import com.flair.shared.interop.dtos.DocumentDTO;
 import com.flair.shared.interop.dtos.QuestionDTO;
 import com.flair.shared.interop.dtos.RankableDocument;
@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 class ClientSessionState {
-	private final ClientIdentificationToken clientId;
+	private final ClientIdToken clientId;
 	private final ServerMessageChannel messageChannel;
 	private final ClientPipelineOpCache pipelineOpCache;
 	// GramParsingPipelineOp -> DocumentDTO -> Document (parsed by the GramParsingPipeline)
@@ -40,7 +40,7 @@ class ClientSessionState {
 	private final ClientPipelineOp2DocumentMap questGenLinkingData;
 	private final TemporaryClientData temporaryClientData;
 
-	ClientSessionState(ClientIdentificationToken tok) {
+	ClientSessionState(ClientIdToken tok) {
 		clientId = tok;
 		messageChannel = ServerMessagingSwitchboard.get().openChannel(clientId);
 		pipelineOpCache = new ClientPipelineOpCache();
@@ -63,7 +63,10 @@ class ClientSessionState {
 		// clear the message queue just in case any old messages ended up there
 		messageChannel.clearPendingMessages();
 
-		return pipelineOpCache.newOp(opBuilder.launch());
+		PipelineOp<?, ?> newOp = opBuilder.build();
+		String opId = pipelineOpCache.newOp(newOp);
+		newOp.launch();
+		return opId;
 	}
 
 	private void endActiveOperation(boolean cancel) {
@@ -130,7 +133,7 @@ class ClientSessionState {
 		List<AbstractDocumentSource> sources = new ArrayList<>();
 		try {
 			int i = 1;        // assign identifiers to the files for later use
-			for (CustomCorpusFile itr : temporaryClientData.customCorpusData.uploaded) {
+			for (CustomCorpusFile itr : uploadedFiles) {
 				sources.add(new UploadedFileDocumentSource(itr.getStream(),
 						itr.getFilename(),
 						msg.getLanguage(),
@@ -169,24 +172,26 @@ class ClientSessionState {
 		} else
 			usingCachedDoc = true;
 
-		if (!usingCachedDoc) {
-			ServerLogger.get().info("Begin eager parsing for question generation -> Doc: " + sourceDoc.getDescription());
-
-			if (pipelineOpCache.hasActiveOp())
-				throw new ServerRuntimeException("Another operation still running");
-
-			QuestionGenerationPipeline.QuestionGenerationOpBuilder builder = QuestionGenerationPipeline.get().generateQuestions()
-					.sourceDoc(sourceDoc)
-					.sourceDocParsed(false)
-					.numQuestions(5)
-					.randomizeSelection(false)
-					.onParseComplete(e -> onQuestionGenerationOpEagerParseComplete(e, doc))
-					.onComplete(e -> onQuestionGenerationOpEagerJobComplete(e.generatedQuestions));
-
-			// needs to be set first to prevent a race condition
-			temporaryClientData.questGenData = new TemporaryClientData.QuestionGen(sourceDoc, doc);
-			temporaryClientData.questGenData.eagerParsingOpId = beginNewOperation(builder);
+		if (usingCachedDoc) {
+			ServerLogger.get().trace("Found cached document for question gen; skipping eager parsing...");
+			return;
 		}
+
+		ServerLogger.get().info("Begin eager parsing for question generation -> Doc: " + sourceDoc.getDescription());
+		if (pipelineOpCache.hasActiveOp())
+			throw new ServerRuntimeException("Another operation still running");
+
+		QuestionGenerationPipeline.QuestionGenerationOpBuilder builder = QuestionGenerationPipeline.get().generateQuestions()
+				.sourceDoc(sourceDoc)
+				.sourceDocParsed(false)
+				.numQuestions(1)
+				.randomizeSelection(false)
+				.onParseComplete(e -> onQuestionGenerationOpEagerParseComplete(e, doc))
+				.onComplete(e -> onQuestionGenerationOpEagerJobComplete(e.generatedQuestions));
+
+		// needs to be set first to prevent a race condition
+		temporaryClientData.questGenData = new TemporaryClientData.QuestionGen(sourceDoc, doc);
+		temporaryClientData.questGenData.eagerParsingOpId = beginNewOperation(builder);
 	}
 
 	private synchronized void onCmQuestionGenStart(CmQuestionGenStart msg) {
@@ -213,13 +218,12 @@ class ClientSessionState {
 		if (pipelineOpCache.hasActiveOp() && (!eagerParsingInProgress || !pipelineOpCache.activeOpId().equals(temporaryClientData.questGenData.eagerParsingOpId)))
 			throw new ServerRuntimeException("Another operation still running");
 
-		boolean captureThrowaway = usingCachedDoc;
 		QuestionGenerationPipeline.QuestionGenerationOpBuilder builder = QuestionGenerationPipeline.get().generateQuestions()
 				.sourceDoc(sourceDoc)
 				.sourceDocParsed(usingCachedDoc)
 				.numQuestions(msg.getNumQuestions())
 				.randomizeSelection(msg.getRandomizeSelection())
-				.onParseComplete(e -> onQuestionGenerationOpParseComplete(e, doc, captureThrowaway))
+				.onParseComplete(e -> onQuestionGenerationOpParseComplete(e, doc))
 				.onComplete(e -> onQuestionGenerationOpJobComplete(e.generatedQuestions));
 
 		if (eagerParsingInProgress) {
@@ -227,13 +231,17 @@ class ClientSessionState {
 				throw new ServerRuntimeException("Multiple queued question generation operations!");
 
 			temporaryClientData.questGenData.queuedOperation = builder;
+			ServerLogger.get().trace("Waiting for question gen eager parse operation to complete...");
 		} else
 			beginNewOperation(builder);
 	}
 
 	private synchronized void onCmActiveOperationCancel(CmActiveOperationCancel msg) {
-		if (!pipelineOpCache.hasActiveOp())
-			throw new ServerRuntimeException("No active operation to cancel");
+		if (!pipelineOpCache.hasActiveOp()) {
+			if (msg.getActiveOperationExpected())
+				ServerLogger.get().warn("No active operation to cancel on client " + clientId);
+			return;
+		}
 
 		endActiveOperation(true);
 		temporaryClientData.questGenData = null;
@@ -314,6 +322,7 @@ class ClientSessionState {
 
 		// add to cache so that future QG requests for this document (in this session) won't have to parse it anew
 		questGenLinkingData.put(pipelineOpCache.lookupOp(linkingDoc.getOperationId()), parsedDoc, linkingDoc);
+		temporaryClientData.questGenData.eagerParsedDoc = parsedDoc;
 	}
 
 	private synchronized void onQuestionGenerationOpEagerJobComplete(Collection<GeneratedQuestion> unused) {
@@ -322,20 +331,22 @@ class ClientSessionState {
 
 		endActiveOperation(false);
 
-		if (temporaryClientData.questGenData.queuedOperation != null)
+		QuestionGenerationPipeline.QuestionGenerationOpBuilder queuedOp = temporaryClientData.questGenData.queuedOperation;
+		if (queuedOp != null) {
+			queuedOp.sourceDoc(temporaryClientData.questGenData.eagerParsedDoc).sourceDocParsed(true);
 			beginNewOperation(temporaryClientData.questGenData.queuedOperation);
+		}
 
 		temporaryClientData.questGenData = null;
 	}
 
-	private synchronized void onQuestionGenerationOpParseComplete(AbstractDocument parsedDoc, DocumentDTO linkingDoc, boolean usingCachedDoc) {
+	private synchronized void onQuestionGenerationOpParseComplete(AbstractDocument parsedDoc, DocumentDTO linkingDoc) {
 		if (!pipelineOpCache.hasActiveOp())
 			throw new ServerRuntimeException("Invalid question gen parse complete event");
 
-		if (usingCachedDoc)
-			return;
-
-		questGenLinkingData.put(pipelineOpCache.lookupOp(linkingDoc.getOperationId()), parsedDoc, linkingDoc);
+		PipelineOp<?, ?> sourceOp = pipelineOpCache.lookupOp(linkingDoc.getOperationId());
+		if (!questGenLinkingData.contains(sourceOp, linkingDoc))
+			questGenLinkingData.put(sourceOp, parsedDoc, linkingDoc);
 	}
 
 	private synchronized void onQuestionGenerationOpJobComplete(Collection<GeneratedQuestion> questions) {

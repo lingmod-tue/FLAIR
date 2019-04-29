@@ -26,4 +26,8 @@ final class ClientPipelineOp2DocumentMap {
 		else
 			return match.get(dto.getLinkingId());
 	}
+
+	boolean contains(PipelineOp<?, ?> op, DocumentDTO dto) {
+		return get(op, dto) != null;
+	}
 }

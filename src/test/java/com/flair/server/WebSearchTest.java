@@ -59,7 +59,7 @@ public class WebSearchTest
 					processParsedDocs(dc);
 
 				})
-				.launch()
+				.build()
 				.await();
 		/*
 		 * At this point, the execution has started and is executing in the background

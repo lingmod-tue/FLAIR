@@ -1,8 +1,10 @@
 package com.flair.client.interop.messaging;
 
+import com.flair.client.ClientEndPoint;
 import com.flair.client.utilities.ClientLogger;
-import com.flair.shared.interop.ClientIdentificationToken;
-import com.flair.shared.interop.FlairClientServerInteropServiceAsync;
+import com.flair.shared.exceptions.InvalidClientIdentificationTokenException;
+import com.flair.shared.interop.ClientIdToken;
+import com.flair.shared.interop.InteropServiceAsync;
 import com.flair.shared.interop.messaging.Message;
 import com.flair.shared.interop.messaging.MessageReceivedHandler;
 import com.flair.shared.interop.messaging.server.SmClientMessageConsumed;
@@ -11,12 +13,13 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import java.util.*;
 
-public class ClientsideInteropBus {
+public class ClientMessageChannel {
 	private final class MessagePollerImpl implements MessagePoller {
 		private final int interval;
 		private final int timeout;
 		private final Runnable timeoutHandler;
 		private final Map<Class<?>, MessageReceivedHandler<?>> messageHandlers;
+		private final Queue<Message<?>> inbox;
 		private boolean running;
 		private boolean disposed;
 		private boolean timedOut;
@@ -29,6 +32,7 @@ public class ClientsideInteropBus {
 			this.timeout = timeout;
 			this.timeoutHandler = timeoutHandler;
 			this.messageHandlers = new HashMap<>(messageHandlers);
+			this.inbox = new ArrayDeque<>();
 			this.running = false;
 			this.timedOut = false;
 			this.disposed = false;
@@ -47,7 +51,9 @@ public class ClientsideInteropBus {
 			this.remainingTicks -= elapsedTicks;
 			this.elapsedTicks += elapsedTicks;
 
-			if (this.elapsedTicks >= timeout && newMessages.isEmpty()) {
+			inbox.addAll(newMessages);
+
+			if (this.elapsedTicks >= timeout && inbox.isEmpty()) {
 				timedOut = true;
 				running = false;
 
@@ -60,7 +66,7 @@ public class ClientsideInteropBus {
 				this.remainingTicks = interval;
 				this.elapsedTicks = 0;
 
-				for (Message<?> msg : newMessages) {
+				for (Message<?> msg : inbox) {
 					P payload = (P) msg.getPayload();
 					MessageReceivedHandler<P> handler = (MessageReceivedHandler<P>) messageHandlers.get(payload.getClass());
 					if (handler != null) {
@@ -71,6 +77,8 @@ public class ClientsideInteropBus {
 						}
 					}
 				}
+
+				inbox.clear();
 			}
 		}
 
@@ -85,6 +93,7 @@ public class ClientsideInteropBus {
 			timedOut = false;
 			remainingTicks = interval;
 			elapsedTicks = 0;
+			inbox.clear();
 
 			updateTimerState();
 		}
@@ -99,6 +108,7 @@ public class ClientsideInteropBus {
 			timedOut = false;
 			remainingTicks = interval;
 			elapsedTicks = 0;
+			inbox.clear();
 
 			updateTimerState();
 		}
@@ -187,8 +197,8 @@ public class ClientsideInteropBus {
 	private static final int POLLING_TIMER_INTERVAL = 1;      // in seconds
 
 
-	private final ClientIdentificationToken clientId;
-	private final FlairClientServerInteropServiceAsync interopService;
+	private final ClientIdToken clientId;
+	private final InteropServiceAsync interopService;
 	private final Timer timer;
 	private final Map<Long, ClientMessageCallbackData> pendingMessageCallbacks;
 	private final Set<MessagePollerImpl> activeMessagePollers;
@@ -196,9 +206,9 @@ public class ClientsideInteropBus {
 	private long nextOutgoingMessageId;
 	private boolean pollingServer;
 
-	public ClientsideInteropBus(ClientIdentificationToken clientId) {
+	public ClientMessageChannel(ClientIdToken clientId) {
 		this.clientId = clientId;
-		this.interopService = FlairClientServerInteropServiceAsync.Util.getInstance();
+		this.interopService = InteropServiceAsync.Util.getInstance();
 		this.timer = new Timer() {
 			@Override
 			public void run() {
@@ -233,6 +243,8 @@ public class ClientsideInteropBus {
 			long numRunningPollers = activeMessagePollers.stream().filter(MessagePollerImpl::isRunning).count();
 			if (numRunningPollers > 0 || !pendingMessageCallbacks.isEmpty())
 				startTimer();
+			else
+				stopTimer();
 		}
 	}
 
@@ -248,9 +260,10 @@ public class ClientsideInteropBus {
 				ClientLogger.get().error(caught, "Message retrieval failed with the following exception: " + caught);
 				updateTimerState();
 
-				// ### TODO anything else to do here?
 				pollingServer = false;
 
+				if (caught instanceof InvalidClientIdentificationTokenException)
+					ClientEndPoint.get().fatalServerError();
 			}
 			@Override
 			public void onSuccess(ArrayList<Message<? extends Message.Payload>> result) {
@@ -265,7 +278,7 @@ public class ClientsideInteropBus {
 
 	private void processIncomingServerMessages(List<Message<? extends Message.Payload>> messages) {
 		if (!messages.isEmpty())
-			ClientLogger.get().info("Pulled " + messages.size() + " messages from the server");
+			ClientLogger.get().trace("Pulled " + messages.size() + " messages from the server");
 
 		List<Message<? extends Message.Payload>> filteredMessages = new ArrayList<>();
 
@@ -290,8 +303,10 @@ public class ClientsideInteropBus {
 					callbackData.failureHandler.onFailure(ackMsg.getError().getException(), ackMsg.getError().getMessage());
 
 				pendingMessageCallbacks.remove(ackMsg.getClientMessageId());
-			} else
+			} else {
+				ClientLogger.get().info("New Message: " + message);
 				filteredMessages.add(message);
+			}
 		}
 
 		// pass the filtered messages to active pollers
@@ -314,6 +329,8 @@ public class ClientsideInteropBus {
 				ClientLogger.get().error("Message: " + message);
 
 				failureHandler.onFailure(caught, "");
+
+				// ### TODO handle IncompatibleRemoteServiceException && InvocationException more elegantly
 			}
 			@Override
 			public void onSuccess(Void result) {

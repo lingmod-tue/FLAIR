@@ -254,6 +254,11 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 		numProcessedSentences = 0;
 		rankedQuestions = new HashMap<>();
 		initTaskSyncHandlers();
+	}
+
+	@Override
+	public void launch() {
+		super.launch();
 
 		AsyncJob.Scheduler scheduler = AsyncJob.Scheduler.newJob(j -> {
 			if (j.isCancelled())
@@ -262,7 +267,6 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 			safeInvoke(() -> input.jobComplete.handle(output),
 					"Exception in job complete handler");
 		});
-
 
 		scheduler.newTask(NerCorefParseTask.factory(input.parsingStrategy, input.parser))
 				.with(input.parseExecutor)

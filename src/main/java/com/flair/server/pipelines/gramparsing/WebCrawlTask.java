@@ -37,7 +37,7 @@ public class WebCrawlTask implements AsyncTask<WebCrawlTask.Result> {
 					+ ". Exception: " + ex.toString());
 		}
 
-		ServerLogger.get().trace("Search Result (" + input.getDisplayURL() + ") text fetched: " + result.output.isTextFetched());
+		//	ServerLogger.get().trace("Search Result (" + input.getDisplayURL() + ") text fetched: " + result.output.isTextFetched());
 		return result;
 	}
 

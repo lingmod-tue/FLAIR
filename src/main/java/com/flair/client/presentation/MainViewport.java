@@ -23,18 +23,6 @@ import gwt.material.design.client.ui.animate.MaterialAnimation;
 import gwt.material.design.client.ui.animate.Transition;
 
 public class MainViewport extends LocalizedComposite implements AbstractWebRankerPresenter {
-	static final class ToastNotifications implements NotificationService {
-		private static final int DEFAULT_TIMEOUT_MS = 3 * 1000;
-		@Override
-		public void notify(String text) {
-			MaterialToast.fireToast(text, DEFAULT_TIMEOUT_MS, "rounded");
-		}
-
-		@Override
-		public void notify(String text, int timeout) {
-			MaterialToast.fireToast(text, timeout, "rounded");
-		}
-	}
 
 	private static MainViewportUiBinder uiBinder = GWT.create(MainViewportUiBinder.class);
 
@@ -129,7 +117,7 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	QuestionGeneratorPreview mdlQuestGenUI;
 	@UiField
 	AboutPage mdlAboutUI;
-	ToastNotifications notificationService;
+	ToastNotification notificationService;
 
 	private void invokeAtomicOperation(Runnable handler) {
 		if (ClientEndPoint.get().getWebRanker().isOperationInProgress()) {
@@ -233,7 +221,7 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 		initWidget(uiBinder.createAndBindUi(this));
 		initLocale(localeBinder.bind(this));
 
-		notificationService = new ToastNotifications();
+		notificationService = new ToastNotification();
 
 		initHandlers();
 		initUI();
@@ -275,11 +263,6 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	@Override
 	public UserPromptService getPromptService() {
 		return mdlPromptUI;
-	}
-
-	@Override
-	public NotificationService getNotificationService() {
-		return notificationService;
 	}
 
 	@Override

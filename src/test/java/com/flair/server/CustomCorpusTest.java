@@ -57,7 +57,7 @@ public class CustomCorpusTest
 					System.out.println("Do something with the document collection: " + dc.toString());
 					processParsedDocs(dc);
 				})
-				.launch()
+				.build()
 				.await();
 
 		System.out.println("Operation Complete");

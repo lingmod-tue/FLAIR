@@ -1,10 +1,11 @@
 package com.flair.client.model;
 
 import com.flair.client.ClientEndPoint;
-import com.flair.client.interop.messaging.ClientsideInteropBus;
+import com.flair.client.interop.messaging.ClientMessageChannel;
 import com.flair.client.interop.messaging.MessagePoller;
 import com.flair.client.localization.*;
 import com.flair.client.model.interfaces.*;
+import com.flair.client.presentation.ToastNotification;
 import com.flair.client.presentation.interfaces.*;
 import com.flair.client.presentation.interfaces.AbstractResultItem.Type;
 import com.flair.client.presentation.widgets.GenericWeightSlider;
@@ -138,7 +139,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 		@Override
 		public void addToCompare() {
 			comparer.addToSelection(doc);
-			notification.notify(getLocalizedString(LocalizationTags.SELECTED_FOR_COMPARISON.toString()));
+			ToastNotification.fire(getLocalizedString(LocalizationTags.SELECTED_FOR_COMPARISON.toString()));
 		}
 	}
 
@@ -626,7 +627,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 		void applySettings(ConstructionSettingsProfile profile) {
 			if (profile.getLanguage() == data.lang) {
 				settings.applySettingsProfile(importedSettings, false);
-				notification.notify(getLocalizedString(LocalizationTags.APPLIED_IMPORTED_SETTINGS.toString()));
+				ToastNotification.fire(getLocalizedString(LocalizationTags.APPLIED_IMPORTED_SETTINGS.toString()));
 			}
 		}
 	}
@@ -716,16 +717,16 @@ public class WebRankerCore implements AbstractWebRankerCore {
 			// check result counts
 			if (numReceivedInprogress == 0) {
 				if (data.type == OperationType.WEB_SEARCH)
-					notification.notify(getLocalizedString(LocalizationTags.NO_SEARCH_RESULTS.toString()));
+					ToastNotification.fire(getLocalizedString(LocalizationTags.NO_SEARCH_RESULTS.toString()));
 				else
-					notification.notify(getLocalizedString(LocalizationTags.NO_PARSED_DOCS.toString()));
+					ToastNotification.fire(getLocalizedString(LocalizationTags.NO_PARSED_DOCS.toString()));
 
 				if (!data.parsedDocs.isEmpty())
 					ClientLogger.get().error("Eh? We received no in-progress items but have parsed docs regardless?!");
 
 				success = false;
 			} else if (data.parsedDocs.isEmpty()) {
-				notification.notify(getLocalizedString(LocalizationTags.NO_PARSED_DOCS.toString()));
+				ToastNotification.fire(getLocalizedString(LocalizationTags.NO_PARSED_DOCS.toString()));
 				success = false;
 			} else {
 				int expectedResults = 0;
@@ -739,7 +740,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 				}
 
 				if (data.parsedDocs.size() < expectedResults)
-					notification.notify(getLocalizedString(LocalizationTags.MISSING_DOCS.toString()));
+					ToastNotification.fire(getLocalizedString(LocalizationTags.MISSING_DOCS.toString()));
 			}
 
 			reset(success);
@@ -766,7 +767,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 					.onTimeout(() -> {
 						if (data != null) {
 							cancel();
-							notification.notify(getLocalizedString(LocalizationTags.OP_TIMEDOUT.toString()), 5000);
+							ToastNotification.fire(getLocalizedString(LocalizationTags.OP_TIMEDOUT.toString()), 5000);
 							ClientLogger.get().error("The current operation timed-out!");
 						}
 					})
@@ -827,7 +828,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 					i++;
 				}
 
-				notification.notify(getLocalizedString(LocalizationTags.ANALYSIS_COMPLETE.toString()));
+				ToastNotification.fire(getLocalizedString(LocalizationTags.ANALYSIS_COMPLETE.toString()));
 			} else {
 				results.clearCompleted();
 				results.clearInProgress();
@@ -872,7 +873,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 	private static final int POLLING_INTERVAL = 2;         // in seconds
 	private static final int TIMEOUT_INTERVAL = 5 * 60;    // in seconds
 
-	private final ClientsideInteropBus serverMessageChannel;
+	private final ClientMessageChannel serverMessageChannel;
 	private AbstractWebRankerPresenter presenter;
 	private final AbstractDocumentRanker ranker;
 	private final AbstractDocumentAnnotator annotator;
@@ -882,7 +883,6 @@ public class WebRankerCore implements AbstractWebRankerCore {
 	private AbstractDocumentPreviewPane preview;
 	private WebSearchService search;
 	private UserPromptService prompt;
-	private NotificationService notification;
 	private CorpusUploadService upload;
 	private CustomKeywordService keywords;
 	private VisualizerService visualizer;
@@ -902,7 +902,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 	private final GenericEventSource<BeginOperation> eventBeginProc;
 	private final GenericEventSource<EndOperation> eventEndProc;
 
-	public WebRankerCore(ClientsideInteropBus m, AbstractDocumentRanker r, AbstractDocumentAnnotator a) {
+	public WebRankerCore(ClientMessageChannel m, AbstractDocumentRanker r, AbstractDocumentAnnotator a) {
 		serverMessageChannel = m;
 		presenter = null;
 
@@ -914,7 +914,6 @@ public class WebRankerCore implements AbstractWebRankerCore {
 		results = null;
 		preview = null;
 		prompt = null;
-		notification = null;
 		search = null;
 		upload = null;
 		keywords = null;
@@ -935,7 +934,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 				.interval(POLLING_INTERVAL)
 				.timeout(TIMEOUT_INTERVAL)
 				.onTimeout(() -> {
-					notification.notify(getLocalizedString(LocalizationTags.OP_TIMEDOUT.toString()), 5000);
+					ToastNotification.fire(getLocalizedString(LocalizationTags.OP_TIMEDOUT.toString()), 5000);
 					questgenpreview.display(new ArrayList<>());
 				})
 				.onMessage(SmQuestionGenEvent.class, this::onSmQuestionGenEvent)
@@ -951,7 +950,6 @@ public class WebRankerCore implements AbstractWebRankerCore {
 		results = presenter.getDocumentResultsPane();
 		preview = presenter.getDocumentPreviewPane();
 		prompt = presenter.getPromptService();
-		notification = presenter.getNotificationService();
 		search = presenter.getWebSearchService();
 		upload = presenter.getCorpusUploadService();
 		keywords = presenter.getCustomKeywordsService();
@@ -968,7 +966,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 		});
 		settings.setVisualizeHandler(() -> {
 			if (transientParsingProcessManager.isBusy())
-				notification.notify(getLocalizedString(DefaultLocalizationProviders.COMMON.toString(), CommonLocalizationTags.WAIT_TILL_COMPLETION.toString()));
+				ToastNotification.fire(getLocalizedString(DefaultLocalizationProviders.COMMON.toString(), CommonLocalizationTags.WAIT_TILL_COMPLETION.toString()));
 			else
 				rankPreviewModule.visualize();
 		});
@@ -1047,7 +1045,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 		if (docs.isEmpty())
 			return;
 		else if (transientParsingProcessManager.isBusy()) {
-			notification.notify(getLocalizedString(DefaultLocalizationProviders.COMMON.toString(), CommonLocalizationTags.WAIT_TILL_COMPLETION.toString()));
+			ToastNotification.fire(getLocalizedString(DefaultLocalizationProviders.COMMON.toString(), CommonLocalizationTags.WAIT_TILL_COMPLETION.toString()));
 			return;
 		}
 
@@ -1119,10 +1117,10 @@ public class WebRankerCore implements AbstractWebRankerCore {
 
 	private void onWebSearch(Language lang, String query, int numResults) {
 		if (query.length() == 0) {
-			notification.notify(getLocalizedString(LocalizationTags.NO_SEARCH_RESULTS.toString()));
+			ToastNotification.fire(getLocalizedString(LocalizationTags.NO_SEARCH_RESULTS.toString()));
 			return;
 		} else if (!searchCooldown.tryBeginOperation()) {
-			notification.notify(getLocalizedString(LocalizationTags.SEARCH_COOLDOWN.toString()));
+			ToastNotification.fire(getLocalizedString(LocalizationTags.SEARCH_COOLDOWN.toString()));
 			return;
 		}
 
@@ -1159,7 +1157,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 				},
 				(e, m) -> {
 					ClientLogger.get().error(e, "Couldn't begin web search operation");
-					notification.notify(getLocalizedString(LocalizationTags.SERVER_ERROR.toString()));
+					ToastNotification.fire(getLocalizedString(LocalizationTags.SERVER_ERROR.toString()));
 					presenter.showLoaderOverlay(false);
 
 					if (e instanceof InvalidClientIdentificationTokenException)
@@ -1202,7 +1200,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 				},
 				(e, m) -> {
 					ClientLogger.get().error(e, "Couldn't begin corpus upload operation");
-					notification.notify(getLocalizedString(LocalizationTags.SERVER_ERROR.toString()));
+					ToastNotification.fire(getLocalizedString(LocalizationTags.SERVER_ERROR.toString()));
 					presenter.showLoaderOverlay(false);
 
 					if (e instanceof InvalidClientIdentificationTokenException)
@@ -1212,10 +1210,10 @@ public class WebRankerCore implements AbstractWebRankerCore {
 
 	private boolean onGenerateQuestions(RankableDocument doc, int numQuestions, boolean randomizeSelection) {
 		if (questionGenPoller.isRunning()) {
-			notification.notify(getLocalizedString(DefaultLocalizationProviders.COMMON.toString(), CommonLocalizationTags.WAIT_TILL_COMPLETION.toString()));
+			ToastNotification.fire(getLocalizedString(DefaultLocalizationProviders.COMMON.toString(), CommonLocalizationTags.WAIT_TILL_COMPLETION.toString()));
 			return false;
 		} else if (Language.ENGLISH != doc.getLanguage()) {
-			notification.notify(getLocalizedString(DefaultLocalizationProviders.COMMON.toString(), CommonLocalizationTags.FEATURE_NOT_SUPPORTED.toString()));
+			ToastNotification.fire(getLocalizedString(DefaultLocalizationProviders.COMMON.toString(), CommonLocalizationTags.FEATURE_NOT_SUPPORTED.toString()));
 			return false;
 		}
 
@@ -1231,7 +1229,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 				questionGenPoller::start,
 				(e, m) -> {
 					ClientLogger.get().error(e, "Couldn't begin question generation operation");
-					notification.notify(getLocalizedString(LocalizationTags.SERVER_ERROR.toString()));
+					ToastNotification.fire(getLocalizedString(LocalizationTags.SERVER_ERROR.toString()));
 					questgenpreview.display(new ArrayList<>());
 
 					if (e instanceof InvalidClientIdentificationTokenException)
@@ -1245,10 +1243,18 @@ public class WebRankerCore implements AbstractWebRankerCore {
 		if (questionGenPoller.isRunning())
 			questionGenPoller.stop();
 
-		serverMessageChannel.send(new CmActiveOperationCancel(), () -> {}, (e, m) -> {});
+		CmActiveOperationCancel msg = new CmActiveOperationCancel();
+		msg.setActiveOperationExpected(false);
+		serverMessageChannel.send(msg, () -> {}, (e, m) -> {});
 	}
 
 	private void onQuestGenPreviewShow(RankableDocument doc) {
+		if (isOperationInProgress())
+			return;
+
+		if (doc instanceof CompareProcessData.ComparisonWrapper)
+			doc = ((CompareProcessData.ComparisonWrapper) doc).doc;
+
 		CmQuestionGenEagerParse msg = new CmQuestionGenEagerParse();
 		msg.setSourceDoc(doc);
 		serverMessageChannel.send(msg, () -> {}, (e, m) -> {});
@@ -1276,7 +1282,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 		// load custom settings from url
 		importedSettings = exporter.importSettings();
 		if (importedSettings != null)
-			notification.notify(getLocalizedString(LocalizationTags.IMPORTED_SETINGS.toString()));
+			ToastNotification.fire(getLocalizedString(LocalizationTags.IMPORTED_SETINGS.toString()));
 	}
 
 	@Override

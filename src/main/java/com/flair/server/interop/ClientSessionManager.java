@@ -3,7 +3,7 @@ package com.flair.server.interop;
 
 import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.exceptions.InvalidClientIdentificationTokenException;
-import com.flair.shared.interop.ClientIdentificationToken;
+import com.flair.shared.interop.ClientIdToken;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -38,11 +38,11 @@ public class ClientSessionManager {
 	}
 
 	private static final class SessionMetadata {
-		private final ClientIdentificationToken token;
+		private final ClientIdToken token;
 		private HttpSession session;
 		private ClientSessionState state;
 
-		SessionMetadata(ClientIdentificationToken t, HttpSession s) {
+		SessionMetadata(ClientIdToken t, HttpSession s) {
 			token = t;
 			session = s;
 			state = new ClientSessionState(t);
@@ -51,7 +51,7 @@ public class ClientSessionManager {
 		void release() {
 			state.release();
 		}
-		ClientIdentificationToken getToken() {
+		ClientIdToken getToken() {
 			return token;
 		}
 		ClientSessionState getState() {
@@ -62,7 +62,7 @@ public class ClientSessionManager {
 		}
 	}
 
-	private final Map<ClientIdentificationToken, SessionMetadata> activeSessions;
+	private final Map<ClientIdToken, SessionMetadata> activeSessions;
 
 	private ClientSessionManager() {
 		activeSessions = new ConcurrentHashMap<>();
@@ -79,30 +79,30 @@ public class ClientSessionManager {
 		}
 	}
 
-	private SessionMetadata getSessionMetadata(ClientIdentificationToken tok) {
+	private SessionMetadata getSessionMetadata(ClientIdToken tok) {
 		return activeSessions.get(tok);
 	}
 
 	private SessionMetadata getSessionMetadata(String tokUuid) {
-		return getSessionMetadata(new ClientIdentificationToken(tokUuid));
+		return getSessionMetadata(new ClientIdToken(tokUuid));
 	}
 
-	private void invalidateAndRemove(ClientIdentificationToken tok) {
+	private void invalidateAndRemove(ClientIdToken tok) {
 		SessionMetadata data = getSessionMetadata(tok);
 		if (data == null)        // can be null if the session was previously invalidated
 			return;
 
 		data.release();
 		activeSessions.remove(tok);
-		ServerLogger.get().info("Session for client " + tok.toString() + " released");
+		ServerLogger.get().info("Released session. ClientID: " + tok);
 	}
 
-	private static ClientIdentificationToken createNewClientIdentificationToken() {
-		return new ClientIdentificationToken(UUID.randomUUID().toString());
+	private static ClientIdToken createNewClientIdentificationToken() {
+		return new ClientIdToken(UUID.randomUUID().toString());
 	}
 
-	public synchronized ClientIdentificationToken addSession(HttpSession httpSession) {
-		ClientIdentificationToken newTok = createNewClientIdentificationToken();
+	public synchronized ClientIdToken addSession(HttpSession httpSession) {
+		ClientIdToken newTok = createNewClientIdentificationToken();
 		ServerLogger.get().info("Opened new session. ClientID: " + newTok.toString());
 
 		// bind the token to the session
@@ -116,16 +116,16 @@ public class ClientSessionManager {
 		// invalidate all associated clients
 		Enumeration<String> boundUuids = oldSession.getAttributeNames();
 		while (boundUuids.hasMoreElements()) {
-			ClientIdentificationToken tok = (ClientIdentificationToken) oldSession.getAttribute(boundUuids.nextElement());
+			ClientIdToken tok = (ClientIdToken) oldSession.getAttribute(boundUuids.nextElement());
 			invalidateAndRemove(tok);
 		}
 	}
 
-	public synchronized void removeSession(ClientIdentificationToken tok) {
+	public synchronized void removeSession(ClientIdToken tok) {
 		invalidateAndRemove(tok);
 	}
 
-	public synchronized void validateClientId(ClientIdentificationToken tok, HttpSession session)
+	public synchronized void validateClientId(ClientIdToken tok, HttpSession session)
 			throws InvalidClientIdentificationTokenException {
 		SessionMetadata data = getSessionMetadata(tok);
 		if (data == null) {
@@ -162,7 +162,7 @@ public class ClientSessionManager {
 		if (parentHttpSession == null)
 			throw new IllegalStateException("Invalid HTTP Session");
 
-		String clientUuid = request.getParameter(ClientIdentificationToken.class.getSimpleName());
+		String clientUuid = request.getParameter(ClientIdToken.class.getSimpleName());
 		if (clientUuid == null)
 			throw new IllegalArgumentException("Request doesn't specify client identifier");
 
@@ -181,7 +181,6 @@ public class ClientSessionManager {
 				orgName = orgName.substring(0, extIdx); // strip extension
 
 			files.add(new CustomCorpusFile(part.getInputStream(), orgName));
-			ServerLogger.get().info("Uploaded custom corpus file " + orgName);
 		}
 
 		data.getState().handleCorpusUpload(files);

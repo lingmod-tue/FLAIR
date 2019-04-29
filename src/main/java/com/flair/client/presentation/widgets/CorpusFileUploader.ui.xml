@@ -33,7 +33,7 @@
 					<ma:stepper.MaterialStep ui:field="stpUploadUI"
 						step="2" title="Upload Files">
 						<ma.fileuploader:MaterialFileUploader
-                                ui:field="uplUploaderUI" url="flair/CustomCorpus" maxFileSize="10"
+                                ui:field="uplUploaderUI" url="flair/CorpusUploadEndpoint" maxFileSize="10"
                                 shadow="0" height="150px" backgroundColor="TRANSPARENT">
 	
 							<ma.fileuploader:MaterialUploadLabel

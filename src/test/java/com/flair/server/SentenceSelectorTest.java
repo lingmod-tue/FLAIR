@@ -29,7 +29,7 @@ public class SentenceSelectorTest {
 				.query(query)
 				.results(numResults)
 				.keywords(new KeywordSearcherInput(Arrays.asList(keywords)))
-				.launch()
+				.build()
 				.yield();
 
 		long start = System.currentTimeMillis();

@@ -1,7 +1,7 @@
 package com.flair.server.interop;
 
 import com.flair.server.document.AbstractDocument;
-import com.flair.server.pipelines.PipelineOp;
+import com.flair.server.pipelines.questgen.QuestionGenerationPipeline;
 import com.flair.shared.interop.dtos.DocumentDTO;
 
 import java.util.ArrayList;
@@ -16,7 +16,8 @@ final class TemporaryClientData {
 		String eagerParsingOpId = "";
 		AbstractDocument eagerSourceDoc = null;
 		DocumentDTO eagerLinkingDoc = null;
-		PipelineOp.PipelineOpBuilder queuedOperation = null;
+		AbstractDocument eagerParsedDoc = null;
+		QuestionGenerationPipeline.QuestionGenerationOpBuilder queuedOperation = null;
 
 		QuestionGen(AbstractDocument eagerSourceDoc, DocumentDTO eagerLinkingDoc) {
 			this.eagerSourceDoc = eagerSourceDoc;

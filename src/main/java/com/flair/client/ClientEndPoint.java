@@ -1,6 +1,6 @@
 package com.flair.client;
 
-import com.flair.client.interop.messaging.ClientsideInteropBus;
+import com.flair.client.interop.messaging.ClientMessageChannel;
 import com.flair.client.localization.GrammaticalConstructionLocalizationProvider;
 import com.flair.client.localization.LocalizationStringTable;
 import com.flair.client.model.DocumentAnnotator;
@@ -10,8 +10,8 @@ import com.flair.client.model.interfaces.AbstractWebRankerCore;
 import com.flair.client.presentation.MainViewport;
 import com.flair.client.presentation.interfaces.AbstractWebRankerPresenter;
 import com.flair.client.utilities.ClientLogger;
-import com.flair.shared.interop.ClientIdentificationToken;
-import com.flair.shared.interop.FlairClientServerInteropServiceAsync;
+import com.flair.shared.interop.ClientIdToken;
+import com.flair.shared.interop.InteropServiceAsync;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -26,18 +26,18 @@ public class ClientEndPoint {
 		return INSTANCE;
 	}
 
-	private ClientIdentificationToken clientToken;
+	private ClientIdToken clientToken;
 	private MainViewport viewport;
 	private WebRankerCore webranker;
-	private FlairClientServerInteropServiceAsync interopService;
-	private ClientsideInteropBus messageChannel;
+	private InteropServiceAsync interopService;
+	private ClientMessageChannel messageChannel;
 	private boolean initialized;
 
 	private ClientEndPoint() {
 		clientToken = null;
 		viewport = null;
 		webranker = null;
-		interopService = FlairClientServerInteropServiceAsync.Util.getInstance();
+		interopService = InteropServiceAsync.Util.getInstance();
 		messageChannel = null;
 		initialized = false;
 	}
@@ -57,7 +57,7 @@ public class ClientEndPoint {
 		viewport.showSplash(true);
 
 		// establish handshake with the server
-		AsyncCallback<ClientIdentificationToken> handshakeCallback = new AsyncCallback<ClientIdentificationToken>() {
+		AsyncCallback<ClientIdToken> handshakeCallback = new AsyncCallback<ClientIdToken>() {
 			@Override
 			public void onFailure(Throwable caught) {
 				ClientLogger.get().error(caught, "Couldn't perform handshake with server");
@@ -66,9 +66,9 @@ public class ClientEndPoint {
 				viewport.setSplashSubtitle("Something went wrong on our end. Please try again later.");
 			}
 			@Override
-			public void onSuccess(ClientIdentificationToken result) {
+			public void onSuccess(ClientIdToken result) {
 				clientToken = result;
-				messageChannel = new ClientsideInteropBus(clientToken);
+				messageChannel = new ClientMessageChannel(clientToken);
 
 				ClientLogger.get().info("Session token assigned. ID: " + clientToken);
 				viewport.showSplash(false);
@@ -100,7 +100,7 @@ public class ClientEndPoint {
 		ClientLogger.get().info("Client endpoint deinitialized");
 	}
 
-	public ClientIdentificationToken getClientIdentificationToken() {
+	public ClientIdToken getClientIdentificationToken() {
 		return clientToken;
 	}
 
@@ -112,7 +112,7 @@ public class ClientEndPoint {
 		return viewport;
 	}
 
-	public ClientsideInteropBus getMessageChannel() {
+	public ClientMessageChannel getMessageChannel() {
 		return messageChannel;
 	}
 

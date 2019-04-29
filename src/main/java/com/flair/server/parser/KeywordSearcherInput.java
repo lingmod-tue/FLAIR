@@ -14,7 +14,9 @@ public class KeywordSearcherInput implements Iterable<String> {
 	public KeywordSearcherInput() {
 		this.keywords = new ArrayList<>();
 	}
-
+	public KeywordSearcherInput(KeywordSearcherInput rhs) {
+		this.keywords = new ArrayList<>(rhs.keywords);
+	}
 	public KeywordSearcherInput(List<String> keywords) {
 		this.keywords = new ArrayList<>(keywords);
 	}

@@ -33,6 +33,11 @@ public class SmClientMessageConsumed implements Message.Payload {
 	}
 	@Override
 	public String desc() {
-		return "";
+		StringBuilder sb = new StringBuilder();
+		sb.append("clientMessageId=").append(clientMessageId).append(" | ");
+		sb.append("success=").append(success).append(" | ");
+		if (!success)
+			sb.append("exception=").append(error);
+		return sb.toString();
 	}
 }

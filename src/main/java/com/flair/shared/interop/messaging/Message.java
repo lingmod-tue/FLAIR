@@ -1,6 +1,6 @@
 package com.flair.shared.interop.messaging;
 
-import com.flair.shared.interop.ClientIdentificationToken;
+import com.flair.shared.interop.ClientIdToken;
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 /*
@@ -10,7 +10,7 @@ public class Message<P extends Message.Payload> implements IsSerializable {
 	/*
 	 * Represents a message's contents.
 	 */
-	public interface Payload {
+	public interface Payload extends IsSerializable {
 		String name();
 		String desc();
 	}
@@ -18,7 +18,7 @@ public class Message<P extends Message.Payload> implements IsSerializable {
 	public static final long INVALID_ID = 0;
 
 	// identification of the client that sent/is to receive the message
-	private ClientIdentificationToken clientId = null;
+	private ClientIdToken clientId = null;
 
 	// a monotonically increasing number used to uniquely identify the message in a particular channel
 	private long messageId = INVALID_ID;
@@ -60,10 +60,10 @@ public class Message<P extends Message.Payload> implements IsSerializable {
 		result = 31 * result + (int) (messageId ^ (messageId >>> 32));
 		return result;
 	}
-	public ClientIdentificationToken getClientId() {
+	public ClientIdToken getClientId() {
 		return clientId;
 	}
-	public void setClientId(ClientIdentificationToken clientId) {
+	public void setClientId(ClientIdToken clientId) {
 		this.clientId = clientId;
 	}
 	public long getMessageId() {

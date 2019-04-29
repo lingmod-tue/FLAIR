@@ -14,7 +14,7 @@
 
     <filter-mapping>
         <filter-name>GzipFilter</filter-name>
-        <servlet-name>FlairClientServerInteropService</servlet-name>
+        <servlet-name>InteropService</servlet-name>
     </filter-mapping>
 
 	<!-- Listeners -->
@@ -28,23 +28,23 @@
 
 	<!-- Servlets -->
 	<servlet>
-		<servlet-name>CustomCorpus</servlet-name>
-		<servlet-class>com.flair.server.interop.CustomCorpusServlet</servlet-class>
+        <servlet-name>CorpusUpload</servlet-name>
+        <servlet-class>com.flair.server.interop.CorpusUploadServlet</servlet-class>
 	</servlet>
 
     <servlet>
-        <servlet-name>FlairClientServerInteropService</servlet-name>
-        <servlet-class>com.flair.server.interop.FlairClientServerInteropServiceImpl</servlet-class>
+        <servlet-name>InteropService</servlet-name>
+        <servlet-class>com.flair.server.interop.InteropServiceImpl</servlet-class>
     </servlet>
 
     <servlet-mapping>
-		<servlet-name>CustomCorpus</servlet-name>
-		<url-pattern>/flair/CustomCorpus</url-pattern>
+        <servlet-name>CorpusUpload</servlet-name>
+        <url-pattern>/flair/CorpusUploadEndpoint</url-pattern>
 	</servlet-mapping>
 	
 	<servlet-mapping>
-        <servlet-name>FlairClientServerInteropService</servlet-name>
-        <url-pattern>/flair/ServerIO</url-pattern>
+        <servlet-name>InteropService</servlet-name>
+        <url-pattern>/flair/InteropEndpoint</url-pattern>
 	</servlet-mapping>
 
     <!-- Session Config -->

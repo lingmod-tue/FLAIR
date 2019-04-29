@@ -7,17 +7,17 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
 import java.util.ArrayList;
 
-@RemoteServiceRelativePath("ServerIO")
-public interface FlairClientServerInteropService extends RemoteService {
+@RemoteServiceRelativePath("InteropEndpoint")
+public interface InteropService extends RemoteService {
 	// invoked before all other server communication, returns the client's token
-	ClientIdentificationToken SessionInitialize();
+	ClientIdToken SessionInitialize();
 
 	// invoked when the client ends its session
-	void SessionTeardown(ClientIdentificationToken clientId) throws InvalidClientIdentificationTokenException;
+	void SessionTeardown(ClientIdToken clientId) throws InvalidClientIdentificationTokenException;
 
 	// communication channel used by the client to send messages to the server
 	void MessagingSend(Message<? extends Message.Payload> message) throws InvalidClientIdentificationTokenException;
 
 	// communication channel polled by the client to receive messages from the server
-	ArrayList<Message<? extends Message.Payload>> MessagingReceive(ClientIdentificationToken clientId) throws InvalidClientIdentificationTokenException;
+	ArrayList<Message<? extends Message.Payload>> MessagingReceive(ClientIdToken clientId) throws InvalidClientIdentificationTokenException;
 }

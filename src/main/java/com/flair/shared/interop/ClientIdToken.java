@@ -5,13 +5,13 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 /*
  * Used to uniquely identify a client during client-server interop.
  */
-public class ClientIdentificationToken implements IsSerializable {
+public class ClientIdToken implements IsSerializable {
 	private String uuid = "";
 
-	public ClientIdentificationToken(String uuid) {
+	public ClientIdToken(String uuid) {
 		this.uuid = uuid;
 	}
-	public ClientIdentificationToken() {}
+	public ClientIdToken() {}
 
 	public String getUuid() {
 		return uuid;
@@ -25,7 +25,7 @@ public class ClientIdentificationToken implements IsSerializable {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 
-		ClientIdentificationToken that = (ClientIdentificationToken) o;
+		ClientIdToken that = (ClientIdToken) o;
 
 		return uuid.equals(that.uuid);
 

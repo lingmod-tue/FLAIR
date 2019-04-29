@@ -2,7 +2,7 @@ package com.flair.server.interop.messaging;
 
 import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.exceptions.InvalidClientIdentificationTokenException;
-import com.flair.shared.interop.ClientIdentificationToken;
+import com.flair.shared.interop.ClientIdToken;
 import com.flair.shared.interop.messaging.Message;
 import com.flair.shared.interop.messaging.MessageReceivedHandler;
 import com.flair.shared.interop.messaging.server.SmClientMessageConsumed;
@@ -47,7 +47,7 @@ public class ServerMessagingSwitchboard {
 	private class ServerMessageChannelImpl implements ServerMessageChannel {
 		private static final long MAX_OUT_OF_ORDER_MESSAGES = 10;
 
-		private final ClientIdentificationToken clientId;
+		private final ClientIdToken clientId;
 		private final List<Message<?>> inbox;
 		private Queue<Message<?>> outbox;
 		private final Map<Class<?>, MessageReceivedHandler<?>> messageHandlers;
@@ -56,36 +56,8 @@ public class ServerMessagingSwitchboard {
 		private long numOutOfOrderMessages;
 		private boolean channelOpen;
 
-		private void sendClientMessageConsumedFailure(long clientMsgId, Throwable ex, String msg) {
-			SmError error = new SmError();
-			error.setException(ex);
-			error.setFatal(true);
-			error.setMessage(msg);
-
-			SmClientMessageConsumed consumed = new SmClientMessageConsumed();
-			consumed.setClientMessageId(clientMsgId);
-			consumed.setSuccess(false);
-			consumed.setError(error);
-			send(consumed);
-		}
-
-		private void sendClientMessageConsumedSuccess(long clientMsgId) {
-			SmClientMessageConsumed msg = new SmClientMessageConsumed();
-			msg.setClientMessageId(clientMsgId);
-			msg.setSuccess(true);
-			send(msg);
-		}
-
-		private void removeLastSentMessage() {
-			if (outbox.isEmpty())
-				return;
-
-			if (!outbox.removeIf(m -> m.getMessageId() == nextOutgoingMessageId - 1))
-				throw new IllegalStateException("Outbox is not empty but is missing the last message!?");
-		}
-
 		private <P extends Message.Payload> void handleMessage(Message<P> msg) {
-			ClientIdentificationToken sender = msg.getClientId();
+			ClientIdToken sender = msg.getClientId();
 			long messageId = msg.getMessageId();
 			P payload = msg.getPayload();
 			MessageReceivedHandler<P> handler = (MessageReceivedHandler<P>) messageHandlers.get(payload.getClass());
@@ -98,18 +70,43 @@ public class ServerMessagingSwitchboard {
 					.trace("Name: " + payload.name())
 					.trace("Contents: " + payload.desc()).exdent();
 
+
+			// queue the success message ahead of time in case the handler sends its own messages
+			// this will preserve the expected order of the messages
+			SmClientMessageConsumed ackClentMsg = new SmClientMessageConsumed();
+			ackClentMsg.setClientMessageId(messageId);
+			ackClentMsg.setSuccess(true);
+			send(ackClentMsg);
+
 			try {
-				// queue the success message ahead of time in case the handler sends its own messages
-				// this will preserve the expected order of the messages
-				sendClientMessageConsumedSuccess(messageId);
 				handler.read(payload);
 			} catch (Throwable ex) {
-				// replace the success message with one of failure
-				removeLastSentMessage();
-				sendClientMessageConsumedFailure(messageId, ex, "Exception raised when handling the following message: " + msg);
-				ServerLogger.get().error(ex, "Message handler raised an exception! Exception: " + ex);
+				// update the success message to reflect failure
+				SmError error = new SmError();
+				error.setException(ex);
+				error.setFatal(false);
+				error.setMessage("Message handler raised an exception! Exception: " + ex);
+
+				ackClentMsg.setSuccess(false);
+				ackClentMsg.setError(error);
+				ServerLogger.get().error(ex, error.getMessage());
 			}
 			previousIncomingMessageId = messageId;
+		}
+
+		private void processPendingInboxMessages() {
+			inbox.sort(Comparator.comparingLong(Message::getMessageId));
+
+			long nextMessageId = inbox.get(0).getMessageId();
+			for (Message<? extends Message.Payload> m : inbox) {
+				if (m.getMessageId() != nextMessageId)
+					ServerLogger.get().warn("Message " + nextMessageId + " was lost! Previously handled message: " + previousIncomingMessageId);
+
+				handleMessage(m);
+				++nextMessageId;
+			}
+
+			inbox.clear();
 		}
 
 		private synchronized void onPushFromClient(Message<? extends Message.Payload> message) {
@@ -136,29 +133,23 @@ public class ServerMessagingSwitchboard {
 
 					numOutOfOrderMessages = 0;
 					inbox.add(message);
-					inbox.sort(Comparator.comparingLong(Message::getMessageId));
-
-					long nextMessageId = receivedMessageId - 1;
-					for (Message<? extends Message.Payload> m : inbox) {
-						if (m.getMessageId() != nextMessageId)
-							ServerLogger.get().warn("Message " + nextMessageId + " was lost! Previously handled message: " + previousIncomingMessageId);
-
-						handleMessage(m);
-						++nextMessageId;
-					}
-
-					inbox.clear();
+					processPendingInboxMessages();
 				}
 			} else if (receivedMessageId > previousIncomingMessageId) {
-				if (numOutOfOrderMessages++ > MAX_OUT_OF_ORDER_MESSAGES) {
-					ServerLogger.get().error("Received too many messages out of order!");
-					// ### TODO this is fatal, communicate with the client
-					return;
+				// This can happen under following circumstances (amongst others):
+				//      > a client message was not delivered to the server due to network issues, ending up getting lost
+				//      > message order was disturbed due to server load balancing
+				if (numOutOfOrderMessages++ <= MAX_OUT_OF_ORDER_MESSAGES) {
+					long delta = receivedMessageId - previousIncomingMessageId;
+					ServerLogger.get().trace("Received newer message " + receivedMessageId + " out-of-order. Delta: " + delta + " | Awaiting older message...");
+					inbox.add(message);
+				} else {
+					ServerLogger.get().error("Received too many messages out of order! Resetting to the oldest pending message in inbox...")
+							.error("Message " + previousIncomingMessageId + " is probably lost");
+					numOutOfOrderMessages = 0;
+					inbox.add(message);
+					processPendingInboxMessages();
 				}
-
-				long delta = receivedMessageId - previousIncomingMessageId;
-				ServerLogger.get().trace("Received newer message " + receivedMessageId + " out-of-order. Delta: " + delta + " | Awaiting older message...");
-				inbox.add(message);
 			} else if (receivedMessageId < previousIncomingMessageId) {
 				ServerLogger.get().warn("Time-travelling message " + receivedMessageId + " encountered! Previously handled message: " + previousIncomingMessageId)
 						.indent().warn("Message: " + message.toString()).exdent();
@@ -199,7 +190,7 @@ public class ServerMessagingSwitchboard {
 			outbox.clear();
 		}
 
-		ServerMessageChannelImpl(ClientIdentificationToken clientId) {
+		ServerMessageChannelImpl(ClientIdToken clientId) {
 			this.clientId = clientId;
 			this.inbox = new ArrayList<>();
 			this.outbox = new ArrayDeque<>();
@@ -211,7 +202,7 @@ public class ServerMessagingSwitchboard {
 		}
 
 		@Override
-		public ClientIdentificationToken clientId() {
+		public ClientIdToken clientId() {
 			return clientId;
 		}
 
@@ -245,20 +236,20 @@ public class ServerMessagingSwitchboard {
 				throw new IllegalStateException("Broken message channel for client " + clientId);
 
 			// keep acknowledgement messages
-			outbox = outbox.stream().filter(e -> !(e.getPayload() instanceof SmClientMessageConsumed))
+			outbox = outbox.stream().filter(e -> e.getPayload() instanceof SmClientMessageConsumed)
 						.sorted(Comparator.comparingLong(Message::getMessageId)).collect(Collectors.toCollection(ArrayDeque::new));
 		}
 	}
 
-	private final Map<ClientIdentificationToken, ServerMessageChannelImpl> clientId2Channel;
-	private final Map<ServerMessageChannelImpl, ClientIdentificationToken> channel2ClientId;
+	private final Map<ClientIdToken, ServerMessageChannelImpl> clientId2Channel;
+	private final Map<ServerMessageChannelImpl, ClientIdToken> channel2ClientId;
 
 	private ServerMessagingSwitchboard() {
 		clientId2Channel = new ConcurrentHashMap<>();
 		channel2ClientId = new ConcurrentHashMap<>();
 	}
 
-	public synchronized ServerMessageChannel openChannel(ClientIdentificationToken clientId) {
+	public synchronized ServerMessageChannel openChannel(ClientIdToken clientId) {
 		if (clientId2Channel.containsKey(clientId))
 			throw new IllegalArgumentException("Multiple message channels for client " + clientId);
 
@@ -274,7 +265,7 @@ public class ServerMessagingSwitchboard {
 		if (channelImpl == null)
 			throw new IllegalArgumentException("Unknown message channel");
 
-		ClientIdentificationToken mapped = channel2ClientId.get(channelImpl);
+		ClientIdToken mapped = channel2ClientId.get(channelImpl);
 		if (mapped == null)
 			throw new IllegalArgumentException("Unknown message channel for client " + channel.clientId().toString());
 		else if (!mapped.equals(channel.clientId()))
@@ -296,7 +287,7 @@ public class ServerMessagingSwitchboard {
 		messageChannel.onPushFromClient(message);
 	}
 
-	public ArrayList<Message<? extends Message.Payload>> onPullToClient(ClientIdentificationToken clientId) {
+	public ArrayList<Message<? extends Message.Payload>> onPullToClient(ClientIdToken clientId) {
 		ServerMessageChannelImpl messageChannel = clientId2Channel.get(clientId);
 		if (messageChannel == null) {
 			ServerLogger.get().error("Received message from unknown client " + clientId);

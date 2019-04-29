@@ -9,6 +9,7 @@ import com.flair.client.presentation.interfaces.DocumentPreviewPaneInput.Rankabl
 import com.flair.client.presentation.interfaces.DocumentPreviewPaneInput.UnRankable;
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
+import com.flair.shared.interop.dtos.RankableDocument;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.dom.client.Style.Unit;
@@ -295,10 +296,11 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 				}
 				case ALL_CONSTRUCTIONS: {
 					for (GrammaticalConstruction itr : rankable.getConstructions()) {
+						RankableDocument doc = rankable.getDocument();
 						TableData d = new TableData(itr,
-								(int) rankable.getDocument().getConstructionFreq(itr),
+								(int) doc.getConstructionFreq(itr),
 								rankable.getConstructionWeight(itr),
-								rankable.getDocument().getConstructionRelFreq(itr));
+								doc.getConstructionRelFreq(itr));
 
 						dataProvider.add(d);
 					}

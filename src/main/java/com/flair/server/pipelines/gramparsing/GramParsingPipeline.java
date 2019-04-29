@@ -164,7 +164,7 @@ public final class GramParsingPipeline {
 			return this;
 		}
 
-		public PipelineOp<SearchCrawlParseOp.Input, SearchCrawlParseOp.Output> launch() {
+		public PipelineOp<SearchCrawlParseOp.Input, SearchCrawlParseOp.Output> build() {
 			if (lang == null)
 				throw new IllegalStateException("Invalid lang");
 			else if (query == null || query.isEmpty())
@@ -184,7 +184,7 @@ public final class GramParsingPipeline {
 					getParser(lang),
 					ParsingStrategy.factory(),
 					keywordSearchers,
-					keywords,
+					new KeywordSearcherInput(keywords),
 					crawlComplete,
 					parseComplete,
 					jobComplete);
@@ -247,20 +247,20 @@ public final class GramParsingPipeline {
 			return this;
 		}
 
-		public PipelineOp<ParseOp.Input, ParseOp.Output> launch() {
+		public PipelineOp<ParseOp.Input, ParseOp.Output> build() {
 			if (lang == null)
 				throw new IllegalStateException("Invalid lang");
 			else if (sourceDocs.isEmpty())
 				throw new IllegalStateException("No document sources to parse");
 
 			ParseOp.Input input = new ParseOp.Input(lang,
-					sourceDocs,
+					new ArrayList<>(sourceDocs),
 					docParseExecutor,
 					docFactory,
 					getParser(lang),
 					ParsingStrategy.factory(),
 					keywordSearchers,
-					keywords,
+					new KeywordSearcherInput(keywords),
 					jobBegin,
 					parseComplete,
 					jobComplete);

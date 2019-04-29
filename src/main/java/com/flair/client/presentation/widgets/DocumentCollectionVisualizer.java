@@ -4,6 +4,7 @@ import com.flair.client.localization.*;
 import com.flair.client.localization.annotations.LocalizedCommonField;
 import com.flair.client.localization.annotations.LocalizedField;
 import com.flair.client.localization.interfaces.LocalizationBinder;
+import com.flair.client.presentation.ToastNotification;
 import com.flair.client.presentation.interfaces.VisualizerService;
 import com.flair.client.presentation.widgets.sliderbundles.ConstructionSliderBundleEnglish;
 import com.flair.client.presentation.widgets.sliderbundles.ConstructionSliderBundleGerman;
@@ -574,10 +575,10 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 			List<RankableDocument> filtered = getFilteredDocs();
 
 			if (filtered.isEmpty())
-				MaterialToast.fireToast(getLocalizedString(LocalizationTags.NO_FILTERED_DOCS.toString()));
+				ToastNotification.fire(getLocalizedString(LocalizationTags.NO_FILTERED_DOCS.toString()));
 			else {
 				String msg = getLocalizedString(LocalizationTags.DOCS_FILTERED.toString()) + ": " + filtered.size();
-				MaterialToast.fireToast(msg);
+				ToastNotification.fire(msg);
 			}
 
 			if (filterHandler != null)

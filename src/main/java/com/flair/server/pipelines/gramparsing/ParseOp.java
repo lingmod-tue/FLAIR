@@ -95,6 +95,11 @@ public class ParseOp extends PipelineOp<ParseOp.Input, ParseOp.Output> {
 	ParseOp(Input input) {
 		super("ParseOp", input, new Output(input.sourceLanguage));
 		initTaskSyncHandlers();
+	}
+
+	@Override
+	public void launch() {
+		super.launch();
 
 		AsyncJob.Scheduler scheduler = AsyncJob.Scheduler.newJob(j -> {
 			if (j.isCancelled())

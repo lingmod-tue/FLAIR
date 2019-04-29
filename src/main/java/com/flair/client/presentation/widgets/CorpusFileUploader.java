@@ -7,9 +7,10 @@ import com.flair.client.localization.LocalizedFieldType;
 import com.flair.client.localization.annotations.LocalizedCommonField;
 import com.flair.client.localization.annotations.LocalizedField;
 import com.flair.client.localization.interfaces.LocalizationBinder;
+import com.flair.client.presentation.ToastNotification;
 import com.flair.client.presentation.interfaces.CorpusUploadService;
 import com.flair.shared.grammar.Language;
-import com.flair.shared.interop.ClientIdentificationToken;
+import com.flair.shared.interop.ClientIdToken;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -22,7 +23,6 @@ import gwt.material.design.addins.client.stepper.MaterialStepper;
 import gwt.material.design.client.ui.MaterialButton;
 import gwt.material.design.client.ui.MaterialDialog;
 import gwt.material.design.client.ui.MaterialRadioButton;
-import gwt.material.design.client.ui.MaterialToast;
 
 public class CorpusFileUploader extends LocalizedComposite implements CorpusUploadService {
 	private static CorpusFileUploaderUiBinder uiBinder = GWT.create(CorpusFileUploaderUiBinder.class);
@@ -87,13 +87,13 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
         return dropzone.getUploadingFiles().length !== 0 || dropzone.getQueuedFiles().length !== 0;
     }-*/;
 
-	private native void setupDropzone(ClientIdentificationToken t, MaterialFileUploader u) /*-{
+	private native void setupDropzone(String headerAttribute, ClientIdToken t, MaterialFileUploader u) /*-{
         var dropzone = u.@gwt.material.design.addins.client.fileuploader.MaterialFileUploader::uploader;
         var uuid = t.toString();
 
         // tag uploaded files with the client token's uuid
         dropzone.on('sending', function (file, xhr, formData) {
-            formData.append('ClientIdentificationToken', uuid);
+            formData.append(headerAttribute, uuid);
         });
     }-*/;
 
@@ -101,7 +101,7 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 		// deferred init to ensure that we have a valid token
 		if (!initialized) {
 			initialized = true;
-			setupDropzone(ClientEndPoint.get().getClientIdentificationToken(), uplUploaderUI);
+			setupDropzone(ClientIdToken.class.getSimpleName(), ClientEndPoint.get().getClientIdentificationToken(), uplUploaderUI);
 		}
 
 		if (uploadInProgress)
@@ -118,11 +118,11 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 		if (!uploadInProgress && success)
 			throw new RuntimeException("Upload hasn't started yet");
 		else if (hasPendingUploads(uplUploaderUI)) {
-			MaterialToast.fireToast(getLocalizedString(LocalizationTags.UPLOAD_INPROGRESS.toString()));
+			ToastNotification.fire(getLocalizedString(LocalizationTags.UPLOAD_INPROGRESS.toString()));
 			return;
 		}
 
-		if (uploadInProgress && completeHandler != null)
+		if (uploadInProgress && success && completeHandler != null)
 			completeHandler.handle(corpusLang, numUploaded);
 
 		uploadInProgress = false;
@@ -134,11 +134,11 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 	}
 
 	private void onUploadError(UploadFile file) {
-		MaterialToast.fireToast(getLocalizedString(LocalizationTags.UPLOAD_FAILED.toString()) + ": " + file.getName());
+		ToastNotification.fire(getLocalizedString(LocalizationTags.UPLOAD_FAILED.toString()) + ": " + file.getName());
 	}
 
 	private void onMaxFilesReached() {
-		MaterialToast.fireToast(getLocalizedString(LocalizationTags.MAX_FILE_LIMIT.toString()));
+		ToastNotification.fire(getLocalizedString(LocalizationTags.MAX_FILE_LIMIT.toString()));
 	}
 
 	private void resetUI() {
