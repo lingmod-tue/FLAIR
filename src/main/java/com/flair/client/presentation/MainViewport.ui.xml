@@ -17,9 +17,9 @@
 	}
 	
 	.global-animation {
-		transition: 0.4s all;
-		-webkit-transition: 0.4s all;
-		-moz-transition: 0.4s all;
+        transition: 0.3s all;
+        -webkit-transition: 0.3s all;
+        -moz-transition: 0.3s all;
 	}	
 	</ui:style>
 	
@@ -34,21 +34,22 @@
 		<m:MaterialHeader depth="996" layoutPosition="FIXED" width="100%">
 			<!-- Main Navbar -->
             <m:MaterialNavBar ui:field="navMainUI" backgroundColor="ORANGE_ACCENT_3">
-				<m:MaterialLink ui:field="tglSettingsPaneUI" waves="LIGHT" paddingLeft="10" paddingRight="5"
-								grid="l12 m12 s12">
-					<m.morph:MaterialIconMorph ui:field="icoSettingsMorphUI" iconSize="SMALL" marginBottom="50"
-											   marginRight="5" grid="l12 m12 s12">
+                <m:MaterialLink ui:field="tglSettingsPaneUI" waves="LIGHT" paddingLeft="10" paddingRight="5">
+                    <m.morph:MaterialIconMorph ui:field="icoSettingsMorphUI" iconSize="SMALL" marginBottom="50"
+                                               marginRight="15">
     					<m:MaterialIcon iconType="ARROW_BACK"/>
     					<m:MaterialIcon iconType="SETTINGS"/>
 					</m.morph:MaterialIconMorph>
 				</m:MaterialLink>
-				<m:MaterialNavBrand ui:field="btnAboutUI" marginLeft="5" href="javascript:void(0)" text="FLAIR"/>
-				
-				<m:MaterialLink ui:field="btnSwitchLangUI" 
-					activates="lang-selector" iconType="LANGUAGE" waves="LIGHT" float="RIGHT" paddingLeft="10"/>
-				<m:MaterialLink ui:field="btnHistoryUI" 
-					iconType="HISTORY" waves="LIGHT" float="RIGHT" paddingLeft="10" marginRight="15" marginLeft="15"/>
-			</m:MaterialNavBar>		
+
+                <m:MaterialNavBrand ui:field="btnAboutUI" href="javascript:void(0)" text="FLAIR"/>
+
+                <m:MaterialLink ui:field="btnSwitchLangUI" activates="lang-selector" iconType="LANGUAGE"
+                                iconSize="SMALL" waves="LIGHT"
+                                float="RIGHT" paddingLeft="10"/>
+                <m:MaterialLink ui:field="btnHistoryUI" iconType="HISTORY" iconSize="SMALL" waves="LIGHT"
+                                float="RIGHT" paddingLeft="10" marginRight="15" marginLeft="15"/>
+            </m:MaterialNavBar>
 		</m:MaterialHeader>
 						
 		<!-- UI Language Dropdown -->

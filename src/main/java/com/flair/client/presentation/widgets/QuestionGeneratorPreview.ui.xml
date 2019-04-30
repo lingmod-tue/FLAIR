@@ -34,14 +34,14 @@
                     <m:MaterialButton ui:field="btnGenerateQuestUI" text="Generate Questions"
                                       waves="LIGHT" backgroundColor="ORANGE_DARKEN_1"
                                       iconType="QUESTION_ANSWER" iconColor="WHITE"/>
-                    <m:MaterialIcon ui:field="btnGenerateQuestPrefsUI" iconType="MORE_VERT" waves="LIGHT"
-                                    iconColor="WHITE" iconFontSize="2.5em" marginLeft="-2" marginTop="-3"
+                    <m:MaterialIcon ui:field="btnGenerateQuestPrefsUI" iconType="SETTINGS" waves="LIGHT"
+                                    iconColor="WHITE" iconFontSize="1.5em" marginLeft="5" marginTop="3"
                                     activates="question-gen-prefs" float="RIGHT"/>
                 </m:MaterialColumn>
             </m:MaterialRow>
 
             <m:MaterialDropDown ui:field="pnlQuestGenDropdown" activator="question-gen-prefs"
-                                constrainWidth="false" belowOrigin="true" hover="false">
+                                constrainWidth="false" belowOrigin="false" hover="true" width="300px">
                 <m:MaterialRadioButton ui:field="rdoGenerate5QuestsUI" name="num-questions-rdo" value="true" text="5 Questions"/>
                 <m:MaterialRadioButton ui:field="rdoGenerate10QuestsUI" name="num-questions-rdo" text="10 Questions"/>
                 <m:MaterialRadioButton ui:field="rdoGenerate15QuestsUI" name="num-questions-rdo" text="15 Questions"/>

@@ -49,8 +49,10 @@ public class ClientEndPoint {
 		// init'ed first to ensure localization providers are ready and available
 		LocalizationStringTable.get().init();
 
+		RootPanel.get().setVisible(false);
 		viewport = new MainViewport();
 		RootPanel.get().add(viewport);
+		RootPanel.get().setVisible(true);
 
 		viewport.setSplashTitle("");
 		viewport.setSplashSubtitle("");

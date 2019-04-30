@@ -15,17 +15,21 @@
 		-webkit-transition: 0.4s all;
 		-moz-transition: 0.4s all;
 	}
+
+	.large-button {
+		display: inline-block;
+	}
 	</ui:style>
 	
 	<m:MaterialPanel layoutPosition="RELATIVE" grid="l12 m12 s12">
 		<m:MaterialRow ui:field="pnlSettingsContainerUI" overflow="AUTO" layoutPosition="FIXED" depth="995" backgroundColor="WHITE"
-                       grid="l4 m4 s12" height="100%" width="450px" padding="15" top="65" left="-450"
-                       addStyleNames="{style.panel-constSettings} {style.global-animation}" shadow="3">
+					   grid="l4 m4 s12" height="100%" width="450px" padding="15" top="60" left="-450"
+					   addStyleNames="{style.panel-constSettings} {style.global-animation}" shadow="2">
 			
 			<m:MaterialRow textAlign="CENTER" paddingBottom="10" marginBottom="10">
 				<!-- Result Count -->
-				<m:MaterialLabel ui:field="lblDocCountUI" text="Result Count"
-					marginBottom="20" marginTop="10"/>
+				<m:MaterialLabel ui:field="lblDocCountUI" text="Result Count" fontSize="1.3em"
+								 marginBottom="20" marginTop="10"/>
 				
 				<!-- Visualize -->
 				<m:MaterialButton ui:field="btnVisualizeUI" text="Visualize"
@@ -39,7 +43,7 @@
 			</m:MaterialRow>
 
 			<!-- Text Characteristics -->
-			<m:MaterialRow marginBottom="5" paddingBottom="5">	
+			<m:MaterialRow marginBottom="15" paddingBottom="5">
 				<m:MaterialCard padding="15" marginBottom="3">
 					<m:MaterialCardTitle ui:field="lblTextCharacteristicsUI" text="Text Characteristics"
 						iconType="SUBJECT" iconPosition="RIGHT"/>
@@ -69,9 +73,9 @@
 						</m:MaterialRow>
 					</m:MaterialRow>
 				</m:MaterialCard>				
-			</m:MaterialRow>	
-			
-			<m:MaterialRow marginBottom="5" paddingBottom="5">
+			</m:MaterialRow>
+
+			<m:MaterialRow marginBottom="10" paddingBottom="5">
 				<m:MaterialCard padding="15" marginBottom="3">
 					<m:MaterialCardTitle ui:field="lblConstructionsUI" text="Constructions"
 						iconType="CHECK_CIRCLE" iconPosition="RIGHT"/>
@@ -81,8 +85,8 @@
 					<flair.pak:ConstructionSliderBundleGerman ui:field="bdlGermanSlidersUI"/>
 				</m:MaterialCard>
 			</m:MaterialRow>
-				
-			<m:MaterialRow marginBottom="5" paddingBottom="5">
+
+			<m:MaterialRow marginBottom="15" paddingBottom="5">
 				<m:MaterialCard padding="15" marginBottom="3">
 					<m:MaterialCardTitle ui:field="lblLanguageUseUI" text="Language Use"
 						iconType="CHROME_READER_MODE" iconPosition="RIGHT"/>
@@ -93,8 +97,9 @@
 			</m:MaterialRow>	
 			
 			<m:MaterialRow paddingTop="20" paddingBottom="15" textAlign="CENTER">
-				<m:MaterialButton ui:field="btnResetAllUI" text="Reset All"
-					waves="LIGHT" backgroundColor="RED" textColor="WHITE" iconType="UNDO" iconPosition="RIGHT"/>
+				<m:MaterialButton ui:field="btnResetAllUI" text="Reset All" grid="l12 m12 s12"
+								  style="{style.large-button}" size="LARGE"
+								  waves="LIGHT" backgroundColor="RED" textColor="WHITE" iconType="UNDO" iconPosition="RIGHT"/>
 			</m:MaterialRow>	
 			
 			<m:MaterialRow marginBottom="20"/>			
