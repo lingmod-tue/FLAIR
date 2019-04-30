@@ -1,7 +1,7 @@
 package com.flair.client.presentation.interfaces;
 
-import com.flair.shared.interop.QuestionDTO;
-import com.flair.shared.interop.RankableDocument;
+import com.flair.shared.interop.dtos.QuestionDTO;
+import com.flair.shared.interop.dtos.RankableDocument;
 import com.google.gwt.dom.client.Element;
 
 import java.util.List;

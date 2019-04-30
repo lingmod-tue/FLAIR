@@ -12,7 +12,6 @@ public interface AbstractWebRankerPresenter {
 	CorpusUploadService getCorpusUploadService();
 	CustomKeywordService getCustomKeywordsService();
 	UserPromptService getPromptService();
-	NotificationService getNotificationService();
 	VisualizerService getVisualizerService();
 	OperationCancelService getCancelService();
 	SettingsUrlExporterView getSettingsUrlExporterView();

@@ -25,8 +25,8 @@
 	
 	<m:MaterialPanel ui:field="pnlRootUI" layoutPosition="RELATIVE" grid="l12 m12 s12">
 		<m:MaterialRow ui:field="pnlPreviewContainerUI" overflow="AUTO" layoutPosition="FIXED" grid="l4 m4 s12"
-			depth="995" padding="20" height="100%" width="450px" top="65" right="-450"
-			addStyleNames="{style.bordered} {style.animation}" backgroundColor="WHITE" shadow="5">
+                       depth="995" padding="20" height="100%" width="450px" top="60" right="-450"
+                       addStyleNames="{style.bordered} {style.animation}" backgroundColor="WHITE" shadow="2">
 						
 			<!-- Header Info -->
 			<m:MaterialRow textAlign="LEFT" marginBottom="5">

@@ -5,7 +5,7 @@ import com.flair.client.model.interfaces.DocumentRankerInput;
 import com.flair.client.model.interfaces.DocumentRankerOutput;
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
-import com.flair.shared.interop.RankableDocument;
+import com.flair.shared.interop.dtos.RankableDocument;
 import com.flair.shared.parser.DocumentReadabilityLevel;
 
 import java.util.*;

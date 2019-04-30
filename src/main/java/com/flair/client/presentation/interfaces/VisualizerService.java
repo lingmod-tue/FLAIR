@@ -2,7 +2,7 @@ package com.flair.client.presentation.interfaces;
 
 import com.flair.client.presentation.widgets.LanguageSpecificConstructionSliderBundle;
 import com.flair.shared.grammar.GrammaticalConstruction;
-import com.flair.shared.interop.RankableDocument;
+import com.flair.shared.interop.dtos.RankableDocument;
 
 import java.util.List;
 

@@ -131,7 +131,7 @@ public class SearchCrawlParseOp extends PipelineOp<SearchCrawlParseOp.Input, Sea
 				StringTokenizer tokenizer = new StringTokenizer(sr.getPageText(), " ");
 				int tokCount = tokenizer.countTokens();
 				if (tokCount > Constants.SEARCH_RESULT_MINIMUM_TOKEN_COUNT) {
-					input.crawlComplete.handle(sr);
+					safeInvoke(() -> input.crawlComplete.handle(sr), "Exception in crawl complete handler");
 					numValidResults++;
 
 					output.searchResults.add(sr);
@@ -172,8 +172,8 @@ public class SearchCrawlParseOp extends PipelineOp<SearchCrawlParseOp.Input, Sea
 		taskLinker.addHandler(DocParseTask.Result.class, (j, r) -> {
 			// add the result to the doc collection
 			if (r.output != null) {
-				input.parseComplete.handle(r.output);
-
+				safeInvoke(() -> input.parseComplete.handle(r.output),
+						"Exception in parse complete handler");
 				// the ranks of the documents can be discontinuous if search results were discarded
 				// the client should rerank the collection upon job completion manually
 				// however, the general sort order wrt the search results will be preserved
@@ -186,13 +186,17 @@ public class SearchCrawlParseOp extends PipelineOp<SearchCrawlParseOp.Input, Sea
 	SearchCrawlParseOp(Input input) {
 		super("SearchCrawlParseOp", input, new Output(input.sourceLanguage));
 		this.numValidResults = this.numActiveCrawlTasks = this.numTotalCrawlsQueued = 0;
-		initTaskSyncHandlers();
-
 		this.searchAgent = WebSearchAgentFactory.create(WebSearchAgentFactory.SearchAgent.BING,
 				input.sourceLanguage,
 				input.query);
+		initTaskSyncHandlers();
+	}
 
-		this.job = AsyncJob.Scheduler.newJob(j -> {
+	@Override
+	public void launch() {
+		super.launch();
+
+		AsyncJob.Scheduler scheduler = AsyncJob.Scheduler.newJob(j -> {
 			if (j.isCancelled())
 				return;
 
@@ -202,12 +206,14 @@ public class SearchCrawlParseOp extends PipelineOp<SearchCrawlParseOp.Input, Sea
 				itr.setRank(i);
 				i++;
 			}
-			input.jobComplete.handle(output.parsedDocs);
+			safeInvoke(() -> input.jobComplete.handle(output.parsedDocs),
+					"Exception in job complete handler");
 		})
 				.newTask(WebSearchTask.factory(searchAgent, input.numResults))
 				.with(input.webSearchExecutor)
 				.then(this::linkTasks)
-				.queue()
-				.fire();
+				.queue();
+
+		this.job = scheduler.fire();
 	}
 }

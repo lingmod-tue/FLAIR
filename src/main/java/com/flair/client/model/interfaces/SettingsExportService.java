@@ -1,7 +1,5 @@
 package com.flair.client.model.interfaces;
 
-import com.flair.shared.interop.ConstructionSettingsProfile;
-
 /*
  * Allows construction settings to be exported and imported through URL query parameters
  */

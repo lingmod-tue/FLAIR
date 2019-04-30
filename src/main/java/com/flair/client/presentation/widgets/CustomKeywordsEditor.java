@@ -6,13 +6,17 @@ import com.flair.client.localization.LocalizedFieldType;
 import com.flair.client.localization.annotations.LocalizedCommonField;
 import com.flair.client.localization.annotations.LocalizedField;
 import com.flair.client.localization.interfaces.LocalizationBinder;
+import com.flair.client.presentation.ToastNotification;
 import com.flair.client.presentation.interfaces.CustomKeywordService;
 import com.flair.shared.grammar.Language;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
-import gwt.material.design.client.ui.*;
+import gwt.material.design.client.ui.MaterialButton;
+import gwt.material.design.client.ui.MaterialDialog;
+import gwt.material.design.client.ui.MaterialTextArea;
+import gwt.material.design.client.ui.MaterialTitle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,14 +59,14 @@ public class CustomKeywordsEditor extends LocalizedComposite implements CustomKe
 		String[] splits = text.replace("\n", ",").split(",");
 
 		if (splits.length == 0 || (splits.length == 1 && splits[0].length() == 0))
-			MaterialToast.fireToast(getLocalizedString(LocalizationTags.NO_KEYWORDS.toString()));
+			ToastNotification.fire(getLocalizedString(LocalizationTags.NO_KEYWORDS.toString()));
 		else {
 			keywords.clear();
 			for (String itr : splits)
 				keywords.add(itr.trim());
 			slider.setCustomVocab(true);
 
-			MaterialToast.fireToast(getLocalizedString(LocalizationTags.KEYWORDS_APPLIED.toString()));
+			ToastNotification.fire(getLocalizedString(LocalizationTags.KEYWORDS_APPLIED.toString()));
 			hide();
 		}
 	}

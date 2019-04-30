@@ -57,7 +57,7 @@ public class QuestionGeneratorTest {
 				.query(query)
 				.results(numResults)
 				.keywords(new KeywordSearcherInput(Arrays.asList(keywords)))
-				.launch()
+				.build()
 				.yield();
 
 		long start = System.currentTimeMillis();
@@ -68,7 +68,7 @@ public class QuestionGeneratorTest {
 					.sourceDoc(doc)
 					.numQuestions(10)
 					.onComplete(outputs::add)
-					.launch());
+					.build());
 		}
 
 		for (PipelineOp<?, ?> jerb : jobs)

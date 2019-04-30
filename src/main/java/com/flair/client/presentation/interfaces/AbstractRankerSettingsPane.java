@@ -1,11 +1,11 @@
 package com.flair.client.presentation.interfaces;
 
+import com.flair.client.model.interfaces.ConstructionSettingsProfile;
 import com.flair.client.model.interfaces.DocumentRankerOutput;
 import com.flair.client.presentation.widgets.DocumentLengthConfigPane;
 import com.flair.client.presentation.widgets.KeywordWeightSlider;
 import com.flair.client.presentation.widgets.LanguageSpecificConstructionSliderBundle;
 import com.flair.shared.grammar.Language;
-import com.flair.shared.interop.ConstructionSettingsProfile;
 import com.flair.shared.parser.DocumentReadabilityLevel;
 
 /*

@@ -1,7 +1,7 @@
 package com.flair.client.model.interfaces;
 
 import com.flair.shared.grammar.GrammaticalConstruction;
-import com.flair.shared.interop.RankableDocument;
+import com.flair.shared.interop.dtos.RankableDocument;
 import gwt.material.design.client.constants.Color;
 
 /*

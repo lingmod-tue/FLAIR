@@ -146,7 +146,7 @@ public final class QuestionGenerationPipeline {
 			return this;
 		}
 
-		public PipelineOp<QuestionGenerationOp.Input, QuestionGenerationOp.Output> launch() {
+		public PipelineOp<QuestionGenerationOp.Input, QuestionGenerationOp.Output> build() {
 			if (sourceDoc == null)
 				throw new IllegalStateException("Invalid source document");
 			else if (sourceDoc.getLanguage() != Language.ENGLISH)

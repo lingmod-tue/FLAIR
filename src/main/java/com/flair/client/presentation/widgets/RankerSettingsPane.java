@@ -7,6 +7,8 @@ import com.flair.client.localization.LocalizedFieldType;
 import com.flair.client.localization.annotations.LocalizedCommonField;
 import com.flair.client.localization.annotations.LocalizedField;
 import com.flair.client.localization.interfaces.LocalizationBinder;
+import com.flair.client.model.ConstructionSettingsProfileImpl;
+import com.flair.client.model.interfaces.ConstructionSettingsProfile;
 import com.flair.client.model.interfaces.DocumentRankerOutput;
 import com.flair.client.model.interfaces.DocumentRankerOutput.Rank;
 import com.flair.client.presentation.interfaces.AbstractRankerSettingsPane;
@@ -14,8 +16,6 @@ import com.flair.client.presentation.widgets.sliderbundles.ConstructionSliderBun
 import com.flair.client.presentation.widgets.sliderbundles.ConstructionSliderBundleGerman;
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
-import com.flair.shared.interop.ConstructionSettingsProfile;
-import com.flair.shared.interop.ConstructionSettingsProfileImpl;
 import com.flair.shared.parser.DocumentReadabilityLevel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;

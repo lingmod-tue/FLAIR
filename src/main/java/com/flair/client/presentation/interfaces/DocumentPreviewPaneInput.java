@@ -2,7 +2,7 @@ package com.flair.client.presentation.interfaces;
 
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
-import com.flair.shared.interop.RankableDocument;
+import com.flair.shared.interop.dtos.RankableDocument;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import gwt.material.design.client.constants.Color;
 
@@ -10,28 +10,28 @@ import gwt.material.design.client.constants.Color;
  * Input for the document preview pane
  */
 public interface DocumentPreviewPaneInput {
-	public interface Rankable {
-		public Language getLanguage();            // language of the data set
-		public Iterable<GrammaticalConstruction> getConstructions();        // language-specific grammatical constructions
+	interface Rankable {
+		Language getLanguage();            // language of the data set
+		Iterable<GrammaticalConstruction> getConstructions();        // language-specific grammatical constructions
 
-		public RankableDocument getDocument();
+		RankableDocument getDocument();
 
-		public Iterable<GrammaticalConstruction> getWeightedConstructions();
-		public boolean isConstructionWeighted(GrammaticalConstruction gram);
-		public SafeHtml getPreviewMarkup();
+		Iterable<GrammaticalConstruction> getWeightedConstructions();
+		boolean isConstructionWeighted(GrammaticalConstruction gram);
+		SafeHtml getPreviewMarkup();
 
-		public Color getConstructionAnnotationColor(GrammaticalConstruction gram);
-		public Color getKeywordAnnotationColor();
+		Color getConstructionAnnotationColor(GrammaticalConstruction gram);
+		Color getKeywordAnnotationColor();
 
-		public boolean shouldShowKeywords();
-		public boolean hasCustomKeywords();
+		boolean shouldShowKeywords();
+		boolean hasCustomKeywords();
 
-		public double getConstructionWeight(GrammaticalConstruction gram);
-		public double getKeywordWeight();
+		double getConstructionWeight(GrammaticalConstruction gram);
+		double getKeywordWeight();
 	}
 
-	public interface UnRankable {
-		public String getTitle();
-		public String getText();
+	interface UnRankable {
+		String getTitle();
+		String getText();
 	}
 }
