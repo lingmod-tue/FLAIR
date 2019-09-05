@@ -12,10 +12,11 @@
         <filter-class>com.flair.server.filters.GzipFilter</filter-class>
 	</filter>
 
-    <filter-mapping>
-        <filter-name>GzipFilter</filter-name>
-        <servlet-name>InteropService</servlet-name>
-    </filter-mapping>
+    <!--    Disabled as it breaks the app on pre-chrominum Edge -->
+    <!--    <filter-mapping>-->
+    <!--        <filter-name>GzipFilter</filter-name>-->
+    <!--        <servlet-name>InteropService</servlet-name>-->
+    <!--    </filter-mapping>-->
 
 	<!-- Listeners -->
 	<listener>

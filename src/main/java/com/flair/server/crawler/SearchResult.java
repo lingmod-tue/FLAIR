@@ -73,7 +73,7 @@ public class SearchResult implements Comparable<SearchResult> {
 			return false;
 
 		AbstractTextExtractor extractor = TextExtractorFactory.create(TextExtractorFactory.Type.AUTODETECT);
-		AbstractTextExtractor.Output output = extractor.extractText(new AbstractTextExtractor.Input(URL, lang));
+		AbstractTextExtractor.Output output = extractor.extractText(new AbstractTextExtractor.Input(URL));
 
 		if (output.success == false)
 			return false;

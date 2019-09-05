@@ -1,7 +1,7 @@
 package com.flair.server.interop;
 
 import com.flair.server.document.AbstractDocument;
-import com.flair.server.pipelines.PipelineOp;
+import com.flair.server.pipelines.common.PipelineOp;
 import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.interop.dtos.DocumentDTO;
 

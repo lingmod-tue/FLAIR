@@ -35,7 +35,7 @@ public class Document implements AbstractDocument {
 
 	private boolean parsed;
 
-	public Document(AbstractDocumentSource parent) {
+	private Document(AbstractDocumentSource parent) {
 		assert parent != null;
 
 		source = parent;

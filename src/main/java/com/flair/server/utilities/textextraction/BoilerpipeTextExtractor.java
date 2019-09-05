@@ -25,7 +25,7 @@ class BoilerpipeTextExtractor extends AbstractTextExtractor {
 
 			switch (input.sourceType) {
 			case URL:
-				source.setByteStream(openURLStream(input.url, input.lang));
+				source.setByteStream(openURLStream(input.url));
 				break;
 			case STREAM:
 				source.setByteStream(input.stream);

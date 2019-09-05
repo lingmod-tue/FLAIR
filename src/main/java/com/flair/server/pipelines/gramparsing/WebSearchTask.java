@@ -8,7 +8,7 @@ import com.flair.server.utilities.ServerLogger;
 import java.util.List;
 
 public class WebSearchTask implements AsyncTask<WebSearchTask.Result> {
-	static WebSearchTask factory(WebSearchAgent source, int numResults) {
+	public static WebSearchTask factory(WebSearchAgent source, int numResults) {
 		return new WebSearchTask(source, numResults);
 	}
 

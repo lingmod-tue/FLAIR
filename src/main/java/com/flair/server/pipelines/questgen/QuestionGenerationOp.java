@@ -3,7 +3,7 @@ package com.flair.server.pipelines.questgen;
 import com.flair.server.document.AbstractDocument;
 import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.ParserAnnotations;
-import com.flair.server.pipelines.PipelineOp;
+import com.flair.server.pipelines.common.PipelineOp;
 import com.flair.server.scheduler.AsyncExecutorService;
 import com.flair.server.scheduler.AsyncJob;
 import com.flair.server.sentencesel.SentenceSelector;
@@ -216,8 +216,11 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 		List<GeneratedQuestion> questions = new ArrayList<>();
 		for (GeneratedQuestion q : r.generated) {
 			// skip questions that don't have an answer
-			if (q.answer.isEmpty())
+			if (q.answer.isEmpty()) {
+				ServerLogger.get().trace("Question '" + q.question + "' has no answer");
 				continue;
+			}
+
 			questions.add(q);
 		}
 
@@ -257,7 +260,7 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 	}
 
 	@Override
-	public void launch() {
+	public PipelineOp<Input, Output> launch() {
 		super.launch();
 
 		AsyncJob.Scheduler scheduler = AsyncJob.Scheduler.newJob(j -> {
@@ -274,5 +277,6 @@ public class QuestionGenerationOp extends PipelineOp<QuestionGenerationOp.Input,
 				.queue();
 
 		this.job = scheduler.fire();
+		return this;
 	}
 }

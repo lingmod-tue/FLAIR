@@ -2,7 +2,6 @@
 package com.flair.server.utilities.textextraction;
 
 import com.flair.server.utilities.ServerLogger;
-import com.flair.shared.grammar.Language;
 import org.apache.tika.Tika;
 import org.apache.tika.io.TikaInputStream;
 import org.apache.tika.metadata.Metadata;
@@ -36,7 +35,7 @@ class TikaTextExtractor extends AbstractTextExtractor {
 			InputStream read = null;
 			switch (input.sourceType) {
 			case URL:
-				read = openURLStream(input.url, input.lang);
+				read = openURLStream(input.url);
 				break;
 			case STREAM:
 				read = input.stream;
@@ -80,10 +79,10 @@ class TikaTextExtractor extends AbstractTextExtractor {
 		return new Output(input, error == false, pageText, isHtml);
 	}
 
-	public static boolean isContentHTMLPlainText(String url, Language lang) throws IOException, URISyntaxException {
+	public static boolean isContentHTMLPlainText(String url) throws IOException, URISyntaxException {
 		Tika pipeline = new Tika();
 		MediaType type;
-		try (TikaInputStream in = TikaInputStream.get(openURLStream(url, lang))) {
+		try (TikaInputStream in = TikaInputStream.get(openURLStream(url))) {
 			type = pipeline.getDetector().detect(in, new Metadata());
 		}
 

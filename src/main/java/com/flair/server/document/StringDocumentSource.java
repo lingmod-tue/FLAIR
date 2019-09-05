@@ -6,10 +6,10 @@ import com.flair.shared.grammar.Language;
 /**
  * Represents a document source object that encapsulates a string
  */
-public class SimpleDocumentSource extends AbstractDocumentSource {
+public class StringDocumentSource extends AbstractDocumentSource {
 	private final String sourceString;
 
-	public SimpleDocumentSource(String parent, Language lang) {
+	public StringDocumentSource(String parent, Language lang) {
 		super(lang);
 		if (parent.isEmpty())
 			throw new IllegalArgumentException("Empty string source");
@@ -32,10 +32,10 @@ public class SimpleDocumentSource extends AbstractDocumentSource {
 
 	@Override
 	public int compareTo(AbstractDocumentSource t) {
-		if (t instanceof SimpleDocumentSource == false)
+		if (t instanceof StringDocumentSource == false)
 			throw new IllegalArgumentException("Incompatible source type");
 
-		SimpleDocumentSource rhs = (SimpleDocumentSource) t;
+		StringDocumentSource rhs = (StringDocumentSource) t;
 
 		// compare source strings
 		return sourceString.compareTo(rhs.sourceString);

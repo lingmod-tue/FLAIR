@@ -9,7 +9,7 @@ import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.KeywordSearcherInput;
 import com.flair.server.parser.SimpleSubstringKeywordSearcher;
 import com.flair.server.parser.corenlp.StopwordAnnotator;
-import com.flair.server.pipelines.PipelineOp;
+import com.flair.server.pipelines.common.PipelineOp;
 import com.flair.server.scheduler.AsyncExecutorService;
 import com.flair.server.scheduler.ThreadPool;
 import com.flair.shared.grammar.Language;
@@ -195,16 +195,14 @@ public final class GramParsingPipeline {
 
 	public final class ParseOpBuilder implements PipelineOp.PipelineOpBuilder<ParseOp.Input, ParseOp.Output> {
 		Language lang;
-		List<AbstractDocumentSource> sourceDocs;
-		KeywordSearcherInput keywords;
+		List<AbstractDocumentSource> sourceDocs = new ArrayList<>();
+		KeywordSearcherInput keywords = new KeywordSearcherInput();
 
 		ParseOp.JobBegin jobBegin;
 		ParseOp.ParseComplete parseComplete;
 		ParseOp.JobComplete jobComplete;
 
-		private ParseOpBuilder() {
-			sourceDocs = new ArrayList<>();
-		}
+		private ParseOpBuilder() {}
 
 		public ParseOpBuilder lang(Language lang) {
 			this.lang = lang;

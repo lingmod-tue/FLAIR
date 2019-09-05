@@ -65,8 +65,10 @@ final class SentenceSelectorPreprocessor {
 			int i = 0;
 			for (ParserAnnotations.Sentence sent : doc.getParserAnnotations().sentences()) {
 				++i;
-				if (sent.tokenCount() > Constants.SELECTOR_MAX_TOKEN_COUNT)
+				if (sent.tokenCount() > Constants.SELECTOR_MAX_TOKEN_COUNT) {
+					//	ServerLogger.get().trace("Sentence too long for ranking: " + sent.text());
 					continue;
+				}
 
 				PreprocessedSentence preprocSent = new PreprocessedSentence(doc, sent, i);
 				for (ParserAnnotations.Token token : sent.tokens()) {
@@ -98,8 +100,9 @@ final class SentenceSelectorPreprocessor {
 					// filter out duplicate sentences
 					if (!out.contains(preprocSent))
 						out.add(preprocSent);
+				} else {
+					//	ServerLogger.get().trace("Sentence has too few unique tokens for ranking: " + sent.text());
 				}
-
 			}
 		} catch (Throwable e) {
 			ServerLogger.get().error(e, "Error while preprocessing document " + doc.toString());

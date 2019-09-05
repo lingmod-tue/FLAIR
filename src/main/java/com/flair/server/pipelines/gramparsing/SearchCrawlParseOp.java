@@ -10,7 +10,7 @@ import com.flair.server.document.SearchResultDocumentSource;
 import com.flair.server.parser.AbstractKeywordSearcher;
 import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.KeywordSearcherInput;
-import com.flair.server.pipelines.PipelineOp;
+import com.flair.server.pipelines.common.PipelineOp;
 import com.flair.server.scheduler.AsyncExecutorService;
 import com.flair.server.scheduler.AsyncJob;
 import com.flair.server.utilities.ServerLogger;
@@ -193,7 +193,7 @@ public class SearchCrawlParseOp extends PipelineOp<SearchCrawlParseOp.Input, Sea
 	}
 
 	@Override
-	public void launch() {
+	public PipelineOp<Input, Output> launch() {
 		super.launch();
 
 		AsyncJob.Scheduler scheduler = AsyncJob.Scheduler.newJob(j -> {
@@ -215,5 +215,6 @@ public class SearchCrawlParseOp extends PipelineOp<SearchCrawlParseOp.Input, Sea
 				.queue();
 
 		this.job = scheduler.fire();
+		return this;
 	}
 }

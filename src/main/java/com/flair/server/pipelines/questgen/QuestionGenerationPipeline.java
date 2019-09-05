@@ -6,7 +6,7 @@ import com.flair.server.document.Document;
 import com.flair.server.grammar.StopwordsList;
 import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.corenlp.StopwordAnnotator;
-import com.flair.server.pipelines.PipelineOp;
+import com.flair.server.pipelines.common.PipelineOp;
 import com.flair.server.scheduler.AsyncExecutorService;
 import com.flair.server.scheduler.ThreadPool;
 import com.flair.server.sentencesel.SentenceSelectorFactory;

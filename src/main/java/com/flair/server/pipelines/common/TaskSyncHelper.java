@@ -1,4 +1,4 @@
-package com.flair.server.pipelines;
+package com.flair.server.pipelines.common;
 
 import com.flair.server.scheduler.AsyncJob;
 

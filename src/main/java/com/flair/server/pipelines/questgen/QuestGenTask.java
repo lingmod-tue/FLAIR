@@ -31,7 +31,7 @@ public class QuestGenTask implements AsyncTask<QuestGenTask.Result> {
 	private QuestGenTask(ParserAnnotations.Sentence sourceSentence, QuestionGeneratorParams qgParams) {
 		this.sourceSentence = sourceSentence;
 		this.qgParams = qgParams;
-		this.simpleQuestionPattern = TokenSequencePattern.compile("^[{tag:/W.?.?/}] [{tag:/VB.?/}] [] [{tag:/\\./}]$");
+		this.simpleQuestionPattern = TokenSequencePattern.compile("^[{tag:/W.?.?/}] [{tag:/VB.?/}] []? [{tag:/\\./}]$");
 	}
 
 	private boolean tokenRegionMatches(List<CoreLabel> lhs, int toffset, List<CoreLabel> rhs, int ooffset, int len) {
@@ -91,11 +91,13 @@ public class QuestGenTask implements AsyncTask<QuestGenTask.Result> {
 		List<CoreLabel> questionTokens = questionTree.yield().stream().map(CoreLabel.class::cast).collect(Collectors.toList());
 		List<CoreLabel> answerTokens = answerTree.yield().stream().map(CoreLabel.class::cast).collect(Collectors.toList());
 
-		if (questionTree.getLeaves().size() > Constants.GENERATOR_MAX_GENERATED_TREE_LEAF_COUNT)
+		if (questionTree.getLeaves().size() > Constants.GENERATOR_MAX_GENERATED_TREE_LEAF_COUNT) {
+			ServerLogger.get().trace("Very large question tree for sentence '" + sourceSentence.text() + "'! Question: " + questionString);
 			return null;
-		else if (qgParams.onlyWHQuestions && q.getFeatureValue("whQuestion") != 1.0)
+		} else if (qgParams.onlyWHQuestions && q.getFeatureValue("whQuestion") != 1.0) {
+			ServerLogger.get().trace("Skipping non-WH question '" + questionString + "'");
 			return null;
-		else if (qgParams.avoidSimpleQuestions && simpleQuestionPattern.getMatcher(questionTokens).matches()) {
+		} else if (qgParams.avoidSimpleQuestions && simpleQuestionPattern.getMatcher(questionTokens).matches()) {
 			ServerLogger.get().trace("Skipped simple question '" + questionString + "'");
 			return null;
 		}

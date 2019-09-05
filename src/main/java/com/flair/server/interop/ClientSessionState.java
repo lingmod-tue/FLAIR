@@ -9,7 +9,7 @@ import com.flair.server.grammar.DefaultVocabularyList;
 import com.flair.server.interop.messaging.ServerMessageChannel;
 import com.flair.server.interop.messaging.ServerMessagingSwitchboard;
 import com.flair.server.parser.KeywordSearcherInput;
-import com.flair.server.pipelines.PipelineOp;
+import com.flair.server.pipelines.common.PipelineOp;
 import com.flair.server.pipelines.gramparsing.GramParsingPipeline;
 import com.flair.server.pipelines.questgen.GeneratedQuestion;
 import com.flair.server.pipelines.questgen.QuestionGenerationPipeline;

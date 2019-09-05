@@ -19,7 +19,7 @@ public class StreamDocumentSource extends AbstractDocumentSource {
 		this.name = name;
 
 		AbstractTextExtractor extractor = TextExtractorFactory.create(TextExtractorFactory.Type.TIKA);
-		AbstractTextExtractor.Output output = extractor.extractText(new AbstractTextExtractor.Input(source, lang));
+		AbstractTextExtractor.Output output = extractor.extractText(new AbstractTextExtractor.Input(source));
 
 		if (output.success == false)
 			throw new IllegalArgumentException("Cannot read from source stream");

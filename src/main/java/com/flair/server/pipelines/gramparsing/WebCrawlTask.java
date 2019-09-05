@@ -9,7 +9,7 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeoutException;
 
 public class WebCrawlTask implements AsyncTask<WebCrawlTask.Result> {
-	static WebCrawlTask factory(SearchResult source) {
+	public static WebCrawlTask factory(SearchResult source) {
 		return new WebCrawlTask(source);
 	}
 
@@ -37,7 +37,6 @@ public class WebCrawlTask implements AsyncTask<WebCrawlTask.Result> {
 					+ ". Exception: " + ex.toString());
 		}
 
-		//	ServerLogger.get().trace("Search Result (" + input.getDisplayURL() + ") text fetched: " + result.output.isTextFetched());
 		return result;
 	}
 

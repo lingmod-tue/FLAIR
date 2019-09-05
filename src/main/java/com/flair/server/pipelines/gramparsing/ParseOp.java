@@ -7,7 +7,7 @@ import com.flair.server.document.DocumentCollection;
 import com.flair.server.parser.AbstractKeywordSearcher;
 import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.KeywordSearcherInput;
-import com.flair.server.pipelines.PipelineOp;
+import com.flair.server.pipelines.common.PipelineOp;
 import com.flair.server.scheduler.AsyncExecutorService;
 import com.flair.server.scheduler.AsyncJob;
 import com.flair.shared.grammar.Language;
@@ -98,7 +98,7 @@ public class ParseOp extends PipelineOp<ParseOp.Input, ParseOp.Output> {
 	}
 
 	@Override
-	public void launch() {
+	public PipelineOp<Input, Output> launch() {
 		super.launch();
 
 		AsyncJob.Scheduler scheduler = AsyncJob.Scheduler.newJob(j -> {
@@ -124,5 +124,6 @@ public class ParseOp extends PipelineOp<ParseOp.Input, ParseOp.Output> {
 
 		this.job = scheduler.fire();
 		input.jobBegin.handle(input.sourceDocs);
+		return this;
 	}
 }

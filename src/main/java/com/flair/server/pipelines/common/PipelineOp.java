@@ -1,4 +1,4 @@
-package com.flair.server.pipelines;
+package com.flair.server.pipelines.common;
 
 import com.flair.server.scheduler.AsyncJob;
 import com.flair.server.scheduler.Cancellable;
@@ -43,11 +43,12 @@ public abstract class PipelineOp<I, O> implements Cancellable {
 		}
 	}
 
-	public void launch() {
+	public PipelineOp<I, O> launch() {
 		if (launched)
 			throw new IllegalStateException(name() + " has already been launched");
 
 		launched = true;
+		return this;
 	}
 	public boolean isExecuting() {
 		return job.isExecuting();

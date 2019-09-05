@@ -2,7 +2,6 @@
 package com.flair.server.utilities.textextraction;
 
 import com.flair.server.utilities.HttpClientFactory;
-import com.flair.shared.grammar.Language;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 
@@ -27,21 +26,9 @@ public abstract class AbstractTextExtractor {
 
 	public abstract Output extractText(Input input);
 
-	protected static InputStream openURLStream(String url, Language lang) throws IOException, URISyntaxException {
-		String langStr = "en-US,en;q=0.8";
-
-		switch (lang) {
-		case ENGLISH:
-			langStr = "en-US,en;q=0.8";
-			break;
-		case GERMAN:
-			langStr = "de-DE,de;q=0.8";
-			break;
-		}
-
+	protected static InputStream openURLStream(String url) throws IOException, URISyntaxException {
 		URI uri = new URI(url);
 		HttpGet get = new HttpGet(uri);
-		get.setHeader("Accept-Language", langStr);
 		get.setHeader("User-Agent", "Mozilla/4.76");
 		get.setHeader("Referer", "google.com");
 
@@ -57,20 +44,17 @@ public abstract class AbstractTextExtractor {
 		public final SourceType sourceType;
 		public final String url;
 		public final InputStream stream;
-		public final Language lang;
 
-		public Input(String url, Language lang) {
+		public Input(String url) {
 			this.sourceType = SourceType.URL;
 			this.url = url;
 			this.stream = null;
-			this.lang = lang;
 		}
 
-		public Input(InputStream stream, Language lang) {
+		public Input(InputStream stream) {
 			this.sourceType = SourceType.STREAM;
 			this.url = null;
 			this.stream = stream;
-			this.lang = lang;
 		}
 	}
 
