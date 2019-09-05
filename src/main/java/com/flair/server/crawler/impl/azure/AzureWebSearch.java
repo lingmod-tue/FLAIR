@@ -144,7 +144,7 @@ public class AzureWebSearch implements AbstractSearchAgentImpl {
 
 	private void doQuery() {
 		try {
-			if (getApiKey().isEmpty())
+			if (getApiKey() == null || getApiKey().isEmpty())
 				throw new IllegalStateException("No API key specified!");
 
 			String full_query = getUrlQuery();
