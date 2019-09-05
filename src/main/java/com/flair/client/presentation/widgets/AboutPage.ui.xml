@@ -142,14 +142,15 @@
 					<p>
 						<b>LICENSE:</b>
 					</p>
-					<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">
-						<img alt="Creative Commons License" style="border-width:0"
-							src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+                    <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html">
+                        <img alt="GPLv3" style="border-width:0"
+                             src="https://www.gnu.org/graphics/gplv3-127x51.png"/>
 					</a>
 					<br />
-					FLAIR tool is licensed under a
-					<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/">Creative Commons
-						Attribution-NonCommercial-ShareAlike 4.0 International License</a>
+                    FLAIR tool is licensed under the
+                    <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html">GNU General Public License
+                        3.0
+                    </a>
 					.
 				</g:HTML>
             </m:MaterialDialogContent>
@@ -278,18 +279,15 @@
 					<p>
 						<b>LIZENZ</b>
 					</p>
-					<a rel="license"
-						href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de">
-						<img alt="Creative Commons License" style="border-width:0"
-							src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" />
+                    <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html">
+                        <img alt="GPLv3" style="border-width:0"
+                             src="https://www.gnu.org/graphics/gplv3-127x51.png"/>
 					</a>
 					<br />
-					FLAIR ist lizensiert unter einer
+                    FLAIR ist lizensiert unter der
 					<a rel="license"
-						href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.de">Creative Commons Namensnennung -
-						Nicht-kommerziell -
-						Weitergabe unter gleichen Bedingungen 4.0
-						Internationalen Lizenz</a>
+                       href="https://www.gnu.org/licenses/gpl-3.0.en.html">GNU General Public License 3.0
+                    </a>
 					.
 				</g:HTML>
             </m:MaterialDialogContent>
