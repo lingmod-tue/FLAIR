@@ -1,0 +1,107 @@
+<!-- -->
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+      xmlns:o="urn:schemas-microsoft-com:office:office"
+      xmlns:w="urn:schemas-microsoft-com:office:word"
+      xmlns:m="http://schemas.microsoft.com/office/2004/12/omml"
+      xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+    <meta http-equiv=Content-Type content="text/html; charset=utf-8">
+    <title></title>
+    <style>
+        v\: * {
+            behavior: url(#default#VML);
+        }
+
+        o\: * {
+            behavior: url(#default#VML);
+        }
+
+        w\: * {
+            behavior: url(#default#VML);
+        }
+
+        .shape {
+            behavior: url(#default#VML);
+        }
+
+        table.myTable, th.myTable, td.myTable {
+            border: 1px solid black;
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        th.myTable, td.myTable {
+            padding-right: 10px;
+            padding-left: 10px;
+        }
+
+
+    </style>
+    <style>
+
+        @page Section1 {
+            mso-header-margin: .5in;
+            mso-footer-margin: .5in;
+            mso-header: h1;
+            mso-footer: f1;
+        }
+
+        div.Section1 {
+            page: Section1;
+        }
+
+        table#hrdftrtbl {
+            margin: 0in 0in 0in 900in;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+        }
+
+        p.MsoFooter, li.MsoFooter, div.MsoFooter {
+            margin: 0in;
+            margin-bottom: .0001pt;
+            mso-pagination: widow-orphan;
+            tab-stops: center 3.0in right 6.0in;
+            font-size: 11.0pt;
+        }
+    </style>
+    <xml>
+        <w:WordDocument>
+            <w:View>Print</w:View>
+            <w:Zoom>100</w:Zoom>
+            <w:DoNotOptimizeForBrowser/>
+        </w:WordDocument>
+    </xml>
+</head>
+
+<body>
+<title>{title}</title>
+<h1>{title}</h1>
+
+<!-- general information table -->
+<table class="myTable">
+    <tr>
+        <th class="myTable">{lblReadabilityLevel}</th>
+        <th class="myTable">{lblSentences}</th>
+        <th class="myTable">{lblWords}</th>
+    </tr>
+    <tr>
+        <td class="myTable">{readabilityLevel}</td>
+        <td class="myTable">{numberOfSentences}</td>
+        <td class="myTable">{numberOfWords}</td>
+    </tr>
+</table>
+
+<p>{lblLink}: <a href="{link}">{link}</a></p>
+</br>
+
+<!-- the text itself -->
+<p>
+    {text}
+</p>
+
+<!-- table of grammatical constructions -->
+{tableGrammaticalConstructions}
+
+</body>
+</html>

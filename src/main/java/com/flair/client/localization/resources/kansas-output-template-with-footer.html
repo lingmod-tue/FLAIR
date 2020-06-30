@@ -1,0 +1,150 @@
+<!-- -->
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+      xmlns:o="urn:schemas-microsoft-com:office:office"
+      xmlns:w="urn:schemas-microsoft-com:office:word"
+      xmlns:m="http://schemas.microsoft.com/office/2004/12/omml"
+      xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+    <meta http-equiv=Content-Type content="text/html; charset=utf-8">
+    <title></title>
+    <style>
+        v\: * {
+            behavior: url(#default#VML);
+        }
+
+        o\: * {
+            behavior: url(#default#VML);
+        }
+
+        w\: * {
+            behavior: url(#default#VML);
+        }
+
+        .shape {
+            behavior: url(#default#VML);
+        }
+
+        table.myTable, th.myTable, td.myTable {
+            border: 1px solid black;
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        th.myTable, td.myTable {
+            padding-right: 10px;
+            padding-left: 10px;
+        }
+
+
+    </style>
+    <style>
+
+        @page Section1 {
+            mso-header-margin: .5in;
+            mso-footer-margin: .5in;
+            mso-header: h1;
+            mso-footer: f1;
+        }
+
+        div.Section1 {
+            page: Section1;
+        }
+
+        table#hrdftrtbl {
+            margin: 0in 0in 0in 900in;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+        }
+
+        p.MsoFooter, li.MsoFooter, div.MsoFooter {
+            margin: 0in;
+            margin-bottom: .0001pt;
+            mso-pagination: widow-orphan;
+            tab-stops: center 3.0in right 6.0in;
+            font-size: 11.0pt;
+        }
+    </style>
+    <xml>
+        <w:WordDocument>
+            <w:View>Print</w:View>
+            <w:Zoom>100</w:Zoom>
+            <w:DoNotOptimizeForBrowser/>
+        </w:WordDocument>
+    </xml>
+</head>
+
+<body>
+<title>{title}</title>
+<h1>{title}</h1>
+
+<!-- general information table -->
+<table class="myTable">
+    <tr>
+        <th class="myTable">{lblReadabilityLevel}</th>
+        <th class="myTable">{lblSentences}</th>
+        <th class="myTable">{lblWords}</th>
+    </tr>
+    <tr>
+        <td class="myTable">{readabilityLevel}</td>
+        <td class="myTable">{numberOfSentences}</td>
+        <td class="myTable">{numberOfWords}</td>
+    </tr>
+</table>
+
+<p>{lblLink}: <a href="{link}">{link}</a></p>
+</br>
+
+<!-- the text itself -->
+<p>
+    {text}
+</p>
+
+<!-- table of grammatical constructions -->
+{tableGrammaticalConstructions}
+
+<!-- FOOTER -->
+<div class="Section1">
+
+    <table id='hrdftrtbl' border='0' cellspacing='0' cellpadding='0'>
+        <tr>
+
+            <td>
+                <div style='mso-element:footer; font-size: 11pt;' id=f1>
+                    <!-- FOOTER-tags -->
+                    <!--
+                    <table class="remove-all-styles">
+                        <tr>
+
+                            <td><p style="font-size: 11pt">{footer}</p>
+                            </td>
+                            <td>
+                                <img
+                                        src="data:image/png;base64,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"
+                                        alt="KANSAS logo"/></td>
+
+                        </tr>
+                    </table>
+                    -->
+                    <p class=MsoFooter>
+                        <span style='mso-tab-count:0'></span>
+                        {footer}</p>
+                    <p class=MsoFooter>
+                        <span style='mso-tab-count:2'></span>
+                        <img  src="data:image/png;base64,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"
+                              alt="KANSAS logo" style="align:right;"/></p>
+
+                </div>
+                <div style='mso-element:footer' id='ff1'>
+                    <p class='MsoFooter'>&nbsp;<o:p></o:p>
+                    </p>
+                </div>
+
+            </td>
+        </tr>
+    </table>
+</div>
+
+
+</body>
+</html>

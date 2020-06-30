@@ -39,10 +39,10 @@
 					</m:MaterialColumn>
 
 					<m:MaterialColumn ui:field="colTextUI" grid="l9 m9 s8" textAlign="LEFT">
-                        <m:MaterialLink ui:field="btnTitleUI" fontSize="1.2em"
+                        <m:MaterialLabel ui:field="btnTitleUI" fontSize="1.2em"
                                         text="My back hurts!" truncate="true"/>
 
-                        <m:MaterialLabel ui:field="lblURLUI" textColor="GREY_LIGHTEN_1" fontSize="0.8em"
+                        <m:MaterialLink ui:field="lblURLUI" textColor="BLUE" fontSize="0.8em"
 							text="www.imsodonewiththis.com" truncate="true"/>
 
                         <m:MaterialLabel ui:field="lblSnippetUI" paddingTop="10" fontSize="0.9em"

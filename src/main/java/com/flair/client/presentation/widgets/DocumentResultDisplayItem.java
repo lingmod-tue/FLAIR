@@ -11,8 +11,10 @@ import com.flair.client.presentation.interfaces.CompletedResultItem;
 import com.flair.shared.grammar.Language;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Style;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Widget;
 import gwt.material.design.client.constants.Color;
 import gwt.material.design.client.constants.IconType;
@@ -49,9 +51,9 @@ public class DocumentResultDisplayItem extends LocalizedComposite {
 	@UiField
 	MaterialColumn colTextUI;
 	@UiField
-	MaterialLink btnTitleUI;
+	MaterialLabel btnTitleUI;
 	@UiField
-	MaterialLabel lblURLUI;
+	MaterialLink lblURLUI;
 	@UiField
 	MaterialLabel lblSnippetUI;
 	@UiField
@@ -71,17 +73,24 @@ public class DocumentResultDisplayItem extends LocalizedComposite {
 		initLocale(localeBinder.bind(this));
 
 		btnTitleUI.setText(item.getTitle());
-		btnTitleUI.addClickHandler(e -> {
-			item.selectItem(AbstractResultItem.SelectionType.TITLE, this.getElement());
-			e.stopPropagation();
-		});
 
 		if (item.hasUrl())
+		{
+			lblURLUI.addClickHandler(e -> {
+				Window.open(item.getUrl(), "_blank", "");
+				e.stopPropagation();
+			});
+
 			lblURLUI.setText(item.getDisplayUrl());
+		}
 		else
 			lblURLUI.setVisible(false);
 
 		lblSnippetUI.setText(item.getSnippet());
+
+		lblSnippetUI.getElement().getStyle().setCursor(Style.Cursor.POINTER);
+		btnTitleUI.getElement().getStyle().setCursor(Style.Cursor.POINTER);
+
 		colTextUI.addClickHandler(e -> item.selectItem(AbstractResultItem.SelectionType.DEFAULT, this.getElement()));
 
 		String guid = Document.get().createUniqueId();
