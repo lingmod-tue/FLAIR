@@ -120,11 +120,16 @@ ExportDocumentWidget	btnExportDocumentPreviewToWordUI	Export as word document
 ExportDocumentWidget	lblCopyTextFormattingUI	Include text formatting
 ExportDocumentWidget	chkCopyTextFormattingUI	Include text formatting
 ExportDocumentWidget	lblExportDocumentWidgetUI	Export document
+ExportDocumentWidget	titleCopyrightNoticeUI	Please respect the copyright of the texts!
+ExportDocumentWidget	chkDontShowCopyrightNoticeUI	Do not show this notification again.
+
 ExportDocumentWidget	TEXT_COPY_TO_CLIPBOARD_FAILED	Error! Text was not copied to clipboard!
 ExportDocumentWidget	TEXT_EXPORT_TO_WORD_FAILED	Error! Exporting the text as a word document failed!
 
 ExportDocumentWidget	TEXT_COPY_TO_CLIPBOARD_SUCCESSFUL	The enhanced text was successfully copied to clipboard!
 ExportDocumentWidget	TEXT_EXPORT_TO_WORD_SUCCESSFUL	The enhanced text was successfully exported as a word document!
+ExportDocumentWidget	TEXT_COPY_TO_CLIPBOARD_COPYRIGHT_NOTICE	The text was successfully copied to the clipboard. Please respect the copyright of the texts!
+ExportDocumentWidget	TEXT_EXPORT_COPYRIGHT_NOTICE	The text was successfully exported. Please respect the copyright of the texts!
 		
 DocumentResultDisplayItem	ORIGINAL_RANK	Original Rank
 		

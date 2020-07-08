@@ -121,11 +121,15 @@ ExportDocumentWidget	btnExportDocumentPreviewToWordUI	Als Word-Dokument exportie
 ExportDocumentWidget	lblCopyTextFormattingUI	Farbl. Hervorhebung übernehmen
 ExportDocumentWidget	chkCopyTextFormattingUI	Farbl. Hervorhebung  übernehmen
 ExportDocumentWidget	lblExportDocumentWidgetUI	Dokument kopieren/exportieren
+ExportDocumentWidget	titleCopyrightNoticeUI	Bitte beachten Sie die Urheberrechte der Texte!
+ExportDocumentWidget	chkDontShowCopyrightNoticeUI	Hinweis nicht mehr anzeigen.
 
 ExportDocumentWidget	TEXT_COPY_TO_CLIPBOARD_SUCCESSFUL	Der Text wurde erfolgreich in die Zwischenablage kopiert!
 ExportDocumentWidget	TEXT_EXPORT_TO_WORD_SUCCESSFUL	Der Text wurde erfolgreich als Word-Dokument exportiert.
 ExportDocumentWidget	TEXT_COPY_TO_CLIPBOARD_FAILED	Fehler! Der Text konnte nicht in die Zwischenablage kopiert werden!
 ExportDocumentWidget	TEXT_EXPORT_TO_WORD_FAILED	Fehler! Der Text konnte nicht als Word-Dokument exportiert werden.
+ExportDocumentWidget	TEXT_COPY_TO_CLIPBOARD_COPYRIGHT_NOTICE	Der Text wurde erfolgreich in die Zwischenablage kopiert! Bitte bachten Sie die Urheberrechte der Texte.
+ExportDocumentWidget	TEXT_EXPORT_COPYRIGHT_NOTICE	Der Text wurde erfolgreich exportiert! Bitte bachten Sie die Urheberrechte der Texte.
 
 		
 DocumentResultDisplayItem	ORIGINAL_RANK	Ursprüngliche Listenposition

@@ -17,6 +17,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.resources.client.TextResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import gwt.material.design.client.base.helper.ColorHelper;
@@ -34,7 +35,9 @@ public class ExportDocumentWidget extends LocalizedComposite {
         TEXT_EXPORT_TO_WORD_SUCCESSFUL,
         // TODO: Implementieren
         TEXT_EXPORT_TO_WORD_FAILED,
-        TEXT_COPY_TEXT_FORMATTING
+        TEXT_COPY_TEXT_FORMATTING,
+        TEXT_COPY_TO_CLIPBOARD_COPYRIGHT_NOTICE,
+        TEXT_EXPORT_COPYRIGHT_NOTICE,
     }
 
     enum WordDocumentTag {
@@ -120,6 +123,31 @@ public class ExportDocumentWidget extends LocalizedComposite {
     @LocalizedField
     MaterialLabel lblExportDocumentWidgetUI;
 
+    /**
+     * The copyright notice modal.
+     */
+    @UiField
+    gwt.material.design.client.ui.MaterialDialog mdlCopyrightNoticeUI;
+
+    /**
+     * Checkbox whether the copyright notice should not be displayed anymore.
+     */
+    @UiField
+    @LocalizedField
+    MaterialCheckBox chkDontShowCopyrightNoticeUI;
+
+    /**
+     * The button to close the copyright notice.
+     */
+    @UiField
+    MaterialButton btnCloseCopyrightNoticeUI;
+
+    /**
+     * Title of the copyright notice modal.
+     */
+    @UiField
+    @LocalizedField(type = LocalizedFieldType.TEXT_TITLE)
+    MaterialTitle titleCopyrightNoticeUI;
 
     /**
      * The ID of the preview document that will be used in copy/export.
@@ -141,15 +169,34 @@ public class ExportDocumentWidget extends LocalizedComposite {
      * Initializes all handlers.
      */
     private void initHandlers() {
+        // Remove the mdl from this panel and add it to the root.
+        // This is necessary so that the modal will be displayed "on top".
+        mdlCopyrightNoticeUI.removeFromParent();
+        RootPanel.get().add(mdlCopyrightNoticeUI);
+
+        btnCloseCopyrightNoticeUI.addClickHandler(event -> {
+            mdlCopyrightNoticeUI.close();
+        });
+
         btnCopyDocumentPreviewUI.addClickHandler(event -> {
             Boolean success = copyDocumentPreviewToClipboard(chkCopyTextFormattingUI.getValue());
             MaterialToast.fireToast(getLocalizedString(success ? LocalizationTags.TEXT_COPY_TO_CLIPBOARD_SUCCESSFUL : LocalizationTags.TEXT_COPY_TO_CLIPBOARD_FAILED));
-
+            // open the copyright prompt if the user has not already set to ignore it.
+            if (success && !chkDontShowCopyrightNoticeUI.getValue()) {
+                titleCopyrightNoticeUI.setDescription(getLocalizedString(LocalizationTags.TEXT_COPY_TO_CLIPBOARD_COPYRIGHT_NOTICE));
+                mdlCopyrightNoticeUI.open();
+            }
         });
 
         btnExportDocumentPreviewToWordUI.addClickHandler(event -> {
             Boolean success = exportDocumentPreviewToDoc();
             MaterialToast.fireToast(getLocalizedString(success ? LocalizationTags.TEXT_EXPORT_TO_WORD_SUCCESSFUL : LocalizationTags.TEXT_EXPORT_TO_WORD_FAILED));
+
+            // open the copyright prompt if the user has not already set to ignore it.
+            if (success && !chkDontShowCopyrightNoticeUI.getValue()) {
+                titleCopyrightNoticeUI.setDescription(getLocalizedString(LocalizationTags.TEXT_EXPORT_COPYRIGHT_NOTICE));
+                mdlCopyrightNoticeUI.open();
+            }
         });
     }
 

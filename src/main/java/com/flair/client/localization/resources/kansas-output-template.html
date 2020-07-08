@@ -1,9 +1,7 @@
 <!-- -->
-<html xmlns:v="urn:schemas-microsoft-com:vml"
-      xmlns:o="urn:schemas-microsoft-com:office:office"
-      xmlns:w="urn:schemas-microsoft-com:office:word"
-      xmlns:m="http://schemas.microsoft.com/office/2004/12/omml"
-      xmlns="http://www.w3.org/TR/REC-html40">
+<html
+        xmlns:w="urn:schemas-microsoft-com:office:word"
+        xmlns="http://www.w3.org/TR/REC-html40">
 <head>
     <meta http-equiv=Content-Type content="text/html; charset=utf-8">
     <title></title>
@@ -34,7 +32,6 @@
             padding-right: 10px;
             padding-left: 10px;
         }
-
 
     </style>
     <style>
@@ -78,30 +75,33 @@
 <title>{title}</title>
 <h1>{title}</h1>
 
-<!-- general information table -->
-<table class="myTable">
-    <tr>
-        <th class="myTable">{lblReadabilityLevel}</th>
-        <th class="myTable">{lblSentences}</th>
-        <th class="myTable">{lblWords}</th>
-    </tr>
-    <tr>
-        <td class="myTable">{readabilityLevel}</td>
-        <td class="myTable">{numberOfSentences}</td>
-        <td class="myTable">{numberOfWords}</td>
-    </tr>
-</table>
 
 <p>{lblLink}: <a href="{link}">{link}</a></p>
-</br>
+
+<!-- general information table -->
+<div style="margin-bottom: 20px;">
+    <table class="myTable">
+        <tr>
+            <th class="myTable">{lblReadabilityLevel}</th>
+            <th class="myTable">{lblSentences}</th>
+            <th class="myTable">{lblWords}</th>
+        </tr>
+        <tr>
+            <td class="myTable">{readabilityLevel}</td>
+            <td class="myTable">{numberOfSentences}</td>
+            <td class="myTable">{numberOfWords}</td>
+        </tr>
+    </table>
+</div>
+<!-- table of grammatical constructions -->
+{tableGrammaticalConstructions}
 
 <!-- the text itself -->
 <p>
     {text}
 </p>
 
-<!-- table of grammatical constructions -->
-{tableGrammaticalConstructions}
+
 
 </body>
 </html>
