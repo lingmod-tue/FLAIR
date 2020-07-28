@@ -25,8 +25,9 @@
                 <m:MaterialRow addStyleNames="{style.card-container}">
 					<m:MaterialColumn ui:field="colCompletedHeaderUI" grid="l2 m2 s3" textAlign="CENTER">
                         <m:MaterialLabel ui:field="lblNewRankUI" fontSize="2.5em" text="1"/>
-                        <m:MaterialIcon ui:field="icoRankOffsetUI" iconSize="SMALL" iconColor="GREY_LIGHTEN_2"
-                                        iconType="KEYBOARD_ARROW_UP" visible="false"/>
+                        <m:MaterialIcon ui:field="icoRankOffsetUI" iconSize="MEDIUM" iconColor="GREY_LIGHTEN_2"
+                                        iconType="KEYBOARD_ARROW_UP"/>
+						<!-- visible="false" -->
 					</m:MaterialColumn>
 
 					<m:MaterialColumn ui:field="colInProgressHeaderUI" grid="l2 m2 s3" textAlign="CENTER">
