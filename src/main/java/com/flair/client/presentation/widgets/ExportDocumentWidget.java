@@ -278,6 +278,9 @@ public class ExportDocumentWidget extends LocalizedComposite {
         String formattedText = exportFormatting ? elem.getInnerHTML() :
                 StringUtil.removeAllTagsByTag(elem.getInnerHTML(), "span");
 
+        // Remove the surrounding <div> tags
+        formattedText = StringUtil.removeAllTagsByTag(formattedText, "div");
+
         // Load the HTML template
         TextResource textResource = LocalizedResources.get().getExportTemplate();
         String htmlTemplate = textResource.getText();

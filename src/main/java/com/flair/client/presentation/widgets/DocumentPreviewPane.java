@@ -133,7 +133,7 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
         /**
          * The scaling factor used to scale the internally used weight for displaying to the user.
          */
-        private final double weightScaleFactor = 3;
+        private final double weightScaleFactor = 5;
         private final double relFreq;
 
         TableData(GrammaticalConstruction gram, int hits, double weight, double relFreq) {
@@ -260,7 +260,7 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
                         if (type == TableType.WEIGHT_SELECTION) {
                             // weight
                             MaterialChip chip = new MaterialChip();
-                            chip.setLetter("(" + data.weight + ")");
+                            chip.setLetter("(" + data.displayedWeight + ")");
                             chip.setBackgroundColor(Color.WHITE);
                             FlowPanel container = new FlowPanel();
                             container.add(chip);
