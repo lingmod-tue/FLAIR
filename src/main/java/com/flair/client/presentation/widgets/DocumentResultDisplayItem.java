@@ -77,7 +77,7 @@ public class DocumentResultDisplayItem extends LocalizedComposite {
 		if (item.hasUrl())
 		{
 			lblURLUI.addClickHandler(e -> {
-				Window.open(item.getUrl(), "_blank", "");
+				item.selectItem(AbstractResultItem.SelectionType.URL, this.getElement());
 				e.stopPropagation();
 			});
 
@@ -85,6 +85,11 @@ public class DocumentResultDisplayItem extends LocalizedComposite {
 		}
 		else
 			lblURLUI.setVisible(false);
+
+		btnTitleUI.addClickHandler(e -> {
+			item.selectItem(AbstractResultItem.SelectionType.TITLE, this.getElement());
+			e.stopPropagation();
+		});
 
 		lblSnippetUI.setText(item.getSnippet());
 
@@ -141,8 +146,8 @@ public class DocumentResultDisplayItem extends LocalizedComposite {
 			btnOverflowUI.setTextColor(Color.WHITE);
 		} else {
 			pnlCardUI.setBackgroundColor(Color.WHITE);
-			btnTitleUI.setTextColor(Color.BLUE);
-			lblURLUI.setTextColor(Color.GREY_LIGHTEN_1);
+			btnTitleUI.setTextColor(Color.BLACK);
+			lblURLUI.setTextColor(Color.BLUE);
 			lblSnippetUI.setTextColor(Color.BLACK);
 			lblNewRankUI.setTextColor(Color.BLACK);
 			btnOverflowUI.setTextColor(Color.GREY);

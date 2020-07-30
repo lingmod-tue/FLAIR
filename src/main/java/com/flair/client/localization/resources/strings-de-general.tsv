@@ -25,17 +25,7 @@ _common-strings_	ACADEMIC_VOCAB	Akademisches Vokabular
 _common-strings_	KEYWORDS	Schlüsselwörter
 _common-strings_	CUSTOM_VOCAB	Benutzerdefiniertes Vokabular
 _common-strings_	FEATURE_NOT_SUPPORTED	Dieses Feature ist im Moment noch nicht unterstützt.
-_common-strings_	ONLY_ALPHA	Beschränke Suche auf folgende Seiten: Lebenshilfe.de (Texte in leichter Sprache), Hurraki, Klexikon, Nachrichtenleicht.de und Geolino.
-_common-strings_	WEB_SEARCH	Web-Suche
-_common-strings_	CORPUS_SEARCH	Corpus-Suche
-_common-strings_	RESEARCH_SEARCH	Forschungskorpus-Suche
-_common-strings_	RESULT_TEXTS	Texte im Suchergebnis
-_common-strings_	NUMBER	Anzahl
-_common-strings_	RESULT_COUNT	Wählen Sie, wie viele Suchergebnisse angezeigt werden sollen.
-_common-strings_	UNSELECT	Texte mit diesem Level von Ergebnisliste streichen.
-_common-strings_	ALPHA_COUNT	Anzahl der Ergebnisse mit diesem Alpha-Level
-_common-strings_	CONSTRUCTION_COUNT	Anzahl der Ergebnisse mit dieser Konstruktion
-_common-strings_	INTERACTIVE_FILTER	Fortgeschrittene Ansicht zum Filtern von Texten nach Konstruktionen
+
 
 _common-strings_	LINK_COPY_TO_CLIPBOARD_SUCCESSFUL	Link wurde erfolgreich in die Zwischenablage kopiert!
 _common-strings_	COPY_TEXT_FORMATTING	Um die Textformatierung (farbliche Hervorhebung der Konstruktionen etc.) zu übernehmen, aktivieren Sie die Checkbox. Wenn Sie den Text ohne Formatierung kopieren/speichern möchten, dann deaktivieren Sie die Checkbox.
@@ -49,7 +39,7 @@ _common-strings_	NUMBER_OF_WORDS	Anzahl Wörter
 _common-strings_	CONSTRUCTION	Konstruktion
 _common-strings_	HITS	Anzahl
 _common-strings_	WEIGHT	Gewichtung
-_common-strings_	FOOTER_WORD	Dieser Text wurde mit Hilfe der KANSAS-Textsuche (<a href='http://www.kansas-suche.de'>www.kansas-suche.de</a>) exportiert. Bitte beachten Sie die Urheberrechte der Texte.
+_common-strings_	FOOTER_WORD	Dieser Text wurde mit Hilfe der FLAIR-Textsuche (<a href='http://www.flair.schule'>www.flair.schule</a>) exportiert. Bitte beachten Sie die Urheberrechte der Texte.
 _common-strings_	LABEL_LINK_TO_TEXT	Originaltext
 
 

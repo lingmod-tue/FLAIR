@@ -13,6 +13,7 @@ public interface AbstractResultItem {
 
 	enum SelectionType {
 		TITLE,      // Clicked on the title text
+		URL, // Clicked on the URL of the text
 		DEFAULT     // Clicked anywhere else
 	}
 

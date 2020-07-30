@@ -25,17 +25,7 @@ _common-strings_	ACADEMIC_VOCAB	Academic Vocabulary
 _common-strings_	KEYWORDS	Keywords
 _common-strings_	CUSTOM_VOCAB	Custom Vocabulary
 _common-strings_	FEATURE_NOT_SUPPORTED	This feature is not yet supported.
-_common-strings_	ONLY_ALPHA	Beschränke Suche auf folgende Seiten: Lebenshilfe.de (Texte in leichter Sprache), Hurraki, Klexikon, Nachrichtenleicht.de und Geolino.
-_common-strings_	WEB_SEARCH	Web search
-_common-strings_	CORPUS_SEARCH	Corpus search
-_common-strings_	RESEARCH_SEARCH	Forschungskorpus-Suche
-_common-strings_	RESULT_TEXTS	Texte im Suchergebnis
-_common-strings_	NUMBER	Number
-_common-strings_	RESULT_COUNT	Wählen Sie, wie viele Suchergebnisse angezeigt werden sollen.
-_common-strings_	UNSELECT	Texte mit diesem Level von Ergebnisliste streichen.
-_common-strings_	ALPHA_COUNT	Anzahl der Ergebnisse mit diesem Alpha-Level
-_common-strings_	CONSTRUCTION_COUNT	Anzahl der Ergebnisse mit dieser Konstruktion
-_common-strings_	INTERACTIVE_FILTER	Fortgeschrittene Ansicht zum Filtern von Texten nach Konstruktionen
+
 
 _common-strings_	LINK_COPY_TO_CLIPBOARD_SUCCESSFUL	Link was successfully copied to clipboard!
 _common-strings_	COPY_TEXT_FORMATTING	If you want to keep the text formatting (highlighting of grammatical constructions etc.), then keep this box checked. If you want to copy only the plain text, then uncheck this box.
@@ -49,7 +39,7 @@ _common-strings_	NUMBER_OF_WORDS	Number of words
 _common-strings_	CONSTRUCTION	Construction
 _common-strings_	HITS	Hits
 _common-strings_	WEIGHT	Weight
-_common-strings_	FOOTER_WORD	This text was exported using the KANSAS text search engine (<a href='http://www.kansas-suche.de'>www.kansas-suche.de</a>). Please respect and take notice of the copyright of the text.
+_common-strings_	FOOTER_WORD	This text was exported using the FLAIR text search engine (<a href='http://www.flair.schule'>www.flair.schule</a>). Please respect and take notice of the copyright of the text.
 _common-strings_	LABEL_LINK_TO_TEXT	Source
 
 

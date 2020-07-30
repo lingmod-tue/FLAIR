@@ -6,6 +6,8 @@ import com.flair.client.localization.annotations.LocalizedField;
 import com.flair.client.localization.interfaces.LocalizationBinder;
 import com.flair.client.localization.resources.LocalizedResources;
 import com.flair.client.presentation.interfaces.DocumentPreviewPaneInput;
+import com.flair.client.utilities.ClientInfo;
+import com.flair.client.utilities.GwtUtil;
 import com.flair.client.utilities.JSUtility;
 import com.flair.client.utilities.StringUtil;
 import com.flair.shared.interop.dtos.RankableDocument;
@@ -218,33 +220,7 @@ public class ExportDocumentWidget extends LocalizedComposite {
         String html = "<h1>" + doc.getTitle() + "</h1>" +
                 formattedText;
 
-        // TODO: nachfolgenden Code in andere Funktion (utility) auslagern.
-        boolean success = false;
-
-        // Depending on the browser, copy HTML directly to the clipboard might not be supported.
-        switch (ClientInfo.CURRENT_BROWSER) {
-            // So far, IE and Safari do not support the feature to directly copy HTML to the clipboard.
-            case IE:
-            case SAFARI: {
-
-                // Create a ghost element, append it to the page, select and copy it, and then delete it.
-                Element ghostElem = createDiv(doc.getTitle(), DOC_TEXT_PREVIEW_ID, html);
-
-                // Append the div.
-                Document.get().getBody().appendChild(ghostElem);
-                // Copy to clipboard.
-                success = JSUtility.selectAndCopyElementToClipboard(ghostElem.getId(), true);
-                // Remove the div.
-                Document.get().getBody().removeChild(ghostElem);
-                break;
-            }
-            default: {
-                success = JSUtility.copyHTMLToClipboard(html);
-            }
-        }
-
-
-        return success;
+        return GwtUtil.copyElementToClipboard(html, doc.getTitle(), DOC_TEXT_PREVIEW_ID);
     }
 
     /**
@@ -261,7 +237,7 @@ public class ExportDocumentWidget extends LocalizedComposite {
         String html = getFormattedHTML(doc, elem, rankable, chkCopyTextFormattingUI.getValue());
 
         // Export the content as .doc
-        return JSUtility.exportToWord(html, doc.getTitle() + "_KANSAS_export", false);
+        return JSUtility.exportToWord(html, doc.getTitle() + "_" + GWT.getModuleName() + "_export", false);
     }
 
     /**
@@ -304,20 +280,11 @@ public class ExportDocumentWidget extends LocalizedComposite {
                 .replace(WordDocumentTag.LABEL_SENTENCES.getHTMLTag(), CommonLocalizationTags.SENTENCES.getString())
                 .replace(WordDocumentTag.LABEL_WORDS.getHTMLTag(), CommonLocalizationTags.WORDS.getString())
                 .replace(WordDocumentTag.LBL_LINK.getHTMLTag(), CommonLocalizationTags.LABEL_LINK_TO_TEXT.getString());
-        
+
 
         return html;
     }
 
-    protected Element createDiv(String title, String id, String html) {
-        DivBuilder divBuilder = HtmlBuilderFactory.get().createDivBuilder();
-        divBuilder.title(title);
-        divBuilder.id(id);
-
-        Element elem = divBuilder.finish();
-        elem.setInnerHTML(html);
-        return elem;
-    }
 
     protected static String getConstructionTableRow(String name, Color color, int hits, double weight) {
         String rgb = ColorHelper.setupComputedBackgroundColor(color);
@@ -325,7 +292,6 @@ public class ExportDocumentWidget extends LocalizedComposite {
                 + "<td class='myTable'>" + hits + "</td>"
                 + "<td class='myTable'>(" + weight + ")</td></tr>";
     }
-
 
 
     /**

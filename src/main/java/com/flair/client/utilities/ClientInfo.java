@@ -1,4 +1,4 @@
-package com.flair.client.localization;
+package com.flair.client.utilities;
 
 import com.google.gwt.user.client.Window;
 

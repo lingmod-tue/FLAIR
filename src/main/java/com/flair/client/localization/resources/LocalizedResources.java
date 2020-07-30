@@ -36,10 +36,10 @@ public class LocalizedResources {
 
     }
     interface CommonStrings extends ClientBundle{
-        @Source("kansas-output-construction-table-template.html")
+        @Source("document-output-construction-table-template.html")
         public TextResource getConstructionTableTemplate();
 
-        @Source("kansas-output-template.html")
+        @Source("document-output-template.html")
         public TextResource getExportTemplate();
     }
 

@@ -80,13 +80,5 @@ public abstract class LocalizedComposite extends Composite implements LocalizedU
 		setLocale(getCurrentLocale());
 	}
 
-	/**
-	 * Gets the string entry for the CommonLocalization tag
-	 * @param tag The CommonLocalizationTag
-	 * @return The string entry for the tag.
-	 */
-	protected String getCommonLocalizedString(CommonLocalizationTags tag) {
-		return DefaultLocalizationProviders.COMMON.get()
-				.getLocalizedString(tag.toString(), getCurrentLocale());
-	}
+
 }
