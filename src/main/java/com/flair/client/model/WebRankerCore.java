@@ -57,13 +57,18 @@ public class WebRankerCore implements AbstractWebRankerCore {
         SERVER_PING_TIMEOUT,
     }
 
+    /**
+     * Whether or not to use the question generator.
+     */
+    protected static final boolean USE_QUESTION_GENERATION = false;
+
+
     private final class CompletedResultItemImpl implements CompletedResultItem {
         private final RankableDocument doc;
         private final int newRank;
         private final int oldRank;
         private final boolean overflow;
         
-        private static final boolean useQuestionGeneration = false;
 
         public CompletedResultItemImpl(RankableDocument d, int nr, int or, boolean menu) {
             doc = d;
@@ -126,7 +131,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
                         rankPreviewModule.preview(this);
                 case TITLE:
 
-                    if (doc.getLanguage() == Language.ENGLISH && useQuestionGeneration)
+                    if (doc.getLanguage() == Language.ENGLISH && USE_QUESTION_GENERATION)
                         questgenpreview.show(doc, parentWidget);
                     else
                         rankPreviewModule.preview(this);

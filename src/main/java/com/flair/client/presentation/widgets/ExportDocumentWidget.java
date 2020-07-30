@@ -171,8 +171,14 @@ public class ExportDocumentWidget extends LocalizedComposite {
      * Initializes all handlers.
      */
     private void initHandlers() {
-        // Remove the mdl from this panel and add it to the root.
-        // This is necessary so that the modal will be displayed "on top".
+         /*
+        Remove the mdlCopyrightNoticeUI from this panel and add it to the root.
+         This is necessary so that the modal will be displayed "on top".
+         There is a bug when MaterialModal/MaterialDialog has a parent with layout set to absolute or relative.
+         In this case, the "black veil" is on top of the MaterialModal/MaterialDialog and elements within the
+         MaterialModal/MaterialDialog are not clickable (a click anywhere on the screen causes the MaterialModal/MaterialDialog to dismiss though).
+         To fix this, the MaterialModal needs to be added to the RootPanel.
+         */
         mdlCopyrightNoticeUI.removeFromParent();
         RootPanel.get().add(mdlCopyrightNoticeUI);
 
@@ -249,7 +255,7 @@ public class ExportDocumentWidget extends LocalizedComposite {
      * @param exportFormatting The formatted HTML.
      * @return The HTML representation of the document for export.
      */
-    protected static String getFormattedHTML(RankableDocument doc, Element elem, DocumentPreviewPaneInput.Rankable rankable, boolean exportFormatting) {
+    protected String getFormattedHTML(RankableDocument doc, Element elem, DocumentPreviewPaneInput.Rankable rankable, boolean exportFormatting) {
         // If the text should be exported without formatting, remove all <span> tags.
         String formattedText = exportFormatting ? elem.getInnerHTML() :
                 StringUtil.removeAllTagsByTag(elem.getInnerHTML(), "span");
@@ -286,7 +292,7 @@ public class ExportDocumentWidget extends LocalizedComposite {
     }
 
 
-    protected static String getConstructionTableRow(String name, Color color, int hits, double weight) {
+    protected String getConstructionTableRow(String name, Color color, int hits, double weight) {
         String rgb = ColorHelper.setupComputedBackgroundColor(color);
         return "<tr><td class='myTable' style='background-color:" + rgb + "'>" + name + "</td>"
                 + "<td class='myTable'>" + hits + "</td>"
@@ -300,7 +306,7 @@ public class ExportDocumentWidget extends LocalizedComposite {
      * @param rankable
      * @return
      */
-    private static String getConstructionTable(DocumentPreviewPaneInput.Rankable rankable, List<DocumentPreviewPane.TableData> dataProvider) {
+    private String getConstructionTable(DocumentPreviewPaneInput.Rankable rankable, List<DocumentPreviewPane.TableData> dataProvider) {
         // Create the construction data table.
         String tbl = LocalizedResources.get().getConstructionTableTemplate().getText();
 
@@ -313,7 +319,7 @@ public class ExportDocumentWidget extends LocalizedComposite {
         StringBuilder constructionData = new StringBuilder();
         for (DocumentPreviewPane.TableData itr : dataProvider) {
 
-            String name = itr.getLocalizedName(getCurrentLocaleStatic());
+            String name = itr.getLocalizedName(getCurrentLocale());
             int hits = itr.hits;
             double weight = itr.displayedWeight;
             Color color = rankable.getConstructionAnnotationColor(itr.gram);
