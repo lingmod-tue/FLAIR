@@ -60,10 +60,6 @@ public abstract class LocalizedComposite extends Composite implements LocalizedU
 		return LocalizationEngine.get().getLanguage();
 	}
 
-	protected static Language getCurrentLocaleStatic() {
-		return LocalizationEngine.get().getLanguage();
-	}
-
 	@Override
 	public LocalizationProvider getLocalizationProvider() {
 		return LocalizationStringTable.get().getProvider(localizationBinderData.providerName);
