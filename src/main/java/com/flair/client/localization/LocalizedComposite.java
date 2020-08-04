@@ -42,6 +42,15 @@ public abstract class LocalizedComposite extends Composite implements LocalizedU
 	protected String getLocalizedString(String tag) {
 		return LocalizationEngine.get().getLocalizedString(localizationBinderData.providerName, tag);
 	}
+	/**
+	 * Gets the localized string for the given enum value.
+	 *
+	 * @param tag The tag to retrieve the string for.
+	 * @return The localized string.
+	 */
+	protected String getLocalizedString(Enum tag) {
+		return LocalizationEngine.get().getLocalizedString(localizationBinderData.providerName, tag.toString());
+	}
 
 	protected String getLocalizedString(String provider, String tag) {
 		return LocalizationEngine.get().getLocalizedString(provider, tag);
@@ -66,4 +75,6 @@ public abstract class LocalizedComposite extends Composite implements LocalizedU
 	public void refreshLocale() {
 		setLocale(getCurrentLocale());
 	}
+
+
 }

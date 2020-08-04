@@ -31,4 +31,26 @@ public enum CommonLocalizationTags {
 	CUSTOM_VOCAB,
 	KEYWORDS,
 	FEATURE_NOT_SUPPORTED,
+	/**
+	 TAGS for word export / copy to clipboard.
+	 */
+	LINK_COPY_TO_CLIPBOARD_SUCCESSFUL,
+	COPY_TEXT_FORMATTING,
+	TEXT_COPY_TEXT_TO_CLIPBOARD,
+	TEXT_SAVE_TEXT_AS_WORD_DOCUMENT,
+	SENTENCES,
+	WORDS,
+	READABILITY_LEVEL,
+	NUMBER_OF_SENTENCES,
+	NUMBER_OF_WORDS,
+	CONSTRUCTION,
+	HITS,
+	WEIGHT,
+	FOOTER_WORD,
+	LABEL_LINK_TO_TEXT;
+
+	public String getString() {
+		return DefaultLocalizationProviders.COMMON.get()
+				.getLocalizedString(this.toString(), LocalizationEngine.get().getLanguage());
+	}
 }

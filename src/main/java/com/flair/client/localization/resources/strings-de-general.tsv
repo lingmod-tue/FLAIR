@@ -25,6 +25,24 @@ _common-strings_	ACADEMIC_VOCAB	Akademisches Vokabular
 _common-strings_	KEYWORDS	Schlüsselwörter
 _common-strings_	CUSTOM_VOCAB	Benutzerdefiniertes Vokabular
 _common-strings_	FEATURE_NOT_SUPPORTED	Dieses Feature ist im Moment noch nicht unterstützt.
+
+
+_common-strings_	LINK_COPY_TO_CLIPBOARD_SUCCESSFUL	Link wurde erfolgreich in die Zwischenablage kopiert!
+_common-strings_	COPY_TEXT_FORMATTING	Um die Textformatierung (farbliche Hervorhebung der Konstruktionen etc.) zu übernehmen, aktivieren Sie die Checkbox. Wenn Sie den Text ohne Formatierung kopieren/speichern möchten, dann deaktivieren Sie die Checkbox.
+_common-strings_	TEXT_COPY_TEXT_TO_CLIPBOARD	Ausgewählten Text in Zwischenablage kopieren
+_common-strings_	TEXT_SAVE_TEXT_AS_WORD_DOCUMENT	Ausgewählten Text als Word-Dokument speichern
+_common-strings_	SENTENCES	Sätze
+_common-strings_	WORDS	Wörter
+_common-strings_	READABILITY_LEVEL	Schwierigkeitsgrad
+_common-strings_	NUMBER_OF_SENTENCES	Anzahl Sätze
+_common-strings_	NUMBER_OF_WORDS	Anzahl Wörter
+_common-strings_	CONSTRUCTION	Konstruktion
+_common-strings_	HITS	Anzahl
+_common-strings_	WEIGHT	Gewichtung
+_common-strings_	FOOTER_WORD	Dieser Text wurde mit Hilfe der FLAIR-Textsuche (<a href='http://www.flair.schule'>www.flair.schule</a>) exportiert. Bitte beachten Sie die Urheberrechte der Texte.
+_common-strings_	LABEL_LINK_TO_TEXT	Originaltext
+
+
 		
 _webrankercore_	ANALYSIS_COMPLETE	Analyse abgeschlossen
 _webrankercore_	SELECTED_FOR_COMPARISON	Zum Vergleichen ausgewählt
@@ -87,6 +105,22 @@ DocumentPreviewPane	COLUMN_CONSTRUCTION	Konstruktion
 DocumentPreviewPane	COLUMN_WEIGHT	Gewichtung
 DocumentPreviewPane	COLUMN_HITS	Anzahl
 DocumentPreviewPane	COLUMN_RELFREQ	Relative Häufigkeit in %
+
+ExportDocumentWidget	btnCopyDocumentPreviewUI	In Zwischenablage kopieren
+ExportDocumentWidget	btnExportDocumentPreviewToWordUI	Als Word-Dokument exportieren
+ExportDocumentWidget	lblCopyTextFormattingUI	Farbl. Hervorhebung übernehmen
+ExportDocumentWidget	chkCopyTextFormattingUI	Farbl. Hervorhebung  übernehmen
+ExportDocumentWidget	lblExportDocumentWidgetUI	Dokument kopieren/exportieren
+ExportDocumentWidget	titleCopyrightNoticeUI	Bitte beachten Sie die Urheberrechte der Texte!
+ExportDocumentWidget	chkDontShowCopyrightNoticeUI	Hinweis nicht mehr anzeigen.
+
+ExportDocumentWidget	TEXT_COPY_TO_CLIPBOARD_SUCCESSFUL	Der Text wurde erfolgreich in die Zwischenablage kopiert!
+ExportDocumentWidget	TEXT_EXPORT_TO_WORD_SUCCESSFUL	Der Text wurde erfolgreich als Word-Dokument exportiert.
+ExportDocumentWidget	TEXT_COPY_TO_CLIPBOARD_FAILED	Fehler! Der Text konnte nicht in die Zwischenablage kopiert werden!
+ExportDocumentWidget	TEXT_EXPORT_TO_WORD_FAILED	Fehler! Der Text konnte nicht als Word-Dokument exportiert werden.
+ExportDocumentWidget	TEXT_COPY_TO_CLIPBOARD_COPYRIGHT_NOTICE	Der Text wurde erfolgreich in die Zwischenablage kopiert! Bitte beachten Sie die Urheberrechte der Texte.
+ExportDocumentWidget	TEXT_EXPORT_COPYRIGHT_NOTICE	Der Text wurde erfolgreich exportiert! Bitte beachten Sie die Urheberrechte der Texte.
+
 		
 DocumentResultDisplayItem	ORIGINAL_RANK	Ursprüngliche Listenposition
 		

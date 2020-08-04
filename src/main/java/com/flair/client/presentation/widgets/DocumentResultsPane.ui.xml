@@ -9,6 +9,9 @@
 		-webkit-transition: 0.4s all;
 		-moz-transition: 0.4s all;
 	}
+	.zIndexFabs {
+		z-index: 1;
+	}
 	</ui:style>
 	
 	<m:MaterialPanel ui:field="pnlRootUI" depth="700" backgroundColor="WHITE" overflow="HIDDEN"

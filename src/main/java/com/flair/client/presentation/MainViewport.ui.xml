@@ -20,7 +20,10 @@
         transition: 0.3s all;
         -webkit-transition: 0.3s all;
         -moz-transition: 0.3s all;
-	}	
+	}
+	.zIndexFabs {
+		z-index: 1;
+	}
 	</ui:style>
 	
 	<m:MaterialPanel ui:field="pnlRootUI" backgroundColor="WHITE" overflow="HIDDEN">		
@@ -59,11 +62,11 @@
 		</m:MaterialDropDown>
 		
 		<!-- Main FABs -->
-		<m:MaterialFAB axis="VERTICAL" depth="998" type="CLICK_ONLY" marginBottom="75">
+		<m:MaterialFAB axis="VERTICAL" addStyleNames="{style.zIndexFabs}" type="CLICK_ONLY" marginBottom="75">
 			<m:MaterialButton ui:field="btnWebSearchUI"
 				type="FLOATING" iconType="SEARCH" size="LARGE" backgroundColor="ORANGE" waves="LIGHT"/>
 		</m:MaterialFAB>		
-		<m:MaterialFAB axis="VERTICAL" depth="998" type="CLICK_ONLY" >
+		<m:MaterialFAB axis="VERTICAL" addStyleNames="{style.zIndexFabs}" type="CLICK_ONLY" >
 			<m:MaterialAnchorButton ui:field="btnUploadUI" size="LARGE"
 					type="FLOATING" waves="LIGHT" backgroundColor="BLUE" iconType="FILE_UPLOAD"/>
 		</m:MaterialFAB>

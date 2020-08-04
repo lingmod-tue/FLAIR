@@ -20,6 +20,7 @@
 						</h3>
 						<p>
 							<span style="color:darkorange">
+
 								<b>by</b>
 							</span>
 							<a href="http://sfs.uni-tuebingen.de/~mchnkina/" target="_blank">Maria
@@ -34,15 +35,14 @@
 							<a href="mailto:mkannan@sfs.uni-tuebingen.de?Subject=FLAIR%20tool"
 								target="_top" title="write to Madeeswaran Kannan">
 								<span class="glyphicon glyphicon-envelope"></span>
-							</a>
-							, supervised by
+							</a>, supervised by
 							<a href="http://sfs.uni-tuebingen.de/~dm/" target="_blank">Prof. Dr.
 								Detmar Meurers</a>
 							<br />
 							<span style="color:darkorange">@</span>
 							University of Tübingen, Germany
 							<span style="color:darkorange">|</span>
-							2015-2019
+							2015-2020
 							<br />
                             Version 2.1
 						</p>
@@ -61,7 +61,7 @@
 							</li>
 							<li>● re-ranks the results according to your (pedagogical or
 								learning) needs specified in the settings</li>
-                            <li>● generates factual questions based on the text in the results</li>
+                            <!--<li>● generates factual questions based on the text in the results</li>-->
 						</ul>
 					</div>
 					<br />
@@ -194,7 +194,7 @@
 							<span style="color:darkorange">@</span>
 							Universität Tübingen, Deutschland
 							<span style="color:darkorange">|</span>
-							2015-2019
+							2015-2020
 							<br />
 							Version 2.1
 						</p>

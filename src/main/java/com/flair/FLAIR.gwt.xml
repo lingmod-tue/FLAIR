@@ -31,5 +31,13 @@
 	<!-- Invoke custom generators -->
 	<generate-with class="com.flair.client.localization.generators.LocalizationBinderGenerator">
 		<when-type-assignable class="com.flair.client.localization.interfaces.LocalizationBinder" />		
-	</generate-with> 
+	</generate-with>
+
+	<!-- Logging -->
+	<!-- To change the default logLevel -->
+	<set-property name="gwt.logging.logLevel"
+				  value="SEVERE"/> <!-- TODO: set to SEVERE on release or to INFO when developing -->
+	<!-- To enable logging -->
+	<set-property name="gwt.logging.enabled" value="TRUE"/>
+
 </module>
