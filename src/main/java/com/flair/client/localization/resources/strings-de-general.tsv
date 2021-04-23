@@ -106,6 +106,13 @@ DocumentPreviewPane	COLUMN_WEIGHT	Gewichtung
 DocumentPreviewPane	COLUMN_HITS	Anzahl
 DocumentPreviewPane	COLUMN_RELFREQ	Relative Häufigkeit in %
 
+ExerciseGenerationWidget	btnAddTask	Neue Aufgabe
+ExerciseGenerationWidget	btnDeleteTasks	Alle Aufgaben löschen
+ExerciseGenerationWidget	btnGenerateExercises	Aufgaben generieren
+
+TaskItem	btnDelete	Löschen
+TaskItem	btnSelectDocumentPart	Textauszug wählen
+
 ExportDocumentWidget	btnCopyDocumentPreviewUI	In Zwischenablage kopieren
 ExportDocumentWidget	btnExportDocumentPreviewToWordUI	Als Word-Dokument exportieren
 ExportDocumentWidget	lblCopyTextFormattingUI	Farbl. Hervorhebung übernehmen

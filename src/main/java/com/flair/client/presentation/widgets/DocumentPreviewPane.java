@@ -99,6 +99,8 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
     MaterialColumn pnlAllConstCol2UI;
     @UiField
     MaterialColumn pnlAllConstCol3UI;
+    @UiField
+    ExerciseGenerationWidget wdgtExerciseGeneration;
 
     State state;
     ShowHideHandler showhideHandler;
@@ -452,6 +454,8 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 
                     if (weightSelection.hasData())
                         icoHelpTextUI.setVisible(true);
+                    
+                    wdgtExerciseGeneration.initConstructionsOccurrences();
 
                     break;
                 }
@@ -463,6 +467,7 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
                     lblDocNumSentencesUI.setVisible(false);
                     lblDocNumWordsUI.setVisible(false);
                     icoHelpTextUI.setVisible(false);
+                    wdgtExerciseGeneration.setVisible(false);
 
                     // update the rest
                     lblDocTitleUI.setText(unrankable.getTitle());

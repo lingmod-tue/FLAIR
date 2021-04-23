@@ -119,13 +119,6 @@ public class ExportDocumentWidget extends LocalizedComposite {
     MaterialButton btnExportDocumentPreviewToWordUI;
 
     /**
-     * The label for this widget.
-     */
-    @UiField
-    @LocalizedField
-    MaterialLabel lblExportDocumentWidgetUI;
-
-    /**
      * The copyright notice modal.
      */
     @UiField

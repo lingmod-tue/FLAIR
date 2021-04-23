@@ -22,6 +22,11 @@
 		-webkit-transition: 0.4s all;
 		-moz-transition: 0.4s all;
 	}
+	
+	.bgGrey {
+            width: 70%;
+            background-color: #cecac1;
+        }
 	</ui:style>
 	
 	<m:MaterialPanel ui:field="pnlRootUI" layoutPosition="RELATIVE" grid="l12 m12 s12">
@@ -42,30 +47,60 @@
 				</m:MaterialRow>
 			</m:MaterialRow>
 			
-			<!-- Preview Pane -->
-			<m:MaterialRow marginBottom="20">				
-				<g:ScrollPanel ui:field="pnlDocTextPreviewUI" addStyleNames="{style.docText-preview}"/>		
-					
-				<m:MaterialRow textAlign="RIGHT" margin="2" padding="0">
-					<m:MaterialIcon ui:field="icoHelpTextUI" iconType="HELP"/>
-				</m:MaterialRow>				
-				<m:MaterialRow ui:field="pnlWeightSelectionUI" padding="0">
-					<m:MaterialColumn ui:field="pnlWeightSelectionCol1UI" padding="0" textAlign="LEFT"/>
-					<m:MaterialColumn ui:field="pnlWeightSelectionCol2UI" textAlign="LEFT"/>
-					<m:MaterialColumn ui:field="pnlWeightSelectionCol3UI" padding="0" textAlign="LEFT"/>
-				</m:MaterialRow>
-				
-				<m:MaterialRow textAlign="CENTER" marginTop="10" marginBottom="30">
-					<m:MaterialButton ui:field="btnShowAllConstUI" backgroundColor="ORANGE" textColor="WHITE"/>
-				</m:MaterialRow>
-
-				<!-- export functionality -->
+			<!-- Expandable -->
+			<m:MaterialCollapsible accordion="false" grid="s12 m12 l12" margin="0" padding="0">
+			   <!-- preview -->
+			   <m:MaterialCollapsibleItem>
+			     <m:MaterialCollapsibleHeader>
+			       <m:MaterialLink text="Document Preview" iconType="ARROW_DROP_DOWN" iconPosition="LEFT" textColor="BLACK"/>
+			     </m:MaterialCollapsibleHeader>
+			     <m:MaterialCollapsibleBody>
+				     <m:MaterialRow marginBottom="20">
+						<g:ScrollPanel ui:field="pnlDocTextPreviewUI" addStyleNames="{style.docText-preview}"/>		
+						
+						<m:MaterialRow textAlign="RIGHT" margin="2" padding="0">
+							<m:MaterialIcon ui:field="icoHelpTextUI" iconType="HELP"/>
+						</m:MaterialRow>				
+						<m:MaterialRow ui:field="pnlWeightSelectionUI" padding="0">
+							<m:MaterialColumn ui:field="pnlWeightSelectionCol1UI" padding="0" textAlign="LEFT"/>
+							<m:MaterialColumn ui:field="pnlWeightSelectionCol2UI" textAlign="LEFT"/>
+							<m:MaterialColumn ui:field="pnlWeightSelectionCol3UI" padding="0" textAlign="LEFT"/>
+						</m:MaterialRow>
+						
+						<m:MaterialRow textAlign="CENTER" marginTop="10">
+							<m:MaterialButton ui:field="btnShowAllConstUI" backgroundColor="ORANGE" textColor="WHITE"/>
+						</m:MaterialRow>
+					  </m:MaterialRow>
+     			</m:MaterialCollapsibleBody>
+   			</m:MaterialCollapsibleItem>
+   
+   		    <!-- export functionality -->
+		    <m:MaterialCollapsibleItem>
+		     <m:MaterialCollapsibleHeader>
+		       <m:MaterialLink text="Export Document" iconType="ARROW_DROP_DOWN" iconPosition="LEFT" textColor="BLACK"/>
+		     </m:MaterialCollapsibleHeader>
+		     <m:MaterialCollapsibleBody>
+		     <m:MaterialRow marginBottom="20">
 				<flair:ExportDocumentWidget ui:field="wdgtExportDocument"/>
-			</m:MaterialRow>
+				</m:MaterialRow>
+      		 </m:MaterialCollapsibleBody>
+		    </m:MaterialCollapsibleItem>
+		    
+		     <!-- exercise generation functionality -->
+		    <m:MaterialCollapsibleItem paddingBottom="20">
+		     <m:MaterialCollapsibleHeader>
+		       <m:MaterialLink text="Generate Exercises" iconType="ARROW_DROP_DOWN" iconPosition="LEFT" textColor="BLACK"/>
+		     </m:MaterialCollapsibleHeader>
+		     <m:MaterialCollapsibleBody>
+		     	<flair:ExerciseGenerationWidget ui:field="wdgtExerciseGeneration"/>
+      		 </m:MaterialCollapsibleBody>
+		    </m:MaterialCollapsibleItem>
+		    
+		 </m:MaterialCollapsible>
+		 
+		 </m:MaterialRow>
+ 
 			
-			<m.html:Br/>
-		</m:MaterialRow>
-		
 		<!-- Construction Details Container -->
         <ma:overlay.MaterialOverlay ui:field="mdlAllConstUI" textAlign="CENTER" textColor="BLACK"
                                     backgroundColor="ORANGE_ACCENT_1">

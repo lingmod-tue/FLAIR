@@ -105,6 +105,13 @@ DocumentPreviewPane	COLUMN_WEIGHT	Weight
 DocumentPreviewPane	COLUMN_HITS	Count
 DocumentPreviewPane	COLUMN_RELFREQ	Relative Frequency %
 
+ExerciseGenerationWidget	btnAddTask	Add Task
+ExerciseGenerationWidget	btnDeleteTasks	Delete all Tasks
+ExerciseGenerationWidget	btnGenerateExercises	Generate Exercises
+
+TaskItem	btnDelete	Delete
+TaskItem	btnSelectDocumentPart	Select document part
+
 ExportDocumentWidget	btnCopyDocumentPreviewUI	Copy to clipboard
 ExportDocumentWidget	btnExportDocumentPreviewToWordUI	Export as word document
 ExportDocumentWidget	lblCopyTextFormattingUI	Include text formatting

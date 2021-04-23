@@ -38,12 +38,7 @@
 
         <m:MaterialRow textAlign="CENTER" marginTop="10" marginBottom="10" paddingBottom="20" layoutPosition="RELATIVE"
                        grid="l12 m12 s12">
-            <m:MaterialDivider/>
-            <m:MaterialRow textAlign="CENTER" marginBottom="5">
-                <m:MaterialIcon iconType="SHARE" float="RIGHT"/>
-                <m:MaterialLabel ui:field="lblExportDocumentWidgetUI" fontSize="1em" fontWeight="BOLD"
-                                 text="Export document"/>
-            </m:MaterialRow>
+
             <m:MaterialRow marginBottom="10" textAlign="CENTER" width="80%">
                 <!-- copy text formatting -->
                 <m:MaterialIcon ui:field="icoInfoCopyFormattingUI" iconType="INFO" float="RIGHT" iconColor="BLUE"/>
