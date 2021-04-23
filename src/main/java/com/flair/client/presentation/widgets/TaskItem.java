@@ -2,43 +2,261 @@ package com.flair.client.presentation.widgets;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import com.flair.client.localization.LocalizedComposite;
 import com.flair.client.localization.LocalizedFieldType;
 import com.flair.client.localization.annotations.LocalizedField;
 import com.flair.client.localization.interfaces.LocalizationBinder;
+import com.flair.shared.grammar.GrammaticalConstruction;
+import com.flair.shared.interop.dtos.RankableDocument;
+import com.flair.shared.interop.dtos.RankableDocument.ConstructionRange;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
 
 import gwt.material.design.client.constants.Color;
 import gwt.material.design.client.ui.MaterialButton;
 import gwt.material.design.client.ui.MaterialCheckBox;
+import gwt.material.design.client.ui.MaterialDialog;
 import gwt.material.design.client.ui.MaterialDropDown;
 import gwt.material.design.client.ui.MaterialLabel;
+import gwt.material.design.client.ui.MaterialLink;
 import gwt.material.design.client.ui.MaterialRadioButton;
 import gwt.material.design.client.ui.MaterialRow;
+import gwt.material.design.client.ui.MaterialToast;
 
 public class TaskItem extends LocalizedComposite {
-	private class CheckBoxItem {
-		public CheckBoxItem(MaterialCheckBox widget, String constructionName) {
-			this.widget = widget;
-			this.constructionName = constructionName;
+	
+	private class Pair<T1, T2>
+    {
+        T1 key;
+        T2 value;
+        
+        Pair(T1 key, T2 value) {  
+        	this.key = key;  
+        	this.value = value;
+        }
+        
+        public T1 getKey()  { return this.key; }
+        public T2 getValue()  { return this.value; }
+    }
+	
+	private class ConstructionComponents {
+		public ConstructionComponents() {
+			passiveFibConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>() {{
+				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
+					add(new Pair<MaterialCheckBox, String>(chkScopeActive, "active"));
+					add(new Pair<MaterialCheckBox, String>(chkScopePassive, "passive"));
+				}});
+				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
+					add(new Pair<MaterialCheckBox, String>(chkPresentSimple, "TENSE_PRESENT_SIMPLE"));
+					add(new Pair<MaterialCheckBox, String>(chkFutureSimple, "TENSE_FUTURE_SIMPLE"));
+					add(new Pair<MaterialCheckBox, String>(chkPresentProgressive, "TENSE_PRESENT_PROGRESSIVE"));
+					add(new Pair<MaterialCheckBox, String>(chkPastProgressive, "TENSE_PAST_PROGRESSIVE"));
+					add(new Pair<MaterialCheckBox, String>(chkFutureProgressive, "TENSE_FUTURE_PROGRESSIVE"));
+					add(new Pair<MaterialCheckBox, String>(chkFuturePerfect, "TENSE_FUTURE_PERFECT"));
+					add(new Pair<MaterialCheckBox, String>(chkPresentPerfectProg, "TENSE_PRESENT_PERFECT_PROGRESSIVE"));
+					add(new Pair<MaterialCheckBox, String>(chkPastPerfectProg, "TENSE_PAST_PERFECT_PROGRESSIVE"));
+					add(new Pair<MaterialCheckBox, String>(chkFuturePerfectProg, "TENSE_FUTURE_PERFECT_PROGRESSIVE"));
+					add(new Pair<MaterialCheckBox, String>(chkPastSimple, "TENSE_PAST_SIMPLE"));
+					add(new Pair<MaterialCheckBox, String>(chkPresentPerfect, "TENSE_PRESENT_PERFECT"));
+					add(new Pair<MaterialCheckBox, String>(chkPastPerfect, "TENSE_PAST_PERFECT"));
+				}});
+			}};
+			
+			passiveDragConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>() {{
+				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
+					add(new Pair<MaterialCheckBox, String>(chkScopePassive, "passive"));
+				}});
+				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
+					add(new Pair<MaterialCheckBox, String>(chkPresentSimple, "TENSE_PRESENT_SIMPLE"));
+					add(new Pair<MaterialCheckBox, String>(chkFutureSimple, "TENSE_FUTURE_SIMPLE"));
+					add(new Pair<MaterialCheckBox, String>(chkPresentProgressive, "TENSE_PRESENT_PROGRESSIVE"));
+					add(new Pair<MaterialCheckBox, String>(chkPastProgressive, "TENSE_PAST_PROGRESSIVE"));
+					add(new Pair<MaterialCheckBox, String>(chkFutureProgressive, "TENSE_FUTURE_PROGRESSIVE"));
+					add(new Pair<MaterialCheckBox, String>(chkFuturePerfect, "TENSE_FUTURE_PERFECT"));
+					add(new Pair<MaterialCheckBox, String>(chkPresentPerfectProg, "TENSE_PRESENT_PERFECT_PROGRESSIVE"));
+					add(new Pair<MaterialCheckBox, String>(chkPastPerfectProg, "TENSE_PAST_PERFECT_PROGRESSIVE"));
+					add(new Pair<MaterialCheckBox, String>(chkFuturePerfectProg, "TENSE_FUTURE_PERFECT_PROGRESSIVE"));
+					add(new Pair<MaterialCheckBox, String>(chkPastSimple, "TENSE_PAST_SIMPLE"));
+					add(new Pair<MaterialCheckBox, String>(chkPresentPerfect, "TENSE_PRESENT_PERFECT"));
+					add(new Pair<MaterialCheckBox, String>(chkPastPerfect, "TENSE_PAST_PERFECT"));
+				}});
+			}};
+							
+			relativesFibMarkConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>() {{
+				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
+					add(new Pair<MaterialCheckBox, String>(chkScopePassive, "who"));
+					add(new Pair<MaterialCheckBox, String>(chkScopePassive, "which"));
+					add(new Pair<MaterialCheckBox, String>(chkScopePassive, "that"));
+					add(new Pair<MaterialCheckBox, String>(chkScopePassive, "otherRelPron"));
+				}});
+			}};
+				 						
+			relativesDragConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>() {{
+				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
+					add(new Pair<MaterialCheckBox, String>(null, "who"));
+					add(new Pair<MaterialCheckBox, String>(null, "which"));
+					add(new Pair<MaterialCheckBox, String>(null, "that"));
+					add(new Pair<MaterialCheckBox, String>(null, "otherRelPron"));
+				}});
+			}};
+						
+			presentFibSelectConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>() {{
+				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
+					add(new Pair<MaterialCheckBox, String>(null, "present"));
+				}});
+				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
+					add(new Pair<MaterialCheckBox, String>(chkQuestions, "question"));
+					add(new Pair<MaterialCheckBox, String>(chkStatements, "stmt"));
+				}});
+				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
+					add(new Pair<MaterialCheckBox, String>(chkNegatedSent, "neg"));
+					add(new Pair<MaterialCheckBox, String>(chkAffirmativeSent, "affirm"));
+				}});
+				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
+					add(new Pair<MaterialCheckBox, String>(chk3Pers, "3"));
+					add(new Pair<MaterialCheckBox, String>(chkNot3Pers, "not3"));
+				}});
+			}};						
+			
+			presentMarkConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>() {{
+				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
+					add(new Pair<MaterialCheckBox, String>(null, "present"));
+				}});
+				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
+					add(new Pair<MaterialCheckBox, String>(null, "question"));
+					add(new Pair<MaterialCheckBox, String>(null, "stmt"));
+				}});
+				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
+					add(new Pair<MaterialCheckBox, String>(null, "neg"));
+					add(new Pair<MaterialCheckBox, String>(null, "affirm"));
+				}});
+				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
+					add(new Pair<MaterialCheckBox, String>(chk3Pers, "3"));
+					add(new Pair<MaterialCheckBox, String>(chkNot3Pers, "not3"));
+				}});
+			}};
+						
+			pastFibSelectConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>() {{
+				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
+					add(new Pair<MaterialCheckBox, String>(chkPastSimple, "pastSimple"));
+					add(new Pair<MaterialCheckBox, String>(chkPresentPerfect, "presentPerfect"));
+					add(new Pair<MaterialCheckBox, String>(chkPastPerfect, "pastPerfect"));
+				}});
+				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
+					add(new Pair<MaterialCheckBox, String>(chkQuestions, "question"));
+					add(new Pair<MaterialCheckBox, String>(chkStatements, "stmt"));
+				}});
+				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
+					add(new Pair<MaterialCheckBox, String>(chkNegatedSent, "neg"));
+					add(new Pair<MaterialCheckBox, String>(chkAffirmativeSent, "affirm"));
+				}});
+				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
+					add(new Pair<MaterialCheckBox, String>(chkRegularVerbs, "reg"));
+					add(new Pair<MaterialCheckBox, String>(chkIrregularVerbs, "irreg"));
+				}});
+			}};
+			
+			pastMarkDragConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>() {{
+				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
+					add(new Pair<MaterialCheckBox, String>(chkPastSimple, "TENSE_PAST_SIMPLE"));
+					add(new Pair<MaterialCheckBox, String>(chkPresentPerfect, "TENSE_PRESENT_PERFECT"));
+					add(new Pair<MaterialCheckBox, String>(chkPastPerfect, "TENSE_PAST_PERFECT"));
+				}});
+				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
+					add(new Pair<MaterialCheckBox, String>(null, "question"));
+					add(new Pair<MaterialCheckBox, String>(null, "stmt"));
+				}});
+				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
+					add(new Pair<MaterialCheckBox, String>(null, "neg"));
+					add(new Pair<MaterialCheckBox, String>(null, "affirm"));
+				}});
+				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
+					add(new Pair<MaterialCheckBox, String>(chkRegularVerbs, "reg"));
+					add(new Pair<MaterialCheckBox, String>(chkIrregularVerbs, "irreg"));
+				}});
+			}};
+								
+			ifConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>() {{
+				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
+					add(new Pair<MaterialCheckBox, String>(chkscopeType1, "condReal"));
+					add(new Pair<MaterialCheckBox, String>(chkscopeType2, "condUnreal"));
+				}});
+			}};
+			
+			compareConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>() {{
+				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
+					add(new Pair<MaterialCheckBox, String>(chkPosAdj, "adj"));
+					add(new Pair<MaterialCheckBox, String>(chkPosAdv, "adv"));
+				}});
+				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
+					add(new Pair<MaterialCheckBox, String>(chkFormComparatives, "comp"));
+					add(new Pair<MaterialCheckBox, String>(chkFormSuperlatives, "sup"));
+				}});
+				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
+					add(new Pair<MaterialCheckBox, String>(chkFormSynthetic, "syn"));
+					add(new Pair<MaterialCheckBox, String>(chkFormAnalytic, "ana"));
+				}});
+			}};
 		}
 		
-		private MaterialCheckBox widget;
-		private String constructionName;
-		
-		public MaterialCheckBox getWidget() {
-			return widget;
+		private final ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> passiveFibConstructionLevels;
+		private final ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> passiveDragConstructionLevels;
+		private final ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> relativesFibMarkConstructionLevels;
+		private final ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> relativesDragConstructionLevels;
+		private final ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> presentFibSelectConstructionLevels;
+		private final ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> presentMarkConstructionLevels;
+		private final ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> pastFibSelectConstructionLevels;
+		private final ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> pastMarkDragConstructionLevels;
+		private final ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> ifConstructionLevels;
+		private final ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> compareConstructionLevels;
+
+		public ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> getPassiveFibConstructionLevels() {
+			return passiveFibConstructionLevels;
+		}
+				
+		public ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> getPassiveDragConstructionLevels() {
+			return passiveDragConstructionLevels;
 		}
 		
-		public String getConstructionName() {
-			return constructionName;
+		public ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> getRelativesFibMarkConstructionLevels() {
+			return relativesFibMarkConstructionLevels;
+		}
+		
+		public ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> getRelativesDragConstructionLevels() {
+			return relativesDragConstructionLevels;
+		}
+		
+		public ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> getPresentFibSelectConstructionLevels() {
+			return presentFibSelectConstructionLevels;
+		}
+		
+		public ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> getPresentMarkConstructionLevels() {
+			return presentMarkConstructionLevels;
+		}
+		
+		public ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> getPastFibSelectConstructionLevels() {
+			return pastFibSelectConstructionLevels;
+		}
+		
+		public ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> getPastMarkDragConstructionLevels() {
+			return pastMarkDragConstructionLevels;
+		}
+		
+		public ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> getIfConstructionLevels() {
+			return ifConstructionLevels;
+		}
+		
+		public ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> getCompareConstructionLevels() {
+			return compareConstructionLevels;
 		}
 	}
 	
@@ -54,6 +272,7 @@ public class TaskItem extends LocalizedComposite {
     interface TaskItemLocalizationBinder extends LocalizationBinder<TaskItem> {
     }
 
+    static DocumentPreviewPane documentPreviewPane = DocumentPreviewPane.getInstance();
     
     @UiField
     MaterialDropDown drpTopic;
@@ -73,6 +292,10 @@ public class TaskItem extends LocalizedComposite {
     @UiField
     @LocalizedField(type = LocalizedFieldType.TEXT_BUTTON)
     MaterialButton btnSelectDocumentPart;
+    @UiField
+    MaterialButton btnApplyDocumentSelection;
+    @UiField
+    MaterialButton btnDiscardDocumentSelection;
     @UiField
     MaterialLabel lblTopicPres;
     @UiField
@@ -94,13 +317,17 @@ public class TaskItem extends LocalizedComposite {
     @UiField
     MaterialLabel lblTypeDrag;
     @UiField
-    MaterialLabel lblQuizNone;
-    @UiField
-    MaterialLabel lblQuiz1;
-    @UiField
     MaterialLabel lblSettings;
     @UiField
     MaterialLabel lblNumberExercises;
+    @UiField
+    MaterialLabel lblTensesSentences;
+    @UiField
+    MaterialLabel lblTensesWords;
+    @UiField
+    TextArea lblDocumentForSelection;
+    @UiField
+    MaterialLink lblName;
     @UiField
     MaterialRow grpPos;
     @UiField
@@ -238,10 +465,6 @@ public class TaskItem extends LocalizedComposite {
     @UiField
     MaterialCheckBox chkFormSynthetic;
     @UiField
-    MaterialLabel lblTensesSentences;
-    @UiField
-    MaterialLabel lblTensesWords;
-    @UiField
     MaterialRadioButton rbtPerSentence;
     @UiField
     MaterialRadioButton rbtSingleTask;
@@ -257,11 +480,16 @@ public class TaskItem extends LocalizedComposite {
     MaterialRadioButton rbt1Verb;
     @UiField
     MaterialRadioButton rbt2Verbs;
+    @UiField
+    MaterialDialog dlgDocumentSelection;
+    
+    private ConstructionComponents constructionComponents;
     
     public TaskItem() {    	
         initWidget(ourUiBinder.createAndBindUi(this));
         initLocale(localeBinder.bind(this));
         this.initHandlers();
+        constructionComponents = new ConstructionComponents();
         settingsWidgets = new Widget[] {
         		grpBrackets, chkBracketsLemma, chkBracketsConditional, chkBracketsPos, chkBracketsForm, chkBracketsWill, 
         		chkBracketsSentenceType, chkBracketsTense, chkBracketsActiveSentence, chkBracketsKeywords, 
@@ -274,11 +502,56 @@ public class TaskItem extends LocalizedComposite {
         };
     	setExerciseSettingsVisibilities();
     }
+    
+    private int currentSelectionStartIndex = 0;
+    private int currentSelectionLength = 0;
 
+    private Pair<Integer, Integer> calculateSelectionIndices() {
+    	RankableDocument doc = documentPreviewPane.getCurrentlyPreviewedDocument().getDocument();
+    	String selectedPart = lblDocumentForSelection.getSelectedText();
+    	int startIndex;
+    	int length;
+    	if(selectedPart == null || selectedPart.length() == 0) {
+    		selectedPart = doc.getText();
+    		startIndex = 0;
+    		length = selectedPart.length();
+    	} else {
+    		startIndex = doc.getText().indexOf(selectedPart);
+    		length = selectedPart.length();
+    	}
+    	
+    	return new Pair<Integer, Integer>(startIndex, length);
+    }
+    
     /**
      * Initializes all handlers.
      */
     private void initHandlers() {
+    	dlgDocumentSelection.removeFromParent();
+        RootPanel.get().add(dlgDocumentSelection);
+
+        btnApplyDocumentSelection.addClickHandler(event -> {
+        	dlgDocumentSelection.close();
+        	calculateConstructionsOccurrences();
+        });
+        btnDiscardDocumentSelection.addClickHandler(event -> {
+        	//TODO: save previous selection on open and reset here
+        	dlgDocumentSelection.close();
+    		lblDocumentForSelection.setSelectionRange(currentSelectionStartIndex, currentSelectionLength);
+        });
+        
+    	btnDelete.addClickHandler(event -> {
+            deleteTask();
+    	});
+    	
+    	btnSelectDocumentPart.addClickHandler(event -> {
+    		Pair<Integer, Integer> selectionIndices = calculateSelectionIndices();
+    		currentSelectionStartIndex = selectionIndices.getKey();
+    		currentSelectionLength = selectionIndices.getValue();
+    		    		
+    		dlgDocumentSelection.open();
+    	});
+    	
     	lblTopicPres.addMouseDownHandler(new MouseDownHandler() 
     	{
 			@Override
@@ -358,32 +631,20 @@ public class TaskItem extends LocalizedComposite {
 				handleDropdownSelection(btnTypeDropdown, "Drag");
 			}
     	});
-    	
-    	lblQuizNone.addMouseDownHandler(new MouseDownHandler() 
-    	{
-			@Override
-			public void onMouseDown(MouseDownEvent event) {
-    	    	btnQuizDropdown.setText("Quiz");
-    	    	btnQuizDropdown.setFontWeight(FontWeight.BOLD);
-			}
-    	});
-    	
-    	lblQuiz1.addMouseDownHandler(new MouseDownHandler() 
-    	{
-			@Override
-			public void onMouseDown(MouseDownEvent event) {
-				btnQuizDropdown.setText("Quiz 1");
-				btnQuizDropdown.setFontWeight(FontWeight.NORMAL);
-			}
-    	});
-    	
+    	    	
     	rbtSingleTask.addValueChangeHandler(e -> setExerciseSettingsVisibilities());
     	rbtPerSentence.addValueChangeHandler(e -> setExerciseSettingsVisibilities());
 
     }
     
-    
     /**
+     * Deletes the task and removes the element from the view.
+     */
+    private void deleteTask() {
+    	this.removeFromParent();
+	}
+
+	/**
      * Sets the text of the selection button and the font weight when an item has been selected.
      * We need to use click handlers on the selection items instead of binding to the selection event
      * because that binding does not work.
@@ -593,234 +854,38 @@ public class TaskItem extends LocalizedComposite {
     	ArrayList<String> constructionsToConsider = new ArrayList<String>();
     	
     	if(topic.equals("Passive")) {
-    		if(exerciseType.equals("FiB")) {
-    			ArrayList<CheckBoxItem> firstLevelConstructions = new ArrayList<CheckBoxItem>(){{
-    				add(new CheckBoxItem(chkScopeActive, "active"));
-    				add(new CheckBoxItem(chkScopePassive, "passive"));
-    			}};
-    			ArrayList<CheckBoxItem> secondLevelConstructions = new ArrayList<CheckBoxItem>(){{
-    				add(new CheckBoxItem(chkPresentSimple, "presentSimple"));
-    				add(new CheckBoxItem(chkFutureSimple, "futureSimple"));
-    				add(new CheckBoxItem(chkPresentProgressive, "presentProgressive"));
-    				add(new CheckBoxItem(chkPastProgressive, "pastProgressive"));
-    				add(new CheckBoxItem(chkFutureProgressive, "futureProgressive"));
-    				add(new CheckBoxItem(chkFuturePerfect, "futurePerfect"));
-    				add(new CheckBoxItem(chkPresentPerfectProg, "presentPerfProg"));
-    				add(new CheckBoxItem(chkPastPerfectProg, "pastPerfProg"));
-    				add(new CheckBoxItem(chkFuturePerfectProg, "futurePerfProg"));
-    				add(new CheckBoxItem(chkPastSimple, "pastSimple"));
-    				add(new CheckBoxItem(chkPresentPerfect, "presentPerfect"));
-    				add(new CheckBoxItem(chkPastPerfect, "pastPerfect"));
-    			}};
-    			
-    			ArrayList<ArrayList<CheckBoxItem>> constructionLevels = new ArrayList<ArrayList<CheckBoxItem>>() {{
-    				add(firstLevelConstructions);
-    				add(secondLevelConstructions);
-    			}};
-    			
-    			constructionsToConsider = getConstructionNamesFromSettings(constructionLevels);    			
+    		if(exerciseType.equals("FiB")) {    			    			    			
+    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPassiveFibConstructionLevels());    			
     		} else if(exerciseType.equals("Drag")) {
-    			ArrayList<CheckBoxItem> firstLevelConstructions = new ArrayList<CheckBoxItem>(){{
-    				add(new CheckBoxItem(chkScopePassive, "passive"));
-    			}};
-    			ArrayList<CheckBoxItem> secondLevelConstructions = new ArrayList<CheckBoxItem>(){{
-    				add(new CheckBoxItem(chkPresentSimple, "presentSimple"));
-    				add(new CheckBoxItem(chkFutureSimple, "futureSimple"));
-    				add(new CheckBoxItem(chkPresentProgressive, "presentProgressive"));
-    				add(new CheckBoxItem(chkPastProgressive, "pastProgressive"));
-    				add(new CheckBoxItem(chkFutureProgressive, "futureProgressive"));
-    				add(new CheckBoxItem(chkFuturePerfect, "futurePerfect"));
-    				add(new CheckBoxItem(chkPresentPerfectProg, "presentPerfProg"));
-    				add(new CheckBoxItem(chkPastPerfectProg, "pastPerfProg"));
-    				add(new CheckBoxItem(chkFuturePerfectProg, "futurePerfProg"));
-    				add(new CheckBoxItem(chkPastSimple, "pastSimple"));
-    				add(new CheckBoxItem(chkPresentPerfect, "presentPerfect"));
-    				add(new CheckBoxItem(chkPastPerfect, "pastPerfect"));
-    			}};
-    			
-    			ArrayList<ArrayList<CheckBoxItem>> constructionLevels = new ArrayList<ArrayList<CheckBoxItem>>() {{
-    				add(firstLevelConstructions);
-    				add(secondLevelConstructions);
-    			}};
-    			
-    			constructionsToConsider = getConstructionNamesFromSettings(constructionLevels);    	
+    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPassiveDragConstructionLevels());    	
     		}
     	} else if(topic.equals("Relatives")) {
     		if(exerciseType.equals("FiB") || exerciseType.equals("Mark")) {
-    			ArrayList<CheckBoxItem> firstLevelConstructions = new ArrayList<CheckBoxItem>(){{
-    				add(new CheckBoxItem(chkScopePassive, "who"));
-    				add(new CheckBoxItem(chkScopePassive, "which"));
-    				add(new CheckBoxItem(chkScopePassive, "that"));
-    				add(new CheckBoxItem(chkScopePassive, "otherRelPron"));
-    			}};
-    			    			
-    			
-    			ArrayList<ArrayList<CheckBoxItem>> constructionLevels = new ArrayList<ArrayList<CheckBoxItem>>() {{
-    				add(firstLevelConstructions);
-    			}};
-    			
-    			constructionsToConsider = getConstructionNamesFromSettings(constructionLevels);  
+    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getRelativesFibMarkConstructionLevels());  
     		} else if(exerciseType.equals("Drag")) {
-    			ArrayList<CheckBoxItem> firstLevelConstructions = new ArrayList<CheckBoxItem>(){{
-    				add(new CheckBoxItem(null, "who"));
-    				add(new CheckBoxItem(null, "which"));
-    				add(new CheckBoxItem(null, "that"));
-    				add(new CheckBoxItem(null, "otherRelPron"));
-    			}};   			 			
-    			
-    			ArrayList<ArrayList<CheckBoxItem>> constructionLevels = new ArrayList<ArrayList<CheckBoxItem>>() {{
-    				add(firstLevelConstructions);
-    			}};
-    			
-    			constructionsToConsider = getConstructionNamesFromSettings(constructionLevels);  
+    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getRelativesDragConstructionLevels());  
     			
     			//TODO maybe also offer choosing the pronoun for exercise per sentence
     		}
     	} else if(topic.equals("Present")) {
-    		if(exerciseType.equals("FiB") || exerciseType.equals("Select")) {   
-    			ArrayList<CheckBoxItem> firstLevelConstructions = new ArrayList<CheckBoxItem>(){{
-    				add(new CheckBoxItem(null, "present"));
-    			}};
-    			ArrayList<CheckBoxItem> secondLevelConstructions = new ArrayList<CheckBoxItem>(){{
-    				add(new CheckBoxItem(chkQuestions, "question"));
-    				add(new CheckBoxItem(chkStatements, "stmt"));
-    			}};
-    			ArrayList<CheckBoxItem> thirdLevelConstructions = new ArrayList<CheckBoxItem>(){{
-    				add(new CheckBoxItem(chkNegatedSent, "neg"));
-    				add(new CheckBoxItem(chkAffirmativeSent, "affirm"));
-    			}};
-    			
-    			ArrayList<CheckBoxItem> fourthLevelConstructions = new ArrayList<CheckBoxItem>(){{
-    				add(new CheckBoxItem(chk3Pers, "3"));
-    				add(new CheckBoxItem(chkNot3Pers, "not3"));
-    			}};
-    			
-    			ArrayList<ArrayList<CheckBoxItem>> constructionLevels = new ArrayList<ArrayList<CheckBoxItem>>() {{
-    				add(firstLevelConstructions);
-    				add(secondLevelConstructions);
-    				add(thirdLevelConstructions);
-    				add(fourthLevelConstructions);
-    			}};
-    			
-    			constructionsToConsider = getConstructionNamesFromSettings(constructionLevels);
-    		} else if(exerciseType.equals("Mark")) {  
-    			ArrayList<CheckBoxItem> firstLevelConstructions = new ArrayList<CheckBoxItem>(){{
-    				add(new CheckBoxItem(null, "present"));
-    			}};
-    			ArrayList<CheckBoxItem> secondLevelConstructions = new ArrayList<CheckBoxItem>(){{
-    				add(new CheckBoxItem(null, "question"));
-    				add(new CheckBoxItem(null, "stmt"));
-    			}};
-    			ArrayList<CheckBoxItem> thirdLevelConstructions = new ArrayList<CheckBoxItem>(){{
-    				add(new CheckBoxItem(null, "neg"));
-    				add(new CheckBoxItem(null, "affirm"));
-    			}};
-    			
-    			ArrayList<CheckBoxItem> fourthLevelConstructions = new ArrayList<CheckBoxItem>(){{
-    				add(new CheckBoxItem(chk3Pers, "3"));
-    				add(new CheckBoxItem(chkNot3Pers, "not3"));
-    			}};
-    			
-    			ArrayList<ArrayList<CheckBoxItem>> constructionLevels = new ArrayList<ArrayList<CheckBoxItem>>() {{
-    				add(firstLevelConstructions);
-    				add(secondLevelConstructions);
-    				add(thirdLevelConstructions);
-    				add(fourthLevelConstructions);
-    			}};
-    			
-    			constructionsToConsider = getConstructionNamesFromSettings(constructionLevels);   			
+    		if(exerciseType.equals("FiB") || exerciseType.equals("Select")) {       			
+    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPresentFibSelectConstructionLevels());
+    		} else if(exerciseType.equals("Mark")) {     			
+    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPresentMarkConstructionLevels());   			
     		}
     	} else if(topic.equals("Past")) {
-    		if(exerciseType.equals("FiB") || exerciseType.equals("Select")) {
-    			ArrayList<CheckBoxItem> firstLevelConstructions = new ArrayList<CheckBoxItem>(){{
-    				add(new CheckBoxItem(chkPastSimple, "pastSimple"));
-    				add(new CheckBoxItem(chkPresentPerfect, "presentPerfect"));
-    				add(new CheckBoxItem(chkPastPerfect, "pastPerfect"));
-    			}};    			
-    			ArrayList<CheckBoxItem> secondLevelConstructions = new ArrayList<CheckBoxItem>(){{
-    				add(new CheckBoxItem(chkQuestions, "question"));
-    				add(new CheckBoxItem(chkStatements, "stmt"));
-    			}};
-    			ArrayList<CheckBoxItem> thirdLevelConstructions = new ArrayList<CheckBoxItem>(){{
-    				add(new CheckBoxItem(chkNegatedSent, "neg"));
-    				add(new CheckBoxItem(chkAffirmativeSent, "affirm"));
-    			}};
-    			ArrayList<CheckBoxItem> fourthLevelConstructions = new ArrayList<CheckBoxItem>(){{
-    				add(new CheckBoxItem(chkRegularVerbs, "reg"));
-    				add(new CheckBoxItem(chkIrregularVerbs, "irreg"));
-    			}};
-    			
-    			ArrayList<ArrayList<CheckBoxItem>> constructionLevels = new ArrayList<ArrayList<CheckBoxItem>>() {{
-    				add(firstLevelConstructions);
-    				add(secondLevelConstructions);
-    				add(thirdLevelConstructions);
-    				add(fourthLevelConstructions);
-    			}};
-    			
-    			constructionsToConsider = getConstructionNamesFromSettings(constructionLevels);    			
-    		} else if(exerciseType.equals("Mark") || exerciseType.equals("Drag")) {
-    			ArrayList<CheckBoxItem> firstLevelConstructions = new ArrayList<CheckBoxItem>(){{
-    				add(new CheckBoxItem(chkPastSimple, "pastSimple"));
-    				add(new CheckBoxItem(chkPresentPerfect, "presentPerfect"));
-    				add(new CheckBoxItem(chkPastPerfect, "pastPerfect"));
-    			}};    			
-    			ArrayList<CheckBoxItem> secondLevelConstructions = new ArrayList<CheckBoxItem>(){{
-    				add(new CheckBoxItem(null, "question"));
-    				add(new CheckBoxItem(null, "stmt"));
-    			}};
-    			ArrayList<CheckBoxItem> thirdLevelConstructions = new ArrayList<CheckBoxItem>(){{
-    				add(new CheckBoxItem(null, "neg"));
-    				add(new CheckBoxItem(null, "affirm"));
-    			}};
-    			ArrayList<CheckBoxItem> fourthLevelConstructions = new ArrayList<CheckBoxItem>(){{
-    				add(new CheckBoxItem(chkRegularVerbs, "reg"));
-    				add(new CheckBoxItem(chkIrregularVerbs, "irreg"));
-    			}};
-    			
-    			ArrayList<ArrayList<CheckBoxItem>> constructionLevels = new ArrayList<ArrayList<CheckBoxItem>>() {{
-    				add(firstLevelConstructions);
-    				add(secondLevelConstructions);
-    				add(thirdLevelConstructions);
-    				add(fourthLevelConstructions);
-    			}};
-    			
-    			constructionsToConsider = getConstructionNamesFromSettings(constructionLevels);    			
+    		if(exerciseType.equals("FiB") || exerciseType.equals("Select")) {    			
+    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPastFibSelectConstructionLevels());    			
+    		} else if(exerciseType.equals("Mark") || exerciseType.equals("Drag")) {    			
+    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPastMarkDragConstructionLevels());    			
     		} 
     	} else if(topic.equals("'if'")) {
     		if(exerciseType.equals("FiB") || exerciseType.equals("Select") || exerciseType.equals("Drag")) {
-    			ArrayList<CheckBoxItem> firstLevelConstructions = new ArrayList<CheckBoxItem>(){{
-    				add(new CheckBoxItem(chkscopeType1, "condReal"));
-    				add(new CheckBoxItem(chkscopeType2, "condUnreal"));
-    			}};    			
-    			
-    			ArrayList<ArrayList<CheckBoxItem>> constructionLevels = new ArrayList<ArrayList<CheckBoxItem>>() {{
-    				add(firstLevelConstructions);
-    			}};
-    			
-    			constructionsToConsider = getConstructionNamesFromSettings(constructionLevels);    	
+    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getIfConstructionLevels());    	
     		} 
     	} else if(topic.equals("Compare")) {
 			if(exerciseType.equals("FiB") || exerciseType.equals("Select") || exerciseType.equals("Mark") || exerciseType.equals("Drag")) {
-				ArrayList<CheckBoxItem> firstLevelConstructions = new ArrayList<CheckBoxItem>(){{
-    				add(new CheckBoxItem(chkPosAdj, "adj"));
-    				add(new CheckBoxItem(chkPosAdv, "adv"));
-    			}};    			
-    			ArrayList<CheckBoxItem> secondLevelConstructions = new ArrayList<CheckBoxItem>(){{
-    				add(new CheckBoxItem(chkFormComparatives, "comp"));
-    				add(new CheckBoxItem(chkFormSuperlatives, "sup"));
-    			}};
-    			ArrayList<CheckBoxItem> thirdLevelConstructions = new ArrayList<CheckBoxItem>(){{
-    				add(new CheckBoxItem(chkFormSynthetic, "syn"));
-    				add(new CheckBoxItem(chkFormAnalytic, "ana"));
-    			}};
-    			
-    			ArrayList<ArrayList<CheckBoxItem>> constructionLevels = new ArrayList<ArrayList<CheckBoxItem>>() {{
-    				add(firstLevelConstructions);
-    				add(secondLevelConstructions);
-    				add(thirdLevelConstructions);
-    			}};
-    			
-    			constructionsToConsider = getConstructionNamesFromSettings(constructionLevels);  
+    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getCompareConstructionLevels());  
     		}
     	}
     	
@@ -839,13 +904,13 @@ public class TaskItem extends LocalizedComposite {
      * 			Each construction consists of a list of possible values.
      * @return	The list of construction names corresponding to relevantConstructions names
      */
-    private ArrayList<String> getConstructionNamesFromSettings(ArrayList<ArrayList<CheckBoxItem>> constructionLevels) {
+    private ArrayList<String> getConstructionNamesFromSettings(ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> constructionLevels) {
 		ArrayList<String> initialConstructionNames = new ArrayList<String>();
 
     	if(constructionLevels.size() > 0) {
-    		for(CheckBoxItem firstLevelConstruction : constructionLevels.get(0)) {
-    			if(firstLevelConstruction.getWidget().getValue()) {
-    				initialConstructionNames.add(firstLevelConstruction.getConstructionName());
+    		for(Pair<MaterialCheckBox, String> firstLevelConstruction : constructionLevels.get(0)) {
+    			if(firstLevelConstruction.getKey().getValue()) {
+    				initialConstructionNames.add(firstLevelConstruction.getValue());
     			}
     		}
     		
@@ -853,10 +918,10 @@ public class TaskItem extends LocalizedComposite {
     			for(int i = 1; i < constructionLevels.size(); i++) {
     				if(initialConstructionNames.size() > 0) {
     					ArrayList<String> currentConstructionNames = new ArrayList<String>();
-    					for(CheckBoxItem currentLevelConstruction : constructionLevels.get(i)) {
-    						if(currentLevelConstruction.getWidget() == null || currentLevelConstruction.getWidget().getValue()) {
+    					for(Pair<MaterialCheckBox, String> currentLevelConstruction : constructionLevels.get(i)) {
+    						if(currentLevelConstruction.getKey() == null || currentLevelConstruction.getKey().getValue()) {
     							for(String initialConstructionName : initialConstructionNames) {
-    			    				currentConstructionNames.add(initialConstructionName + "-" + currentLevelConstruction.getConstructionName());
+    			    				currentConstructionNames.add(initialConstructionName + "-" + currentLevelConstruction.getValue());
     							}
     						}
     					}
@@ -865,20 +930,12 @@ public class TaskItem extends LocalizedComposite {
     			}
     		}
     	}
-    		
+
     	return initialConstructionNames;
     }
     
-    /**
-     * Updates the relevant constructions and recalculates the possible exercises when a new document has been selected.
-     * @param relevantConstructions	The occurrences relevant constructions for exercises generation in the new document.
-     */
-    public void updateTask(HashMap<String, Integer> relevantConstructions) {
-    	this.relevantConstructions = relevantConstructions;
-    	setNumberExercisesText();
-    }
-    
-    /**
+
+	/**
      * Sets the text on whether and  how many exercises can be generated according to the selected topic and exercise type,
      * the individual parameter settings and the selected document.
      */
@@ -903,6 +960,295 @@ public class TaskItem extends LocalizedComposite {
         		lblNumberExercises.setTextColor(Color.BLACK);
     		}
     	}
+    }
+    
+    /**
+     * Filters those constructions that are within the selected part of the document.
+     * @param startIndex 	The start index of the selected part within the document
+     * @param endIndex		The end index of the selected part within the document
+     * @param construction	The construction under consideration
+     * @param doc			The document containing the text and constructions
+     * @return				The occurrences of the construction within the selected range
+     */
+    private ArrayList<ConstructionRange> getConstructionsWithinSelectedPart(int startIndex, int endIndex, 
+    		GrammaticalConstruction construction, RankableDocument doc) {
+    	ArrayList<ConstructionRange> containedConstructions = new ArrayList<ConstructionRange>();
+    	for(ConstructionRange range : doc.getConstructionOccurrences(construction)) {
+    		if(range.getStart() >= startIndex && range.getEnd() <= endIndex) {
+    			containedConstructions.add(range);
+    		}
+    	}
+    	
+    	return containedConstructions;
+    }
+    
+    
+    /**
+     * Calculates the occurrences of constructions in the combinations relevant to exercise generation.
+     */
+    public void calculateConstructionsOccurrences() {    
+    	// Calculate indices of the selected document part
+    	RankableDocument doc = documentPreviewPane.getCurrentlyPreviewedDocument().getDocument();
+    	
+    	Pair<Integer, Integer> selectionIndices = calculateSelectionIndices();
+    	int startIndex = selectionIndices.getKey();
+    	int endIndex = selectionIndices.getValue() + startIndex;
+		        
+        relevantConstructions = new HashMap<String, Integer>();
+        
+        //non-combined constructions
+		relevantConstructions.put("adj-comp-syn", getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.ADJECTIVE_COMPARATIVE_SHORT, doc).size());
+		relevantConstructions.put("adj-sup-syn", getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.ADJECTIVE_COMPARATIVE_SHORT, doc).size());
+		relevantConstructions.put("adj-comp-ana", getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.ADJECTIVE_COMPARATIVE_SHORT, doc).size());
+		relevantConstructions.put("adj-sup-ana", getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.ADJECTIVE_COMPARATIVE_SHORT, doc).size());
+		relevantConstructions.put("adv-comp-syn", getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.ADJECTIVE_COMPARATIVE_SHORT, doc).size());
+		relevantConstructions.put("adv-sup-syn", getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.ADJECTIVE_COMPARATIVE_SHORT, doc).size());
+		relevantConstructions.put("adv-comp-ana", getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.ADJECTIVE_COMPARATIVE_SHORT, doc).size());
+		relevantConstructions.put("adv-sup-ana", getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.ADJECTIVE_COMPARATIVE_SHORT, doc).size());
+		relevantConstructions.put("condReal", getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.ADJECTIVE_COMPARATIVE_SHORT, doc).size());
+		relevantConstructions.put("condUnreal", getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.ADJECTIVE_COMPARATIVE_SHORT, doc).size());
+        	
+        // passive combinations
+        GrammaticalConstruction[] tenseConstructions = new GrammaticalConstruction[]{
+        		GrammaticalConstruction.TENSE_PRESENT_SIMPLE,
+        		GrammaticalConstruction.TENSE_PAST_SIMPLE,
+        		GrammaticalConstruction.TENSE_FUTURE_SIMPLE,
+        		GrammaticalConstruction.TENSE_FUTURE_PERFECT,
+        		GrammaticalConstruction.TENSE_PRESENT_PROGRESSIVE,
+        		GrammaticalConstruction.TENSE_PRESENT_PERFECT_PROGRESSIVE,
+        		GrammaticalConstruction.TENSE_PAST_PROGRESSIVE,
+        		GrammaticalConstruction.TENSE_PAST_PERFECT_PROGRESSIVE,
+        		GrammaticalConstruction.TENSE_FUTURE_PROGRESSIVE,
+        		GrammaticalConstruction.TENSE_FUTURE_PERFECT_PROGRESSIVE,
+        		GrammaticalConstruction.TENSE_PRESENT_PERFECT,
+        		GrammaticalConstruction.TENSE_PAST_PERFECT,
+        };
+        
+        ArrayList<ConstructionRange> passiveOccurrences = 
+        		getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.PASSIVE_VOICE, doc);
+        for(GrammaticalConstruction tenseConstruction : tenseConstructions) {
+        	ArrayList<ConstructionRange> tenseOccurrences = 
+            		getConstructionsWithinSelectedPart(startIndex, endIndex, tenseConstruction, doc);
+        	int nPassiveOccurrences = 0;
+        	int nActiveOccurrences = 0;
+            for(ConstructionRange tenseOccurrence : tenseOccurrences) {
+            	boolean foundPassiveOverlap = false;
+            	for(ConstructionRange passiveOccurrence : passiveOccurrences) {
+            		if(passiveOccurrence.getStart() >= tenseOccurrence.getStart() && passiveOccurrence.getStart() < tenseOccurrence.getEnd() || 
+            				tenseOccurrence.getStart() >= passiveOccurrence.getStart() && tenseOccurrence.getStart() < passiveOccurrence.getEnd()) {
+            			// There is some overlap between the passive construction and the tense construction
+            			foundPassiveOverlap = true;
+            			break;
+            		}
+            	}
+            	if(foundPassiveOverlap) {
+        			nPassiveOccurrences++;
+            	} else {
+            		nActiveOccurrences++;
+            	}
+            }
+			relevantConstructions.put("passive-" + tenseConstruction.name(), nPassiveOccurrences);
+			relevantConstructions.put("active-" + tenseConstruction.name(), nActiveOccurrences);                               	
+        }
+        
+        tenseConstructions = new GrammaticalConstruction[]{
+        		GrammaticalConstruction.TENSE_PAST_SIMPLE,
+        		GrammaticalConstruction.TENSE_PRESENT_PERFECT,
+        		GrammaticalConstruction.TENSE_PAST_PERFECT
+        };
+        
+        ArrayList<ConstructionRange> negationOccurrences = 
+        		getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.NEGATION_NOT, doc);
+        negationOccurrences.addAll(getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.NEGATION_NT, doc));
+        ArrayList<ConstructionRange> questionOccurrences = 
+        		getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.QUESTIONS_DIRECT, doc);
+        ArrayList<ConstructionRange> irregularOccurrences = 
+        		getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.VERBS_IRREGULAR, doc);
+
+        // past tense combinations
+        for(GrammaticalConstruction tenseConstruction : tenseConstructions) {
+        	ArrayList<ConstructionRange> tenseOccurrences = 
+            		getConstructionsWithinSelectedPart(startIndex, endIndex, tenseConstruction, doc);
+        	int nQuestionAffirmativeRegular = 0;
+        	int nQuestionAffirmativeIrregular = 0;
+        	int nQuestionNegativeRegular = 0;
+        	int nQuestionNegativeIrregular = 0;
+        	int nStatementAffirmativeRegular = 0;
+        	int nStatementAffirmativeIrregular = 0;
+        	int nStatementNegativeRegular = 0;
+        	int nStatementNegativeIrregular = 0;
+        	
+            for(ConstructionRange tenseOccurrence : tenseOccurrences) {
+            	boolean foundNegationOverlap = false;
+            	for(ConstructionRange negationOccurrence : negationOccurrences) {
+            		if(negationOccurrence.getEnd() >= tenseOccurrence.getStart() - 1 && negationOccurrence.getStart() <= tenseOccurrence.getEnd() + 1) {
+            			// The negation is at most the previous or succeeding token (only a single character in-between for a whitespace)
+            			foundNegationOverlap = true;
+            			break;
+            		}
+            	}
+            	
+            	boolean foundQuestionOverlap = false;
+            	for(ConstructionRange questionOccurrence : questionOccurrences) {
+            		if(tenseOccurrence.getStart() >= questionOccurrence.getStart() && tenseOccurrence.getEnd() <= questionOccurrence.getEnd()) {
+            			// The verb is within a question
+            			foundQuestionOverlap = true;
+            			break;
+            		}
+            	}
+            	
+            	boolean foundIrregularOverlap = false;
+            	for(ConstructionRange irregularOccurrence : irregularOccurrences) {
+            		if(irregularOccurrence.getStart() >= tenseOccurrence.getStart() && irregularOccurrence.getEnd() <= tenseOccurrence.getEnd()) {
+            			// The irregular verb is part of the verb (irregular forms consist of a single token)
+            			foundIrregularOverlap = true;
+            			break;
+            		}
+            	}
+            	
+            	if(foundNegationOverlap) {
+            		if(foundQuestionOverlap) {
+            			if(foundIrregularOverlap) {
+            				nQuestionNegativeIrregular++;
+            			} else {
+            				nQuestionNegativeRegular++;
+            			}
+            		} else {
+            			if(foundIrregularOverlap) {
+            				nStatementNegativeIrregular++;
+            			} else {
+            				nStatementNegativeRegular++;
+            			}
+            		}
+            	} else {
+            		if(foundQuestionOverlap) {
+            			if(foundIrregularOverlap) {
+            				nQuestionAffirmativeIrregular++;
+            			} else {
+            				nQuestionAffirmativeRegular++;
+            			}
+            		} else {
+            			if(foundIrregularOverlap) {
+            				nStatementAffirmativeIrregular++;
+            			} else {
+            				nStatementAffirmativeRegular++;
+            			}
+            		}
+            	}
+            	           	
+            }
+            
+			relevantConstructions.put(tenseConstruction.name() + "-question-neg-irreg", nQuestionNegativeIrregular);
+			relevantConstructions.put(tenseConstruction.name() + "-question-neg-reg", nQuestionNegativeRegular);
+			relevantConstructions.put(tenseConstruction.name() + "-stmt-neg-irreg", nStatementNegativeIrregular);
+			relevantConstructions.put(tenseConstruction.name() + "-stmt-neg-reg", nStatementNegativeRegular);
+			relevantConstructions.put(tenseConstruction.name() + "-question-affirm-irreg", nQuestionAffirmativeIrregular);
+			relevantConstructions.put(tenseConstruction.name() + "-question-affirm-reg", nQuestionAffirmativeRegular);
+			relevantConstructions.put(tenseConstruction.name() + "-stmt-affirm-irreg", nStatementAffirmativeIrregular);
+			relevantConstructions.put(tenseConstruction.name() + "-stmt-affirm-reg", nStatementAffirmativeRegular);
+        }
+        
+        // present tense combinations
+        ArrayList<ConstructionRange> presentOccurrences = 
+        		getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.TENSE_PRESENT_SIMPLE, doc);
+        int nQuestionAffirmative3 = 0;
+    	int nQuestionAffirmativeNot3 = 0;
+    	int nQuestionNegative3 = 0;
+    	int nQuestionNegativeNot3 = 0;
+    	int nStatementAffirmative3 = 0;
+    	int nStatementAffirmativeNot3 = 0;
+    	int nStatementNegative3 = 0;
+    	int nStatementNegativeNot3 = 0;
+        for(ConstructionRange tenseOccurrence : presentOccurrences) {
+        	boolean foundNegationOverlap = false;
+        	for(ConstructionRange negationOccurrence : negationOccurrences) {
+        		if(negationOccurrence.getEnd() >= tenseOccurrence.getStart() - 1 && negationOccurrence.getStart() <= tenseOccurrence.getEnd() + 1) {
+        			// The negation is at most the previous or succeeding token (only a single character in-between for a whitespace)
+        			foundNegationOverlap = true;
+        			break;
+        		}
+        	}
+        	
+        	boolean foundQuestionOverlap = false;
+        	for(ConstructionRange questionOccurrence : questionOccurrences) {
+        		if(tenseOccurrence.getStart() >= questionOccurrence.getStart() && tenseOccurrence.getEnd() <= questionOccurrence.getEnd()) {
+        			// The verb is within a question
+        			foundQuestionOverlap = true;
+        			break;
+        		}
+        	}
+        	
+        	boolean isThirdPersonSingular = tenseOccurrence.toString().endsWith("s") || tenseOccurrence.equals("doesn't") || 
+        			tenseOccurrence.equals("hasn't") || tenseOccurrence.equals("isn't");
+
+        	if(foundNegationOverlap) {
+        		if(foundQuestionOverlap) {
+        			if(isThirdPersonSingular) {
+        				nQuestionNegative3++;
+        			} else {
+        				nQuestionNegativeNot3++;
+        			}
+        		} else {
+        			if(isThirdPersonSingular) {
+        				nStatementNegative3++;
+        			} else {
+        				nStatementNegativeNot3++;
+        			}
+        		}
+        	} else {
+        		if(foundQuestionOverlap) {
+        			if(isThirdPersonSingular) {
+        				nQuestionAffirmative3++;
+        			} else {
+        				nQuestionAffirmativeNot3++;
+        			}
+        		} else {
+        			if(isThirdPersonSingular) {
+        				nStatementAffirmative3++;
+        				nStatementAffirmativeNot3++;
+        			}
+        		}
+        	}
+        }
+        
+        relevantConstructions.put("present-question-neg-3", nQuestionNegative3);
+		relevantConstructions.put("present-question-neg-not3", nQuestionNegativeNot3);
+		relevantConstructions.put("present-stmt-neg-3", nStatementNegative3);
+		relevantConstructions.put("present-stmt-neg-not3", nStatementNegativeNot3);
+		relevantConstructions.put("present-question-affirm-3", nQuestionAffirmative3);
+		relevantConstructions.put("present-question-affirm-not3", nQuestionAffirmativeNot3);
+		relevantConstructions.put("present-stmt-affirm-3", nStatementAffirmative3);
+		relevantConstructions.put("present-stmt-affirm-not3", nStatementAffirmativeNot3);                              	
+
+		// relative pronouns
+		ArrayList<ConstructionRange> relativeOccurrences = 
+        		getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.CLAUSE_RELATIVE, doc);
+    	int nWhoOccurrences = 0;
+    	int nWhichOccurrences = 0;
+    	int nThatOccurrences = 0;
+    	int nOtherOccurrences = 0;
+        for(ConstructionRange relativeOccurrence : relativeOccurrences) {
+        	// We will only get an approximation like this, but without further NLP analysis, we cannot get a better estimate.
+        	// By first looking for 'who' and 'which' we might filter out most occurrences of 'that' as conjunction or demonstrative pronoun
+        	if(relativeOccurrence.toString().contains(" who ")) {
+        		nWhoOccurrences++;
+        	} else if(relativeOccurrence.toString().contains(" which ")) {
+        		nWhichOccurrences++;
+        	} else if(relativeOccurrence.toString().contains(" that ")) {
+        		nThatOccurrences++;
+        	} else {
+        		nOtherOccurrences++;
+        	}
+        	
+        }
+		relevantConstructions.put("who", nWhoOccurrences);
+		relevantConstructions.put("which", nWhichOccurrences);
+		relevantConstructions.put("that", nThatOccurrences);
+		relevantConstructions.put("otherRelPron", nOtherOccurrences);
+		
+		setNumberExercisesText();
+		lblDocumentForSelection.setText(doc.getText());
+		lblDocumentForSelection.setSelectionRange(startIndex, endIndex - startIndex);
     }
     
 }

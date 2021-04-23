@@ -30,7 +30,7 @@
 			<m:MaterialRow margin="0" padding="0">
 				<m:MaterialColumn grid='s6 m6 l6' margin="0"
 					padding="0">
-					<m:MaterialLink text="Task n"
+					<m:MaterialLink ui:field="lblName"
 						iconType="ARROW_DROP_DOWN" iconPosition="LEFT" textColor="BLACK"
 						margin="0" />
 				</m:MaterialColumn>
@@ -106,10 +106,6 @@
 					<m:MaterialDropDown ui:field="drpQuiz"
 						activator="dp-3" constrainWidth="true" belowOrigin="true"
 						margin="0" padding="0">
-						<m:MaterialLabel text="---" textColor="BLACK"
-							ui:field="lblQuizNone" fontSize="10pt" />
-						<m:MaterialLabel text="1" textColor="BLACK"
-							ui:field="lblQuiz1" fontSize="10pt" />
 					</m:MaterialDropDown>
 				</m:MaterialColumn>
 			</m:MaterialRow>
@@ -413,6 +409,22 @@
 
 			</m:MaterialRow>
 
+			<!-- Document part selection popup -->
+			<m:MaterialDialog ui:field="dlgDocumentSelection"
+				type="DEFAULT" dismissible="true">
+				<m:MaterialDialogContent>
+					<m:MaterialTitle title="Document part selection"
+						description="Mark the document part that you want to use." />
+					<g:TextArea ui:field="lblDocumentForSelection" height="200px"/>
+				</m:MaterialDialogContent>
+				<m:MaterialDialogFooter>
+					<m:MaterialButton
+						ui:field="btnApplyDocumentSelection" text="Apply selection"
+						type="FLAT" />
+					<m:MaterialButton
+						ui:field="btnDiscardDocumentSelection" text="Cancel" type="FLAT" />
+				</m:MaterialDialogFooter>
+			</m:MaterialDialog>
 		</m:MaterialCollapsibleBody>
 	</m:MaterialCollapsibleItem>
 

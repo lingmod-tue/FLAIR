@@ -1,7 +1,9 @@
 package com.flair.client.presentation.widgets;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 import com.flair.client.localization.LocalizedComposite;
 import com.flair.client.localization.LocalizedFieldType;
@@ -11,12 +13,17 @@ import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.interop.dtos.RankableDocument;
 import com.flair.shared.interop.dtos.RankableDocument.ConstructionRange;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.FontWeight;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
 
+import gwt.material.design.client.constants.Color;
 import gwt.material.design.client.ui.MaterialButton;
 import gwt.material.design.client.ui.MaterialCollapsible;
+import gwt.material.design.client.ui.MaterialLabel;
 import gwt.material.design.client.ui.MaterialToast;
 
 public class ExerciseGenerationWidget extends LocalizedComposite {
@@ -46,10 +53,7 @@ public class ExerciseGenerationWidget extends LocalizedComposite {
     @LocalizedField(type = LocalizedFieldType.TEXT_BUTTON)
     MaterialButton btnGenerateExercises;
     
-    
-    
-    private static final String DOC_TEXT_PREVIEW_ID = "docTextPreview";
-
+        
     static DocumentPreviewPane documentPreviewPane = DocumentPreviewPane.getInstance();
 
     public ExerciseGenerationWidget() {
@@ -62,272 +66,118 @@ public class ExerciseGenerationWidget extends LocalizedComposite {
      * Initializes all handlers.
      */
     private void initHandlers() {
-        addTask();
+    	btnAddTask.addClickHandler(event -> {
+            addTask();
+    	});
+    	btnDeleteTasks.addClickHandler(event -> {
+            deleteAllTasks();
+    	});
     }
     
-    private void addTask() {
-        wdgtTasks.add(new TaskItem());
-    }
-    
-    private HashMap<String, Integer> relevantConstructions = null;
-
     /**
-     * Calculates the occurrences of constructions in the combinations relevant to exercise generation.
+     * Deletes all task widgets and removes them from the view.
+     */
+    private void deleteAllTasks() {
+    	List<Widget> existingTasks = wdgtTasks.getChildrenList();
+    	for(Widget existingTask : existingTasks) {
+    		wdgtTasks.remove(existingTask);
+    	}
+    }
+    
+    /**
+     * Creates a new task widget and adds it to the displayed tasks.
+     */
+    private void addTask() {
+    	String name = "Task 1";
+    	List<Widget> existingTasks = wdgtTasks.getChildrenList();
+    	if(existingTasks.size() > 0) {
+    		int lastNumber = Integer.parseInt(((TaskItem)existingTasks.get(existingTasks.size() - 1)).lblName.getText().split(" ")[1]);
+    		name = "Task " + (lastNumber + 1);
+    	}
+    	TaskItem newTask = new TaskItem();
+    	newTask.lblName.setText(name);
+        wdgtTasks.add(newTask);
+        updateSelectableQuizzes();
+        newTask.calculateConstructionsOccurrences();
+    }
+    
+    /**
+     * Updates the construction counts when the selected document has been changed.
      */
     public void initConstructionsOccurrences() {
-        RankableDocument doc = documentPreviewPane.getCurrentlyPreviewedDocument().getDocument();
-        
-        relevantConstructions = new HashMap<String, Integer>();
-        
-        //non-combined constructions
-		relevantConstructions.put("adj-comp-syn", doc.getConstructionOccurrences(GrammaticalConstruction.ADJECTIVE_COMPARATIVE_SHORT).size());
-		relevantConstructions.put("adj-sup-syn", doc.getConstructionOccurrences(GrammaticalConstruction.ADJECTIVE_SUPERLATIVE_SHORT).size());
-		relevantConstructions.put("adj-comp-ana", doc.getConstructionOccurrences(GrammaticalConstruction.ADJECTIVE_COMPARATIVE_LONG).size());
-		relevantConstructions.put("adj-sup-ana", doc.getConstructionOccurrences(GrammaticalConstruction.ADJECTIVE_SUPERLATIVE_LONG).size());
-		relevantConstructions.put("adv-comp-syn", doc.getConstructionOccurrences(GrammaticalConstruction.ADVERB_COMPARATIVE_SHORT).size());
-		relevantConstructions.put("adv-sup-syn", doc.getConstructionOccurrences(GrammaticalConstruction.ADVERB_SUPERLATIVE_SHORT).size());
-		relevantConstructions.put("adv-comp-ana", doc.getConstructionOccurrences(GrammaticalConstruction.ADVERB_COMPARATIVE_LONG).size());
-		relevantConstructions.put("adv-sup-ana", doc.getConstructionOccurrences(GrammaticalConstruction.ADVERB_SUPERLATIVE_LONG).size());
-		relevantConstructions.put("condReal", doc.getConstructionOccurrences(GrammaticalConstruction.CONDITIONALS_REAL).size());
-		relevantConstructions.put("condUnreal", doc.getConstructionOccurrences(GrammaticalConstruction.CONDITIONALS_UNREAL).size());
-        	
-        // passive combinations
-        GrammaticalConstruction[] tenseConstructions = new GrammaticalConstruction[]{
-        		GrammaticalConstruction.TENSE_PRESENT_SIMPLE,
-        		GrammaticalConstruction.TENSE_PAST_SIMPLE,
-        		GrammaticalConstruction.TENSE_FUTURE_SIMPLE,
-        		GrammaticalConstruction.TENSE_FUTURE_PERFECT,
-        		GrammaticalConstruction.TENSE_PRESENT_PROGRESSIVE,
-        		GrammaticalConstruction.TENSE_PRESENT_PERFECT_PROGRESSIVE,
-        		GrammaticalConstruction.TENSE_PAST_PROGRESSIVE,
-        		GrammaticalConstruction.TENSE_PAST_PERFECT_PROGRESSIVE,
-        		GrammaticalConstruction.TENSE_FUTURE_PROGRESSIVE,
-        		GrammaticalConstruction.TENSE_FUTURE_PERFECT_PROGRESSIVE,
-        		GrammaticalConstruction.TENSE_PRESENT_PERFECT,
-        		GrammaticalConstruction.TENSE_PAST_PERFECT,
-        };
-        
-    	ArrayList<? extends ConstructionRange> passiveOccurrences = doc.getConstructionOccurrences(GrammaticalConstruction.PASSIVE_VOICE);
-        for(GrammaticalConstruction tenseConstruction : tenseConstructions) {
-        	ArrayList<? extends ConstructionRange> tenseOccurrences = doc.getConstructionOccurrences(tenseConstruction);
-        	int nPassiveOccurrences = 0;
-        	int nActiveOccurrences = 0;
-            for(ConstructionRange tenseOccurrence : tenseOccurrences) {
-            	boolean foundPassiveOverlap = false;
-            	for(ConstructionRange passiveOccurrence : passiveOccurrences) {
-            		if(passiveOccurrence.getStart() >= tenseOccurrence.getStart() && passiveOccurrence.getStart() < tenseOccurrence.getEnd() || 
-            				tenseOccurrence.getStart() >= passiveOccurrence.getStart() && tenseOccurrence.getStart() < passiveOccurrence.getEnd()) {
-            			// There is some overlap between the passive construction and the tense construction
-            			foundPassiveOverlap = true;
-            			break;
-            		}
-            	}
-            	if(foundPassiveOverlap) {
-        			nPassiveOccurrences++;
-            	} else {
-            		nActiveOccurrences++;
-            	}
-            }
-			relevantConstructions.put("passive-" + tenseConstruction.name(), nPassiveOccurrences);
-			relevantConstructions.put("active-" + tenseConstruction.name(), nActiveOccurrences);                               	
-        }
-        
-        tenseConstructions = new GrammaticalConstruction[]{
-        		GrammaticalConstruction.TENSE_PAST_SIMPLE,
-        		GrammaticalConstruction.TENSE_PRESENT_PERFECT,
-        		GrammaticalConstruction.TENSE_PAST_PERFECT
-        };
-        
-        ArrayList<ConstructionRange> negationOccurrences = new ArrayList<ConstructionRange>();
-        negationOccurrences.addAll(doc.getConstructionOccurrences(GrammaticalConstruction.NEGATION_NOT));
-        negationOccurrences.addAll(doc.getConstructionOccurrences(GrammaticalConstruction.NEGATION_NT));
-        ArrayList<? extends ConstructionRange> questionOccurrences = doc.getConstructionOccurrences(GrammaticalConstruction.QUESTIONS_DIRECT);
-        ArrayList<? extends ConstructionRange> irregularOccurrences = doc.getConstructionOccurrences(GrammaticalConstruction.VERBS_IRREGULAR);
-
-        // past tense combinations
-        for(GrammaticalConstruction tenseConstruction : tenseConstructions) {
-        	ArrayList<? extends ConstructionRange> tenseOccurrences = doc.getConstructionOccurrences(tenseConstruction);
-        	int nQuestionAffirmativeRegular = 0;
-        	int nQuestionAffirmativeIrregular = 0;
-        	int nQuestionNegativeRegular = 0;
-        	int nQuestionNegativeIrregular = 0;
-        	int nStatementAffirmativeRegular = 0;
-        	int nStatementAffirmativeIrregular = 0;
-        	int nStatementNegativeRegular = 0;
-        	int nStatementNegativeIrregular = 0;
-        	
-            for(ConstructionRange tenseOccurrence : tenseOccurrences) {
-            	boolean foundNegationOverlap = false;
-            	for(ConstructionRange negationOccurrence : negationOccurrences) {
-            		if(negationOccurrence.getEnd() >= tenseOccurrence.getStart() - 1 && negationOccurrence.getStart() <= tenseOccurrence.getEnd() + 1) {
-            			// The negation is at most the previous or succeeding token (only a single character in-between for a whitespace)
-            			foundNegationOverlap = true;
-            			break;
-            		}
-            	}
-            	
-            	boolean foundQuestionOverlap = false;
-            	for(ConstructionRange questionOccurrence : questionOccurrences) {
-            		if(tenseOccurrence.getStart() >= questionOccurrence.getStart() && tenseOccurrence.getEnd() <= questionOccurrence.getEnd()) {
-            			// The verb is within a question
-            			foundQuestionOverlap = true;
-            			break;
-            		}
-            	}
-            	
-            	boolean foundIrregularOverlap = false;
-            	for(ConstructionRange irregularOccurrence : irregularOccurrences) {
-            		if(irregularOccurrence.getStart() >= tenseOccurrence.getStart() && irregularOccurrence.getEnd() <= tenseOccurrence.getEnd()) {
-            			// The irregular verb is part of the verb (irregular forms consist of a single token)
-            			foundIrregularOverlap = true;
-            			break;
-            		}
-            	}
-            	
-            	if(foundNegationOverlap) {
-            		if(foundQuestionOverlap) {
-            			if(foundIrregularOverlap) {
-            				nQuestionNegativeIrregular++;
-            			} else {
-            				nQuestionNegativeRegular++;
-            			}
-            		} else {
-            			if(foundIrregularOverlap) {
-            				nStatementNegativeIrregular++;
-            			} else {
-            				nStatementNegativeRegular++;
-            			}
-            		}
-            	} else {
-            		if(foundQuestionOverlap) {
-            			if(foundIrregularOverlap) {
-            				nQuestionAffirmativeIrregular++;
-            			} else {
-            				nQuestionAffirmativeRegular++;
-            			}
-            		} else {
-            			if(foundIrregularOverlap) {
-            				nStatementAffirmativeIrregular++;
-            			} else {
-            				nStatementAffirmativeRegular++;
-            			}
-            		}
-            	}
-            	           	
-            }
-            
-			relevantConstructions.put(tenseConstruction.name() + "-question-neg-irreg", nQuestionNegativeIrregular);
-			relevantConstructions.put(tenseConstruction.name() + "-question-neg-reg", nQuestionNegativeRegular);
-			relevantConstructions.put(tenseConstruction.name() + "-stmt-neg-irreg", nStatementNegativeIrregular);
-			relevantConstructions.put(tenseConstruction.name() + "-stmt-neg-reg", nStatementNegativeRegular);
-			relevantConstructions.put(tenseConstruction.name() + "-question-affirm-irreg", nQuestionAffirmativeIrregular);
-			relevantConstructions.put(tenseConstruction.name() + "-question-affirm-reg", nQuestionAffirmativeRegular);
-			relevantConstructions.put(tenseConstruction.name() + "-stmt-affirm-irreg", nStatementAffirmativeIrregular);
-			relevantConstructions.put(tenseConstruction.name() + "-stmt-affirm-reg", nStatementAffirmativeRegular);
-        }
-        
-        // present tense combinations
-        ArrayList<? extends ConstructionRange> presentOccurrences = doc.getConstructionOccurrences(GrammaticalConstruction.TENSE_PRESENT_SIMPLE);
-        int nQuestionAffirmative3 = 0;
-    	int nQuestionAffirmativeNot3 = 0;
-    	int nQuestionNegative3 = 0;
-    	int nQuestionNegativeNot3 = 0;
-    	int nStatementAffirmative3 = 0;
-    	int nStatementAffirmativeNot3 = 0;
-    	int nStatementNegative3 = 0;
-    	int nStatementNegativeNot3 = 0;
-        for(ConstructionRange tenseOccurrence : presentOccurrences) {
-        	boolean foundNegationOverlap = false;
-        	for(ConstructionRange negationOccurrence : negationOccurrences) {
-        		if(negationOccurrence.getEnd() >= tenseOccurrence.getStart() - 1 && negationOccurrence.getStart() <= tenseOccurrence.getEnd() + 1) {
-        			// The negation is at most the previous or succeeding token (only a single character in-between for a whitespace)
-        			foundNegationOverlap = true;
-        			break;
-        		}
-        	}
-        	
-        	boolean foundQuestionOverlap = false;
-        	for(ConstructionRange questionOccurrence : questionOccurrences) {
-        		if(tenseOccurrence.getStart() >= questionOccurrence.getStart() && tenseOccurrence.getEnd() <= questionOccurrence.getEnd()) {
-        			// The verb is within a question
-        			foundQuestionOverlap = true;
-        			break;
-        		}
-        	}
-        	
-        	boolean isThirdPersonSingular = tenseOccurrence.toString().endsWith("s") || tenseOccurrence.equals("doesn't") || 
-        			tenseOccurrence.equals("hasn't") || tenseOccurrence.equals("isn't");
-
-        	if(foundNegationOverlap) {
-        		if(foundQuestionOverlap) {
-        			if(isThirdPersonSingular) {
-        				nQuestionNegative3++;
-        			} else {
-        				nQuestionNegativeNot3++;
-        			}
-        		} else {
-        			if(isThirdPersonSingular) {
-        				nStatementNegative3++;
-        			} else {
-        				nStatementNegativeNot3++;
-        			}
-        		}
-        	} else {
-        		if(foundQuestionOverlap) {
-        			if(isThirdPersonSingular) {
-        				nQuestionAffirmative3++;
-        			} else {
-        				nQuestionAffirmativeNot3++;
-        			}
-        		} else {
-        			if(isThirdPersonSingular) {
-        				nStatementAffirmative3++;
-        				nStatementAffirmativeNot3++;
-        			}
-        		}
-        	}
-        }
-        
-        relevantConstructions.put("present-question-neg-3", nQuestionNegative3);
-		relevantConstructions.put("present-question-neg-not3", nQuestionNegativeNot3);
-		relevantConstructions.put("present-stmt-neg-3", nStatementNegative3);
-		relevantConstructions.put("present-stmt-neg-not3", nStatementNegativeNot3);
-		relevantConstructions.put("present-question-affirm-3", nQuestionAffirmative3);
-		relevantConstructions.put("present-question-affirm-not3", nQuestionAffirmativeNot3);
-		relevantConstructions.put("present-stmt-affirm-3", nStatementAffirmative3);
-		relevantConstructions.put("present-stmt-affirm-not3", nStatementAffirmativeNot3);                              	
-
-		// relative pronouns
-		ArrayList<? extends ConstructionRange> relativeOccurrences = doc.getConstructionOccurrences(GrammaticalConstruction.CLAUSE_RELATIVE);
-    	int nWhoOccurrences = 0;
-    	int nWhichOccurrences = 0;
-    	int nThatOccurrences = 0;
-    	int nOtherOccurrences = 0;
-        for(ConstructionRange relativeOccurrence : relativeOccurrences) {
-        	// We will only get an approximation like this, but without further NLP analysis, we cannot get a better estimate.
-        	// By first looking for 'who' and 'which' we might filter out most occurrences of 'that' as conjunction or demonstrative pronoun
-        	if(relativeOccurrence.toString().contains(" who ")) {
-        		nWhoOccurrences++;
-        	} else if(relativeOccurrence.toString().contains(" which ")) {
-        		nWhichOccurrences++;
-        	} else if(relativeOccurrence.toString().contains(" that ")) {
-        		nThatOccurrences++;
-        	} else {
-        		nOtherOccurrences++;
-        	}
-        	
-        }
-		relevantConstructions.put("who", nWhoOccurrences);
-		relevantConstructions.put("which", nWhichOccurrences);
-		relevantConstructions.put("that", nThatOccurrences);
-		relevantConstructions.put("otherRelPron", nOtherOccurrences);
-		
 		for(Widget task : wdgtTasks.getChildren()) {
 			if(task instanceof TaskItem) {
-				((TaskItem)task).updateTask(relevantConstructions);
+				((TaskItem)task).calculateConstructionsOccurrences();
 			}
 		}
     }
 
+    /**
+     * Re-sets the options in the quiz dropdown whenever the selection in one of the tasks has been changed, 
+     * thus possibly changing the available quizzes
+     */
+    private void updateSelectableQuizzes() {
+    	List<Widget> existingTasks = wdgtTasks.getChildrenList();
+    	ArrayList<Integer> selectedQuizzes = new ArrayList<Integer>();
+    	for(Widget existingTask : existingTasks) {
+    		String selectedQuiz = ((TaskItem)existingTask).btnQuizDropdown.getText();
+    		if(!selectedQuiz.equals("Quiz")) {
+    			int selectedNumber = Integer.parseInt(selectedQuiz.split(" ")[1]);
+    			if(!selectedQuizzes.contains(selectedNumber)) {
+    				selectedQuizzes.add(selectedNumber);
+    			}
+    		}
+    	}
+    	
+    	if(selectedQuizzes.size() > 0) {
+    		Collections.sort(selectedQuizzes);
+    		selectedQuizzes.add(selectedQuizzes.get(selectedQuizzes.size() - 1) + 1);
+    	} else {
+    		selectedQuizzes.add(1);
+    	}
+    	
+    	for(Widget existingTask : existingTasks) {
+    		// Remove all previous selections
+    		List<Widget> oldSelections = ((TaskItem)existingTask).drpQuiz.getChildrenList();
+    		for(Widget oldSelection : oldSelections) {
+    			((TaskItem)existingTask).drpQuiz.remove(oldSelection);
+    		}
+    		
+    		// Add the no quiz selection item
+			MaterialLabel newSelection = new MaterialLabel();
+			newSelection.setText("---");
+			newSelection.setTextColor(Color.BLACK);
+			newSelection.setFontSize("10pt");
+			newSelection.addMouseDownHandler(new MouseDownHandler() 
+	    	{
+				@Override
+				public void onMouseDown(MouseDownEvent event) {
+					((TaskItem)existingTask).btnQuizDropdown.setText("Quiz");
+					((TaskItem)existingTask).btnQuizDropdown.setFontWeight(FontWeight.BOLD);
+					updateSelectableQuizzes();
+				}
+	    	});			
+			((TaskItem)existingTask).drpQuiz.add(newSelection);
+    		
+    		// Add the newly determined selections
+    		for(int selectedQuiz : selectedQuizzes) {
+    			newSelection = new MaterialLabel();
+    			newSelection.setText("Quiz " + selectedQuiz);
+    			newSelection.setTextColor(Color.BLACK);
+    			newSelection.setFontSize("10pt");
+    			newSelection.addMouseDownHandler(new MouseDownHandler() 
+    	    	{
+    				@Override
+    				public void onMouseDown(MouseDownEvent event) {
+    					((TaskItem)existingTask).btnQuizDropdown.setText("Quiz " + selectedQuiz);
+    					((TaskItem)existingTask).btnQuizDropdown.setFontWeight(FontWeight.NORMAL);
+    					updateSelectableQuizzes();
+    				}
+    	    	});
+    			
+    			((TaskItem)existingTask).drpQuiz.add(newSelection);
+    		}
+    	}
+    }
 
 }
