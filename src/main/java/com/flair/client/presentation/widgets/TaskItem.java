@@ -506,6 +506,10 @@ public class TaskItem extends LocalizedComposite {
     private int currentSelectionStartIndex = 0;
     private int currentSelectionLength = 0;
 
+    /**
+     * Calculates the start index and length of the selected document part within the previewed document.
+     * @return	The start index and length of the current selection
+     */
     private Pair<Integer, Integer> calculateSelectionIndices() {
     	RankableDocument doc = documentPreviewPane.getCurrentlyPreviewedDocument().getDocument();
     	String selectedPart = lblDocumentForSelection.getSelectedText();
@@ -535,7 +539,6 @@ public class TaskItem extends LocalizedComposite {
         	calculateConstructionsOccurrences();
         });
         btnDiscardDocumentSelection.addClickHandler(event -> {
-        	//TODO: save previous selection on open and reset here
         	dlgDocumentSelection.close();
     		lblDocumentForSelection.setSelectionRange(currentSelectionStartIndex, currentSelectionLength);
         });
@@ -737,6 +740,9 @@ public class TaskItem extends LocalizedComposite {
     			visibleSettings.add(grpPronouns);
     		} else if(exerciseType.equals("Drag")) {
     			visibleSettings.add(grpScope);
+    			if(rbtPerSentence.getValue()) {
+    				visibleSettings.add(grpPronouns);
+    			}
     		}
     	} else if(topic.equals("Present")) {
     		if(exerciseType.equals("FiB")) {
@@ -860,12 +866,10 @@ public class TaskItem extends LocalizedComposite {
     			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPassiveDragConstructionLevels());    	
     		}
     	} else if(topic.equals("Relatives")) {
-    		if(exerciseType.equals("FiB") || exerciseType.equals("Mark")) {
+    		if(exerciseType.equals("FiB") || exerciseType.equals("Mark") || exerciseType.equals("Drag") && rbtPerSentence.getValue()) {
     			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getRelativesFibMarkConstructionLevels());  
-    		} else if(exerciseType.equals("Drag")) {
-    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getRelativesDragConstructionLevels());  
-    			
-    			//TODO maybe also offer choosing the pronoun for exercise per sentence
+    		} else if(exerciseType.equals("Drag") && !rbtPerSentence.getValue()) {
+    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getRelativesDragConstructionLevels());      			
     		}
     	} else if(topic.equals("Present")) {
     		if(exerciseType.equals("FiB") || exerciseType.equals("Select")) {       			
