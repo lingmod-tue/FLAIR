@@ -13,14 +13,23 @@ import com.flair.shared.interop.dtos.RankableDocument;
 import com.flair.shared.interop.dtos.RankableDocument.ConstructionRange;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.FontWeight;
+import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.logical.shared.OpenEvent;
+import com.google.gwt.event.logical.shared.OpenHandler;
+import com.google.gwt.event.logical.shared.SelectionEvent;
+import com.google.gwt.event.logical.shared.SelectionHandler;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
 
+import gwt.material.design.addins.client.combobox.MaterialComboBox;
+import gwt.material.design.addins.client.combobox.events.SelectItemEvent;
+import gwt.material.design.addins.client.combobox.events.SelectItemEvent.SelectComboHandler;
 import gwt.material.design.client.constants.Color;
 import gwt.material.design.client.ui.MaterialButton;
 import gwt.material.design.client.ui.MaterialCheckBox;
@@ -31,6 +40,7 @@ import gwt.material.design.client.ui.MaterialLink;
 import gwt.material.design.client.ui.MaterialRadioButton;
 import gwt.material.design.client.ui.MaterialRow;
 import gwt.material.design.client.ui.MaterialToast;
+import gwt.material.design.client.ui.html.Option;
 
 public class TaskItem extends LocalizedComposite {
 	
@@ -147,9 +157,9 @@ public class TaskItem extends LocalizedComposite {
 						
 			pastFibSelectConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>() {{
 				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
-					add(new Pair<MaterialCheckBox, String>(chkPastSimple, "pastSimple"));
-					add(new Pair<MaterialCheckBox, String>(chkPresentPerfect, "presentPerfect"));
-					add(new Pair<MaterialCheckBox, String>(chkPastPerfect, "pastPerfect"));
+					add(new Pair<MaterialCheckBox, String>(chkPastSimple, "TENSE_PAST_SIMPLE"));
+					add(new Pair<MaterialCheckBox, String>(chkPresentPerfect, "TENSE_PRESENT_PERFECT"));
+					add(new Pair<MaterialCheckBox, String>(chkPastPerfect, "TENSE_PAST_PERFECT"));
 				}});
 				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
 					add(new Pair<MaterialCheckBox, String>(chkQuestions, "question"));
@@ -275,17 +285,15 @@ public class TaskItem extends LocalizedComposite {
     static DocumentPreviewPane documentPreviewPane = DocumentPreviewPane.getInstance();
     
     @UiField
-    MaterialDropDown drpTopic;
+    MaterialComboBox<Option> drpTopic;
     @UiField
-    MaterialDropDown drpType;
+    MaterialComboBox<Option> drpType;
     @UiField
-    MaterialDropDown drpQuiz;
+    MaterialComboBox<Option> drpQuiz;
     @UiField
-    MaterialButton btnTopicDropdown;
+    Option optTopicDefault;
     @UiField
-    MaterialButton btnQuizDropdown;
-    @UiField
-    MaterialButton btnTypeDropdown;
+    Option optTypeDefault;
     @UiField
     @LocalizedField(type = LocalizedFieldType.TEXT_BUTTON)
     MaterialButton btnDelete;
@@ -296,26 +304,6 @@ public class TaskItem extends LocalizedComposite {
     MaterialButton btnApplyDocumentSelection;
     @UiField
     MaterialButton btnDiscardDocumentSelection;
-    @UiField
-    MaterialLabel lblTopicPres;
-    @UiField
-    MaterialLabel lblTopicPass;
-    @UiField
-    MaterialLabel lblTopicComp;
-    @UiField
-    MaterialLabel lblTopicRel;
-    @UiField
-    MaterialLabel lblTopicCond;
-    @UiField
-    MaterialLabel lblTopicPast;
-    @UiField
-    MaterialLabel lblTypeFib;
-    @UiField
-    MaterialLabel lblTypeSelect;
-    @UiField
-    MaterialLabel lblTypeMark;
-    @UiField
-    MaterialLabel lblTypeDrag;
     @UiField
     MaterialLabel lblSettings;
     @UiField
@@ -554,111 +542,35 @@ public class TaskItem extends LocalizedComposite {
     		    		
     		dlgDocumentSelection.open();
     	});
-    	
-    	lblTopicPres.addMouseDownHandler(new MouseDownHandler() 
+    	    
+    	drpTopic.addSelectionHandler(new SelectComboHandler<Option>()
     	{
 			@Override
-			public void onMouseDown(MouseDownEvent event) {
-				handleDropdownSelection(btnTopicDropdown, "Present");
+			public void onSelectItem(SelectItemEvent<Option> event) {
+				setExerciseSettingsVisibilities();
 			}
     	});
     	
-    	lblTopicPast.addMouseDownHandler(new MouseDownHandler() 
+    	drpType.addSelectionHandler(new SelectComboHandler<Option>()
     	{
 			@Override
-			public void onMouseDown(MouseDownEvent event) {
-				handleDropdownSelection(btnTopicDropdown, "Past");
+			public void onSelectItem(SelectItemEvent<Option> event) {
+				setExerciseSettingsVisibilities();
 			}
     	});
-    	
-    	lblTopicCond.addMouseDownHandler(new MouseDownHandler() 
-    	{
-			@Override
-			public void onMouseDown(MouseDownEvent event) {
-				handleDropdownSelection(btnTopicDropdown, "'if'");
-			}
-    	});
-    	
-    	lblTopicComp.addMouseDownHandler(new MouseDownHandler() 
-    	{
-			@Override
-			public void onMouseDown(MouseDownEvent event) {
-				handleDropdownSelection(btnTopicDropdown, "Compare");
-			}
-    	});
-    	
-    	lblTopicRel.addMouseDownHandler(new MouseDownHandler() 
-    	{
-			@Override
-			public void onMouseDown(MouseDownEvent event) {
-				handleDropdownSelection(btnTopicDropdown, "Relatives");
-			}
-    	});
-    	
-    	lblTopicPass.addMouseDownHandler(new MouseDownHandler() 
-    	{
-			@Override
-			public void onMouseDown(MouseDownEvent event) {
-				handleDropdownSelection(btnTopicDropdown, "Passive");
-			}
-    	});
-    	
-    	lblTypeFib.addMouseDownHandler(new MouseDownHandler() 
-    	{
-			@Override
-			public void onMouseDown(MouseDownEvent event) {
-				handleDropdownSelection(btnTypeDropdown, "FiB");
-			}
-    	});
-    	
-    	lblTypeSelect.addMouseDownHandler(new MouseDownHandler() 
-    	{
-			@Override
-			public void onMouseDown(MouseDownEvent event) {
-				handleDropdownSelection(btnTypeDropdown, "Select");
-			}
-    	});
-    	
-    	lblTypeMark.addMouseDownHandler(new MouseDownHandler() 
-    	{
-			@Override
-			public void onMouseDown(MouseDownEvent event) {
-				handleDropdownSelection(btnTypeDropdown, "Mark");
-			}
-    	});
-    	
-    	lblTypeDrag.addMouseDownHandler(new MouseDownHandler() 
-    	{
-			@Override
-			public void onMouseDown(MouseDownEvent event) {
-				handleDropdownSelection(btnTypeDropdown, "Drag");
-			}
-    	});
-    	    	
+    	    	    	    	
     	rbtSingleTask.addValueChangeHandler(e -> setExerciseSettingsVisibilities());
     	rbtPerSentence.addValueChangeHandler(e -> setExerciseSettingsVisibilities());
 
     }
-    
+        
     /**
-     * Deletes the task and removes the element from the view.
+     * Removes the element from the view.
      */
     private void deleteTask() {
     	this.removeFromParent();
 	}
 
-	/**
-     * Sets the text of the selection button and the font weight when an item has been selected.
-     * We need to use click handlers on the selection items instead of binding to the selection event
-     * because that binding does not work.
-     * @param btn 	The button of the dropdown whose text we want to set.
-     * @param text 	The text we want to set.
-     */
-    private void handleDropdownSelection(MaterialButton btn, String text) {
-    	btn.setText(text);
-    	btn.setFontWeight(FontWeight.NORMAL);
-    	setExerciseSettingsVisibilities();
-    }
     
     /**
      * Sets the visibility of the settings parameters.
@@ -687,11 +599,35 @@ public class TaskItem extends LocalizedComposite {
     final Widget[] settingsWidgets;
     
     /**
+     * Gets the value of the currently selected topic.
+     * @return	The value of the currently selected topic, if any; otherwise the empty string
+     */
+    private String getTopic() {
+    	for(Object o : drpTopic.getSelectedValue()) {
+    		return o.toString();
+    	}   		
+    	
+    	return "";
+    }
+    
+    /**
+     * Gets the value of the currently selected exercise type.
+     * @return	The value of the currently selected exercise type, if any; otherwise the empty string
+     */
+    private String getExerciseType() {
+    	for(Object o : drpType.getSelectedValue()) {
+    		return o.toString();
+    	}   		
+    	
+    	return "";
+    }
+    
+    /**
      * Shows only those exercise parameters that are relevant for the topic and exercise type and hides all others
      */
     private void setExerciseSettingsVisibilities() {  
-    	String topic = btnTopicDropdown.getText();
-    	String exerciseType = btnTypeDropdown.getText();
+    	String topic = getTopic();
+    	String exerciseType = getExerciseType();
     	ArrayList<Widget> visibleSettings = new ArrayList<Widget>();
     	
     	if(topic.equals("Passive")) {
@@ -854,11 +790,11 @@ public class TaskItem extends LocalizedComposite {
      * @return The number of exercises that can be generated.
      */
     private int calculateNumberOfExercises() {
-    	String topic = btnTopicDropdown.getText();
-    	String exerciseType = btnTypeDropdown.getText();
+    	String topic = getTopic();
+    	String exerciseType = getExerciseType();
     	
     	ArrayList<String> constructionsToConsider = new ArrayList<String>();
-    	
+
     	if(topic.equals("Passive")) {
     		if(exerciseType.equals("FiB")) {    			    			    			
     			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPassiveFibConstructionLevels());    			
@@ -892,7 +828,7 @@ public class TaskItem extends LocalizedComposite {
     			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getCompareConstructionLevels());  
     		}
     	}
-    	
+
     	int nExercises = 0;
     	
     	for(String constructionToConsider : constructionsToConsider) {
@@ -910,14 +846,13 @@ public class TaskItem extends LocalizedComposite {
      */
     private ArrayList<String> getConstructionNamesFromSettings(ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> constructionLevels) {
 		ArrayList<String> initialConstructionNames = new ArrayList<String>();
-
     	if(constructionLevels.size() > 0) {
     		for(Pair<MaterialCheckBox, String> firstLevelConstruction : constructionLevels.get(0)) {
-    			if(firstLevelConstruction.getKey().getValue()) {
+    			if(firstLevelConstruction.getKey() == null ||  firstLevelConstruction.getKey().getValue()) {
     				initialConstructionNames.add(firstLevelConstruction.getValue());
-    			}
+    			}   		
     		}
-    		
+		
     		if(constructionLevels.size() > 1) {
     			for(int i = 1; i < constructionLevels.size(); i++) {
     				if(initialConstructionNames.size() > 0) {
@@ -944,9 +879,9 @@ public class TaskItem extends LocalizedComposite {
      * the individual parameter settings and the selected document.
      */
     private void setNumberExercisesText() {
-    	String topic = btnTopicDropdown.getText();
-    	String exerciseType = btnTypeDropdown.getText();
-    	   	
+    	String topic = getTopic();
+    	String exerciseType = getExerciseType();
+
 		if(exerciseType.equals("Exercise Type") || topic.equals("Topic")) {
 			lblNumberExercises.setText("Select a grammar topic and an exercise type to enable exercise generation.");
     		lblNumberExercises.setTextColor(Color.GREY);
@@ -964,6 +899,7 @@ public class TaskItem extends LocalizedComposite {
         		lblNumberExercises.setTextColor(Color.BLACK);
     		}
     	}
+		
     }
     
     /**

@@ -20,11 +20,16 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
 
+import gwt.material.design.addins.client.combobox.MaterialComboBox;
+import gwt.material.design.addins.client.combobox.events.SelectItemEvent;
+import gwt.material.design.addins.client.combobox.events.SelectItemEvent.SelectComboHandler;
 import gwt.material.design.client.constants.Color;
 import gwt.material.design.client.ui.MaterialButton;
 import gwt.material.design.client.ui.MaterialCollapsible;
 import gwt.material.design.client.ui.MaterialLabel;
 import gwt.material.design.client.ui.MaterialToast;
+import gwt.material.design.client.ui.html.OptGroup;
+import gwt.material.design.client.ui.html.Option;
 
 public class ExerciseGenerationWidget extends LocalizedComposite {
 
@@ -96,6 +101,14 @@ public class ExerciseGenerationWidget extends LocalizedComposite {
     	}
     	TaskItem newTask = new TaskItem();
     	newTask.lblName.setText(name);
+    	newTask.drpQuiz.addSelectionHandler(new SelectComboHandler<Option>()
+    	{
+			@Override
+			public void onSelectItem(SelectItemEvent<Option> event) {
+				updateSelectableQuizzes();
+			}
+    	});
+    	
         wdgtTasks.add(newTask);
         updateSelectableQuizzes();
         newTask.calculateConstructionsOccurrences();
@@ -113,16 +126,30 @@ public class ExerciseGenerationWidget extends LocalizedComposite {
     }
 
     /**
+     * Gets the value of the currently selected quiz.
+     * @return	The value of the currently selected quiz, if any; otherwise the empty string
+     */
+    private String getQuiz(MaterialComboBox<Option> quizWidget) {    	
+    	//We get a ClassCastException when we try to access the first list element, so we just iterate over the (only) element
+    	for(Object o : quizWidget.getSelectedValue()) {
+    		return o.toString();
+    	}   		
+    	
+    	return "";
+    }
+    
+    /**
      * Re-sets the options in the quiz dropdown whenever the selection in one of the tasks has been changed, 
-     * thus possibly changing the available quizzes
+     * thus possibly changing the available quizzes.
      */
     private void updateSelectableQuizzes() {
     	List<Widget> existingTasks = wdgtTasks.getChildrenList();
     	ArrayList<Integer> selectedQuizzes = new ArrayList<Integer>();
     	for(Widget existingTask : existingTasks) {
-    		String selectedQuiz = ((TaskItem)existingTask).btnQuizDropdown.getText();
-    		if(!selectedQuiz.equals("Quiz")) {
-    			int selectedNumber = Integer.parseInt(selectedQuiz.split(" ")[1]);
+    		String selectedQuiz = getQuiz(((TaskItem)existingTask).drpQuiz);
+
+    		if(!selectedQuiz.equals("")) {
+    			int selectedNumber = Integer.parseInt(selectedQuiz);
     			if(!selectedQuizzes.contains(selectedNumber)) {
     				selectedQuizzes.add(selectedNumber);
     			}
@@ -135,49 +162,44 @@ public class ExerciseGenerationWidget extends LocalizedComposite {
     	} else {
     		selectedQuizzes.add(1);
     	}
-    	
+    	    	
     	for(Widget existingTask : existingTasks) {
-    		// Remove all previous selections
-    		List<Widget> oldSelections = ((TaskItem)existingTask).drpQuiz.getChildrenList();
-    		for(Widget oldSelection : oldSelections) {
-    			((TaskItem)existingTask).drpQuiz.remove(oldSelection);
-    		}
+    		String currentlySelectedQuiz = getQuiz(((TaskItem)existingTask).drpQuiz);
+    		    		
+    		// Remove all previous options
+    		((TaskItem)existingTask).drpQuiz.clear();
     		
-    		// Add the no quiz selection item
-			MaterialLabel newSelection = new MaterialLabel();
-			newSelection.setText("---");
-			newSelection.setTextColor(Color.BLACK);
-			newSelection.setFontSize("10pt");
-			newSelection.addMouseDownHandler(new MouseDownHandler() 
-	    	{
-				@Override
-				public void onMouseDown(MouseDownEvent event) {
-					((TaskItem)existingTask).btnQuizDropdown.setText("Quiz");
-					((TaskItem)existingTask).btnQuizDropdown.setFontWeight(FontWeight.BOLD);
-					updateSelectableQuizzes();
-				}
-	    	});			
-			((TaskItem)existingTask).drpQuiz.add(newSelection);
-    		
-    		// Add the newly determined selections
-    		for(int selectedQuiz : selectedQuizzes) {
-    			newSelection = new MaterialLabel();
-    			newSelection.setText("Quiz " + selectedQuiz);
-    			newSelection.setTextColor(Color.BLACK);
-    			newSelection.setFontSize("10pt");
-    			newSelection.addMouseDownHandler(new MouseDownHandler() 
-    	    	{
-    				@Override
-    				public void onMouseDown(MouseDownEvent event) {
-    					((TaskItem)existingTask).btnQuizDropdown.setText("Quiz " + selectedQuiz);
-    					((TaskItem)existingTask).btnQuizDropdown.setFontWeight(FontWeight.NORMAL);
-    					updateSelectableQuizzes();
-    				}
-    	    	});
+    		// Add the no quiz option
+			addOptionToQuiz("---", "", (TaskItem)existingTask, currentlySelectedQuiz, 0);    			
+
+    		// Add the newly determined options
+    		for(int i = 0; i < selectedQuizzes.size(); i++) {
+    			int selectedQuiz = selectedQuizzes.get(i);
+    			addOptionToQuiz("Quiz " + selectedQuiz, "" + selectedQuiz, (TaskItem)existingTask, currentlySelectedQuiz, i + 1);    	
     			
-    			((TaskItem)existingTask).drpQuiz.add(newSelection);
     		}
     	}
+    }
+    
+    /**
+     * Adds an option to the specified dropdown.
+     * @param name			The string of the option to display
+     * @param value			The value of the option to use internally
+     * @param task			The Task item to which the quiz belongs
+     * @param selectedQuiz	The value of the currently selected option
+     * @param index			The index at which the element will be inserted
+     */
+    private void addOptionToQuiz(String name, String value, TaskItem task, String selectedQuiz, int index) {
+    	Option newSelection = new Option();
+		newSelection.setText(name);
+		newSelection.setValue(value);
+		newSelection.setTextColor(Color.BLACK);
+		newSelection.setFontSize("10pt");
+		task.drpQuiz.add(newSelection);	
+		
+		if(value.equals(selectedQuiz)) {
+			task.drpQuiz.setSelectedIndex(index);
+		}
     }
 
 }

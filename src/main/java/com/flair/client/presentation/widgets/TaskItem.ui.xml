@@ -54,59 +54,49 @@
 			<m:MaterialRow margin="0" padding="0">
 				<m:MaterialColumn grid='s4 m4 l4' padding="0"
 					margin="0">
-					<m:MaterialButton text="Topic"
-						iconType="ARROW_DROP_DOWN" iconPosition="RIGHT" textColor="BLACK"
-						fontWeight="BOLD"
-						addStyleNames="{style.bgGrey} {style.lowercase} {style.smallButtonText}"
-						waves="DEFAULT" activates="dp-1" ui:field="btnTopicDropdown"
-						margin="0" padding="0" width="95%" />
-					<m:MaterialDropDown ui:field="drpTopic"
-						activator="dp-1" constrainWidth="true" belowOrigin="true">
-						<m:MaterialLabel text="Comparatives"
+					<m:MaterialLabel text="Topic" />
+					<ma:combobox.MaterialComboBox
+						ui:field="drpTopic" margin="0" padding="0" marginRight="10">
+						<m:html.Option value="Topic" text="---"
+							textColor="BLACK" ui:field="optTopicDefault" fontSize="10pt" />
+						<m:html.Option value="Compare" text="Comparatives"
 							textColor="BLACK" ui:field="lblTopicComp" fontSize="10pt" />
-						<m:MaterialLabel text="Present simple"
+						<m:html.Option text="Present simple" value="Present"
 							textColor="BLACK" ui:field="lblTopicPres" fontSize="10pt" />
-						<m:MaterialLabel text="Past tenses"
+						<m:html.Option text="Past tenses" value="Past"
 							textColor="BLACK" ui:field="lblTopicPast" fontSize="10pt" />
-						<m:MaterialLabel text="Passive" textColor="BLACK"
-							ui:field="lblTopicPass" fontSize="10pt" />
-						<m:MaterialLabel text="Conditionals"
+						<m:html.Option text="Passive" value="Passive"
+							textColor="BLACK" ui:field="lblTopicPass" fontSize="10pt" />
+						<m:html.Option text="Conditionals" value="'if'"
 							textColor="BLACK" ui:field="lblTopicCond" fontSize="10pt" />
-						<m:MaterialLabel text="Relative Clauses"
-							textColor="BLACK" ui:field="lblTopicRel" fontSize="10pt" />
-					</m:MaterialDropDown>
+						<m:html.Option text="Relative Clauses"
+							value="Relatives" textColor="BLACK" ui:field="lblTopicRel"
+							fontSize="10pt" />
+					</ma:combobox.MaterialComboBox>
 				</m:MaterialColumn>
 				<m:MaterialColumn grid='s4 m4 l4' padding="0"
 					margin="0">
-					<m:MaterialButton text="Exercise Type"
-						iconType="ARROW_DROP_DOWN" iconPosition="RIGHT" textColor="BLACK"
-						addStyleNames="{style.bgGrey} {style.lowercase} {style.smallButtonText}"
-						waves="DEFAULT" activates="dp-2" ui:field="btnTypeDropdown"
-						margin="0" padding="0" fontWeight="BOLD" width="95%" />
-					<m:MaterialDropDown ui:field="drpType"
-						activator="dp-2" constrainWidth="true" belowOrigin="true"
-						margin="0" padding="0">
-						<m:MaterialLabel text="Fill in the Blanks"
+					<m:MaterialLabel text="Task type" />
+					<ma:combobox.MaterialComboBox
+						ui:field="drpType" margin="0" padding="0" marginRight="10">
+						<m:html.Option value="Exercise Type" text="---"
+							textColor="BLACK" ui:field="optTypeDefault" fontSize="10pt" />
+						<m:html.Option text="Fill in the Blanks" value="FiB"
 							textColor="BLACK" ui:field="lblTypeFib" fontSize="10pt" />
-						<m:MaterialLabel text="Single Choice"
+						<m:html.Option text="Single Choice" value="Select"
 							textColor="BLACK" ui:field="lblTypeSelect" fontSize="10pt" />
-						<m:MaterialLabel text="Mark the Words"
+						<m:html.Option text="Mark the Words" value="Mark"
 							textColor="BLACK" ui:field="lblTypeMark" fontSize="10pt" />
-						<m:MaterialLabel text="Drag &amp; Drop"
+						<m:html.Option text="Drag &amp; Drop" value="Drag"
 							textColor="BLACK" ui:field="lblTypeDrag" fontSize="10pt" />
-					</m:MaterialDropDown>
+					</ma:combobox.MaterialComboBox>
 				</m:MaterialColumn>
 				<m:MaterialColumn grid='s4 m4 l4' padding="0"
 					margin="0">
-					<m:MaterialButton text="Quiz" fontWeight="BOLD"
-						iconType="ARROW_DROP_DOWN" iconPosition="RIGHT" textColor="BLACK"
-						addStyleNames="{style.bgGrey} {style.lowercase} {style.smallButtonText}"
-						waves="DEFAULT" activates="dp-3" ui:field="btnQuizDropdown"
-						margin="0" padding="0" width="100%" />
-					<m:MaterialDropDown ui:field="drpQuiz"
-						activator="dp-3" constrainWidth="true" belowOrigin="true"
-						margin="0" padding="0">
-					</m:MaterialDropDown>
+					<m:MaterialLabel text="Quiz" />
+					<ma:combobox.MaterialComboBox
+						ui:field="drpQuiz" margin="0" padding="0">
+					</ma:combobox.MaterialComboBox>
 				</m:MaterialColumn>
 			</m:MaterialRow>
 			<m:MaterialRow>
@@ -415,7 +405,8 @@
 				<m:MaterialDialogContent>
 					<m:MaterialTitle title="Document part selection"
 						description="Mark the document part that you want to use." />
-					<g:TextArea ui:field="lblDocumentForSelection" height="200px"/>
+					<g:TextArea ui:field="lblDocumentForSelection"
+						height="200px" />
 				</m:MaterialDialogContent>
 				<m:MaterialDialogFooter>
 					<m:MaterialButton
