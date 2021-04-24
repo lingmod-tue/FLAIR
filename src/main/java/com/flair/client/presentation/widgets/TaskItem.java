@@ -472,8 +472,11 @@ public class TaskItem extends LocalizedComposite {
     MaterialDialog dlgDocumentSelection;
     
     private ConstructionComponents constructionComponents;
+    private ExerciseGenerationWidget parent;
     
-    public TaskItem() {    	
+    public TaskItem(ExerciseGenerationWidget parent) {   
+    	this.parent = parent;
+    	
         initWidget(ourUiBinder.createAndBindUi(this));
         initLocale(localeBinder.bind(this));
         this.initHandlers();
@@ -532,7 +535,7 @@ public class TaskItem extends LocalizedComposite {
         });
         
     	btnDelete.addClickHandler(event -> {
-            deleteTask();
+    		parent.deleteTask(this);
     	});
     	
     	btnSelectDocumentPart.addClickHandler(event -> {
@@ -564,13 +567,6 @@ public class TaskItem extends LocalizedComposite {
 
     }
         
-    /**
-     * Removes the element from the view.
-     */
-    private void deleteTask() {
-    	this.removeFromParent();
-	}
-
     
     /**
      * Sets the visibility of the settings parameters.

@@ -85,7 +85,18 @@ public class ExerciseGenerationWidget extends LocalizedComposite {
     private void deleteAllTasks() {
     	List<Widget> existingTasks = wdgtTasks.getChildrenList();
     	for(Widget existingTask : existingTasks) {
-    		wdgtTasks.remove(existingTask);
+    		deleteTask((TaskItem)existingTask);
+    	}
+    }
+    
+    /**
+     * Removes the given task from the UI
+     * @param task	The task to remove
+     */
+    public void deleteTask(TaskItem task) {
+    	wdgtTasks.remove(task);
+    	if(wdgtTasks.getChildrenList().size() == 0) {
+    		wdgtTasks.setVisible(false);
     	}
     }
     
@@ -99,7 +110,7 @@ public class ExerciseGenerationWidget extends LocalizedComposite {
     		int lastNumber = Integer.parseInt(((TaskItem)existingTasks.get(existingTasks.size() - 1)).lblName.getText().split(" ")[1]);
     		name = "Task " + (lastNumber + 1);
     	}
-    	TaskItem newTask = new TaskItem();
+    	TaskItem newTask = new TaskItem(this);
     	newTask.lblName.setText(name);
     	newTask.drpQuiz.addSelectionHandler(new SelectComboHandler<Option>()
     	{
@@ -112,6 +123,8 @@ public class ExerciseGenerationWidget extends LocalizedComposite {
         wdgtTasks.add(newTask);
         updateSelectableQuizzes();
         newTask.calculateConstructionsOccurrences();
+        
+		wdgtTasks.setVisible(true);
     }
     
     /**

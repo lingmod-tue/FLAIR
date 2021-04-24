@@ -19,8 +19,7 @@
 
     <m:MaterialContainer>
        <m:MaterialRow marginBottom="20">
-		    <m:MaterialCollapsible ui:field="wdgtTasks" accordion="false" grid="s12 m12 l12" margin="0" padding="0"/>
-			<m.html:Br/>
+		    <m:MaterialCollapsible ui:field="wdgtTasks" accordion="false" grid="s12 m12 l12" margin="0" padding="0" visible="false" marginTop="20" marginBottom="20"/>
 			
 			<m:MaterialRow marginTop="10">
 				<m:MaterialButton ui:field="btnAddTask" textAlign="CENTER" textColor="BLACK"
