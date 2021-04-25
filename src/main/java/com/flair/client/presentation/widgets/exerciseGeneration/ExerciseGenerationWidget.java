@@ -1,4 +1,4 @@
-package com.flair.client.presentation.widgets;
+package com.flair.client.presentation.widgets.exerciseGeneration;
 
 import java.util.ArrayList;
 import java.util.Collections;

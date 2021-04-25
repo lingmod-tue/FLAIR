@@ -1,4 +1,4 @@
-package com.flair.client.presentation.widgets;
+package com.flair.client.presentation.widgets.exerciseGeneration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,6 +8,7 @@ import com.flair.client.localization.LocalizedComposite;
 import com.flair.client.localization.LocalizedFieldType;
 import com.flair.client.localization.annotations.LocalizedField;
 import com.flair.client.localization.interfaces.LocalizationBinder;
+import com.flair.client.presentation.widgets.DocumentPreviewPane;
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.interop.dtos.RankableDocument;
 import com.flair.shared.interop.dtos.RankableDocument.ConstructionRange;
@@ -44,20 +45,6 @@ import gwt.material.design.client.ui.html.Option;
 
 public class TaskItem extends LocalizedComposite {
 	
-	private class Pair<T1, T2>
-    {
-        T1 key;
-        T2 value;
-        
-        Pair(T1 key, T2 value) {  
-        	this.key = key;  
-        	this.value = value;
-        }
-        
-        public T1 getKey()  { return this.key; }
-        public T2 getValue()  { return this.value; }
-    }
-	
 	/**
 	 * Collection of detailed constructions which need to be considered per exercise type and topic when counting target occurrences.
 	 * Each detailed construction is made up of levels corresponding to a construction extracted in the backend.
@@ -66,7 +53,7 @@ public class TaskItem extends LocalizedComposite {
 	 * @author tanja
 	 *
 	 */
-	private class ConstructionComponents {
+	public class ConstructionComponents {
 		public ConstructionComponents() {
 			// Passive Drag
 			ArrayList<Pair<MaterialCheckBox, String>> firstLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();
@@ -477,17 +464,8 @@ public class TaskItem extends LocalizedComposite {
     	
         initWidget(ourUiBinder.createAndBindUi(this));
         initLocale(localeBinder.bind(this));
-        this.initHandlers();
+        initHandlers();
         
-        possibleTopics = new ArrayList<Pair<String, String>>();
-    	possibleTopics.add(new Pair<String, String>("Comparatives", "Compare"));
-    	possibleTopics.add(new Pair<String, String>("Present simple", "Present"));
-    	possibleTopics.add(new Pair<String, String>("Past tenses", "Past"));
-    	possibleTopics.add(new Pair<String, String>("Passive", "Passive"));
-    	possibleTopics.add(new Pair<String, String>("Conditionals", "'if'"));
-    	possibleTopics.add(new Pair<String, String>("Relative Clauses", "Relatives"));
-    	
-        constructionComponents = new ConstructionComponents();
         settingsWidgets = new Widget[] {
         		grpBrackets, chkBracketsLemma, chkBracketsConditional, chkBracketsPos, chkBracketsForm, chkBracketsWill, 
         		chkBracketsSentenceType, chkBracketsTense, chkBracketsActiveSentence, chkBracketsKeywords, 
@@ -501,7 +479,8 @@ public class TaskItem extends LocalizedComposite {
         		chkNegatedSent, chkQuestions, chkStatements, chkRegularVerbs, chkIrregularVerbs, chkscopeType1, chkscopeType2, 
         		chkPosAdj, chkPosAdv, chkFormComparatives, chkFormSuperlatives, chkFormSynthetic, chkFormAnalytic
         };
-    	setExerciseSettingsVisibilities();
+        
+        initUI();
     }
     
     private int currentSelectionStartIndex = 0;
@@ -599,6 +578,22 @@ public class TaskItem extends LocalizedComposite {
 
     }
         
+    /**
+     * Initializes the UI components and sets their visibility.
+     */
+    private void initUI() {
+    	possibleTopics = new ArrayList<Pair<String, String>>();
+    	possibleTopics.add(new Pair<String, String>("Comparatives", "Compare"));
+    	possibleTopics.add(new Pair<String, String>("Present simple", "Present"));
+    	possibleTopics.add(new Pair<String, String>("Past tenses", "Past"));
+    	possibleTopics.add(new Pair<String, String>("Passive", "Passive"));
+    	possibleTopics.add(new Pair<String, String>("Conditionals", "'if'"));
+    	possibleTopics.add(new Pair<String, String>("Relative Clauses", "Relatives"));
+    	
+        constructionComponents = new ConstructionComponents();
+        
+    	setExerciseSettingsVisibilities();
+    }
     
     /**
      * Sets the visibility of the settings parameters.
@@ -1495,12 +1490,6 @@ public class TaskItem extends LocalizedComposite {
 		}
 		
 		return getConstructionNamesFromSettings(constructionLevels);    	
-    }
-    
-    //TODO: create dropdown dynamically on document select
-    //TODO: also for type
-    private boolean displayTopic(String topic) {
-    	return checkConstructionOccurs(null, topic, 0);    	
     }
     
 }

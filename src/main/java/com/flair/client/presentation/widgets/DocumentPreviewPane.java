@@ -7,6 +7,7 @@ import com.flair.client.presentation.interfaces.AbstractDocumentPreviewPane;
 import com.flair.client.presentation.interfaces.DocumentPreviewPaneInput;
 import com.flair.client.presentation.interfaces.DocumentPreviewPaneInput.Rankable;
 import com.flair.client.presentation.interfaces.DocumentPreviewPaneInput.UnRankable;
+import com.flair.client.presentation.widgets.exerciseGeneration.ExerciseGenerationWidget;
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
 import com.flair.shared.interop.dtos.RankableDocument;

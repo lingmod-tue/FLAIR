@@ -92,7 +92,7 @@
 		       <m:MaterialLink text="Generate Exercises" iconType="ARROW_DROP_DOWN" iconPosition="LEFT" textColor="BLACK"/>
 		     </m:MaterialCollapsibleHeader>
 		     <m:MaterialCollapsibleBody paddingTop="0">
-		     	<flair:ExerciseGenerationWidget ui:field="wdgtExerciseGeneration"/>
+		     	<flair:exerciseGeneration.ExerciseGenerationWidget ui:field="wdgtExerciseGeneration"/>
       		 </m:MaterialCollapsibleBody>
 		    </m:MaterialCollapsibleItem>
 		    
