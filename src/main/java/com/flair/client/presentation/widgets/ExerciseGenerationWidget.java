@@ -2,20 +2,13 @@ package com.flair.client.presentation.widgets;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 
 import com.flair.client.localization.LocalizedComposite;
 import com.flair.client.localization.LocalizedFieldType;
 import com.flair.client.localization.annotations.LocalizedField;
 import com.flair.client.localization.interfaces.LocalizationBinder;
-import com.flair.shared.grammar.GrammaticalConstruction;
-import com.flair.shared.interop.dtos.RankableDocument;
-import com.flair.shared.interop.dtos.RankableDocument.ConstructionRange;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.FontWeight;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
@@ -26,9 +19,6 @@ import gwt.material.design.addins.client.combobox.events.SelectItemEvent.SelectC
 import gwt.material.design.client.constants.Color;
 import gwt.material.design.client.ui.MaterialButton;
 import gwt.material.design.client.ui.MaterialCollapsible;
-import gwt.material.design.client.ui.MaterialLabel;
-import gwt.material.design.client.ui.MaterialToast;
-import gwt.material.design.client.ui.html.OptGroup;
 import gwt.material.design.client.ui.html.Option;
 
 public class ExerciseGenerationWidget extends LocalizedComposite {
@@ -59,8 +49,6 @@ public class ExerciseGenerationWidget extends LocalizedComposite {
     MaterialButton btnGenerateExercises;
     
         
-    static DocumentPreviewPane documentPreviewPane = DocumentPreviewPane.getInstance();
-
     public ExerciseGenerationWidget() {
         initWidget(ourUiBinder.createAndBindUi(this));
         initLocale(localeBinder.bind(this));

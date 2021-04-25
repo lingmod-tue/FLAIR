@@ -101,7 +101,7 @@ public class TaskItem extends LocalizedComposite {
 				}});
 			}};
 							
-			relativesFibMarkConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>() {{
+			relativesFibMarkSelectConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>() {{
 				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
 					add(new Pair<MaterialCheckBox, String>(chkScopePassive, "who"));
 					add(new Pair<MaterialCheckBox, String>(chkScopePassive, "which"));
@@ -220,7 +220,7 @@ public class TaskItem extends LocalizedComposite {
 		
 		private final ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> passiveFibConstructionLevels;
 		private final ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> passiveDragConstructionLevels;
-		private final ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> relativesFibMarkConstructionLevels;
+		private final ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> relativesFibMarkSelectConstructionLevels;
 		private final ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> relativesDragConstructionLevels;
 		private final ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> presentFibSelectConstructionLevels;
 		private final ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> presentMarkConstructionLevels;
@@ -237,8 +237,8 @@ public class TaskItem extends LocalizedComposite {
 			return passiveDragConstructionLevels;
 		}
 		
-		public ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> getRelativesFibMarkConstructionLevels() {
-			return relativesFibMarkConstructionLevels;
+		public ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> getRelativesFibMarkSelectConstructionLevels() {
+			return relativesFibMarkSelectConstructionLevels;
 		}
 		
 		public ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> getRelativesDragConstructionLevels() {
@@ -667,7 +667,8 @@ public class TaskItem extends LocalizedComposite {
     		if(exerciseType.equals("FiB")) {
     			visibleSettings.add(grpPronouns);
     		} else if(exerciseType.equals("Select")) {
-    			
+    			visibleSettings.add(grpDistractors);
+    			visibleSettings.add(grpPronouns);
     		} else if(exerciseType.equals("Mark")) {
     			visibleSettings.add(grpPronouns);
     		} else if(exerciseType.equals("Drag")) {
@@ -798,8 +799,8 @@ public class TaskItem extends LocalizedComposite {
     			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPassiveDragConstructionLevels());    	
     		}
     	} else if(topic.equals("Relatives")) {
-    		if(exerciseType.equals("FiB") || exerciseType.equals("Mark") || exerciseType.equals("Drag") && rbtPerSentence.getValue()) {
-    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getRelativesFibMarkConstructionLevels());  
+    		if(exerciseType.equals("FiB") || exerciseType.equals("Mark") || exerciseType.equals("Select") || exerciseType.equals("Drag") && rbtPerSentence.getValue()) {
+    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getRelativesFibMarkSelectConstructionLevels());  
     		} else if(exerciseType.equals("Drag") && !rbtPerSentence.getValue()) {
     			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getRelativesDragConstructionLevels());      			
     		}

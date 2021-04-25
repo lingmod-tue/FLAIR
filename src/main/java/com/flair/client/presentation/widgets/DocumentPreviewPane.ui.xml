@@ -92,6 +92,10 @@
 		       <m:MaterialLink text="Generate Exercises" iconType="ARROW_DROP_DOWN" iconPosition="LEFT" textColor="BLACK"/>
 		     </m:MaterialCollapsibleHeader>
 		     <m:MaterialCollapsibleBody paddingTop="0">
+		     <!-- If we only have the ExerciseGenerationWidget, nothing is displayed if we choose a web page too quickly.
+		     For some reason, this kind of race condition does not occur when we have any other view element in the body as well.
+		     We thus just add an invisible element. -->
+		     <m:MaterialLabel visible="false"/>
 		     	<flair:ExerciseGenerationWidget ui:field="wdgtExerciseGeneration"/>
       		 </m:MaterialCollapsibleBody>
 		    </m:MaterialCollapsibleItem>
