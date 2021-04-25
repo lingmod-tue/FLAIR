@@ -56,23 +56,7 @@
 					margin="0">
 					<m:MaterialLabel text="Topic" />
 					<ma:combobox.MaterialComboBox
-						ui:field="drpTopic" margin="0" padding="0" marginRight="10">
-						<m:html.Option value="Topic" text="---"
-							textColor="BLACK" ui:field="optTopicDefault" fontSize="10pt" />
-						<m:html.Option value="Compare" text="Comparatives"
-							textColor="BLACK" ui:field="lblTopicComp" fontSize="10pt" />
-						<m:html.Option text="Present simple" value="Present"
-							textColor="BLACK" ui:field="lblTopicPres" fontSize="10pt" />
-						<m:html.Option text="Past tenses" value="Past"
-							textColor="BLACK" ui:field="lblTopicPast" fontSize="10pt" />
-						<m:html.Option text="Passive" value="Passive"
-							textColor="BLACK" ui:field="lblTopicPass" fontSize="10pt" />
-						<m:html.Option text="Conditionals" value="'if'"
-							textColor="BLACK" ui:field="lblTopicCond" fontSize="10pt" />
-						<m:html.Option text="Relative Clauses"
-							value="Relatives" textColor="BLACK" ui:field="lblTopicRel"
-							fontSize="10pt" />
-					</ma:combobox.MaterialComboBox>
+						ui:field="drpTopic" margin="0" padding="0" marginRight="10"/>
 				</m:MaterialColumn>
 				<m:MaterialColumn grid='s4 m4 l4' padding="0"
 					margin="0">
@@ -105,52 +89,84 @@
 					marginTop="20" marginBottom="5" />
 
 				<m:MaterialRow ui:field="grpPos">
-					<m:MaterialLabel text="POS of target words:"
-						textColor="BLACK" />
-					<m:MaterialCheckBox ui:field="chkPosAdj"
-						value="true" text="Adjectives" />
-					<m:MaterialCheckBox ui:field="chkPosAdv"
-						value="true" text="Adverbs" />
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialLabel text="POS of target words:"
+							textColor="BLACK" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox ui:field="chkPosAdj"
+							value="true" text="Adjectives" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox ui:field="chkPosAdv"
+							value="true" text="Adverbs" />
+					</m:MaterialRow>
 				</m:MaterialRow>
 
 				<m:MaterialRow ui:field="grpCompForm">
-					<m:MaterialLabel
-						text="Comparative forms of target words:" textColor="BLACK" />
-					<m:MaterialCheckBox
-						ui:field="chkFormComparatives" value="true" text="Comparatives" />
-					<m:MaterialCheckBox
-						ui:field="chkFormSuperlatives" value="true" text="Superlatives" />
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialLabel
+							text="Comparative forms of target words:" textColor="BLACK" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox
+							ui:field="chkFormComparatives" value="true" text="Comparatives" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox
+							ui:field="chkFormSuperlatives" value="true" text="Superlatives" />
+					</m:MaterialRow>
 				</m:MaterialRow>
 
 				<m:MaterialRow ui:field="grpForms">
-					<m:MaterialLabel text="Forms of target words:" />
-					<m:MaterialCheckBox ui:field="chkFormSynthetic"
-						value="true" text="Synthetic forms" />
-					<m:MaterialCheckBox ui:field="chkFormAnalytic"
-						value="true" text="Analytic forms" />
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialLabel text="Forms of target words:" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox ui:field="chkFormSynthetic"
+							value="true" text="Synthetic forms" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox ui:field="chkFormAnalytic"
+							value="true" text="Analytic forms" />
+					</m:MaterialRow>
 				</m:MaterialRow>
 
 				<m:MaterialRow ui:field="grpScope">
-					<m:MaterialLabel text="Scope:" />
-					<m:MaterialRadioButton
-						ui:field="rbtPerSentence" value="true"
-						text="1 exercise per sentence" name="scope" type="GAP" />
-					<m:MaterialRadioButton
-						ui:field="rbtSingleTask" text="Single exercise" name="scope"
-						type="GAP" />
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialLabel text="Scope:" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialRadioButton
+							ui:field="rbtPerSentence" value="true"
+							text="1 exercise per sentence" name="scope" type="GAP" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialRadioButton
+							ui:field="rbtSingleTask" text="Single exercise" name="scope"
+							type="GAP" />
+					</m:MaterialRow>
 				</m:MaterialRow>
 
 				<m:MaterialRow ui:field="grpCondTypes">
-					<m:MaterialLabel
-						text="Conditional types of target sentences:" />
-					<m:MaterialCheckBox ui:field="chkscopeType1"
-						value="true" text="Real conditionals" />
-					<m:MaterialCheckBox ui:field="chkscopeType2"
-						value="true" text="Unreal conditionals" />
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialLabel
+							text="Conditional types of target sentences:" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox ui:field="chkscopeType1"
+							value="true" text="Real conditionals" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox ui:field="chkscopeType2"
+							value="true" text="Unreal conditionals" />
+					</m:MaterialRow>
 				</m:MaterialRow>
 
 				<m:MaterialRow ui:field="grpClauses">
-					<m:MaterialLabel text="Target clauses:" />
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialLabel text="Target clauses:" />
+					</m:MaterialRow>
 					<m:MaterialRow padding="0" margin="0">
 						<m:MaterialRadioButton
 							ui:field="rbtMainClause" text="Only main clause"
@@ -174,19 +190,29 @@
 				</m:MaterialRow>
 
 				<m:MaterialRow ui:field="grpSentTypes">
-					<m:MaterialLabel
-						text="Sentence types of target sentences:" />
-					<m:MaterialCheckBox ui:field="chkScopeActive"
-						value="true" text="Active sentences" />
-					<m:MaterialCheckBox ui:field="chkScopePassive"
-						value="true" text="Passive sentences" />
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialLabel
+							text="Sentence types of target sentences:" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox ui:field="chkScopeActive"
+							value="true" text="Active sentences" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox ui:field="chkScopePassive"
+							value="true" text="Passive sentences" />
+					</m:MaterialRow>
 				</m:MaterialRow>
 
 				<m:MaterialRow ui:field="grpTenses">
-					<m:MaterialLabel ui:field="lblTensesSentences"
-						text="Tenses of target sentences:" />
-					<m:MaterialLabel ui:field="lblTensesWords"
-						text="Tenses of target words" />
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialLabel ui:field="lblTensesSentences"
+							text="Tenses of target sentences:" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialLabel ui:field="lblTensesWords"
+							text="Tenses of target words" />
+					</m:MaterialRow>
 					<m:MaterialRow padding="0" margin="0">
 						<m:MaterialCheckBox ui:field="chkPresentSimple"
 							value="true" text="Present simple" />
@@ -244,69 +270,116 @@
 				</m:MaterialRow>
 
 				<m:MaterialRow ui:field="grpVerbSplitting">
-					<m:MaterialLabel text="Verb splitting:" />
-					<m:MaterialRadioButton ui:field="rbt1Verb"
-						text="Entire verb cluster as single element" name="verbSplitting"
-						type="GAP" value="true" />
-					<m:MaterialRadioButton ui:field="rbt2Verbs"
-						text="Form of 'be' and past participle as separate elements"
-						name="verbSplitting" type="GAP" />
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialLabel text="Verb splitting:" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialRadioButton ui:field="rbt1Verb"
+							text="Entire verb cluster as single element" name="verbSplitting"
+							type="GAP" value="true" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialRadioButton ui:field="rbt2Verbs"
+							text="Form of 'be' and past participle as separate elements"
+							name="verbSplitting" type="GAP" />
+					</m:MaterialRow>
 				</m:MaterialRow>
 
 				<m:MaterialRow ui:field="grpTargetWords">
-					<m:MaterialLabel text="Target words:" />
-					<m:MaterialCheckBox ui:field="chkAgents"
-						value="true" text="Agents" />
-					<m:MaterialCheckBox ui:field="chkPatients"
-						value="true" text="Patients" />
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialLabel text="Target words:" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox ui:field="chkAgents"
+							value="true" text="Agents" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox ui:field="chkPatients"
+							value="true" text="Patients" />
+					</m:MaterialRow>
 				</m:MaterialRow>
 
 				<m:MaterialRow ui:field="grpSentenceTypes">
-					<m:MaterialLabel
-						text="Sentence types of target sentences:" />
-					<m:MaterialCheckBox
-						ui:field="chkAffirmativeSent" value="true"
-						text="Affirmative sentences" />
-					<m:MaterialCheckBox ui:field="chkNegatedSent"
-						value="true" text="Negated sentences" />
-					<m:MaterialCheckBox ui:field="chkQuestions"
-						value="true" text="Questions" />
-					<m:MaterialCheckBox ui:field="chkStatements"
-						value="true" text="Statements" />
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialLabel
+							text="Sentence types of target sentences:" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox
+							ui:field="chkAffirmativeSent" value="true"
+							text="Affirmative sentences" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox ui:field="chkNegatedSent"
+							value="true" text="Negated sentences" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox ui:field="chkQuestions"
+							value="true" text="Questions" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox ui:field="chkStatements"
+							value="true" text="Statements" />
+					</m:MaterialRow>
 				</m:MaterialRow>
 
 				<m:MaterialRow ui:field="grpVerbForms">
-					<m:MaterialLabel text="Verb forms of target words:" />
-					<m:MaterialCheckBox ui:field="chkRegularVerbs"
-						value="true" text="Regular verbs" />
-					<m:MaterialCheckBox ui:field="chkIrregularVerbs"
-						value="true" text="Irregular verbs" />
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialLabel
+							text="Verb forms of target words:" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox ui:field="chkRegularVerbs"
+							value="true" text="Regular verbs" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox
+							ui:field="chkIrregularVerbs" value="true" text="Irregular verbs" />
+					</m:MaterialRow>
 				</m:MaterialRow>
 
 				<m:MaterialRow ui:field="grpVerbPerson">
-					<m:MaterialLabel text="Person of target words:" />
-					<m:MaterialCheckBox ui:field="chk3Pers"
-						value="true" text="3rd ps. sg." />
-					<m:MaterialCheckBox ui:field="chkNot3Pers"
-						value="true" text="Not 3rd ps. sg." />
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialLabel text="Person of target words:" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox ui:field="chk3Pers"
+							value="true" text="3rd ps. sg." />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox ui:field="chkNot3Pers"
+							value="true" text="Not 3rd ps. sg." />
+					</m:MaterialRow>
 				</m:MaterialRow>
 
 				<m:MaterialRow ui:field="grpPronouns">
-					<m:MaterialLabel
-						text="Pronoun type of target words:" />
-					<m:MaterialCheckBox ui:field="chkWho"
-						value="true" text="'who'" />
-					<m:MaterialCheckBox ui:field="chkWhich"
-						value="true" text="'which'" />
-					<m:MaterialCheckBox ui:field="chkThat"
-						value="true" text="'that'" />
-					<m:MaterialCheckBox ui:field="chkOtherRelPron"
-						value="true" text="Other relative pronouns" />
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialLabel
+							text="Pronoun type of target words:" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox ui:field="chkWho"
+							value="true" text="'who'" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox ui:field="chkWhich"
+							value="true" text="'which'" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox ui:field="chkThat"
+							value="true" text="'that'" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox ui:field="chkOtherRelPron"
+							value="true" text="Other relative pronouns" />
+					</m:MaterialRow>
 				</m:MaterialRow>
 
 				<m:MaterialRow ui:field="grpBrackets">
-					<m:MaterialLabel text="Brackets content:"
-						textColor="BLACK" />
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialLabel text="Brackets content:"
+							textColor="BLACK" />
+					</m:MaterialRow>
 					<m:MaterialRow padding="0" margin="0">
 						<m:MaterialCheckBox ui:field="chkBracketsLemma"
 							value="true" text="Lemma" />
@@ -350,44 +423,66 @@
 				</m:MaterialRow>
 
 				<m:MaterialRow ui:field="grpDistractors">
-					<m:MaterialLabel text="Distractors:"
-						textColor="BLACK" />
-					<m:MaterialCheckBox
-						ui:field="chkDistractorsOtherForm" value="true"
-						text="Correct forms in other comparative form" />
-					<m:MaterialCheckBox
-						ui:field="chkDistractorsOtherVariant" value="true"
-						text="Correctly formed synthetic/analytic variant" />
-					<m:MaterialCheckBox
-						ui:field="chkDistractorsOtherPast" value="true"
-						text="Correct forms in other past tenses" />
-					<m:MaterialCheckBox
-						ui:field="chkDistractorsOtherTense" value="true"
-						text="Correct forms in future or present tenses" />
-					<m:MaterialCheckBox
-						ui:field="chkDistractorsIncorrectForms" value="true"
-						text="Incorrectly formed forms" />
-					<m:MaterialCheckBox
-						ui:field="chkDistractorsWrongConditional" value="true"
-						text="Forms of wrong conditional type" />
-					<m:MaterialCheckBox
-						ui:field="chkDistractorsWrongClause" value="true"
-						text="Forms of wrong clause" />
-					<m:MaterialCheckBox
-						ui:field="chkDistractorsWrongSuffixUse" value="true"
-						text="Form with/without '-s'" />
-					<m:MaterialCheckBox
-						ui:field="chkDistractorsWrongSuffix" value="true"
-						text="Form with incorrectly formed suffix" />
-					<m:MaterialColumn grid='s8 m8 l8' padding="0"
-						margin="0">
-						<m:MaterialLabel text="Number of distractors: "
-							textColor="GREY" />
-					</m:MaterialColumn>
-					<m:MaterialColumn grid='s4 m4 l4' padding="0"
-						margin="0">
-						<flair:NumberSpinner value="2" min="1" />
-					</m:MaterialColumn>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialLabel text="Distractors:"
+							textColor="BLACK" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox
+							ui:field="chkDistractorsOtherForm" value="true"
+							text="Correct forms in other comparative form" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox
+							ui:field="chkDistractorsOtherVariant" value="true"
+							text="Correctly formed synthetic/analytic variant" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox
+							ui:field="chkDistractorsOtherPast" value="true"
+							text="Correct forms in other past tenses" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox
+							ui:field="chkDistractorsOtherTense" value="true"
+							text="Correct forms in future or present tenses" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox
+							ui:field="chkDistractorsIncorrectForms" value="true"
+							text="Incorrectly formed forms" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox
+							ui:field="chkDistractorsWrongConditional" value="true"
+							text="Forms of wrong conditional type" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox
+							ui:field="chkDistractorsWrongClause" value="true"
+							text="Forms of wrong clause" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox
+							ui:field="chkDistractorsWrongSuffixUse" value="true"
+							text="Form with/without '-s'" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox
+							ui:field="chkDistractorsWrongSuffix" value="true"
+							text="Form with incorrectly formed suffix" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialColumn grid='s8 m8 l8' padding="0"
+							margin="0">
+							<m:MaterialLabel text="Number of distractors: "
+								textColor="GREY" />
+						</m:MaterialColumn>
+						<m:MaterialColumn grid='s4 m4 l4' padding="0"
+							margin="0">
+							<flair:NumberSpinner value="2" min="1" />
+						</m:MaterialColumn>
+					</m:MaterialRow>
 				</m:MaterialRow>
 
 				<m:MaterialRow>

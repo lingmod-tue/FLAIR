@@ -425,6 +425,7 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
             lblDocNumSentencesUI.setVisible(true);
             lblDocNumWordsUI.setVisible(true);
             icoHelpTextUI.setVisible(false);
+
         }
 
         public void reload(boolean fullReload) {
@@ -469,7 +470,7 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
                     lblDocNumSentencesUI.setVisible(false);
                     lblDocNumWordsUI.setVisible(false);
                     icoHelpTextUI.setVisible(false);
-                    wdgtExerciseGeneration.setVisible(false);
+                    //wdgtExerciseGeneration.setVisible(false);
 
                     // update the rest
                     lblDocTitleUI.setText(unrankable.getTitle());

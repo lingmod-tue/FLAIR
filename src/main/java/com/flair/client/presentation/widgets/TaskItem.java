@@ -58,164 +58,166 @@ public class TaskItem extends LocalizedComposite {
         public T2 getValue()  { return this.value; }
     }
 	
+	/**
+	 * Collection of detailed constructions which need to be considered per exercise type and topic when counting target occurrences.
+	 * Each detailed construction is made up of levels corresponding to a construction extracted in the backend.
+	 * If the first Pair item is a MaterialCheckBox, the construction is only taken into account for the counting if the checkbox is checked.
+	 * If the first Pair item is null, the construction is always taken into account.
+	 * @author tanja
+	 *
+	 */
 	private class ConstructionComponents {
 		public ConstructionComponents() {
-			passiveFibConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>() {{
-				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
-					add(new Pair<MaterialCheckBox, String>(chkScopeActive, "active"));
-					add(new Pair<MaterialCheckBox, String>(chkScopePassive, "passive"));
-				}});
-				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
-					add(new Pair<MaterialCheckBox, String>(chkPresentSimple, "TENSE_PRESENT_SIMPLE"));
-					add(new Pair<MaterialCheckBox, String>(chkFutureSimple, "TENSE_FUTURE_SIMPLE"));
-					add(new Pair<MaterialCheckBox, String>(chkPresentProgressive, "TENSE_PRESENT_PROGRESSIVE"));
-					add(new Pair<MaterialCheckBox, String>(chkPastProgressive, "TENSE_PAST_PROGRESSIVE"));
-					add(new Pair<MaterialCheckBox, String>(chkFutureProgressive, "TENSE_FUTURE_PROGRESSIVE"));
-					add(new Pair<MaterialCheckBox, String>(chkFuturePerfect, "TENSE_FUTURE_PERFECT"));
-					add(new Pair<MaterialCheckBox, String>(chkPresentPerfectProg, "TENSE_PRESENT_PERFECT_PROGRESSIVE"));
-					add(new Pair<MaterialCheckBox, String>(chkPastPerfectProg, "TENSE_PAST_PERFECT_PROGRESSIVE"));
-					add(new Pair<MaterialCheckBox, String>(chkFuturePerfectProg, "TENSE_FUTURE_PERFECT_PROGRESSIVE"));
-					add(new Pair<MaterialCheckBox, String>(chkPastSimple, "TENSE_PAST_SIMPLE"));
-					add(new Pair<MaterialCheckBox, String>(chkPresentPerfect, "TENSE_PRESENT_PERFECT"));
-					add(new Pair<MaterialCheckBox, String>(chkPastPerfect, "TENSE_PAST_PERFECT"));
-				}});
-			}};
+			// Passive Drag
+			ArrayList<Pair<MaterialCheckBox, String>> firstLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();
+			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkScopePassive, "passive"));
 			
-			passiveDragConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>() {{
-				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
-					add(new Pair<MaterialCheckBox, String>(chkScopePassive, "passive"));
-				}});
-				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
-					add(new Pair<MaterialCheckBox, String>(chkPresentSimple, "TENSE_PRESENT_SIMPLE"));
-					add(new Pair<MaterialCheckBox, String>(chkFutureSimple, "TENSE_FUTURE_SIMPLE"));
-					add(new Pair<MaterialCheckBox, String>(chkPresentProgressive, "TENSE_PRESENT_PROGRESSIVE"));
-					add(new Pair<MaterialCheckBox, String>(chkPastProgressive, "TENSE_PAST_PROGRESSIVE"));
-					add(new Pair<MaterialCheckBox, String>(chkFutureProgressive, "TENSE_FUTURE_PROGRESSIVE"));
-					add(new Pair<MaterialCheckBox, String>(chkFuturePerfect, "TENSE_FUTURE_PERFECT"));
-					add(new Pair<MaterialCheckBox, String>(chkPresentPerfectProg, "TENSE_PRESENT_PERFECT_PROGRESSIVE"));
-					add(new Pair<MaterialCheckBox, String>(chkPastPerfectProg, "TENSE_PAST_PERFECT_PROGRESSIVE"));
-					add(new Pair<MaterialCheckBox, String>(chkFuturePerfectProg, "TENSE_FUTURE_PERFECT_PROGRESSIVE"));
-					add(new Pair<MaterialCheckBox, String>(chkPastSimple, "TENSE_PAST_SIMPLE"));
-					add(new Pair<MaterialCheckBox, String>(chkPresentPerfect, "TENSE_PRESENT_PERFECT"));
-					add(new Pair<MaterialCheckBox, String>(chkPastPerfect, "TENSE_PAST_PERFECT"));
-				}});
-			}};
-							
-			relativesFibMarkSelectConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>() {{
-				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
-					add(new Pair<MaterialCheckBox, String>(chkScopePassive, "who"));
-					add(new Pair<MaterialCheckBox, String>(chkScopePassive, "which"));
-					add(new Pair<MaterialCheckBox, String>(chkScopePassive, "that"));
-					add(new Pair<MaterialCheckBox, String>(chkScopePassive, "otherRelPron"));
-				}});
-			}};
-				 						
-			relativesDragConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>() {{
-				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
-					add(new Pair<MaterialCheckBox, String>(null, "who"));
-					add(new Pair<MaterialCheckBox, String>(null, "which"));
-					add(new Pair<MaterialCheckBox, String>(null, "that"));
-					add(new Pair<MaterialCheckBox, String>(null, "otherRelPron"));
-				}});
-			}};
+			ArrayList<Pair<MaterialCheckBox, String>> secondLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkPresentSimple, "TENSE_PRESENT_SIMPLE"));
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkFutureSimple, "TENSE_FUTURE_SIMPLE"));
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkPresentProgressive, "TENSE_PRESENT_PROGRESSIVE"));
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkPastProgressive, "TENSE_PAST_PROGRESSIVE"));
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkFutureProgressive, "TENSE_FUTURE_PROGRESSIVE"));
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkFuturePerfect, "TENSE_FUTURE_PERFECT"));
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkPresentPerfectProg, "TENSE_PRESENT_PERFECT_PROGRESSIVE"));
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkPastPerfectProg, "TENSE_PAST_PERFECT_PROGRESSIVE"));
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkFuturePerfectProg, "TENSE_FUTURE_PERFECT_PROGRESSIVE"));
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkPastSimple, "TENSE_PAST_SIMPLE"));
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkPresentPerfect, "TENSE_PRESENT_PERFECT"));
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkPastPerfect, "TENSE_PAST_PERFECT"));
+			
+			passiveDragConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>(); 
+			passiveDragConstructionLevels.add(firstLevelConstructions);
+			passiveDragConstructionLevels.add(secondLevelConstructions);
 						
-			presentFibSelectConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>() {{
-				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
-					add(new Pair<MaterialCheckBox, String>(null, "present"));
-				}});
-				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
-					add(new Pair<MaterialCheckBox, String>(chkQuestions, "question"));
-					add(new Pair<MaterialCheckBox, String>(chkStatements, "stmt"));
-				}});
-				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
-					add(new Pair<MaterialCheckBox, String>(chkNegatedSent, "neg"));
-					add(new Pair<MaterialCheckBox, String>(chkAffirmativeSent, "affirm"));
-				}});
-				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
-					add(new Pair<MaterialCheckBox, String>(chk3Pers, "3"));
-					add(new Pair<MaterialCheckBox, String>(chkNot3Pers, "not3"));
-				}});
-			}};						
+			// Passive FiB
+			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkScopeActive, "active"));			
 			
-			presentMarkConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>() {{
-				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
-					add(new Pair<MaterialCheckBox, String>(null, "present"));
-				}});
-				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
-					add(new Pair<MaterialCheckBox, String>(null, "question"));
-					add(new Pair<MaterialCheckBox, String>(null, "stmt"));
-				}});
-				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
-					add(new Pair<MaterialCheckBox, String>(null, "neg"));
-					add(new Pair<MaterialCheckBox, String>(null, "affirm"));
-				}});
-				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
-					add(new Pair<MaterialCheckBox, String>(chk3Pers, "3"));
-					add(new Pair<MaterialCheckBox, String>(chkNot3Pers, "not3"));
-				}});
-			}};
+			passiveFibConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>(); 
+			passiveFibConstructionLevels.add(firstLevelConstructions);
+			passiveFibConstructionLevels.add(secondLevelConstructions);
 						
-			pastFibSelectConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>() {{
-				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
-					add(new Pair<MaterialCheckBox, String>(chkPastSimple, "TENSE_PAST_SIMPLE"));
-					add(new Pair<MaterialCheckBox, String>(chkPresentPerfect, "TENSE_PRESENT_PERFECT"));
-					add(new Pair<MaterialCheckBox, String>(chkPastPerfect, "TENSE_PAST_PERFECT"));
-				}});
-				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
-					add(new Pair<MaterialCheckBox, String>(chkQuestions, "question"));
-					add(new Pair<MaterialCheckBox, String>(chkStatements, "stmt"));
-				}});
-				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
-					add(new Pair<MaterialCheckBox, String>(chkNegatedSent, "neg"));
-					add(new Pair<MaterialCheckBox, String>(chkAffirmativeSent, "affirm"));
-				}});
-				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
-					add(new Pair<MaterialCheckBox, String>(chkRegularVerbs, "reg"));
-					add(new Pair<MaterialCheckBox, String>(chkIrregularVerbs, "irreg"));
-				}});
-			}};
+			// Relatives FiB/Mark/Select
+			firstLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
+			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkScopePassive, "who"));
+			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkScopePassive, "which"));
+			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkScopePassive, "that"));
+			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkScopePassive, "otherRelPron"));
 			
-			pastMarkDragConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>() {{
-				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
-					add(new Pair<MaterialCheckBox, String>(chkPastSimple, "TENSE_PAST_SIMPLE"));
-					add(new Pair<MaterialCheckBox, String>(chkPresentPerfect, "TENSE_PRESENT_PERFECT"));
-					add(new Pair<MaterialCheckBox, String>(chkPastPerfect, "TENSE_PAST_PERFECT"));
-				}});
-				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
-					add(new Pair<MaterialCheckBox, String>(null, "question"));
-					add(new Pair<MaterialCheckBox, String>(null, "stmt"));
-				}});
-				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
-					add(new Pair<MaterialCheckBox, String>(null, "neg"));
-					add(new Pair<MaterialCheckBox, String>(null, "affirm"));
-				}});
-				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
-					add(new Pair<MaterialCheckBox, String>(chkRegularVerbs, "reg"));
-					add(new Pair<MaterialCheckBox, String>(chkIrregularVerbs, "irreg"));
-				}});
-			}};
-								
-			ifConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>() {{
-				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
-					add(new Pair<MaterialCheckBox, String>(chkscopeType1, "condReal"));
-					add(new Pair<MaterialCheckBox, String>(chkscopeType2, "condUnreal"));
-				}});
-			}};
+			relativesFibMarkSelectConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>(); 
+			relativesFibMarkSelectConstructionLevels.add(firstLevelConstructions);
 			
-			compareConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>() {{
-				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
-					add(new Pair<MaterialCheckBox, String>(chkPosAdj, "adj"));
-					add(new Pair<MaterialCheckBox, String>(chkPosAdv, "adv"));
-				}});
-				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
-					add(new Pair<MaterialCheckBox, String>(chkFormComparatives, "comp"));
-					add(new Pair<MaterialCheckBox, String>(chkFormSuperlatives, "sup"));
-				}});
-				add(new ArrayList<Pair<MaterialCheckBox, String>>(){{
-					add(new Pair<MaterialCheckBox, String>(chkFormSynthetic, "syn"));
-					add(new Pair<MaterialCheckBox, String>(chkFormAnalytic, "ana"));
-				}});
-			}};
+			// Relatives Drag
+			firstLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
+			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "who"));
+			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "which"));
+			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "that"));
+			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "otherRelPron"));
+			
+			relativesDragConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>(); 
+			relativesDragConstructionLevels.add(firstLevelConstructions);
+			
+			// Present FiB/Select
+			firstLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
+			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "present"));
+			
+			secondLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkQuestions, "question"));
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkStatements, "stmt"));
+			
+			ArrayList<Pair<MaterialCheckBox, String>> thirdLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
+			thirdLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkNegatedSent, "neg"));
+			thirdLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkAffirmativeSent, "affirm"));
+			
+			ArrayList<Pair<MaterialCheckBox, String>> fourthLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
+			fourthLevelConstructions.add(new Pair<MaterialCheckBox, String>(chk3Pers, "3"));
+			fourthLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkNot3Pers, "not3"));
+			
+			presentFibSelectConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>(); 
+			presentFibSelectConstructionLevels.add(firstLevelConstructions);
+			presentFibSelectConstructionLevels.add(secondLevelConstructions);
+			presentFibSelectConstructionLevels.add(thirdLevelConstructions);
+			presentFibSelectConstructionLevels.add(fourthLevelConstructions);
+
+			// Present Mark
+			secondLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "question"));
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "stmt"));
+			
+			thirdLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
+			thirdLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "neg"));
+			thirdLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "affirm"));
+						
+			presentMarkConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>(); 
+			presentMarkConstructionLevels.add(firstLevelConstructions);
+			presentMarkConstructionLevels.add(secondLevelConstructions);
+			presentMarkConstructionLevels.add(thirdLevelConstructions);
+			presentMarkConstructionLevels.add(fourthLevelConstructions);
+
+			// Past FiB/Select
+			firstLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
+			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkPastSimple, "TENSE_PAST_SIMPLE"));
+			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkPresentPerfect, "TENSE_PRESENT_PERFECT"));
+			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkPastPerfect, "TENSE_PAST_PERFECT"));
+			
+			secondLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkQuestions, "question"));
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkStatements, "stmt"));
+			
+			thirdLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
+			thirdLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkNegatedSent, "neg"));
+			thirdLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkAffirmativeSent, "affirm"));
+			
+			fourthLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
+			fourthLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkRegularVerbs, "reg"));
+			fourthLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkIrregularVerbs, "irreg"));
+			
+			pastFibSelectConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>(); 
+			pastFibSelectConstructionLevels.add(firstLevelConstructions);
+			pastFibSelectConstructionLevels.add(secondLevelConstructions);
+			pastFibSelectConstructionLevels.add(thirdLevelConstructions);
+			pastFibSelectConstructionLevels.add(fourthLevelConstructions);
+			
+			// Past Mark/Drag
+			secondLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "question"));
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "stmt"));
+			
+			thirdLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
+			thirdLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "neg"));
+			thirdLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "affirm"));
+			
+			pastMarkDragConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>(); 
+			pastMarkDragConstructionLevels.add(firstLevelConstructions);
+			pastMarkDragConstructionLevels.add(secondLevelConstructions);
+			pastMarkDragConstructionLevels.add(thirdLevelConstructions);
+			pastMarkDragConstructionLevels.add(fourthLevelConstructions);
+			
+			// Conditionals		
+			firstLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
+			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkscopeType1, "condReal"));
+			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkscopeType2, "condUnreal"));
+			
+			ifConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>(); 
+			ifConstructionLevels.add(firstLevelConstructions);
+			
+			//Comparative
+			firstLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
+			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkPosAdj, "adj"));
+			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkPosAdv, "adv"));
+			
+			secondLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkFormComparatives, "comp"));
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkFormSuperlatives, "sup"));
+			
+			thirdLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
+			thirdLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkFormSynthetic, "syn"));
+			thirdLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkFormAnalytic, "ana"));
+			
+			compareConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>(); 
+			compareConstructionLevels.add(firstLevelConstructions);
+			compareConstructionLevels.add(secondLevelConstructions);
+			compareConstructionLevels.add(thirdLevelConstructions);
 		}
 		
 		private final ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> passiveFibConstructionLevels;
@@ -288,8 +290,6 @@ public class TaskItem extends LocalizedComposite {
     MaterialComboBox<Option> drpType;
     @UiField
     MaterialComboBox<Option> drpQuiz;
-    @UiField
-    Option optTopicDefault;
     @UiField
     Option optTypeDefault;
     @UiField
@@ -478,6 +478,15 @@ public class TaskItem extends LocalizedComposite {
         initWidget(ourUiBinder.createAndBindUi(this));
         initLocale(localeBinder.bind(this));
         this.initHandlers();
+        
+        possibleTopics = new ArrayList<Pair<String, String>>();
+    	possibleTopics.add(new Pair<String, String>("Comparatives", "Compare"));
+    	possibleTopics.add(new Pair<String, String>("Present simple", "Present"));
+    	possibleTopics.add(new Pair<String, String>("Past tenses", "Past"));
+    	possibleTopics.add(new Pair<String, String>("Passive", "Passive"));
+    	possibleTopics.add(new Pair<String, String>("Conditionals", "'if'"));
+    	possibleTopics.add(new Pair<String, String>("Relative Clauses", "Relatives"));
+    	
         constructionComponents = new ConstructionComponents();
         settingsWidgets = new Widget[] {
         		grpBrackets, chkBracketsLemma, chkBracketsConditional, chkBracketsPos, chkBracketsForm, chkBracketsWill, 
@@ -487,14 +496,38 @@ public class TaskItem extends LocalizedComposite {
         		chkDistractorsWrongSuffix, grpPos, grpCompForm, grpForms, grpVerbPerson, grpVerbForms, grpSentenceTypes, grpTenses,
         		lblTensesSentences, chkPresentSimple, chkFutureSimple, chkPresentProgressive, chkPastProgressive, chkFutureProgressive, 
         		chkFuturePerfect, chkPresentPerfectProg, chkPastPerfectProg, chkFuturePerfectProg, lblTensesWords, grpCondTypes, 
-        		grpClauses, grpScope, grpPronouns, grpVerbSplitting, grpTargetWords, grpSentTypes
+        		grpClauses, grpScope, grpPronouns, grpVerbSplitting, grpTargetWords, grpSentTypes, chkPastSimple, chkPresentPerfect, 
+        		chkPastPerfect, chkScopeActive, chkWho, chkWhich, chkThat, chkOtherRelPron, chk3Pers, chkNot3Pers, chkAffirmativeSent, 
+        		chkNegatedSent, chkQuestions, chkStatements, chkRegularVerbs, chkIrregularVerbs, chkscopeType1, chkscopeType2, 
+        		chkPosAdj, chkPosAdv, chkFormComparatives, chkFormSuperlatives, chkFormSynthetic, chkFormAnalytic
         };
     	setExerciseSettingsVisibilities();
     }
     
     private int currentSelectionStartIndex = 0;
     private int currentSelectionLength = 0;
+    
 
+    /**
+     * The widgets whose visibility depends on the settings.
+     */
+    final Widget[] settingsWidgets;
+
+    /**
+     * The occurrences of constructions relevant to exercise generation in the currently selected document part.
+     */
+    private HashMap<String, Integer> relevantConstructionsInSelectedDocumentPart = null;
+    
+    /**
+     * The occurrences of constructions relevant to exercise generation in the current document.
+     */
+    private HashMap<String, Integer> relevantConstructionsInEntireDocument = null;
+    
+    /**
+     * The possible topics for the dropdown.
+     */
+    private ArrayList<Pair<String, String>> possibleTopics;
+    
     /**
      * Calculates the start index and length of the selected document part within the previewed document.
      * @return	The start index and length of the current selection
@@ -525,7 +558,8 @@ public class TaskItem extends LocalizedComposite {
 
         btnApplyDocumentSelection.addClickHandler(event -> {
         	dlgDocumentSelection.close();
-        	calculateConstructionsOccurrences();
+        	relevantConstructionsInSelectedDocumentPart = new HashMap<String, Integer>();
+        	calculateConstructionsOccurrences(relevantConstructionsInSelectedDocumentPart);
         });
         btnDiscardDocumentSelection.addClickHandler(event -> {
         	dlgDocumentSelection.close();
@@ -587,10 +621,6 @@ public class TaskItem extends LocalizedComposite {
     	}
     }
     
-    /**
-     * The widgets whose visibility depends on the settings.
-     */
-    final Widget[] settingsWidgets;
     
     /**
      * Gets the value of the currently selected topic.
@@ -617,6 +647,20 @@ public class TaskItem extends LocalizedComposite {
     }
     
     /**
+     * Adds a widget to the visible widgets list if the corresponding construction occurs at least once in the text.
+     * @param construction		The construction denoted by the widget
+     * @param topic				The topic to which the construction belongs
+     * @param group				The index of the construction in the detailed construction name
+     * @param visibleSettings	The list of widgets to be displayed
+     * @param widget			The widget
+     */
+    private void addConstructionIfOccurs(String construction, String topic, int group, ArrayList<Widget> visibleSettings, Widget widget) {
+    	if(checkConstructionOccurs(construction, topic, group)) {
+			visibleSettings.add(widget);
+		}
+    }
+    
+    /**
      * Shows only those exercise parameters that are relevant for the topic and exercise type and hides all others
      */
     private void setExerciseSettingsVisibilities() {  
@@ -633,46 +677,67 @@ public class TaskItem extends LocalizedComposite {
     			visibleSettings.add(chkBracketsKeywords);
     			visibleSettings.add(grpTenses);
     			visibleSettings.add(lblTensesSentences);
-    			visibleSettings.add(chkPresentSimple);
-    			visibleSettings.add(chkFutureSimple);
-    			visibleSettings.add(chkPresentProgressive);
-    			visibleSettings.add(chkPastProgressive);
-    			visibleSettings.add(chkFutureProgressive);
-    			visibleSettings.add(chkFuturePerfect);
-    			visibleSettings.add(chkPresentPerfectProg);
-    			visibleSettings.add(chkPastPerfectProg);
-    			visibleSettings.add(chkFuturePerfectProg);
+    			addConstructionIfOccurs("TENSE_PRESENT_SIMPLE", "Passive", 2, visibleSettings, chkPresentSimple);
+    			addConstructionIfOccurs("TENSE_FUTURE_SIMPLE", "Passive", 2, visibleSettings, chkFutureSimple);
+    			addConstructionIfOccurs("TENSE_PRESENT_PROGRESSIVE", "Passive", 2, visibleSettings, chkPresentProgressive);
+    			addConstructionIfOccurs("TENSE_PAST_PROGRESSIVE", "Passive", 2, visibleSettings, chkPastProgressive);
+    			addConstructionIfOccurs("TENSE_FUTURE_PROGRESSIVE", "Passive", 2, visibleSettings, chkFutureProgressive);
+    			addConstructionIfOccurs("TENSE_FUTURE_PERFECT", "Passive", 2, visibleSettings, chkFuturePerfect);
+    			addConstructionIfOccurs("TENSE_PRESENT_PERFECT_PROGRESSIVE", "Passive", 2, visibleSettings, chkPresentPerfectProg);
+    			addConstructionIfOccurs("TENSE_PAST_PERFECT_PROGRESSIVE", "Passive", 2, visibleSettings, chkPastPerfectProg);
+    			addConstructionIfOccurs("TENSE_FUTURE_PERFECT_PROGRESSIVE", "Passive", 2, visibleSettings, chkFuturePerfectProg);
+    			addConstructionIfOccurs("TENSE_PAST_SIMPLE", "Passive", 2, visibleSettings, chkPastSimple);
+    			addConstructionIfOccurs("TENSE_PRESENT_PERFECT", "Passive", 2, visibleSettings, chkPresentPerfect);
+    			addConstructionIfOccurs("TENSE_PAST_PERFECT", "Passive", 2, visibleSettings, chkPastPerfect);
     			visibleSettings.add(grpSentTypes);
-    		} else if(exerciseType.equals("Select")) {
-    			
+    			addConstructionIfOccurs("active", "Passive", 2, visibleSettings, chkScopeActive);	
     		} else if(exerciseType.equals("Mark")) {
     			//visibleSettings.add(grpTargetWords);
     		} else if(exerciseType.equals("Drag")) {
     			visibleSettings.add(grpTenses);
     			visibleSettings.add(lblTensesSentences);
-    			visibleSettings.add(chkPresentSimple);
-    			visibleSettings.add(chkFutureSimple);
-    			visibleSettings.add(chkPresentProgressive);
-    			visibleSettings.add(chkPastProgressive);
-    			visibleSettings.add(chkFutureProgressive);
-    			visibleSettings.add(chkFuturePerfect);
-    			visibleSettings.add(chkPresentPerfectProg);
-    			visibleSettings.add(chkPastPerfectProg);
-    			visibleSettings.add(chkFuturePerfectProg);
+    			addConstructionIfOccurs("TENSE_PRESENT_SIMPLE", "Passive", 2, visibleSettings, chkPresentSimple);
+    			addConstructionIfOccurs("TENSE_FUTURE_SIMPLE", "Passive", 2, visibleSettings, chkFutureSimple);
+    			addConstructionIfOccurs("TENSE_PRESENT_PROGRESSIVE", "Passive", 2, visibleSettings, chkPresentProgressive);
+    			addConstructionIfOccurs("TENSE_PAST_PROGRESSIVE", "Passive", 2, visibleSettings, chkPastProgressive);
+    			addConstructionIfOccurs("TENSE_FUTURE_PROGRESSIVE", "Passive", 2, visibleSettings, chkFutureProgressive);
+    			addConstructionIfOccurs("TENSE_FUTURE_PERFECT", "Passive", 2, visibleSettings, chkFuturePerfect);
+    			addConstructionIfOccurs("TENSE_PRESENT_PERFECT_PROGRESSIVE", "Passive", 2, visibleSettings, chkPresentPerfectProg);
+    			addConstructionIfOccurs("TENSE_PAST_PERFECT_PROGRESSIVE", "Passive", 2, visibleSettings, chkPastPerfectProg);
+    			addConstructionIfOccurs("TENSE_FUTURE_PERFECT_PROGRESSIVE", "Passive", 2, visibleSettings, chkFuturePerfectProg);
+    			addConstructionIfOccurs("TENSE_PAST_SIMPLE", "Passive", 2, visibleSettings, chkPastSimple);
+    			addConstructionIfOccurs("TENSE_PRESENT_PERFECT", "Passive", 2, visibleSettings, chkPresentPerfect);
+    			addConstructionIfOccurs("TENSE_PAST_PERFECT", "Passive", 2, visibleSettings, chkPastPerfect);   			
     			visibleSettings.add(grpVerbSplitting);
     		}
     	} else if(topic.equals("Relatives")) {
     		if(exerciseType.equals("FiB")) {
     			visibleSettings.add(grpPronouns);
+    			addConstructionIfOccurs("who", "Relatives", 1, visibleSettings, chkWho);   			
+    			addConstructionIfOccurs("which", "Relatives", 1, visibleSettings, chkWhich);   			
+    			addConstructionIfOccurs("that", "Relatives", 1, visibleSettings, chkThat);   			
+    			addConstructionIfOccurs("otherRelPron", "Relatives", 1, visibleSettings, chkOtherRelPron);   			
     		} else if(exerciseType.equals("Select")) {
     			visibleSettings.add(grpDistractors);
     			visibleSettings.add(grpPronouns);
+    			addConstructionIfOccurs("who", "Relatives", 1, visibleSettings, chkWho);   			
+    			addConstructionIfOccurs("which", "Relatives", 1, visibleSettings, chkWhich);   			
+    			addConstructionIfOccurs("that", "Relatives", 1, visibleSettings, chkThat);   			
+    			addConstructionIfOccurs("otherRelPron", "Relatives", 1, visibleSettings, chkOtherRelPron);
     		} else if(exerciseType.equals("Mark")) {
     			visibleSettings.add(grpPronouns);
+    			addConstructionIfOccurs("who", "Relatives", 1, visibleSettings, chkWho);   			
+    			addConstructionIfOccurs("which", "Relatives", 1, visibleSettings, chkWhich);   			
+    			addConstructionIfOccurs("that", "Relatives", 1, visibleSettings, chkThat);   			
+    			addConstructionIfOccurs("otherRelPron", "Relatives", 1, visibleSettings, chkOtherRelPron);
     		} else if(exerciseType.equals("Drag")) {
     			visibleSettings.add(grpScope);
     			if(rbtPerSentence.getValue()) {
     				visibleSettings.add(grpPronouns);
+    				addConstructionIfOccurs("who", "Relatives", 1, visibleSettings, chkWho);   			
+        			addConstructionIfOccurs("which", "Relatives", 1, visibleSettings, chkWhich);   			
+        			addConstructionIfOccurs("that", "Relatives", 1, visibleSettings, chkThat);   			
+        			addConstructionIfOccurs("otherRelPron", "Relatives", 1, visibleSettings, chkOtherRelPron);
     			}
     		}
     	} else if(topic.equals("Present")) {
@@ -680,44 +745,84 @@ public class TaskItem extends LocalizedComposite {
     			visibleSettings.add(grpBrackets);
     			visibleSettings.add(chkBracketsLemma);   
     			visibleSettings.add(grpVerbPerson);  
-    			visibleSettings.add(grpSentenceTypes);  
+				addConstructionIfOccurs("3", "Present", 4, visibleSettings, chk3Pers);   			
+				addConstructionIfOccurs("not3", "Present", 4, visibleSettings, chkNot3Pers);   			
+    			visibleSettings.add(grpSentenceTypes); 
+				addConstructionIfOccurs("affirm", "Present", 3, visibleSettings, chkAffirmativeSent);   			
+				addConstructionIfOccurs("neg", "Present", 3, visibleSettings, chkNegatedSent);   			
+				addConstructionIfOccurs("question", "Present", 2, visibleSettings, chkQuestions);   			
+				addConstructionIfOccurs("stmt", "Present", 2, visibleSettings, chkStatements);   			
     		} else if(exerciseType.equals("Select")) {
     			visibleSettings.add(grpDistractors);    
     			visibleSettings.add(chkDistractorsWrongSuffixUse);  
     			visibleSettings.add(chkDistractorsWrongSuffix);  
     			visibleSettings.add(grpVerbPerson);  
-    			visibleSettings.add(grpSentenceTypes);  
+    			addConstructionIfOccurs("3", "Present", 4, visibleSettings, chk3Pers);   			
+				addConstructionIfOccurs("not3", "Present", 4, visibleSettings, chkNot3Pers);   			
+    			visibleSettings.add(grpSentenceTypes); 
+				addConstructionIfOccurs("affirm", "Present", 3, visibleSettings, chkAffirmativeSent);   			
+				addConstructionIfOccurs("neg", "Present", 3, visibleSettings, chkNegatedSent);   			
+				addConstructionIfOccurs("question", "Present", 2, visibleSettings, chkQuestions);   			
+				addConstructionIfOccurs("stmt", "Present", 2, visibleSettings, chkStatements);   
     		} else if(exerciseType.equals("Mark")) {
-    			visibleSettings.add(grpVerbPerson);   
-    		} else if(exerciseType.equals("Drag")) {
-    			
-    		}
+    			visibleSettings.add(grpVerbPerson);  
+    			addConstructionIfOccurs("3", "Present", 4, visibleSettings, chk3Pers);   			
+				addConstructionIfOccurs("not3", "Present", 4, visibleSettings, chkNot3Pers);   	
+    		} 
     	} else if(topic.equals("Past")) {
     		if(exerciseType.equals("FiB")) {
     			visibleSettings.add(grpBrackets);
     			visibleSettings.add(chkBracketsLemma);
     			visibleSettings.add(chkBracketsTense);
     			visibleSettings.add(grpSentenceTypes);
+    			addConstructionIfOccurs("affirm", "Past", 3, visibleSettings, chkAffirmativeSent);   			
+				addConstructionIfOccurs("neg", "Past", 3, visibleSettings, chkNegatedSent);   			
+				addConstructionIfOccurs("question", "Past", 2, visibleSettings, chkQuestions);   			
+				addConstructionIfOccurs("stmt", "Past", 2, visibleSettings, chkStatements);   
     			visibleSettings.add(grpTenses);
     			visibleSettings.add(lblTensesWords);
+    			addConstructionIfOccurs("TENSE_PAST_SIMPLE", "Past", 1, visibleSettings, chkPastSimple);
+    			addConstructionIfOccurs("TENSE_PRESENT_PERFECT", "Past", 1, visibleSettings, chkPresentPerfect);
+    			addConstructionIfOccurs("TENSE_PAST_PERFECT", "Past", 1, visibleSettings, chkPastPerfect);       			
     			visibleSettings.add(grpVerbForms);
+    			addConstructionIfOccurs("irreg", "Past", 4, visibleSettings, chkIrregularVerbs);   
+    			addConstructionIfOccurs("reg", "Past", 4, visibleSettings, chkRegularVerbs);       			
     		} else if(exerciseType.equals("Select")) {
     			visibleSettings.add(grpDistractors);
     			visibleSettings.add(chkDistractorsOtherPast);
     			visibleSettings.add(chkDistractorsOtherTense);
     			visibleSettings.add(chkDistractorsIncorrectForms);
-    			visibleSettings.add(grpSentenceTypes); 
+    			visibleSettings.add(grpSentenceTypes);
+    			addConstructionIfOccurs("affirm", "Past", 3, visibleSettings, chkAffirmativeSent);   			
+				addConstructionIfOccurs("neg", "Past", 3, visibleSettings, chkNegatedSent);   			
+				addConstructionIfOccurs("question", "Past", 2, visibleSettings, chkQuestions);   			
+				addConstructionIfOccurs("stmt", "Past", 2, visibleSettings, chkStatements);   
     			visibleSettings.add(grpTenses);
     			visibleSettings.add(lblTensesWords);
+    			addConstructionIfOccurs("TENSE_PAST_SIMPLE", "Past", 1, visibleSettings, chkPastSimple);
+    			addConstructionIfOccurs("TENSE_PRESENT_PERFECT", "Past", 1, visibleSettings, chkPresentPerfect);
+    			addConstructionIfOccurs("TENSE_PAST_PERFECT", "Past", 1, visibleSettings, chkPastPerfect);       			
     			visibleSettings.add(grpVerbForms);
+    			addConstructionIfOccurs("irreg", "Past", 4, visibleSettings, chkIrregularVerbs);   
+    			addConstructionIfOccurs("reg", "Past", 4, visibleSettings, chkRegularVerbs);  
     		} else if(exerciseType.equals("Mark")) {
     			visibleSettings.add(grpTenses);
     			visibleSettings.add(lblTensesWords);
+    			addConstructionIfOccurs("TENSE_PAST_SIMPLE", "Past", 1, visibleSettings, chkPastSimple);
+    			addConstructionIfOccurs("TENSE_PRESENT_PERFECT", "Past", 1, visibleSettings, chkPresentPerfect);
+    			addConstructionIfOccurs("TENSE_PAST_PERFECT", "Past", 1, visibleSettings, chkPastPerfect);       			
     			visibleSettings.add(grpVerbForms);
+    			addConstructionIfOccurs("irreg", "Past", 4, visibleSettings, chkIrregularVerbs);   
+    			addConstructionIfOccurs("reg", "Past", 4, visibleSettings, chkRegularVerbs);  
     		} else if(exerciseType.equals("Drag")) {
     			visibleSettings.add(grpTenses);
     			visibleSettings.add(lblTensesWords);
+    			addConstructionIfOccurs("TENSE_PAST_SIMPLE", "Past", 1, visibleSettings, chkPastSimple);
+    			addConstructionIfOccurs("TENSE_PRESENT_PERFECT", "Past", 1, visibleSettings, chkPresentPerfect);
+    			addConstructionIfOccurs("TENSE_PAST_PERFECT", "Past", 1, visibleSettings, chkPastPerfect);       			
     			visibleSettings.add(grpVerbForms);
+    			addConstructionIfOccurs("irreg", "Past", 4, visibleSettings, chkIrregularVerbs);   
+    			addConstructionIfOccurs("reg", "Past", 4, visibleSettings, chkRegularVerbs);  
     		}
     	} else if(topic.equals("'if'")) {
     		if(exerciseType.equals("FiB")) {
@@ -726,17 +831,21 @@ public class TaskItem extends LocalizedComposite {
     			visibleSettings.add(chkBracketsConditional);
     			visibleSettings.add(chkBracketsWill);
     			visibleSettings.add(grpCondTypes);
+    			addConstructionIfOccurs("condUnreal", "'if'", 1, visibleSettings, chkscopeType1);  
+    			addConstructionIfOccurs("condReal", "'if'", 1, visibleSettings, chkscopeType2);    			
     			visibleSettings.add(grpClauses);
     		} else if(exerciseType.equals("Select")) {
     			visibleSettings.add(grpDistractors);
     			visibleSettings.add(chkDistractorsWrongConditional);
     			visibleSettings.add(chkDistractorsWrongClause);
     			visibleSettings.add(grpCondTypes);
+    			addConstructionIfOccurs("condUnreal", "'if'", 1, visibleSettings, chkscopeType1);  
+    			addConstructionIfOccurs("condReal", "'if'", 1, visibleSettings, chkscopeType2); 
     			visibleSettings.add(grpClauses);
-    		} else if(exerciseType.equals("Mark")) {
-    			
     		} else if(exerciseType.equals("Drag")) {
     			visibleSettings.add(grpCondTypes);
+    			addConstructionIfOccurs("condUnreal", "'if'", 1, visibleSettings, chkscopeType1);  
+    			addConstructionIfOccurs("condReal", "'if'", 1, visibleSettings, chkscopeType2); 
     			if(rbtSingleTask.getValue()) {
     				visibleSettings.add(grpClauses);
     			}
@@ -749,24 +858,48 @@ public class TaskItem extends LocalizedComposite {
     			visibleSettings.add(chkBracketsPos);
     			visibleSettings.add(chkBracketsForm);
     			visibleSettings.add(grpPos);
+    			addConstructionIfOccurs("adj", "Compare", 1, visibleSettings, chkPosAdj); 
+    			addConstructionIfOccurs("adv", "Compare", 1, visibleSettings, chkPosAdv); 
     			visibleSettings.add(grpCompForm);
+    			addConstructionIfOccurs("comp", "Compare", 2, visibleSettings, chkFormComparatives); 
+    			addConstructionIfOccurs("sup", "Compare", 2, visibleSettings, chkFormSuperlatives); 
     			visibleSettings.add(grpForms);
+    			addConstructionIfOccurs("syn", "Compare", 3, visibleSettings, chkFormSynthetic); 
+    			addConstructionIfOccurs("ana", "Compare", 3, visibleSettings, chkFormAnalytic);
     		} else if(exerciseType.equals("Select")) {
     			visibleSettings.add(grpDistractors);
     			visibleSettings.add(chkDistractorsOtherForm);
     			visibleSettings.add(chkDistractorsOtherVariant);
     			visibleSettings.add(chkDistractorsIncorrectForms);
     			visibleSettings.add(grpPos);
+    			addConstructionIfOccurs("adj", "Compare", 1, visibleSettings, chkPosAdj); 
+    			addConstructionIfOccurs("adv", "Compare", 1, visibleSettings, chkPosAdv); 
     			visibleSettings.add(grpCompForm);
+    			addConstructionIfOccurs("comp", "Compare", 2, visibleSettings, chkFormComparatives); 
+    			addConstructionIfOccurs("sup", "Compare", 2, visibleSettings, chkFormSuperlatives); 
     			visibleSettings.add(grpForms);
+    			addConstructionIfOccurs("syn", "Compare", 3, visibleSettings, chkFormSynthetic); 
+    			addConstructionIfOccurs("ana", "Compare", 3, visibleSettings, chkFormAnalytic);
     		} else if(exerciseType.equals("Mark")) {
     			visibleSettings.add(grpPos);
+    			addConstructionIfOccurs("adj", "Compare", 1, visibleSettings, chkPosAdj); 
+    			addConstructionIfOccurs("adv", "Compare", 1, visibleSettings, chkPosAdv); 
     			visibleSettings.add(grpCompForm);
+    			addConstructionIfOccurs("comp", "Compare", 2, visibleSettings, chkFormComparatives); 
+    			addConstructionIfOccurs("sup", "Compare", 2, visibleSettings, chkFormSuperlatives); 
     			visibleSettings.add(grpForms);
+    			addConstructionIfOccurs("syn", "Compare", 3, visibleSettings, chkFormSynthetic); 
+    			addConstructionIfOccurs("ana", "Compare", 3, visibleSettings, chkFormAnalytic);
     		} else if(exerciseType.equals("Drag")) {
     			visibleSettings.add(grpPos);
+    			addConstructionIfOccurs("adj", "Compare", 1, visibleSettings, chkPosAdj); 
+    			addConstructionIfOccurs("adv", "Compare", 1, visibleSettings, chkPosAdv); 
     			visibleSettings.add(grpCompForm);
+    			addConstructionIfOccurs("comp", "Compare", 2, visibleSettings, chkFormComparatives); 
+    			addConstructionIfOccurs("sup", "Compare", 2, visibleSettings, chkFormSuperlatives); 
     			visibleSettings.add(grpForms);
+    			addConstructionIfOccurs("syn", "Compare", 3, visibleSettings, chkFormSynthetic); 
+    			addConstructionIfOccurs("ana", "Compare", 3, visibleSettings, chkFormAnalytic);
     		}
     	}
     	    	
@@ -775,10 +908,69 @@ public class TaskItem extends LocalizedComposite {
     	setNumberExercisesText();
     }
     
+
     /**
-     * The occurrences of constructions relevant to exercise generation in the current document.
+     * Re-calculates the constructions relevant to exercise generation for the entire document and for the selected document part.
+     * Sets the text for document part selection to the previewed text and the selected range to the entire document.
+     * Sets the possible topics options in the dropdown.
      */
-    private HashMap<String, Integer> relevantConstructions = null;
+    public void initializeRelevantConstructions() {
+    	RankableDocument doc = DocumentPreviewPane.getInstance().getCurrentlyPreviewedDocument().getDocument();
+        lblDocumentForSelection.setText(doc.getText());
+		lblDocumentForSelection.setSelectionRange(0, doc.getText().length());
+		
+		relevantConstructionsInEntireDocument = new HashMap<String, Integer>();
+    	calculateConstructionsOccurrences(relevantConstructionsInEntireDocument);
+    	relevantConstructionsInSelectedDocumentPart = new HashMap<String, Integer>(relevantConstructionsInEntireDocument);  
+    	
+		String selecteTopic = getSelectedTopic();
+    	drpTopic.clear();
+    	
+    	// Add the no topic option
+    	addOptionToTopic("---", "Topic", selecteTopic, 0);    			
+
+		// Add the newly determined options    	
+    	int i = 1;
+    	for(Pair<String, String> possibleTopic : possibleTopics) {
+    		if(checkConstructionOccurs(null, possibleTopic.getValue(), 0)) {
+    			addOptionToTopic(possibleTopic.getKey(), possibleTopic.getValue(), selecteTopic, i);  
+    			i++;
+        	}
+    	}
+    }
+    
+    /**
+     * Gets the value of the currently selected quiz.
+     * @return	The value of the currently selected quiz, if any; otherwise the empty string
+     */
+    private String getSelectedTopic() {    	
+    	//We get a ClassCastException when we try to access the first list element, so we just iterate over the (only) element
+    	for(Object o : drpTopic.getSelectedValue()) {
+    		return o.toString();
+    	}   		
+    	
+    	return "";
+    }
+    
+    /**
+     * Adds an option to the specified dropdown.
+     * @param name			The string of the option to display
+     * @param value			The value of the option to use internally
+     * @param selectedTopic	The value of the currently selected option
+     * @param index			The index at which the element will be inserted
+     */
+    private void addOptionToTopic(String name, String value, String selectedTopic, int index) {
+    	Option newSelection = new Option();
+		newSelection.setText(name);
+		newSelection.setValue(value);
+		newSelection.setTextColor(Color.BLACK);
+		newSelection.setFontSize("10pt");
+		drpTopic.add(newSelection);	
+		
+		if(value.equals(selectedTopic)) {
+			drpTopic.setSelectedIndex(index);
+		}
+    }
 
     /**
      * Calculates the number of exercises that can be generated for the current document with the current parameter settings.
@@ -827,7 +1019,7 @@ public class TaskItem extends LocalizedComposite {
     	int nExercises = 0;
     	
     	for(String constructionToConsider : constructionsToConsider) {
-    		nExercises += relevantConstructions.get(constructionToConsider);
+    		nExercises += relevantConstructionsInSelectedDocumentPart.get(constructionToConsider);
     	}
     	    	
     	return nExercises;
@@ -921,16 +1113,14 @@ public class TaskItem extends LocalizedComposite {
     /**
      * Calculates the occurrences of constructions in the combinations relevant to exercise generation.
      */
-    public void calculateConstructionsOccurrences() {    
+    public void calculateConstructionsOccurrences(HashMap<String, Integer> relevantConstructions) {    
     	// Calculate indices of the selected document part
     	RankableDocument doc = DocumentPreviewPane.getInstance().getCurrentlyPreviewedDocument().getDocument();
     	
     	Pair<Integer, Integer> selectionIndices = calculateSelectionIndices();
     	int startIndex = selectionIndices.getKey();
     	int endIndex = selectionIndices.getValue() + startIndex;
-		        
-        relevantConstructions = new HashMap<String, Integer>();
-        
+		                
         //non-combined constructions
 		relevantConstructions.put("adj-comp-syn", getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.ADJECTIVE_COMPARATIVE_SHORT, doc).size());
 		relevantConstructions.put("adj-sup-syn", getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.ADJECTIVE_COMPARATIVE_SHORT, doc).size());
@@ -1184,6 +1374,133 @@ public class TaskItem extends LocalizedComposite {
 		setNumberExercisesText();
 		lblDocumentForSelection.setText(doc.getText());
 		lblDocumentForSelection.setSelectionRange(startIndex, endIndex - startIndex);
+    }
+    
+    /**
+     * Checks for a construction whether it occurs in the document.
+     * @param constructionName	The name of the construction
+     * @param topic				The topic to which the construction belongs
+     * @param group				The index (in terms of first, second, third or fourth part) of the construction in the name
+     * @return					<code>true</code> if the construction occurs in the text; otherwise <code>false</code>
+     */
+    private boolean checkConstructionOccurs(String constructionName, String topic, int group) {
+    	int numberOccurrences = 0;
+    	
+		for(String name : getPartConstructionNames(topic, constructionName, group)) {
+			numberOccurrences += relevantConstructionsInEntireDocument.get(name);
+		}
+
+		return numberOccurrences > 0;
+    }
+    
+    /**
+     * Determines the names of all detailed constructions relevant to a topic with the value of one construction set.
+     * @param topic	The topic to which the construction belongs
+     * @param value	The value of the construction
+     * @param group	The index (in terms of first, second, third or fourth part) of the construction in the name
+     * @return The list of detailed construction names to which the construction belongs
+     */
+    private ArrayList<String> getPartConstructionNames(String topic, String value, int group) {
+		ArrayList<Pair<MaterialCheckBox, String>> firstLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();
+		ArrayList<Pair<MaterialCheckBox, String>> secondLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();
+		ArrayList<Pair<MaterialCheckBox, String>> thirdLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();
+		ArrayList<Pair<MaterialCheckBox, String>> fourthLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();
+
+    	if(topic.equals("Compare")) {
+			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "adj"));
+			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "adv"));
+			
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "comp"));
+			secondLevelConstructions. add(new Pair<MaterialCheckBox, String>(null, "sup"));
+
+			thirdLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "syn"));
+			thirdLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "ana"));
+    	} else if(topic.equals("Present")) {
+			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "present"));
+			
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "question"));
+			secondLevelConstructions. add(new Pair<MaterialCheckBox, String>(null, "stmt"));
+
+			thirdLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "neg"));
+			thirdLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "affirm"));
+
+			fourthLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "3"));
+			fourthLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "not3"));			
+    	} else if(topic.equals("Past")) {
+			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "TENSE_PAST_SIMPLE"));
+			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "TENSE_PRESENT_PERFECT"));
+			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "TENSE_PAST_PERFECT"));
+			
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "question"));
+			secondLevelConstructions. add(new Pair<MaterialCheckBox, String>(null, "stmt"));
+
+			thirdLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "neg"));
+			thirdLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "affirm"));
+
+			fourthLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "irreg"));
+			fourthLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "reg"));
+    	} else if(topic.equals("Passive")) {
+			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "active"));
+			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "passive"));
+			
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "TENSE_PRESENT_SIMPLE"));
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "TENSE_FUTURE_SIMPLE"));
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "TENSE_PRESENT_PROGRESSIVE"));
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "TENSE_PAST_PROGRESSIVE"));
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "TENSE_FUTURE_PROGRESSIVE"));
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "TENSE_FUTURE_PERFECT"));
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "TENSE_PRESENT_PERFECT_PROGRESSIVE"));
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "TENSE_PAST_PERFECT_PROGRESSIVE"));
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "TENSE_FUTURE_PERFECT_PROGRESSIVE"));
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "TENSE_PAST_SIMPLE"));
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "TENSE_PRESENT_PERFECT"));
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "TENSE_PAST_PERFECT"));
+    	} else if(topic.equals("'if'")) {
+			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "condReal"));
+			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "condUnreal"));
+    	}  else if(topic.equals("relatives")) {
+			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "who"));
+			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "which"));
+			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "that"));
+			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "otherRelPron"));
+    	}
+    	
+    	// For the construction part that we are interested in, we only use those constructions for our value.
+    	if(group == 1) {
+			firstLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();
+			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, value));	    		
+		} else if(group == 2) {
+			secondLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();
+			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, value));   			
+		} else if(group == 3) {
+			thirdLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();
+			thirdLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, value));
+		}  else if(group == 4) {
+			fourthLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();
+			fourthLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, value));
+		}	
+    	
+    	ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> constructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>();
+		constructionLevels.add(firstLevelConstructions);
+		if(secondLevelConstructions.size() > 0) {
+			constructionLevels.add(secondLevelConstructions);
+			
+			if(thirdLevelConstructions.size() > 0) {
+				constructionLevels.add(thirdLevelConstructions);
+
+				if(fourthLevelConstructions.size() > 0) {
+					constructionLevels.add(fourthLevelConstructions);
+				}
+			}
+		}
+		
+		return getConstructionNamesFromSettings(constructionLevels);    	
+    }
+    
+    //TODO: create dropdown dynamically on document select
+    //TODO: also for type
+    private boolean displayTopic(String topic) {
+    	return checkConstructionOccurs(null, topic, 0);    	
     }
     
 }

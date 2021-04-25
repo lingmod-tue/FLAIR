@@ -37,7 +37,6 @@ public class ExerciseGenerationWidget extends LocalizedComposite {
     
     @UiField
     MaterialCollapsible wdgtTasks;
-    //TODO: disable button for German
     @UiField
     @LocalizedField(type = LocalizedFieldType.TEXT_BUTTON)
     MaterialButton btnAddTask;
@@ -110,8 +109,8 @@ public class ExerciseGenerationWidget extends LocalizedComposite {
     	
         wdgtTasks.add(newTask);
         updateSelectableQuizzes();
-        newTask.calculateConstructionsOccurrences();
-        
+        newTask.initializeRelevantConstructions();
+
 		wdgtTasks.setVisible(true);
     }
     
@@ -121,7 +120,7 @@ public class ExerciseGenerationWidget extends LocalizedComposite {
     public void initConstructionsOccurrences() {
 		for(Widget task : wdgtTasks.getChildren()) {
 			if(task instanceof TaskItem) {
-				((TaskItem)task).calculateConstructionsOccurrences();
+				((TaskItem)task).initializeRelevantConstructions();
 			}
 		}
     }
