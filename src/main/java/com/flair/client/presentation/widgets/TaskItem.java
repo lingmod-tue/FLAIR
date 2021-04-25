@@ -281,8 +281,6 @@ public class TaskItem extends LocalizedComposite {
 
     interface TaskItemLocalizationBinder extends LocalizationBinder<TaskItem> {
     }
-
-    static DocumentPreviewPane documentPreviewPane = DocumentPreviewPane.getInstance();
     
     @UiField
     MaterialComboBox<Option> drpTopic;
@@ -502,7 +500,7 @@ public class TaskItem extends LocalizedComposite {
      * @return	The start index and length of the current selection
      */
     private Pair<Integer, Integer> calculateSelectionIndices() {
-    	RankableDocument doc = documentPreviewPane.getCurrentlyPreviewedDocument().getDocument();
+    	RankableDocument doc = DocumentPreviewPane.getInstance().getCurrentlyPreviewedDocument().getDocument();
     	String selectedPart = lblDocumentForSelection.getSelectedText();
     	int startIndex;
     	int length;
@@ -925,7 +923,7 @@ public class TaskItem extends LocalizedComposite {
      */
     public void calculateConstructionsOccurrences() {    
     	// Calculate indices of the selected document part
-    	RankableDocument doc = documentPreviewPane.getCurrentlyPreviewedDocument().getDocument();
+    	RankableDocument doc = DocumentPreviewPane.getInstance().getCurrentlyPreviewedDocument().getDocument();
     	
     	Pair<Integer, Integer> selectionIndices = calculateSelectionIndices();
     	int startIndex = selectionIndices.getKey();

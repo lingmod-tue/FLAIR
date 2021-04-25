@@ -87,7 +87,7 @@
 		    </m:MaterialCollapsibleItem>
 		    
 		     <!-- exercise generation functionality -->
-		    <m:MaterialCollapsibleItem paddingBottom="20">
+		    <m:MaterialCollapsibleItem paddingBottom="20" ui:field="expExerciseGeneration">
 		     <m:MaterialCollapsibleHeader>
 		       <m:MaterialLink text="Generate Exercises" iconType="ARROW_DROP_DOWN" iconPosition="LEFT" textColor="BLACK"/>
 		     </m:MaterialCollapsibleHeader>

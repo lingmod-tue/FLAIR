@@ -101,6 +101,8 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
     MaterialColumn pnlAllConstCol3UI;
     @UiField
     ExerciseGenerationWidget wdgtExerciseGeneration;
+    @UiField
+    MaterialCollapsibleItem expExerciseGeneration;
 
     State state;
     ShowHideHandler showhideHandler;
@@ -517,7 +519,16 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
     @Override
     public void setLocale(Language lang) {
         super.setLocale(lang);
+        setExerciseGenerationVisibility(lang);
         state.reload(false);
+    }
+    
+    private void setExerciseGenerationVisibility(Language lang) {
+    	if(lang == Language.ENGLISH) {
+        	expExerciseGeneration.setVisible(true);
+        } else {
+        	expExerciseGeneration.setVisible(false);
+        }
     }
 
     @Override
