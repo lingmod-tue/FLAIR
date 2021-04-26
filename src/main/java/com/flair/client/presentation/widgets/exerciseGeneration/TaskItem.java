@@ -29,6 +29,7 @@ import gwt.material.design.client.ui.MaterialLabel;
 import gwt.material.design.client.ui.MaterialLink;
 import gwt.material.design.client.ui.MaterialRadioButton;
 import gwt.material.design.client.ui.MaterialRow;
+import gwt.material.design.client.ui.MaterialToast;
 import gwt.material.design.client.ui.html.Option;
 
 public class TaskItem extends LocalizedComposite {
@@ -348,7 +349,45 @@ public class TaskItem extends LocalizedComposite {
 				setExerciseSettingsVisibilities();
 			}
     	});
-    	    	    	    	
+    	    	    	
+    	chkPosAdj.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	chkPosAdv.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	chkFormComparatives.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	chkFormSuperlatives.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	chkFormSynthetic.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	chkFormAnalytic.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	chkscopeType1.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	chkscopeType2.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	rbtBothClauses.addValueChangeHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	rbtMainClause.addValueChangeHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	rbtEitherClause.addValueChangeHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	rbtIfClause.addValueChangeHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	chkScopeActive.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	chkPresentSimple.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	chkPastSimple.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	chkFutureSimple.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	chkPresentProgressive.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	chkPastProgressive.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	chkFutureProgressive.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	chkPresentPerfect.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	chkPastPerfect.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	chkFuturePerfect.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	chkPresentPerfectProg.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	chkPastPerfectProg.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	chkFuturePerfectProg.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	chkAffirmativeSent.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	chkNegatedSent.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	chkQuestions.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	chkStatements.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	chkRegularVerbs.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	chkIrregularVerbs.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	chk3Pers.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	chkNot3Pers.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	chkWho.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	chkWhich.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	chkThat.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	chkOtherRelPron.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	
     	rbtSingleTask.addValueChangeHandler(e -> setExerciseSettingsVisibilities());
     	rbtPerSentence.addValueChangeHandler(e -> setExerciseSettingsVisibilities());
 
