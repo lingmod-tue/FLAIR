@@ -476,6 +476,8 @@ public class TaskItem extends LocalizedComposite {
 	        	}
     		}
     	}
+    	
+    	setExerciseSettingsVisibilities();
     }
     
     /**
