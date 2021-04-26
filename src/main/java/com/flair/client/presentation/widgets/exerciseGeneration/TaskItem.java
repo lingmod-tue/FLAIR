@@ -45,222 +45,7 @@ import gwt.material.design.client.ui.html.Option;
 
 public class TaskItem extends LocalizedComposite {
 	
-	/**
-	 * Collection of detailed constructions which need to be considered per exercise type and topic when counting target occurrences.
-	 * Each detailed construction is made up of levels corresponding to a construction extracted in the backend.
-	 * If the first Pair item is a MaterialCheckBox, the construction is only taken into account for the counting if the checkbox is checked.
-	 * If the first Pair item is null, the construction is always taken into account.
-	 * @author tanja
-	 *
-	 */
-	public class ConstructionComponents {
-		public ConstructionComponents() {
-			// Passive Drag
-			ArrayList<Pair<MaterialCheckBox, String>> firstLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();
-			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkScopePassive, "passive"));
-			
-			ArrayList<Pair<MaterialCheckBox, String>> secondLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();
-			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkPresentSimple, "TENSE_PRESENT_SIMPLE"));
-			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkFutureSimple, "TENSE_FUTURE_SIMPLE"));
-			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkPresentProgressive, "TENSE_PRESENT_PROGRESSIVE"));
-			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkPastProgressive, "TENSE_PAST_PROGRESSIVE"));
-			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkFutureProgressive, "TENSE_FUTURE_PROGRESSIVE"));
-			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkFuturePerfect, "TENSE_FUTURE_PERFECT"));
-			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkPresentPerfectProg, "TENSE_PRESENT_PERFECT_PROGRESSIVE"));
-			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkPastPerfectProg, "TENSE_PAST_PERFECT_PROGRESSIVE"));
-			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkFuturePerfectProg, "TENSE_FUTURE_PERFECT_PROGRESSIVE"));
-			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkPastSimple, "TENSE_PAST_SIMPLE"));
-			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkPresentPerfect, "TENSE_PRESENT_PERFECT"));
-			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkPastPerfect, "TENSE_PAST_PERFECT"));
-			
-			passiveDragConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>(); 
-			passiveDragConstructionLevels.add(firstLevelConstructions);
-			passiveDragConstructionLevels.add(secondLevelConstructions);
-						
-			// Passive FiB
-			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkScopeActive, "active"));			
-			
-			passiveFibConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>(); 
-			passiveFibConstructionLevels.add(firstLevelConstructions);
-			passiveFibConstructionLevels.add(secondLevelConstructions);
-						
-			// Relatives FiB/Mark/Select
-			firstLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
-			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkScopePassive, "who"));
-			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkScopePassive, "which"));
-			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkScopePassive, "that"));
-			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkScopePassive, "otherRelPron"));
-			
-			relativesFibMarkSelectConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>(); 
-			relativesFibMarkSelectConstructionLevels.add(firstLevelConstructions);
-			
-			// Relatives Drag
-			firstLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
-			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "who"));
-			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "which"));
-			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "that"));
-			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "otherRelPron"));
-			
-			relativesDragConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>(); 
-			relativesDragConstructionLevels.add(firstLevelConstructions);
-			
-			// Present FiB/Select
-			firstLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
-			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "present"));
-			
-			secondLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
-			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkQuestions, "question"));
-			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkStatements, "stmt"));
-			
-			ArrayList<Pair<MaterialCheckBox, String>> thirdLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
-			thirdLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkNegatedSent, "neg"));
-			thirdLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkAffirmativeSent, "affirm"));
-			
-			ArrayList<Pair<MaterialCheckBox, String>> fourthLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
-			fourthLevelConstructions.add(new Pair<MaterialCheckBox, String>(chk3Pers, "3"));
-			fourthLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkNot3Pers, "not3"));
-			
-			presentFibSelectConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>(); 
-			presentFibSelectConstructionLevels.add(firstLevelConstructions);
-			presentFibSelectConstructionLevels.add(secondLevelConstructions);
-			presentFibSelectConstructionLevels.add(thirdLevelConstructions);
-			presentFibSelectConstructionLevels.add(fourthLevelConstructions);
-
-			// Present Mark
-			secondLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
-			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "question"));
-			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "stmt"));
-			
-			thirdLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
-			thirdLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "neg"));
-			thirdLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "affirm"));
-						
-			presentMarkConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>(); 
-			presentMarkConstructionLevels.add(firstLevelConstructions);
-			presentMarkConstructionLevels.add(secondLevelConstructions);
-			presentMarkConstructionLevels.add(thirdLevelConstructions);
-			presentMarkConstructionLevels.add(fourthLevelConstructions);
-
-			// Past FiB/Select
-			firstLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
-			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkPastSimple, "TENSE_PAST_SIMPLE"));
-			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkPresentPerfect, "TENSE_PRESENT_PERFECT"));
-			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkPastPerfect, "TENSE_PAST_PERFECT"));
-			
-			secondLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
-			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkQuestions, "question"));
-			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkStatements, "stmt"));
-			
-			thirdLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
-			thirdLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkNegatedSent, "neg"));
-			thirdLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkAffirmativeSent, "affirm"));
-			
-			fourthLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
-			fourthLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkRegularVerbs, "reg"));
-			fourthLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkIrregularVerbs, "irreg"));
-			
-			pastFibSelectConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>(); 
-			pastFibSelectConstructionLevels.add(firstLevelConstructions);
-			pastFibSelectConstructionLevels.add(secondLevelConstructions);
-			pastFibSelectConstructionLevels.add(thirdLevelConstructions);
-			pastFibSelectConstructionLevels.add(fourthLevelConstructions);
-			
-			// Past Mark/Drag
-			secondLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
-			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "question"));
-			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "stmt"));
-			
-			thirdLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
-			thirdLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "neg"));
-			thirdLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "affirm"));
-			
-			pastMarkDragConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>(); 
-			pastMarkDragConstructionLevels.add(firstLevelConstructions);
-			pastMarkDragConstructionLevels.add(secondLevelConstructions);
-			pastMarkDragConstructionLevels.add(thirdLevelConstructions);
-			pastMarkDragConstructionLevels.add(fourthLevelConstructions);
-			
-			// Conditionals		
-			firstLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
-			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkscopeType1, "condReal"));
-			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkscopeType2, "condUnreal"));
-			
-			ifConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>(); 
-			ifConstructionLevels.add(firstLevelConstructions);
-			
-			//Comparative
-			firstLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
-			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkPosAdj, "adj"));
-			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkPosAdv, "adv"));
-			
-			secondLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
-			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkFormComparatives, "comp"));
-			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkFormSuperlatives, "sup"));
-			
-			thirdLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
-			thirdLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkFormSynthetic, "syn"));
-			thirdLevelConstructions.add(new Pair<MaterialCheckBox, String>(chkFormAnalytic, "ana"));
-			
-			compareConstructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>(); 
-			compareConstructionLevels.add(firstLevelConstructions);
-			compareConstructionLevels.add(secondLevelConstructions);
-			compareConstructionLevels.add(thirdLevelConstructions);
-		}
-		
-		private final ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> passiveFibConstructionLevels;
-		private final ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> passiveDragConstructionLevels;
-		private final ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> relativesFibMarkSelectConstructionLevels;
-		private final ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> relativesDragConstructionLevels;
-		private final ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> presentFibSelectConstructionLevels;
-		private final ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> presentMarkConstructionLevels;
-		private final ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> pastFibSelectConstructionLevels;
-		private final ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> pastMarkDragConstructionLevels;
-		private final ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> ifConstructionLevels;
-		private final ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> compareConstructionLevels;
-
-		public ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> getPassiveFibConstructionLevels() {
-			return passiveFibConstructionLevels;
-		}
-				
-		public ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> getPassiveDragConstructionLevels() {
-			return passiveDragConstructionLevels;
-		}
-		
-		public ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> getRelativesFibMarkSelectConstructionLevels() {
-			return relativesFibMarkSelectConstructionLevels;
-		}
-		
-		public ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> getRelativesDragConstructionLevels() {
-			return relativesDragConstructionLevels;
-		}
-		
-		public ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> getPresentFibSelectConstructionLevels() {
-			return presentFibSelectConstructionLevels;
-		}
-		
-		public ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> getPresentMarkConstructionLevels() {
-			return presentMarkConstructionLevels;
-		}
-		
-		public ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> getPastFibSelectConstructionLevels() {
-			return pastFibSelectConstructionLevels;
-		}
-		
-		public ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> getPastMarkDragConstructionLevels() {
-			return pastMarkDragConstructionLevels;
-		}
-		
-		public ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> getIfConstructionLevels() {
-			return ifConstructionLevels;
-		}
-		
-		public ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> getCompareConstructionLevels() {
-			return compareConstructionLevels;
-		}
-	}
-	
-
-    interface TaskItemUiBinder extends UiBinder<Widget, TaskItem> {
+	interface TaskItemUiBinder extends UiBinder<Widget, TaskItem> {
     }
 
     private static TaskItemUiBinder ourUiBinder = GWT.create(TaskItemUiBinder.class);
@@ -456,7 +241,7 @@ public class TaskItem extends LocalizedComposite {
     @UiField
     MaterialDialog dlgDocumentSelection;
     
-    private ConstructionComponents constructionComponents;
+    private ConstructionComponentsCollection constructionComponents;
     private ExerciseGenerationWidget parent;
     
     public TaskItem(ExerciseGenerationWidget parent) {   
@@ -590,7 +375,7 @@ public class TaskItem extends LocalizedComposite {
     	possibleTopics.add(new Pair<String, String>("Conditionals", "'if'"));
     	possibleTopics.add(new Pair<String, String>("Relative Clauses", "Relatives"));
     	
-        constructionComponents = new ConstructionComponents();
+        constructionComponents = new ConstructionComponentsCollection(this);
         
     	setExerciseSettingsVisibilities();
     }
@@ -917,8 +702,8 @@ public class TaskItem extends LocalizedComposite {
 		relevantConstructionsInEntireDocument = new HashMap<String, Integer>();
     	calculateConstructionsOccurrences(relevantConstructionsInEntireDocument);
     	relevantConstructionsInSelectedDocumentPart = new HashMap<String, Integer>(relevantConstructionsInEntireDocument);  
-    	
-		String selecteTopic = getSelectedTopic();
+
+    	String selecteTopic = getSelectedTopic();
     	drpTopic.clear();
     	
     	// Add the no topic option
@@ -979,35 +764,35 @@ public class TaskItem extends LocalizedComposite {
 
     	if(topic.equals("Passive")) {
     		if(exerciseType.equals("FiB")) {    			    			    			
-    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPassiveFibConstructionLevels());    			
+    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPassiveFiBComponents());    			
     		} else if(exerciseType.equals("Drag")) {
-    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPassiveDragConstructionLevels());    	
+    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPassiveDragComponents());    	
     		}
     	} else if(topic.equals("Relatives")) {
     		if(exerciseType.equals("FiB") || exerciseType.equals("Mark") || exerciseType.equals("Select") || exerciseType.equals("Drag") && rbtPerSentence.getValue()) {
-    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getRelativesFibMarkSelectConstructionLevels());  
+    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getRelativesFiBMarkSelectComponents());  
     		} else if(exerciseType.equals("Drag") && !rbtPerSentence.getValue()) {
-    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getRelativesDragConstructionLevels());      			
+    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getRelativesDragComponents());      			
     		}
     	} else if(topic.equals("Present")) {
     		if(exerciseType.equals("FiB") || exerciseType.equals("Select")) {       			
-    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPresentFibSelectConstructionLevels());
+    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPresentFiBSelectComponents());
     		} else if(exerciseType.equals("Mark")) {     			
-    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPresentMarkConstructionLevels());   			
+    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPresentMarkComponents());   			
     		}
     	} else if(topic.equals("Past")) {
     		if(exerciseType.equals("FiB") || exerciseType.equals("Select")) {    			
-    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPastFibSelectConstructionLevels());    			
+    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPastFiBSelectComponents());    			
     		} else if(exerciseType.equals("Mark") || exerciseType.equals("Drag")) {    			
-    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPastMarkDragConstructionLevels());    			
+    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPastMarkDragComponents());    			
     		} 
     	} else if(topic.equals("'if'")) {
     		if(exerciseType.equals("FiB") || exerciseType.equals("Select") || exerciseType.equals("Drag")) {
-    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getIfConstructionLevels());    	
+    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getConditionalComponents());    	
     		} 
     	} else if(topic.equals("Compare")) {
 			if(exerciseType.equals("FiB") || exerciseType.equals("Select") || exerciseType.equals("Mark") || exerciseType.equals("Drag")) {
-    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getCompareConstructionLevels());  
+    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getComparativeComponents());  
     		}
     	}
 
@@ -1022,7 +807,7 @@ public class TaskItem extends LocalizedComposite {
     
     /**
      * Creates all combinations of constructions for the checked settings.
-     * @param 	constructionLevels A list of the individual constructions making up a more complex (more detailed) construction. 
+     * @param 	constructionComponent A list of the individual constructions making up a more complex (more detailed) construction. 
      * 			Each construction consists of a list of possible values.
      * @return	The list of construction names corresponding to relevantConstructions names
      */
@@ -1067,7 +852,7 @@ public class TaskItem extends LocalizedComposite {
 		if(exerciseType.equals("Exercise Type") || topic.equals("Topic")) {
 			lblNumberExercises.setText("Select a grammar topic and an exercise type to enable exercise generation.");
     		lblNumberExercises.setTextColor(Color.GREY);
-		} else if((topic.equals("Passive") || topic.equals("Relatives")) && exerciseType.equals("Select") || 
+		} else if(topic.equals("Passive") && exerciseType.equals("Select") || 
 				topic.equals("'if'") && exerciseType.equals("Mark") || topic.equals("Present") && exerciseType.equals("Drag")) {
     		lblNumberExercises.setText("No exercises can be generated for the current settings.");
     		lblNumberExercises.setTextColor(Color.RED);
@@ -1095,6 +880,7 @@ public class TaskItem extends LocalizedComposite {
     private ArrayList<ConstructionRange> getConstructionsWithinSelectedPart(int startIndex, int endIndex, 
     		GrammaticalConstruction construction, RankableDocument doc) {
     	ArrayList<ConstructionRange> containedConstructions = new ArrayList<ConstructionRange>();
+		
     	for(ConstructionRange range : doc.getConstructionOccurrences(construction)) {
     		if(range.getStart() >= startIndex && range.getEnd() <= endIndex) {
     			containedConstructions.add(range);
@@ -1453,7 +1239,7 @@ public class TaskItem extends LocalizedComposite {
     	} else if(topic.equals("'if'")) {
 			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "condReal"));
 			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "condUnreal"));
-    	}  else if(topic.equals("relatives")) {
+    	}  else if(topic.equals("Relatives")) {
 			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "who"));
 			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "which"));
 			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "that"));

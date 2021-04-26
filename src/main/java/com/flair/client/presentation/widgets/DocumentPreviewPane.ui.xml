@@ -92,6 +92,7 @@
 		       <m:MaterialLink text="Generate Exercises" iconType="ARROW_DROP_DOWN" iconPosition="LEFT" textColor="BLACK"/>
 		     </m:MaterialCollapsibleHeader>
 		     <m:MaterialCollapsibleBody paddingTop="0">
+		     <m:MaterialLabel text="Select a document" ui:field="lblSelectExGenDoc"></m:MaterialLabel>
 		     	<flair:exerciseGeneration.ExerciseGenerationWidget ui:field="wdgtExerciseGeneration"/>
       		 </m:MaterialCollapsibleBody>
 		    </m:MaterialCollapsibleItem>
