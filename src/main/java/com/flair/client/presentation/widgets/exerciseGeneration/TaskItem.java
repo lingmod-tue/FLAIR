@@ -280,6 +280,7 @@ public class TaskItem extends LocalizedComposite {
     
     private int currentSelectionStartIndex = 0;
     private int currentSelectionLength = 0;
+    private RankableDocument doc;
     
 
     /**
@@ -319,7 +320,6 @@ public class TaskItem extends LocalizedComposite {
      * @return	The start index and length of the current selection
      */
     private Pair<Integer, Integer> calculateSelectionIndices() {
-    	RankableDocument doc = DocumentPreviewPane.getInstance().getCurrentlyPreviewedDocument().getDocument();
     	String selectedPart = lblDocumentForSelection.getSelectedText();
     	int startIndex;
     	int length;
@@ -606,7 +606,7 @@ public class TaskItem extends LocalizedComposite {
      * Sets the possible topics options in the dropdown.
      */
     public void initializeRelevantConstructions() {
-    	RankableDocument doc = DocumentPreviewPane.getInstance().getCurrentlyPreviewedDocument().getDocument();
+    	doc = DocumentPreviewPane.getInstance().getCurrentlyPreviewedDocument().getDocument();
         lblDocumentForSelection.setText(doc.getText());
 		lblDocumentForSelection.setSelectionRange(0, doc.getText().length());
 		
@@ -689,8 +689,10 @@ public class TaskItem extends LocalizedComposite {
     			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPassiveDragComponents());    	
     		}
     	} else if(topic.equals("Relatives")) {
-    		if(exerciseType.equals("FiB") || exerciseType.equals("Mark") || exerciseType.equals("Select") || exerciseType.equals("Drag") && rbtPerSentence.getValue()) {
-    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getRelativesFiBMarkSelectComponents());  
+    		if(exerciseType.equals("FiB") || exerciseType.equals("Mark") || exerciseType.equals("Drag") && rbtPerSentence.getValue()) {
+    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getRelativesFiBMarkComponents());  
+    		} else if (exerciseType.equals("Select")) {
+    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getRelativesSelectComponents());  
     		} else if(exerciseType.equals("Drag") && !rbtPerSentence.getValue()) {
     			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getRelativesDragComponents());      			
     		}
@@ -857,9 +859,7 @@ public class TaskItem extends LocalizedComposite {
      * Calculates the occurrences of constructions in the combinations relevant to exercise generation.
      */
     public void calculateConstructionsOccurrences(HashMap<String, Integer> relevantConstructions) {    
-    	// Calculate indices of the selected document part
-    	RankableDocument doc = DocumentPreviewPane.getInstance().getCurrentlyPreviewedDocument().getDocument();
-    	
+    	// Calculate indices of the selected document part    	
     	Pair<Integer, Integer> selectionIndices = calculateSelectionIndices();
     	int startIndex = selectionIndices.getKey();
     	int endIndex = selectionIndices.getValue() + startIndex;

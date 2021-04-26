@@ -24,7 +24,8 @@ public class ConstructionComponentsCollection {
 		presentFiBSelectComponents = new PresentFiBSelectConstructionComponents(taskItem);
 		presentMarkComponents = new PresentMarkConstructionComponents(taskItem);
 		relativesDragComponents = new RelativesDragConstructionComponents(taskItem);
-		relativesFiBMarkSelectComponents = new RelativesFiBMarkSelectConstructionComponents(taskItem);
+		relativesFiBMarkComponents = new RelativesFiBMarkConstructionComponents(taskItem);
+		relativesSelectComponents = new RelativesSelectConstructionComponents(taskItem);
 	}
 	
 	private final ComparativeConstructionComponents comparativeComponents;
@@ -36,8 +37,9 @@ public class ConstructionComponentsCollection {
 	private final PresentFiBSelectConstructionComponents presentFiBSelectComponents;
 	private final PresentMarkConstructionComponents presentMarkComponents;
 	private final RelativesDragConstructionComponents relativesDragComponents;
-	private final RelativesFiBMarkSelectConstructionComponents relativesFiBMarkSelectComponents;
-	
+	private final RelativesFiBMarkConstructionComponents relativesFiBMarkComponents;
+	private final RelativesSelectConstructionComponents relativesSelectComponents;
+
 	public ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> getComparativeComponents() {
 		return comparativeComponents.getConstructionLevels();
 	}
@@ -65,8 +67,11 @@ public class ConstructionComponentsCollection {
 	public ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> getRelativesDragComponents() {
 		return relativesDragComponents.getConstructionLevels();
 	}
-	public ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> getRelativesFiBMarkSelectComponents() {
-		return relativesFiBMarkSelectComponents.getConstructionLevels();
+	public ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> getRelativesFiBMarkComponents() {
+		return relativesFiBMarkComponents.getConstructionLevels();
+	}
+	public ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> getRelativesSelectComponents() {
+		return relativesSelectComponents.getConstructionLevels();
 	}
 	
 }

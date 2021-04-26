@@ -14,12 +14,13 @@ public class RelativesSelectVisibilityManager extends VisibilityManager {
 	public ArrayList<Widget> getVisibleWidgets(int numberExercises) {
 		ArrayList<Widget> visibleSettings = new ArrayList<Widget>();
 		
-		visibleSettings.add(taskItem.grpDistractors);
-		visibleSettings.add(taskItem.grpPronouns);
 		addConstructionIfOccurs("who", "Relatives", 1, visibleSettings, taskItem.chkWho, numberExercises);   			
 		addConstructionIfOccurs("which", "Relatives", 1, visibleSettings, taskItem.chkWhich, numberExercises);   			
-		addConstructionIfOccurs("that", "Relatives", 1, visibleSettings, taskItem.chkThat, numberExercises);   			
-		addConstructionIfOccurs("otherRelPron", "Relatives", 1, visibleSettings, taskItem.chkOtherRelPron, numberExercises);
+		addConstructionIfOccurs("that", "Relatives", 1, visibleSettings, taskItem.chkThat, numberExercises);   
+		if(visibleSettings.size() > 0) {
+			visibleSettings.add(taskItem.grpDistractors);
+			visibleSettings.add(taskItem.grpPronouns);
+		}
 		
 		return visibleSettings;
 	}

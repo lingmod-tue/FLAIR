@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import gwt.material.design.client.ui.MaterialCheckBox;
 
 
-public class RelativesFiBMarkSelectConstructionComponents extends ConstructionComponents {
+public class RelativesFiBMarkConstructionComponents extends ConstructionComponents {
 
-	public RelativesFiBMarkSelectConstructionComponents(TaskItem taskItem) {
+	public RelativesFiBMarkConstructionComponents(TaskItem taskItem) {
 		super(taskItem);
 
 		ArrayList<Pair<MaterialCheckBox, String>> firstLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
