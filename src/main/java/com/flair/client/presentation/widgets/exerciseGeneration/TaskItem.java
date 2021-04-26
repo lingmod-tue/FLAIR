@@ -306,6 +306,22 @@ public class TaskItem extends LocalizedComposite {
     }
     
     /**
+     * Checks whether at least 2 of the given check boxes are visible and checked.
+     * @param widgets	The checkboxes to take into account
+     * @return 			<code>true</code> if at least 2 of the checkboxes are visible and checked; otherwise <code>false</code>
+     */
+    private boolean checkAtLeast2Checked(MaterialCheckBox[] widgets) {
+    	int checked = 0;
+    	for(MaterialCheckBox widget : widgets) {
+    		if(widget.isVisible() && widget.getValue()) {
+    			checked++;
+    		}
+    	}
+    	
+    	return checked >= 2;
+    }
+    
+    /**
      * Initializes all handlers.
      */
     private void initHandlers() {
@@ -350,31 +366,64 @@ public class TaskItem extends LocalizedComposite {
 			}
     	});
     	    	    	
-    	chkPosAdj.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
-    	chkPosAdv.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
-    	chkFormComparatives.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
-    	chkFormSuperlatives.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
-    	chkFormSynthetic.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
-    	chkFormAnalytic.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
-    	chkscopeType1.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
-    	chkscopeType2.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	chkPosAdj.addClickHandler(e -> {
+    		setNumberExercisesText(calculateNumberOfExercises());
+    		chkBracketsPos.setVisible(getExerciseType().equals("FiB") && checkAtLeast2Checked(new MaterialCheckBox[] {chkPosAdj, chkPosAdv}));
+    	});
+    	chkPosAdv.addClickHandler(e -> {
+    		setNumberExercisesText(calculateNumberOfExercises());
+    		chkBracketsPos.setVisible(getExerciseType().equals("FiB") && checkAtLeast2Checked(new MaterialCheckBox[] {chkPosAdj, chkPosAdv}));
+    	});
+    	chkFormComparatives.addClickHandler(e -> {
+    		setNumberExercisesText(calculateNumberOfExercises());
+    		chkBracketsForm.setVisible(getExerciseType().equals("FiB") && checkAtLeast2Checked(new MaterialCheckBox[] {chkFormComparatives, chkFormSuperlatives}));
+    		chkDistractorsOtherForm.setVisible(getExerciseType().equals("Select") && checkAtLeast2Checked(new MaterialCheckBox[] {chkFormComparatives, chkFormSuperlatives}));
+    	});
+    	chkFormSuperlatives.addClickHandler(e -> {
+    		setNumberExercisesText(calculateNumberOfExercises());
+    		chkBracketsForm.setVisible(getExerciseType().equals("FiB") && checkAtLeast2Checked(new MaterialCheckBox[] {chkFormComparatives, chkFormSuperlatives}));
+    		chkDistractorsOtherForm.setVisible(getExerciseType().equals("Select") && checkAtLeast2Checked(new MaterialCheckBox[] {chkFormComparatives, chkFormSuperlatives}));
+    	});
+    	chkFormSynthetic.addClickHandler(e -> {
+    		setNumberExercisesText(calculateNumberOfExercises());
+    		chkDistractorsOtherVariant.setVisible(getExerciseType().equals("Select") && checkAtLeast2Checked(new MaterialCheckBox[] {chkFormAnalytic, chkFormSynthetic}));
+    	});
+    	chkFormAnalytic.addClickHandler(e -> {
+    		setNumberExercisesText(calculateNumberOfExercises());
+    		chkDistractorsOtherVariant.setVisible(getExerciseType().equals("Select") && checkAtLeast2Checked(new MaterialCheckBox[] {chkFormAnalytic, chkFormSynthetic}));
+    	});
+    	chkscopeType1.addClickHandler(e -> {
+    		setNumberExercisesText(calculateNumberOfExercises());
+    		chkBracketsConditional.setVisible(getExerciseType().equals("FiB") && checkAtLeast2Checked(new MaterialCheckBox[] {chkscopeType1, chkscopeType2}));
+    		chkDistractorsWrongConditional.setVisible(getExerciseType().equals("Select") && checkAtLeast2Checked(new MaterialCheckBox[] {chkscopeType1, chkscopeType2}));
+    	});
+    	chkscopeType2.addClickHandler(e -> {
+    		setNumberExercisesText(calculateNumberOfExercises());
+    		chkBracketsConditional.setVisible(getExerciseType().equals("FiB") && checkAtLeast2Checked(new MaterialCheckBox[] {chkscopeType1, chkscopeType2}));
+    		chkDistractorsWrongConditional.setVisible(getExerciseType().equals("Select") && checkAtLeast2Checked(new MaterialCheckBox[] {chkscopeType1, chkscopeType2}));
+    	});
     	rbtBothClauses.addValueChangeHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
     	rbtMainClause.addValueChangeHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
     	rbtEitherClause.addValueChangeHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
     	rbtIfClause.addValueChangeHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
-    	chkScopeActive.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
-    	chkPresentSimple.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
-    	chkPastSimple.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
-    	chkFutureSimple.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
-    	chkPresentProgressive.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
-    	chkPastProgressive.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
-    	chkFutureProgressive.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
-    	chkPresentPerfect.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
-    	chkPastPerfect.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
-    	chkFuturePerfect.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
-    	chkPresentPerfectProg.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
-    	chkPastPerfectProg.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
-    	chkFuturePerfectProg.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	chkScopeActive.addClickHandler(e ->  {
+    		setNumberExercisesText(calculateNumberOfExercises());
+    		chkBracketsSentenceType.setVisible(getExerciseType().equals("FiB") && checkAtLeast2Checked(new MaterialCheckBox[] {chkScopeActive, chkScopePassive}));
+    		chkBracketsActiveSentence.setVisible(!chkScopeActive.isVisible() || !chkScopeActive.getValue());
+    		chkBracketsKeywords.setVisible(!chkScopeActive.isVisible() || !chkScopeActive.getValue());
+    	});
+    	chkPresentSimple.addClickHandler(e -> onTenseClickedEventHandler());
+    	chkPastSimple.addClickHandler(e -> onTenseClickedEventHandler());
+    	chkFutureSimple.addClickHandler(e -> onTenseClickedEventHandler());
+    	chkPresentProgressive.addClickHandler(e -> onTenseClickedEventHandler());
+    	chkPastProgressive.addClickHandler(e -> onTenseClickedEventHandler());
+    	chkFutureProgressive.addClickHandler(e -> onTenseClickedEventHandler());
+    	chkPresentPerfect.addClickHandler(e -> onTenseClickedEventHandler());
+    	chkPastPerfect.addClickHandler(e -> onTenseClickedEventHandler());
+    	chkFuturePerfect.addClickHandler(e -> onTenseClickedEventHandler());
+    	chkPresentPerfectProg.addClickHandler(e -> onTenseClickedEventHandler());
+    	chkPastPerfectProg.addClickHandler(e -> onTenseClickedEventHandler());
+    	chkFuturePerfectProg.addClickHandler(e -> onTenseClickedEventHandler());
     	chkAffirmativeSent.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
     	chkNegatedSent.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
     	chkQuestions.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
@@ -391,6 +440,17 @@ public class TaskItem extends LocalizedComposite {
     	rbtSingleTask.addValueChangeHandler(e -> setExerciseSettingsVisibilities());
     	rbtPerSentence.addValueChangeHandler(e -> setExerciseSettingsVisibilities());
 
+    }
+    
+    /**
+     * Event handler method for when a tense checkbox has been clicked.
+     * Hides the brackets option for tense if less than 2 relevant tenses are checked.
+     */
+    private void onTenseClickedEventHandler() {
+    	setNumberExercisesText(calculateNumberOfExercises());
+		chkBracketsTense.setVisible(getExerciseType().equals("FiB") && checkAtLeast2Checked(new MaterialCheckBox[] {chkPresentSimple, chkPastSimple, chkFutureSimple, chkPresentProgressive, chkPastProgressive,
+				chkFutureProgressive, chkPresentPerfect, chkPastPerfect, chkFuturePerfect, chkPresentPerfectProg, chkPastPerfectProg, 
+				chkFuturePerfectProg}));
     }
         
     /**

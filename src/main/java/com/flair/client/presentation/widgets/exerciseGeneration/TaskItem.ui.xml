@@ -106,7 +106,7 @@
 				<m:MaterialRow ui:field="grpCompForm">
 					<m:MaterialRow padding="0" margin="0">
 						<m:MaterialLabel
-							text="Comparative forms of target words:" textColor="BLACK" />
+							text="Comparison forms of target words:" textColor="BLACK" />
 					</m:MaterialRow>
 					<m:MaterialRow padding="0" margin="0">
 						<m:MaterialCheckBox
@@ -390,7 +390,7 @@
 					</m:MaterialRow>
 					<m:MaterialRow padding="0" margin="0">
 						<m:MaterialCheckBox ui:field="chkBracketsForm"
-							value="true" text="Comparative Form" />
+							value="true" text="Comparison Form" />
 					</m:MaterialRow>
 					<m:MaterialRow padding="0" margin="0">
 						<m:MaterialCheckBox
@@ -430,7 +430,7 @@
 					<m:MaterialRow padding="0" margin="0">
 						<m:MaterialCheckBox
 							ui:field="chkDistractorsOtherForm" value="true"
-							text="Correct forms in other comparative form" />
+							text="Correct forms in other comparison form" />
 					</m:MaterialRow>
 					<m:MaterialRow padding="0" margin="0">
 						<m:MaterialCheckBox
