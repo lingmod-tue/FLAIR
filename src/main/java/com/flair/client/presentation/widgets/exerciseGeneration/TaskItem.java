@@ -265,6 +265,7 @@ public class TaskItem extends LocalizedComposite {
         		chkPosAdj, chkPosAdv, chkFormComparatives, chkFormSuperlatives, chkFormSynthetic, chkFormAnalytic
         };
         
+        visibilityManagers = new VisibilityManagerCollection(this);
         initUI();
     }
     
@@ -285,12 +286,14 @@ public class TaskItem extends LocalizedComposite {
     /**
      * The occurrences of constructions relevant to exercise generation in the current document.
      */
-    private HashMap<String, Integer> relevantConstructionsInEntireDocument = null;
+    public HashMap<String, Integer> relevantConstructionsInEntireDocument = null;
     
     /**
      * The possible topics for the dropdown.
      */
     private ArrayList<Pair<String, String>> possibleTopics;
+    
+    private final VisibilityManagerCollection visibilityManagers;
     
     /**
      * Calculates the start index and length of the selected document part within the previewed document.
@@ -446,241 +449,12 @@ public class TaskItem extends LocalizedComposite {
     private void setExerciseSettingsVisibilities() {  
     	String topic = getTopic();
     	String exerciseType = getExerciseType();
-    	ArrayList<Widget> visibleSettings = new ArrayList<Widget>();
-    	
-    	if(topic.equals("Passive")) {
-    		if(exerciseType.equals("FiB")) {
-    			visibleSettings.add(grpBrackets);
-    			visibleSettings.add(chkBracketsSentenceType);
-    			visibleSettings.add(chkBracketsTense);
-    			visibleSettings.add(chkBracketsActiveSentence);
-    			visibleSettings.add(chkBracketsKeywords);
-    			visibleSettings.add(grpTenses);
-    			visibleSettings.add(lblTensesSentences);
-    			addConstructionIfOccurs("TENSE_PRESENT_SIMPLE", "Passive", 2, visibleSettings, chkPresentSimple);
-    			addConstructionIfOccurs("TENSE_FUTURE_SIMPLE", "Passive", 2, visibleSettings, chkFutureSimple);
-    			addConstructionIfOccurs("TENSE_PRESENT_PROGRESSIVE", "Passive", 2, visibleSettings, chkPresentProgressive);
-    			addConstructionIfOccurs("TENSE_PAST_PROGRESSIVE", "Passive", 2, visibleSettings, chkPastProgressive);
-    			addConstructionIfOccurs("TENSE_FUTURE_PROGRESSIVE", "Passive", 2, visibleSettings, chkFutureProgressive);
-    			addConstructionIfOccurs("TENSE_FUTURE_PERFECT", "Passive", 2, visibleSettings, chkFuturePerfect);
-    			addConstructionIfOccurs("TENSE_PRESENT_PERFECT_PROGRESSIVE", "Passive", 2, visibleSettings, chkPresentPerfectProg);
-    			addConstructionIfOccurs("TENSE_PAST_PERFECT_PROGRESSIVE", "Passive", 2, visibleSettings, chkPastPerfectProg);
-    			addConstructionIfOccurs("TENSE_FUTURE_PERFECT_PROGRESSIVE", "Passive", 2, visibleSettings, chkFuturePerfectProg);
-    			addConstructionIfOccurs("TENSE_PAST_SIMPLE", "Passive", 2, visibleSettings, chkPastSimple);
-    			addConstructionIfOccurs("TENSE_PRESENT_PERFECT", "Passive", 2, visibleSettings, chkPresentPerfect);
-    			addConstructionIfOccurs("TENSE_PAST_PERFECT", "Passive", 2, visibleSettings, chkPastPerfect);
-    			visibleSettings.add(grpSentTypes);
-    			addConstructionIfOccurs("active", "Passive", 2, visibleSettings, chkScopeActive);	
-    		} else if(exerciseType.equals("Mark")) {
-    			//visibleSettings.add(grpTargetWords);
-    		} else if(exerciseType.equals("Drag")) {
-    			visibleSettings.add(grpTenses);
-    			visibleSettings.add(lblTensesSentences);
-    			addConstructionIfOccurs("TENSE_PRESENT_SIMPLE", "Passive", 2, visibleSettings, chkPresentSimple);
-    			addConstructionIfOccurs("TENSE_FUTURE_SIMPLE", "Passive", 2, visibleSettings, chkFutureSimple);
-    			addConstructionIfOccurs("TENSE_PRESENT_PROGRESSIVE", "Passive", 2, visibleSettings, chkPresentProgressive);
-    			addConstructionIfOccurs("TENSE_PAST_PROGRESSIVE", "Passive", 2, visibleSettings, chkPastProgressive);
-    			addConstructionIfOccurs("TENSE_FUTURE_PROGRESSIVE", "Passive", 2, visibleSettings, chkFutureProgressive);
-    			addConstructionIfOccurs("TENSE_FUTURE_PERFECT", "Passive", 2, visibleSettings, chkFuturePerfect);
-    			addConstructionIfOccurs("TENSE_PRESENT_PERFECT_PROGRESSIVE", "Passive", 2, visibleSettings, chkPresentPerfectProg);
-    			addConstructionIfOccurs("TENSE_PAST_PERFECT_PROGRESSIVE", "Passive", 2, visibleSettings, chkPastPerfectProg);
-    			addConstructionIfOccurs("TENSE_FUTURE_PERFECT_PROGRESSIVE", "Passive", 2, visibleSettings, chkFuturePerfectProg);
-    			addConstructionIfOccurs("TENSE_PAST_SIMPLE", "Passive", 2, visibleSettings, chkPastSimple);
-    			addConstructionIfOccurs("TENSE_PRESENT_PERFECT", "Passive", 2, visibleSettings, chkPresentPerfect);
-    			addConstructionIfOccurs("TENSE_PAST_PERFECT", "Passive", 2, visibleSettings, chkPastPerfect);   			
-    			visibleSettings.add(grpVerbSplitting);
-    		}
-    	} else if(topic.equals("Relatives")) {
-    		if(exerciseType.equals("FiB")) {
-    			visibleSettings.add(grpPronouns);
-    			addConstructionIfOccurs("who", "Relatives", 1, visibleSettings, chkWho);   			
-    			addConstructionIfOccurs("which", "Relatives", 1, visibleSettings, chkWhich);   			
-    			addConstructionIfOccurs("that", "Relatives", 1, visibleSettings, chkThat);   			
-    			addConstructionIfOccurs("otherRelPron", "Relatives", 1, visibleSettings, chkOtherRelPron);   			
-    		} else if(exerciseType.equals("Select")) {
-    			visibleSettings.add(grpDistractors);
-    			visibleSettings.add(grpPronouns);
-    			addConstructionIfOccurs("who", "Relatives", 1, visibleSettings, chkWho);   			
-    			addConstructionIfOccurs("which", "Relatives", 1, visibleSettings, chkWhich);   			
-    			addConstructionIfOccurs("that", "Relatives", 1, visibleSettings, chkThat);   			
-    			addConstructionIfOccurs("otherRelPron", "Relatives", 1, visibleSettings, chkOtherRelPron);
-    		} else if(exerciseType.equals("Mark")) {
-    			visibleSettings.add(grpPronouns);
-    			addConstructionIfOccurs("who", "Relatives", 1, visibleSettings, chkWho);   			
-    			addConstructionIfOccurs("which", "Relatives", 1, visibleSettings, chkWhich);   			
-    			addConstructionIfOccurs("that", "Relatives", 1, visibleSettings, chkThat);   			
-    			addConstructionIfOccurs("otherRelPron", "Relatives", 1, visibleSettings, chkOtherRelPron);
-    		} else if(exerciseType.equals("Drag")) {
-    			visibleSettings.add(grpScope);
-    			if(rbtPerSentence.getValue()) {
-    				visibleSettings.add(grpPronouns);
-    				addConstructionIfOccurs("who", "Relatives", 1, visibleSettings, chkWho);   			
-        			addConstructionIfOccurs("which", "Relatives", 1, visibleSettings, chkWhich);   			
-        			addConstructionIfOccurs("that", "Relatives", 1, visibleSettings, chkThat);   			
-        			addConstructionIfOccurs("otherRelPron", "Relatives", 1, visibleSettings, chkOtherRelPron);
-    			}
-    		}
-    	} else if(topic.equals("Present")) {
-    		if(exerciseType.equals("FiB")) {
-    			visibleSettings.add(grpBrackets);
-    			visibleSettings.add(chkBracketsLemma);   
-    			visibleSettings.add(grpVerbPerson);  
-				addConstructionIfOccurs("3", "Present", 4, visibleSettings, chk3Pers);   			
-				addConstructionIfOccurs("not3", "Present", 4, visibleSettings, chkNot3Pers);   			
-    			visibleSettings.add(grpSentenceTypes); 
-				addConstructionIfOccurs("affirm", "Present", 3, visibleSettings, chkAffirmativeSent);   			
-				addConstructionIfOccurs("neg", "Present", 3, visibleSettings, chkNegatedSent);   			
-				addConstructionIfOccurs("question", "Present", 2, visibleSettings, chkQuestions);   			
-				addConstructionIfOccurs("stmt", "Present", 2, visibleSettings, chkStatements);   			
-    		} else if(exerciseType.equals("Select")) {
-    			visibleSettings.add(grpDistractors);    
-    			visibleSettings.add(chkDistractorsWrongSuffixUse);  
-    			visibleSettings.add(chkDistractorsWrongSuffix);  
-    			visibleSettings.add(grpVerbPerson);  
-    			addConstructionIfOccurs("3", "Present", 4, visibleSettings, chk3Pers);   			
-				addConstructionIfOccurs("not3", "Present", 4, visibleSettings, chkNot3Pers);   			
-    			visibleSettings.add(grpSentenceTypes); 
-				addConstructionIfOccurs("affirm", "Present", 3, visibleSettings, chkAffirmativeSent);   			
-				addConstructionIfOccurs("neg", "Present", 3, visibleSettings, chkNegatedSent);   			
-				addConstructionIfOccurs("question", "Present", 2, visibleSettings, chkQuestions);   			
-				addConstructionIfOccurs("stmt", "Present", 2, visibleSettings, chkStatements);   
-    		} else if(exerciseType.equals("Mark")) {
-    			visibleSettings.add(grpVerbPerson);  
-    			addConstructionIfOccurs("3", "Present", 4, visibleSettings, chk3Pers);   			
-				addConstructionIfOccurs("not3", "Present", 4, visibleSettings, chkNot3Pers);   	
-    		} 
-    	} else if(topic.equals("Past")) {
-    		if(exerciseType.equals("FiB")) {
-    			visibleSettings.add(grpBrackets);
-    			visibleSettings.add(chkBracketsLemma);
-    			visibleSettings.add(chkBracketsTense);
-    			visibleSettings.add(grpSentenceTypes);
-    			addConstructionIfOccurs("affirm", "Past", 3, visibleSettings, chkAffirmativeSent);   			
-				addConstructionIfOccurs("neg", "Past", 3, visibleSettings, chkNegatedSent);   			
-				addConstructionIfOccurs("question", "Past", 2, visibleSettings, chkQuestions);   			
-				addConstructionIfOccurs("stmt", "Past", 2, visibleSettings, chkStatements);   
-    			visibleSettings.add(grpTenses);
-    			visibleSettings.add(lblTensesWords);
-    			addConstructionIfOccurs("TENSE_PAST_SIMPLE", "Past", 1, visibleSettings, chkPastSimple);
-    			addConstructionIfOccurs("TENSE_PRESENT_PERFECT", "Past", 1, visibleSettings, chkPresentPerfect);
-    			addConstructionIfOccurs("TENSE_PAST_PERFECT", "Past", 1, visibleSettings, chkPastPerfect);       			
-    			visibleSettings.add(grpVerbForms);
-    			addConstructionIfOccurs("irreg", "Past", 4, visibleSettings, chkIrregularVerbs);   
-    			addConstructionIfOccurs("reg", "Past", 4, visibleSettings, chkRegularVerbs);       			
-    		} else if(exerciseType.equals("Select")) {
-    			visibleSettings.add(grpDistractors);
-    			visibleSettings.add(chkDistractorsOtherPast);
-    			visibleSettings.add(chkDistractorsOtherTense);
-    			visibleSettings.add(chkDistractorsIncorrectForms);
-    			visibleSettings.add(grpSentenceTypes);
-    			addConstructionIfOccurs("affirm", "Past", 3, visibleSettings, chkAffirmativeSent);   			
-				addConstructionIfOccurs("neg", "Past", 3, visibleSettings, chkNegatedSent);   			
-				addConstructionIfOccurs("question", "Past", 2, visibleSettings, chkQuestions);   			
-				addConstructionIfOccurs("stmt", "Past", 2, visibleSettings, chkStatements);   
-    			visibleSettings.add(grpTenses);
-    			visibleSettings.add(lblTensesWords);
-    			addConstructionIfOccurs("TENSE_PAST_SIMPLE", "Past", 1, visibleSettings, chkPastSimple);
-    			addConstructionIfOccurs("TENSE_PRESENT_PERFECT", "Past", 1, visibleSettings, chkPresentPerfect);
-    			addConstructionIfOccurs("TENSE_PAST_PERFECT", "Past", 1, visibleSettings, chkPastPerfect);       			
-    			visibleSettings.add(grpVerbForms);
-    			addConstructionIfOccurs("irreg", "Past", 4, visibleSettings, chkIrregularVerbs);   
-    			addConstructionIfOccurs("reg", "Past", 4, visibleSettings, chkRegularVerbs);  
-    		} else if(exerciseType.equals("Mark")) {
-    			visibleSettings.add(grpTenses);
-    			visibleSettings.add(lblTensesWords);
-    			addConstructionIfOccurs("TENSE_PAST_SIMPLE", "Past", 1, visibleSettings, chkPastSimple);
-    			addConstructionIfOccurs("TENSE_PRESENT_PERFECT", "Past", 1, visibleSettings, chkPresentPerfect);
-    			addConstructionIfOccurs("TENSE_PAST_PERFECT", "Past", 1, visibleSettings, chkPastPerfect);       			
-    			visibleSettings.add(grpVerbForms);
-    			addConstructionIfOccurs("irreg", "Past", 4, visibleSettings, chkIrregularVerbs);   
-    			addConstructionIfOccurs("reg", "Past", 4, visibleSettings, chkRegularVerbs);  
-    		} else if(exerciseType.equals("Drag")) {
-    			visibleSettings.add(grpTenses);
-    			visibleSettings.add(lblTensesWords);
-    			addConstructionIfOccurs("TENSE_PAST_SIMPLE", "Past", 1, visibleSettings, chkPastSimple);
-    			addConstructionIfOccurs("TENSE_PRESENT_PERFECT", "Past", 1, visibleSettings, chkPresentPerfect);
-    			addConstructionIfOccurs("TENSE_PAST_PERFECT", "Past", 1, visibleSettings, chkPastPerfect);       			
-    			visibleSettings.add(grpVerbForms);
-    			addConstructionIfOccurs("irreg", "Past", 4, visibleSettings, chkIrregularVerbs);   
-    			addConstructionIfOccurs("reg", "Past", 4, visibleSettings, chkRegularVerbs);  
-    		}
-    	} else if(topic.equals("'if'")) {
-    		if(exerciseType.equals("FiB")) {
-    			visibleSettings.add(grpBrackets);
-    			visibleSettings.add(chkBracketsLemma);
-    			visibleSettings.add(chkBracketsConditional);
-    			visibleSettings.add(chkBracketsWill);
-    			visibleSettings.add(grpCondTypes);
-    			addConstructionIfOccurs("condUnreal", "'if'", 1, visibleSettings, chkscopeType1);  
-    			addConstructionIfOccurs("condReal", "'if'", 1, visibleSettings, chkscopeType2);    			
-    			visibleSettings.add(grpClauses);
-    		} else if(exerciseType.equals("Select")) {
-    			visibleSettings.add(grpDistractors);
-    			visibleSettings.add(chkDistractorsWrongConditional);
-    			visibleSettings.add(chkDistractorsWrongClause);
-    			visibleSettings.add(grpCondTypes);
-    			addConstructionIfOccurs("condUnreal", "'if'", 1, visibleSettings, chkscopeType1);  
-    			addConstructionIfOccurs("condReal", "'if'", 1, visibleSettings, chkscopeType2); 
-    			visibleSettings.add(grpClauses);
-    		} else if(exerciseType.equals("Drag")) {
-    			visibleSettings.add(grpCondTypes);
-    			addConstructionIfOccurs("condUnreal", "'if'", 1, visibleSettings, chkscopeType1);  
-    			addConstructionIfOccurs("condReal", "'if'", 1, visibleSettings, chkscopeType2); 
-    			if(rbtSingleTask.getValue()) {
-    				visibleSettings.add(grpClauses);
-    			}
-    			visibleSettings.add(grpScope);
-    		}
-    	}else if(topic.equals("Compare")) {
-			if(exerciseType.equals("FiB")) {
-    			visibleSettings.add(grpBrackets);
-    			visibleSettings.add(chkBracketsLemma);
-    			visibleSettings.add(chkBracketsPos);
-    			visibleSettings.add(chkBracketsForm);
-    			visibleSettings.add(grpPos);
-    			addConstructionIfOccurs("adj", "Compare", 1, visibleSettings, chkPosAdj); 
-    			addConstructionIfOccurs("adv", "Compare", 1, visibleSettings, chkPosAdv); 
-    			visibleSettings.add(grpCompForm);
-    			addConstructionIfOccurs("comp", "Compare", 2, visibleSettings, chkFormComparatives); 
-    			addConstructionIfOccurs("sup", "Compare", 2, visibleSettings, chkFormSuperlatives); 
-    			visibleSettings.add(grpForms);
-    			addConstructionIfOccurs("syn", "Compare", 3, visibleSettings, chkFormSynthetic); 
-    			addConstructionIfOccurs("ana", "Compare", 3, visibleSettings, chkFormAnalytic);
-    		} else if(exerciseType.equals("Select")) {
-    			visibleSettings.add(grpDistractors);
-    			visibleSettings.add(chkDistractorsOtherForm);
-    			visibleSettings.add(chkDistractorsOtherVariant);
-    			visibleSettings.add(chkDistractorsIncorrectForms);
-    			visibleSettings.add(grpPos);
-    			addConstructionIfOccurs("adj", "Compare", 1, visibleSettings, chkPosAdj); 
-    			addConstructionIfOccurs("adv", "Compare", 1, visibleSettings, chkPosAdv); 
-    			visibleSettings.add(grpCompForm);
-    			addConstructionIfOccurs("comp", "Compare", 2, visibleSettings, chkFormComparatives); 
-    			addConstructionIfOccurs("sup", "Compare", 2, visibleSettings, chkFormSuperlatives); 
-    			visibleSettings.add(grpForms);
-    			addConstructionIfOccurs("syn", "Compare", 3, visibleSettings, chkFormSynthetic); 
-    			addConstructionIfOccurs("ana", "Compare", 3, visibleSettings, chkFormAnalytic);
-    		} else if(exerciseType.equals("Mark")) {
-    			visibleSettings.add(grpPos);
-    			addConstructionIfOccurs("adj", "Compare", 1, visibleSettings, chkPosAdj); 
-    			addConstructionIfOccurs("adv", "Compare", 1, visibleSettings, chkPosAdv); 
-    			visibleSettings.add(grpCompForm);
-    			addConstructionIfOccurs("comp", "Compare", 2, visibleSettings, chkFormComparatives); 
-    			addConstructionIfOccurs("sup", "Compare", 2, visibleSettings, chkFormSuperlatives); 
-    			visibleSettings.add(grpForms);
-    			addConstructionIfOccurs("syn", "Compare", 3, visibleSettings, chkFormSynthetic); 
-    			addConstructionIfOccurs("ana", "Compare", 3, visibleSettings, chkFormAnalytic);
-    		} else if(exerciseType.equals("Drag")) {
-    			visibleSettings.add(grpPos);
-    			addConstructionIfOccurs("adj", "Compare", 1, visibleSettings, chkPosAdj); 
-    			addConstructionIfOccurs("adv", "Compare", 1, visibleSettings, chkPosAdv); 
-    			visibleSettings.add(grpCompForm);
-    			addConstructionIfOccurs("comp", "Compare", 2, visibleSettings, chkFormComparatives); 
-    			addConstructionIfOccurs("sup", "Compare", 2, visibleSettings, chkFormSuperlatives); 
-    			visibleSettings.add(grpForms);
-    			addConstructionIfOccurs("syn", "Compare", 3, visibleSettings, chkFormSynthetic); 
-    			addConstructionIfOccurs("ana", "Compare", 3, visibleSettings, chkFormAnalytic);
-    		}
+    	VisibilityManager visibilityManager = visibilityManagers.getVisibilityManger(topic, exerciseType);
+    	ArrayList<Widget> visibleSettings;
+    	if(visibilityManager != null) {
+    		visibleSettings = visibilityManager.getVisibleWidgets();
+    	} else {
+        	visibleSettings = new ArrayList<Widget>();
     	}
     	    	
     	setSettingsVisibility(visibleSettings);  	
@@ -1181,7 +955,7 @@ public class TaskItem extends LocalizedComposite {
      * @param group	The index (in terms of first, second, third or fourth part) of the construction in the name
      * @return The list of detailed construction names to which the construction belongs
      */
-    private ArrayList<String> getPartConstructionNames(String topic, String value, int group) {
+    public ArrayList<String> getPartConstructionNames(String topic, String value, int group) {
 		ArrayList<Pair<MaterialCheckBox, String>> firstLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();
 		ArrayList<Pair<MaterialCheckBox, String>> secondLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();
 		ArrayList<Pair<MaterialCheckBox, String>> thirdLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();
