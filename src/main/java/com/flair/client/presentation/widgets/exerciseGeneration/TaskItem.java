@@ -241,9 +241,7 @@ public class TaskItem extends LocalizedComposite {
         
         distractorOptions = new MaterialCheckBox[] {chkDistractorsOtherForm, chkDistractorsOtherVariant, chkDistractorsOtherPast, chkDistractorsOtherTense, 
         		chkDistractorsIncorrectForms, chkDistractorsWrongConditional, chkDistractorsWrongClause, chkDistractorsWrongSuffixUse, chkDistractorsWrongSuffix};
-        
-        initHandlers();
-        
+                
         settingsWidgets = new Widget[] {
         		grpBrackets, chkBracketsLemma, chkBracketsConditional, chkBracketsPos, chkBracketsForm, chkBracketsWill, 
         		chkBracketsSentenceType, chkBracketsTense, chkBracketsActiveSentence, chkBracketsKeywords, 
@@ -258,6 +256,17 @@ public class TaskItem extends LocalizedComposite {
         		chkPosAdj, chkPosAdv, chkFormComparatives, chkFormSuperlatives, chkFormSynthetic, chkFormAnalytic
         };
         
+        controlsToReset = new Widget[] {chkPosAdj, chkPosAdv, chkFormComparatives, chkFormSuperlatives, chkFormSynthetic, chkFormAnalytic, chkscopeType1,
+    			chkscopeType2, rbtMainClause, chkScopeActive, rbt1Verb, chkPresentSimple, 
+    			chkPastSimple, chkFutureSimple, chkPresentProgressive, chkPastProgressive, chkFutureProgressive, chkPresentPerfect, chkPastPerfect, 
+    			chkFuturePerfect, chkPresentPerfectProg, chkPastPerfectProg, chkFuturePerfectProg, chkAffirmativeSent, chkNegatedSent, chkQuestions, 
+    			chkStatements, chkRegularVerbs, chkIrregularVerbs, chk3Pers, chkNot3Pers, chkWho, chkWhich, chkThat, chkOtherRelPron, rbtPerSentence,
+    			chkBracketsLemma, chkBracketsPos, chkBracketsForm, chkBracketsConditional, chkBracketsWill, chkBracketsSentenceType, chkBracketsTense,
+    			chkBracketsActiveSentence, chkBracketsKeywords,
+    			chkDistractorsOtherForm, chkDistractorsOtherVariant, chkDistractorsOtherPast, chkDistractorsOtherTense, 
+        		chkDistractorsIncorrectForms, chkDistractorsWrongConditional, chkDistractorsWrongClause, chkDistractorsWrongSuffixUse, chkDistractorsWrongSuffix};
+        
+        initHandlers();
         visibilityManagers = new VisibilityManagerCollection(this);
         initUI();
     }
@@ -275,6 +284,11 @@ public class TaskItem extends LocalizedComposite {
      * Checkboxes representing possible distractor options
      */
     final MaterialCheckBox[] distractorOptions;
+    
+    /**
+     * Checkboxes and radiobuttons which need to be set to <code>true</code> when resetting the panel
+     */
+    final Widget[] controlsToReset;
 
     /**
      * The occurrences of constructions relevant to exercise generation in the currently selected document part.
@@ -364,6 +378,7 @@ public class TaskItem extends LocalizedComposite {
 			@Override
 			public void onSelectItem(SelectItemEvent<Option> event) {
 				setExerciseSettingsVisibilities();
+				resetControlValues();
 			}
     	});
     	
@@ -489,6 +504,19 @@ public class TaskItem extends LocalizedComposite {
         constructionComponents = new ConstructionComponentsCollection(this);
         
     	setExerciseSettingsVisibilities();
+    }
+    
+    /**
+     * Resets all controls that are initially <code>true</code> to that value.
+     */
+    private void resetControlValues() {
+    	for(Widget widget : controlsToReset) {
+    		if(widget instanceof MaterialRadioButton) {
+    			((MaterialRadioButton) widget).setValue(true);
+    		} else if(widget instanceof MaterialCheckBox) {
+    			((MaterialCheckBox) widget).setValue(true);
+    		}
+    	}
     }
     
     /**
