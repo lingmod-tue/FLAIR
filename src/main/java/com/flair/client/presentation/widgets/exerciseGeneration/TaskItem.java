@@ -25,6 +25,7 @@ import gwt.material.design.client.constants.Color;
 import gwt.material.design.client.ui.MaterialButton;
 import gwt.material.design.client.ui.MaterialCheckBox;
 import gwt.material.design.client.ui.MaterialDialog;
+import gwt.material.design.client.ui.MaterialIcon;
 import gwt.material.design.client.ui.MaterialLabel;
 import gwt.material.design.client.ui.MaterialLink;
 import gwt.material.design.client.ui.MaterialRadioButton;
@@ -229,6 +230,10 @@ public class TaskItem extends LocalizedComposite {
     MaterialRadioButton rbt2Verbs;
     @UiField
     MaterialDialog dlgDocumentSelection;
+    @UiField
+    MaterialIcon icoOk;
+    @UiField
+    MaterialIcon icoInvalid;
     
     private ConstructionComponentsCollection constructionComponents;
     private ExerciseGenerationWidget parent;
@@ -776,6 +781,9 @@ public class TaskItem extends LocalizedComposite {
     	String topic = getTopic();
     	String exerciseType = getExerciseType();
 
+    	icoOk.setVisible(false);
+		icoInvalid.setVisible(true);
+		
 		if(exerciseType.equals("Exercise Type") || topic.equals("Topic")) {
 			lblNumberExercises.setText("Select a grammar topic and an exercise type to enable exercise generation.");
     		lblNumberExercises.setTextColor(Color.GREY);
@@ -790,6 +798,8 @@ public class TaskItem extends LocalizedComposite {
         		lblNumberExercises.setTextColor(Color.RED);
     		} else {
         		lblNumberExercises.setTextColor(Color.BLACK);
+        		icoOk.setVisible(true);
+        		icoInvalid.setVisible(false);
     			if(exerciseType.equals("FiB") || exerciseType.equals("Select")) {
             		lblNumberExercises.setText(numberOfExercises + " blanks can be generated for the current settings.");
     			} else if(exerciseType.equals("Mark")) {
@@ -803,6 +813,8 @@ public class TaskItem extends LocalizedComposite {
     						// We need at least 2 target words for drag & drop to make sense
     						lblNumberExercises.setText("No exercises can be generated for the current settings.");
     		        		lblNumberExercises.setTextColor(Color.RED);
+    		        		icoOk.setVisible(false);
+    		        		icoInvalid.setVisible(true);
     					} else {
     						lblNumberExercises.setText(numberOfExercises + " target words can be generated for the current settings.");
     					}
