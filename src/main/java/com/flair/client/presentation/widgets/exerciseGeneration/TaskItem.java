@@ -562,6 +562,11 @@ public class TaskItem extends LocalizedComposite {
     	for(String constructionToConsider : constructionsToConsider) {
     		nExercises += relevantConstructionsInSelectedDocumentPart.get(constructionToConsider);
     	}
+    	
+    	// If we use both clauses of the conditional sentence as targets, we have double the amount of blanks
+    	if(topic.equals("'if'") && (exerciseType.equals("FiB") || exerciseType.equals("Select")) && rbtBothClauses.getValue()) {
+    		nExercises = nExercises * 2;	
+    	}
     	    	
     	return nExercises;
     }
