@@ -65,6 +65,8 @@ public class TaskItem extends LocalizedComposite {
     @UiField
     MaterialButton btnDiscardDocumentSelection;
     @UiField
+    MaterialButton btnUpdateDocument;
+    @UiField
     MaterialLabel lblSettings;
     @UiField
     MaterialLabel lblNumberExercises;
@@ -376,6 +378,10 @@ public class TaskItem extends LocalizedComposite {
     		currentSelectionLength = selectionIndices.getValue();
     		    		
     		dlgDocumentSelection.open();
+    	});
+    	
+    	btnUpdateDocument.addClickHandler(event -> {
+    		initializeRelevantConstructions();
     	});
     	    
     	drpTopic.addSelectionHandler(new SelectComboHandler<Option>()

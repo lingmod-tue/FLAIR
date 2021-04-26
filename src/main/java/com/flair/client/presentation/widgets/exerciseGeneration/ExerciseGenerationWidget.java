@@ -118,11 +118,11 @@ public class ExerciseGenerationWidget extends LocalizedComposite {
      * Updates the construction counts when the selected document has been changed.
      */
     public void initConstructionsOccurrences() {
-		for(Widget task : wdgtTasks.getChildren()) {
+		/*for(Widget task : wdgtTasks.getChildren()) {
 			if(task instanceof TaskItem) {
 				((TaskItem)task).initializeRelevantConstructions();
 			}
-		}
+		}*/
     }
 
     /**

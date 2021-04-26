@@ -51,7 +51,12 @@
 
 			<m:MaterialRow>
 				<m:MaterialButton ui:field="btnSelectDocumentPart"
-					textAlign="CENTER" textColor="BLACK"
+					textAlign="CENTER" textColor="BLACK" width="100%"
+					addStyleNames="{style.bgGrey} {style.lowercase}" waves="DEFAULT" />
+			</m:MaterialRow>
+			<m:MaterialRow>
+				<m:MaterialButton ui:field="btnUpdateDocument" width="100%" paddingLeft="10" paddingRight="10"
+					textAlign="CENTER" textColor="BLACK" text="Update document to current selection"
 					addStyleNames="{style.bgGrey} {style.lowercase}" waves="DEFAULT" />
 			</m:MaterialRow>
 
