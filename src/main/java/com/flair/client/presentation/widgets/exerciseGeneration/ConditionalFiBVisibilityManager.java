@@ -10,7 +10,8 @@ public class ConditionalFiBVisibilityManager extends VisibilityManager {
 		super(taskItem);
 	}
 	
-	public ArrayList<Widget> getVisibleWidgets() {
+	@Override
+	public ArrayList<Widget> getVisibleWidgets(int numberExercises) {
 		ArrayList<Widget> visibleSettings = new ArrayList<Widget>();
 		
 		visibleSettings.add(taskItem.grpBrackets);
@@ -18,8 +19,8 @@ public class ConditionalFiBVisibilityManager extends VisibilityManager {
 		visibleSettings.add(taskItem.chkBracketsConditional);
 		visibleSettings.add(taskItem.chkBracketsWill);
 		visibleSettings.add(taskItem.grpCondTypes);
-		addConstructionIfOccurs("condUnreal", "'if'", 1, visibleSettings, taskItem.chkscopeType1);  
-		addConstructionIfOccurs("condReal", "'if'", 1, visibleSettings, taskItem.chkscopeType2);    			
+		addConstructionIfOccurs("condUnreal", "'if'", 1, visibleSettings, taskItem.chkscopeType1, numberExercises);  
+		addConstructionIfOccurs("condReal", "'if'", 1, visibleSettings, taskItem.chkscopeType2, numberExercises);    			
 		visibleSettings.add(taskItem.grpClauses);
 		
 		return visibleSettings;

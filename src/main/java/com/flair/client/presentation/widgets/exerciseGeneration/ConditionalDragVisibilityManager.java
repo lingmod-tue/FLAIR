@@ -10,12 +10,13 @@ public class ConditionalDragVisibilityManager extends VisibilityManager {
 		super(taskItem);
 	}
 	
-	public ArrayList<Widget> getVisibleWidgets() {
+	@Override
+	public ArrayList<Widget> getVisibleWidgets(int numberExercises) {
 		ArrayList<Widget> visibleSettings = new ArrayList<Widget>();
 		
 		visibleSettings.add(taskItem.grpCondTypes);
-		addConstructionIfOccurs("condUnreal", "'if'", 1, visibleSettings, taskItem.chkscopeType1);  
-		addConstructionIfOccurs("condReal", "'if'", 1, visibleSettings, taskItem.chkscopeType2); 
+		addConstructionIfOccurs("condUnreal", "'if'", 1, visibleSettings, taskItem.chkscopeType1, numberExercises);  
+		addConstructionIfOccurs("condReal", "'if'", 1, visibleSettings, taskItem.chkscopeType2, numberExercises); 
 		if(taskItem.rbtSingleTask.getValue()) {
 			visibleSettings.add(taskItem.grpClauses);
 		}

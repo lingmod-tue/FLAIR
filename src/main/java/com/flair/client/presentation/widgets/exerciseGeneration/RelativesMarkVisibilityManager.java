@@ -11,14 +11,14 @@ public class RelativesMarkVisibilityManager extends VisibilityManager {
 	}
 	
 	@Override
-	public ArrayList<Widget> getVisibleWidgets() {
+	public ArrayList<Widget> getVisibleWidgets(int numberExercises) {
 		ArrayList<Widget> visibleSettings = new ArrayList<Widget>();
 		
 		visibleSettings.add(taskItem.grpPronouns);
-		addConstructionIfOccurs("who", "Relatives", 1, visibleSettings, taskItem.chkWho);   			
-		addConstructionIfOccurs("which", "Relatives", 1, visibleSettings, taskItem.chkWhich);   			
-		addConstructionIfOccurs("that", "Relatives", 1, visibleSettings, taskItem.chkThat);   			
-		addConstructionIfOccurs("otherRelPron", "Relatives", 1, visibleSettings, taskItem.chkOtherRelPron);
+		addConstructionIfOccurs("who", "Relatives", 1, visibleSettings, taskItem.chkWho, numberExercises);   			
+		addConstructionIfOccurs("which", "Relatives", 1, visibleSettings, taskItem.chkWhich, numberExercises);   			
+		addConstructionIfOccurs("that", "Relatives", 1, visibleSettings, taskItem.chkThat, numberExercises);   			
+		addConstructionIfOccurs("otherRelPron", "Relatives", 1, visibleSettings, taskItem.chkOtherRelPron, numberExercises);
 		
 		return visibleSettings;
 	}

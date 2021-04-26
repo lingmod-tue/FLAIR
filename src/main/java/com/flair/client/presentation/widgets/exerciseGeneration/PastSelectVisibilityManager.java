@@ -10,7 +10,8 @@ public class PastSelectVisibilityManager extends VisibilityManager {
 		super(taskItem);
 	}
 	
-	public ArrayList<Widget> getVisibleWidgets() {
+	@Override
+	public ArrayList<Widget> getVisibleWidgets(int numberExercises) {
 		ArrayList<Widget> visibleSettings = new ArrayList<Widget>();
 		
 		visibleSettings.add(taskItem.grpDistractors);
@@ -18,18 +19,18 @@ public class PastSelectVisibilityManager extends VisibilityManager {
 		visibleSettings.add(taskItem.chkDistractorsOtherTense);
 		visibleSettings.add(taskItem.chkDistractorsIncorrectForms);
 		visibleSettings.add(taskItem.grpSentenceTypes);
-		addConstructionIfOccurs("affirm", "Past", 3, visibleSettings, taskItem.chkAffirmativeSent);   			
-		addConstructionIfOccurs("neg", "Past", 3, visibleSettings, taskItem.chkNegatedSent);   			
-		addConstructionIfOccurs("question", "Past", 2, visibleSettings, taskItem.chkQuestions);   			
-		addConstructionIfOccurs("stmt", "Past", 2, visibleSettings, taskItem.chkStatements);   
+		addConstructionIfOccurs("affirm", "Past", 3, visibleSettings, taskItem.chkAffirmativeSent, numberExercises);   			
+		addConstructionIfOccurs("neg", "Past", 3, visibleSettings, taskItem.chkNegatedSent, numberExercises);   			
+		addConstructionIfOccurs("question", "Past", 2, visibleSettings, taskItem.chkQuestions, numberExercises);   			
+		addConstructionIfOccurs("stmt", "Past", 2, visibleSettings, taskItem.chkStatements, numberExercises);   
 		visibleSettings.add(taskItem.grpTenses);
 		visibleSettings.add(taskItem.lblTensesWords);
-		addConstructionIfOccurs("TENSE_PAST_SIMPLE", "Past", 1, visibleSettings, taskItem.chkPastSimple);
-		addConstructionIfOccurs("TENSE_PRESENT_PERFECT", "Past", 1, visibleSettings, taskItem.chkPresentPerfect);
-		addConstructionIfOccurs("TENSE_PAST_PERFECT", "Past", 1, visibleSettings, taskItem.chkPastPerfect);       			
+		addConstructionIfOccurs("TENSE_PAST_SIMPLE", "Past", 1, visibleSettings, taskItem.chkPastSimple, numberExercises);
+		addConstructionIfOccurs("TENSE_PRESENT_PERFECT", "Past", 1, visibleSettings, taskItem.chkPresentPerfect, numberExercises);
+		addConstructionIfOccurs("TENSE_PAST_PERFECT", "Past", 1, visibleSettings, taskItem.chkPastPerfect, numberExercises);       			
 		visibleSettings.add(taskItem.grpVerbForms);
-		addConstructionIfOccurs("irreg", "Past", 4, visibleSettings, taskItem.chkIrregularVerbs);   
-		addConstructionIfOccurs("reg", "Past", 4, visibleSettings, taskItem.chkRegularVerbs);  
+		addConstructionIfOccurs("irreg", "Past", 4, visibleSettings, taskItem.chkIrregularVerbs, numberExercises);   
+		addConstructionIfOccurs("reg", "Past", 4, visibleSettings, taskItem.chkRegularVerbs, numberExercises);  
 		
 		return visibleSettings;
 	}

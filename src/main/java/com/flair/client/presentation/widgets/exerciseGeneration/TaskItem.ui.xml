@@ -200,7 +200,7 @@
 					</m:MaterialRow>
 					<m:MaterialRow padding="0" margin="0">
 						<m:MaterialCheckBox ui:field="chkScopePassive"
-							value="true" text="Passive sentences" />
+							value="true" text="Passive sentences" enabled="false"/>
 					</m:MaterialRow>
 				</m:MaterialRow>
 

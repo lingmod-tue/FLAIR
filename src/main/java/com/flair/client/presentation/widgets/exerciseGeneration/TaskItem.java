@@ -2,7 +2,6 @@ package com.flair.client.presentation.widgets.exerciseGeneration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import com.flair.client.localization.LocalizedComposite;
 import com.flair.client.localization.LocalizedFieldType;
@@ -13,15 +12,6 @@ import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.interop.dtos.RankableDocument;
 import com.flair.shared.interop.dtos.RankableDocument.ConstructionRange;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.FontWeight;
-import com.google.gwt.dom.client.Style.Visibility;
-import com.google.gwt.event.dom.client.MouseDownEvent;
-import com.google.gwt.event.dom.client.MouseDownHandler;
-import com.google.gwt.event.logical.shared.OpenEvent;
-import com.google.gwt.event.logical.shared.OpenHandler;
-import com.google.gwt.event.logical.shared.SelectionEvent;
-import com.google.gwt.event.logical.shared.SelectionHandler;
-import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -35,12 +25,10 @@ import gwt.material.design.client.constants.Color;
 import gwt.material.design.client.ui.MaterialButton;
 import gwt.material.design.client.ui.MaterialCheckBox;
 import gwt.material.design.client.ui.MaterialDialog;
-import gwt.material.design.client.ui.MaterialDropDown;
 import gwt.material.design.client.ui.MaterialLabel;
 import gwt.material.design.client.ui.MaterialLink;
 import gwt.material.design.client.ui.MaterialRadioButton;
 import gwt.material.design.client.ui.MaterialRow;
-import gwt.material.design.client.ui.MaterialToast;
 import gwt.material.design.client.ui.html.Option;
 
 public class TaskItem extends LocalizedComposite {
@@ -429,19 +417,6 @@ public class TaskItem extends LocalizedComposite {
     	return "";
     }
     
-    /**
-     * Adds a widget to the visible widgets list if the corresponding construction occurs at least once in the text.
-     * @param construction		The construction denoted by the widget
-     * @param topic				The topic to which the construction belongs
-     * @param group				The index of the construction in the detailed construction name
-     * @param visibleSettings	The list of widgets to be displayed
-     * @param widget			The widget
-     */
-    private void addConstructionIfOccurs(String construction, String topic, int group, ArrayList<Widget> visibleSettings, Widget widget) {
-    	if(checkConstructionOccurs(construction, topic, group)) {
-			visibleSettings.add(widget);
-		}
-    }
     
     /**
      * Shows only those exercise parameters that are relevant for the topic and exercise type and hides all others
@@ -449,17 +424,20 @@ public class TaskItem extends LocalizedComposite {
     private void setExerciseSettingsVisibilities() {  
     	String topic = getTopic();
     	String exerciseType = getExerciseType();
+    	int numberOfExercises = 0;
+
     	VisibilityManager visibilityManager = visibilityManagers.getVisibilityManger(topic, exerciseType);
     	ArrayList<Widget> visibleSettings;
     	if(visibilityManager != null) {
-    		visibleSettings = visibilityManager.getVisibleWidgets();
+    		numberOfExercises = calculateNumberOfExercises();
+    		visibleSettings = visibilityManager.getVisibleWidgets(numberOfExercises);
     	} else {
         	visibleSettings = new ArrayList<Widget>();
     	}
     	    	
     	setSettingsVisibility(visibleSettings);  	
     	
-    	setNumberExercisesText();
+    	setNumberExercisesText(numberOfExercises);
     }
     
 
@@ -486,10 +464,17 @@ public class TaskItem extends LocalizedComposite {
 		// Add the newly determined options    	
     	int i = 1;
     	for(Pair<String, String> possibleTopic : possibleTopics) {
-    		if(checkConstructionOccurs(null, possibleTopic.getValue(), 0)) {
-    			addOptionToTopic(possibleTopic.getKey(), possibleTopic.getValue(), selecteTopic, i);  
-    			i++;
-        	}
+    		if(possibleTopic.getValue().equals("Passive")) {
+    			if(getNumberOfConstructionOccurrences("passive", "Passive", 1) > 0) {
+    				addOptionToTopic(possibleTopic.getKey(), possibleTopic.getValue(), selecteTopic, i);  
+        			i++;
+    			}
+    		} else {
+	    		if(checkConstructionOccurs(null, possibleTopic.getValue(), 0)) {
+	    			addOptionToTopic(possibleTopic.getKey(), possibleTopic.getValue(), selecteTopic, i);  
+	    			i++;
+	        	}
+    		}
     	}
     }
     
@@ -619,7 +604,7 @@ public class TaskItem extends LocalizedComposite {
      * Sets the text on whether and  how many exercises can be generated according to the selected topic and exercise type,
      * the individual parameter settings and the selected document.
      */
-    private void setNumberExercisesText() {
+    private void setNumberExercisesText(int numberOfExercises) {
     	String topic = getTopic();
     	String exerciseType = getExerciseType();
 
@@ -631,13 +616,29 @@ public class TaskItem extends LocalizedComposite {
     		lblNumberExercises.setText("No exercises can be generated for the current settings.");
     		lblNumberExercises.setTextColor(Color.RED);
 		} else {
-    		int numberOfExercises = calculateNumberOfExercises();
     		if(numberOfExercises == 0) {
     			lblNumberExercises.setText("No exercises can be generated for the current settings.");
         		lblNumberExercises.setTextColor(Color.RED);
     		} else {
-        		lblNumberExercises.setText(numberOfExercises + " exercises can be generated for the current settings.");
         		lblNumberExercises.setTextColor(Color.BLACK);
+    			if(exerciseType.equals("FiB") || exerciseType.equals("Select")) {
+            		lblNumberExercises.setText(numberOfExercises + " blanks can be generated for the current settings.");
+    			} else if(exerciseType.equals("Mark")) {
+            		lblNumberExercises.setText(numberOfExercises + " target words can be generated for the current settings.");
+    			} else if(exerciseType.equals("Drag")) {
+    				if((topic.equals("Relatives") || topic.equals("'if'")) && rbtPerSentence.getValue() || topic.equals("Passive")) {
+    					// 1 exercise per sentence
+                		lblNumberExercises.setText(numberOfExercises + " exercises can be generated for the current settings.");
+    				} else {
+    					if(numberOfExercises < 2) {
+    						// We need at least 2 target words for drag & drop to make sense
+    						lblNumberExercises.setText("No exercises can be generated for the current settings.");
+    		        		lblNumberExercises.setTextColor(Color.RED);
+    					} else {
+    						lblNumberExercises.setText(numberOfExercises + " target words can be generated for the current settings.");
+    					}
+    				}
+    			}
     		}
     	}
 		
@@ -926,8 +927,9 @@ public class TaskItem extends LocalizedComposite {
 		relevantConstructions.put("that", nThatOccurrences);
 		relevantConstructions.put("otherRelPron", nOtherOccurrences);
 		
-		setNumberExercisesText();
-		lblDocumentForSelection.setText(doc.getText());
+		int numberOfExercises = calculateNumberOfExercises();
+    	setNumberExercisesText(numberOfExercises);
+    	lblDocumentForSelection.setText(doc.getText());
 		lblDocumentForSelection.setSelectionRange(startIndex, endIndex - startIndex);
     }
     
@@ -939,13 +941,24 @@ public class TaskItem extends LocalizedComposite {
      * @return					<code>true</code> if the construction occurs in the text; otherwise <code>false</code>
      */
     private boolean checkConstructionOccurs(String constructionName, String topic, int group) {
+		return getNumberOfConstructionOccurrences(constructionName, topic, group) > 0;
+    }
+    
+    /**
+     * Determines how often a construction occurs in the document.
+     * @param constructionName	The name of the construction
+     * @param topic				The topic to which the construction belongs
+     * @param group				The index (in terms of first, second, third or fourth part) of the construction in the name
+     * @return					The number of occurrences of the construction in the document
+     */
+    public int getNumberOfConstructionOccurrences(String constructionName, String topic, int group) {
     	int numberOccurrences = 0;
     	
 		for(String name : getPartConstructionNames(topic, constructionName, group)) {
 			numberOccurrences += relevantConstructionsInEntireDocument.get(name);
 		}
 
-		return numberOccurrences > 0;
+		return numberOccurrences;
     }
     
     /**
