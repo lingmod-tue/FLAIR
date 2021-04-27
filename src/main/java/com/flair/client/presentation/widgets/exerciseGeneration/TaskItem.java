@@ -1091,19 +1091,17 @@ public class TaskItem extends LocalizedComposite {
 
 		// relative pronouns
 		ArrayList<ConstructionRange> relativeOccurrences = 
-        		getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.CLAUSE_RELATIVE, doc);
+        		getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.PRONOUNS_RELATIVE, doc);
     	int nWhoOccurrences = 0;
     	int nWhichOccurrences = 0;
     	int nThatOccurrences = 0;
     	int nOtherOccurrences = 0;
         for(ConstructionRange relativeOccurrence : relativeOccurrences) {
-        	// We will only get an approximation like this, but without further NLP analysis, we cannot get a better estimate.
-        	// By first looking for 'who' and 'which' we might filter out most occurrences of 'that' as conjunction or demonstrative pronoun
-        	if(relativeOccurrence.toString().contains(" who ")) {
+        	if(relativeOccurrence.toString().equals("who")) {
         		nWhoOccurrences++;
-        	} else if(relativeOccurrence.toString().contains(" which ")) {
+        	} else if(relativeOccurrence.toString().equals("which")) {
         		nWhichOccurrences++;
-        	} else if(relativeOccurrence.toString().contains(" that ")) {
+        	} else if(relativeOccurrence.toString().equals("that")) {
         		nThatOccurrences++;
         	} else {
         		nOtherOccurrences++;
