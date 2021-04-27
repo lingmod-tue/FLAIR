@@ -230,6 +230,8 @@
 						<flair:GrammaticalConstructionWeightSlider gram="PRONOUNS_POSSESSIVE_ABSOLUTE" parentLanguage="ENGLISH"/>
 						
 						<flair:GrammaticalConstructionWeightSlider gram="PRONOUNS_REFLEXIVE" parentLanguage="ENGLISH"/>
+						
+						<flair:GrammaticalConstructionWeightSlider gram="PRONOUNS_RELATIVE" parentLanguage="ENGLISH"/>
 					</flair:GrammaticalConstructionPanelItem>
 					
 					<!-- Conjunctions -->

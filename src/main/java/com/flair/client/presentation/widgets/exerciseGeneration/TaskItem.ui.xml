@@ -509,7 +509,7 @@
 				<m:MaterialDialogContent>
 					<m:MaterialTitle title="Document part selection"
 						description="Mark the document part that you want to use." />
-					<g:TextArea ui:field="lblDocumentForSelection"
+					<g:TextArea ui:field="lblDocumentForSelection" readOnly="true"
 						height="200px" />
 				</m:MaterialDialogContent>
 				<m:MaterialDialogFooter>

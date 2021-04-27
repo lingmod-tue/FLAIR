@@ -18,6 +18,7 @@ import edu.stanford.nlp.trees.tregex.TregexMatcher;
 import edu.stanford.nlp.trees.tregex.TregexPattern;
 import edu.stanford.nlp.util.CoreMap;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -98,6 +99,9 @@ class EnglishParsingLogic implements ParsingLogic {
 		int endInd = wordsOutput.get(wordsOutput.size() - 1).endPosition();
 
 		identifySentencesAndClauses();
+		
+		// Relative pronouns
+		addRelativePronouns(treeOutput, wordsOutput);
 
 		// >>> questions or imperative
 		findQuestionOrImperative(startInd, endInd);
@@ -1790,6 +1794,56 @@ class EnglishParsingLogic implements ParsingLogic {
 		}
 	}
 
+	private void addRelativePronouns(Tree tree, List<CoreLabel> words) {
+		TregexPattern pattern = TregexPattern.compile("WP|WDT >> SBAR");
+		List<Tree> leaves = tree.getLeaves();
+
+		TregexMatcher matcher = pattern.matcher(tree);
+		Tree lastMatchingRootNode = null;
+		while(matcher.find()) {
+			Tree match = matcher.getMatch();
+			
+			// We get the same result multiple times multiple matches apply to the same WP/WDT node (e.g. when it's in a nested SBAR construction)
+			if(lastMatchingRootNode != match) {
+				lastMatchingRootNode = match;
+			
+				// We don't have the indices in the tree, so we need to get them by mapping the tree leaves to the tokenized sentence			
+				String leftText = "";
+				for(int i = 0; i < leaves.size(); i++) {
+					Tree leaf = leaves.get(i);
+					if(leaf != match.getLeaves().get(0)) {
+						leftText += leaf.toString();
+					} else {
+						break;
+					}
+				}
+				
+				String wordString = "";
+				int startIndex = 0;
+				int endIndex = 0;
+				String targetWord = null;
+				for(int i = 0; i < words.size(); i++) {
+					if(i != words.size() - 1) {
+						wordString += words.get(i).value();
+						CoreLabel word = words.get(i + 1);
+	
+						if(wordString.equals(leftText)) {
+							startIndex = word.beginPosition();
+							endIndex = word.endPosition();
+							targetWord = word.value();
+							break;
+						}
+					}
+				}
+				
+				if(targetWord != null) {
+					addConstructionOccurrence(GrammaticalConstruction.PRONOUNS_RELATIVE,
+							startIndex, endIndex, targetWord);
+				}
+			}
+		}
+	}
+	
 	@Override
 	public void apply(CoreNlpParser parser) {
 		Annotation docAnnotation = new Annotation(workingDoc.getText());

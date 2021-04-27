@@ -45,7 +45,7 @@ public enum GrammaticalConstruction {
 
 	PRONOUNS("pronouns", Language.ENGLISH, Language.GERMAN),
 	PRONOUNS_PERSONAL("pronounsPersonal", Language.GERMAN),
-	PRONOUNS_RELATIVE("pronounsRelative", Language.GERMAN),
+	PRONOUNS_RELATIVE("pronounsRelative", Language.GERMAN, Language.ENGLISH),
 	PRONOUNS_POSSESSIVE("pronounsPossessive", Language.ENGLISH, Language.GERMAN), // /PRP$ ("", my, your, their)
 	PRONOUNS_DEMONSTRATIVE("pronounsDemonstrative", Language.GERMAN), // /JJ or PRP... ("", mine, yours, theirs)
 	PRONOUNS_REFLEXIVE("pronounsReflexive", Language.ENGLISH, Language.GERMAN), // /PRP + myself, themselves, etc.

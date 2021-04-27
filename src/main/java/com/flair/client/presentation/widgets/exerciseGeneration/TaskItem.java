@@ -378,6 +378,7 @@ public class TaskItem extends LocalizedComposite {
     		currentSelectionLength = selectionIndices.getValue();
     		    		
     		dlgDocumentSelection.open();
+    		lblDocumentForSelection.setFocus(true);
     	});
     	
     	btnUpdateDocument.addClickHandler(event -> {
