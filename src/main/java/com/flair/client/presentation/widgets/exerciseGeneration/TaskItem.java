@@ -8,6 +8,12 @@ import com.flair.client.localization.LocalizedFieldType;
 import com.flair.client.localization.annotations.LocalizedField;
 import com.flair.client.localization.interfaces.LocalizationBinder;
 import com.flair.client.presentation.widgets.DocumentPreviewPane;
+import com.flair.client.presentation.widgets.NumberSpinner;
+import com.flair.shared.exerciseGeneration.BracketsProperties;
+import com.flair.shared.exerciseGeneration.Construction;
+import com.flair.shared.exerciseGeneration.DistractorProperties;
+import com.flair.shared.exerciseGeneration.ExerciseSettings;
+import com.flair.shared.exerciseGeneration.Pair;
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.interop.dtos.RankableDocument;
 import com.flair.shared.interop.dtos.RankableDocument.ConstructionRange;
@@ -236,6 +242,8 @@ public class TaskItem extends LocalizedComposite {
     MaterialIcon icoOk;
     @UiField
     MaterialIcon icoInvalid;
+    @UiField
+    NumberSpinner spnNDistractors;
     
     private ConstructionComponentsCollection constructionComponents;
     private ExerciseGenerationWidget parent;
@@ -641,7 +649,7 @@ public class TaskItem extends LocalizedComposite {
     }
     
     /**
-     * Gets the value of the currently selected quiz.
+     * Gets the value of the currently selected topic.
      * @return	The value of the currently selected quiz, if any; otherwise the empty string
      */
     private String getSelectedTopic() {    	
@@ -672,12 +680,12 @@ public class TaskItem extends LocalizedComposite {
 			drpTopic.setSelectedIndex(index);
 		}
     }
-
+    
     /**
-     * Calculates the number of exercises that can be generated for the current document with the current parameter settings.
-     * @return The number of exercises that can be generated.
+     * Determines the constructions which are targeted by the exercise according to the current parameter settings.
+     * @return	The list of targeted constructions
      */
-    private int calculateNumberOfExercises() {
+    private ArrayList<String> determineConfiguredConstructions() {
     	String topic = getTopic();
     	String exerciseType = getExerciseType();
     	
@@ -718,6 +726,18 @@ public class TaskItem extends LocalizedComposite {
     			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getComparativeComponents());  
     		}
     	}
+    	
+    	return constructionsToConsider;
+    }
+
+    /**
+     * Calculates the number of exercises that can be generated for the current document with the current parameter settings.
+     * @return The number of exercises that can be generated.
+     */
+    private int calculateNumberOfExercises() {
+    	String topic = getTopic();
+    	String exerciseType = getExerciseType();
+    	ArrayList<String> constructionsToConsider = determineConfiguredConstructions();
 
     	int nExercises = 0;
     	
@@ -832,6 +852,7 @@ public class TaskItem extends LocalizedComposite {
     		}
     	}
 		
+		parent.setGenerateExercisesEnabled();
     }
     
     /**
@@ -864,255 +885,13 @@ public class TaskItem extends LocalizedComposite {
     	Pair<Integer, Integer> selectionIndices = calculateSelectionIndices();
     	int startIndex = selectionIndices.getKey();
     	int endIndex = selectionIndices.getValue() + startIndex;
-		                
-        //non-combined constructions
-		relevantConstructions.put("adj-comp-syn", getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.ADJECTIVE_COMPARATIVE_SHORT, doc).size());
-		relevantConstructions.put("adj-sup-syn", getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.ADJECTIVE_COMPARATIVE_SHORT, doc).size());
-		relevantConstructions.put("adj-comp-ana", getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.ADJECTIVE_COMPARATIVE_SHORT, doc).size());
-		relevantConstructions.put("adj-sup-ana", getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.ADJECTIVE_COMPARATIVE_SHORT, doc).size());
-		relevantConstructions.put("adv-comp-syn", getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.ADJECTIVE_COMPARATIVE_SHORT, doc).size());
-		relevantConstructions.put("adv-sup-syn", getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.ADJECTIVE_COMPARATIVE_SHORT, doc).size());
-		relevantConstructions.put("adv-comp-ana", getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.ADJECTIVE_COMPARATIVE_SHORT, doc).size());
-		relevantConstructions.put("adv-sup-ana", getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.ADJECTIVE_COMPARATIVE_SHORT, doc).size());
-		relevantConstructions.put("condReal", getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.ADJECTIVE_COMPARATIVE_SHORT, doc).size());
-		relevantConstructions.put("condUnreal", getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.ADJECTIVE_COMPARATIVE_SHORT, doc).size());
-        	
-        // passive combinations
-        GrammaticalConstruction[] tenseConstructions = new GrammaticalConstruction[]{
-        		GrammaticalConstruction.TENSE_PRESENT_SIMPLE,
-        		GrammaticalConstruction.TENSE_PAST_SIMPLE,
-        		GrammaticalConstruction.TENSE_FUTURE_SIMPLE,
-        		GrammaticalConstruction.TENSE_FUTURE_PERFECT,
-        		GrammaticalConstruction.TENSE_PRESENT_PROGRESSIVE,
-        		GrammaticalConstruction.TENSE_PRESENT_PERFECT_PROGRESSIVE,
-        		GrammaticalConstruction.TENSE_PAST_PROGRESSIVE,
-        		GrammaticalConstruction.TENSE_PAST_PERFECT_PROGRESSIVE,
-        		GrammaticalConstruction.TENSE_FUTURE_PROGRESSIVE,
-        		GrammaticalConstruction.TENSE_FUTURE_PERFECT_PROGRESSIVE,
-        		GrammaticalConstruction.TENSE_PRESENT_PERFECT,
-        		GrammaticalConstruction.TENSE_PAST_PERFECT,
-        };
-        
-        ArrayList<ConstructionRange> passiveOccurrences = 
-        		getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.PASSIVE_VOICE, doc);
-        for(GrammaticalConstruction tenseConstruction : tenseConstructions) {
-        	ArrayList<ConstructionRange> tenseOccurrences = 
-            		getConstructionsWithinSelectedPart(startIndex, endIndex, tenseConstruction, doc);
-        	int nPassiveOccurrences = 0;
-        	int nActiveOccurrences = 0;
-            for(ConstructionRange tenseOccurrence : tenseOccurrences) {
-            	boolean foundPassiveOverlap = false;
-            	for(ConstructionRange passiveOccurrence : passiveOccurrences) {
-            		if(passiveOccurrence.getStart() >= tenseOccurrence.getStart() && passiveOccurrence.getStart() < tenseOccurrence.getEnd() || 
-            				tenseOccurrence.getStart() >= passiveOccurrence.getStart() && tenseOccurrence.getStart() < passiveOccurrence.getEnd()) {
-            			// There is some overlap between the passive construction and the tense construction
-            			foundPassiveOverlap = true;
-            			break;
-            		}
-            	}
-            	if(foundPassiveOverlap) {
-        			nPassiveOccurrences++;
-            	} else {
-            		nActiveOccurrences++;
-            	}
-            }
-			relevantConstructions.put("passive-" + tenseConstruction.name(), nPassiveOccurrences);
-			relevantConstructions.put("active-" + tenseConstruction.name(), nActiveOccurrences);                               	
+    	
+    	relevantConstructions.clear();
+    	HashMap<String, ArrayList<Pair<Integer, Integer>>> constructionOccurrences = getConstructionsOccurrences(startIndex, endIndex);
+    	for (HashMap.Entry<String, ArrayList<Pair<Integer, Integer>>> entry : constructionOccurrences.entrySet()) {
+    		relevantConstructions.put(entry.getKey(), entry.getValue().size());
         }
-        
-        tenseConstructions = new GrammaticalConstruction[]{
-        		GrammaticalConstruction.TENSE_PAST_SIMPLE,
-        		GrammaticalConstruction.TENSE_PRESENT_PERFECT,
-        		GrammaticalConstruction.TENSE_PAST_PERFECT
-        };
-        
-        ArrayList<ConstructionRange> negationOccurrences = 
-        		getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.NEGATION_NOT, doc);
-        negationOccurrences.addAll(getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.NEGATION_NT, doc));
-        ArrayList<ConstructionRange> questionOccurrences = 
-        		getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.QUESTIONS_DIRECT, doc);
-        ArrayList<ConstructionRange> irregularOccurrences = 
-        		getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.VERBS_IRREGULAR, doc);
-
-        // past tense combinations
-        for(GrammaticalConstruction tenseConstruction : tenseConstructions) {
-        	ArrayList<ConstructionRange> tenseOccurrences = 
-            		getConstructionsWithinSelectedPart(startIndex, endIndex, tenseConstruction, doc);
-        	int nQuestionAffirmativeRegular = 0;
-        	int nQuestionAffirmativeIrregular = 0;
-        	int nQuestionNegativeRegular = 0;
-        	int nQuestionNegativeIrregular = 0;
-        	int nStatementAffirmativeRegular = 0;
-        	int nStatementAffirmativeIrregular = 0;
-        	int nStatementNegativeRegular = 0;
-        	int nStatementNegativeIrregular = 0;
-        	
-            for(ConstructionRange tenseOccurrence : tenseOccurrences) {
-            	boolean foundNegationOverlap = false;
-            	for(ConstructionRange negationOccurrence : negationOccurrences) {
-            		if(negationOccurrence.getEnd() >= tenseOccurrence.getStart() - 1 && negationOccurrence.getStart() <= tenseOccurrence.getEnd() + 1) {
-            			// The negation is at most the previous or succeeding token (only a single character in-between for a whitespace)
-            			foundNegationOverlap = true;
-            			break;
-            		}
-            	}
-            	
-            	boolean foundQuestionOverlap = false;
-            	for(ConstructionRange questionOccurrence : questionOccurrences) {
-            		if(tenseOccurrence.getStart() >= questionOccurrence.getStart() && tenseOccurrence.getEnd() <= questionOccurrence.getEnd()) {
-            			// The verb is within a question
-            			foundQuestionOverlap = true;
-            			break;
-            		}
-            	}
-            	
-            	boolean foundIrregularOverlap = false;
-            	for(ConstructionRange irregularOccurrence : irregularOccurrences) {
-            		if(irregularOccurrence.getStart() >= tenseOccurrence.getStart() && irregularOccurrence.getEnd() <= tenseOccurrence.getEnd()) {
-            			// The irregular verb is part of the verb (irregular forms consist of a single token)
-            			foundIrregularOverlap = true;
-            			break;
-            		}
-            	}
-            	
-            	if(foundNegationOverlap) {
-            		if(foundQuestionOverlap) {
-            			if(foundIrregularOverlap) {
-            				nQuestionNegativeIrregular++;
-            			} else {
-            				nQuestionNegativeRegular++;
-            			}
-            		} else {
-            			if(foundIrregularOverlap) {
-            				nStatementNegativeIrregular++;
-            			} else {
-            				nStatementNegativeRegular++;
-            			}
-            		}
-            	} else {
-            		if(foundQuestionOverlap) {
-            			if(foundIrregularOverlap) {
-            				nQuestionAffirmativeIrregular++;
-            			} else {
-            				nQuestionAffirmativeRegular++;
-            			}
-            		} else {
-            			if(foundIrregularOverlap) {
-            				nStatementAffirmativeIrregular++;
-            			} else {
-            				nStatementAffirmativeRegular++;
-            			}
-            		}
-            	}
-            	           	
-            }
-            
-			relevantConstructions.put(tenseConstruction.name() + "-question-neg-irreg", nQuestionNegativeIrregular);
-			relevantConstructions.put(tenseConstruction.name() + "-question-neg-reg", nQuestionNegativeRegular);
-			relevantConstructions.put(tenseConstruction.name() + "-stmt-neg-irreg", nStatementNegativeIrregular);
-			relevantConstructions.put(tenseConstruction.name() + "-stmt-neg-reg", nStatementNegativeRegular);
-			relevantConstructions.put(tenseConstruction.name() + "-question-affirm-irreg", nQuestionAffirmativeIrregular);
-			relevantConstructions.put(tenseConstruction.name() + "-question-affirm-reg", nQuestionAffirmativeRegular);
-			relevantConstructions.put(tenseConstruction.name() + "-stmt-affirm-irreg", nStatementAffirmativeIrregular);
-			relevantConstructions.put(tenseConstruction.name() + "-stmt-affirm-reg", nStatementAffirmativeRegular);
-        }
-        
-        // present tense combinations
-        ArrayList<ConstructionRange> presentOccurrences = 
-        		getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.TENSE_PRESENT_SIMPLE, doc);
-        int nQuestionAffirmative3 = 0;
-    	int nQuestionAffirmativeNot3 = 0;
-    	int nQuestionNegative3 = 0;
-    	int nQuestionNegativeNot3 = 0;
-    	int nStatementAffirmative3 = 0;
-    	int nStatementAffirmativeNot3 = 0;
-    	int nStatementNegative3 = 0;
-    	int nStatementNegativeNot3 = 0;
-        for(ConstructionRange tenseOccurrence : presentOccurrences) {
-        	boolean foundNegationOverlap = false;
-        	for(ConstructionRange negationOccurrence : negationOccurrences) {
-        		if(negationOccurrence.getEnd() >= tenseOccurrence.getStart() - 1 && negationOccurrence.getStart() <= tenseOccurrence.getEnd() + 1) {
-        			// The negation is at most the previous or succeeding token (only a single character in-between for a whitespace)
-        			foundNegationOverlap = true;
-        			break;
-        		}
-        	}
-        	
-        	boolean foundQuestionOverlap = false;
-        	for(ConstructionRange questionOccurrence : questionOccurrences) {
-        		if(tenseOccurrence.getStart() >= questionOccurrence.getStart() && tenseOccurrence.getEnd() <= questionOccurrence.getEnd()) {
-        			// The verb is within a question
-        			foundQuestionOverlap = true;
-        			break;
-        		}
-        	}
-        	
-        	boolean isThirdPersonSingular = tenseOccurrence.toString().endsWith("s") || tenseOccurrence.equals("doesn't") || 
-        			tenseOccurrence.equals("hasn't") || tenseOccurrence.equals("isn't");
-
-        	if(foundNegationOverlap) {
-        		if(foundQuestionOverlap) {
-        			if(isThirdPersonSingular) {
-        				nQuestionNegative3++;
-        			} else {
-        				nQuestionNegativeNot3++;
-        			}
-        		} else {
-        			if(isThirdPersonSingular) {
-        				nStatementNegative3++;
-        			} else {
-        				nStatementNegativeNot3++;
-        			}
-        		}
-        	} else {
-        		if(foundQuestionOverlap) {
-        			if(isThirdPersonSingular) {
-        				nQuestionAffirmative3++;
-        			} else {
-        				nQuestionAffirmativeNot3++;
-        			}
-        		} else {
-        			if(isThirdPersonSingular) {
-        				nStatementAffirmative3++;
-        				nStatementAffirmativeNot3++;
-        			}
-        		}
-        	}
-        }
-        
-        relevantConstructions.put("present-question-neg-3", nQuestionNegative3);
-		relevantConstructions.put("present-question-neg-not3", nQuestionNegativeNot3);
-		relevantConstructions.put("present-stmt-neg-3", nStatementNegative3);
-		relevantConstructions.put("present-stmt-neg-not3", nStatementNegativeNot3);
-		relevantConstructions.put("present-question-affirm-3", nQuestionAffirmative3);
-		relevantConstructions.put("present-question-affirm-not3", nQuestionAffirmativeNot3);
-		relevantConstructions.put("present-stmt-affirm-3", nStatementAffirmative3);
-		relevantConstructions.put("present-stmt-affirm-not3", nStatementAffirmativeNot3);                              	
-
-		// relative pronouns
-		ArrayList<ConstructionRange> relativeOccurrences = 
-        		getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.PRONOUNS_RELATIVE, doc);
-    	int nWhoOccurrences = 0;
-    	int nWhichOccurrences = 0;
-    	int nThatOccurrences = 0;
-    	int nOtherOccurrences = 0;
-        for(ConstructionRange relativeOccurrence : relativeOccurrences) {
-        	if(relativeOccurrence.toString().equals("who")) {
-        		nWhoOccurrences++;
-        	} else if(relativeOccurrence.toString().equals("which")) {
-        		nWhichOccurrences++;
-        	} else if(relativeOccurrence.toString().equals("that")) {
-        		nThatOccurrences++;
-        	} else {
-        		nOtherOccurrences++;
-        	}
-        	
-        }
-		relevantConstructions.put("who", nWhoOccurrences);
-		relevantConstructions.put("which", nWhichOccurrences);
-		relevantConstructions.put("that", nThatOccurrences);
-		relevantConstructions.put("otherRelPron", nOtherOccurrences);
-		
+		  
 		int numberOfExercises = calculateNumberOfExercises();
     	setNumberExercisesText(numberOfExercises);
     	lblDocumentForSelection.setText(doc.getText());
@@ -1249,6 +1028,389 @@ public class TaskItem extends LocalizedComposite {
 		}
 		
 		return getConstructionNamesFromSettings(constructionLevels);    	
+    }
+    
+    /**
+     * Generates settings for the server from the selected options
+     */
+    public ExerciseSettings generateExerciseSettings() {
+    	ArrayList<Construction> constructions = new ArrayList<>();
+    	
+    	Pair<Integer, Integer> selectionIndices = calculateSelectionIndices();
+    	int selectionStartIndex = selectionIndices.getKey();
+    	int selectionEndIndex = selectionIndices.getValue();
+
+    	HashMap<String, ArrayList<Pair<Integer, Integer>>> constructionOccurrences = 
+    			getConstructionsOccurrences(selectionStartIndex, selectionEndIndex);
+    	ArrayList<String> configuredConstructions = determineConfiguredConstructions();
+    	
+    	for(String constructionToConsider : configuredConstructions) {
+    		for(Pair<Integer, Integer> constructionIndices : constructionOccurrences.get(constructionToConsider)) {
+    			ArrayList<DistractorProperties> distractorProperties = new ArrayList<DistractorProperties>();
+    			ArrayList<BracketsProperties> brackets = new ArrayList<BracketsProperties>();
+    			Construction construction = new Construction(distractorProperties, brackets, spnNDistractors.getValue(),
+    					ConstructionNameEnumMapper.getEnum(constructionToConsider), constructionIndices);
+        		constructions.add(construction);
+    		}
+    	}
+
+    	String type = getExerciseType();
+    	if(type.equals("Drag")) {
+    		String topic = getTopic();
+    		if(topic.equals("Passive")) {
+    			type = "MultiDrag";
+    		} else if(topic.equals("Past") || topic.equals("Compare")) {
+				type = "SingleDrag";
+    		} else {
+    			if(rbtPerSentence.getValue()) {
+    				type = "MultiDrag";
+    			} else {
+    				type = "SingleDrag";
+    			}
+    		}
+    	}
+    	
+    	return new ExerciseSettings(constructions,
+    			doc.getUrl(), doc.getText(), selectionStartIndex, selectionEndIndex, type, getQuiz());
+    }
+    
+    /**
+     * Gets the value of the currently selected quiz.
+     * @return	The value of the currently selected quiz, if any; otherwise the empty string
+     */
+    public String getQuiz() {    	
+    	//We get a ClassCastException when we try to access the first list element, so we just iterate over the (only) element
+    	for(Object o : drpQuiz.getSelectedValue()) {
+    		return o.toString();
+    	}   		
+    	
+    	return "";
+    }
+    
+    
+    /**
+     * Splits constructions consisting of multiple tokens at whitespaces and adds the parts as individual occurrences to the list
+     * @param relevantConstructions	The identified construction occurrences
+     * @param startIndex			The start index of the selected document part
+     * @param endIndex				The end index of the selected document part
+     * @param gram					The grammatical construction
+     * @param key					The name of the construction used as key in the has map
+     */
+    private void addMultiWordConstructions(HashMap<String, ArrayList<ConstructionRange>> relevantConstructions, 
+    		int startIndex, int endIndex, GrammaticalConstruction gram, String key) {
+    	ArrayList<ConstructionRange> findings = getConstructionsWithinSelectedPart(startIndex, endIndex, gram, doc);
+		ArrayList<Pair<Integer, Integer>> indices = new ArrayList<>();
+		for(ConstructionRange finding : findings) {
+			String entireConstruction = doc.getText().substring(finding.getStart(), finding.getEnd());
+			String[] parts = entireConstruction.split("\\s\\h");
+			int constructionStart = finding.getStart();
+			for(String part : parts) {
+				part = part.trim();
+				if(!part.equals("")){
+					int start = entireConstruction.indexOf(part);
+					int end = part.length() + start;
+					entireConstruction = entireConstruction.substring(end);
+					indices.add(new Pair<Integer, Integer>(start + constructionStart, end + constructionStart));
+					constructionStart += end;
+				}
+			}
+		}
+		relevantConstructions.put(key, findings);
+    }
+    
+    
+    /**
+     * Adds constructions consisting of a single token to the list
+     * @param relevantConstructions	The identified construction occurrences
+     * @param startIndex			The start index of the selected document part
+     * @param endIndex				The end index of the selected document part
+     * @param gram					The grammatical construction
+     * @param key					The name of the construction used as key in the has map
+     */
+    private void addSingleWordConstructions(HashMap<String, ArrayList<Pair<Integer, Integer>>> relevantConstructions, 
+    		int startIndex, int endIndex, GrammaticalConstruction gram, String key) {
+    	ArrayList<ConstructionRange> findings = getConstructionsWithinSelectedPart(startIndex, endIndex, gram, doc);
+		ArrayList<Pair<Integer, Integer>> indices = new ArrayList<>();
+		for(ConstructionRange finding : findings) {			
+			indices.add(new Pair<>(finding.getStart(), finding.getEnd()));
+		}
+		relevantConstructions.put(key, indices);
+    }
+    
+/**
+ * Determines the indices of occurrences of constructions in the combinations relevant to exercise generation.
+ * @param startIndex	The start index of the selected document part
+ * @param endIndex		The end index of the selected document part
+ * @return				The indices of occurrences of constructions relevant to exercise generation
+ */
+    public HashMap<String, ArrayList<Pair<Integer, Integer>>> getConstructionsOccurrences(int startIndex, int endIndex) {    
+    	HashMap<String, ArrayList<Pair<Integer, Integer>>> relevantConstructions = 
+    			new HashMap<String, ArrayList<Pair<Integer, Integer>>>();
+		                
+        // comparison
+    	// comparatives and superlatives exclude elements like 'the', 'than'
+    	//TODO: Maybe allow to specify in view whether to keep analytic forms as single markable or as separate
+    	//TODO: we would split them in the backend
+    	//TODO: we would have to multiply the occurrences of mark instances if this was selected
+    	// for now, we keep them as one
+    	addSingleWordConstructions(relevantConstructions, startIndex, endIndex, GrammaticalConstruction.ADJECTIVE_COMPARATIVE_SHORT, "adj-comp-syn");
+    	addSingleWordConstructions(relevantConstructions, startIndex, endIndex, GrammaticalConstruction.ADJECTIVE_SUPERLATIVE_SHORT, "adj-sup-syn");		
+    	addSingleWordConstructions(relevantConstructions, startIndex, endIndex, GrammaticalConstruction.ADJECTIVE_COMPARATIVE_LONG, "adj-comp-ana");
+    	addSingleWordConstructions(relevantConstructions, startIndex, endIndex, GrammaticalConstruction.ADJECTIVE_SUPERLATIVE_LONG, "adj-sup-ana");
+    	addSingleWordConstructions(relevantConstructions, startIndex, endIndex, GrammaticalConstruction.ADVERB_COMPARATIVE_SHORT, "adv-comp-syn");		
+    	addSingleWordConstructions(relevantConstructions, startIndex, endIndex, GrammaticalConstruction.ADVERB_SUPERLATIVE_SHORT, "adv-sup-syn");		
+    	addSingleWordConstructions(relevantConstructions, startIndex, endIndex, GrammaticalConstruction.ADVERB_COMPARATIVE_LONG, "adv-comp-ana");
+    	addSingleWordConstructions(relevantConstructions, startIndex, endIndex, GrammaticalConstruction.ADVERB_SUPERLATIVE_LONG, "adv-sup-ana");
+
+		// for conditional sentences, we put the entire sentences
+		// TODO: the server needs to extract indices for the verbs for exercise generation
+    	addSingleWordConstructions(relevantConstructions, startIndex, endIndex, GrammaticalConstruction.CONDITIONALS_REAL, "condReal");
+    	addSingleWordConstructions(relevantConstructions, startIndex, endIndex, GrammaticalConstruction.CONDITIONALS_UNREAL, "condUnreal");
+        	
+        // passive combinations
+        GrammaticalConstruction[] tenseConstructions = new GrammaticalConstruction[]{
+        		GrammaticalConstruction.TENSE_PRESENT_SIMPLE,
+        		GrammaticalConstruction.TENSE_PAST_SIMPLE,
+        		GrammaticalConstruction.TENSE_FUTURE_SIMPLE,
+        		GrammaticalConstruction.TENSE_FUTURE_PERFECT,
+        		GrammaticalConstruction.TENSE_PRESENT_PROGRESSIVE,
+        		GrammaticalConstruction.TENSE_PRESENT_PERFECT_PROGRESSIVE,
+        		GrammaticalConstruction.TENSE_PAST_PROGRESSIVE,
+        		GrammaticalConstruction.TENSE_PAST_PERFECT_PROGRESSIVE,
+        		GrammaticalConstruction.TENSE_FUTURE_PROGRESSIVE,
+        		GrammaticalConstruction.TENSE_FUTURE_PERFECT_PROGRESSIVE,
+        		GrammaticalConstruction.TENSE_PRESENT_PERFECT,
+        		GrammaticalConstruction.TENSE_PAST_PERFECT,
+        };
+        
+        ArrayList<ConstructionRange> passiveOccurrences = 
+        		getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.PASSIVE_VOICE, doc);
+        for(GrammaticalConstruction tenseConstruction : tenseConstructions) {
+        	ArrayList<ConstructionRange> tenseOccurrences = 
+            		getConstructionsWithinSelectedPart(startIndex, endIndex, tenseConstruction, doc);
+    		ArrayList<Pair<Integer, Integer>> passiveIndices = new ArrayList<>();
+    		ArrayList<Pair<Integer, Integer>> activeIndices = new ArrayList<>();
+            for(ConstructionRange tenseOccurrence : tenseOccurrences) {
+            	ConstructionRange correspondingPassiveOccurrence = null;
+            	for(ConstructionRange passiveOccurrence : passiveOccurrences) {
+            		if(passiveOccurrence.getStart() >= tenseOccurrence.getStart() && passiveOccurrence.getStart() < tenseOccurrence.getEnd() || 
+            				tenseOccurrence.getStart() >= passiveOccurrence.getStart() && tenseOccurrence.getStart() < passiveOccurrence.getEnd()) {
+            			// There is some overlap between the passive construction and the tense construction
+            			correspondingPassiveOccurrence = passiveOccurrence;
+            			break;
+            		}
+            	}
+            	if(correspondingPassiveOccurrence != null) {
+            		// The passive construction doesn't always contain all verbs of a verb cluster and the tense construction doesn't usually include the participle
+            		// We therefore take the combined construction
+            		// TODO: if we want entire sentences as blanks, we need to account for this on the server at exercise generation time
+            		passiveIndices.add(new Pair<>(Integer.min(correspondingPassiveOccurrence.getStart(), tenseOccurrence.getStart()), 
+            				Integer.max(correspondingPassiveOccurrence.getEnd(), tenseOccurrence.getEnd())));
+            	} else {
+            		// We just take the verb of the tense construction for active constructions
+            		activeIndices.add(new Pair<>(tenseOccurrence.getStart(), tenseOccurrence.getEnd()));
+            	}
+            }
+
+			relevantConstructions.put("passive-" + tenseConstruction.name(), passiveIndices);
+			relevantConstructions.put("active-" + tenseConstruction.name(), activeIndices);                               	
+        }
+        
+        tenseConstructions = new GrammaticalConstruction[]{
+        		GrammaticalConstruction.TENSE_PAST_SIMPLE,
+        		GrammaticalConstruction.TENSE_PRESENT_PERFECT,
+        		GrammaticalConstruction.TENSE_PAST_PERFECT
+        };
+        
+        ArrayList<ConstructionRange> negationOccurrences = 
+        		getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.NEGATION_NOT, doc);
+        negationOccurrences.addAll(getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.NEGATION_NT, doc));
+        ArrayList<ConstructionRange> questionOccurrences = 
+        		getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.QUESTIONS_DIRECT, doc);
+        ArrayList<ConstructionRange> irregularOccurrences = 
+        		getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.VERBS_IRREGULAR, doc);
+
+        // past tense combinations
+        for(GrammaticalConstruction tenseConstruction : tenseConstructions) {
+        	ArrayList<ConstructionRange> tenseOccurrences = 
+            		getConstructionsWithinSelectedPart(startIndex, endIndex, tenseConstruction, doc);
+    		ArrayList<Pair<Integer, Integer>> indicesQuestionAffirmativeRegular = new ArrayList<>();
+    		ArrayList<Pair<Integer, Integer>> indicesQuestionAffirmativeIrregular = new ArrayList<>();
+    		ArrayList<Pair<Integer, Integer>> indicesQuestionNegativeRegular = new ArrayList<>();
+    		ArrayList<Pair<Integer, Integer>> indicesQuestionNegativeIrregular = new ArrayList<>();
+    		ArrayList<Pair<Integer, Integer>> indicesStatementAffirmativeRegular = new ArrayList<>();
+    		ArrayList<Pair<Integer, Integer>> indicesStatementAffirmativeIrregular = new ArrayList<>();
+    		ArrayList<Pair<Integer, Integer>> indicesStatementNegativeRegular = new ArrayList<>();
+    		ArrayList<Pair<Integer, Integer>> indicesStatementNegativeIrregular = new ArrayList<>();
+        	
+            for(ConstructionRange tenseOccurrence : tenseOccurrences) {
+            	boolean foundNegationOverlap = false;
+            	for(ConstructionRange negationOccurrence : negationOccurrences) {
+            		if(negationOccurrence.getEnd() >= tenseOccurrence.getStart() - 1 && negationOccurrence.getStart() <= tenseOccurrence.getEnd() + 1) {
+            			// The negation is at most the previous or succeeding token (only a single character in-between for a whitespace)
+            			foundNegationOverlap = true;
+            			break;
+            		}
+            	}
+            	
+            	boolean foundQuestionOverlap = false;
+            	for(ConstructionRange questionOccurrence : questionOccurrences) {
+            		if(tenseOccurrence.getStart() >= questionOccurrence.getStart() && tenseOccurrence.getEnd() <= questionOccurrence.getEnd()) {
+            			// The verb is within a question
+            			foundQuestionOverlap = true;
+            			break;
+            		}
+            	}
+            	
+            	boolean foundIrregularOverlap = false;
+            	for(ConstructionRange irregularOccurrence : irregularOccurrences) {
+            		if(irregularOccurrence.getStart() >= tenseOccurrence.getStart() && irregularOccurrence.getEnd() <= tenseOccurrence.getEnd()) {
+            			// The irregular verb is part of the verb (irregular forms consist of a single token)
+            			foundIrregularOverlap = true;
+            			break;
+            		}
+            	}
+            	
+            	if(foundNegationOverlap) {
+            		if(foundQuestionOverlap) {
+            			if(foundIrregularOverlap) {
+            				indicesQuestionNegativeIrregular.add(new Pair<Integer, Integer>(tenseOccurrence.getStart(), tenseOccurrence.getEnd()));
+            			} else {
+            				indicesQuestionNegativeRegular.add(new Pair<Integer, Integer>(tenseOccurrence.getStart(), tenseOccurrence.getEnd()));
+            			}
+            		} else {
+            			if(foundIrregularOverlap) {
+            				indicesStatementNegativeIrregular.add(new Pair<Integer, Integer>(tenseOccurrence.getStart(), tenseOccurrence.getEnd()));
+            			} else {
+            				indicesStatementNegativeRegular.add(new Pair<Integer, Integer>(tenseOccurrence.getStart(), tenseOccurrence.getEnd()));
+            			}
+            		}
+            	} else {
+            		if(foundQuestionOverlap) {
+            			if(foundIrregularOverlap) {
+            				indicesQuestionAffirmativeIrregular.add(new Pair<Integer, Integer>(tenseOccurrence.getStart(), tenseOccurrence.getEnd()));
+            			} else {
+            				indicesQuestionAffirmativeRegular.add(new Pair<Integer, Integer>(tenseOccurrence.getStart(), tenseOccurrence.getEnd()));
+            			}
+            		} else {
+            			if(foundIrregularOverlap) {
+            				indicesStatementAffirmativeIrregular.add(new Pair<Integer, Integer>(tenseOccurrence.getStart(), tenseOccurrence.getEnd()));
+            			} else {
+            				indicesStatementAffirmativeRegular.add(new Pair<Integer, Integer>(tenseOccurrence.getStart(), tenseOccurrence.getEnd()));
+            			}
+            		}
+            	}
+            	           	
+            }
+            
+			relevantConstructions.put(tenseConstruction.name() + "-question-neg-irreg", indicesQuestionNegativeIrregular);
+			relevantConstructions.put(tenseConstruction.name() + "-question-neg-reg", indicesQuestionNegativeRegular);
+			relevantConstructions.put(tenseConstruction.name() + "-stmt-neg-irreg", indicesStatementNegativeIrregular);
+			relevantConstructions.put(tenseConstruction.name() + "-stmt-neg-reg", indicesStatementNegativeRegular);
+			relevantConstructions.put(tenseConstruction.name() + "-question-affirm-irreg", indicesQuestionAffirmativeIrregular);
+			relevantConstructions.put(tenseConstruction.name() + "-question-affirm-reg", indicesQuestionAffirmativeRegular);
+			relevantConstructions.put(tenseConstruction.name() + "-stmt-affirm-irreg", indicesStatementAffirmativeIrregular);
+			relevantConstructions.put(tenseConstruction.name() + "-stmt-affirm-reg", indicesStatementAffirmativeRegular);
+        }
+        
+        // present tense combinations
+        ArrayList<ConstructionRange> presentOccurrences = 
+        		getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.TENSE_PRESENT_SIMPLE, doc);
+        ArrayList<Pair<Integer, Integer>> indicesQuestionAffirmative3 = new ArrayList<Pair<Integer, Integer>>();
+        ArrayList<Pair<Integer, Integer>> indicesQuestionAffirmativeNot3 = new ArrayList<Pair<Integer, Integer>>();
+    	ArrayList<Pair<Integer, Integer>> indicesQuestionNegative3 = new ArrayList<Pair<Integer, Integer>>();
+    	ArrayList<Pair<Integer, Integer>> indicesQuestionNegativeNot3 = new ArrayList<Pair<Integer, Integer>>();
+    	ArrayList<Pair<Integer, Integer>> indicesStatementAffirmative3 = new ArrayList<Pair<Integer, Integer>>();
+    	ArrayList<Pair<Integer, Integer>> indicesStatementAffirmativeNot3 = new ArrayList<Pair<Integer, Integer>>();
+    	ArrayList<Pair<Integer, Integer>> indicesStatementNegative3 = new ArrayList<Pair<Integer, Integer>>();
+    	ArrayList<Pair<Integer, Integer>> indicesStatementNegativeNot3 = new ArrayList<Pair<Integer, Integer>>();
+        for(ConstructionRange tenseOccurrence : presentOccurrences) {
+        	boolean foundNegationOverlap = false;
+        	for(ConstructionRange negationOccurrence : negationOccurrences) {
+        		if(negationOccurrence.getEnd() >= tenseOccurrence.getStart() - 1 && negationOccurrence.getStart() <= tenseOccurrence.getEnd() + 1) {
+        			// The negation is at most the previous or succeeding token (only a single character in-between for a whitespace)
+        			foundNegationOverlap = true;
+        			break;
+        		}
+        	}
+        	
+        	boolean foundQuestionOverlap = false;
+        	for(ConstructionRange questionOccurrence : questionOccurrences) {
+        		if(tenseOccurrence.getStart() >= questionOccurrence.getStart() && tenseOccurrence.getEnd() <= questionOccurrence.getEnd()) {
+        			// The verb is within a question
+        			foundQuestionOverlap = true;
+        			break;
+        		}
+        	}
+        	
+        	boolean isThirdPersonSingular = tenseOccurrence.toString().endsWith("s") || tenseOccurrence.equals("doesn't") || 
+        			tenseOccurrence.equals("hasn't") || tenseOccurrence.equals("isn't");
+
+        	if(foundNegationOverlap) {
+        		if(foundQuestionOverlap) {
+        			if(isThirdPersonSingular) {
+        				indicesQuestionNegative3.add(new Pair<Integer, Integer>(tenseOccurrence.getStart(), tenseOccurrence.getEnd()));
+        			} else {
+        				indicesQuestionNegativeNot3.add(new Pair<Integer, Integer>(tenseOccurrence.getStart(), tenseOccurrence.getEnd()));
+        			}
+        		} else {
+        			if(isThirdPersonSingular) {
+        				indicesStatementNegative3.add(new Pair<Integer, Integer>(tenseOccurrence.getStart(), tenseOccurrence.getEnd()));
+        			} else {
+        				indicesStatementNegativeNot3.add(new Pair<Integer, Integer>(tenseOccurrence.getStart(), tenseOccurrence.getEnd()));
+        			}
+        		}
+        	} else {
+        		if(foundQuestionOverlap) {
+        			if(isThirdPersonSingular) {
+        				indicesQuestionAffirmative3.add(new Pair<Integer, Integer>(tenseOccurrence.getStart(), tenseOccurrence.getEnd()));
+        			} else {
+        				indicesQuestionAffirmativeNot3.add(new Pair<Integer, Integer>(tenseOccurrence.getStart(), tenseOccurrence.getEnd()));
+        			}
+        		} else {
+        			if(isThirdPersonSingular) {
+        				indicesStatementAffirmative3.add(new Pair<Integer, Integer>(tenseOccurrence.getStart(), tenseOccurrence.getEnd()));
+        			} else {
+        				indicesStatementAffirmativeNot3.add(new Pair<Integer, Integer>(tenseOccurrence.getStart(), tenseOccurrence.getEnd()));
+        			}
+        		}
+        	}
+        }
+        
+        relevantConstructions.put("present-question-neg-3", indicesQuestionNegative3);
+		relevantConstructions.put("present-question-neg-not3", indicesQuestionNegativeNot3);
+		relevantConstructions.put("present-stmt-neg-3", indicesStatementNegative3);
+		relevantConstructions.put("present-stmt-neg-not3", indicesStatementNegativeNot3);
+		relevantConstructions.put("present-question-affirm-3", indicesQuestionAffirmative3);
+		relevantConstructions.put("present-question-affirm-not3", indicesQuestionAffirmativeNot3);
+		relevantConstructions.put("present-stmt-affirm-3", indicesStatementAffirmative3);
+		relevantConstructions.put("present-stmt-affirm-not3", indicesStatementAffirmativeNot3);                              	
+
+		// relative pronouns
+		ArrayList<ConstructionRange> relativeOccurrences = 
+        		getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.PRONOUNS_RELATIVE, doc);
+        ArrayList<Pair<Integer, Integer>> indicesWhoOccurrences = new ArrayList<Pair<Integer, Integer>>();
+        ArrayList<Pair<Integer, Integer>> indicesWhichOccurrences = new ArrayList<Pair<Integer, Integer>>();
+        ArrayList<Pair<Integer, Integer>> indicesThatOccurrences = new ArrayList<Pair<Integer, Integer>>();
+        ArrayList<Pair<Integer, Integer>> indicesOtherOccurrences = new ArrayList<Pair<Integer, Integer>>();
+        for(ConstructionRange relativeOccurrence : relativeOccurrences) {
+        	if(relativeOccurrence.toString().equals("who")) {
+        		indicesWhoOccurrences.add(new Pair<Integer, Integer>(relativeOccurrence.getStart(), relativeOccurrence.getEnd()));
+        	} else if(relativeOccurrence.toString().equals("which")) {
+        		indicesWhichOccurrences.add(new Pair<Integer, Integer>(relativeOccurrence.getStart(), relativeOccurrence.getEnd()));
+        	} else if(relativeOccurrence.toString().equals("that")) {
+        		indicesThatOccurrences.add(new Pair<Integer, Integer>(relativeOccurrence.getStart(), relativeOccurrence.getEnd()));
+        	} else {
+        		indicesOtherOccurrences.add(new Pair<Integer, Integer>(relativeOccurrence.getStart(), relativeOccurrence.getEnd()));
+        	}
+        	
+        }
+		relevantConstructions.put("who", indicesWhoOccurrences);
+		relevantConstructions.put("which", indicesWhichOccurrences);
+		relevantConstructions.put("that", indicesThatOccurrences);
+		relevantConstructions.put("otherRelPron", indicesOtherOccurrences);
+		
+		return relevantConstructions;
     }
     
 }

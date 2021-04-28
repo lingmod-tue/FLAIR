@@ -8,6 +8,7 @@ import com.flair.client.localization.LocalizedComposite;
 import com.flair.client.localization.LocalizedFieldType;
 import com.flair.client.localization.annotations.LocalizedField;
 import com.flair.client.localization.interfaces.LocalizationBinder;
+import com.flair.shared.exerciseGeneration.ExerciseSettings;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -58,12 +59,9 @@ public class ExerciseGenerationWidget extends LocalizedComposite {
      * Initializes all handlers.
      */
     private void initHandlers() {
-    	btnAddTask.addClickHandler(event -> {
-            addTask();
-    	});
-    	btnDeleteTasks.addClickHandler(event -> {
-            deleteAllTasks();
-    	});
+    	btnAddTask.addClickHandler(event -> addTask());
+    	btnDeleteTasks.addClickHandler(event -> deleteAllTasks());
+    	btnGenerateExercises.addClickHandler(event -> generateExercises());
     }
     
     /**
@@ -125,18 +123,6 @@ public class ExerciseGenerationWidget extends LocalizedComposite {
 		}*/
     }
 
-    /**
-     * Gets the value of the currently selected quiz.
-     * @return	The value of the currently selected quiz, if any; otherwise the empty string
-     */
-    private String getQuiz(MaterialComboBox<Option> quizWidget) {    	
-    	//We get a ClassCastException when we try to access the first list element, so we just iterate over the (only) element
-    	for(Object o : quizWidget.getSelectedValue()) {
-    		return o.toString();
-    	}   		
-    	
-    	return "";
-    }
     
     /**
      * Re-sets the options in the quiz dropdown whenever the selection in one of the tasks has been changed, 
@@ -146,7 +132,7 @@ public class ExerciseGenerationWidget extends LocalizedComposite {
     	List<Widget> existingTasks = wdgtTasks.getChildrenList();
     	ArrayList<Integer> selectedQuizzes = new ArrayList<Integer>();
     	for(Widget existingTask : existingTasks) {
-    		String selectedQuiz = getQuiz(((TaskItem)existingTask).drpQuiz);
+    		String selectedQuiz = ((TaskItem)existingTask).getQuiz();
 
     		if(!selectedQuiz.equals("")) {
     			int selectedNumber = Integer.parseInt(selectedQuiz);
@@ -164,7 +150,7 @@ public class ExerciseGenerationWidget extends LocalizedComposite {
     	}
     	    	
     	for(Widget existingTask : existingTasks) {
-    		String currentlySelectedQuiz = getQuiz(((TaskItem)existingTask).drpQuiz);
+    		String currentlySelectedQuiz = ((TaskItem)existingTask).getQuiz();
     		    		
     		// Remove all previous options
     		((TaskItem)existingTask).drpQuiz.clear();
@@ -201,5 +187,32 @@ public class ExerciseGenerationWidget extends LocalizedComposite {
 			task.drpQuiz.setSelectedIndex(index);
 		}
     }
-
+    
+    /**
+     * Enables the Generate exercises button if there is at least 1 valid exercise.
+     * Disables it otherwise.
+     */
+    public void setGenerateExercisesEnabled() {
+    	boolean hasValidExercise = false;
+    	for(Widget existingTask : wdgtTasks.getChildrenList()) {
+    		if (((TaskItem)existingTask).icoOk.isVisible()) {
+    			hasValidExercise = true;
+    		}
+    	}
+    	
+    	btnGenerateExercises.setEnabled(hasValidExercise);
+    }
+    
+    /**
+     * Generate H5P exercises for all valid tasks
+     */
+    private void generateExercises()
+    {
+    	for(Widget existingTask : wdgtTasks.getChildrenList()) {
+            ArrayList<ExerciseSettings> exerciseSettings = new ArrayList<>();
+    		if (((TaskItem)existingTask).icoOk.isVisible()) {
+    			exerciseSettings.add(((TaskItem)existingTask).generateExerciseSettings());
+    		}
+    	}
+    }
 }

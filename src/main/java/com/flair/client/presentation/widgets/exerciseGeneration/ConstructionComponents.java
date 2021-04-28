@@ -2,6 +2,8 @@ package com.flair.client.presentation.widgets.exerciseGeneration;
 
 import java.util.ArrayList;
 
+import com.flair.shared.exerciseGeneration.Pair;
+
 import gwt.material.design.client.ui.MaterialCheckBox;
 
 /**

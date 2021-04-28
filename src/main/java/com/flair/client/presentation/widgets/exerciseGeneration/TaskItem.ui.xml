@@ -489,7 +489,7 @@
 						</m:MaterialColumn>
 						<m:MaterialColumn grid='s4 m4 l4' padding="0"
 							margin="0">
-							<flair:NumberSpinner value="2" min="1" />
+							<flair:NumberSpinner value="2" min="1" ui:field="spnNDistractors"/>
 						</m:MaterialColumn>
 					</m:MaterialRow>
 				</m:MaterialRow>

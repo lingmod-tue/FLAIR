@@ -28,7 +28,7 @@
                                 addStyleNames="{style.bgGrey}" waves="DEFAULT"/>
 			</m:MaterialRow>
 			<m:MaterialRow textAlign="CENTER" marginTop="10">
-				<m:MaterialButton ui:field="btnGenerateExercises" backgroundColor="ORANGE" textColor="WHITE"/>
+				<m:MaterialButton ui:field="btnGenerateExercises" backgroundColor="ORANGE" textColor="WHITE" enabled="false"/>
 			</m:MaterialRow>
 			
 		</m:MaterialRow>
