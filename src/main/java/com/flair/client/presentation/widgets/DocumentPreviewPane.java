@@ -103,7 +103,7 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
     @UiField
     MaterialColumn pnlAllConstCol3UI;
     @UiField
-    ExerciseGenerationWidget wdgtExerciseGeneration;
+	public ExerciseGenerationWidget wdgtExerciseGeneration;
     @UiField
     MaterialCollapsibleItem expExerciseGeneration;
 

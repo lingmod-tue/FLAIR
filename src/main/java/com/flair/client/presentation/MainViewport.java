@@ -330,4 +330,9 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	public WebSearchService getWebSearchService() {
 		return mdlWebSearchUI;
 	}
+
+	@Override
+	public ExerciseGenerationService getExerciseGenerationService() {
+		return pnlDocPreviewUI.wdgtExerciseGeneration;
+	}
 }

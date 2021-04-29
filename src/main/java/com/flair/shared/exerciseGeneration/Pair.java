@@ -1,9 +1,12 @@
 package com.flair.shared.exerciseGeneration;
 
-public class Pair<T1, T2>
-{
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+public class Pair<T1, T2> implements IsSerializable {
     T1 key;
     T2 value;
+    
+    public Pair() {}
     
     public Pair(T1 key, T2 value) {  
     	this.key = key;  

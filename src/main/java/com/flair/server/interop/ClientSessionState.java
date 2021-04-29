@@ -10,11 +10,13 @@ import com.flair.server.interop.messaging.ServerMessageChannel;
 import com.flair.server.interop.messaging.ServerMessagingSwitchboard;
 import com.flair.server.parser.KeywordSearcherInput;
 import com.flair.server.pipelines.common.PipelineOp;
+import com.flair.server.pipelines.exgen.ExerciseGenerationPipeline;
 import com.flair.server.pipelines.gramparsing.GramParsingPipeline;
 import com.flair.server.pipelines.questgen.GeneratedQuestion;
 import com.flair.server.pipelines.questgen.QuestionGenerationPipeline;
 import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.exceptions.ServerRuntimeException;
+import com.flair.shared.exerciseGeneration.ExerciseSettings;
 import com.flair.shared.interop.ClientIdToken;
 import com.flair.shared.interop.dtos.DocumentDTO;
 import com.flair.shared.interop.dtos.QuestionDTO;
@@ -22,6 +24,7 @@ import com.flair.shared.interop.dtos.RankableDocument;
 import com.flair.shared.interop.dtos.RankableDocumentImpl;
 import com.flair.shared.interop.messaging.client.*;
 import com.flair.shared.interop.messaging.server.SmCustomCorpusEvent;
+import com.flair.shared.interop.messaging.server.SmExGenEvent;
 import com.flair.shared.interop.messaging.server.SmQuestionGenEvent;
 import com.flair.shared.interop.messaging.server.SmWebSearchParseEvent;
 
@@ -56,6 +59,7 @@ class ClientSessionState {
 		messageChannel.addReceiveHandler(CmCustomCorpusParseStart.class, this::onCmCustomCorpusParseStart);
 		messageChannel.addReceiveHandler(CmQuestionGenEagerParse.class, this::onCmQuestionGenEagerParse);
 		messageChannel.addReceiveHandler(CmQuestionGenStart.class, this::onCmQuestionGenStart);
+		messageChannel.addReceiveHandler(CmExGenStart.class, this::onCmExGenStart);
 		messageChannel.addReceiveHandler(CmActiveOperationCancel.class, this::onCmActiveOperationCancel);
 	}
 
@@ -235,6 +239,22 @@ class ClientSessionState {
 		} else
 			beginNewOperation(builder);
 	}
+	
+	private synchronized void onCmExGenStart(CmExGenStart msg) {
+		ArrayList<ExerciseSettings> settings = msg.getSettings();
+		
+		ServerLogger.get().info("Begin exercise generation");
+
+		if (pipelineOpCache.hasActiveOp())
+			throw new ServerRuntimeException("Another operation is still running");
+
+		ExerciseGenerationPipeline.ExerciseGenerationOpBuilder builder = ExerciseGenerationPipeline.get().generateExercises()
+				.settings(settings)
+				.onExGenComplete(e -> onExerciseGenerationOpGenerationComplete(e))
+				.onComplete(e -> onExerciseGenerationOpJobComplete(e));
+
+		beginNewOperation(builder);
+	}
 
 	private synchronized void onCmActiveOperationCancel(CmActiveOperationCancel msg) {
 		if (!pipelineOpCache.hasActiveOp()) {
@@ -356,6 +376,29 @@ class ClientSessionState {
 		SmQuestionGenEvent msg = new SmQuestionGenEvent();
 		msg.setEvent(SmQuestionGenEvent.EventType.JOB_COMPLETE);
 		msg.setGenerationResult(questions.stream().map(q -> new QuestionDTO(q.question, q.answer, q.distractors)).collect(Collectors.toCollection(ArrayList::new)));
+		messageChannel.send(msg);
+
+		// reset operation state
+		endActiveOperation(false);
+	}
+	
+	private synchronized void onExerciseGenerationOpGenerationComplete(byte[] file) {
+		if (!pipelineOpCache.hasActiveOp())
+			throw new ServerRuntimeException("Invalid exercise generation generation complete event!");
+
+		/*SmExGenEvent msg = new SmExGenEvent();
+		msg.setEvent(SmExGenEvent.EventType.GENERATION_COMPLETE);
+		msg.setFile(file);
+		messageChannel.send(msg);*/
+	}
+	
+	private synchronized void onExerciseGenerationOpJobComplete(byte[] file) {
+		if (!pipelineOpCache.hasActiveOp())
+			throw new ServerRuntimeException("Invalid exercise generation job complete event!");
+
+		SmExGenEvent msg = new SmExGenEvent();
+		msg.setEvent(SmExGenEvent.EventType.JOB_COMPLETE);
+		msg.setFile(file);
 		messageChannel.send(msg);
 
 		// reset operation state

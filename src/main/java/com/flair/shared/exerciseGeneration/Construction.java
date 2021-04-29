@@ -2,7 +2,9 @@ package com.flair.shared.exerciseGeneration;
 
 import java.util.ArrayList;
 
-public class Construction {
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+public class Construction implements IsSerializable {
 
     private ArrayList<DistractorProperties> distractors;
     private ArrayList<BracketsProperties> brackets;
@@ -11,6 +13,8 @@ public class Construction {
     private Pair<Integer, Integer> constructionIndices;
     private String bracketsText = "";
 
+    public Construction() {}
+    
     public Construction(ArrayList<DistractorProperties> distractors, ArrayList<BracketsProperties> brackets, int nDistractors,
                         DetailedConstruction construction, Pair<Integer, Integer> constructionIndices) {
         this.distractors = distractors;

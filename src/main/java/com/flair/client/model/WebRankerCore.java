@@ -14,6 +14,7 @@ import com.flair.client.presentation.widgets.LanguageSpecificConstructionSliderB
 import com.flair.client.utilities.ClientLogger;
 import com.flair.client.utilities.GwtUtil;
 import com.flair.shared.exceptions.InvalidClientIdentificationTokenException;
+import com.flair.shared.exerciseGeneration.ExerciseSettings;
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
 import com.flair.shared.interop.dtos.DocumentDTO;
@@ -23,6 +24,7 @@ import com.flair.shared.interop.dtos.UploadedDocument;
 import com.flair.shared.interop.messaging.client.*;
 import com.flair.shared.interop.messaging.server.SmCustomCorpusEvent;
 import com.flair.shared.interop.messaging.server.SmError;
+import com.flair.shared.interop.messaging.server.SmExGenEvent;
 import com.flair.shared.interop.messaging.server.SmQuestionGenEvent;
 import com.flair.shared.interop.messaging.server.SmWebSearchParseEvent;
 import com.flair.shared.parser.DocumentReadabilityLevel;
@@ -33,6 +35,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.Window;
 import gwt.material.design.client.constants.Color;
+import gwt.material.design.client.ui.MaterialToast;
 
 import java.util.*;
 
@@ -897,6 +900,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
     private WebSearchService search;
     private UserPromptService prompt;
     private CorpusUploadService upload;
+    ExerciseGenerationService exGen;
     private CustomKeywordService keywords;
     private VisualizerService visualizer;
     private OperationCancelService cancel;
@@ -910,6 +914,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
     private ConstructionSettingsProfile importedSettings;
     private final WebSearchCooldownTimer searchCooldown;
     private final MessagePoller questionGenPoller;
+    private final MessagePoller exGenPoller;
     private boolean rerankFlag;
 
     private final GenericEventSource<BeginOperation> eventBeginProc;
@@ -953,6 +958,17 @@ public class WebRankerCore implements AbstractWebRankerCore {
                 .onMessage(SmQuestionGenEvent.class, this::onSmQuestionGenEvent)
                 .onMessage(SmError.class, WebRankerCore.this::onSmError)
                 .build();
+        
+        exGenPoller = serverMessageChannel.messagePoller()
+                .interval(POLLING_INTERVAL)
+                .timeout(TIMEOUT_INTERVAL)
+                .onTimeout(() -> {
+                    ToastNotification.fire(getLocalizedString(LocalizationTags.OP_TIMEDOUT.toString()), 5000);
+                    exGen.enableButton();
+                })
+                .onMessage(SmExGenEvent.class, this::onSmExGenEvent)
+                .onMessage(SmError.class, WebRankerCore.this::onSmError)
+                .build();
 
         eventBeginProc = new GenericEventSource<>();
         eventEndProc = new GenericEventSource<>();
@@ -965,6 +981,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
         prompt = presenter.getPromptService();
         search = presenter.getWebSearchService();
         upload = presenter.getCorpusUploadService();
+        exGen = presenter.getExerciseGenerationService();
         keywords = presenter.getCustomKeywordsService();
         visualizer = presenter.getVisualizerService();
         cancel = presenter.getCancelService();
@@ -1014,6 +1031,8 @@ public class WebRankerCore implements AbstractWebRankerCore {
         questgenpreview.setGenerateHandler(this::onGenerateQuestions);
         questgenpreview.setInterruptHandler(this::onInterruptQuestionGen);
         questgenpreview.setShowHandler(this::onQuestGenPreviewShow);
+        exGen.setGenerateHandler(this::onGenerateExercises);
+        exGen.setGenerationCompleteHandler(this::onGenerationComplete);
 
         LocalizationEngine.get().addLanguageChangeHandler(l -> rankPreviewModule.refreshLocalization(l.newLang));
 
@@ -1036,6 +1055,16 @@ public class WebRankerCore implements AbstractWebRankerCore {
                 questgenpreview.display(msg.getGenerationResult());
                 break;
         }
+    }
+    
+    private void onSmExGenEvent(SmExGenEvent msg) {
+        //switch (msg.getEvent()) {
+        //    case JOB_COMPLETE:
+                exGenPoller.stop();
+                exGen.enableButton();
+                exGen.provideForDownload(msg.getFile());
+        //        break;
+        //}
     }
 
     private void onRestoreProcess(WebRankerAnalysis p) {
@@ -1251,7 +1280,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
 
         return true;
     }
-
+    
     private void onInterruptQuestionGen() {
         if (questionGenPoller.isRunning())
             questionGenPoller.stop();
@@ -1275,6 +1304,33 @@ public class WebRankerCore implements AbstractWebRankerCore {
         serverMessageChannel.send(msg, () -> {
         }, (e, m) -> {
         });
+    }
+    
+    private boolean onGenerateExercises(ArrayList<ExerciseSettings> settings) {
+        if (exGenPoller.isRunning()) {
+            ToastNotification.fire(getLocalizedString(DefaultLocalizationProviders.COMMON.toString(), CommonLocalizationTags.WAIT_TILL_COMPLETION.toString()));
+            return false;
+        }
+
+        CmExGenStart msg = new CmExGenStart();
+        msg.setSettings(settings);
+
+        serverMessageChannel.send(msg,
+                exGenPoller::start,
+                (e, m) -> {
+                    ClientLogger.get().error(e, "Couldn't begin exercise generation operation");
+                    ToastNotification.fire(getLocalizedString(LocalizationTags.SERVER_ERROR.toString()));
+                    exGen.enableButton();
+
+                    if (e instanceof InvalidClientIdentificationTokenException)
+                        ClientEndPoint.get().fatalServerError();
+                });
+
+        return true;
+    }
+    
+    private void onGenerationComplete(byte[] file) {
+        exGen.provideForDownload(file);
     }
 
     private void onCancelOp() {
@@ -1326,4 +1382,5 @@ public class WebRankerCore implements AbstractWebRankerCore {
     public void addEndOperationHandler(EventHandler<EndOperation> handler) {
         eventEndProc.addHandler(handler);
     }
+
 }

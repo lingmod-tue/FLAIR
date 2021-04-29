@@ -18,6 +18,7 @@ public interface AbstractWebRankerPresenter {
 	DocumentCompareService getDocumentCompareService();
 	HistoryViewerService getHistoryViewerService();
 	QuestionGeneratorPreviewService getQuestionGeneratorPreviewService();
+	ExerciseGenerationService getExerciseGenerationService();
 
 	void showLoaderOverlay(boolean visible);        // over the entire viewport
 	void showProgressBar(boolean visible);

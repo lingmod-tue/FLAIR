@@ -8,8 +8,12 @@ import com.flair.client.localization.LocalizedComposite;
 import com.flair.client.localization.LocalizedFieldType;
 import com.flair.client.localization.annotations.LocalizedField;
 import com.flair.client.localization.interfaces.LocalizationBinder;
+import com.flair.client.presentation.interfaces.CorpusUploadService;
+import com.flair.client.presentation.interfaces.ExerciseGenerationService;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
+import com.flair.shared.interop.dtos.RankableDocument;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
@@ -20,9 +24,10 @@ import gwt.material.design.addins.client.combobox.events.SelectItemEvent.SelectC
 import gwt.material.design.client.constants.Color;
 import gwt.material.design.client.ui.MaterialButton;
 import gwt.material.design.client.ui.MaterialCollapsible;
+import gwt.material.design.client.ui.MaterialToast;
 import gwt.material.design.client.ui.html.Option;
 
-public class ExerciseGenerationWidget extends LocalizedComposite {
+public class ExerciseGenerationWidget extends LocalizedComposite implements ExerciseGenerationService {
 
     interface ExerciseGenerationWidgetUiBinder extends UiBinder<Widget, ExerciseGenerationWidget> {
     }
@@ -105,7 +110,11 @@ public class ExerciseGenerationWidget extends LocalizedComposite {
 			}
     	});
     	
+    	newTask.expTask.setParent(wdgtTasks);
+    	newTask.expTask.expand();
+
         wdgtTasks.add(newTask);
+
         updateSelectableQuizzes();
         newTask.initializeRelevantConstructions();
 
@@ -203,16 +212,45 @@ public class ExerciseGenerationWidget extends LocalizedComposite {
     	btnGenerateExercises.setEnabled(hasValidExercise);
     }
     
+    @Override
+    public void enableButton() {
+    	btnGenerateExercises.setEnabled(true);
+    }
+    
     /**
      * Generate H5P exercises for all valid tasks
      */
     private void generateExercises()
     {
+        ArrayList<ExerciseSettings> exerciseSettings = new ArrayList<>();
     	for(Widget existingTask : wdgtTasks.getChildrenList()) {
-            ArrayList<ExerciseSettings> exerciseSettings = new ArrayList<>();
     		if (((TaskItem)existingTask).icoOk.isVisible()) {
     			exerciseSettings.add(((TaskItem)existingTask).generateExerciseSettings());
     		}
     	}
+    	
+    	startGenerationHandler.handle(exerciseSettings);
     }
+
+    GenerateHandler startGenerationHandler;
+    GenerationCompleteHandler endGenerationHandler;
+    
+	@Override
+	public void provideForDownload(byte[] file) {
+		// TODO serve file
+		MaterialToast.fireToast("Generated file");
+		
+	}
+
+	@Override
+	public void setGenerateHandler(GenerateHandler handler) {
+		startGenerationHandler = handler;
+		
+	}
+
+	@Override
+	public void setGenerationCompleteHandler(GenerationCompleteHandler handler) {
+		endGenerationHandler = handler;
+		
+	}
 }

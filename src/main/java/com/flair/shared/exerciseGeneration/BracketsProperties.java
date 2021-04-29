@@ -1,5 +1,7 @@
 package com.flair.shared.exerciseGeneration;
 
+import com.google.gwt.user.client.rpc.IsSerializable;
+
 public enum BracketsProperties {
     LEMMA,
     POS,

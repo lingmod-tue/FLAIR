@@ -2,6 +2,7 @@
 package com.flair.server.interop;
 
 import com.flair.server.interop.messaging.ServerMessagingSwitchboard;
+import com.flair.server.pipelines.exgen.ExerciseGenerationPipeline;
 import com.flair.server.pipelines.gramparsing.GramParsingPipeline;
 import com.flair.server.pipelines.questgen.QuestionGenerationPipeline;
 import com.flair.server.scheduler.ThreadPool;
@@ -23,6 +24,7 @@ public class FlairWebAppContextListener implements ServletContextListener {
 		ServerMessagingSwitchboard.get();
 		ClientSessionManager.get();
 		GramParsingPipeline.get();
+		ExerciseGenerationPipeline.get();
 		QuestionGenerationPipeline.get();
 
 		Thread.setDefaultUncaughtExceptionHandler((thread, thrwbl) -> {
@@ -41,6 +43,7 @@ public class FlairWebAppContextListener implements ServletContextListener {
 
 		QuestionGenerationPipeline.dispose();
 		GramParsingPipeline.dispose();
+		ExerciseGenerationPipeline.dispose();
 		ClientSessionManager.dispose();
 		ServerMessagingSwitchboard.dispose();
 		ThreadPool.dispose();

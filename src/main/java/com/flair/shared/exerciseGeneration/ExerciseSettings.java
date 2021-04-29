@@ -2,7 +2,9 @@ package com.flair.shared.exerciseGeneration;
 
 import java.util.ArrayList;
 
-public class ExerciseSettings {
+import com.google.gwt.user.client.rpc.IsSerializable;
+
+public class ExerciseSettings implements IsSerializable{
 
     private ArrayList<Pair<String, Boolean>> sentences;
     private ArrayList<Integer> sentenceStartIndices;
@@ -14,6 +16,8 @@ public class ExerciseSettings {
     private String contentType;
     private String quiz;
 
+    public ExerciseSettings() {}
+    
     public ExerciseSettings(ArrayList<Construction> constructions, String url,
                             String plainText, int selectionStartIndex, int selectionEndIndex,
                             String contentType, String quiz) {

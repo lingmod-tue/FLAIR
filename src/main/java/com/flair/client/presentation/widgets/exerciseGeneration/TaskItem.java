@@ -30,6 +30,7 @@ import gwt.material.design.addins.client.combobox.events.SelectItemEvent.SelectC
 import gwt.material.design.client.constants.Color;
 import gwt.material.design.client.ui.MaterialButton;
 import gwt.material.design.client.ui.MaterialCheckBox;
+import gwt.material.design.client.ui.MaterialCollapsibleItem;
 import gwt.material.design.client.ui.MaterialDialog;
 import gwt.material.design.client.ui.MaterialIcon;
 import gwt.material.design.client.ui.MaterialLabel;
@@ -244,6 +245,8 @@ public class TaskItem extends LocalizedComposite {
     MaterialIcon icoInvalid;
     @UiField
     NumberSpinner spnNDistractors;
+    @UiField
+    MaterialCollapsibleItem expTask;
     
     private ConstructionComponentsCollection constructionComponents;
     private ExerciseGenerationWidget parent;
@@ -253,7 +256,7 @@ public class TaskItem extends LocalizedComposite {
     	
         initWidget(ourUiBinder.createAndBindUi(this));
         initLocale(localeBinder.bind(this));
-        
+                
         distractorOptions = new MaterialCheckBox[] {chkDistractorsOtherForm, chkDistractorsOtherVariant, chkDistractorsOtherPast, chkDistractorsOtherTense, 
         		chkDistractorsIncorrectForms, chkDistractorsWrongConditional, chkDistractorsWrongClause, chkDistractorsWrongSuffixUse, chkDistractorsWrongSuffix};
                 
@@ -523,7 +526,7 @@ public class TaskItem extends LocalizedComposite {
     	
         constructionComponents = new ConstructionComponentsCollection(this);
         
-    	setExerciseSettingsVisibilities();
+    	setExerciseSettingsVisibilities();    	
     }
     
     /**
