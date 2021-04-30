@@ -1,10 +1,10 @@
-
 package com.flair.server.interop;
 
 import com.flair.server.crawler.SearchResult;
 import com.flair.server.document.AbstractDocument;
 import com.flair.server.document.AbstractDocumentSource;
 import com.flair.server.document.DocumentCollection;
+import com.flair.server.exerciseGeneration.exerciseManagement.domManipulation.ZipManager;
 import com.flair.server.grammar.DefaultVocabularyList;
 import com.flair.server.interop.messaging.ServerMessageChannel;
 import com.flair.server.interop.messaging.ServerMessagingSwitchboard;
@@ -251,7 +251,7 @@ class ClientSessionState {
 		ExerciseGenerationPipeline.ExerciseGenerationOpBuilder builder = ExerciseGenerationPipeline.get().generateExercises()
 				.settings(settings)
 				.onExGenComplete(e -> onExerciseGenerationOpGenerationComplete(e))
-				.onComplete(e -> onExerciseGenerationOpJobComplete(e));
+				.onComplete(e -> onExerciseGenerationOpJobComplete());
 
 		beginNewOperation(builder);
 	}
@@ -382,23 +382,38 @@ class ClientSessionState {
 		endActiveOperation(false);
 	}
 	
+	
+    ArrayList<byte[]> generatedPackages = new ArrayList<>();
+
 	private synchronized void onExerciseGenerationOpGenerationComplete(byte[] file) {
 		if (!pipelineOpCache.hasActiveOp())
 			throw new ServerRuntimeException("Invalid exercise generation generation complete event!");
 
-		/*SmExGenEvent msg = new SmExGenEvent();
-		msg.setEvent(SmExGenEvent.EventType.GENERATION_COMPLETE);
-		msg.setFile(file);
-		messageChannel.send(msg);*/
+		if(file != null) {
+            generatedPackages.add(file);
+        }
 	}
 	
-	private synchronized void onExerciseGenerationOpJobComplete(byte[] file) {
+	private synchronized void onExerciseGenerationOpJobComplete() {
 		if (!pipelineOpCache.hasActiveOp())
 			throw new ServerRuntimeException("Invalid exercise generation job complete event!");
 
+		
+		byte[] outputFile = null;
+        String name = null;
+        if(generatedPackages.size() > 1) {
+            outputFile = ZipManager.zipH5PPackages(generatedPackages);
+            name = "exercises.zip";
+        } else if(generatedPackages.size() > 0) {
+            outputFile = generatedPackages.get(0);
+            name = "task1.h5p";
+        }
+        
+        
 		SmExGenEvent msg = new SmExGenEvent();
 		msg.setEvent(SmExGenEvent.EventType.JOB_COMPLETE);
-		msg.setFile(file);
+		msg.setFile(outputFile);
+		msg.setFileName(name);
 		messageChannel.send(msg);
 
 		// reset operation state

@@ -29,9 +29,14 @@ public final class ExerciseGenerationPipeline {
 	}
 
 	private final AsyncExecutorService exGenExecutor;
+	private final AsyncExecutorService downloadExecutor;
 
 	private ExerciseGenerationPipeline() {
 		ThreadPool.Builder threadPoolBuilder = ThreadPool.get().builder();
+		downloadExecutor = threadPoolBuilder
+				.poolSize(50)
+				.poolName("Web page Download")
+				.build();		
 		exGenExecutor = threadPoolBuilder
 				.poolSize(50)
 				.poolName("Exercise Generation")
@@ -54,7 +59,7 @@ public final class ExerciseGenerationPipeline {
 			this.settings = settings;
 			return this;
 		}
-
+		
 		public ExerciseGenerationOpBuilder onExGenComplete(ExerciseGenerationOp.ExGenComplete handler) {
 			this.exGenComplete = handler;
 			return this;
@@ -69,7 +74,7 @@ public final class ExerciseGenerationPipeline {
 			if (settings == null)
 				throw new IllegalStateException("Invalid exercise settings");
 			
-			ExerciseGenerationOp.Input input = new ExerciseGenerationOp.Input(settings, exGenExecutor, exGenComplete, jobComplete);
+			ExerciseGenerationOp.Input input = new ExerciseGenerationOp.Input(settings, downloadExecutor, exGenExecutor, exGenComplete, jobComplete);
 
 			return new ExerciseGenerationOp(input);
 		}

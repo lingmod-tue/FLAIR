@@ -9,7 +9,7 @@ import com.flair.shared.exerciseGeneration.ExerciseSettings;
  */
 public interface ExerciseGenerationService {
 	interface GenerationCompleteHandler {
-		void handle(byte[] file);
+		void handle(byte[] file, String fileName);
 	}
 	
 	interface GenerateHandler {
@@ -17,7 +17,7 @@ public interface ExerciseGenerationService {
 	}
 
 
-	void provideForDownload(byte[] file);
+	void provideForDownload(byte[] file, String fileName);
 
 	void setGenerateHandler(GenerateHandler handler);
 	

@@ -429,6 +429,8 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
             lblDocNumWordsUI.setVisible(true);
             icoHelpTextUI.setVisible(false);
 
+            lblSelectExGenDoc.setVisible(false);
+            wdgtExerciseGeneration.setVisible(true);
         }
 
         public void reload(boolean fullReload) {
@@ -461,8 +463,6 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
                     if (weightSelection.hasData())
                         icoHelpTextUI.setVisible(true);
                     
-                    lblSelectExGenDoc.setVisible(false);
-                    wdgtExerciseGeneration.setVisible(true);
                     wdgtExerciseGeneration.initConstructionsOccurrences();
 
                     break;

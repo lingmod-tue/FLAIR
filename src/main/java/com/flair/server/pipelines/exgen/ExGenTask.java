@@ -1,29 +1,29 @@
 package com.flair.server.pipelines.exgen;
 
-import java.util.ArrayList;
-
+import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseManager;
+import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
 import com.flair.server.scheduler.AsyncTask;
 import com.flair.server.utilities.ServerLogger;
-import com.flair.shared.exerciseGeneration.ExerciseSettings;
 
 public class ExGenTask implements AsyncTask<ExGenTask.Result> {
-	public static ExGenTask factory(ArrayList<ExerciseSettings> settings) {
+	public static ExGenTask factory(ContentTypeSettings settings) {
 		return new ExGenTask(settings);
 	}
 
-	private final ArrayList<ExerciseSettings> settings;
+	private final ContentTypeSettings settings;
 
-	private ExGenTask(ArrayList<ExerciseSettings> settings) {
+	private ExGenTask(ContentTypeSettings settings) {
 		this.settings = settings;
 	}
 
 
 	@Override
 	public Result run() {		
-		//TODO: start logic here!
-		System.out.println("Here we should generate some files");
-		Result result = new Result(new byte[] {});
-		ServerLogger.get().trace("Created exercises");
+        ExerciseManager exerciseManger = new ExerciseManager();
+        byte[] file = exerciseManger.generateExercises(settings);
+                
+		Result result = new Result(file);
+		ServerLogger.get().trace("Created exercise");
 		return result;
 	}
 

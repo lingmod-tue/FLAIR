@@ -385,8 +385,8 @@ public class TaskItem extends LocalizedComposite {
     	
     	btnSelectDocumentPart.addClickHandler(event -> {
     		Pair<Integer, Integer> selectionIndices = calculateSelectionIndices();
-    		currentSelectionStartIndex = selectionIndices.getKey();
-    		currentSelectionLength = selectionIndices.getValue();
+    		currentSelectionStartIndex = selectionIndices.first;
+    		currentSelectionLength = selectionIndices.second;
     		    		
     		dlgDocumentSelection.open();
     		lblDocumentForSelection.setFocus(true);
@@ -635,14 +635,14 @@ public class TaskItem extends LocalizedComposite {
 		// Add the newly determined options    	
     	int i = 1;
     	for(Pair<String, String> possibleTopic : possibleTopics) {
-    		if(possibleTopic.getValue().equals("Passive")) {
+    		if(possibleTopic.second.equals("Passive")) {
     			if(getNumberOfConstructionOccurrences("passive", "Passive", 1) > 0) {
-    				addOptionToTopic(possibleTopic.getKey(), possibleTopic.getValue(), selecteTopic, i);  
+    				addOptionToTopic(possibleTopic.first, possibleTopic.second, selecteTopic, i);  
         			i++;
     			}
     		} else {
-	    		if(checkConstructionOccurs(null, possibleTopic.getValue(), 0)) {
-	    			addOptionToTopic(possibleTopic.getKey(), possibleTopic.getValue(), selecteTopic, i);  
+	    		if(checkConstructionOccurs(null, possibleTopic.second, 0)) {
+	    			addOptionToTopic(possibleTopic.first, possibleTopic.second, selecteTopic, i);  
 	    			i++;
 	        	}
     		}
@@ -766,8 +766,8 @@ public class TaskItem extends LocalizedComposite {
 		ArrayList<String> initialConstructionNames = new ArrayList<String>();
     	if(constructionLevels.size() > 0) {
     		for(Pair<MaterialCheckBox, String> firstLevelConstruction : constructionLevels.get(0)) {
-    			if(firstLevelConstruction.getKey() == null ||  firstLevelConstruction.getKey().getValue()) {
-    				initialConstructionNames.add(firstLevelConstruction.getValue());
+    			if(firstLevelConstruction.first == null ||  firstLevelConstruction.first.getValue()) {
+    				initialConstructionNames.add(firstLevelConstruction.second);
     			}   		
     		}
 		
@@ -776,9 +776,9 @@ public class TaskItem extends LocalizedComposite {
     				if(initialConstructionNames.size() > 0) {
     					ArrayList<String> currentConstructionNames = new ArrayList<String>();
     					for(Pair<MaterialCheckBox, String> currentLevelConstruction : constructionLevels.get(i)) {
-    						if(currentLevelConstruction.getKey() == null || currentLevelConstruction.getKey().getValue()) {
+    						if(currentLevelConstruction.first == null || currentLevelConstruction.first.getValue()) {
     							for(String initialConstructionName : initialConstructionNames) {
-    			    				currentConstructionNames.add(initialConstructionName + "-" + currentLevelConstruction.getValue());
+    			    				currentConstructionNames.add(initialConstructionName + "-" + currentLevelConstruction.second);
     							}
     						}
     					}
@@ -886,8 +886,8 @@ public class TaskItem extends LocalizedComposite {
     public void calculateConstructionsOccurrences(HashMap<String, Integer> relevantConstructions) {    
     	// Calculate indices of the selected document part    	
     	Pair<Integer, Integer> selectionIndices = calculateSelectionIndices();
-    	int startIndex = selectionIndices.getKey();
-    	int endIndex = selectionIndices.getValue() + startIndex;
+    	int startIndex = selectionIndices.first;
+    	int endIndex = selectionIndices.second + startIndex;
     	
     	relevantConstructions.clear();
     	HashMap<String, ArrayList<Pair<Integer, Integer>>> constructionOccurrences = getConstructionsOccurrences(startIndex, endIndex);
@@ -1040,8 +1040,8 @@ public class TaskItem extends LocalizedComposite {
     	ArrayList<Construction> constructions = new ArrayList<>();
     	
     	Pair<Integer, Integer> selectionIndices = calculateSelectionIndices();
-    	int selectionStartIndex = selectionIndices.getKey();
-    	int selectionEndIndex = selectionIndices.getValue();
+    	int selectionStartIndex = selectionIndices.first;
+    	int selectionEndIndex = selectionIndices.second;
 
     	HashMap<String, ArrayList<Pair<Integer, Integer>>> constructionOccurrences = 
     			getConstructionsOccurrences(selectionStartIndex, selectionEndIndex);

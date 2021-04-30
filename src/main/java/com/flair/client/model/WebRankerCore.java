@@ -1062,7 +1062,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
         //    case JOB_COMPLETE:
                 exGenPoller.stop();
                 exGen.enableButton();
-                exGen.provideForDownload(msg.getFile());
+                exGen.provideForDownload(msg.getFile(), msg.getFileName());
         //        break;
         //}
     }
@@ -1329,8 +1329,8 @@ public class WebRankerCore implements AbstractWebRankerCore {
         return true;
     }
     
-    private void onGenerationComplete(byte[] file) {
-        exGen.provideForDownload(file);
+    private void onGenerationComplete(byte[] file, String fileName) {
+        exGen.provideForDownload(file,fileName);
     }
 
     private void onCancelOp() {

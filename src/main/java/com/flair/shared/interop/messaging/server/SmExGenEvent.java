@@ -10,6 +10,7 @@ public class SmExGenEvent implements Message.Payload {
 
 	private EventType event = EventType.JOB_COMPLETE;
 	private byte[] file;
+	private String fileName;
 
 	public SmExGenEvent() {}
 
@@ -24,6 +25,12 @@ public class SmExGenEvent implements Message.Payload {
 	}
 	public void setFile(byte[] file) {
 		this.file = file;
+	}
+	public String getFileName() {
+		return fileName;
+	}
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
 	}
 
 	@Override

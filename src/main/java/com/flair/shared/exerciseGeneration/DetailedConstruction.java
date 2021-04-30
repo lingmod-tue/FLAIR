@@ -1,7 +1,5 @@
 package com.flair.shared.exerciseGeneration;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
-
 public enum DetailedConstruction {
     ADJ_COMP_SYN,
     ADJ_SUP_SYN,

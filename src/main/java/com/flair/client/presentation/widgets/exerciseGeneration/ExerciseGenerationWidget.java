@@ -8,17 +8,13 @@ import com.flair.client.localization.LocalizedComposite;
 import com.flair.client.localization.LocalizedFieldType;
 import com.flair.client.localization.annotations.LocalizedField;
 import com.flair.client.localization.interfaces.LocalizationBinder;
-import com.flair.client.presentation.interfaces.CorpusUploadService;
 import com.flair.client.presentation.interfaces.ExerciseGenerationService;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
-import com.flair.shared.interop.dtos.RankableDocument;
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Element;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
 
-import gwt.material.design.addins.client.combobox.MaterialComboBox;
 import gwt.material.design.addins.client.combobox.events.SelectItemEvent;
 import gwt.material.design.addins.client.combobox.events.SelectItemEvent.SelectComboHandler;
 import gwt.material.design.client.constants.Color;
@@ -236,9 +232,9 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     GenerationCompleteHandler endGenerationHandler;
     
 	@Override
-	public void provideForDownload(byte[] file) {
+	public void provideForDownload(byte[] file, String fileName) {
 		// TODO serve file
-		MaterialToast.fireToast("Generated file");
+		MaterialToast.fireToast("Generated file: " + fileName);
 		
 	}
 
