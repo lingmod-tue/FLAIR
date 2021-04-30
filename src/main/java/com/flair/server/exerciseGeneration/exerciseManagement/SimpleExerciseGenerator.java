@@ -49,7 +49,7 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        ClozeManager clozeManager = new ClozeManager();
 	        clozeManager.prepareBlanks(settings.getExerciseSettings());
 	
-	        PlainTextPreparer plainTextPreparer = new PlainTextPreparer();
+	        PlainTextPreparer plainTextPreparer = new PlainTextPreparer(); 
 	        plainTextPreparer.prepareIndices(settings.getExerciseSettings());
 	
 	        Indexer indexer = new Indexer();

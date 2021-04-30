@@ -1,19 +1,19 @@
 package com.flair.server.exerciseGeneration.exerciseManagement.jsonManagement;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.ParseException;
-
-import com.flair.server.exerciseGeneration.exerciseManagement.JsonComponents;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.ParseException;
+
+import com.flair.server.exerciseGeneration.exerciseManagement.JsonComponents;
+import com.flair.server.exerciseGeneration.exerciseManagement.resourceManagement.ResourceLoader;
 
 public abstract class JsonManager {
 
@@ -37,7 +37,7 @@ public abstract class JsonManager {
     protected InputStream getContentFileContent(String fileName) {
     	ZipFile zipFile = null;
         try {
-        	ZipInputStream zipStream = new ZipInputStream(ZipManager.class.getResourceAsStream(fileName));
+        	ZipInputStream zipStream = new ZipInputStream(ResourceLoader.loadFile(fileName));
             ZipEntry entry;
             while ((entry = zipStream.getNextEntry()) != null) {
                 if (entry.getName().equalsIgnoreCase("content/content.json")) {

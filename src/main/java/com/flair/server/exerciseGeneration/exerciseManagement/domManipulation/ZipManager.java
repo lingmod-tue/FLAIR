@@ -1,13 +1,14 @@
 package com.flair.server.exerciseGeneration.exerciseManagement.domManipulation;
 
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+
+import com.flair.server.exerciseGeneration.exerciseManagement.resourceManagement.ResourceLoader;
 
 import edu.stanford.nlp.util.Pair;
 
@@ -50,7 +51,7 @@ public class ZipManager {
     public static byte[] generateModifiedZipFile(String inputFilePath, String contentFileContent,
                                                   ArrayList<Pair<String, byte[]>> resources) {
         try {
-        	ZipInputStream zipStream = new ZipInputStream(ZipManager.class.getResourceAsStream(inputFilePath));
+        	ZipInputStream zipStream = new ZipInputStream(ResourceLoader.loadFile(inputFilePath));
 
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             final ZipOutputStream outputStream = new ZipOutputStream(byteArrayOutputStream);
