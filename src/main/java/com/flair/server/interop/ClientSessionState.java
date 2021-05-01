@@ -42,6 +42,7 @@ class ClientSessionState {
 	// GramParsingPipelineOp -> DocumentDTO -> Document (parsed by the QuestionGenerationPipeline)
 	private final ClientPipelineOp2DocumentMap questGenLinkingData;
 	private final TemporaryClientData temporaryClientData;
+    private final ArrayList<byte[]> generatedPackages = new ArrayList<>();
 
 	ClientSessionState(ClientIdToken tok) {
 		clientId = tok;
@@ -383,8 +384,6 @@ class ClientSessionState {
 	}
 	
 	
-    ArrayList<byte[]> generatedPackages = new ArrayList<>();
-
 	private synchronized void onExerciseGenerationOpGenerationComplete(byte[] file) {
 		if (!pipelineOpCache.hasActiveOp())
 			throw new ServerRuntimeException("Invalid exercise generation generation complete event!");
@@ -416,6 +415,7 @@ class ClientSessionState {
 		msg.setFileName(name);
 		messageChannel.send(msg);
 
+		generatedPackages.clear();
 		// reset operation state
 		endActiveOperation(false);
 	}

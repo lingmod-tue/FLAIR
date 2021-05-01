@@ -225,4 +225,25 @@ public class JSUtility {
     }-*/;
 
 
+    /**
+     * Exports the given HTML/RTF to a word document.
+     *
+     * @param html     The HTML to export.
+     * @param filename The filename.
+     */
+    public static native boolean exportToZip(byte[] content, String filename)/*-{     
+    	var blob = new Blob([new Uint8Array(content)], {
+            type: 'application/zip'
+        });
+        
+        var a = $doc.createElement("a");
+        a.href = window.URL.createObjectURL(blob);
+        a.download = filename;
+	    document.body.appendChild(a)
+	    a.click();
+	    $doc.body.removeChild(a)
+                   
+        return true;
+
+    }-*/;
 }

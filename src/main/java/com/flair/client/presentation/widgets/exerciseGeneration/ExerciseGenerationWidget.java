@@ -9,6 +9,7 @@ import com.flair.client.localization.LocalizedFieldType;
 import com.flair.client.localization.annotations.LocalizedField;
 import com.flair.client.localization.interfaces.LocalizationBinder;
 import com.flair.client.presentation.interfaces.ExerciseGenerationService;
+import com.flair.client.utilities.JSUtility;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -233,9 +234,9 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     
 	@Override
 	public void provideForDownload(byte[] file, String fileName) {
-		// TODO serve file
 		MaterialToast.fireToast("Generated file: " + fileName);
 		
+        JSUtility.exportToZip(file, fileName);
 	}
 
 	@Override
