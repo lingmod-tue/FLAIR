@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.EmptyStackException;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -59,8 +60,8 @@ public class CssManager {
      * @param cssContent The CSS string
      * @return The modified CSS string
      */
-    public static String replaceNonEmbeddableTagSelectors(String cssContent) {
-        CSSOMParser parser = new CSSOMParser();
+    public static String replaceNonEmbeddableTagSelectors(String cssContent) {    	
+        CSSOMParser parser = PARSER.get();
 
         // Overwrite the default error handler to suppress console output
         parser.setErrorHandler(new CssParseErrorHandler());
@@ -103,4 +104,14 @@ public class CssManager {
 
         return cssContent;
     }
+    
+    /**
+     * Get thread-safe parser instance.
+     */
+    private static final ThreadLocal<CSSOMParser> PARSER  = ThreadLocal.withInitial(new Supplier<CSSOMParser>() {
+	    @Override
+	    public CSSOMParser get() {
+	        return new CSSOMParser();
+	    }
+	});
 }

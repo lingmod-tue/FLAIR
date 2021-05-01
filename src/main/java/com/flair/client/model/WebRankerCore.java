@@ -1330,7 +1330,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
     }
     
     private void onGenerationComplete(byte[] file, String fileName) {
-        exGen.provideForDownload(file,fileName);
+    	exGen.provideForDownload(file,fileName);
     }
 
     private void onCancelOp() {

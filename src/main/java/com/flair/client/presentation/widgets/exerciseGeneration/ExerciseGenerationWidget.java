@@ -8,6 +8,7 @@ import com.flair.client.localization.LocalizedComposite;
 import com.flair.client.localization.LocalizedFieldType;
 import com.flair.client.localization.annotations.LocalizedField;
 import com.flair.client.localization.interfaces.LocalizationBinder;
+import com.flair.client.presentation.ToastNotification;
 import com.flair.client.presentation.interfaces.ExerciseGenerationService;
 import com.flair.client.utilities.JSUtility;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
@@ -219,6 +220,7 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
      */
     private void generateExercises()
     {
+    	btnGenerateExercises.setEnabled(false);
         ArrayList<ExerciseSettings> exerciseSettings = new ArrayList<>();
     	for(Widget existingTask : wdgtTasks.getChildrenList()) {
     		if (((TaskItem)existingTask).icoOk.isVisible()) {
@@ -233,16 +235,18 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     GenerationCompleteHandler endGenerationHandler;
     
 	@Override
-	public void provideForDownload(byte[] file, String fileName) {
-		MaterialToast.fireToast("Generated file: " + fileName);
-		
-        JSUtility.exportToZip(file, fileName);
+	public void provideForDownload(byte[] file, String fileName) {	
+		if(file != null && file.length > 0) {
+	        JSUtility.exportToZip(file, fileName);
+    	} else {
+            ToastNotification.fire("No exercises could be generated.");
+    	}
+    	btnGenerateExercises.setEnabled(true);
 	}
 
 	@Override
 	public void setGenerateHandler(GenerateHandler handler) {
 		startGenerationHandler = handler;
-		
 	}
 
 	@Override
