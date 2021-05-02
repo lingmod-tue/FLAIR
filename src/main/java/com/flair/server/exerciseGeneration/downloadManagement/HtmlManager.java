@@ -258,8 +258,9 @@ public class HtmlManager {
      */
     private static void handleCssContent(String siteUrl, Element element, String cssContent,
                                          ResourceDownloader resourceDownloader, String parentUrl) {
-        cssContent = CssManager.handleUrls(siteUrl, cssContent, resourceDownloader, parentUrl);
-        cssContent = CssManager.replaceNonEmbeddableTagSelectors(cssContent);
+    	CssManager cssManager = new CssManager();
+        cssContent = cssManager.handleUrls(siteUrl, cssContent, resourceDownloader, parentUrl);
+        cssContent = cssManager.replaceNonEmbeddableTagSelectors(cssContent);
 
         String replacement = "<style>" + cssContent + "</style>";
         Document d = Jsoup.parse(replacement);
