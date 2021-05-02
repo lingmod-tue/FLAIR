@@ -257,9 +257,27 @@ public class TaskItem extends LocalizedComposite {
         initWidget(ourUiBinder.createAndBindUi(this));
         initLocale(localeBinder.bind(this));
                 
-        distractorOptions = new MaterialCheckBox[] {chkDistractorsOtherForm, chkDistractorsOtherVariant, chkDistractorsOtherPast, chkDistractorsOtherTense, 
-        		chkDistractorsIncorrectForms, chkDistractorsWrongConditional, chkDistractorsWrongClause, chkDistractorsWrongSuffixUse, chkDistractorsWrongSuffix};
+        distractorOptions.add(new Pair<MaterialCheckBox, DistractorProperties>(chkDistractorsOtherForm, DistractorProperties.OTHER_FORM));
+        distractorOptions.add(new Pair<MaterialCheckBox, DistractorProperties>(chkDistractorsOtherVariant, DistractorProperties.OTHER_VARIANT));
+        distractorOptions.add(new Pair<MaterialCheckBox, DistractorProperties>(chkDistractorsOtherPast, DistractorProperties.OTHER_PAST));
+        distractorOptions.add(new Pair<MaterialCheckBox, DistractorProperties>(chkDistractorsOtherTense, DistractorProperties.OTHER_TENSE));
+        distractorOptions.add(new Pair<MaterialCheckBox, DistractorProperties>(chkDistractorsIncorrectForms, DistractorProperties.INCORRECT_FORMS));
+        distractorOptions.add(new Pair<MaterialCheckBox, DistractorProperties>(chkDistractorsWrongConditional, DistractorProperties.WRONG_CONDITIONAL));
+        distractorOptions.add(new Pair<MaterialCheckBox, DistractorProperties>(chkDistractorsWrongClause, DistractorProperties.WRONG_CLAUSE));
+        distractorOptions.add(new Pair<MaterialCheckBox, DistractorProperties>(chkDistractorsWrongSuffixUse, DistractorProperties.WRONG_SUFFIX_USE));
+        distractorOptions.add(new Pair<MaterialCheckBox, DistractorProperties>(chkDistractorsWrongSuffix, DistractorProperties.INCORRECT_SUFFIX));
                 
+        bracketsOptions.add(new Pair<MaterialCheckBox, BracketsProperties>(chkBracketsLemma, BracketsProperties.LEMMA));
+        bracketsOptions.add(new Pair<MaterialCheckBox, BracketsProperties>(chkBracketsPos, BracketsProperties.POS));
+        bracketsOptions.add(new Pair<MaterialCheckBox, BracketsProperties>(chkBracketsForm, BracketsProperties.COMPARISON_FORM));
+        bracketsOptions.add(new Pair<MaterialCheckBox, BracketsProperties>(chkBracketsConditional, BracketsProperties.CONDITIONAL_TYPE));
+        bracketsOptions.add(new Pair<MaterialCheckBox, BracketsProperties>(chkBracketsWill, BracketsProperties.WILL));
+        bracketsOptions.add(new Pair<MaterialCheckBox, BracketsProperties>(chkBracketsSentenceType, BracketsProperties.SENTENCE_TYPE));
+        bracketsOptions.add(new Pair<MaterialCheckBox, BracketsProperties>(chkBracketsTense, BracketsProperties.TENSE));
+        bracketsOptions.add(new Pair<MaterialCheckBox, BracketsProperties>(chkBracketsActiveSentence, BracketsProperties.ACTIVE_SENTENCE));
+        bracketsOptions.add(new Pair<MaterialCheckBox, BracketsProperties>(chkBracketsKeywords, BracketsProperties.KEYWORDS));
+
+        
         settingsWidgets = new Widget[] {
         		grpBrackets, chkBracketsLemma, chkBracketsConditional, chkBracketsPos, chkBracketsForm, chkBracketsWill, 
         		chkBracketsSentenceType, chkBracketsTense, chkBracketsActiveSentence, chkBracketsKeywords, 
@@ -302,7 +320,12 @@ public class TaskItem extends LocalizedComposite {
     /**
      * Checkboxes representing possible distractor options
      */
-    final MaterialCheckBox[] distractorOptions;
+    private final ArrayList<Pair<MaterialCheckBox, DistractorProperties>> distractorOptions = new ArrayList<>();
+    
+    /**
+     * Checkboxes representing possible brackets options
+     */
+    private final ArrayList<Pair<MaterialCheckBox, BracketsProperties>> bracketsOptions = new ArrayList<>();
     
     /**
      * Checkboxes and radiobuttons which need to be set to <code>true</code> when resetting the panel
@@ -458,8 +481,8 @@ public class TaskItem extends LocalizedComposite {
     	rbtSingleTask.addValueChangeHandler(e -> setExerciseSettingsVisibilities());
     	rbtPerSentence.addValueChangeHandler(e -> setExerciseSettingsVisibilities());
     	
-    	for(MaterialCheckBox option : distractorOptions) {
-    		option.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	for(Pair<MaterialCheckBox, DistractorProperties> option : distractorOptions) {
+    		option.first.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
     	}
     }
     
@@ -796,8 +819,8 @@ public class TaskItem extends LocalizedComposite {
      * @return	<code>true</code> if at least 1 visible distractor option is checked; otherwise <code>false</code>
      */
     private boolean hasCheckedDistractors() {
-    	for(MaterialCheckBox option : distractorOptions) {
-    		if(option.isVisible() && option.getValue()) {
+    	for(Pair<MaterialCheckBox, DistractorProperties> option : distractorOptions) {
+    		if(option.first.isVisible() && option.first.getValue()) {
     			return true;
     		}
     	}
@@ -1049,8 +1072,8 @@ public class TaskItem extends LocalizedComposite {
     	
     	for(String constructionToConsider : configuredConstructions) {
     		for(Pair<Integer, Integer> constructionIndices : constructionOccurrences.get(constructionToConsider)) {
-    			ArrayList<DistractorProperties> distractorProperties = new ArrayList<DistractorProperties>();
-    			ArrayList<BracketsProperties> brackets = new ArrayList<BracketsProperties>();
+    			ArrayList<DistractorProperties> distractorProperties = getSelectedDistractors();
+    			ArrayList<BracketsProperties> brackets = getSelectedBracketContents();
     			Construction construction = new Construction(distractorProperties, brackets, spnNDistractors.getValue(),
     					ConstructionNameEnumMapper.getEnum(constructionToConsider), constructionIndices);
         		constructions.add(construction);
@@ -1075,6 +1098,36 @@ public class TaskItem extends LocalizedComposite {
     	
     	return new ExerciseSettings(constructions,
     			doc.getUrl(), doc.getText(), selectionStartIndex, selectionEndIndex, type, getQuiz());
+    }
+    
+    /**
+     * Determines the selected distractor properties.
+     * @return	The selected distractor properties
+     */
+    private ArrayList<DistractorProperties> getSelectedDistractors() {
+    	ArrayList<DistractorProperties> distractors = new ArrayList<>();
+    	for(Pair<MaterialCheckBox, DistractorProperties> option : distractorOptions) {
+    		if(option.first.isVisible() && option.first.getValue()) {
+    			distractors.add(option.second);
+    		}
+    	}
+    	
+    	return distractors;
+    }
+    
+    /**
+     * Determines the selected brackets content properties.
+     * @return	The selected brackets properties
+     */
+    private ArrayList<BracketsProperties> getSelectedBracketContents() {
+    	ArrayList<BracketsProperties> brackets = new ArrayList<>();
+    	for(Pair<MaterialCheckBox, BracketsProperties> option : bracketsOptions) {
+    		if(option.first.isVisible() && option.first.getValue()) {
+    			brackets.add(option.second);
+    		}
+    	}
+    	
+    	return brackets;
     }
     
     /**
