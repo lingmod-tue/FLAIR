@@ -13,11 +13,14 @@ import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagem
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.QuizSettings;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.SingleChoiceSettings;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.SingleDragDropSettings;
+import com.flair.server.parser.CoreNlpParser;
+import com.flair.server.parser.SimpleNlgParser;
 import com.flair.server.pipelines.common.PipelineOp;
 import com.flair.server.scheduler.AsyncExecutorService;
 import com.flair.server.scheduler.AsyncJob;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
 
+import edu.stanford.nlp.util.Lazy;
 import edu.stanford.nlp.util.Pair;
 
 public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input, ExerciseGenerationOp.Output> {
@@ -34,17 +37,23 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
 		final AsyncExecutorService exGenExecutor;
 		final ExGenComplete exGenComplete;
 		final JobComplete jobComplete;
-
+		final CoreNlpParser parser;
+		final SimpleNlgParser generator;
+		
 		Input(ArrayList<ExerciseSettings> settings,
 				AsyncExecutorService downloadExecutor,
 		      AsyncExecutorService exGenExecutor,
 		      ExGenComplete exGenComplete,
-		      JobComplete jobComplete) {
+		      JobComplete jobComplete,
+		      CoreNlpParser parser,
+		      SimpleNlgParser generator) {
 			this.settings = settings;		
 			this.downloadExecutor = downloadExecutor;
 			this.exGenExecutor = exGenExecutor;
 			this.exGenComplete = exGenComplete != null ? exGenComplete : e -> {};
 			this.jobComplete = jobComplete != null ? jobComplete : e -> {};
+			this.parser = parser;
+			this.generator = generator;
 		}
 	}
 
@@ -86,7 +95,7 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
 						
 						if(allDocumentsDownloaded) {
 							settingsStates.set(i, new Pair<>(entry.first, true));	// set state of exercise to handled
-							scheduler.newTask(ExGenTask.factory(contentTypeSettings))
+							scheduler.newTask(ExGenTask.factory(contentTypeSettings, input.parser, input.generator))
 							.with(input.exGenExecutor)
 							.then(this::linkTasks)
 							.queue();
@@ -97,7 +106,7 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
 							
 							contentTypeSettings.setDoc(r.document);
 				            contentTypeSettings.setResources(r.resources);
-							scheduler.newTask(ExGenTask.factory(contentTypeSettings))
+							scheduler.newTask(ExGenTask.factory(contentTypeSettings, input.parser, input.generator))
 							.with(input.exGenExecutor)
 							.then(this::linkTasks)
 							.queue();

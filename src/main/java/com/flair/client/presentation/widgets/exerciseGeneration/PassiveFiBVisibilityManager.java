@@ -18,7 +18,6 @@ public class PassiveFiBVisibilityManager extends VisibilityManager {
 		visibleSettings.add(taskItem.chkBracketsSentenceType);
 		visibleSettings.add(taskItem.chkBracketsTense);
 		visibleSettings.add(taskItem.chkBracketsActiveSentence);
-		visibleSettings.add(taskItem.chkBracketsKeywords);
 		visibleSettings.add(taskItem.grpTenses);
 		visibleSettings.add(taskItem.lblTensesSentences);
 		addConstructionIfOccurs("TENSE_PRESENT_SIMPLE", "Passive", 2, visibleSettings, taskItem.chkPresentSimple, numberExercises);

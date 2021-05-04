@@ -134,8 +134,6 @@ public class TaskItem extends LocalizedComposite {
     @UiField
     MaterialCheckBox chkBracketsActiveSentence;
     @UiField
-    MaterialCheckBox chkBracketsKeywords;
-    @UiField
     MaterialCheckBox chkDistractorsOtherForm;
     @UiField
     MaterialCheckBox chkDistractorsOtherVariant;
@@ -275,12 +273,11 @@ public class TaskItem extends LocalizedComposite {
         bracketsOptions.add(new Pair<MaterialCheckBox, BracketsProperties>(chkBracketsSentenceType, BracketsProperties.SENTENCE_TYPE));
         bracketsOptions.add(new Pair<MaterialCheckBox, BracketsProperties>(chkBracketsTense, BracketsProperties.TENSE));
         bracketsOptions.add(new Pair<MaterialCheckBox, BracketsProperties>(chkBracketsActiveSentence, BracketsProperties.ACTIVE_SENTENCE));
-        bracketsOptions.add(new Pair<MaterialCheckBox, BracketsProperties>(chkBracketsKeywords, BracketsProperties.KEYWORDS));
 
         
         settingsWidgets = new Widget[] {
         		grpBrackets, chkBracketsLemma, chkBracketsConditional, chkBracketsPos, chkBracketsForm, chkBracketsWill, 
-        		chkBracketsSentenceType, chkBracketsTense, chkBracketsActiveSentence, chkBracketsKeywords, 
+        		chkBracketsSentenceType, chkBracketsTense, chkBracketsActiveSentence, 
         		grpDistractors, chkDistractorsOtherForm, chkDistractorsOtherVariant, chkDistractorsOtherPast, chkDistractorsOtherTense, 
         		chkDistractorsIncorrectForms, chkDistractorsWrongConditional, chkDistractorsWrongClause, chkDistractorsWrongSuffixUse,
         		chkDistractorsWrongSuffix, grpPos, grpCompForm, grpForms, grpVerbPerson, grpVerbForms, grpSentenceTypes, grpTenses,
@@ -298,7 +295,7 @@ public class TaskItem extends LocalizedComposite {
     			chkFuturePerfect, chkPresentPerfectProg, chkPastPerfectProg, chkFuturePerfectProg, chkAffirmativeSent, chkNegatedSent, chkQuestions, 
     			chkStatements, chkRegularVerbs, chkIrregularVerbs, chk3Pers, chkNot3Pers, chkWho, chkWhich, chkThat, chkOtherRelPron, rbtPerSentence,
     			chkBracketsLemma, chkBracketsPos, chkBracketsForm, chkBracketsConditional, chkBracketsWill, chkBracketsSentenceType, chkBracketsTense,
-    			chkBracketsActiveSentence, chkBracketsKeywords,
+    			chkBracketsActiveSentence,
     			chkDistractorsOtherForm, chkDistractorsOtherVariant, chkDistractorsOtherPast, chkDistractorsOtherTense, 
         		chkDistractorsIncorrectForms, chkDistractorsWrongConditional, chkDistractorsWrongClause, chkDistractorsWrongSuffixUse, chkDistractorsWrongSuffix};
         
@@ -452,7 +449,6 @@ public class TaskItem extends LocalizedComposite {
     		setNumberExercisesText(calculateNumberOfExercises());
     		chkBracketsSentenceType.setVisible(getExerciseType().equals("FiB") && checkAtLeast2Checked(new MaterialCheckBox[] {chkScopeActive, chkScopePassive}));
     		chkBracketsActiveSentence.setVisible(!chkScopeActive.isVisible() || !chkScopeActive.getValue());
-    		chkBracketsKeywords.setVisible(!chkScopeActive.isVisible() || !chkScopeActive.getValue());
     	});
     	chkPresentSimple.addClickHandler(e -> onTenseClickedEventHandler());
     	chkPastSimple.addClickHandler(e -> onTenseClickedEventHandler());
@@ -1069,13 +1065,13 @@ public class TaskItem extends LocalizedComposite {
     	HashMap<String, ArrayList<Pair<Integer, Integer>>> constructionOccurrences = 
     			getConstructionsOccurrences(selectionStartIndex, selectionEndIndex);
     	ArrayList<String> configuredConstructions = determineConfiguredConstructions();
-    	
+    	ArrayList<DistractorProperties> distractorProperties = getSelectedDistractors();
+		ArrayList<BracketsProperties> brackets = getSelectedBracketContents();
+		
     	for(String constructionToConsider : configuredConstructions) {
     		for(Pair<Integer, Integer> constructionIndices : constructionOccurrences.get(constructionToConsider)) {
-    			ArrayList<DistractorProperties> distractorProperties = getSelectedDistractors();
-    			ArrayList<BracketsProperties> brackets = getSelectedBracketContents();
-    			Construction construction = new Construction(distractorProperties, brackets, spnNDistractors.getValue(),
-    					ConstructionNameEnumMapper.getEnum(constructionToConsider), constructionIndices);
+    			Construction construction = new Construction(ConstructionNameEnumMapper.getEnum(constructionToConsider), 
+    					constructionIndices);
         		constructions.add(construction);
     		}
     	}
@@ -1085,6 +1081,9 @@ public class TaskItem extends LocalizedComposite {
     		String topic = getTopic();
     		if(topic.equals("Passive")) {
     			type = "MultiDrag";
+    			if(rbt2Verbs.getValue()) {
+    				brackets.add(BracketsProperties.VERB_SPLITTING);
+    			}
     		} else if(topic.equals("Past") || topic.equals("Compare")) {
 				type = "SingleDrag";
     		} else {
@@ -1096,8 +1095,21 @@ public class TaskItem extends LocalizedComposite {
     		}
     	}
     	
-    	return new ExerciseSettings(constructions,
-    			doc.getUrl(), doc.getText(), selectionStartIndex, selectionEndIndex, type, getQuiz());
+    	if(getTopic().equals("'if")) {
+    		if(rbtMainClause.getValue() ) {
+    			brackets.add(BracketsProperties.MAIN_CLAUSE);
+    		} else if(rbtBothClauses.getValue()) {
+    			brackets.add(BracketsProperties.IF_CLAUSE);
+    			brackets.add(BracketsProperties.MAIN_CLAUSE);
+    		} else if(rbtIfClause.getValue()) {
+    			brackets.add(BracketsProperties.IF_CLAUSE);
+    		} else {
+    			brackets.add(BracketsProperties.EITHER_CLAUSE);
+    		}
+    	}
+    	
+    	return new ExerciseSettings(constructions, doc.getUrl(), doc.getText(), selectionStartIndex, selectionEndIndex, 
+    			type, getQuiz(), distractorProperties, brackets, spnNDistractors.getValue());
     }
     
     /**

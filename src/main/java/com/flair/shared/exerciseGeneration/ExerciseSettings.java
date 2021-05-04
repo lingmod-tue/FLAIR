@@ -15,12 +15,16 @@ public class ExerciseSettings implements IsSerializable{
     private int selectionEndIndex;
     private String contentType;
     private String quiz;
+    private ArrayList<DistractorProperties> distractors;
+    private ArrayList<BracketsProperties> brackets;
+    private int nDistractors;
 
     public ExerciseSettings() {}
     
     public ExerciseSettings(ArrayList<Construction> constructions, String url,
                             String plainText, int selectionStartIndex, int selectionEndIndex,
-                            String contentType, String quiz) {
+                            String contentType, String quiz, ArrayList<DistractorProperties> distractors, 
+                            ArrayList<BracketsProperties> brackets, int nDistractors) {
         this.constructions = constructions;
         this.url = url;
         this.plainText = plainText;
@@ -28,6 +32,9 @@ public class ExerciseSettings implements IsSerializable{
         this.selectionEndIndex = selectionEndIndex;
         this.contentType = contentType;
         this.quiz = quiz;
+        this.distractors = distractors;
+        this.brackets = brackets;
+        this.nDistractors = nDistractors;
     }
 
     public void setSentences(ArrayList<Pair<String, Boolean>> sentences) { this.sentences = sentences; }
@@ -43,5 +50,8 @@ public class ExerciseSettings implements IsSerializable{
     public int getSelectionEndIndex() { return selectionEndIndex; }
     public String getContentType() { return contentType; }
     public String getQuiz() { return quiz; }
+    public ArrayList<DistractorProperties> getDistractors() { return distractors; }
+    public ArrayList<BracketsProperties> getBrackets() { return brackets; }
+    public int getnDistractors() { return nDistractors; }
 
 }

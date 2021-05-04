@@ -1,7 +1,5 @@
 package com.flair.shared.exerciseGeneration;
 
-import com.google.gwt.user.client.rpc.IsSerializable;
-
 public enum BracketsProperties {
     LEMMA,
     POS,
@@ -11,5 +9,8 @@ public enum BracketsProperties {
     SENTENCE_TYPE,
     TENSE,
     ACTIVE_SENTENCE,
-    KEYWORDS
+    VERB_SPLITTING,
+    IF_CLAUSE,
+    MAIN_CLAUSE,
+    EITHER_CLAUSE
 }

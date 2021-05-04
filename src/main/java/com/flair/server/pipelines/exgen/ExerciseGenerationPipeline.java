@@ -2,10 +2,15 @@ package com.flair.server.pipelines.exgen;
 
 import java.util.ArrayList;
 
+import com.flair.server.parser.CoreNlpParser;
+import com.flair.server.parser.SimpleNlgParser;
 import com.flair.server.pipelines.common.PipelineOp;
 import com.flair.server.scheduler.AsyncExecutorService;
 import com.flair.server.scheduler.ThreadPool;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
+import com.flair.shared.grammar.Language;
+
+import edu.stanford.nlp.util.Lazy;
 
 public final class ExerciseGenerationPipeline {
 	private static ExerciseGenerationPipeline SINGLETON = null;
@@ -30,6 +35,10 @@ public final class ExerciseGenerationPipeline {
 
 	private final AsyncExecutorService exGenExecutor;
 	private final AsyncExecutorService downloadExecutor;
+	
+	private final Lazy<CoreNlpParser> parser;
+	private final Lazy<SimpleNlgParser> generator;
+
 
 	private ExerciseGenerationPipeline() {
 		ThreadPool.Builder threadPoolBuilder = ThreadPool.get().builder();
@@ -41,6 +50,12 @@ public final class ExerciseGenerationPipeline {
 				.poolSize(50)
 				.poolName("Exercise Generation")
 				.build();		
+		
+		CoreNlpParser.Factory parserFactory = CoreNlpParser.factory();
+		parser = Lazy.of(() -> parserFactory.create(Language.ENGLISH, null));
+		
+		SimpleNlgParser.Factory generatorFactory = SimpleNlgParser.factory();
+        generator = Lazy.of(() -> generatorFactory.create(Language.ENGLISH, null));
 	}
 
 	private void shutdown() {
@@ -74,7 +89,8 @@ public final class ExerciseGenerationPipeline {
 			if (settings == null)
 				throw new IllegalStateException("Invalid exercise settings");
 			
-			ExerciseGenerationOp.Input input = new ExerciseGenerationOp.Input(settings, downloadExecutor, exGenExecutor, exGenComplete, jobComplete);
+			ExerciseGenerationOp.Input input = new ExerciseGenerationOp.Input(settings, downloadExecutor, exGenExecutor, 
+					exGenComplete, jobComplete, parser.get(), generator.get());
 
 			return new ExerciseGenerationOp(input);
 		}

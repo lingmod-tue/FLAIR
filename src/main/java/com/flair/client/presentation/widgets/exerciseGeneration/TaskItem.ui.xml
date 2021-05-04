@@ -424,11 +424,6 @@
 							ui:field="chkBracketsActiveSentence" value="true"
 							text="Active Sentence" />
 					</m:MaterialRow>
-					<m:MaterialRow padding="0" margin="0">
-						<m:MaterialCheckBox
-							ui:field="chkBracketsKeywords" value="true"
-							text="Keywords (lemmatized sentence components)" />
-					</m:MaterialRow>
 				</m:MaterialRow>
 
 				<m:MaterialRow ui:field="grpDistractors">
