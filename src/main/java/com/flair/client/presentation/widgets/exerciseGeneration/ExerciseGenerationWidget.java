@@ -22,6 +22,7 @@ import gwt.material.design.addins.client.combobox.events.SelectItemEvent.SelectC
 import gwt.material.design.client.constants.Color;
 import gwt.material.design.client.ui.MaterialButton;
 import gwt.material.design.client.ui.MaterialCollapsible;
+import gwt.material.design.client.ui.MaterialPreLoader;
 import gwt.material.design.client.ui.MaterialToast;
 import gwt.material.design.client.ui.html.Option;
 
@@ -50,6 +51,8 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     @UiField
     @LocalizedField(type = LocalizedFieldType.TEXT_BUTTON)
     MaterialButton btnGenerateExercises;
+    @UiField
+    MaterialPreLoader spnGenerating;
     
         
     public ExerciseGenerationWidget() {
@@ -213,6 +216,7 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     @Override
     public void enableButton() {
     	btnGenerateExercises.setEnabled(true);
+    	spnGenerating.setVisible(false);
     }
     
     /**
@@ -221,6 +225,7 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     private void generateExercises()
     {
     	btnGenerateExercises.setEnabled(false);
+    	spnGenerating.setVisible(true);
         ArrayList<ExerciseSettings> exerciseSettings = new ArrayList<>();
     	for(Widget existingTask : wdgtTasks.getChildrenList()) {
     		if (((TaskItem)existingTask).icoOk.isVisible()) {
@@ -242,6 +247,7 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
             ToastNotification.fire("No exercises could be generated.");
     	}
     	btnGenerateExercises.setEnabled(true);
+    	spnGenerating.setVisible(false);
 	}
 
 	@Override

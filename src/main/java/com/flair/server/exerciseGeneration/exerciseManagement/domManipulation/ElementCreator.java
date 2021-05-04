@@ -24,13 +24,13 @@ public class ElementCreator {
         return createHtmlElement("data-sentenceplaceholder=\"" + sentenceCounter + "\"", "");
     }
 
-    /**
+	/**
      * Creates a DOM element with the attribute data-plaintextplaceholder.
-     * The syntax is incorrect, but we remove this later anyway (we just need it for splitting).
-     * @return	The generated DOM element <span data-plaintextplaceholder></span>
-     */
-    public static Element createPlainTextReplacementElement(){
-        return createHtmlElement("data-plaintextplaceholder", "");
+	 * @param id	The number of the question
+     * @return		The generated DOM element <span data-plaintextplaceholder></span>
+	 */
+    public static Element createPlainTextReplacementElement(int id){
+        return createHtmlElement("data-plaintextplaceholder", id + "");
     }
 
     /**

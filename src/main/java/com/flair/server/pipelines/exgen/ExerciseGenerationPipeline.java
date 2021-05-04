@@ -1,6 +1,7 @@
 package com.flair.server.pipelines.exgen;
 
 import java.util.ArrayList;
+import java.util.Properties;
 
 import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.SimpleNlgParser;
@@ -52,12 +53,25 @@ public final class ExerciseGenerationPipeline {
 				.build();		
 		
 		CoreNlpParser.Factory parserFactory = CoreNlpParser.factory();
-		parser = Lazy.of(() -> parserFactory.create(Language.ENGLISH, null));
+		parser = Lazy.of(() -> parserFactory.create(Language.ENGLISH, initializeAnnotationProperties()));
 		
 		SimpleNlgParser.Factory generatorFactory = SimpleNlgParser.factory();
         generator = Lazy.of(() -> generatorFactory.create(Language.ENGLISH, null));
 	}
 
+	private Properties initializeAnnotationProperties() {
+        Properties pipelineProps = new Properties();
+
+        pipelineProps.put("annotators", "tokenize, ssplit, pos, lemma, parse, depparse");
+        pipelineProps.put("parse.originalDependencies", "true");
+        pipelineProps.setProperty("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz");
+
+        pipelineProps.put("tokenize.options", "tokenizePerLine");
+        pipelineProps.put("ssplit.newlineIsSentenceBreak", "two");
+
+        return pipelineProps;
+    }
+	
 	private void shutdown() {
 		// the thread pools are shut down elsewhere
 		// nothing else to do here

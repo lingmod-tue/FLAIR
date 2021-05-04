@@ -7,6 +7,7 @@ import org.jsoup.nodes.TextNode;
 import com.flair.shared.exerciseGeneration.Pair;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -18,7 +19,7 @@ public class Matcher {
 
     private ArrayList<Fragment> indexedSentences;
     private ArrayList<Boundaries> sentenceBoundaryElements = new ArrayList<>();
-    private ArrayList<String> plainTextElements = new ArrayList<>();
+    private HashMap<Integer, String> plainTextElements = new HashMap<>();
     private ArrayList<String> constructions = new ArrayList<>();
 
     /**
@@ -266,11 +267,11 @@ public class Matcher {
             }
         }
 
-        String plainText = "<span data-internal=\"" + plainTextCounter++ + "\">" + sb.toString() + "</span>";
-        plainTextElements.add(plainText);
+        String plainText = "<span data-internal=\"" + plainTextCounter + "\">" + sb.toString() + "</span>";
+        plainTextElements.put(plainTextCounter, plainText);
         lastSentenceIndex = sentenceIndex;
 
-        return ElementCreator.createPlainTextReplacementElement();
+        return ElementCreator.createPlainTextReplacementElement(plainTextCounter++);
     }
 
 }

@@ -1,10 +1,11 @@
 package com.flair.server.exerciseGeneration.exerciseManagement.domManipulation;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MatchResult {
 
-    public MatchResult(ArrayList<Boundaries> sentenceBoundaryElements, ArrayList<String> plainTextElements,
+    public MatchResult(ArrayList<Boundaries> sentenceBoundaryElements, HashMap<Integer, String> plainTextElements,
                        ArrayList<String> constructions) {
         this.sentenceBoundaryElements = sentenceBoundaryElements;
         this.plainTextElements = plainTextElements;
@@ -12,14 +13,14 @@ public class MatchResult {
     }
 
     private ArrayList<Boundaries> sentenceBoundaryElements;
-    private ArrayList<String> plainTextElements;
+    private HashMap<Integer, String> plainTextElements;
     private ArrayList<String> constructions;
 
     public ArrayList<Boundaries> getSentenceBoundaryElements() {
         return sentenceBoundaryElements;
     }
 
-    public ArrayList<String> getPlainTextElements() {
+    public HashMap<Integer, String> getPlainTextElements() {
         return plainTextElements;
     }
 

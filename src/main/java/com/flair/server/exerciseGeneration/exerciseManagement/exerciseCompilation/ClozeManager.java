@@ -41,6 +41,7 @@ public class ClozeManager {
 	 */
     public void prepareBlanks(ExerciseSettings exerciseSettings, CoreNlpParser parser, SimpleNlgParser generator) {
     	initializeAnnotations(parser, exerciseSettings.getPlainText());
+    	this.generator = generator;
 
         ArrayList<Construction> constructionsToAdd = new ArrayList<>();
         ArrayList<Construction> constructionsToRemove = new ArrayList<>();
