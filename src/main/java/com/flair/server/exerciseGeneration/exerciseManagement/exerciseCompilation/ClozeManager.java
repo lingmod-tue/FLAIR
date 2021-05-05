@@ -43,15 +43,12 @@ public class ClozeManager {
     	initializeAnnotations(parser, exerciseSettings.getPlainText());
     	this.generator = generator;
 
-        ArrayList<Construction> constructionsToAdd = new ArrayList<>();
+    	ArrayList<Construction> constructionsToAdd = new ArrayList<>();
         ArrayList<Construction> constructionsToRemove = new ArrayList<>();
         for(Construction construction : exerciseSettings.getConstructions()) {
-            ArrayList<String> brackets = new ArrayList<>();
-
             if(construction.getConstruction().toString().startsWith("COND")) {
                 Pair<Pair<Integer, Integer>, Pair<Integer, Integer>> clauses = getConditionalClauses(construction.getConstructionIndices());
                 if(clauses != null) {
-                    ArrayList<Construction> newConstructions = new ArrayList<>();
                     int r = 0;
                     if (exerciseSettings.getBrackets().contains(BracketsProperties.EITHER_CLAUSE)) {
                         r = new Random().nextInt(2) + 1;
@@ -59,25 +56,27 @@ public class ClozeManager {
                     if (exerciseSettings.getBrackets().contains(BracketsProperties.MAIN_CLAUSE) || r == 1) {
                         Pair<Integer, Integer> mainClauseConstructionIndices = extractVerbCluster(clauses.first);
                         if(mainClauseConstructionIndices != null) {
-                            newConstructions.add(new Construction(construction.getConstruction(), mainClauseConstructionIndices));
+                            Construction newConstruction = new Construction(construction.getConstruction(), mainClauseConstructionIndices);
+                            if (exerciseSettings.getContentType().equals("FiB")) {
+                                ArrayList<String> brackets = new ArrayList<>();
+                                addBracketsToConditionals(exerciseSettings, newConstruction, true, brackets);
+                                newConstruction.setBracketsText("(" + String.join(", ", brackets) + ")");
+                            }
+                            constructionsToAdd.add(newConstruction);
                         }
                     }
                     if (exerciseSettings.getBrackets().contains(BracketsProperties.IF_CLAUSE) || r == 2) {
                         Pair<Integer, Integer> ifClauseConstructionIndices = extractVerbCluster(clauses.second);
                         if(ifClauseConstructionIndices != null) {
-                            newConstructions.add(new Construction(construction.getConstruction(), ifClauseConstructionIndices));
-                        }
-                    }
-
-                    if (exerciseSettings.getContentType().equals("FiB")) {
-                        if (exerciseSettings.getBrackets().contains(BracketsProperties.LEMMA)) {
-                            for (Construction c : newConstructions) {
-                                brackets.add(getLemmatizedVerbConstruction(c.getConstructionIndices()));
+                            Construction newConstruction = new Construction(construction.getConstruction(), ifClauseConstructionIndices);
+                            if (exerciseSettings.getContentType().equals("FiB")) {
+                                ArrayList<String> brackets = new ArrayList<>();
+                                addBracketsToConditionals(exerciseSettings, newConstruction, false, brackets);
+                                newConstruction.setBracketsText("(" + String.join(", ", brackets) + ")");
                             }
+                            constructionsToAdd.add(newConstruction);
                         }
                     }
-
-                    constructionsToAdd.addAll(newConstructions);
                 }
                 constructionsToRemove.add(construction);
             } else if(construction.getConstruction().toString().startsWith("ADJ") ||
@@ -85,6 +84,7 @@ public class ClozeManager {
                 if (exerciseSettings.getContentType().equals("Mark")) {
                     //TODO: if we decide to allow the client to specify whether to split synthetic forms for mark, we have to do that here
                 } else if(exerciseSettings.getContentType().equals("FiB")){
+                    ArrayList<String> brackets = new ArrayList<>();
                     if(exerciseSettings.getBrackets().contains(BracketsProperties.LEMMA)) {
                         String lemma = getLemmaOfComparison(construction.getConstructionIndices());
                         if(lemma != null) {
@@ -103,10 +103,12 @@ public class ClozeManager {
                         String form = construction.getConstruction().toString().contains("_COMP_") ? "comparative" : "superlative";
                         brackets.add(form);
                     }
+                    construction.setBracketsText("(" + String.join(", ", brackets) + ")");
                 }
             } else if(construction.getConstruction().toString().startsWith("PASSIVE") ||
                     construction.getConstruction().toString().startsWith("ACTIVE")) {
                 if(exerciseSettings.getContentType().equals("FiB")) {
+                    ArrayList<String> brackets = new ArrayList<>();
                     if (exerciseSettings.getBrackets().contains(BracketsProperties.ACTIVE_SENTENCE)) {
                         Pair<String, Pair<Integer, Integer>> activeSentence = getActiveSentence(construction.getConstructionIndices(), exerciseSettings.getPlainText(), construction.getConstruction());
                         if (activeSentence != null) {
@@ -116,15 +118,14 @@ public class ClozeManager {
                             constructionsToRemove.add(construction);
                         }
                     } else {
-                        if (exerciseSettings.getBrackets().contains(BracketsProperties.LEMMA)) {
-                            String lemma = getLemmatizedVerbConstruction(construction.getConstructionIndices());
-                            if (lemma != null) {
-                                brackets.add(lemma);
-                            } else {
-                                constructionsToRemove.add(construction);
-                            }
+                        String lemma = getLemmatizedVerbConstruction(construction.getConstructionIndices());
+                        if (lemma != null) {
+                            brackets.add(lemma);
+                        } else {
+                            constructionsToRemove.add(construction);
                         }
                     }
+                    construction.setBracketsText("(" + String.join(", ", brackets) + ")");
                 } else if(exerciseSettings.getContentType().equals("Drag") &&
                         exerciseSettings.getBrackets().contains(BracketsProperties.VERB_SPLITTING)) {
                     ArrayList<Pair<Integer, Integer>> parts = splitParticiple(construction.getConstructionIndices());
@@ -140,6 +141,7 @@ public class ClozeManager {
                             construction.getConstruction().toString().startsWith("PAST") ||
                             construction.getConstruction().toString().startsWith("PRES")) &&
                     exerciseSettings.getContentType().equals("FiB")) {
+                ArrayList<String> brackets = new ArrayList<>();
                 if(exerciseSettings.getBrackets().contains(BracketsProperties.LEMMA)) {
                     String lemma = getLemmatizedVerbConstruction(construction.getConstructionIndices());
                     if(lemma != null) {
@@ -161,8 +163,8 @@ public class ClozeManager {
                             construction.getConstruction().toString().startsWith("PRESPERF") ? "present perfect" : "past perfect";
                     brackets.add(tense);
                 }
+                construction.setBracketsText("(" + String.join(", ", brackets) + ")");
             }
-            construction.setBracketsText("(" + String.join(", ", brackets) + ")");
         }
 
         for(Construction construction : constructionsToRemove) {
@@ -223,8 +225,6 @@ public class ClozeManager {
         // We always operate on the entire sentence to facilitate NLP processing.
         for (SentenceAnnotations sent : sentences) {
 
-            int st = sent.getTokens().get(0).beginPosition();
-            int e = sent.getTokens().get(sent.getTokens().size() - 1).endPosition();
             if (sent.getTokens().get(0).beginPosition() <= constructionIndices.first && 
             		sent.getTokens().get(sent.getTokens().size() - 1).endPosition() >= constructionIndices.second) {
                 return sent;
@@ -815,6 +815,27 @@ public class ClozeManager {
         constructionParts.add(new Pair<>(participleStartIndex, constructionIndices.second));
 
         return constructionParts;
+    }
+    
+    /**
+     * compiles the text for brackets of conditional exercises.
+     * @param exerciseSettings  The exercise settings
+     * @param construction      The construction of the blank
+     * @param isMain            <c>true</c> if the blank is in a main clause; otherwise <c>false</c>
+     * @param brackets          The array into which to write the brackets components
+     */
+    private void addBracketsToConditionals(ExerciseSettings exerciseSettings, Construction construction, boolean isMain, ArrayList<String> brackets) {
+        if (exerciseSettings.getContentType().equals("FiB")) {
+            if (exerciseSettings.getBrackets().contains(BracketsProperties.LEMMA)) {
+                brackets.add(getLemmatizedVerbConstruction(construction.getConstructionIndices()));
+            }
+            if (exerciseSettings.getBrackets().contains(BracketsProperties.CONDITIONAL_TYPE)) {
+                brackets.add(construction.getConstruction() == DetailedConstruction.CONDREAL ? "real" : "unreal");
+            }
+            if (isMain && exerciseSettings.getBrackets().contains(BracketsProperties.WILL)) {
+                brackets.add(construction.getConstruction() == DetailedConstruction.CONDREAL ? "real" : "unreal");
+            }
+        }
     }
 
 }
