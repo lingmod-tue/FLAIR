@@ -1,10 +1,17 @@
 package com.flair.server.pipelines.exgen;
 
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+import com.flair.server.document.AbstractDocument;
 import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseManager;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
 import com.flair.server.parser.CoreNlpParser;
+import com.flair.server.parser.KeywordSearcherOutput;
 import com.flair.server.parser.SimpleNlgParser;
 import com.flair.server.scheduler.AsyncTask;
+import com.flair.server.scheduler.ThreadPool;
 import com.flair.server.utilities.ServerLogger;
 
 public class ExGenTask implements AsyncTask<ExGenTask.Result> {
@@ -25,12 +32,31 @@ public class ExGenTask implements AsyncTask<ExGenTask.Result> {
 
 	@Override
 	public Result run() {		
-        ExerciseManager exerciseManger = new ExerciseManager();
-        byte[] file = exerciseManger.generateExercises(settings, parser, generator);
-                
-		Result result = new Result(file);
-		ServerLogger.get().trace("Created exercise");
-		return result;
+		byte[] file;
+		long startTime = 0;
+		boolean error = false;
+
+		try {
+			startTime = System.currentTimeMillis();
+			file = ThreadPool.get().invokeAndWait(new FutureTask<>(() -> {
+				ExerciseManager exerciseManger = new ExerciseManager();
+		        return exerciseManger.generateExercises(settings, parser, generator);
+			}), 1000, TimeUnit.SECONDS);
+		} catch (TimeoutException ex) {
+			ServerLogger.get().error("Exercise generation task timed-out.");
+			file = null;
+			error = true;
+		} catch (Throwable ex) {
+			ServerLogger.get().error(ex, "Exercise generation task encountered an error. Exception: " + ex.toString());
+			file = null;
+			error = true;
+		}
+
+		long endTime = System.currentTimeMillis();
+		if (!error)
+			ServerLogger.get().info("Exercise generated in " + (endTime - startTime) + " ms");
+
+		return new Result(file);
 	}
 
 	static final class Result {
