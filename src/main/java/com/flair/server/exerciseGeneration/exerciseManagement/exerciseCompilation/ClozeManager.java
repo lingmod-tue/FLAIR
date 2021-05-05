@@ -126,7 +126,7 @@ public class ClozeManager {
                         }
                     }
                     construction.setBracketsText("(" + String.join(", ", brackets) + ")");
-                } else if(exerciseSettings.getContentType().equals("Drag") &&
+                } else if(exerciseSettings.getContentType().endsWith("Drag") &&
                         exerciseSettings.getBrackets().contains(BracketsProperties.VERB_SPLITTING)) {
                     ArrayList<Pair<Integer, Integer>> parts = splitParticiple(construction.getConstructionIndices());
                     if(parts != null) { // if the splitting wasn't successful, we keep it as entire cluster

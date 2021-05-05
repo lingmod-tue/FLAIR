@@ -4,11 +4,9 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import com.flair.server.document.AbstractDocument;
 import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseManager;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
 import com.flair.server.parser.CoreNlpParser;
-import com.flair.server.parser.KeywordSearcherOutput;
 import com.flair.server.parser.SimpleNlgParser;
 import com.flair.server.scheduler.AsyncTask;
 import com.flair.server.scheduler.ThreadPool;

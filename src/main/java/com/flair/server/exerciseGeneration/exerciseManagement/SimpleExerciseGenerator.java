@@ -18,6 +18,8 @@ import com.flair.server.exerciseGeneration.exerciseManagement.exerciseCompilatio
 import com.flair.server.exerciseGeneration.exerciseManagement.jsonManagement.SimpleExerciseJsonManager;
 import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.SimpleNlgParser;
+import com.flair.shared.exerciseGeneration.Construction;
+import com.flair.shared.exerciseGeneration.ExerciseSettings;
 
 import edu.stanford.nlp.util.Pair;
 
@@ -73,15 +75,48 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	            ((SimpleExerciseJsonManager)settings.getJsonManager()).escapeAsterisks(pureHtmlElements);
 	        }
 	
+	        ArrayList<String> usedConstructions = updateConstructions(settings.getExerciseSettings(), matchResult.getConstructions());
 	        String taskDescription = InstructionsManager.componseTaskDescription(settings.getExerciseSettings());
 	        ArrayList<ArrayList<String>> distractors =
-	                DistractorManager.generateDistractors(settings.getExerciseSettings(), matchResult.getConstructions());
+	        		DistractorManager.generateDistractors(settings.getExerciseSettings());
 	
-	        return new JsonComponents(plainTextPerSentence, pureHtmlElements, matchResult.getConstructions(),
+	        return new JsonComponents(plainTextPerSentence, pureHtmlElements, usedConstructions,
 	                settings.getJsonManager(), settings.getContentTypeLibrary(), settings.getResourceFolder(), distractors, taskDescription);
     	} else {
     		return null;
     	}
+    }
+    
+    /**
+     * Removes unused constructions and sets the construction text for the remaining constructions.
+     * @param settings                  The exercise settings containing the constructions
+     * @param arrayList         The used constructions with their index in the original list of all constructions in the exercise settings
+     */
+    private ArrayList<String> updateConstructions(ExerciseSettings settings, ArrayList<com.flair.shared.exerciseGeneration.Pair<String, Integer>> arrayList) {
+        ArrayList<String> usedConstructionTexts = new ArrayList<>();
+        ArrayList<Construction> constructionsToRemove = new ArrayList<>();
+        for(int i = 0; i < settings.getConstructions().size(); i++) {
+            com.flair.shared.exerciseGeneration.Pair<String, Integer> matchingConstruction = null;
+            for(com.flair.shared.exerciseGeneration.Pair<String, Integer> usedConstruction : arrayList) {
+                if(usedConstruction.second == i) {
+                    matchingConstruction = usedConstruction;
+                    break;
+                }
+            }
+            if(matchingConstruction != null) {
+                settings.getConstructions().get(i).setConstructionText(matchingConstruction.first);
+                usedConstructionTexts.add(matchingConstruction.first);
+            } else {
+                // we want to make sure that we don't corrupt indices by removing elements by index, so we better save the elements to remove
+                constructionsToRemove.add(settings.getConstructions().get(i));
+            }
+        }
+
+        for(Construction construction : constructionsToRemove) {
+            settings.getConstructions().remove(construction);
+        }
+
+        return usedConstructionTexts;
     }
 
 }

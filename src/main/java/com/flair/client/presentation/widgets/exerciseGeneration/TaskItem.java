@@ -1218,7 +1218,6 @@ public class TaskItem extends LocalizedComposite {
         // comparison
     	// comparatives and superlatives exclude elements like 'the', 'than'
     	//TODO: Maybe allow to specify in view whether to keep analytic forms as single markable or as separate
-    	//TODO: we would split them in the backend
     	//TODO: we would have to multiply the occurrences of mark instances if this was selected
     	// for now, we keep them as one
     	addSingleWordConstructions(relevantConstructions, startIndex, endIndex, GrammaticalConstruction.ADJECTIVE_COMPARATIVE_SHORT, "adj-comp-syn");
@@ -1231,7 +1230,6 @@ public class TaskItem extends LocalizedComposite {
     	addSingleWordConstructions(relevantConstructions, startIndex, endIndex, GrammaticalConstruction.ADVERB_SUPERLATIVE_LONG, "adv-sup-ana");
 
 		// for conditional sentences, we put the entire sentences
-		// TODO: the server needs to extract indices for the verbs for exercise generation
     	addSingleWordConstructions(relevantConstructions, startIndex, endIndex, GrammaticalConstruction.CONDITIONALS_REAL, "condReal");
     	addSingleWordConstructions(relevantConstructions, startIndex, endIndex, GrammaticalConstruction.CONDITIONALS_UNREAL, "condUnreal");
         	
@@ -1271,7 +1269,6 @@ public class TaskItem extends LocalizedComposite {
             	if(correspondingPassiveOccurrence != null) {
             		// The passive construction doesn't always contain all verbs of a verb cluster and the tense construction doesn't usually include the participle
             		// We therefore take the combined construction
-            		// TODO: if we want entire sentences as blanks, we need to account for this on the server at exercise generation time
             		passiveIndices.add(new Pair<>(Integer.min(correspondingPassiveOccurrence.getStart(), tenseOccurrence.getStart()), 
             				Integer.max(correspondingPassiveOccurrence.getEnd(), tenseOccurrence.getEnd())));
             	} else {

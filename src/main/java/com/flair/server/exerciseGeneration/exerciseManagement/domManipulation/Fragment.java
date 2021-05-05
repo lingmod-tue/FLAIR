@@ -14,11 +14,11 @@ public class Fragment {
     private int sentenceIndex;
     private int plainTextStartIndex;
     private boolean isUnambiguousMatch = false;
-    private ArrayList<Pair<Integer, String>> blanksBoundaries = new ArrayList<>();
+    private ArrayList<Blank> blanksBoundaries = new ArrayList<>();
     private boolean display = false;
 
     public Fragment(String text, int startIndex, int endIndex, int sentenceIndex, int plainTextStartIndex, boolean isUnambiguousMatch,
-                    ArrayList<Pair<Integer, String>> blanksBoundaryIndices, boolean display) {
+    		ArrayList<Blank> blanksBoundaryIndices, boolean display) {
         this.text = text;
         this.startIndex = startIndex;
         this.endIndex = endIndex;
@@ -75,7 +75,7 @@ public class Fragment {
     public boolean isUnambiguousMatch() {
         return isUnambiguousMatch;
     }
-    public ArrayList<Pair<Integer, String>> getBlanksBoundaries() { return blanksBoundaries; }
+    public ArrayList<Blank> getBlanksBoundaries() { return blanksBoundaries; }
     public boolean isSentenceStart() { return isSentenceStart; }
     public boolean isSentenceEnd() { return isSentenceEnd; }
     public boolean isDisplay() { return display; }
@@ -88,7 +88,7 @@ public class Fragment {
     public void setText(String text) {
         this.text = text;
     }
-    public void setBlanksBoundaries(ArrayList<Pair<Integer, String>> blanksBoundaries) { this.blanksBoundaries = blanksBoundaries; }
+    public void setBlanksBoundaries(ArrayList<Blank> blanksBoundaries) { this.blanksBoundaries = blanksBoundaries; }
     public void setSentenceStart(boolean sentenceStart) { isSentenceStart = sentenceStart; }
     public void setSentenceEnd(boolean sentenceEnd) { isSentenceEnd = sentenceEnd; }
     public void setSentenceIndex(int sentenceIndex) { this.sentenceIndex = sentenceIndex;}

@@ -21,6 +21,7 @@ public class Matcher {
     private ArrayList<Boundaries> sentenceBoundaryElements = new ArrayList<>();
     private HashMap<Integer, String> plainTextElements = new HashMap<>();
     private ArrayList<String> constructions = new ArrayList<>();
+    private ArrayList<Integer> usedConstructionIndices = new ArrayList<>();
 
     /**
      * Indicates if a construction has been opened but not yet been closed.
@@ -49,7 +50,11 @@ public class Matcher {
      */
     public MatchResult prepareDomForSplitting(Element doc){
         replacePlainText(doc);
-        return new MatchResult(sentenceBoundaryElements, plainTextElements, constructions);
+        ArrayList<Pair<String, Integer>> usedConstructions = new ArrayList<>();
+        for(int i = 0; i < constructions.size(); i++) {
+            usedConstructions.add(new Pair<>(constructions.get(i), usedConstructionIndices.get(i)));
+        }
+        return new MatchResult(sentenceBoundaryElements, plainTextElements, usedConstructions);
     }
 
     /**
@@ -220,10 +225,10 @@ public class Matcher {
      * @return 					The generated DOM element <span data-plaintextplaceholder></span>
      */
     private Element createPlainTextReplacementElement(String text, int startIndex, int sentenceIndex,
-                                                      ArrayList<Pair<Integer, String>> boundaryIndices){
-        ArrayList<Pair<Integer, String>> containedBoundaries = new ArrayList<>();
-        for(Pair<Integer, String> constructionBoundary : boundaryIndices) {
-            int constructionBoundaryIndex = constructionBoundary.first;
+                                                      ArrayList<Blank> boundaryIndices){
+        ArrayList<Blank> containedBoundaries = new ArrayList<>();
+        for(Blank constructionBoundary : boundaryIndices) {
+            int constructionBoundaryIndex = constructionBoundary.getBoundaryIndex();
             if(constructionBoundaryIndex >= startIndex && constructionBoundaryIndex <= startIndex + text.length()) {
                 containedBoundaries.add(constructionBoundary);
             }
@@ -236,12 +241,13 @@ public class Matcher {
                     // add the beginning of this text until the construction boundary to the last construction
                     constructions.set(constructions.size() - 1,
                             constructions.get(constructions.size() - 1) +
-                                    text.substring(0, containedBoundaries.get(0).first - startIndex));
-                    text = text.substring(containedBoundaries.get(0).first - startIndex);
-                    startIndex = containedBoundaries.get(0).first;
+                            text.substring(0, containedBoundaries.get(0).getBoundaryIndex() - startIndex));
+                    text = text.substring(containedBoundaries.get(0).getBoundaryIndex() - startIndex);
+                    startIndex = containedBoundaries.get(0).getBoundaryIndex();
 
                     // it's a closing tag, so we add the brackets
-                    sb.append(containedBoundaries.get(0).second +  " ");
+                    sb.append(containedBoundaries.get(0).getText()).append(" ");
+                    usedConstructionIndices.add(containedBoundaries.get(0).getBlankIndex());
 
                     containedBoundaries.remove(0);
                     inConstruction = false;
@@ -253,12 +259,12 @@ public class Matcher {
                 }
             } else {
                 if (containedBoundaries.size() > 0) {
-                    sb.append(text, 0, containedBoundaries.get(0).first - startIndex);
+                	sb.append(text, 0, containedBoundaries.get(0).getBoundaryIndex() - startIndex);
                     sb.append(ElementCreator.createBlanksPlaceholderElement(constructions.size()));
                     inConstruction = true;
                     constructions.add("");
-                    text = text.substring(containedBoundaries.get(0).first - startIndex);
-                    startIndex = containedBoundaries.get(0).first;
+                    text = text.substring(containedBoundaries.get(0).getBoundaryIndex() - startIndex);
+                    startIndex = containedBoundaries.get(0).getBoundaryIndex();
                     containedBoundaries.remove(0);
                 } else {
                     sb.append(text);

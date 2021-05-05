@@ -136,10 +136,10 @@ public class Indexer {
                         fragment.setEndIndex(fragment.getEndIndex() + 1);
                     }
                     for(int k = 0; k < fragment.getBlanksBoundaries().size(); k++) {
-                        Pair<Integer, String> blank = fragment.getBlanksBoundaries().get(k);
-                        int blanksIndex = blank.first;
+                    	Blank blank = fragment.getBlanksBoundaries().get(k);
+                        int blanksIndex = blank.getBoundaryIndex();
                         if (blanksIndex >= i + offset) {
-                            fragment.getBlanksBoundaries().set(k, new Pair<>(blanksIndex + 1, blank.second));
+                        	fragment.getBlanksBoundaries().get(k).setBoundaryIndex(blanksIndex + 1);
                         }
                     }
                 }
@@ -159,13 +159,13 @@ public class Indexer {
         boolean isStartBoundary = true;
         for(Fragment fragment : fragments) {
             for(int k = 0; k < fragment.getBlanksBoundaries().size(); k++) {
-                Pair<Integer, String> blank = fragment.getBlanksBoundaries().get(k);
-                int blanksIndex = blank.first;
+            	Blank blank = fragment.getBlanksBoundaries().get(k);
+                int blanksIndex = blank.getBoundaryIndex();
                 while(("" + htmlText.charAt(isStartBoundary ? blanksIndex : blanksIndex - 1)).matches("[\\s\\h]")) {
                     blanksIndex += isStartBoundary ? 1 : -1;
                 }
 
-                fragment.getBlanksBoundaries().set(k, new Pair<>(blanksIndex, blank.second));
+                fragment.getBlanksBoundaries().get(k).setBoundaryIndex(blanksIndex);
                 isStartBoundary = !isStartBoundary;
             }
         }
@@ -235,10 +235,10 @@ public class Indexer {
                 int htmlToPlainTextOffset = fragment.getStartIndex() - fragmentStartIndex;
 
                 if(blanksStartIndex >= fragmentStartIndex && blanksStartIndex < fragmentEndIndex) {
-                    fragment.getBlanksBoundaries().add(new Pair<>(blanksStartIndex + htmlToPlainTextOffset, null));
+                    fragment.getBlanksBoundaries().add(new Blank(blanksStartIndex + htmlToPlainTextOffset));
                 }
                 if(blanksEndIndex > fragmentStartIndex && blanksEndIndex <= fragmentEndIndex) {
-                    fragment.getBlanksBoundaries().add(new Pair<>(blanksEndIndex + htmlToPlainTextOffset, plainTextConstruction.getBracketsText()));
+                    fragment.getBlanksBoundaries().add(new Blank(blanksEndIndex + htmlToPlainTextOffset, plainTextConstruction.getBracketsText(), plainTextIndices.indexOf(plainTextConstruction)));
                 }
             }
         }
