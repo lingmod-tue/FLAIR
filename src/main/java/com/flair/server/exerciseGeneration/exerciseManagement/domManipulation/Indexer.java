@@ -253,22 +253,24 @@ public class Indexer {
     		boolean startIndexInFragment = false;
     		boolean endIndexInFragment = false;
     		for(Fragment fragment : fragments) {
-    			Pair<Integer, Integer> plainTextBlanks = construction.getConstructionIndices();
-                int blanksStartIndex = plainTextBlanks.first;
-                int blanksEndIndex = plainTextBlanks.second;
-                int fragmentStartIndex = fragment.getPlainTextStartIndex();
-                int fragmentEndIndex = fragmentStartIndex + fragment.getText().length();
-
-                if(blanksStartIndex >= fragmentStartIndex && blanksStartIndex < fragmentEndIndex) {
-                    startIndexInFragment = true;
-                }
-                if(blanksEndIndex > fragmentStartIndex && blanksEndIndex <= fragmentEndIndex) {
-                	endIndexInFragment = true;
-                }
-                
-                if(startIndexInFragment && endIndexInFragment) {
-                	break;
-                }
+    			if(fragment.isUnambiguousMatch()) {
+	    			Pair<Integer, Integer> plainTextBlanks = construction.getConstructionIndices();
+	                int blanksStartIndex = plainTextBlanks.first;
+	                int blanksEndIndex = plainTextBlanks.second;
+	                int fragmentStartIndex = fragment.getPlainTextStartIndex();
+	                int fragmentEndIndex = fragmentStartIndex + fragment.getText().length();
+	
+	                if(blanksStartIndex >= fragmentStartIndex && blanksStartIndex < fragmentEndIndex) {
+	                    startIndexInFragment = true;
+	                }
+	                if(blanksEndIndex > fragmentStartIndex && blanksEndIndex <= fragmentEndIndex) {
+	                	endIndexInFragment = true;
+	                }
+	                
+	                if(startIndexInFragment && endIndexInFragment) {
+	                	break;
+	                }
+    			}
     		}
     		if(!(startIndexInFragment && endIndexInFragment)) {
     			constructionsToRemove.add(construction);

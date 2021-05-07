@@ -24,7 +24,7 @@ import edu.stanford.nlp.util.Lazy;
 import edu.stanford.nlp.util.Pair;
 
 public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input, ExerciseGenerationOp.Output> {
-	public interface ExGenComplete extends EventHandler<byte[]> {}
+	public interface ExGenComplete extends EventHandler<Pair<String, byte[]>> {}
 	public interface JobComplete extends EventHandler<Pair<String, byte[]>> {}
 	
 	private final ReentrantLock lock = new ReentrantLock();
@@ -84,8 +84,8 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
 						boolean allDocumentsDownloaded = true;
 						for(ContentTypeSettings settings : ((QuizSettings)contentTypeSettings).getExercises()) {
 							if(settings.getExerciseSettings().getUrl().equals(r.url)) {
-					            contentTypeSettings.setDoc(r.document);
-					            contentTypeSettings.setResources(r.resources);
+					            settings.setDoc(r.document);
+					            settings.setResources(r.resources);
 							}
 							if(!downloadedUrls.contains(settings.getExerciseSettings().getUrl())) {
 								allDocumentsDownloaded = false;
@@ -120,7 +120,7 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
 				scheduler.fire();
 		});
 		taskLinker.addHandler(ExGenTask.Result.class, (j, r) -> {
-			safeInvoke(() -> input.exGenComplete.handle(r.file),
+			safeInvoke(() -> input.exGenComplete.handle(new Pair<>(r.fileName, r.file)),
 						"Exception in generation complete handler");
 		});
 	}
@@ -132,15 +132,15 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
         for(ExerciseSettings settings : input.settings) {
             ContentTypeSettings contentTypeSettings;
             if(settings.getContentType().equals("FiB")) {
-                contentTypeSettings = new FillInTheBlanksSettings();
+                contentTypeSettings = new FillInTheBlanksSettings(settings.getTaskName());
             } else if(settings.getContentType().equals("Select")) {
-                contentTypeSettings = new SingleChoiceSettings();
+                contentTypeSettings = new SingleChoiceSettings(settings.getTaskName());
             } else if(settings.getContentType().equals("SingleDrag")) {
-                contentTypeSettings = new SingleDragDropSettings();
+                contentTypeSettings = new SingleDragDropSettings(settings.getTaskName());
             } else if(settings.getContentType().equals("MultiDrag")) {
-                contentTypeSettings = new MultiDragDropSettings();
+                contentTypeSettings = new MultiDragDropSettings(settings.getTaskName());
             } else if(settings.getContentType().equals("Mark")) {
-                contentTypeSettings = new FindSettings();
+                contentTypeSettings = new FindSettings(settings.getTaskName());
             } else {
                 throw new IllegalArgumentException();
             }
@@ -159,7 +159,7 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
                 	settingsStates.add(new Pair<>(settings, false));            	
             	}
             } else {
-                ContentTypeSettings settings = new QuizSettings(entry.getValue());
+                ContentTypeSettings settings = new QuizSettings(entry.getValue(), "Quiz " + entry.getKey());
                 settingsStates.add(new Pair<>(settings, false));  
             }
         }

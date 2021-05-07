@@ -17,7 +17,7 @@ public class ExerciseManager {
 	 * @param settings	The exercise settings
 	 * @return			The byte array of the generated H5P package
 	 */
-    public byte[] generateExercises(ContentTypeSettings settings, CoreNlpParser parser, SimpleNlgParser generator) {
+    public Pair<String, byte[]> generateExercises(ContentTypeSettings settings, CoreNlpParser parser, SimpleNlgParser generator) {
     	try {
 	        ArrayList<Pair<String, byte[]>> relevantResources = new ArrayList<>();
 	    	if(settings instanceof QuizSettings) {
@@ -28,7 +28,7 @@ public class ExerciseManager {
 	            relevantResources.addAll(getRelevantResources(settings.getResources()));
 	        }
 	        
-	        return settings.getExerciseGenerator().generateExercise(settings, relevantResources, parser, generator);       
+	        return new Pair<>(settings.getName(), settings.getExerciseGenerator().generateExercise(settings, relevantResources, parser, generator));       
     	} catch(Exception e) {
     		e.printStackTrace();
     		return null;

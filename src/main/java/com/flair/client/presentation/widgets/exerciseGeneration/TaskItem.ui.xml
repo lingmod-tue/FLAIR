@@ -38,40 +38,60 @@
 					margin="0" padding="0">
 					<m:MaterialButton ui:field="btnDelete"
 						textAlign="CENTER" textColor="BLACK" margin="0"
-						addStyleNames="{style.bgGrey}" waves="DEFAULT" marginBottom="10" paddingLeft="10" paddingRight="10"
-						marginTop="10" />
+						addStyleNames="{style.bgGrey}" waves="DEFAULT" marginBottom="10"
+						paddingLeft="10" paddingRight="10" marginTop="10" />
 				</m:MaterialColumn>
 				<m:MaterialColumn grid='s1 m1 l1'>
-				<m:MaterialIcon iconType="CHECK_CIRCLE" textColor="GREEN" ui:field="icoOk"/>
-				<m:MaterialIcon iconType="ERROR" textColor="RED" ui:field="icoInvalid" visible="false"/>
+					<m:MaterialIcon iconType="CHECK_CIRCLE"
+						textColor="GREEN" ui:field="icoOk" />
+					<m:MaterialIcon iconType="ERROR" textColor="RED"
+						ui:field="icoInvalid" visible="false" />
 				</m:MaterialColumn>
 			</m:MaterialRow>
 		</m:MaterialCollapsibleHeader>
 		<m:MaterialCollapsibleBody padding="10">
+			<m:MaterialRow marginBottom="0" padding="0">
+				<m:MaterialLabel text="Document" textColor="BLACK"
+					fontWeight="BOLD" />
+			</m:MaterialRow>
+			<m:MaterialRow marginTop="0" padding="0">
+				<m:MaterialColumn grid='s8 m8 l8' padding="0"
+					margin="0" paddingRight="10">
+					<m:MaterialLabel ui:field="lblDocTitle" />
+				</m:MaterialColumn>
+				<m:MaterialColumn grid='s4 m4 l4' padding="0"
+					margin="0">
+					<m:MaterialButton ui:field="btnUpdateDocument"
+						width="100%" paddingLeft="10" paddingRight="10" textAlign="CENTER"
+						textColor="BLACK" text="Update"
+						addStyleNames="{style.bgGrey} {style.lowercase}" waves="DEFAULT" />
+				</m:MaterialColumn>
+			</m:MaterialRow>
 
 			<m:MaterialRow>
 				<m:MaterialButton ui:field="btnSelectDocumentPart"
 					textAlign="CENTER" textColor="BLACK" width="100%"
 					addStyleNames="{style.bgGrey} {style.lowercase}" waves="DEFAULT" />
 			</m:MaterialRow>
-			<m:MaterialRow>
-				<m:MaterialButton ui:field="btnUpdateDocument" width="100%" paddingLeft="10" paddingRight="10"
-					textAlign="CENTER" textColor="BLACK" text="Update document to current selection"
-					addStyleNames="{style.bgGrey} {style.lowercase}" waves="DEFAULT" />
-			</m:MaterialRow>
 
 			<m:MaterialRow margin="0" padding="0">
+				<m:MaterialLabel text="Exercise settings"
+					ui:field="lblSettings" textColor="BLACK" fontWeight="BOLD"
+					marginTop="20" marginBottom="5" />
+
 				<m:MaterialColumn grid='s4 m4 l4' padding="0"
 					margin="0">
-					<m:MaterialLabel text="Topic" />
+					<m:MaterialLabel text="Topic:" margin="0" padding="0"/>
 					<ma:combobox.MaterialComboBox
-						ui:field="drpTopic" margin="0" padding="0" marginRight="10"/>
+						textColor="GREY" ui:field="drpTopic" margin="0" padding="0"
+						marginRight="10" />
 				</m:MaterialColumn>
 				<m:MaterialColumn grid='s4 m4 l4' padding="0"
 					margin="0">
-					<m:MaterialLabel text="Task type" />
+					<m:MaterialLabel text="Task type:" margin="0" padding="0" />
 					<ma:combobox.MaterialComboBox
-						ui:field="drpType" margin="0" padding="0" marginRight="10">
+						textColor="GREY" ui:field="drpType" margin="0" padding="0"
+						marginRight="10">
 						<m:html.Option value="Exercise Type" text="---"
 							textColor="BLACK" ui:field="optTypeDefault" fontSize="10pt" />
 						<m:html.Option text="Fill in the Blanks" value="FiB"
@@ -86,17 +106,13 @@
 				</m:MaterialColumn>
 				<m:MaterialColumn grid='s4 m4 l4' padding="0"
 					margin="0">
-					<m:MaterialLabel text="Quiz" />
+					<m:MaterialLabel text="Quiz:" margin="0" padding="0"/>
 					<ma:combobox.MaterialComboBox
-						ui:field="drpQuiz" margin="0" padding="0">
+						textColor="GREY" ui:field="drpQuiz" margin="0" padding="0">
 					</ma:combobox.MaterialComboBox>
 				</m:MaterialColumn>
 			</m:MaterialRow>
 			<m:MaterialRow>
-				<m:MaterialLabel text="Exercise settings"
-					ui:field="lblSettings" textColor="BLACK" fontWeight="BOLD"
-					marginTop="20" marginBottom="5" />
-
 				<m:MaterialRow ui:field="grpPos">
 					<m:MaterialRow padding="0" margin="0">
 						<m:MaterialLabel text="POS of target words:"
@@ -209,7 +225,7 @@
 					</m:MaterialRow>
 					<m:MaterialRow padding="0" margin="0">
 						<m:MaterialCheckBox ui:field="chkScopePassive"
-							value="true" text="Passive sentences" enabled="false"/>
+							value="true" text="Passive sentences" enabled="false" />
 					</m:MaterialRow>
 				</m:MaterialRow>
 
@@ -484,7 +500,8 @@
 						</m:MaterialColumn>
 						<m:MaterialColumn grid='s4 m4 l4' padding="0"
 							margin="0">
-							<flair:NumberSpinner value="2" min="1" ui:field="spnNDistractors"/>
+							<flair:NumberSpinner value="2" min="1"
+								ui:field="spnNDistractors" />
 						</m:MaterialColumn>
 					</m:MaterialRow>
 				</m:MaterialRow>
@@ -504,8 +521,8 @@
 				<m:MaterialDialogContent>
 					<m:MaterialTitle title="Document part selection"
 						description="Mark the document part that you want to use." />
-					<g:TextArea ui:field="lblDocumentForSelection" readOnly="true"
-						height="200px" />
+					<g:TextArea ui:field="lblDocumentForSelection"
+						readOnly="true" height="200px" />
 				</m:MaterialDialogContent>
 				<m:MaterialDialogFooter>
 					<m:MaterialButton

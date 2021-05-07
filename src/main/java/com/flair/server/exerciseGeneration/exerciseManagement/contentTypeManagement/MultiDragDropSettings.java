@@ -5,8 +5,8 @@ import com.flair.server.exerciseGeneration.exerciseManagement.jsonManagement.Mul
 
 public class MultiDragDropSettings extends ContentTypeSettings {
 
-    public MultiDragDropSettings() {
-        super("drag_the_words.h5p", new MultipleExercisesWithInlineBlanksJsonManager(), true, new SimpleExerciseGenerator(), "H5P.XDragText 1.0");
+    public MultiDragDropSettings(String name) {
+        super("drag_the_words.h5p", new MultipleExercisesWithInlineBlanksJsonManager(), true, new SimpleExerciseGenerator(), "H5P.XDragText 1.0", name);
     }
 
 }

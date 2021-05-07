@@ -28,6 +28,8 @@ import com.flair.shared.interop.messaging.server.SmExGenEvent;
 import com.flair.shared.interop.messaging.server.SmQuestionGenEvent;
 import com.flair.shared.interop.messaging.server.SmWebSearchParseEvent;
 
+import edu.stanford.nlp.util.Pair;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -42,7 +44,7 @@ class ClientSessionState {
 	// GramParsingPipelineOp -> DocumentDTO -> Document (parsed by the QuestionGenerationPipeline)
 	private final ClientPipelineOp2DocumentMap questGenLinkingData;
 	private final TemporaryClientData temporaryClientData;
-    private final ArrayList<byte[]> generatedPackages = new ArrayList<>();
+    private final ArrayList<Pair<String, byte[]>> generatedPackages = new ArrayList<>();
 
 	ClientSessionState(ClientIdToken tok) {
 		clientId = tok;
@@ -384,7 +386,7 @@ class ClientSessionState {
 	}
 	
 	
-	private synchronized void onExerciseGenerationOpGenerationComplete(byte[] file) {
+	private synchronized void onExerciseGenerationOpGenerationComplete(Pair<String, byte[]> file) {
 		if (!pipelineOpCache.hasActiveOp())
 			throw new ServerRuntimeException("Invalid exercise generation generation complete event!");
 
@@ -405,8 +407,8 @@ class ClientSessionState {
             outputFile = ZipManager.zipH5PPackages(generatedPackages);
             name = "exercises.zip";
         } else if(generatedPackages.size() > 0) {
-            outputFile = generatedPackages.get(0);
-            name = "task1.h5p";
+            outputFile = generatedPackages.get(0).second;
+            name = generatedPackages.get(0).first + ".h5p";
         }
         
         

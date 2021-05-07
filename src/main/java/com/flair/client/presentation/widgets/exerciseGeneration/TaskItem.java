@@ -74,13 +74,13 @@ public class TaskItem extends LocalizedComposite {
     @UiField
     MaterialButton btnUpdateDocument;
     @UiField
-    MaterialLabel lblSettings;
-    @UiField
     MaterialLabel lblNumberExercises;
     @UiField
     MaterialLabel lblTensesSentences;
     @UiField
     MaterialLabel lblTensesWords;
+    @UiField
+    MaterialLabel lblDocTitle;
     @UiField
     TextArea lblDocumentForSelection;
     @UiField
@@ -567,12 +567,6 @@ public class TaskItem extends LocalizedComposite {
      * @param visibleSettings	The widgets to be displayed
      */
     private void setSettingsVisibility(ArrayList<Widget> visibleSettings) {
-    	if(visibleSettings.size() == 0) {
-    		lblSettings.setVisible(false);   		
-    	} else {
-    		lblSettings.setVisible(true);
-    	}
-    	
     	for(Widget settingsWidget : settingsWidgets) {
     		if(visibleSettings.contains(settingsWidget)) {
     			settingsWidget.setVisible(true);
@@ -638,6 +632,7 @@ public class TaskItem extends LocalizedComposite {
      */
     public void initializeRelevantConstructions() {
     	doc = DocumentPreviewPane.getInstance().getCurrentlyPreviewedDocument().getDocument();
+    	lblDocTitle.setText(doc.getTitle());
         lblDocumentForSelection.setText(doc.getText());
 		lblDocumentForSelection.setSelectionRange(0, doc.getText().length());
 		
@@ -1109,7 +1104,7 @@ public class TaskItem extends LocalizedComposite {
     	}
     	
     	return new ExerciseSettings(constructions, doc.getUrl(), doc.getText(), selectionStartIndex, selectionEndIndex, 
-    			type, getQuiz(), distractorProperties, brackets, spnNDistractors.getValue() - 1);
+    			type, getQuiz(), distractorProperties, brackets, spnNDistractors.getValue() - 1, lblName.getValue());
     }
     
     /**

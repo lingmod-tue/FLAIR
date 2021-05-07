@@ -19,13 +19,13 @@ public class ZipManager {
      * @param tasks The H5P packages representing the generated tasks
      * @return      The byte array of the created zip file
      */
-    public static byte[] zipH5PPackages(ArrayList<byte[]> tasks) {
+    public static byte[] zipH5PPackages(ArrayList<Pair<String, byte[]>> tasks) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream);
         try {
             for (int i = 0; i < tasks.size(); i++) {
-                byte[] task = tasks.get(i);
-                ZipEntry zipEntry = new ZipEntry("task" + (i + 1) + ".h5p");
+                byte[] task = tasks.get(i).second;
+                ZipEntry zipEntry = new ZipEntry(tasks.get(i).first + ".h5p");
                 zipOutputStream.putNextEntry(zipEntry);
                 zipOutputStream.write(task);
                 zipOutputStream.closeEntry();

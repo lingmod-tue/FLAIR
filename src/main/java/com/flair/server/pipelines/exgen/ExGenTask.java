@@ -12,6 +12,8 @@ import com.flair.server.scheduler.AsyncTask;
 import com.flair.server.scheduler.ThreadPool;
 import com.flair.server.utilities.ServerLogger;
 
+import edu.stanford.nlp.util.Pair;
+
 public class ExGenTask implements AsyncTask<ExGenTask.Result> {
 	public static ExGenTask factory(ContentTypeSettings settings, CoreNlpParser parser, SimpleNlgParser generator) {
 		return new ExGenTask(settings, parser, generator);
@@ -30,7 +32,7 @@ public class ExGenTask implements AsyncTask<ExGenTask.Result> {
 
 	@Override
 	public Result run() {		
-		byte[] file;
+		Pair<String, byte[]> file;
 		long startTime = 0;
 		boolean error = false;
 
@@ -54,14 +56,16 @@ public class ExGenTask implements AsyncTask<ExGenTask.Result> {
 		if (!error)
 			ServerLogger.get().info("Exercise generated in " + (endTime - startTime) + " ms");
 
-		return new Result(file);
+		return new Result(file.second, file.first);
 	}
 
 	static final class Result {
 		final byte[] file;
+		final String fileName;
 
-		Result(byte[] file) {
+		Result(byte[] file, String fileName) {
 			this.file = file;
+			this.fileName = fileName;
 		}
 	}
 }
