@@ -154,11 +154,7 @@ public class DistractorManager {
 	                                    isNegated, parameterConstellation, lemma.second, "present",false, false)));
 	                        }
 	                    }
-                    } else {
-                    	//TODO: jsut for debugging
-                    	lemma =
-                                nlpManager.getVerbLemma(construction.getConstructionIndices(), isInterrogative);
-                    }
+                    } 
                 } else if(name.startsWith("PAST") || name.startsWith("PRES")) {
                     boolean isPerfect = construction.getConstruction().toString().contains("PERF_");
                     String tense = construction.getConstruction().toString().startsWith("PAST") ? "past" : "present";

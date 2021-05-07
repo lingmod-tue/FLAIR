@@ -696,7 +696,7 @@ public class NlpManager {
             String pos = token.tag();
 
             // The last verb in a verb cluster is the main verb, so we just lemmatize that
-            if(pos.equals("VBN") || pos.startsWith("VB") && !pos.equals("VB") || pos.equals("MD") ||
+            if(pos.equals("VBN") || pos.equals("VBZ") || pos.startsWith("VB") && !pos.equals("VB") || pos.equals("MD") ||
                     pos.equals("VB") && !previousPos.equals("TO")) {
                 mainVerb = token;
             }
@@ -704,10 +704,13 @@ public class NlpManager {
             previousPos = token.tag();
         }
 
-        if(mainVerb != null && getSubject) {
+        if(mainVerb == null) {
+        	return null;
+        }
+        if(getSubject) {
             return new Pair<>(mainVerb.lemma(), getSubject(mainVerb.beginPosition(), sent.getDependencyGraph()));
         }
-        return null;
+        return new Pair<>(mainVerb.lemma(), null);
     }
 
     /**
