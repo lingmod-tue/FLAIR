@@ -229,7 +229,9 @@ public class Matcher {
         ArrayList<Blank> containedBoundaries = new ArrayList<>();
         for(Blank constructionBoundary : boundaryIndices) {
             int constructionBoundaryIndex = constructionBoundary.getBoundaryIndex();
-            if(constructionBoundaryIndex >= startIndex && constructionBoundaryIndex <= startIndex + text.length()) {
+            boolean isStartIndex = constructionBoundary.getBlankIndex() == null;
+            if(isStartIndex && constructionBoundaryIndex >= startIndex && constructionBoundaryIndex < startIndex + text.length() ||
+            		!isStartIndex && constructionBoundaryIndex > startIndex && constructionBoundaryIndex <= startIndex + text.length()) {
                 containedBoundaries.add(constructionBoundary);
             }
         }

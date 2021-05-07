@@ -15,6 +15,7 @@ import com.flair.server.exerciseGeneration.exerciseManagement.domManipulation.Se
 import com.flair.server.exerciseGeneration.exerciseManagement.exerciseCompilation.ClozeManager;
 import com.flair.server.exerciseGeneration.exerciseManagement.exerciseCompilation.DistractorManager;
 import com.flair.server.exerciseGeneration.exerciseManagement.exerciseCompilation.InstructionsManager;
+import com.flair.server.exerciseGeneration.exerciseManagement.exerciseCompilation.NlpManager;
 import com.flair.server.exerciseGeneration.exerciseManagement.jsonManagement.SimpleExerciseJsonManager;
 import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.SimpleNlgParser;
@@ -51,8 +52,12 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        // We cannot operate on the same document for all exercises (in-place modifications), so we create a copy
 	        Element doc = Jsoup.parse(settings.getDoc().toString());
 	
+	        NlpManager nlpManager = new NlpManager(parser, generator, settings.getExerciseSettings().getPlainText());
+
 	        ClozeManager clozeManager = new ClozeManager();
-	        clozeManager.prepareBlanks(settings.getExerciseSettings(), parser, generator);
+	        clozeManager.prepareBlanks(settings.getExerciseSettings(), nlpManager);
+	        DistractorManager distractorManager = new DistractorManager(); // we need the original indices, so we need to generate distractors for all possible blanks
+	        distractorManager.generateDistractors(settings.getExerciseSettings(), nlpManager);
 	
 	        PlainTextPreparer plainTextPreparer = new PlainTextPreparer(); 
 	        plainTextPreparer.prepareIndices(settings.getExerciseSettings());
@@ -76,15 +81,29 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        }
 	
 	        ArrayList<String> usedConstructions = updateConstructions(settings.getExerciseSettings(), matchResult.getConstructions());
-	        String taskDescription = InstructionsManager.componseTaskDescription(settings.getExerciseSettings());
-	        ArrayList<ArrayList<String>> distractors =
-	        		DistractorManager.generateDistractors(settings.getExerciseSettings());
+	        String taskDescription = InstructionsManager.componseTaskDescription(settings.getExerciseSettings());	       
 	
 	        return new JsonComponents(plainTextPerSentence, pureHtmlElements, usedConstructions,
-	                settings.getJsonManager(), settings.getContentTypeLibrary(), settings.getResourceFolder(), distractors, taskDescription);
+	                settings.getJsonManager(), settings.getContentTypeLibrary(), settings.getResourceFolder(), assembleDistractors(settings.getExerciseSettings()), taskDescription);
     	} else {
     		return null;
     	}
+    }
+    
+    /**
+     * Collects the distractors for Single Choice exercises from the individual constructions into a single ArrayList.
+     * @param settings	The exercise settings
+     * @return			The distractors per construction
+     */
+    private ArrayList<ArrayList<String>> assembleDistractors(ExerciseSettings settings) {
+        ArrayList<ArrayList<String>> distractors = new ArrayList<>();
+        if(settings.getContentType().equals("Select")) {
+            for(Construction construction : settings.getConstructions()) {
+                distractors.add(construction.getDistractors());
+            }
+        }
+
+        return distractors;
     }
     
     /**

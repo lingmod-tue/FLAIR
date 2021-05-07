@@ -1808,36 +1808,22 @@ class EnglishParsingLogic implements ParsingLogic {
 				lastMatchingRootNode = match;
 			
 				// We don't have the indices in the tree, so we need to get them by mapping the tree leaves to the tokenized sentence			
-				String leftText = "";
+				int  nLeftLeaves = 0;
 				for(int i = 0; i < leaves.size(); i++) {
 					Tree leaf = leaves.get(i);
 					if(leaf != match.getLeaves().get(0)) {
-						leftText += leaf.toString();
+						nLeftLeaves++;
 					} else {
 						break;
 					}
 				}
 				
-				String wordString = "";
-				int startIndex = 0;
-				int endIndex = 0;
-				String targetWord = null;
-				for(int i = 0; i < words.size(); i++) {
-					if(i != words.size() - 1) {
-						wordString += words.get(i).value();
-						CoreLabel word = words.get(i + 1);
-	
-						if(wordString.equals(leftText)) {
-							startIndex = word.beginPosition();
-							endIndex = word.endPosition();
-							targetWord = word.value();
-							break;
-						}
-					}
-				}
-				
-				if(targetWord != null) {
-					addConstructionOccurrence(GrammaticalConstruction.PRONOUNS_RELATIVE,
+				if(nLeftLeaves < words.size()) {
+			        int startIndex = words.get(nLeftLeaves).beginPosition();
+			        int endIndex = words.get(nLeftLeaves).endPosition();
+			        String targetWord = words.get(nLeftLeaves).word();
+			        
+			        addConstructionOccurrence(GrammaticalConstruction.PRONOUNS_RELATIVE,
 							startIndex, endIndex, targetWord);
 				}
 			}

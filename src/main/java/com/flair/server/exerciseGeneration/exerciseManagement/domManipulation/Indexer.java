@@ -1,6 +1,7 @@
 package com.flair.server.exerciseGeneration.exerciseManagement.domManipulation;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import com.flair.shared.exerciseGeneration.Construction;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
@@ -31,6 +32,7 @@ public class Indexer {
 
         fragments = recheckMatches(fragments, htmlText);
         addSentenceFinalPunctuation(fragments, htmlText);
+        removeIcompleteConstructions(fragments, exerciseSettings.getConstructions());
         addBlanksIndicesToFragments(fragments, exerciseSettings.getConstructions());
         matchIndicesToNonNormalizedHtml(fragments, originalHtml, htmlText);
         fragments = mergeFragments(fragments, originalHtml);
@@ -204,6 +206,7 @@ public class Indexer {
                     previousFragment = fragment;
                 }
             }
+            Collections.sort(fragment.getBlanksBoundaries(), (blank1, blank2) -> blank1.getBoundaryIndex() < blank2.getBoundaryIndex() ? -1 : 1);
         }
         if(previousFragment != null) {
             validFragments.add(previousFragment);
@@ -242,6 +245,39 @@ public class Indexer {
                 }
             }
         }
+    }
+    
+    private void removeIcompleteConstructions(ArrayList<Fragment> fragments, ArrayList<Construction> plainTextIndices) {
+    	ArrayList<Construction> constructionsToRemove = new ArrayList<>();
+    	for(Construction construction : plainTextIndices) {
+    		boolean startIndexInFragment = false;
+    		boolean endIndexInFragment = false;
+    		for(Fragment fragment : fragments) {
+    			Pair<Integer, Integer> plainTextBlanks = construction.getConstructionIndices();
+                int blanksStartIndex = plainTextBlanks.first;
+                int blanksEndIndex = plainTextBlanks.second;
+                int fragmentStartIndex = fragment.getPlainTextStartIndex();
+                int fragmentEndIndex = fragmentStartIndex + fragment.getText().length();
+
+                if(blanksStartIndex >= fragmentStartIndex && blanksStartIndex < fragmentEndIndex) {
+                    startIndexInFragment = true;
+                }
+                if(blanksEndIndex > fragmentStartIndex && blanksEndIndex <= fragmentEndIndex) {
+                	endIndexInFragment = true;
+                }
+                
+                if(startIndexInFragment && endIndexInFragment) {
+                	break;
+                }
+    		}
+    		if(!(startIndexInFragment && endIndexInFragment)) {
+    			constructionsToRemove.add(construction);
+    		}
+    	}
+    	
+    	for(Construction construction : constructionsToRemove) {
+    		plainTextIndices.remove(construction);
+    	}
     }
 
     /**
@@ -325,7 +361,7 @@ public class Indexer {
                 int newStart = offset + foundFragment.getText().length();
                 startIndex = foundFragment.getEndIndex();
                 fragmentText = fragmentText.substring(newStart);
-                fragmentPlainTextStartIndex = fragmentSentenceIndex + newStart;
+                fragmentPlainTextStartIndex = foundFragment.getPlainTextStartIndex() + foundFragment.getText().length();
             } else {
                 newFragments.add(new Fragment(fragmentText, fragmentSentenceIndex, fragmentPlainTextStartIndex, display));
                 allSentencesDone = false;

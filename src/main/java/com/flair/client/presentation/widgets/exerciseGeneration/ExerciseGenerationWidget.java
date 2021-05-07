@@ -241,13 +241,14 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     
 	@Override
 	public void provideForDownload(byte[] file, String fileName) {	
+		btnGenerateExercises.setEnabled(true);
+    	spnGenerating.setVisible(false);
+    	
 		if(file != null && file.length > 0) {
 	        JSUtility.exportToZip(file, fileName);
     	} else {
             ToastNotification.fire("No exercises could be generated.");
     	}
-    	btnGenerateExercises.setEnabled(true);
-    	spnGenerating.setVisible(false);
 	}
 
 	@Override

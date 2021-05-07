@@ -1061,7 +1061,6 @@ public class WebRankerCore implements AbstractWebRankerCore {
         //switch (msg.getEvent()) {
         //    case JOB_COMPLETE:
                 exGenPoller.stop();
-                exGen.enableButton();
                 exGen.provideForDownload(msg.getFile(), msg.getFileName());
         //        break;
         //}

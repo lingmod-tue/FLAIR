@@ -397,9 +397,10 @@ class ClientSessionState {
 		if (!pipelineOpCache.hasActiveOp())
 			throw new ServerRuntimeException("Invalid exercise generation job complete event!");
 
+		ServerLogger.get().info("Generated " + generatedPackages.size() + " exercises");
 		
-		byte[] outputFile = null;
-        String name = null;
+		byte[] outputFile = new byte[] {};
+        String name = "";
         if(generatedPackages.size() > 1) {
             outputFile = ZipManager.zipH5PPackages(generatedPackages);
             name = "exercises.zip";

@@ -32,7 +32,7 @@ public class Blank {
 
     public int getBoundaryIndex() { return boundaryIndex; }
     public String getText() { return text; }
-    public int getBlankIndex() { return blankIndex; }
+    public Integer getBlankIndex() { return blankIndex; }
 
     public void setBoundaryIndex(int boundaryIndex) { this.boundaryIndex = boundaryIndex; }
 }
