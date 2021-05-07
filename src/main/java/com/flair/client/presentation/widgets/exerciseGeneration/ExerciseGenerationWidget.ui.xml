@@ -23,12 +23,13 @@
 				visible="false" marginTop="20" marginBottom="20" />
 
 			<m:MaterialRow marginTop="10">
-				<m:MaterialButton ui:field="btnAddTask"  width="100%"
-					textAlign="CENTER" textColor="BLACK" addStyleNames="{style.bgGrey}"
-					waves="DEFAULT" marginBottom="10" marginTop="10" />
-				<m:MaterialButton ui:field="btnDeleteTasks" width="100%"
-					textAlign="CENTER" textColor="BLACK" addStyleNames="{style.bgGrey}"
-					waves="DEFAULT" />
+				<m:MaterialButton ui:field="btnAddTask"
+					width="100%" textAlign="CENTER" textColor="BLACK"
+					addStyleNames="{style.bgGrey}" waves="DEFAULT" marginBottom="10"
+					marginTop="10" />
+				<m:MaterialButton ui:field="btnDeleteTasks"
+					width="100%" textAlign="CENTER" textColor="BLACK"
+					addStyleNames="{style.bgGrey}" waves="DEFAULT" />
 			</m:MaterialRow>
 			<m:MaterialRow textAlign="CENTER" marginTop="10">
 				<m:MaterialColumn grid="l10 m10 s10"
@@ -38,12 +39,28 @@
 				</m:MaterialColumn>
 				<m:MaterialColumn grid="l2 m2 s2"
 					textAlign="CENTER">
-					<m:MaterialPreLoader size="SMALL" margin="0" ui:field="spnGenerating" visible="false">
+					<m:MaterialPreLoader size="SMALL" margin="0"
+						ui:field="spnGenerating" visible="false">
 						<m:MaterialSpinner color="BLUE_ONLY" />
 					</m:MaterialPreLoader>
 				</m:MaterialColumn>
 			</m:MaterialRow>
 
 		</m:MaterialRow>
+
+		<!-- COPYRIGHT NOTICE -->
+		<m:MaterialDialog ui:field="mdlCopyrightNoticeUI"
+			type="DEFAULT" dismissible="true">
+			<m:MaterialDialogContent>
+				<m:MaterialTitle ui:field="titleCopyrightNoticeUI" 
+					title="Please respect the copyright of the texts!" description="desc" />
+				<m:MaterialCheckBox
+					ui:field="chkDontShowCopyrightNoticeUI" text="Do not show this notification again." type="FILLED" />
+			</m:MaterialDialogContent>
+			<m:MaterialDialogFooter>
+				<m:MaterialButton
+					ui:field="btnCloseCopyrightNoticeUI" text="Ok" type="FLAT" />
+			</m:MaterialDialogFooter>
+		</m:MaterialDialog>
 	</m:MaterialContainer>
 </ui:UiBinder>

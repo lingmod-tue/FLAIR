@@ -15,15 +15,17 @@ import com.flair.shared.exerciseGeneration.ExerciseSettings;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 import gwt.material.design.addins.client.combobox.events.SelectItemEvent;
 import gwt.material.design.addins.client.combobox.events.SelectItemEvent.SelectComboHandler;
 import gwt.material.design.client.constants.Color;
 import gwt.material.design.client.ui.MaterialButton;
+import gwt.material.design.client.ui.MaterialCheckBox;
 import gwt.material.design.client.ui.MaterialCollapsible;
 import gwt.material.design.client.ui.MaterialPreLoader;
-import gwt.material.design.client.ui.MaterialToast;
+import gwt.material.design.client.ui.MaterialTitle;
 import gwt.material.design.client.ui.html.Option;
 
 public class ExerciseGenerationWidget extends LocalizedComposite implements ExerciseGenerationService {
@@ -53,6 +55,14 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     MaterialButton btnGenerateExercises;
     @UiField
     MaterialPreLoader spnGenerating;
+    @UiField
+    gwt.material.design.client.ui.MaterialDialog mdlCopyrightNoticeUI;
+    @UiField
+    MaterialCheckBox chkDontShowCopyrightNoticeUI;
+    @UiField
+    MaterialButton btnCloseCopyrightNoticeUI;
+    @UiField
+    MaterialTitle titleCopyrightNoticeUI;
     
         
     public ExerciseGenerationWidget() {
@@ -65,6 +75,14 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
      * Initializes all handlers.
      */
     private void initHandlers() {
+    	// Functionality for copyright notice copied from ExportDocument widget
+    	mdlCopyrightNoticeUI.removeFromParent();
+        RootPanel.get().add(mdlCopyrightNoticeUI);
+
+        btnCloseCopyrightNoticeUI.addClickHandler(event -> {
+            mdlCopyrightNoticeUI.close();
+        });
+
     	btnAddTask.addClickHandler(event -> addTask());
     	btnDeleteTasks.addClickHandler(event -> deleteAllTasks());
     	btnGenerateExercises.addClickHandler(event -> generateExercises());
@@ -248,6 +266,11 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     	spnGenerating.setVisible(false);
     	
 		if(file != null && file.length > 0) {
+			if (!chkDontShowCopyrightNoticeUI.getValue()) {
+                titleCopyrightNoticeUI.setDescription("The configured exercises were generated successfully for the selected document. Please respect the copyright of the texts!");
+                mdlCopyrightNoticeUI.open();
+            }
+			
 	        JSUtility.exportToZip(file, fileName);
     	} else {
             ToastNotification.fire("No exercises could be generated.");
