@@ -149,11 +149,11 @@
 					</m:MaterialRow>
 					<m:MaterialRow padding="0" margin="0">
 						<m:MaterialCheckBox ui:field="chkFormSynthetic"
-							value="true" text="Synthetic forms" />
+							value="true" text="Short forms" />
 					</m:MaterialRow>
 					<m:MaterialRow padding="0" margin="0">
 						<m:MaterialCheckBox ui:field="chkFormAnalytic"
-							value="true" text="Analytic forms" />
+							value="true" text="Long forms" />
 					</m:MaterialRow>
 				</m:MaterialRow>
 
@@ -424,7 +424,7 @@
 					</m:MaterialRow>
 					<m:MaterialRow padding="0" margin="0">
 						<m:MaterialCheckBox ui:field="chkBracketsWill"
-							value="true" text="'will' for if-clauses" />
+							value="true" text="'will' for main clauses" />
 					</m:MaterialRow>
 					<m:MaterialRow padding="0" margin="0">
 						<m:MaterialCheckBox
@@ -444,7 +444,7 @@
 
 				<m:MaterialRow ui:field="grpDistractors">
 					<m:MaterialRow padding="0" margin="0">
-						<m:MaterialLabel text="Distractors:"
+						<m:MaterialLabel text="Dropdown options:"
 							textColor="BLACK" />
 					</m:MaterialRow>
 					<m:MaterialRow padding="0" margin="0">
@@ -495,7 +495,7 @@
 					<m:MaterialRow padding="0" margin="0">
 						<m:MaterialColumn grid='s8 m8 l8' padding="0"
 							margin="0">
-							<m:MaterialLabel text="Number of distractors: "
+							<m:MaterialLabel text="Number of dropdown options "
 								textColor="GREY" />
 						</m:MaterialColumn>
 						<m:MaterialColumn grid='s4 m4 l4' padding="0"
@@ -507,9 +507,7 @@
 				</m:MaterialRow>
 
 				<m:MaterialRow>
-					<m:MaterialLabel textColor="RED"
-						ui:field="lblNumberExercises" paddingTop="10"
-						text="No exercises can be generated for the current settings. Check more options to enable exercise generation." />
+					<m:MaterialLabel ui:field="lblNumberExercises" paddingTop="10" />
 				</m:MaterialRow>
 
 

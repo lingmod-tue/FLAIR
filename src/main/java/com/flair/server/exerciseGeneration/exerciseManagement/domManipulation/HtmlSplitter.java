@@ -36,7 +36,6 @@ public class HtmlSplitter {
 			placeholderIndex = htmlString.indexOf("<span data-sentenceplaceholder=\"", placeholderIndex + 1);
 		}
 
-		int questionCounter = 1;
 		ArrayList<String> plainTextElementsOfCurrentSentence = new ArrayList<>();
 
 		String[] htmlElements = htmlString.split("<span data-sentenceplaceholder></span>");

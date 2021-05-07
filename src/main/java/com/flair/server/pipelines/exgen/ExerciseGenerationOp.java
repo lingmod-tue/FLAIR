@@ -20,7 +20,6 @@ import com.flair.server.scheduler.AsyncExecutorService;
 import com.flair.server.scheduler.AsyncJob;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
 
-import edu.stanford.nlp.util.Lazy;
 import edu.stanford.nlp.util.Pair;
 
 public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input, ExerciseGenerationOp.Output> {

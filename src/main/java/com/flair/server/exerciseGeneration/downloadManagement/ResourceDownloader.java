@@ -8,6 +8,7 @@ import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.zip.GZIPInputStream;
 
@@ -50,49 +51,9 @@ public class ResourceDownloader {
     /**
      * File extensions of file formats allowed as content of H5P exercises
      */
-    private final ArrayList<String> allowedFileExtensions = new ArrayList<String>() {{
-        add("bmp");
-        add("csv");
-        add("diff");
-        add("doc");
-        add("docx");
-        add("eot");
-        add("gif");
-        add("jpeg");
-        add("jpg");
-        add("json");
-        add("mp3");
-        add("mp4");
-        add("m4a");
-        add("odp");
-        add("ods");
-        add("odt");
-        add("ogg");
-        add("otf");
-        add("patch");
-        add("pdf");
-        add("png");
-        add("ppt");
-        add("pptx");
-        add("rtf");
-        add("svg");
-        add("swf");
-        add("textile");
-        add("tif");
-        add("tiff");
-        add("ttf");
-        add("txt");
-        add("wav");
-        add("webm");
-        add("woff");
-        add("woff2");
-        add("xls");
-        add("xlsx");
-        add("xml");
-        add("md");
-        add("vtt");
-        add("webvtt");
-    }};
+    private final String[] allowedFileExtensions = new String[] {"bmp", "csv", "diff", "doc", "docx", "eot", "gif", "jpeg", "jpg", "json", 
+    		"mp3", "mp4", "m4a", "odp", "ods", "odt", "ogg", "otf", "patch", "pdf", "png", "ppt", "pptx", "rtf", "svg", "swf", "textile", 
+    		"tif", "tiff", "ttf", "txt", "wav", "webm", "woff", "woff2", "xls", "xlsx", "xml", "md", "vtt", "webvtt"};
 
     /**
      * Downloads the file form the provided url and assigns a new name.
@@ -108,7 +69,7 @@ public class ResourceDownloader {
             outputName = resources.get(urlString);
         } else if(download){
             String fileExtension = urlString.substring(urlString.lastIndexOf(".") + 1);
-            String nextOutputName = allowedFileExtensions.contains(fileExtension) ?
+            String nextOutputName = Arrays.asList(allowedFileExtensions).contains(fileExtension) ?
                     "tempResourceName" + fileNumber++ + "." + fileExtension :
                     "tempResourceName" + fileNumber++ + ".jpeg";
 
