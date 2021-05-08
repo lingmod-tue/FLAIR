@@ -214,27 +214,34 @@ public class InstructionsManager {
         
         if(addLemmas) {
         	ArrayList<String> lemmas = new ArrayList<>();
-        	ArrayList<Construction> constructionsToRemove = new ArrayList<>();
         	for(Construction construction : settings.getConstructions()) {
+            	String lemma = null;
                 if(isVerbLemma) {
                 	LemmatizedVerbCluster verbCluster = nlpManager.getLemmatizedVerbConstruction(construction.getConstructionIndices(), false);
-                	if(verbCluster == null || verbCluster.getMainLemma() == null) {
-                		constructionsToRemove.add(construction);
-                	} else {
-                    	lemmas.add(verbCluster.getMainLemma());
+                	if(verbCluster != null) {
+                		if(verbCluster.getMainLemma() == null) {
+                			if(verbCluster.getModal() == null) {
+                				if(verbCluster.getLemmatizedCluster() == null) {
+                            		lemma = construction.getBracketsText();
+                				} else {
+                					lemma = verbCluster.getLemmatizedCluster();
+                				}
+                			} else {
+                				lemma = verbCluster.getModal();
+                			}
+                		} else {
+                			lemma = verbCluster.getMainLemma();
+                		}
                 	}
                 } else {
-                	String lemma = nlpManager.getLemmaOfComparison(construction.getConstructionIndices());
-                	if(lemma == null) {
-                		constructionsToRemove.add(construction);
-                	} else {
-                		lemmas.add(lemma);
-                	}
+                	lemma = nlpManager.getLemmaOfComparison(construction.getConstructionIndices());
                 }
-            }
-        	
-        	for(Construction construction : constructionsToRemove) {
-            	settings.getConstructions().remove(construction);
+                
+            	if(lemma == null) {
+            		lemmas.add(construction.getBracketsText());
+            	} else {
+            		lemmas.add(lemma);
+            	}
             }
         	
         	if(lemmas.size() > 0) {

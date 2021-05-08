@@ -82,7 +82,7 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        }
 	
 	        ArrayList<String> usedConstructions = updateConstructions(settings.getExerciseSettings(), matchResult.getConstructions());
-	        String taskDescription = InstructionsManager.componseTaskDescription(settings.getExerciseSettings());	       
+	        String taskDescription = InstructionsManager.componseTaskDescription(settings.getExerciseSettings(), nlpManager);	       
 	
 	        return new JsonComponents(plainTextPerSentence, pureHtmlElements, usedConstructions,
 	                settings.getJsonManager(), settings.getContentTypeLibrary(), settings.getResourceFolder(), assembleDistractors(settings.getExerciseSettings()), taskDescription);
