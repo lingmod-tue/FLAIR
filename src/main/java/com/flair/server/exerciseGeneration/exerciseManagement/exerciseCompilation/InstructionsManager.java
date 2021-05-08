@@ -12,13 +12,15 @@ import edu.stanford.nlp.util.Pair;
 
 public class InstructionsManager {
 
-	public static String componseTaskDescription(ExerciseSettings settings) {
+	public static String componseTaskDescription(ExerciseSettings settings, NlpManager nlpManager) {
         HashSet<DetailedConstruction> constructions = new HashSet<>();
         for(Construction construction : settings.getConstructions()) {
             constructions.add(construction.getConstruction());
         }
 
         String instructions = "";
+        boolean addLemmas = false;
+        boolean isVerbLemma = true;
         if(constructions.stream().anyMatch((construction) -> construction.toString().startsWith("COND"))) {
             // Conditionals
 
@@ -29,7 +31,8 @@ public class InstructionsManager {
                     hasRealConditionals ? "real conditional" : "unreal conditional";
 
             if(settings.getContentType().equals("FiB")) {
-                String target = settings.getBrackets().contains(BracketsProperties.LEMMA) ?
+            	addLemmas = !settings.getBrackets().contains(BracketsProperties.LEMMA);
+                String target = !addLemmas ?
                         "the verbs in brackets" :
                         "one of the following verbs. Each word may be used only once";
 
@@ -57,7 +60,9 @@ public class InstructionsManager {
                         "adjectives and adverbs" :
                         hasAdjectives ? "adjectives" : "adverbs";
 
-                String target = settings.getBrackets().contains(BracketsProperties.LEMMA) ?
+                addLemmas = !settings.getBrackets().contains(BracketsProperties.LEMMA);
+            	isVerbLemma = false;
+                String target = !addLemmas ?
                         "the " + pos + " in brackets" :
                         "one of the following " + pos + ". Each word may only be used once";
 
@@ -122,7 +127,8 @@ public class InstructionsManager {
             String tense = "simple present";
 
             if(settings.getContentType().equals("FiB")) {
-                String target = settings.getBrackets().contains(BracketsProperties.LEMMA) ?
+            	addLemmas = !settings.getBrackets().contains(BracketsProperties.LEMMA);
+                String target = !addLemmas ?
                         "the verbs in brackets" :
                         "one of the following verbs. Each word may only be used once";
 
@@ -153,7 +159,8 @@ public class InstructionsManager {
                             containedTenses.get(0);
 
             if(settings.getContentType().equals("FiB")) {
-                String target = settings.getBrackets().contains(BracketsProperties.LEMMA) ?
+            	addLemmas = !settings.getBrackets().contains(BracketsProperties.LEMMA);
+                String target = !addLemmas ?
                         "the verbs in brackets" :
                         "one of the following verbs. Each word may only be used once";
 
@@ -204,7 +211,37 @@ public class InstructionsManager {
                 instructions = "Drag the relative pronouns into the empty slots to form correct sentences.";
             }
         }
-
+        
+        if(addLemmas) {
+        	ArrayList<String> lemmas = new ArrayList<>();
+        	ArrayList<Construction> constructionsToRemove = new ArrayList<>();
+        	for(Construction construction : settings.getConstructions()) {
+                if(isVerbLemma) {
+                	LemmatizedVerbCluster verbCluster = nlpManager.getLemmatizedVerbConstruction(construction.getConstructionIndices(), false);
+                	if(verbCluster == null || verbCluster.getMainLemma() == null) {
+                		constructionsToRemove.add(construction);
+                	} else {
+                    	lemmas.add(verbCluster.getMainLemma());
+                	}
+                } else {
+                	String lemma = nlpManager.getLemmaOfComparison(construction.getConstructionIndices());
+                	if(lemma == null) {
+                		constructionsToRemove.add(construction);
+                	} else {
+                		lemmas.add(lemma);
+                	}
+                }
+            }
+        	
+        	for(Construction construction : constructionsToRemove) {
+            	settings.getConstructions().remove(construction);
+            }
+        	
+        	if(lemmas.size() > 0) {
+            	instructions += "\n<em>" + String.join("</em>, <em>", lemmas) + "</em>";
+        	}
+        }
+                
         return instructions;
     }
 }

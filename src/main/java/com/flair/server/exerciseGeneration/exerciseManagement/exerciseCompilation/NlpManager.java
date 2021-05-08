@@ -281,9 +281,10 @@ public class NlpManager {
      * Lemmatizes a verb construction with the given boundary indices.
      * Anything other than verbs contained within the construction (e.g. negation) is preserved.
      * @param constructionIndices   The start and end index of the verb construction
+     * @param includeModal			<c>true</c> if any modal is to be included in the lemmatized construction; <c>false</c> if it is to be removed
      * @return                      The lemmatized verb construction
      */
-    public String getLemmatizedVerbConstruction(Pair<Integer, Integer> constructionIndices){
+    public LemmatizedVerbCluster getLemmatizedVerbConstruction(Pair<Integer, Integer> constructionIndices, boolean includeModal){
         SentenceAnnotations sent = getRelevantSentence(constructionIndices);
         if(sent == null) {
             return null;
@@ -291,37 +292,46 @@ public class NlpManager {
 
         ArrayList<CoreLabel> tokens = getRelevantTokens(sent, constructionIndices);
         String previousPos = getPreviousPos(sent, tokens);
+        String modal = null;
+        String mainLemma = null;
+        ArrayList<String> nonVerbTokens = new ArrayList<>();
 
         ArrayList<Pair<String, String>> constructionParts = new ArrayList<>();
         for (CoreLabel token : tokens) {
             String pos = token.tag();
             String lemma = null;
+            boolean isModal = false;
 
             if(pos.equals("VBN")) {
                 // If we have a participle, we lemmatize it and remove all other verbs except for to-infinitives
                 lemma = token.lemma();
+                mainLemma = token.lemma();
                 constructionParts = removeTokensStartingWith(constructionParts, "VB");
             } else if(pos.startsWith("VB") && !pos.equals("VB")) {
                 // If we don't have a participle, we take the last found VB
                 // Since the participle comes after conjugated verb forms, this will just be overwritten if we find a participle after all
                 lemma = token.lemma();
-                constructionParts = removeTokens(constructionParts, "MD");
+                mainLemma = token.lemma();
             } else if(pos.equals("MD")) {
-                // If we don't have a participle or conjugated verb or infinitive (not to-infinitive), we take the modal
-                // The modal always comes first, so it can just be overwritten
-                lemma = token.lemma();
+            	// The modal always comes first, so if we have an inflected verb or infinitive afterwards, it will simply be overwritten
+                modal = token.lemma();
+                isModal = true;
+                mainLemma = token.lemma();
             } else if(pos.equals("VB") && !previousPos.equals("TO")) {
                 // If we have an infinitive with a modal, we take this
                 lemma = token.lemma();
-                constructionParts = removeTokens(constructionParts, "MD");
+                mainLemma = token.lemma();
             }
 
-            if(lemma == null) {
-                // if it wasn't any token we want to lemmatize, we take the word form instead
-                lemma = token.word();
+            if(!isModal || includeModal) {
+	            if(lemma == null) {
+	                // if it wasn't any token we want to lemmatize, we take the word form instead
+	                lemma = token.word();
+	                nonVerbTokens.add(token.word());
+	            }
+	
+	            constructionParts.add(new Pair<>(lemma, token.tag()));
             }
-
-            constructionParts.add(new Pair<>(lemma, token.tag()));
             previousPos = token.tag();
         }
 
@@ -331,7 +341,7 @@ public class NlpManager {
             sb.append(" ");
         }
 
-        return sb.toString().trim();
+        return new LemmatizedVerbCluster(sb.toString().trim(), nonVerbTokens, modal, mainLemma);
     }
 
     /**

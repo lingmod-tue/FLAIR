@@ -29,28 +29,32 @@ public class ClozeManager {
                     if (exerciseSettings.getBrackets().contains(BracketsProperties.EITHER_CLAUSE)) {
                         r = new Random().nextInt(2) + 1;
                     }
+                    
+                    ArrayList<Pair<Construction, Boolean>> newConstructions = new ArrayList<>();
                     if (exerciseSettings.getBrackets().contains(BracketsProperties.MAIN_CLAUSE) || r == 1) {
                         Pair<Integer, Integer> mainClauseConstructionIndices = nlpManager.extractVerbCluster(clauses.first);
                         if(mainClauseConstructionIndices != null) {
-                            Construction newConstruction = new Construction(construction.getConstruction(), mainClauseConstructionIndices);
-                            if (exerciseSettings.getContentType().equals("FiB")) {
-                                ArrayList<String> brackets = new ArrayList<>();
-                                addBracketsToConditionals(exerciseSettings, newConstruction, true, brackets, nlpManager);
-                                newConstruction.setBracketsText("(" + String.join(", ", brackets) + ")");
-                            }
-                            constructionsToAdd.add(newConstruction);
+                            newConstructions.add(new Pair<>(new Construction(construction.getConstruction(), mainClauseConstructionIndices), true));
                         }
                     }
                     if (exerciseSettings.getBrackets().contains(BracketsProperties.IF_CLAUSE) || r == 2) {
                         Pair<Integer, Integer> ifClauseConstructionIndices = nlpManager.extractVerbCluster(clauses.second);
                         if(ifClauseConstructionIndices != null) {
-                            Construction newConstruction = new Construction(construction.getConstruction(), ifClauseConstructionIndices);
-                            if (exerciseSettings.getContentType().equals("FiB")) {
-                                ArrayList<String> brackets = new ArrayList<>();
-                                addBracketsToConditionals(exerciseSettings, newConstruction, false, brackets, nlpManager);
-                                newConstruction.setBracketsText("(" + String.join(", ", brackets) + ")");
-                            }
-                            constructionsToAdd.add(newConstruction);
+                            newConstructions.add(new Pair<>(new Construction(construction.getConstruction(), ifClauseConstructionIndices), false));
+                        }
+                    }
+                    
+                    for(Pair<Construction, Boolean> newConstruction : newConstructions) {
+                    	if (exerciseSettings.getContentType().equals("FiB")) {
+                            ArrayList<String> brackets = new ArrayList<>();
+                            if(addBracketsToConditionals(exerciseSettings, newConstruction.first, newConstruction.second, brackets, nlpManager)) {
+                            	newConstruction.first.setBracketsText("(" + String.join(", ", brackets) + ")");
+                            } else {
+                            	newConstruction = null;
+                            }                               
+                        }
+                        if(newConstruction != null) {
+                        	constructionsToAdd.add(newConstruction.first);
                         }
                     }
                 }
@@ -94,11 +98,18 @@ public class ClozeManager {
                             constructionsToRemove.add(construction);
                         }
                     } else {
-                        String lemma = nlpManager.getLemmatizedVerbConstruction(construction.getConstructionIndices());
-                        if (lemma != null) {
-                            brackets.add(lemma);
+                    	LemmatizedVerbCluster lemmatizedVerb = nlpManager.getLemmatizedVerbConstruction(construction.getConstructionIndices(), true);
+                        if(exerciseSettings.getBrackets().contains(BracketsProperties.LEMMA)) {
+                            if(lemmatizedVerb != null) {
+                                brackets.add(lemmatizedVerb.getLemmatizedCluster());
+                            } else {
+                                constructionsToRemove.add(construction);
+                                break;
+                            }
                         } else {
-                            constructionsToRemove.add(construction);
+                        	if(lemmatizedVerb != null) {
+                        		brackets.add(String.join(" ", lemmatizedVerb.getNonLemmatizedComponents()));
+                        	}
                         }
                     }
                     construction.setBracketsText("(" + String.join(", ", brackets) + ")");
@@ -118,14 +129,18 @@ public class ClozeManager {
                             construction.getConstruction().toString().startsWith("PRES")) &&
                     exerciseSettings.getContentType().equals("FiB")) {
                 ArrayList<String> brackets = new ArrayList<>();
+                LemmatizedVerbCluster lemmatizedVerb = nlpManager.getLemmatizedVerbConstruction(construction.getConstructionIndices(), true);
                 if(exerciseSettings.getBrackets().contains(BracketsProperties.LEMMA)) {
-                    String lemma = nlpManager.getLemmatizedVerbConstruction(construction.getConstructionIndices());
-                    if(lemma != null) {
-                        brackets.add(lemma);
+                    if(lemmatizedVerb != null) {
+                        brackets.add(lemmatizedVerb.getLemmatizedCluster());
                     } else {
                         constructionsToRemove.add(construction);
                         break;
                     }
+                } else {
+                	if(lemmatizedVerb != null) {
+                		brackets.add(String.join(" ", lemmatizedVerb.getNonLemmatizedComponents()));
+                	}
                 }
                 if(construction.getConstruction().toString().contains("QUEST")) {
                     brackets.add("interrog");
@@ -160,19 +175,31 @@ public class ClozeManager {
      * @param brackets          The array into which to write the brackets components
      * @param nlpManager		The NLP manager
      */
-    private void addBracketsToConditionals(ExerciseSettings exerciseSettings, Construction construction, boolean isMain, 
+    private boolean addBracketsToConditionals(ExerciseSettings exerciseSettings, Construction construction, boolean isMain, 
     		ArrayList<String> brackets, NlpManager nlpManager) {
         if (exerciseSettings.getContentType().equals("FiB")) {
-            if (exerciseSettings.getBrackets().contains(BracketsProperties.LEMMA)) {
-                brackets.add(nlpManager.getLemmatizedVerbConstruction(construction.getConstructionIndices()));
+        	LemmatizedVerbCluster lemmatizedVerb = nlpManager.getLemmatizedVerbConstruction(construction.getConstructionIndices(), false);
+            if(exerciseSettings.getBrackets().contains(BracketsProperties.LEMMA)) {
+                if(lemmatizedVerb != null) {
+                    brackets.add(lemmatizedVerb.getLemmatizedCluster());
+                } else {
+                    return false;
+                }
+            } else {
+            	if(lemmatizedVerb != null) {
+            		brackets.add(String.join(" ", lemmatizedVerb.getNonLemmatizedComponents()));
+            	}
             }
+            
             if (exerciseSettings.getBrackets().contains(BracketsProperties.CONDITIONAL_TYPE)) {
                 brackets.add(construction.getConstruction() == DetailedConstruction.CONDREAL ? "real" : "unreal");
             }
             if (isMain && exerciseSettings.getBrackets().contains(BracketsProperties.WILL)) {
-                brackets.add(construction.getConstruction() == DetailedConstruction.CONDREAL ? "real" : "unreal");
+                brackets.add(lemmatizedVerb.getModal());
             }
         }
+        
+        return true;
     }
 
 }
