@@ -6,5 +6,6 @@ package com.flair.server.parser;
  */
 public enum ParserKind {
 	STANFORD_CORENLP,
-	SIMPLE_NLG
+	SIMPLE_NLG,
+	OPEN_NLP
 }

@@ -7,6 +7,7 @@ import java.util.concurrent.TimeoutException;
 import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseManager;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
 import com.flair.server.parser.CoreNlpParser;
+import com.flair.server.parser.OpenNlpParser;
 import com.flair.server.parser.SimpleNlgParser;
 import com.flair.server.scheduler.AsyncTask;
 import com.flair.server.scheduler.ThreadPool;
@@ -15,18 +16,20 @@ import com.flair.server.utilities.ServerLogger;
 import edu.stanford.nlp.util.Pair;
 
 public class ExGenTask implements AsyncTask<ExGenTask.Result> {
-	public static ExGenTask factory(ContentTypeSettings settings, CoreNlpParser parser, SimpleNlgParser generator) {
-		return new ExGenTask(settings, parser, generator);
+	public static ExGenTask factory(ContentTypeSettings settings, CoreNlpParser parser, SimpleNlgParser generator, OpenNlpParser lemmatizer) {
+		return new ExGenTask(settings, parser, generator, lemmatizer);
 	}
 
 	private final ContentTypeSettings settings;
 	private final CoreNlpParser parser;
 	private final SimpleNlgParser generator;
+	private final OpenNlpParser lemmatizer;
 
-	private ExGenTask(ContentTypeSettings settings, CoreNlpParser parser, SimpleNlgParser generator) {
+	private ExGenTask(ContentTypeSettings settings, CoreNlpParser parser, SimpleNlgParser generator, OpenNlpParser lemmatizer) {
 		this.settings = settings;
 		this.parser = parser;
 		this.generator = generator;
+		this.lemmatizer = lemmatizer;
 	}
 
 
@@ -40,8 +43,8 @@ public class ExGenTask implements AsyncTask<ExGenTask.Result> {
 			startTime = System.currentTimeMillis();
 			file = ThreadPool.get().invokeAndWait(new FutureTask<>(() -> {
 				ExerciseManager exerciseManger = new ExerciseManager();
-		        return exerciseManger.generateExercises(settings, parser, generator);
-			}), 1000, TimeUnit.SECONDS);
+		        return exerciseManger.generateExercises(settings, parser, generator, lemmatizer);
+			}), Constants.EXERCISE_GENERATION_TASK_TIMEOUT, Constants.TIMEOUT_UNIT);
 		} catch (TimeoutException ex) {
 			ServerLogger.get().error("Exercise generation task timed-out.");
 			file = null;

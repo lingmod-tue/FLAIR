@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.QuizSettings;
 import com.flair.server.parser.CoreNlpParser;
+import com.flair.server.parser.OpenNlpParser;
 import com.flair.server.parser.SimpleNlgParser;
 
 import edu.stanford.nlp.util.Pair;
@@ -17,7 +18,7 @@ public class ExerciseManager {
 	 * @param settings	The exercise settings
 	 * @return			The byte array of the generated H5P package
 	 */
-    public Pair<String, byte[]> generateExercises(ContentTypeSettings settings, CoreNlpParser parser, SimpleNlgParser generator) {
+    public Pair<String, byte[]> generateExercises(ContentTypeSettings settings, CoreNlpParser parser, SimpleNlgParser generator, OpenNlpParser lemmatizer) {
     	try {
 	        ArrayList<Pair<String, byte[]>> relevantResources = new ArrayList<>();
 	    	if(settings instanceof QuizSettings) {
@@ -28,7 +29,7 @@ public class ExerciseManager {
 	            relevantResources.addAll(getRelevantResources(settings.getResources()));
 	        }
 	        
-	        return new Pair<>(settings.getName(), settings.getExerciseGenerator().generateExercise(settings, relevantResources, parser, generator));       
+	        return new Pair<>(settings.getName(), settings.getExerciseGenerator().generateExercise(settings, relevantResources, parser, generator, lemmatizer));       
     	} catch(Exception e) {
     		e.printStackTrace();
     		return null;

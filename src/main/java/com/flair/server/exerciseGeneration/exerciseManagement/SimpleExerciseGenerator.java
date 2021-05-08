@@ -18,6 +18,7 @@ import com.flair.server.exerciseGeneration.exerciseManagement.exerciseCompilatio
 import com.flair.server.exerciseGeneration.exerciseManagement.exerciseCompilation.NlpManager;
 import com.flair.server.exerciseGeneration.exerciseManagement.jsonManagement.SimpleExerciseJsonManager;
 import com.flair.server.parser.CoreNlpParser;
+import com.flair.server.parser.OpenNlpParser;
 import com.flair.server.parser.SimpleNlgParser;
 import com.flair.shared.exerciseGeneration.Construction;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
@@ -30,8 +31,8 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 
     @Override
 	public byte[] generateExercise(ContentTypeSettings settings, ArrayList<Pair<String, byte[]>> resources, 
-			CoreNlpParser parser, SimpleNlgParser generator) {
-        JsonComponents jsonComponents = prepareExercise(settings, parser, generator);
+			CoreNlpParser parser, SimpleNlgParser generator, OpenNlpParser lemmatizer) {
+        JsonComponents jsonComponents = prepareExercise(settings, parser, generator, lemmatizer);
 
     	if(jsonComponents != null) {
 	        ArrayList<JsonComponents> helper = new ArrayList<>();
@@ -47,12 +48,12 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
      * @param settings  The content type settings
      * @return          The extracted exercise components relevant for the JSON configuration
      */
-    public JsonComponents prepareExercise(ContentTypeSettings settings, CoreNlpParser parser, SimpleNlgParser generator) {
+    public JsonComponents prepareExercise(ContentTypeSettings settings, CoreNlpParser parser, SimpleNlgParser generator, OpenNlpParser lemmatizer) {
     	if(settings.getDoc() != null) {
 	        // We cannot operate on the same document for all exercises (in-place modifications), so we create a copy
 	        Element doc = Jsoup.parse(settings.getDoc().toString());
 	
-	        NlpManager nlpManager = new NlpManager(parser, generator, settings.getExerciseSettings().getPlainText());
+	        NlpManager nlpManager = new NlpManager(parser, generator, settings.getExerciseSettings().getPlainText(), lemmatizer);
 
 	        ClozeManager clozeManager = new ClozeManager();
 	        clozeManager.prepareBlanks(settings.getExerciseSettings(), nlpManager);

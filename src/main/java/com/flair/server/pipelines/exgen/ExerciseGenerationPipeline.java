@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Properties;
 
 import com.flair.server.parser.CoreNlpParser;
+import com.flair.server.parser.OpenNlpParser;
 import com.flair.server.parser.SimpleNlgParser;
 import com.flair.server.pipelines.common.PipelineOp;
 import com.flair.server.scheduler.AsyncExecutorService;
@@ -39,16 +40,17 @@ public final class ExerciseGenerationPipeline {
 	
 	private final Lazy<CoreNlpParser> parser;
 	private final Lazy<SimpleNlgParser> generator;
+	private final Lazy<OpenNlpParser> lemmatizer;
 
 
 	private ExerciseGenerationPipeline() {
 		ThreadPool.Builder threadPoolBuilder = ThreadPool.get().builder();
 		downloadExecutor = threadPoolBuilder
-				.poolSize(50)
+				.poolSize(Constants.DOWNLOAD_TASK_THREADPOOL_SIZE)
 				.poolName("Web page Download")
 				.build();		
 		exGenExecutor = threadPoolBuilder
-				.poolSize(50)
+				.poolSize(Constants.EXERCISE_GENERATION_TASK_THREADPOOL_SIZE)
 				.poolName("Exercise Generation")
 				.build();		
 		
@@ -57,6 +59,9 @@ public final class ExerciseGenerationPipeline {
 		
 		SimpleNlgParser.Factory generatorFactory = SimpleNlgParser.factory();
         generator = Lazy.of(() -> generatorFactory.create(Language.ENGLISH, null));
+        
+        OpenNlpParser.Factory lemmatizerFactory = OpenNlpParser.factory();
+        lemmatizer = Lazy.of(() -> lemmatizerFactory.create(Language.ENGLISH, null));
 	}
 
 	private Properties initializeAnnotationProperties() {
@@ -104,7 +109,7 @@ public final class ExerciseGenerationPipeline {
 				throw new IllegalStateException("Invalid exercise settings");
 			
 			ExerciseGenerationOp.Input input = new ExerciseGenerationOp.Input(settings, downloadExecutor, exGenExecutor, 
-					exGenComplete, jobComplete, parser.get(), generator.get());
+					exGenComplete, jobComplete, parser.get(), generator.get(), lemmatizer.get());
 
 			return new ExerciseGenerationOp(input);
 		}

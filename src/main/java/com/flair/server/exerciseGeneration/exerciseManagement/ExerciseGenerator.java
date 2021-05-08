@@ -6,6 +6,7 @@ import org.json.simple.parser.ParseException;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
 import com.flair.server.exerciseGeneration.exerciseManagement.domManipulation.ZipManager;
 import com.flair.server.parser.CoreNlpParser;
+import com.flair.server.parser.OpenNlpParser;
 import com.flair.server.parser.SimpleNlgParser;
 
 import edu.stanford.nlp.util.Pair;
@@ -22,7 +23,7 @@ public abstract class ExerciseGenerator {
 	 * @return			The byte array of the generated H5P file
 	 */
     public abstract byte[] generateExercise(ContentTypeSettings settings, ArrayList<Pair<String, byte[]>> resources, 
-    		CoreNlpParser parser, SimpleNlgParser generator);
+    		CoreNlpParser parser, SimpleNlgParser generator, OpenNlpParser lemmatizer);
 
     /**
      * Writes the extracted components to the JSON configuration file and zips everything into a H5P package.

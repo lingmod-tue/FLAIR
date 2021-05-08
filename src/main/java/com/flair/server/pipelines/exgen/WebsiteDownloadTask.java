@@ -40,7 +40,7 @@ public class WebsiteDownloadTask implements AsyncTask<WebsiteDownloadTask.Result
 			HtmlManager htmlManager = new HtmlManager();
 			doc = ThreadPool.get().invokeAndWait(new FutureTask<>(() -> {
 		        return htmlManager.prepareHtml(url, downloadResources, resourceDownloader);		        
-			}), 1000, TimeUnit.SECONDS);
+			}), Constants.DOWNLOAD_TASK_TIMEOUT, Constants.TIMEOUT_UNIT);
 		} catch (TimeoutException ex) {
 			ServerLogger.get().error("Webpage download task timed-out for " + url + ".");
 			doc = null;

@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import com.flair.server.parser.CoreNlpParser;
+import com.flair.server.parser.OpenNlpParser;
 import com.flair.server.parser.SimpleNlgParser;
 import com.flair.shared.exerciseGeneration.DetailedConstruction;
 import com.flair.shared.exerciseGeneration.Pair;
@@ -23,18 +24,18 @@ import edu.stanford.nlp.trees.tregex.TregexPattern;
 import edu.stanford.nlp.util.CoreMap;
 import simplenlg.features.Feature;
 import simplenlg.features.Tense;
-import simplenlg.framework.LexicalCategory;
-import simplenlg.framework.WordElement;
 import simplenlg.phrasespec.SPhraseSpec;
 
 public class NlpManager {
 
-    public NlpManager(CoreNlpParser parser, SimpleNlgParser generator, String text) {
+    public NlpManager(CoreNlpParser parser, SimpleNlgParser generator, String text, OpenNlpParser lemmatizer) {
     	initializeAnnotations(parser, text);
     	this.generator = generator;
+    	this.lemmatizer = lemmatizer;
     }
     
     private SimpleNlgParser generator;
+    private OpenNlpParser lemmatizer;
 
     private ArrayList<SentenceAnnotations> sentences = new ArrayList<>();
 
@@ -380,40 +381,37 @@ public class NlpManager {
         }
 
         ArrayList<CoreLabel> tokens = getRelevantTokens(sent, constructionIndices);
+        String[] lemmas = lemmatizeSentence(tokens);
 
         // "more" and "most" are also tagged RBR, so we take the last relevant token
         String lemma = null;
-        for (CoreLabel token : tokens) {
+        for (int i = 0; i < tokens.size(); i++) {
+        	CoreLabel token = tokens.get(i);
             String pos = token.tag();
             if (pos.startsWith("RB") || pos.startsWith("JJ")) {
-                lemma = token.lemma();
-                // TODO: synthetic forms are lemmatized to themselves, so we need to form the positive ourselves
-                String tentativeLemma = null;
-                if(lemma.endsWith("er")) {
-                    tentativeLemma = token.word().substring(0, token.word().length() - 2);
-                } else if(lemma.endsWith("est")) {
-                    tentativeLemma = token.word().substring(0, token.word().length() - 3);
-                }
-
-                if(tentativeLemma != null) {
-                    if(tentativeLemma.endsWith("i")) {
-                        tentativeLemma = tentativeLemma.substring(0, tentativeLemma.length() - 1) + "y";
-                    }
-                    WordElement w = generator.lexicon().getWord(tentativeLemma);
-                    if(w.getCategory() == LexicalCategory.ADJECTIVE || w.getCategory() == LexicalCategory.ADVERB) {
-                        lemma = tentativeLemma;
-                    } else {
-                        tentativeLemma = tentativeLemma + "e";
-                        w = generator.lexicon().getWord(tentativeLemma);
-                        if(w.getCategory() == LexicalCategory.ADJECTIVE || w.getCategory() == LexicalCategory.ADVERB) {
-                            lemma = tentativeLemma;
-                        }
-                    }
-                }
+            	// The Stanford CoreNLP lemmatizer lemmatizes synthetic forms to themselves, so we use the OpenNlp DictionaryLemmatizer instead
+                lemma = lemmas[i];
             }
         }
 
         return lemma;
+    }
+    
+    /**
+     * Lemmatizes a sentence using the OpenNLP dictionary lemmatizer.
+     * @param tokens	The tokens obtained from the Stanford CoreNLP tagger
+     * @return			The lemmas of the tokens
+     */
+    private String[] lemmatizeSentence(ArrayList<CoreLabel> tokens) {
+    	ArrayList<String> tags = new ArrayList<>();
+    	ArrayList<String> words = new ArrayList<>();
+    	
+    	for(CoreLabel token : tokens) {
+    		tags.add(token.tag());
+    		words.add(token.word());
+    	}
+    	
+    	return lemmatizer.lemmatizer().lemmatize(words.toArray(new String[0]), tags.toArray(new String[0]));
     }
 
     /**
