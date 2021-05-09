@@ -124,7 +124,6 @@ public class NlpManager {
         TregexPattern pattern = TregexPattern.compile("SBAR <, (IN <: /[Ii]f/)");
         List<Tree> leaves = sent.getConstituentTree().getLeaves();
 
-        sent.getConstituentTree().pennPrint();
         TregexMatcher matcher = pattern.matcher(sent.getConstituentTree());
         if(matcher.find()) {
             Tree match = matcher.getMatch();
@@ -146,7 +145,6 @@ public class NlpManager {
                     if(dominationPath.size() > 2) { // the domination path includes match and sMatch
                         for (int i = 1; i < dominationPath.size() - 1; i++) {
                             Tree t = dominationPath.get(i);
-                            t.pennPrint();
                             if ((t.nodeString().equals("S") || t.nodeString().equals("SQ")) && !match.dominates(t)) {
                                 containsS = true;
                                 break;

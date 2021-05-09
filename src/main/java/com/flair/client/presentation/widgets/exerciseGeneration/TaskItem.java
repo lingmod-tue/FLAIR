@@ -1089,7 +1089,7 @@ public class TaskItem extends LocalizedComposite {
     		}
     	}
     	
-    	if(getTopic().equals("'if")) {
+    	if(getTopic().equals("'if'")) {
     		if(rbtMainClause.getValue() ) {
     			brackets.add(BracketsProperties.MAIN_CLAUSE);
     		} else if(rbtBothClauses.getValue()) {
