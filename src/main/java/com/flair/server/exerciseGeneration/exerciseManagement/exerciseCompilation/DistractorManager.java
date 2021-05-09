@@ -23,6 +23,7 @@ public class DistractorManager {
 
         if(exerciseSettings.getContentType().equals("Select")) {
             for(Construction construction : exerciseSettings.getConstructions()) {
+            	String constructionText = exerciseSettings.getPlainText().substring(construction.getConstructionIndices().first, construction.getConstructionIndices().second);
                 HashSet<String> options = new HashSet<>();
                 HashSet<String> incorrectFormOptions = new HashSet<>();
 
@@ -124,7 +125,7 @@ public class DistractorManager {
                         }
                         if(exerciseSettings.getDistractors().contains(DistractorProperties.INCORRECT_FORMS)) {
                             incorrectFormOptions.addAll(nlpManager.generateIncorrectForms(new ComparisonSettings(parameterConstellation.first,
-                                    parameterConstellation.second, lemma, construction.getConstructionText())));
+                                    parameterConstellation.second, lemma, constructionText)));
                         }
                     }
                 } else if(name.startsWith("QUEST") || name.startsWith("STMT")){
@@ -199,12 +200,13 @@ public class DistractorManager {
                         construction.getConstruction() == DetailedConstruction.OTHERPRN) {
                     // We make sure to only include those pronouns as distractors which actually occur in the text
                     for(Construction c : exerciseSettings.getConstructions()) {
-                        options.add(c.getConstructionText());
+                    	String text = exerciseSettings.getPlainText().substring(c.getConstructionIndices().first, c.getConstructionIndices().second);
+                        options.add(text);
                     }
                 }
 
-                removeCorrectForm(construction.getConstructionText(), options);
-                removeCorrectForm(construction.getConstructionText(), incorrectFormOptions);
+                removeCorrectForm(constructionText, options);
+                removeCorrectForm(constructionText, incorrectFormOptions);
 
                 if(options.size() == 0 && incorrectFormOptions.size() == 0) {
                     constructionsToRemove.add(construction);
@@ -234,8 +236,9 @@ public class DistractorManager {
                         incorrectOptions.remove(randomForm);
                     }
 
+                    ArrayList<String> distractors = capitalize(options, constructionText);                    
+                    
                     // Add the distractors to the settings
-                    ArrayList<String> distractors = new ArrayList<>(options);
                     Collections.shuffle(distractors);
                     construction.setDistractors(distractors);
                 }
@@ -245,6 +248,24 @@ public class DistractorManager {
         for(Construction constructionToRemove : constructionsToRemove) {
             exerciseSettings.getConstructions().remove(constructionToRemove);
         }
+    }
+    
+    /**
+     * Capitalizes all distractors if the correct form starts with an uppercase character.
+     * @param options		The distractors
+     * @param correctForm	The correct form
+     * @return				The capitalized distractors if the correct form is capitalized, otherwise the original distractors
+     */
+    private ArrayList<String> capitalize(HashSet<String> options, String correctForm) {
+       	if(Character.isUpperCase(correctForm.charAt(0))) {
+            ArrayList<String> distractors = new ArrayList<>();
+            for(String option: options) {
+            	distractors.add(option.substring(0, 1).toUpperCase() + option.substring(1));
+            }
+            return distractors;
+    	} else {
+    		return new ArrayList<>(options);
+    	}
     }
 
     /**
