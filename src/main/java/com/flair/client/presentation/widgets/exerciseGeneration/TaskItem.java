@@ -1212,8 +1212,8 @@ public class TaskItem extends LocalizedComposite {
         // comparison
     	// comparatives and superlatives exclude elements like 'the', 'than'
     	//TODO: Maybe allow to specify in view whether to keep analytic forms as single markable or as separate
-    	//TODO: we would have to multiply the occurrences of mark instances if this was selected
-    	// for now, we keep them as one
+    	//we would have to multiply the occurrences of mark instances if this was selected
+    	//for now, we keep them as one
     	addSingleWordConstructions(relevantConstructions, startIndex, endIndex, GrammaticalConstruction.ADJECTIVE_COMPARATIVE_SHORT, "adj-comp-syn");
     	addSingleWordConstructions(relevantConstructions, startIndex, endIndex, GrammaticalConstruction.ADJECTIVE_SUPERLATIVE_SHORT, "adj-sup-syn");		
     	addSingleWordConstructions(relevantConstructions, startIndex, endIndex, GrammaticalConstruction.ADJECTIVE_COMPARATIVE_LONG, "adj-comp-ana");
@@ -1304,10 +1304,12 @@ public class TaskItem extends LocalizedComposite {
         	
             for(ConstructionRange tenseOccurrence : tenseOccurrences) {
             	boolean foundNegationOverlap = false;
+            	ConstructionRange negation = null;
             	for(ConstructionRange negationOccurrence : negationOccurrences) {
             		if(negationOccurrence.getEnd() >= tenseOccurrence.getStart() - 1 && negationOccurrence.getStart() <= tenseOccurrence.getEnd() + 1) {
             			// The negation is at most the previous or succeeding token (only a single character in-between for a whitespace)
             			foundNegationOverlap = true;
+            			negation = negationOccurrence;
             			break;
             		}
             	}
@@ -1333,15 +1335,15 @@ public class TaskItem extends LocalizedComposite {
             	if(foundNegationOverlap) {
             		if(foundQuestionOverlap) {
             			if(foundIrregularOverlap) {
-            				indicesQuestionNegativeIrregular.add(new Pair<Integer, Integer>(tenseOccurrence.getStart(), tenseOccurrence.getEnd()));
+            				indicesQuestionNegativeIrregular.add(new Pair<Integer, Integer>(Math.min(tenseOccurrence.getStart(), negation.getStart()), Math.max(tenseOccurrence.getEnd(), negation.getEnd())));
             			} else {
-            				indicesQuestionNegativeRegular.add(new Pair<Integer, Integer>(tenseOccurrence.getStart(), tenseOccurrence.getEnd()));
+            				indicesQuestionNegativeRegular.add(new Pair<Integer, Integer>(Math.min(tenseOccurrence.getStart(), negation.getStart()), Math.max(tenseOccurrence.getEnd(), negation.getEnd())));
             			}
             		} else {
             			if(foundIrregularOverlap) {
-            				indicesStatementNegativeIrregular.add(new Pair<Integer, Integer>(tenseOccurrence.getStart(), tenseOccurrence.getEnd()));
+            				indicesStatementNegativeIrregular.add(new Pair<Integer, Integer>(Math.min(tenseOccurrence.getStart(), negation.getStart()), Math.max(tenseOccurrence.getEnd(), negation.getEnd())));
             			} else {
-            				indicesStatementNegativeRegular.add(new Pair<Integer, Integer>(tenseOccurrence.getStart(), tenseOccurrence.getEnd()));
+            				indicesStatementNegativeRegular.add(new Pair<Integer, Integer>(Math.min(tenseOccurrence.getStart(), negation.getStart()), Math.max(tenseOccurrence.getEnd(), negation.getEnd())));
             			}
             		}
             	} else {
@@ -1384,11 +1386,16 @@ public class TaskItem extends LocalizedComposite {
     	ArrayList<Pair<Integer, Integer>> indicesStatementNegative3 = new ArrayList<Pair<Integer, Integer>>();
     	ArrayList<Pair<Integer, Integer>> indicesStatementNegativeNot3 = new ArrayList<Pair<Integer, Integer>>();
         for(ConstructionRange tenseOccurrence : presentOccurrences) {
+        	// we take the first token since the inflected present verb is usually at the beginning of the sequence.
+        	// It's just an approximation, but the best we can get without proper NLP processing.
+        	String occurrenceText = doc.getText().substring(tenseOccurrence.getStart(), tenseOccurrence.getEnd()).split(" ")[0];
         	boolean foundNegationOverlap = false;
+        	ConstructionRange negation = null;
         	for(ConstructionRange negationOccurrence : negationOccurrences) {
         		if(negationOccurrence.getEnd() >= tenseOccurrence.getStart() - 1 && negationOccurrence.getStart() <= tenseOccurrence.getEnd() + 1) {
         			// The negation is at most the previous or succeeding token (only a single character in-between for a whitespace)
         			foundNegationOverlap = true;
+        			negation = negationOccurrence;
         			break;
         		}
         	}
@@ -1402,21 +1409,21 @@ public class TaskItem extends LocalizedComposite {
         		}
         	}
         	
-        	boolean isThirdPersonSingular = tenseOccurrence.toString().endsWith("s") || tenseOccurrence.equals("doesn't") || 
-        			tenseOccurrence.equals("hasn't") || tenseOccurrence.equals("isn't");
+        	boolean isThirdPersonSingular = occurrenceText.endsWith("s") || occurrenceText.equals("doesn't") || 
+        			occurrenceText.equals("hasn't") || occurrenceText.equals("isn't");
 
         	if(foundNegationOverlap) {
         		if(foundQuestionOverlap) {
         			if(isThirdPersonSingular) {
-        				indicesQuestionNegative3.add(new Pair<Integer, Integer>(tenseOccurrence.getStart(), tenseOccurrence.getEnd()));
+        				indicesQuestionNegative3.add(new Pair<Integer, Integer>(Math.min(tenseOccurrence.getStart(), negation.getStart()), Math.max(tenseOccurrence.getEnd(), negation.getEnd())));
         			} else {
-        				indicesQuestionNegativeNot3.add(new Pair<Integer, Integer>(tenseOccurrence.getStart(), tenseOccurrence.getEnd()));
+        				indicesQuestionNegativeNot3.add(new Pair<Integer, Integer>(Math.min(tenseOccurrence.getStart(), negation.getStart()), Math.max(tenseOccurrence.getEnd(), negation.getEnd())));
         			}
         		} else {
         			if(isThirdPersonSingular) {
-        				indicesStatementNegative3.add(new Pair<Integer, Integer>(tenseOccurrence.getStart(), tenseOccurrence.getEnd()));
+        				indicesStatementNegative3.add(new Pair<Integer, Integer>(Math.min(tenseOccurrence.getStart(), negation.getStart()), Math.max(tenseOccurrence.getEnd(), negation.getEnd())));
         			} else {
-        				indicesStatementNegativeNot3.add(new Pair<Integer, Integer>(tenseOccurrence.getStart(), tenseOccurrence.getEnd()));
+        				indicesStatementNegativeNot3.add(new Pair<Integer, Integer>(Math.min(tenseOccurrence.getStart(), negation.getStart()), Math.max(tenseOccurrence.getEnd(), negation.getEnd())));
         			}
         		}
         	} else {
@@ -1453,11 +1460,12 @@ public class TaskItem extends LocalizedComposite {
         ArrayList<Pair<Integer, Integer>> indicesThatOccurrences = new ArrayList<Pair<Integer, Integer>>();
         ArrayList<Pair<Integer, Integer>> indicesOtherOccurrences = new ArrayList<Pair<Integer, Integer>>();
         for(ConstructionRange relativeOccurrence : relativeOccurrences) {
-        	if(relativeOccurrence.toString().equals("who")) {
+        	String occurrenceText = doc.getText().substring(relativeOccurrence.getStart(), relativeOccurrence.getEnd());
+        	if(occurrenceText.equalsIgnoreCase("who")) {
         		indicesWhoOccurrences.add(new Pair<Integer, Integer>(relativeOccurrence.getStart(), relativeOccurrence.getEnd()));
-        	} else if(relativeOccurrence.toString().equals("which")) {
+        	} else if(occurrenceText.equalsIgnoreCase("which")) {
         		indicesWhichOccurrences.add(new Pair<Integer, Integer>(relativeOccurrence.getStart(), relativeOccurrence.getEnd()));
-        	} else if(relativeOccurrence.toString().equals("that")) {
+        	} else if(occurrenceText.equalsIgnoreCase("that")) {
         		indicesThatOccurrences.add(new Pair<Integer, Integer>(relativeOccurrence.getStart(), relativeOccurrence.getEnd()));
         	} else {
         		indicesOtherOccurrences.add(new Pair<Integer, Integer>(relativeOccurrence.getStart(), relativeOccurrence.getEnd()));
