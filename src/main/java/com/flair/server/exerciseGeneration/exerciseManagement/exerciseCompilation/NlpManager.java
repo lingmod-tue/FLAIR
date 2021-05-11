@@ -399,6 +399,18 @@ public class NlpManager {
             if (pos.startsWith("RB") || pos.startsWith("JJ")) {
             	// The Stanford CoreNLP lemmatizer lemmatizes synthetic forms to themselves, so we use the OpenNlp DictionaryLemmatizer instead
                 lemma = lemmas[i];
+                
+                // If the form isn't in the dictionary, it is quite likely that it is not really a comparative or superlative form
+                // We still apply rule-based lemma generation; removing a wrong form in the authoring interface is still easier than generating blanks for correct ones
+                if(lemma.equals("O")) {
+                	if(token.word().endsWith("er")) {
+                		lemma = token.word().substring(0, token.word().length() - 2);
+                	} else if(token.word().endsWith("est")) {
+                		lemma = token.word().substring(0, token.word().length() - 3);
+                	} else {
+                		lemma = token.word();
+                	}
+                }
             }
         }
 

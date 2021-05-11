@@ -44,7 +44,7 @@ public class ComparisonGenerator extends FormGenerator {
             }
         } else {
             String defaultPrefix = ((ComparisonSettings)settings).isComparative() ? "more " : "most ";
-            HashSet<String> incorrectSyntheticForms = generateIncorrectForms(settings);
+            HashSet<String> incorrectSyntheticForms = generateIncorrectForms(new ComparisonSettings(true, ((ComparisonSettings)settings).isComparative(), ((ComparisonSettings)settings).getLemma(), ((ComparisonSettings)settings).getCorrectForm()));
             incorrectSyntheticForms.add(((ComparisonSettings)settings).getCorrectForm());
             for(String incorrectSyntheticForm : incorrectSyntheticForms) {
                 incorrectForms.add(defaultPrefix + incorrectSyntheticForm);

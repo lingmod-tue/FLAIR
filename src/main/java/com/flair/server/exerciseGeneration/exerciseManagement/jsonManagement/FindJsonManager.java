@@ -1,6 +1,6 @@
 package com.flair.server.exerciseGeneration.exerciseManagement.jsonManagement;
 
-public class FindJsonManager extends SingleExerciseWithInlineBlanksJsonManager {
+public class FindJsonManager extends ExerciseWithInlineBlanksJsonManager {
 
     @Override
     protected String getPlacehholderReplacement(String construction) {

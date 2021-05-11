@@ -39,11 +39,6 @@ public class Matcher {
     private int plainTextCounter = 1;
 
     /**
-     * The index of the last sentence of which question elements have been added to the plainTextElements.
-     */
-    int lastSentenceIndex = 0;
-
-    /**
      * Extracts plain text fragments, sentences and constructions from a HTML document.
      * @param doc	The HTML document
      * @return 		The start and end elements of each identified sentence, the extracted plain text elements and the extracted constructions
@@ -169,7 +164,7 @@ public class Matcher {
                     nodeText.substring(startIndex - textStartIndex);
 
             Element replacement = createPlainTextReplacementElement(fragmentPart, startIndex,
-                    indexedSentence.getSentenceIndex() + 1, indexedSentence.getBlanksBoundaries());
+            		indexedSentence.getBlanksBoundaries());
             replacementElements.add(replacement);
 
             if (indexedSentence.isSentenceStart() && startIndex == indexedSentence.getStartIndex()) {
@@ -220,11 +215,10 @@ public class Matcher {
      * (we might e.g. lose a hyperlink), but we cannot have split blanks.
      * @param text 				The text to be inserted as content (the node text)
      * @param startIndex 		The index in the entire HTML text at which the text starts
-     * @param sentenceIndex		The index of the sentence to which the fragment belongs
      * @param boundaryIndices	The start and end indices of constructions
      * @return 					The generated DOM element <span data-plaintextplaceholder></span>
      */
-    private Element createPlainTextReplacementElement(String text, int startIndex, int sentenceIndex,
+    private Element createPlainTextReplacementElement(String text, int startIndex,
                                                       ArrayList<Blank> boundaryIndices){
         ArrayList<Blank> containedBoundaries = new ArrayList<>();
         for(Blank constructionBoundary : boundaryIndices) {
@@ -277,7 +271,6 @@ public class Matcher {
 
         String plainText = "<span data-internal=\"" + plainTextCounter + "\">" + sb.toString() + "</span>";
         plainTextElements.put(plainTextCounter, plainText);
-        lastSentenceIndex = sentenceIndex;
 
         return ElementCreator.createPlainTextReplacementElement(plainTextCounter++);
     }

@@ -44,7 +44,7 @@ public class Indexer {
 
     /**
      * Inserts fragments for html text that is not contained in the plain text.
-     * Collapse adjoining fragments without constructions into a single sentence.
+     * Such fragments can never have constructions, thus not be a sentence.
      * @param fragments The matched fragments corresponding to plain text fragments
      * @param htmlText  The original HTML text
      * @return          The list of fragments covering the entire HTMl text
@@ -53,55 +53,27 @@ public class Indexer {
         ArrayList<Fragment> newFragments = new ArrayList<>();
 
         int lastEndIndex = 0;
-        int sentenceIndex = 0;
         for(int i = 0; i < fragments.size(); i++) {
             Fragment fragment = fragments.get(i);
             if(fragment.getStartIndex() > lastEndIndex) {
                 boolean display = fragment.isDisplay() && (i == 0 || fragments.get(i - 1).isDisplay());
-                boolean isSentenceStart = i == 0 || newFragments.get(newFragments.size() - 1).isSentenceEnd();
 
-                if(newFragments.size() > 0 && display != newFragments.get(newFragments.size() - 1).isDisplay()) {
-                    newFragments.get(newFragments.size() - 1).setSentenceEnd(true);
-                    isSentenceStart = true;
-                }
-                if(isSentenceStart) {
-                    sentenceIndex++;
-                }
-
-                boolean isSentenceEnd = fragment.getBlanksBoundaries().size() > 0 || display != fragment.isDisplay();
-
-                newFragments.add(new Fragment(lastEndIndex, fragment.getStartIndex(), isSentenceStart, isSentenceEnd,
-                        sentenceIndex, display));
+                newFragments.add(new Fragment(lastEndIndex, fragment.getStartIndex(), false, false,
+                        null, display));
             }
-            fragment.setSentenceIndex(++i);
-            boolean isSentenceStart = newFragments.size() == 0 || newFragments.get(newFragments.size() - 1).isSentenceEnd();
-            if(isSentenceStart) {
-                sentenceIndex++;
-            }
-            fragment.setSentenceStart(isSentenceStart);
-            fragment.setSentenceEnd(fragment.isSentenceEnd() && fragment.getBlanksBoundaries().size() > 0);
-            fragment.setSentenceIndex(sentenceIndex);
 
             newFragments.add(fragment);
             lastEndIndex = fragment.getEndIndex();
         }
 
         if(lastEndIndex < htmlText.length()) {
-            boolean isSentenceStart = newFragments.size() == 0 || newFragments.get(newFragments.size() - 1).isSentenceEnd();
-            if(isSentenceStart) {
-                sentenceIndex++;
-            }
-            newFragments.add(new Fragment(lastEndIndex, htmlText.length(), isSentenceStart, true,
-                    sentenceIndex, newFragments.size() > 0 && newFragments.get(newFragments.size() - 1).isDisplay()));
-        }
-
-        if(newFragments.size() > 0) {
-            newFragments.get(newFragments.size() - 1).setSentenceEnd(true);
+            newFragments.add(new Fragment(lastEndIndex, htmlText.length(), false, false,
+                    null, newFragments.size() > 0 && newFragments.get(newFragments.size() - 1).isDisplay()));
         }
 
         return newFragments;
     }
-
+    
     /**
      * Adds trailing punctuation which were excluded from sentences for better matching
      * if they haven't been matched to another sentence.
@@ -202,7 +174,6 @@ public class Indexer {
                         previousFragment = fragment;
                     }
                 } else {
-                    fragment.setSentenceStart(true);
                     previousFragment = fragment;
                 }
             }
@@ -213,9 +184,11 @@ public class Indexer {
         }
 
         for(Fragment fragment : validFragments) {
-            // all new Fragments are both sentence start and sentence end
-            fragment.setSentenceStart(true);
-            fragment.setSentenceEnd(true);
+        	// all new Fragments are both sentence start and sentence end if they contain at least 1 construction
+            if(fragment.getBlanksBoundaries().size() > 0) {
+                fragment.setSentenceStart(true);
+                fragment.setSentenceEnd(true);
+            }
         }
 
         return validFragments;

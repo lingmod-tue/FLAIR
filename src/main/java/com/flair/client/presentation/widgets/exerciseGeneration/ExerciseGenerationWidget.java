@@ -273,7 +273,7 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
 			
 	        JSUtility.exportToZip(file, fileName);
     	} else {
-            ToastNotification.fire("No exercises could be generated.");
+            ToastNotification.fire("We're sorry, no exercises could be generated. Please try with another document.");
     	}
 	}
 

@@ -31,21 +31,10 @@ public abstract class SimpleExerciseJsonManager extends JsonManager {
         JSONParser jsonParser = new JSONParser();
         JSONObject jsonObject = (JSONObject)jsonParser.parse(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 
-        ArrayList<String> plainTextArray = new ArrayList<>();
-        for(ArrayList<String> plainTextElement : jsonComponents.get(0).getPlainTextPerSentence()) {
-            StringBuilder sb = new StringBuilder();
-            for(String plainText : plainTextElement) {
-                sb.append(plainText);
-            }
-            if(!sb.toString().equals("")) {
-                plainTextArray.add(sb.toString());
-            }
-        }
-
         jsonObject.put("taskDescription", jsonComponents.get(0).getTaskDescription());
 
-        ArrayList<String> constructions = orderBlanks(plainTextArray, jsonComponents.get(0).getConstructions());
-        addQuestionsToJson(jsonObject, plainTextArray, constructions);
+        ArrayList<String> constructions = orderBlanks(jsonComponents.get(0).getPlainTextElements(), jsonComponents.get(0).getConstructions());
+        addQuestionsToJson(jsonObject, jsonComponents.get(0).getPlainTextElements(), constructions);
         addBlanksToJson(jsonObject, constructions, jsonComponents.get(0).getDistractors());
         JSONArray htmlArray = new JSONArray();
         htmlArray.addAll(jsonComponents.get(0).getPureHtmlElements());

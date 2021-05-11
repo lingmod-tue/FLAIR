@@ -535,12 +535,12 @@ public class TaskItem extends LocalizedComposite {
      */
     private void initUI() {
     	possibleTopics = new ArrayList<Pair<String, String>>();
-    	possibleTopics.add(new Pair<String, String>("Comparatives", "Compare"));
+    	possibleTopics.add(new Pair<String, String>("Comparison", "Compare"));
     	possibleTopics.add(new Pair<String, String>("Present simple", "Present"));
     	possibleTopics.add(new Pair<String, String>("Past tenses", "Past"));
     	possibleTopics.add(new Pair<String, String>("Passive", "Passive"));
     	possibleTopics.add(new Pair<String, String>("Conditionals", "'if'"));
-    	possibleTopics.add(new Pair<String, String>("Relative Clauses", "Relatives"));
+    	possibleTopics.add(new Pair<String, String>("Relative Pronouns", "Relatives"));
     	
         constructionComponents = new ConstructionComponentsCollection(this);
         

@@ -107,14 +107,18 @@ public class DistractorManager {
                     parameterConstellations.add(new Pair<>(isSynthetic, isComparative));
 
                     if(exerciseSettings.getDistractors().contains(DistractorProperties.OTHER_FORM)) {
+                    	ArrayList<Pair<Boolean, Boolean>> newParameterConstellations = new ArrayList<>();
                         for(Pair<Boolean, Boolean> parameterConstellation : parameterConstellations) {
-                            parameterConstellations.add(new Pair<>(parameterConstellation.first, !isComparative));
+                            newParameterConstellations.add(new Pair<>(parameterConstellation.first, !isComparative));
                         }
+                        parameterConstellations.addAll(newParameterConstellations);
                     }
                     if(exerciseSettings.getDistractors().contains(DistractorProperties.OTHER_VARIANT)) {
+                    	ArrayList<Pair<Boolean, Boolean>> newParameterConstellations = new ArrayList<>();
                         for(Pair<Boolean, Boolean> parameterConstellation : parameterConstellations) {
-                            parameterConstellations.add(new Pair<>(!isSynthetic, parameterConstellation.second));
+                            newParameterConstellations.add(new Pair<>(!isSynthetic, parameterConstellation.second));
                         }
+                        parameterConstellations.addAll(newParameterConstellations);
                     }
 
                     for(int i = 0; i < parameterConstellations.size(); i++) {

@@ -2,7 +2,7 @@ package com.flair.server.exerciseGeneration.exerciseManagement.jsonManagement;
 
 import org.json.simple.JSONObject;
 
-public class AdvancedFIBJsonManager extends SingleExerciseWithSeparateBlanksJsonManager {
+public class AdvancedFIBJsonManager extends ExerciseWithSeparateBlanksJsonManager {
 
     public AdvancedFIBJsonManager(boolean useBlanks) {
         this.useBlanks = useBlanks;

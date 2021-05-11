@@ -6,9 +6,9 @@ import com.flair.server.exerciseGeneration.exerciseManagement.jsonManagement.Jso
 
 public class JsonComponents {
 
-    public JsonComponents(ArrayList<ArrayList<String>> plainTextPerSentence, ArrayList<String> pureHtmlElements,
+    public JsonComponents(ArrayList<String> plainTextElements, ArrayList<String> pureHtmlElements,
                           ArrayList<String> constructions, JsonManager jsonManager, String contentTypeLibrary, String folderName, ArrayList<ArrayList<String>> distractors, String taskDescription) {
-        this.plainTextPerSentence = plainTextPerSentence;
+    	this.plainTextElements = plainTextElements;
         this.pureHtmlElements = pureHtmlElements;
         this.constructions = constructions;
         this.jsonManager = jsonManager;
@@ -18,7 +18,7 @@ public class JsonComponents {
         this.taskDescription = taskDescription;
     }
 
-    private ArrayList<ArrayList<String>> plainTextPerSentence;
+    private ArrayList<String> plainTextElements;
     private ArrayList<String> pureHtmlElements;
     private ArrayList<String> constructions;
     private JsonManager jsonManager;
@@ -27,7 +27,7 @@ public class JsonComponents {
     private ArrayList<ArrayList<String>> distractors;
     private String taskDescription;
 
-    public ArrayList<ArrayList<String>> getPlainTextPerSentence() { return plainTextPerSentence; }
+    public ArrayList<String> getPlainTextElements() { return plainTextElements; }
     public ArrayList<String> getPureHtmlElements() { return pureHtmlElements; }
     public ArrayList<String> getConstructions() { return constructions; }
     public JsonManager getJsonManager() { return jsonManager; }

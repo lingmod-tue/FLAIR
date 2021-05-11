@@ -122,7 +122,8 @@ public class SentenceManager {
             allElementsContained = true;
             for(int i = 1; i < elementsToMerge.size(); i++) {
                 Elements elementAncestors = elementsToMerge.get(i).parents();
-                if (!elementAncestors.contains(startElementParent)) {
+             // If the parent element is not contained in the ancestors, the dom was modified and we're at the top level
+                if (startElement.parents().contains(startElementParent) && !elementAncestors.contains(startElementParent)) {                    
                     startElementParent = startElementParent.parent();
                     allElementsContained = false;
                 }

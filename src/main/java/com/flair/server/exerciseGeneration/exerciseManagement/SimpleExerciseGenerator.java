@@ -26,6 +26,7 @@ import com.flair.shared.exerciseGeneration.ExerciseSettings;
 import edu.stanford.nlp.util.Pair;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class SimpleExerciseGenerator extends ExerciseGenerator {
 
@@ -55,6 +56,29 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	
 	        NlpManager nlpManager = new NlpManager(parser, generator, settings.getExerciseSettings().getPlainText(), lemmatizer);
 
+	        // Remove overlapping constructions (can occur e.g. with synthetic and analytic comparatives)
+	        HashSet<Construction> constructionsToRemove = new HashSet<>();
+	        for(Construction construction : settings.getExerciseSettings().getConstructions()) {
+	        	for(Construction otherConstruction : settings.getExerciseSettings().getConstructions()) {
+	        		if(construction != otherConstruction && (construction.getConstructionIndices().first >= otherConstruction.getConstructionIndices().first &&
+	        				construction.getConstructionIndices().first < otherConstruction.getConstructionIndices().second ||
+	        				otherConstruction.getConstructionIndices().first >= construction.getConstructionIndices().first &&
+	        						otherConstruction.getConstructionIndices().first < construction.getConstructionIndices().second)) {
+	        					if(construction.getConstructionIndices().second - construction.getConstructionIndices().first > 
+	        							otherConstruction.getConstructionIndices().second - otherConstruction.getConstructionIndices().first) {
+	        						constructionsToRemove.add(otherConstruction);
+	        					} else {
+	        						constructionsToRemove.add(construction);
+	        					}
+	        		}
+
+	        	}
+	        }
+	        
+	        for(Construction construction : constructionsToRemove) {
+	        	settings.getExerciseSettings().getConstructions().remove(construction);
+	        }
+	        
 	        ClozeManager clozeManager = new ClozeManager();
 	        clozeManager.prepareBlanks(settings.getExerciseSettings(), nlpManager);
 	        DistractorManager distractorManager = new DistractorManager(); // we need the original indices, so we need to generate distractors for all possible blanks
@@ -73,9 +97,9 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        ArrayList<String> sentenceHtml = sentenceManager.extractSentencesFromDom(matchResult.getSentenceBoundaryElements());
 	        HtmlSplitter splitter = new HtmlSplitter();
 	
-	        ArrayList<ArrayList<String>> plainTextPerSentence = new ArrayList<>();
+	        ArrayList<String> orderedPlainTextElements = new ArrayList<>();
 	        ArrayList<String> pureHtmlElements = splitter.preparePureHtmlElements(doc.toString(), sentenceHtml,
-	                matchResult.getPlainTextElements(), plainTextPerSentence);
+	        		matchResult.getPlainTextElements(), orderedPlainTextElements);
 	
 	        if (settings.isEscapeAsterisksInHtml()) {
 	            ((SimpleExerciseJsonManager)settings.getJsonManager()).escapeAsterisks(pureHtmlElements);
@@ -84,7 +108,7 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        ArrayList<String> usedConstructions = updateConstructions(settings.getExerciseSettings(), matchResult.getConstructions());
 	        String taskDescription = InstructionsManager.componseTaskDescription(settings.getExerciseSettings(), nlpManager);	       
 	
-	        return new JsonComponents(plainTextPerSentence, pureHtmlElements, usedConstructions,
+	        return new JsonComponents(orderedPlainTextElements, pureHtmlElements, usedConstructions,
 	                settings.getJsonManager(), settings.getContentTypeLibrary(), settings.getResourceFolder(), assembleDistractors(settings.getExerciseSettings()), taskDescription);
     	} else {
     		return null;

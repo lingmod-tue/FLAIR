@@ -4,6 +4,8 @@ package com.flair.client.presentation.widgets;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.AbsolutePanel;
@@ -61,6 +63,20 @@ public class NumberSpinner extends Composite {
                 	setValue(getValue() - RATE);
             }
         });
+    	
+    	boxInteger.addValueChangeHandler(new ValueChangeHandler<Integer>() {
+
+			@Override
+			public void onValueChange(ValueChangeEvent<Integer> event) {
+				if(event.getValue() < min) {
+					boxInteger.setValue(min);
+				} else if(event.getValue() > max) {
+					boxInteger.setValue(max);
+				}
+				
+			}
+    		
+    	});
     }
     
     private int RATE = 1;
