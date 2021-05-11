@@ -12,6 +12,8 @@ import com.flair.shared.exerciseGeneration.DistractorProperties;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
 import com.flair.shared.exerciseGeneration.Pair;
 
+import edu.stanford.nlp.ling.CoreLabel;
+
 public class DistractorManager {
 
 	/**
@@ -134,29 +136,39 @@ public class DistractorManager {
                     }
                 } else if(name.startsWith("QUEST") || name.startsWith("STMT")){
                     boolean is3Sg = construction.getConstruction().toString().endsWith("_3");
-                    boolean isInterrogative = construction.getConstruction().toString().startsWith("QUEST");
-                    boolean isNegated = construction.getConstruction().toString().contains("_NEG_");
-                    Pair<String, String> lemma =
-                            nlpManager.getVerbLemma(construction.getConstructionIndices(), isInterrogative);
-
-                    if(lemma != null) {
+                    CoreLabel mainVerb = nlpManager.getMainVerb(construction.getConstructionIndices());
+                    
+                    if(mainVerb != null) {
 	                    ArrayList<Boolean> parameterConstellations = new ArrayList<>();
 	                    parameterConstellations.add(is3Sg);
 	
-	                    if(exerciseSettings.getDistractors().contains(DistractorProperties.INCORRECT_SUFFIX)) {
+	                    if(exerciseSettings.getDistractors().contains(DistractorProperties.WRONG_SUFFIX_USE)) {
 	                        parameterConstellations.add(!is3Sg);
 	                    }
-	
+	                    
+	                    String subject = nlpManager.getSubject(mainVerb.beginPosition(), construction.getConstructionIndices());
+	                    if(subject == null) {
+	                    	subject = is3Sg ? "he" : "they";
+	                    }
+	                    	
 	                    for(int i = 0; i < parameterConstellations.size(); i++) {
 	                        boolean parameterConstellation = parameterConstellations.get(i);
 	                        if(i != 0) {    // don't calculate the correct form, we already have it
-	                            options.add(nlpManager.generateCorrectForm(new TenseSettings(lemma.first, isInterrogative,
-	                                    isNegated, parameterConstellation, lemma.second, "present",
-	                                    false, false)));
+	                        	String option = nlpManager.generateCorrectForm(new TenseSettings(mainVerb.lemma(), false,
+	                                    false, parameterConstellation, subject, "present",
+	                                    false, false));
+	                        	option = exerciseSettings.getPlainText().substring(construction.getConstructionIndices().first, mainVerb.beginPosition()) +
+	                        			option + exerciseSettings.getPlainText().substring(mainVerb.endPosition(), construction.getConstructionIndices().second);	                        			
+	                            options.add(option);
 	                        }
 	                        if(exerciseSettings.getDistractors().contains(DistractorProperties.INCORRECT_FORMS)) {
-	                            incorrectFormOptions.addAll(nlpManager.generateIncorrectForms(new TenseSettings(lemma.first, isInterrogative,
-	                                    isNegated, parameterConstellation, lemma.second, "present",false, false)));
+	                        	HashSet<String> o = nlpManager.generateIncorrectForms(new TenseSettings(mainVerb.lemma(), false,
+	                                    false, parameterConstellation, subject, "present",false, false));
+	                            for(String option : o) {
+	                            	option = exerciseSettings.getPlainText().substring(construction.getConstructionIndices().first, mainVerb.beginPosition()) +
+		                        			option + exerciseSettings.getPlainText().substring(mainVerb.endPosition(), construction.getConstructionIndices().second);	                        			
+	                            	incorrectFormOptions.add(option);
+	                            }	                        	
 	                        }
 	                    }
                     } 

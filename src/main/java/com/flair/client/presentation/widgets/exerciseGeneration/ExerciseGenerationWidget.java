@@ -26,7 +26,6 @@ import gwt.material.design.client.ui.MaterialCheckBox;
 import gwt.material.design.client.ui.MaterialCollapsible;
 import gwt.material.design.client.ui.MaterialPreLoader;
 import gwt.material.design.client.ui.MaterialTitle;
-import gwt.material.design.client.ui.MaterialToast;
 import gwt.material.design.client.ui.html.Option;
 
 public class ExerciseGenerationWidget extends LocalizedComposite implements ExerciseGenerationService {
@@ -162,7 +161,6 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     public boolean hasValidTasks() {
     	for(Widget task : wdgtTasks.getChildrenList()) {
             if(task instanceof TaskItem && ((TaskItem)task).icoOk.isVisible()) {
-            	MaterialToast.fireToast("valid");
             	return true;
             }
     	}

@@ -8,6 +8,5 @@ public enum DistractorProperties {
     INCORRECT_FORMS,
     WRONG_CONDITIONAL,
     WRONG_CLAUSE,
-    WRONG_SUFFIX_USE,
-    INCORRECT_SUFFIX
+    WRONG_SUFFIX_USE
 }

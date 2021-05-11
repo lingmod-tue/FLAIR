@@ -485,7 +485,7 @@
 					<m:MaterialRow padding="0" margin="0">
 						<m:MaterialCheckBox
 							ui:field="chkDistractorsWrongSuffixUse" value="true"
-							text="Form with/without '-s'" />
+							text="Form for wrong person" />
 					</m:MaterialRow>
 					<m:MaterialRow padding="0" margin="0">
 						<m:MaterialCheckBox

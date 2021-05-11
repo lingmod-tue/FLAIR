@@ -295,17 +295,26 @@ public class NlpManager {
         ArrayList<String> nonVerbTokens = new ArrayList<>();
 
         ArrayList<Pair<String, String>> constructionParts = new ArrayList<>();
+        
+        boolean isPassive = false;
+        for (CoreLabel token : tokens) {
+	        if(token.lemma().equals("be")) {
+	        	isPassive = true;
+	        }
+        }
+        
+        
         for (CoreLabel token : tokens) {
             String pos = token.tag();
             String lemma = null;
             boolean isModal = false;
 
-            if(pos.equals("VBN")) {
-                // If we have a participle, we lemmatize it and remove all other verbs except for to-infinitives
+            if(pos.equals("VBN") && !isPassive) {
+                // If we have a participle and it's not part of a passive construction, we lemmatize it and remove all other verbs except for to-infinitives
                 lemma = token.lemma();
                 mainLemma = token.lemma();
                 constructionParts = removeTokensStartingWith(constructionParts, "VB");
-            } else if(pos.startsWith("VB") && !pos.equals("VB")) {
+            } else if(pos.matches("VB[DPZ]")) {
                 // If we don't have a participle, we take the last found VB
                 // Since the participle comes after conjugated verb forms, this will just be overwritten if we find a participle after all
                 lemma = token.lemma();
@@ -320,7 +329,7 @@ public class NlpManager {
                 lemma = token.lemma();
                 mainLemma = token.lemma();
             }
-
+           
             if(!isModal || includeModal) {
 	            if(lemma == null) {
 	                // if it wasn't any token we want to lemmatize, we take the word form instead
@@ -701,27 +710,13 @@ public class NlpManager {
      * @return                      The lemma of the main verb and the subject if it is to be determined, otherwise <c>null</c>
      */
     public Pair<String, String> getVerbLemma(Pair<Integer, Integer> constructionIndices, boolean getSubject){
-        SentenceAnnotations sent = getRelevantSentence(constructionIndices);
+    	SentenceAnnotations sent = getRelevantSentence(constructionIndices);
         if(sent == null) {
             return null;
         }
-
-        ArrayList<CoreLabel> tokens = getRelevantTokens(sent, constructionIndices);
-        String previousPos = getPreviousPos(sent, tokens);
-
-        CoreLabel mainVerb = null;
-        for (CoreLabel token : tokens) {
-            String pos = token.tag();
-
-            // The last verb in a verb cluster is the main verb, so we just lemmatize that
-            if(pos.equals("VBN") || pos.equals("VBZ") || pos.startsWith("VB") && !pos.equals("VB") || pos.equals("MD") ||
-                    pos.equals("VB") && !previousPos.equals("TO")) {
-                mainVerb = token;
-            }
-
-            previousPos = token.tag();
-        }
-
+    	
+    	CoreLabel mainVerb = getMainVerb(constructionIndices, sent);
+        
         if(mainVerb == null) {
         	return null;
         }
@@ -729,6 +724,55 @@ public class NlpManager {
             return new Pair<>(mainVerb.lemma(), getSubject(mainVerb.beginPosition(), sent.getDependencyGraph()));
         }
         return new Pair<>(mainVerb.lemma(), null);
+    }
+    
+    /**
+     * Determines the main verb of a verb cluster.
+     * @param constructionIndices	The start and end indices of the verb cluster
+     * @return						The main verb
+     */
+    public CoreLabel getMainVerb(Pair<Integer, Integer> constructionIndices, SentenceAnnotations sent) {
+        ArrayList<CoreLabel> tokens = getRelevantTokens(sent, constructionIndices);
+        String previousPos = getPreviousPos(sent, tokens);
+
+        CoreLabel mainVerb = null;
+        CoreLabel previousMainVerbCandidate = null;
+        boolean isPassive = false;
+        for (CoreLabel token : tokens) {
+            String pos = token.tag();
+            if(token.lemma().equals("be")) {
+            	isPassive = true;
+            }
+
+            // The last verb in a verb cluster is the main verb, so we just lemmatize that
+            if(pos.matches("VB[NZDP]") || pos.equals("MD") || pos.equals("VB") && !previousPos.equals("TO")) {
+                previousMainVerbCandidate = mainVerb;
+            	mainVerb = token;
+            }
+
+            previousPos = token.tag();
+        }
+        
+        // We do not want the passive participle
+        if(isPassive && previousPos.equals("VBN")) {
+        	mainVerb = previousMainVerbCandidate;
+        }
+
+        return mainVerb;
+    }
+    
+    /**
+     * Determines the main verb of a verb cluster.
+     * @param constructionIndices	The start and end indices of the verb cluster
+     * @return						The main verb
+     */
+    public CoreLabel getMainVerb(Pair<Integer, Integer> constructionIndices) {
+    	SentenceAnnotations sent = getRelevantSentence(constructionIndices);
+        if(sent == null) {
+            return null;
+        }
+        
+    	return getMainVerb(constructionIndices, sent);
     }
 
     /**
@@ -740,6 +784,40 @@ public class NlpManager {
     private String getSubject(int mainVerbStartIndex,
                               Collection<TypedDependency> dependencyGraph) {
         String subject = null;
+        IndexedWord copulaGovernor = null;
+        for(TypedDependency dependency : dependencyGraph) {
+            if(dependency.reln().getShortName().startsWith("nsubj") && dependency.gov().beginPosition() == mainVerbStartIndex) {
+                subject = dependency.dep().word();
+            } else if(dependency.reln().getShortName().equals("cop") && dependency.dep().beginPosition() == mainVerbStartIndex) {
+                copulaGovernor = dependency.gov();
+            }
+        }
+
+        // If the main verb is a copula, the subject is the subject of the governing object
+        if(subject == null && copulaGovernor != null) {
+            for(TypedDependency dependency : dependencyGraph) {
+                if(dependency.reln().getShortName().startsWith("nsubj") && dependency.gov().equals(copulaGovernor)) {
+                    subject = dependency.dep().word();
+                }
+            }
+        }
+
+        return subject;
+    }
+    
+    /**
+     * Determines the subject of a main verb.
+     * @param mainVerbStartIndex    The start index of the main verb
+     * @return                      The subject
+     */
+    public String getSubject(int mainVerbStartIndex, Pair<Integer, Integer> constructionIndices) {
+    	SentenceAnnotations sent = getRelevantSentence(constructionIndices);
+        if(sent == null) {
+            return null;
+        }
+        
+        String subject = null;
+        Collection<TypedDependency> dependencyGraph = sent.getDependencyGraph();
         IndexedWord copulaGovernor = null;
         for(TypedDependency dependency : dependencyGraph) {
             if(dependency.reln().getShortName().startsWith("nsubj") && dependency.gov().beginPosition() == mainVerbStartIndex) {

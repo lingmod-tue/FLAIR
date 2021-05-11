@@ -57,7 +57,7 @@ public class ExGenTask implements AsyncTask<ExGenTask.Result> {
 
 		long endTime = System.currentTimeMillis();
 		if (!error)
-			ServerLogger.get().info("Exercise generated in " + (endTime - startTime) + " ms");
+			ServerLogger.get().info("Exercise " + file.first + " generated in " + (endTime - startTime) + " ms");
 
 		return new Result(file.second, file.first);
 	}

@@ -48,7 +48,9 @@ public class ClozeManager {
                     	if (exerciseSettings.getContentType().equals("FiB")) {
                             ArrayList<String> brackets = new ArrayList<>();
                             if(addBracketsToConditionals(exerciseSettings, newConstruction.first, newConstruction.second, brackets, nlpManager)) {
-                            	newConstruction.first.setBracketsText("(" + String.join(", ", brackets) + ")");
+                            	if(brackets.size() > 0) {
+                            		newConstruction.first.setBracketsText("(" + String.join(", ", brackets) + ")");
+                            	}
                             } else {
                             	newConstruction = null;
                             }                               
@@ -83,7 +85,9 @@ public class ClozeManager {
                         String form = construction.getConstruction().toString().contains("_COMP_") ? "comparative" : "superlative";
                         brackets.add(form);
                     }
-                    construction.setBracketsText("(" + String.join(", ", brackets) + ")");
+                    if(brackets.size() > 0) {
+                    	construction.setBracketsText("(" + String.join(", ", brackets) + ")");
+                    }
                 }
             } else if(construction.getConstruction().toString().startsWith("PASSIVE") ||
                     construction.getConstruction().toString().startsWith("ACTIVE")) {
@@ -112,7 +116,9 @@ public class ClozeManager {
                         	}
                         }
                     }
-                    construction.setBracketsText("(" + String.join(", ", brackets) + ")");
+                    if(brackets.size() > 0) {
+                    	construction.setBracketsText("(" + String.join(", ", brackets) + ")");
+                    }
                 } else if(exerciseSettings.getContentType().endsWith("Drag") &&
                         exerciseSettings.getBrackets().contains(BracketsProperties.VERB_SPLITTING)) {
                     ArrayList<Pair<Integer, Integer>> parts = nlpManager.splitParticiple(construction.getConstructionIndices());
@@ -132,14 +138,32 @@ public class ClozeManager {
                 LemmatizedVerbCluster lemmatizedVerb = nlpManager.getLemmatizedVerbConstruction(construction.getConstructionIndices(), true);
                 if(exerciseSettings.getBrackets().contains(BracketsProperties.LEMMA)) {
                     if(lemmatizedVerb != null) {
-                        brackets.add(lemmatizedVerb.getLemmatizedCluster());
+                    	String lemmaCluster = lemmatizedVerb.getLemmatizedCluster();
+                    	if(construction.getConstruction().toString().contains("_NEG_")) {
+                    		// remove simple negation if contained in lemmas
+                    		lemmaCluster = lemmaCluster.replaceAll(" n[o']t ", " ");
+                    		if(lemmaCluster.startsWith("not ")) {
+                    			lemmaCluster = lemmaCluster.substring(3);
+                    		}
+                    		if(lemmaCluster.endsWith(" not")) {
+                    			lemmaCluster = lemmaCluster.substring(0, lemmaCluster.length() - 4);
+                    		} else if(lemmaCluster.endsWith("n't")) {
+                    			lemmaCluster = lemmaCluster.substring(0, lemmaCluster.length() - 3);
+                    		}
+                    	}
+                    	if(!lemmaCluster.trim().equals("")) {
+                    		brackets.add(lemmaCluster);
+                    	}
                     } else {
                         constructionsToRemove.add(construction);
                         break;
                     }
                 } else {
                 	if(lemmatizedVerb != null) {
-                		brackets.add(String.join(" ", lemmatizedVerb.getNonLemmatizedComponents()));
+                		String lemmaCluster = String.join(" ", lemmatizedVerb.getNonLemmatizedComponents());
+                		if(!lemmaCluster.trim().equals("")) {
+                			brackets.add(lemmaCluster);
+                		}
                 	}
                 }
                 if(construction.getConstruction().toString().contains("QUEST")) {
@@ -154,7 +178,9 @@ public class ClozeManager {
                             construction.getConstruction().toString().startsWith("PRESPERF") ? "present perfect" : "past perfect";
                     brackets.add(tense);
                 }
-                construction.setBracketsText("(" + String.join(", ", brackets) + ")");
+                if(brackets.size() > 0) {
+                	construction.setBracketsText("(" + String.join(", ", brackets) + ")");
+                }
             }
         }
 

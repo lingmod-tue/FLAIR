@@ -262,7 +262,7 @@ public class TaskItem extends LocalizedComposite {
         distractorOptions.add(new Pair<MaterialCheckBox, DistractorProperties>(chkDistractorsWrongConditional, DistractorProperties.WRONG_CONDITIONAL));
         distractorOptions.add(new Pair<MaterialCheckBox, DistractorProperties>(chkDistractorsWrongClause, DistractorProperties.WRONG_CLAUSE));
         distractorOptions.add(new Pair<MaterialCheckBox, DistractorProperties>(chkDistractorsWrongSuffixUse, DistractorProperties.WRONG_SUFFIX_USE));
-        distractorOptions.add(new Pair<MaterialCheckBox, DistractorProperties>(chkDistractorsWrongSuffix, DistractorProperties.INCORRECT_SUFFIX));
+        distractorOptions.add(new Pair<MaterialCheckBox, DistractorProperties>(chkDistractorsWrongSuffix, DistractorProperties.INCORRECT_FORMS));
                 
         bracketsOptions.add(new Pair<MaterialCheckBox, BracketsProperties>(chkBracketsLemma, BracketsProperties.LEMMA));
         bracketsOptions.add(new Pair<MaterialCheckBox, BracketsProperties>(chkBracketsPos, BracketsProperties.POS));
