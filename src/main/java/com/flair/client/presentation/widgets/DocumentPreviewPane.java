@@ -475,8 +475,10 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
                     lblDocNumSentencesUI.setVisible(false);
                     lblDocNumWordsUI.setVisible(false);
                     icoHelpTextUI.setVisible(false);
-                    wdgtExerciseGeneration.setVisible(false);
-                    lblSelectExGenDoc.setVisible(true);
+                    
+                    wdgtExerciseGeneration.setVisible(wdgtExerciseGeneration.hasValidTasks());
+                    lblSelectExGenDoc.setVisible(!wdgtExerciseGeneration.hasValidTasks());
+                    
 
                     // update the rest
                     lblDocTitleUI.setText(unrankable.getTitle());

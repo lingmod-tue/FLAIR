@@ -26,6 +26,7 @@ import gwt.material.design.client.ui.MaterialCheckBox;
 import gwt.material.design.client.ui.MaterialCollapsible;
 import gwt.material.design.client.ui.MaterialPreLoader;
 import gwt.material.design.client.ui.MaterialTitle;
+import gwt.material.design.client.ui.MaterialToast;
 import gwt.material.design.client.ui.html.Option;
 
 public class ExerciseGenerationWidget extends LocalizedComposite implements ExerciseGenerationService {
@@ -152,6 +153,21 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
 				((TaskItem)task).initializeRelevantConstructions();
 			}
 		}*/
+    }
+    
+    /**
+     * Determines if there is at least 1 valid task.
+     * @return	<c>true</c> if there is at least 1 valid task; otherwise <c>false</c>
+     */
+    public boolean hasValidTasks() {
+    	for(Widget task : wdgtTasks.getChildrenList()) {
+            if(task instanceof TaskItem && ((TaskItem)task).icoOk.isVisible()) {
+            	MaterialToast.fireToast("valid");
+            	return true;
+            }
+    	}
+    	
+    	return false;
     }
 
     

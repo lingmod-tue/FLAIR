@@ -846,13 +846,13 @@ public class TaskItem extends LocalizedComposite {
         		icoOk.setVisible(true);
         		icoInvalid.setVisible(false);
     			if(exerciseType.equals("FiB") || exerciseType.equals("Select")) {
-            		lblNumberExercises.setText(numberOfExercises + " blanks can be generated for the current settings.");
+            		lblNumberExercises.setText("A maximum of " + numberOfExercises + " blanks can be generated for the current settings.");
     			} else if(exerciseType.equals("Mark")) {
-            		lblNumberExercises.setText(numberOfExercises + " target words can be generated for the current settings.");
+            		lblNumberExercises.setText("A maximum of " + numberOfExercises + " target words can be generated for the current settings.");
     			} else if(exerciseType.equals("Drag")) {
     				if((topic.equals("Relatives") || topic.equals("'if'")) && rbtPerSentence.getValue() || topic.equals("Passive")) {
     					// 1 exercise per sentence
-                		lblNumberExercises.setText(numberOfExercises + " exercises can be generated for the current settings.");
+                		lblNumberExercises.setText("A maximum of " + numberOfExercises + " exercises can be generated for the current settings.");
     				} else {
     					if(numberOfExercises < 2) {
     						// We need at least 2 target words for drag & drop to make sense
@@ -861,7 +861,7 @@ public class TaskItem extends LocalizedComposite {
     		        		icoOk.setVisible(false);
     		        		icoInvalid.setVisible(true);
     					} else {
-    						lblNumberExercises.setText(numberOfExercises + " target words can be generated for the current settings.");
+    						lblNumberExercises.setText("A maximum of " + numberOfExercises + " target words can be generated for the current settings.");
     					}
     				}
     			}
