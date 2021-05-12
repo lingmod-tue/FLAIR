@@ -37,6 +37,7 @@ import gwt.material.design.client.ui.MaterialLabel;
 import gwt.material.design.client.ui.MaterialLink;
 import gwt.material.design.client.ui.MaterialRadioButton;
 import gwt.material.design.client.ui.MaterialRow;
+import gwt.material.design.client.ui.MaterialToast;
 import gwt.material.design.client.ui.html.Option;
 
 public class TaskItem extends LocalizedComposite {
@@ -486,7 +487,7 @@ public class TaskItem extends LocalizedComposite {
     		setNumberExercisesText(calculateNumberOfExercises());
     	}
     	chkBracketsSentenceType.setVisible(getExerciseType().equals("FiB") && checkAtLeast2Checked(new MaterialCheckBox[] {chkScopeActive, chkScopePassive}));
-		chkBracketsActiveSentence.setVisible(!chkScopeActive.isVisible() || !chkScopeActive.getValue());
+		chkBracketsActiveSentence.setVisible(grpSentTypes.isVisible() && (!chkScopeActive.isVisible() || !chkScopeActive.getValue()));
     }
     
     /**

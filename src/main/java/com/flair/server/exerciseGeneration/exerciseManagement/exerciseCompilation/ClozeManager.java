@@ -35,13 +35,13 @@ public class ClozeManager {
                     }
                     
                     ArrayList<Pair<Construction, Boolean>> newConstructions = new ArrayList<>();
-                    if (exerciseSettings.getBrackets().contains(BracketsProperties.MAIN_CLAUSE) || r == 1) {
+                    if (clauses.first != null && exerciseSettings.getBrackets().contains(BracketsProperties.MAIN_CLAUSE) || r == 1) {
                         Pair<Integer, Integer> mainClauseConstructionIndices = nlpManager.extractVerbCluster(clauses.first);
                         if(mainClauseConstructionIndices != null) {
                             newConstructions.add(new Pair<>(new Construction(construction.getConstruction(), mainClauseConstructionIndices), true));
                         }
                     }
-                    if (exerciseSettings.getBrackets().contains(BracketsProperties.IF_CLAUSE) || r == 2) {
+                    if (clauses.second != null && exerciseSettings.getBrackets().contains(BracketsProperties.IF_CLAUSE) || r == 2) {
                         Pair<Integer, Integer> ifClauseConstructionIndices = nlpManager.extractVerbCluster(clauses.second);
                         if(ifClauseConstructionIndices != null) {
                             newConstructions.add(new Pair<>(new Construction(construction.getConstruction(), ifClauseConstructionIndices), false));

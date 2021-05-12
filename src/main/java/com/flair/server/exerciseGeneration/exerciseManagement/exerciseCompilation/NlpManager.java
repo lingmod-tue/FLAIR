@@ -121,7 +121,8 @@ public class NlpManager {
         }
 
         // if clause: SBAR node with first direct child IN with only direct child if
-        TregexPattern pattern = TregexPattern.compile("SBAR <, (IN <: /[Ii]f/)");
+        TregexPattern pattern = TregexPattern.compile("SBAR <, IN");
+        sent.getConstituentTree().pennPrint();
         List<Tree> leaves = sent.getConstituentTree().getLeaves();
 
         TregexMatcher matcher = pattern.matcher(sent.getConstituentTree());
@@ -162,6 +163,8 @@ public class NlpManager {
                     }
                 }
             }
+            // We couldn't identify the main clause, but at least the if-clause can be returned
+            return new Pair<>(null, new Pair<>(ifClauseStartIndex, ifClauseEndIndex));
         }
 
         return null;
