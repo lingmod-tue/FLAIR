@@ -61,7 +61,7 @@ public class TestArkref extends TestCase {
 
 
 	public void testSpecialSymbols() throws IOException {
-		Document d = Document.loadFiles("data/specialsymbols");
+		Document d = Document.loadFiles(java.nio.file.Paths.get("data", "specialsymbols").toString());
 		_SimplePipeline.go(d);
 
 		assertTrue(d.mentions().toString(), d.mentions().size() == 2);
@@ -78,7 +78,7 @@ public class TestArkref extends TestCase {
 		//The bank ruined it.	(s6)
 		//James believed he could win. (s7)
 
-		Document d = Document.loadFiles("data/reflexives");
+		Document d = Document.loadFiles(java.nio.file.Paths.get("data", "reflexives").toString());
 		_SimplePipeline.go(d);
 
 		assertLink(1, 2, d); //John, himself (s1)
@@ -115,7 +115,7 @@ public class TestArkref extends TestCase {
 		//I learned about the painter John Smith, the subject of the exposition.
 		//The shared Lunar Precursor Robotic Program was new.
 
-		Document d = Document.loadFiles("data/roleAppositivesTest");
+		Document d = Document.loadFiles(java.nio.file.Paths.get("data", "roleAppositivesTest").toString());
 		_SimplePipeline.go(d);
 
 		assertTrue(d.mentions().toString(), d.mentions().size() == 9);
@@ -138,12 +138,12 @@ public class TestArkref extends TestCase {
 	}
 
 	public void testFirstPerson() throws IOException {
-		Document d = Document.loadFiles("data/roleAppositivesTest");
+		Document d = Document.loadFiles(java.nio.file.Paths.get("data", "roleAppositivesTest").toString());
 		_SimplePipeline.go(d);
 		assertSurface(d, 4, "I");
 		assertSingleton(d, 4);
 
-		d = Document.loadFiles("data/firstPerson1");
+		d = Document.loadFiles(java.nio.file.Paths.get("data", "firstPerson1").toString());
 		_SimplePipeline.go(d);
 		assertSurface(d, 1, "I");
 		assertSurface(d, 4, "I");
@@ -161,7 +161,7 @@ public class TestArkref extends TestCase {
 		// If we make it an option, should make tests to ensure the flip happens.
 
 		Document d;
-		d = Document.loadFiles("data/defaultMale1");
+		d = Document.loadFiles(java.nio.file.Paths.get("data", "defaultMale1").toString());
 		_SimplePipeline.go(d);
 		assertSurface(d, 1, "Sally");
 		assertEquals(Types.Gender.Female, Types.gender(mention(d, 1)));
@@ -170,7 +170,7 @@ public class TestArkref extends TestCase {
 		assertSurface(d, 3, "He");
 		assertLink(d, 2, 3);
 
-		d = Document.loadFiles("data/defaultMale2");
+		d = Document.loadFiles(java.nio.file.Paths.get("data", "defaultMale2").toString());
 		_SimplePipeline.go(d);
 		assertSurface(d, 1, "Bob");
 		assertEquals(Types.Gender.Male, Types.gender(mention(d, 1)));
@@ -179,7 +179,7 @@ public class TestArkref extends TestCase {
 		assertSurface(d, 3, "He");
 		assertLink(d, 1, 3);
 
-		d = Document.loadFiles("data/defaultMale3");
+		d = Document.loadFiles(java.nio.file.Paths.get("data", "defaultMale3").toString());
 		_SimplePipeline.go(d);
 		assertSurface(d, 1, "The banker");
 		assertEquals(null, Types.gender(mention(d, 1)));
@@ -194,7 +194,7 @@ public class TestArkref extends TestCase {
 		//example from H&K 2009
 		//Walmart says Gitano, its top-selling brand, is underselling.
 
-		Document d = Document.loadFiles("data/IWithinI");
+		Document d = Document.loadFiles(java.nio.file.Paths.get("data", "IWithinI").toString());
 		_SimplePipeline.go(d);
 
 		assertSurface(d, 1, "Walmart");
@@ -204,7 +204,7 @@ public class TestArkref extends TestCase {
 
 		assertLink(3, 2, d);
 
-		d = Document.loadFiles("data/nativeAmericans");
+		d = Document.loadFiles(java.nio.file.Paths.get("data", "nativeAmericans").toString());
 		_SimplePipeline.go(d);
 
 
@@ -220,7 +220,7 @@ public class TestArkref extends TestCase {
 
 	public void testPathLength() throws IOException {
 		//John knew that Bob was weird, but he still invited him to the party.
-		Document d = Document.loadFiles("data/pathLengthTest");
+		Document d = Document.loadFiles(java.nio.file.Paths.get("data", "pathLengthTest").toString());
 		_SimplePipeline.go(d);
 
 		assertSurface(d, 1, "John");
@@ -234,7 +234,7 @@ public class TestArkref extends TestCase {
 
 	public void testLargerNodeComesFirstAsMention() throws IOException {
 		//Nintendo of America announced its new console.
-		Document d = Document.loadFiles("data/pathLengthTest2");
+		Document d = Document.loadFiles(java.nio.file.Paths.get("data", "pathLengthTest2").toString());
 		_SimplePipeline.go(d);
 
 		assertSurface(d, 1, "Nintendo of America");
@@ -248,7 +248,7 @@ public class TestArkref extends TestCase {
 
 	public void testPathLength2() throws IOException {
 		//Nintendo of America announced its new console.
-		Document d = Document.loadFiles("data/pathLengthTest2");
+		Document d = Document.loadFiles(java.nio.file.Paths.get("data", "pathLengthTest2").toString());
 		_SimplePipeline.go(d);
 
 		Mention m1 = d.mentions().get(0); //Nintendo of America
@@ -272,7 +272,7 @@ public class TestArkref extends TestCase {
 		//It was a grocery store.
 		//He bought an item.
 
-		Document d = Document.loadFiles("data/test1");
+		Document d = Document.loadFiles(java.nio.file.Paths.get("data", "test1").toString());
 		_SimplePipeline.go(d);
 
 		assertLink(5, 4, d); //store and it
@@ -281,7 +281,7 @@ public class TestArkref extends TestCase {
 		assertNoLink(7, 6, d); //he and store
 		assertNoLink(1, 2, d); //john and store
 
-		d = Document.loadFiles("data/personNounTest");
+		d = Document.loadFiles(java.nio.file.Paths.get("data", "personNounTest").toString());
 		_SimplePipeline.go(d);
 
 		//The astronaut went to the space with Howard.
@@ -300,7 +300,7 @@ public class TestArkref extends TestCase {
 		//example from H&K 2009
 		//Walmart says Gitano, its top-selling brand, is underselling.
 
-		Document d = Document.loadFiles("data/IWithinI");
+		Document d = Document.loadFiles(java.nio.file.Paths.get("data", "IWithinI").toString());
 		_SimplePipeline.go(d);
 
 		assertSurface(d, 1, "Walmart");
@@ -321,7 +321,7 @@ public class TestArkref extends TestCase {
 		//Lincoln was being president.
 		//Lincoln will be president.
 
-		Document d = Document.loadFiles("data/predNomTest");
+		Document d = Document.loadFiles(java.nio.file.Paths.get("data", "predNomTest").toString());
 		_SimplePipeline.go(d);
 
 		Mention m1;
@@ -345,7 +345,7 @@ public class TestArkref extends TestCase {
 		//He and Fred went to the store.
 		//They also went to the library.
 
-		Document d = Document.loadFiles("data/conjunctionsTest");
+		Document d = Document.loadFiles(java.nio.file.Paths.get("data", "conjunctionsTest").toString());
 		_SimplePipeline.go(d);
 
 		Mention m1 = d.mentions().get(0); //He and Fred
@@ -363,7 +363,7 @@ public class TestArkref extends TestCase {
 		//during the last glacial period. They preceded the Anishinaabe, the Dakota, 
 		//and other Native American inhabitants.
 
-		Document d = Document.loadFiles("data/they1");
+		Document d = Document.loadFiles(java.nio.file.Paths.get("data", "they1").toString());
 		_SimplePipeline.go(d);
 		assertSurface(d, 1, "The earliest known settlers");
 		assertSurface(d, 6, "They");
@@ -374,7 +374,7 @@ public class TestArkref extends TestCase {
 		//The team practiced very hard, and later on they won the game.
 		//The herd of animals grazed on the land, and then they moved on.
 
-		d = Document.loadFiles("data/they2");
+		d = Document.loadFiles(java.nio.file.Paths.get("data", "they2").toString());
 		_SimplePipeline.go(d);
 		System.out.println("!!!!   Disabled data/they2 test, fails since we disabled the org check in Types.number()  !!!!");
 		// assertLink(d,1,2);
@@ -395,7 +395,7 @@ public class TestArkref extends TestCase {
 		Document d;
 		Tree t;
 
-		d = Document.loadFiles("data/conjunctionsTest");
+		d = Document.loadFiles(java.nio.file.Paths.get("data", "conjunctionsTest").toString());
 		t = d.findNodeThatCoversSpan(0, 0, 0);
 		assertEquals("He", t.yield().toString());
 		t = d.findNodeThatCoversSpan(0, 0, 2);
@@ -409,7 +409,7 @@ public class TestArkref extends TestCase {
 		// [0 Jerusalem] [1 7-15] [2 -LRB-] [3 AFP] [4 -RRB-] [5 -] [6 A] [7 high] [8 level] [9 Israeli] [10 army] [11 official] [12 has] [13 said] [14 today] [15 Saturday] [16 that] [17 Israel] [18 believes] [19 Iran] [20 is] [21 set] [22 to] [23 begin] [24 acquiring] [25 nuclear] [26 capability] [27 for] [28 military] [29 purposes] [30 from] [31 2005] [32 and] [33 will] [34 be] [35 in] [36 a] [37 position] [38 to] [39 equip] [40 missiles] [41 with] [42 nuclear] [43 warheads] [44 ,] [45 capable]
 		// [46 of] [47 reaching] [48 Israel] [49 ,] [50 within] [51 ten] [52 years] [53 .] 
 
-		d = Document.loadFiles("data/20000715_AFP_ARB_0072_ENG");
+		d = Document.loadFiles(java.nio.file.Paths.get("data", "20000715_AFP_ARB_0072_ENG").toString());
 		t = d.findNodeThatCoversSpan(0, 0, 0);
 		assertEquals("Jerusalem", t.yield().toString());
 		t = d.findNodeThatCoversSpan(0, 48, 48);
@@ -424,7 +424,7 @@ public class TestArkref extends TestCase {
 		//example from H&K 2009
 		//Walmart says Gitano, its top-selling brand, is underselling.
 
-		Document d = Document.loadFiles("data/IWithinI");
+		Document d = Document.loadFiles(java.nio.file.Paths.get("data", "IWithinI").toString());
 		_SimplePipeline.go(d);
 
 		Tree t;
@@ -448,9 +448,9 @@ public class TestArkref extends TestCase {
 	}
 
 	public void testTokenAlignments() throws IOException {
-		Document d = arkref.data.Document.loadFiles("data/indo");
+		Document d = arkref.data.Document.loadFiles(java.nio.file.Paths.get("data", "indo").toString());
 
-		String text = arkref.parsestuff.U.readFile("data/indo.sent");
+		String text = arkref.parsestuff.U.readFile(java.nio.file.Paths.get("data", "indo.sent").toString());
 		String[] lines = text.split("\n");
 		int[] alignments = AnalysisUtilities.alignTokens(lines[0], d.sentences().get(0).words);
 		assertFalse(ArrayUtils.contains(alignments, -1));
@@ -500,7 +500,7 @@ public class TestArkref extends TestCase {
 		//Since Bill wanted to talk to John, he picked up the phone. (s4)
 		//To Susan, she seemed nice. (s5)
 
-		Document d = Document.loadFiles("data/adjunctPhrases");
+		Document d = Document.loadFiles(java.nio.file.Paths.get("data", "adjunctPhrases").toString());
 		_SimplePipeline.go(d);
 
 		assertLink(1, 3, d); //students, their
