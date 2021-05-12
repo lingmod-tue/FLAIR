@@ -160,15 +160,27 @@ public class ClozeManager {
                     if(brackets.size() > 0) {
                     	construction.setBracketsText("(" + String.join(", ", brackets) + ")");
                     }
-                } else if(exerciseSettings.getContentType().endsWith("Drag") &&
-                        exerciseSettings.getBrackets().contains(BracketsProperties.VERB_SPLITTING)) {
-                    ArrayList<Pair<Integer, Integer>> parts = nlpManager.splitParticiple(construction.getConstructionIndices());
-                    if(parts != null) { // if the splitting wasn't successful, we keep it as entire cluster
-                        for (Pair<Integer, Integer> part : parts) {
-                            constructionsToAdd.add(new Construction(construction.getConstruction(), part));
-                        }
-                        constructionsToRemove.add(construction);
-                    }
+                } else if(exerciseSettings.getContentType().endsWith("Drag")) {
+                	ArrayList<Pair<Integer, Integer>> components = nlpManager.getPassiveSentenceComponents(construction.getConstructionIndices());
+                	if(components != null) {
+                		recheckForOverlappingConstructions = true;
+	                	for(int i = 1; i <= 3; i++) {
+	                		if(components.get(i) != null) {
+	                			if(exerciseSettings.getBrackets().contains(BracketsProperties.VERB_SPLITTING) && i == 2) {
+	        	                    ArrayList<Pair<Integer, Integer>> parts = nlpManager.splitParticiple(components.get(i));
+	        	                    if(parts != null) { // if the splitting wasn't successful, we keep it as entire cluster
+	        	                        for (Pair<Integer, Integer> part : parts) {
+	        	                            constructionsToAdd.add(new Construction(construction.getConstruction(), part));
+	        	                        }
+	        	                    }
+	                        	} else {                			
+	                        		constructionsToAdd.add(new Construction(construction.getConstruction(), components.get(i)));
+	                        	}
+	                        }
+	                	}
+                	}
+                	                	                	
+                    constructionsToRemove.add(construction);
                 }
             } else if((construction.getConstruction().toString().startsWith("QUEST") ||
                             construction.getConstruction().toString().startsWith("STMT") ||

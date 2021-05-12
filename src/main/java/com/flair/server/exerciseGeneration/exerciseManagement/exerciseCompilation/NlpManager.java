@@ -590,7 +590,7 @@ public class NlpManager {
      * @param constructionIndices   The indices of the passive sentence in the plain text
      * @return                      The indices of the part preceding the patient, the patient, the verb cluster, the agent and the part succeeding the agent
      */
-    private ArrayList<Pair<Integer, Integer>> getPassiveSentenceComponents(Pair<Integer, Integer> constructionIndices) {
+    public ArrayList<Pair<Integer, Integer>> getPassiveSentenceComponents(Pair<Integer, Integer> constructionIndices) {
         Pair<Integer, Integer> verbIndices;
         Pair<Integer, Integer> agentIndices = null;
         Pair<Integer, Integer> patientIndices;
