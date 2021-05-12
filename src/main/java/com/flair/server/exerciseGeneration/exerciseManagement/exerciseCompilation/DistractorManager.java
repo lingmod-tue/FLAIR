@@ -195,17 +195,40 @@ public class DistractorManager {
 	                        parameterConstellations.add(new Pair<>(false, "future"));
 	                        parameterConstellations.add(new Pair<>(false, "past"));
 	                    }
-	
+	                    
+	                    // get other components excluding the verb and negation
+	                    String otherComponents = "";
+	                    LemmatizedVerbCluster verbCluster = nlpManager.getLemmatizedVerbConstruction(construction.getConstructionIndices(), true);
+	                    if(verbCluster != null) {
+	                    	otherComponents = String.join(" ", verbCluster.getNonLemmatizedComponents());
+	                    	otherComponents.replaceAll(" n[o']t ", " ");
+	                    	if(otherComponents.startsWith("not ")) {
+	                    		otherComponents = otherComponents.substring(3);
+	                    	}
+	                    	if(otherComponents.endsWith(" not")){
+	                    		otherComponents = otherComponents.substring(0, otherComponents.length() - 4);
+	                    	} else if(otherComponents.endsWith("n't")){
+	                    		otherComponents = otherComponents.substring(0, otherComponents.length() - 3);
+	                    	}
+	                    	
+	                    	if(!otherComponents.equals("")) {
+	                    		otherComponents = " " + otherComponents;
+	                    	}
+	                    }
+	                    
 	                    for (Pair<Boolean, String> parameterConstellation : parameterConstellations) {
 	                        for (int j = 0; j <= 1; j++) {
 	                            // We don't know if we have a 3rd pers. sing. form or not, so we calculate both forms also for the correct parameter settings
 	                            options.add(nlpManager.generateCorrectForm(new TenseSettings(lemma.first, isInterrogative,
 	                                    isNegated, j == 0, lemma.second, parameterConstellation.second,
-	                                    false, parameterConstellation.first)));
+	                                    false, parameterConstellation.first)) + otherComponents);
 	                            if (exerciseSettings.getDistractors().contains(DistractorProperties.INCORRECT_FORMS)) {
-	                                incorrectFormOptions.addAll(nlpManager.generateIncorrectForms(new TenseSettings(lemma.first, isInterrogative,
+	                            	HashSet<String> incorrectForms = nlpManager.generateIncorrectForms(new TenseSettings(lemma.first, isInterrogative,
 	                                        isNegated, j == 0, lemma.second, parameterConstellation.second,
-	                                        false, parameterConstellation.first)));
+	                                        false, parameterConstellation.first));
+	                            	for(String incorrectForm : incorrectForms) {
+	                            		incorrectFormOptions.add(incorrectForm + otherComponents);
+	                            	}
 	                            }
 	                        }
 	                    }

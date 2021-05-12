@@ -107,6 +107,8 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     	if(wdgtTasks.getChildrenList().size() == 0) {
     		wdgtTasks.setVisible(false);
     	}
+    	
+    	setGenerateExercisesEnabled();
     }
     
     /**
