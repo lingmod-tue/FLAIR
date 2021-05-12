@@ -198,7 +198,7 @@ public class DistractorManager {
 	                    
 	                    // get other components excluding the verb and negation
 	                    String otherComponents = "";
-	                    LemmatizedVerbCluster verbCluster = nlpManager.getLemmatizedVerbConstruction(construction.getConstructionIndices(), true);
+	                    LemmatizedVerbCluster verbCluster = nlpManager.getLemmatizedVerbConstruction(construction.getConstructionIndices(), true, false);
 	                    if(verbCluster != null) {
 	                    	otherComponents = String.join(" ", verbCluster.getNonLemmatizedComponents());
 	                    	otherComponents.replaceAll(" n[o']t ", " ");

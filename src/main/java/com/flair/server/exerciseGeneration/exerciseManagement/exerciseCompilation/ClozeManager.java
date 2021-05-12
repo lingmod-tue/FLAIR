@@ -2,6 +2,7 @@ package com.flair.server.exerciseGeneration.exerciseManagement.exerciseCompilati
 
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Random;
 
 import com.flair.shared.exerciseGeneration.BracketsProperties;
@@ -21,10 +22,13 @@ public class ClozeManager {
     public void prepareBlanks(ExerciseSettings exerciseSettings, NlpManager nlpManager) {
     	ArrayList<Construction> constructionsToAdd = new ArrayList<>();
         ArrayList<Construction> constructionsToRemove = new ArrayList<>();
+        boolean recheckForOverlappingConstructions = false;
         for(Construction construction : exerciseSettings.getConstructions()) {
             if(construction.getConstruction().toString().startsWith("COND")) {
                 Pair<Pair<Integer, Integer>, Pair<Integer, Integer>> clauses = nlpManager.getConditionalClauses(construction.getConstructionIndices());
                 if(clauses != null) {
+                	recheckForOverlappingConstructions = true;
+                	
                     int r = 0;
                     if (exerciseSettings.getBrackets().contains(BracketsProperties.EITHER_CLAUSE)) {
                         r = new Random().nextInt(2) + 1;
@@ -94,6 +98,8 @@ public class ClozeManager {
                 if(exerciseSettings.getContentType().equals("FiB")) {
                     ArrayList<String> brackets = new ArrayList<>();
                     if (exerciseSettings.getBrackets().contains(BracketsProperties.ACTIVE_SENTENCE)) {
+                    	recheckForOverlappingConstructions = true;
+
                         Pair<String, Pair<Integer, Integer>> activeSentence = nlpManager.getActiveSentence(construction.getConstructionIndices(), exerciseSettings.getPlainText(), construction.getConstruction());
                         if (activeSentence != null) {
                             construction.setConstructionIndices(activeSentence.second);
@@ -102,7 +108,7 @@ public class ClozeManager {
                             constructionsToRemove.add(construction);
                         }
                     } else {
-                    	LemmatizedVerbCluster lemmatizedVerb = nlpManager.getLemmatizedVerbConstruction(construction.getConstructionIndices(), true);
+                    	LemmatizedVerbCluster lemmatizedVerb = nlpManager.getLemmatizedVerbConstruction(construction.getConstructionIndices(), true, true);
                         if(exerciseSettings.getBrackets().contains(BracketsProperties.LEMMA)) {
                             if(lemmatizedVerb != null) {
                                 brackets.add(lemmatizedVerb.getLemmatizedCluster());
@@ -116,6 +122,41 @@ public class ClozeManager {
                         	}
                         }
                     }
+                    
+                    if(exerciseSettings.getBrackets().contains(BracketsProperties.TENSE)) {
+                        String tense;
+                        if(construction.getConstruction().toString().endsWith("PRESSMP")) {
+                        	tense = "simple present";
+                        } else if(construction.getConstruction().toString().endsWith("FUTSMP")) {
+                        	tense = "future simple";
+                        } else if(construction.getConstruction().toString().endsWith("PRESPRG")) {
+                        	tense = "present progressive";
+                        } else if(construction.getConstruction().toString().endsWith("PASTPRG")) {
+                        	tense = "past progressive";
+                        } else if(construction.getConstruction().toString().endsWith("FUTPRG")) {
+                        	tense = "future progressive";
+                        } else if(construction.getConstruction().toString().endsWith("FUTPERF")) {
+                        	tense = "future perfect";
+                        } else if(construction.getConstruction().toString().endsWith("PRESPERFPRG")) {
+                        	tense = "present perfect progressive";
+                        } else if(construction.getConstruction().toString().endsWith("PASTPERFPRG")) {
+                        	tense = "past perfect progressive";
+                        } else if(construction.getConstruction().toString().endsWith("FUTPERFPRG")) {
+                        	tense = "future perfect progressive";
+                        } else if(construction.getConstruction().toString().endsWith("PASTSMP")) {
+                        	tense = "simple past";
+                        } else if(construction.getConstruction().toString().endsWith("PRESPERF")) {
+                        	tense = "present perfect";
+                        } else {
+                        	tense = "past perfect";
+                        }
+                        brackets.add(tense);
+                    }
+                    
+                    if(exerciseSettings.getBrackets().contains(BracketsProperties.SENTENCE_TYPE)) {
+                    	brackets.add(construction.getConstruction().toString().startsWith("PASSIVE") ? "passive" : "active");
+                    }
+                    
                     if(brackets.size() > 0) {
                     	construction.setBracketsText("(" + String.join(", ", brackets) + ")");
                     }
@@ -135,7 +176,7 @@ public class ClozeManager {
                             construction.getConstruction().toString().startsWith("PRES")) &&
                     exerciseSettings.getContentType().equals("FiB")) {
                 ArrayList<String> brackets = new ArrayList<>();
-                LemmatizedVerbCluster lemmatizedVerb = nlpManager.getLemmatizedVerbConstruction(construction.getConstructionIndices(), true);
+                LemmatizedVerbCluster lemmatizedVerb = nlpManager.getLemmatizedVerbConstruction(construction.getConstructionIndices(), true, false);
                 if(exerciseSettings.getBrackets().contains(BracketsProperties.LEMMA)) {
                     if(lemmatizedVerb != null) {
                     	String lemmaCluster = lemmatizedVerb.getLemmatizedCluster();
@@ -191,6 +232,31 @@ public class ClozeManager {
         for(Construction construction : constructionsToAdd) {
             exerciseSettings.getConstructions().add(construction);
         }
+                
+        if(recheckForOverlappingConstructions) {
+	        // Remove overlapping constructions (can occur e.g. with synthetic and analytic comparatives)
+	        HashSet<Construction> activeConstructionsToRemove = new HashSet<>();
+	        for(Construction construction : exerciseSettings.getConstructions()) {
+	        	for(Construction otherConstruction : exerciseSettings.getConstructions()) {
+	        		if(construction != otherConstruction && (construction.getConstructionIndices().first >= otherConstruction.getConstructionIndices().first &&
+	        				construction.getConstructionIndices().first < otherConstruction.getConstructionIndices().second ||
+	        				otherConstruction.getConstructionIndices().first >= construction.getConstructionIndices().first &&
+	        						otherConstruction.getConstructionIndices().first < construction.getConstructionIndices().second)) {
+	        					if(construction.getConstructionIndices().second - construction.getConstructionIndices().first > 
+	        							otherConstruction.getConstructionIndices().second - otherConstruction.getConstructionIndices().first) {
+	        						activeConstructionsToRemove.add(otherConstruction);
+	        					} else {
+	        						activeConstructionsToRemove.add(construction);
+	        					}
+	        		}
+	
+	        	}
+	        }
+        
+	        for(Construction construction : activeConstructionsToRemove) {
+	        	exerciseSettings.getConstructions().remove(construction);
+	        }
+        }
     }
 
     /**
@@ -204,7 +270,7 @@ public class ClozeManager {
     private boolean addBracketsToConditionals(ExerciseSettings exerciseSettings, Construction construction, boolean isMain, 
     		ArrayList<String> brackets, NlpManager nlpManager) {
         if (exerciseSettings.getContentType().equals("FiB")) {
-        	LemmatizedVerbCluster lemmatizedVerb = nlpManager.getLemmatizedVerbConstruction(construction.getConstructionIndices(), false);
+        	LemmatizedVerbCluster lemmatizedVerb = nlpManager.getLemmatizedVerbConstruction(construction.getConstructionIndices(), false, false);
             if(exerciseSettings.getBrackets().contains(BracketsProperties.LEMMA)) {
                 if(lemmatizedVerb != null) {
                     brackets.add(lemmatizedVerb.getLemmatizedCluster());

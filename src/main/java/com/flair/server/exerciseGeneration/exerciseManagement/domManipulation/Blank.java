@@ -9,7 +9,7 @@ public class Blank {
     private int boundaryIndex;
 
     /**
-     * The correct blanks text.
+     * The brackets text.
      * Only set for end indices.
      */
     private String text = "";
@@ -18,14 +18,17 @@ public class Blank {
      * The index of the construction in the original list of all constructions.
      * Only set for end indices.
      */
-    private Integer blankIndex = null;
+    private Integer blankIndex;
+    
+    private int constructionIndex;
 
-    public Blank(int boundaryIndex) {
-        this.boundaryIndex = boundaryIndex;
+    public Blank(int boundaryIndex, int constructionIndex) {
+    	this(boundaryIndex, constructionIndex, "", null);
     }
 
-    public Blank(int boundaryIndex, String text, int blankIndex) {
+    public Blank(int boundaryIndex, int constructionIndex, String text, Integer blankIndex) {
         this.boundaryIndex = boundaryIndex;
+        this.constructionIndex = constructionIndex;
         this.text = text;
         this.blankIndex = blankIndex;
     }
@@ -33,6 +36,7 @@ public class Blank {
     public int getBoundaryIndex() { return boundaryIndex; }
     public String getText() { return text; }
     public Integer getBlankIndex() { return blankIndex; }
+    public int getConstructionIndex() { return constructionIndex; }
 
     public void setBoundaryIndex(int boundaryIndex) { this.boundaryIndex = boundaryIndex; }
 }

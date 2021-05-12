@@ -64,7 +64,7 @@ public class Fragment {
     public boolean isSentenceEnd() { return isSentenceEnd; }
     public boolean isDisplay() { return display; }
 
-    public void setStartIndex(int startIndex) {this.startIndex = startIndex; }
+	public void setStartIndex(int startIndex) {this.startIndex = startIndex; }
     public void setEndIndex(int endIndex) {this.endIndex = endIndex; }
     public void setPlainTextStartIndex(int plainTextStartIndex) { this.plainTextStartIndex = plainTextStartIndex; }
     public void setText(String text) { this.text = text; }

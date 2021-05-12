@@ -2,6 +2,8 @@ package com.flair.server.exerciseGeneration.exerciseManagement.domManipulation;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 import com.flair.shared.exerciseGeneration.Construction;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
@@ -32,10 +34,10 @@ public class Indexer {
 
         fragments = recheckMatches(fragments, htmlText);
         addSentenceFinalPunctuation(fragments, htmlText);
-        removeIcompleteConstructions(fragments, exerciseSettings.getConstructions());
         addBlanksIndicesToFragments(fragments, exerciseSettings.getConstructions());
         matchIndicesToNonNormalizedHtml(fragments, originalHtml, htmlText);
         fragments = mergeFragments(fragments, originalHtml);
+        removeIncompleteConstructions(fragments);
         trimBlanks(fragments, originalHtml);
         fragments = insertNotContainedFragments(fragments, originalHtml);
 
@@ -211,47 +213,36 @@ public class Indexer {
                 int htmlToPlainTextOffset = fragment.getStartIndex() - fragmentStartIndex;
 
                 if(blanksStartIndex >= fragmentStartIndex && blanksStartIndex < fragmentEndIndex) {
-                    fragment.getBlanksBoundaries().add(new Blank(blanksStartIndex + htmlToPlainTextOffset));
+                    fragment.getBlanksBoundaries().add(new Blank(blanksStartIndex + htmlToPlainTextOffset, plainTextIndices.indexOf(plainTextConstruction)));
                 }
                 if(blanksEndIndex > fragmentStartIndex && blanksEndIndex <= fragmentEndIndex) {
-                    fragment.getBlanksBoundaries().add(new Blank(blanksEndIndex + htmlToPlainTextOffset, plainTextConstruction.getBracketsText(), plainTextIndices.indexOf(plainTextConstruction)));
+                    fragment.getBlanksBoundaries().add(new Blank(blanksEndIndex + htmlToPlainTextOffset, plainTextIndices.indexOf(plainTextConstruction), plainTextConstruction.getBracketsText(), plainTextIndices.indexOf(plainTextConstruction)));
                 }
             }
         }
     }
     
-    private void removeIcompleteConstructions(ArrayList<Fragment> fragments, ArrayList<Construction> plainTextIndices) {
-    	ArrayList<Construction> constructionsToRemove = new ArrayList<>();
-    	for(Construction construction : plainTextIndices) {
-    		boolean startIndexInFragment = false;
-    		boolean endIndexInFragment = false;
-    		for(Fragment fragment : fragments) {
-    			if(fragment.isUnambiguousMatch()) {
-	    			Pair<Integer, Integer> plainTextBlanks = construction.getConstructionIndices();
-	                int blanksStartIndex = plainTextBlanks.first;
-	                int blanksEndIndex = plainTextBlanks.second;
-	                int fragmentStartIndex = fragment.getPlainTextStartIndex();
-	                int fragmentEndIndex = fragmentStartIndex + fragment.getText().length();
-	
-	                if(blanksStartIndex >= fragmentStartIndex && blanksStartIndex < fragmentEndIndex) {
-	                    startIndexInFragment = true;
-	                }
-	                if(blanksEndIndex > fragmentStartIndex && blanksEndIndex <= fragmentEndIndex) {
-	                	endIndexInFragment = true;
-	                }
-	                
-	                if(startIndexInFragment && endIndexInFragment) {
-	                	break;
-	                }
+    /**
+     * Removes constructions which are not entirely contained in a fragment.
+     * @param fragments	The already merged fragments
+     */
+    private void removeIncompleteConstructions(ArrayList<Fragment> fragments) {
+    	HashMap<Integer, ArrayList<Pair<Fragment, Blank>>> constructionBoundaries = new HashMap<> ();
+    	for(Fragment fragment : fragments) {
+    		for(Blank blank : fragment.getBlanksBoundaries()) {
+    			if(!constructionBoundaries.containsKey(blank.getConstructionIndex())) {
+    				constructionBoundaries.put(blank.getConstructionIndex(), new ArrayList<Pair<Fragment, Blank>>());
     			}
-    		}
-    		if(!(startIndexInFragment && endIndexInFragment)) {
-    			constructionsToRemove.add(construction);
+    			constructionBoundaries.get(blank.getConstructionIndex()).add(new Pair<>(fragment, blank));
     		}
     	}
     	
-    	for(Construction construction : constructionsToRemove) {
-    		plainTextIndices.remove(construction);
+    	for(Entry<Integer, ArrayList<Pair<Fragment, Blank>>> entry : constructionBoundaries.entrySet()) {
+    		if(entry.getValue().size() != 2) {
+    			for(Pair<Fragment, Blank> pair : entry.getValue()) {
+    				pair.first.getBlanksBoundaries().remove(pair.second);
+    			}
+    		}
     	}
     }
 

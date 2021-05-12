@@ -282,7 +282,7 @@ public class NlpManager {
      * @param includeModal			<c>true</c> if any modal is to be included in the lemmatized construction; <c>false</c> if it is to be removed
      * @return                      The lemmatized verb construction
      */
-    public LemmatizedVerbCluster getLemmatizedVerbConstruction(Pair<Integer, Integer> constructionIndices, boolean includeModal){
+    public LemmatizedVerbCluster getLemmatizedVerbConstruction(Pair<Integer, Integer> constructionIndices, boolean includeModal, boolean lemmatizePassives){
         SentenceAnnotations sent = getRelevantSentence(constructionIndices);
         if(sent == null) {
             return null;
@@ -309,7 +309,7 @@ public class NlpManager {
             String lemma = null;
             boolean isModal = false;
 
-            if(pos.equals("VBN") && !isPassive) {
+            if(pos.equals("VBN") && (!isPassive || lemmatizePassives)) {
                 // If we have a participle and it's not part of a passive construction, we lemmatize it and remove all other verbs except for to-infinitives
                 lemma = token.lemma();
                 mainLemma = token.lemma();
@@ -330,7 +330,7 @@ public class NlpManager {
                 mainLemma = token.lemma();
             }
            
-            if(!isModal || includeModal) {
+            if((!isModal || includeModal) && !(lemmatizePassives && lemma != null && lemma.equals("be"))) {
 	            if(lemma == null) {
 	                // if it wasn't any token we want to lemmatize, we take the word form instead
 	                lemma = token.word();
@@ -518,7 +518,8 @@ public class NlpManager {
         }
 
         int sentenceStartindex = sent.getTokens().get(0).beginPosition();
-        int sentenceEndIndex = sent.getTokens().get(sent.getTokens().size() - 1).endPosition();
+        int lastTokenIndex = sent.getTokens().size() - (sent.getTokens().get(sent.getTokens().size() - 1).word().matches("\\p{Punct}") ? 2 : 1);
+        int sentenceEndIndex = sent.getTokens().get(lastTokenIndex).endPosition();
 
         return new Pair<>(activeSentence, new Pair<>(sentenceStartindex, sentenceEndIndex));
     }
@@ -607,7 +608,7 @@ public class NlpManager {
         for(TypedDependency dependency : dependencyGraph) {
             if(dependency.reln().getShortName().equals("nsubjpass")) {
                 patientRelation = dependency;
-            } else if(dependency.reln().getShortName().equals("nmod") && dependency.reln().getSpecific().equals("agent")) {
+            } else if(dependency.reln().getShortName().equals("nmod") && dependency.reln().getSpecific() != null && dependency.reln().getSpecific().equals("agent")) {
                 agents.add(dependency);
             }
         }

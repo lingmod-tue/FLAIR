@@ -217,7 +217,7 @@ public class InstructionsManager {
         	for(Construction construction : settings.getConstructions()) {
             	String lemma = null;
                 if(isVerbLemma) {
-                	LemmatizedVerbCluster verbCluster = nlpManager.getLemmatizedVerbConstruction(construction.getOriginalConstructionIndices(), false);
+                	LemmatizedVerbCluster verbCluster = nlpManager.getLemmatizedVerbConstruction(construction.getOriginalConstructionIndices(), false, false);
                 	if(verbCluster != null) {
                 		if(verbCluster.getMainLemma() == null) {
                 			if(verbCluster.getModal() == null) {
