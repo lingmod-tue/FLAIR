@@ -8,6 +8,7 @@ import com.flair.server.exerciseGeneration.exerciseManagement.domManipulation.Zi
 import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.OpenNlpParser;
 import com.flair.server.parser.SimpleNlgParser;
+import com.flair.server.utilities.ServerLogger;
 
 import edu.stanford.nlp.util.Pair;
 
@@ -39,7 +40,7 @@ public abstract class ExerciseGenerator {
 	            String jsonContent = settings.getJsonManager().modifyJsonContent(exerciseComponents, settings.getResourceFolder()).toString();
 	            return ZipManager.generateModifiedZipFile(settings.getResourceFolder(), jsonContent, resources);
 	        } catch (ParseException | IOException e) {
-	            e.printStackTrace();
+				ServerLogger.get().error(e, "Files could not be zipped. Exception: " + e.toString());
 	            return null;
 	        }
     	} else {

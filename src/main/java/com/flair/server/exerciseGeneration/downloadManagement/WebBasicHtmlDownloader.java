@@ -17,6 +17,8 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import com.flair.server.utilities.ServerLogger;
+
 /**
  * Downloads the DOM of a web page consisting of the initial HTML
  */
@@ -59,7 +61,7 @@ public class WebBasicHtmlDownloader implements WebDownloader{
                     .method(Connection.Method.POST)
                     .execute().parse();   */  
         } catch (KeyManagementException | NoSuchAlgorithmException | IOException e) {
-			e.printStackTrace();
+			ServerLogger.get().error(e, "Document could not be downloaded. Exception: " + e.toString());
 		} 
 
         return null;

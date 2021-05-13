@@ -1,5 +1,6 @@
 package com.flair.server.exerciseGeneration.downloadManagement;
 
+import com.flair.server.utilities.ServerLogger;
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.ScriptResult;
 import com.gargoylesoftware.htmlunit.WebClient;
@@ -38,7 +39,7 @@ public class WebLoadedHtmlDownloader implements WebDownloader {
 
             document = Jsoup.parse(scriptResult.getJavaScriptResult().toString());
         } catch (IOException e) {
-            e.printStackTrace();
+			ServerLogger.get().error(e, "Non-fatal error. Exception: " + e.toString());
         }
 
         return document;

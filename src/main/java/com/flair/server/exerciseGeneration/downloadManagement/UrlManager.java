@@ -5,6 +5,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import com.flair.server.utilities.ServerLogger;
+
 import edu.stanford.nlp.util.Pair;
 
 public class UrlManager {
@@ -49,7 +51,7 @@ public class UrlManager {
 
             url = getValidUrlFromString(src);
         } catch (MalformedURLException | URISyntaxException e) {
-            System.out.println("The detected resource path is not a valid url.");
+			ServerLogger.get().error(e, "Non-fatal error. Exception: " + e.toString());
         }
 
         return url;

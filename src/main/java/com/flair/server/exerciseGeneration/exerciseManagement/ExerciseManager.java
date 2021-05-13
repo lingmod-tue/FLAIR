@@ -8,6 +8,7 @@ import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagem
 import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.OpenNlpParser;
 import com.flair.server.parser.SimpleNlgParser;
+import com.flair.server.utilities.ServerLogger;
 
 import edu.stanford.nlp.util.Pair;
 
@@ -31,7 +32,7 @@ public class ExerciseManager {
 	        
 	        return new Pair<>(settings.getName(), settings.getExerciseGenerator().generateExercise(settings, relevantResources, parser, generator, lemmatizer));       
     	} catch(Exception e) {
-    		e.printStackTrace();
+			ServerLogger.get().error(e, "Exercise could not be generated. Exception: " + e.toString());
     		return null;
     	}
     }

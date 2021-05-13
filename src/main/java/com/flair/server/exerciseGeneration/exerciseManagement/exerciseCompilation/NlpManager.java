@@ -459,6 +459,39 @@ public class NlpManager {
     }
     
     /**
+     * Determines the main adjective of a comparison form.
+     * @param constructionIndices   The start and end indices of the comparison form in the plain text
+     * @return                      The main comparison form
+     */
+    public Pair<Integer, Integer> getMainComparison(Pair<Integer, Integer> constructionIndices){
+        SentenceAnnotations sent = getRelevantSentence(constructionIndices);
+        if(sent == null) {
+            return null;
+        }
+
+        ArrayList<CoreLabel> tokens = getRelevantTokens(sent, constructionIndices);
+        Integer startIndex = null;
+        Integer endIndex = null;
+
+        // "more" and "most" are also tagged RBR, so we take the last relevant token
+        String lemma = null;
+        for (CoreLabel token : tokens) {
+            String pos = token.tag();
+            if (pos.startsWith("RB") || pos.startsWith("JJ")) {
+            	if(startIndex == null) {
+            		startIndex = token.beginPosition();
+            	}
+            	endIndex = token.endPosition();
+            }
+        }
+
+        if(startIndex == null) {
+        	return null;
+        }
+        return new Pair<>(startIndex, endIndex);
+    }
+    
+    /**
      * Lemmatizes a sentence using the OpenNLP dictionary lemmatizer.
      * @param tokens	The tokens obtained from the Stanford CoreNLP tagger
      * @return			The lemmas of the tokens

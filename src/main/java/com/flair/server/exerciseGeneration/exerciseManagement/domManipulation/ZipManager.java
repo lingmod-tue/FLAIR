@@ -9,6 +9,7 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import com.flair.server.exerciseGeneration.exerciseManagement.resourceManagement.ResourceLoader;
+import com.flair.server.utilities.ServerLogger;
 
 import edu.stanford.nlp.util.Pair;
 
@@ -31,12 +32,12 @@ public class ZipManager {
                 zipOutputStream.closeEntry();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+			ServerLogger.get().error(e, "File could not be zipped. Exception: " + e.toString());
         } finally {
             try {
                 zipOutputStream.close();
             } catch (IOException e) {
-                e.printStackTrace();
+    			ServerLogger.get().error(e, "Non-fatal error. Exception: " + e.toString());
             }
         }
         return byteArrayOutputStream.toByteArray();
@@ -74,7 +75,7 @@ public class ZipManager {
 
             return byteArrayOutputStream.toByteArray();
         } catch (IOException e) {
-            e.printStackTrace();
+			ServerLogger.get().error(e, "File could not be zipped. Exception: " + e.toString());
         }
 
         return null;
@@ -108,7 +109,7 @@ public class ZipManager {
             byte[] output = contentFileContent.getBytes();
             outputStream.write(output, 0, output.length);
         } catch (IOException e) {
-            e.printStackTrace();
+			ServerLogger.get().error(e, "File could not be zipped. Exception: " + e.toString());
         }
     }
 
@@ -123,7 +124,8 @@ public class ZipManager {
             outputStream.putNextEntry(new ZipEntry("content/" + resourceName));
             outputStream.write(resource, 0, resource.length);
         } catch (IOException e) {
-            e.printStackTrace();
+			ServerLogger.get().error(e, "Non-fatal error. Exception: " + e.toString());
+
         }
     }
 }

@@ -14,6 +14,7 @@ import org.json.simple.parser.ParseException;
 
 import com.flair.server.exerciseGeneration.exerciseManagement.JsonComponents;
 import com.flair.server.exerciseGeneration.exerciseManagement.resourceManagement.ResourceLoader;
+import com.flair.server.utilities.ServerLogger;
 
 public abstract class JsonManager {
 
@@ -51,13 +52,13 @@ public abstract class JsonManager {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+			ServerLogger.get().error(e, "Resource file could not be opened. Exception: " + e.toString());
         } finally {
         	if(zipFile != null) {
         		try {
 					zipFile.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					ServerLogger.get().error(e, "Non-fatal error. Exception: " + e.toString());
 				}
         	}
         }

@@ -6,6 +6,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.flair.server.utilities.ServerLogger;
+
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -174,7 +176,7 @@ public class HtmlManager {
                 return true;
             }
         } catch (IOException e) {
-            e.printStackTrace();
+			ServerLogger.get().error(e, "Non-fatal error. Exception: " + e.toString());
         }
 
         return false;

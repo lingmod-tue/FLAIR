@@ -11,6 +11,8 @@ import com.flair.shared.exerciseGeneration.DetailedConstruction;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
 import com.flair.shared.exerciseGeneration.Pair;
 
+import edu.stanford.nlp.ling.CoreLabel;
+
 public class ClozeManager {
 
 	/**
@@ -35,14 +37,16 @@ public class ClozeManager {
                     }
                     
                     ArrayList<Pair<Construction, Boolean>> newConstructions = new ArrayList<>();
+                    Pair<Integer, Integer> mainClauseConstructionIndices = null;
                     if (clauses.first != null && exerciseSettings.getBrackets().contains(BracketsProperties.MAIN_CLAUSE) || r == 1) {
-                        Pair<Integer, Integer> mainClauseConstructionIndices = nlpManager.extractVerbCluster(clauses.first);
+                        mainClauseConstructionIndices = nlpManager.extractVerbCluster(clauses.first);
                         if(mainClauseConstructionIndices != null) {
                             newConstructions.add(new Pair<>(new Construction(construction.getConstruction(), mainClauseConstructionIndices), true));
                         }
                     }
+                    Pair<Integer, Integer> ifClauseConstructionIndices = null;
                     if (clauses.second != null && exerciseSettings.getBrackets().contains(BracketsProperties.IF_CLAUSE) || r == 2) {
-                        Pair<Integer, Integer> ifClauseConstructionIndices = nlpManager.extractVerbCluster(clauses.second);
+                        ifClauseConstructionIndices = nlpManager.extractVerbCluster(clauses.second);
                         if(ifClauseConstructionIndices != null) {
                             newConstructions.add(new Pair<>(new Construction(construction.getConstruction(), ifClauseConstructionIndices), false));
                         }
@@ -60,6 +64,25 @@ public class ClozeManager {
                             }                               
                         }
                         if(newConstruction != null) {
+                        	// try to limit the construction to max. 30 characters
+                        	if(exerciseSettings.getContentType().equals("SingleDrag") && newConstruction.first.getConstructionIndices().second - newConstruction.first.getConstructionIndices().first > 30) {
+                        		if(newConstruction.second) {
+                        			if(mainClauseConstructionIndices != null) {
+                        				newConstruction.first.setConstructionIndices(mainClauseConstructionIndices);  
+                        			}
+                        		} else {
+                        			if(ifClauseConstructionIndices != null) {
+                        				newConstruction.first.setConstructionIndices(ifClauseConstructionIndices);
+                        			}
+                        		}
+                        			
+                    			if(newConstruction.first.getConstructionIndices().second - newConstruction.first.getConstructionIndices().first > 30) {
+                					CoreLabel mainVerb = nlpManager.getMainVerb(newConstruction.first.getConstructionIndices());
+                					if(mainVerb != null) {
+                						newConstruction.first.setConstructionIndices(new Pair<>(mainVerb.beginPosition(), mainVerb.endPosition()));
+                					}
+                				}
+                        	}
                         	constructionsToAdd.add(newConstruction.first);
                         }
                     }
@@ -92,7 +115,12 @@ public class ClozeManager {
                     if(brackets.size() > 0) {
                     	construction.setBracketsText("(" + String.join(", ", brackets) + ")");
                     }
-                }
+                } else if(exerciseSettings.getContentType().equals("SingleDrag") && construction.getConstructionIndices().second - construction.getConstructionIndices().first > 30) {                	
+					Pair<Integer,Integer> mainComparison = nlpManager.getMainComparison(construction.getConstructionIndices());
+					if(mainComparison != null) {
+						construction.setConstructionIndices(mainComparison);
+					}
+            	}
             } else if(construction.getConstruction().toString().startsWith("PASSIVE") ||
                     construction.getConstruction().toString().startsWith("ACTIVE")) {
                 if(exerciseSettings.getContentType().equals("FiB")) {
@@ -234,7 +262,15 @@ public class ClozeManager {
                 if(brackets.size() > 0) {
                 	construction.setBracketsText("(" + String.join(", ", brackets) + ")");
                 }
-            } else if((construction.getConstruction() == DetailedConstruction.WHICH ||
+            } else if((construction.getConstruction().toString().startsWith("PAST") || construction.getConstruction().toString().startsWith("PRES")) && 
+                    exerciseSettings.getContentType().equals("SingleDrag") && 
+                    construction.getConstructionIndices().second - construction.getConstructionIndices().first > 30) {                	
+            	CoreLabel mainVerb = nlpManager.getMainVerb(construction.getConstructionIndices());
+				if(mainVerb != null) {
+					construction.setConstructionIndices(new Pair<>(mainVerb.beginPosition(), mainVerb.endPosition()));
+				}
+        	}
+            else if((construction.getConstruction() == DetailedConstruction.WHICH ||
             		construction.getConstruction() == DetailedConstruction.WHO ||
             		construction.getConstruction() == DetailedConstruction.THAT ||
             		construction.getConstruction() == DetailedConstruction.OTHERPRN) &&

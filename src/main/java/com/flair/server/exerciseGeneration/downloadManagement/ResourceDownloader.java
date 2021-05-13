@@ -3,6 +3,7 @@ package com.flair.server.exerciseGeneration.downloadManagement;
 import org.apache.commons.io.IOUtils;
 
 import com.flair.server.exerciseGeneration.exerciseManagement.DownloadedResource;
+import com.flair.server.utilities.ServerLogger;
 
 import java.io.*;
 import java.net.URL;
@@ -85,7 +86,7 @@ public class ResourceDownloader {
                 if(parentFileUrl != null){
                     return downloadFile(parentFileUrl, null);
                 }
-                System.out.println("Could not open file " + urlString);
+                ServerLogger.get().info("Could not open file " + urlString);
             }
         }
 
@@ -115,7 +116,7 @@ public class ResourceDownloader {
 
             return content.toString();
         } catch (IOException e) {
-            //e.printStackTrace();
+			ServerLogger.get().error(e, "Non-fatal error. Exception: " + e.toString());
             return null;
         }
     }

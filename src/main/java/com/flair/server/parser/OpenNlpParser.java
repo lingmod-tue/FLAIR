@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import com.flair.server.exerciseGeneration.exerciseManagement.resourceManagement.ResourceLoader;
+import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.grammar.Language;
 
 import opennlp.tools.lemmatizer.DictionaryLemmatizer;
@@ -30,7 +31,7 @@ public class OpenNlpParser implements ThreadSafeParser<OpenNlpParser,
         try {
 			lemmatizer = new DictionaryLemmatizer(dictLemmatizer);
 		} catch (IOException e) {
-			e.printStackTrace();
+			ServerLogger.get().error(e, "Non-fatal error. Exception: " + e.toString());
 		}
     }
 
