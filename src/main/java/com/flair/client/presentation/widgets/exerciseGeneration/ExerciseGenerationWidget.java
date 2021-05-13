@@ -121,8 +121,7 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     		int lastNumber = Integer.parseInt(((TaskItem)existingTasks.get(existingTasks.size() - 1)).lblName.getText().split(" ")[1]);
     		name = "Task " + (lastNumber + 1);
     	}
-    	TaskItem newTask = new TaskItem(this);
-    	newTask.lblName.setText(name);
+    	TaskItem newTask = new TaskItem(this, name);
     	newTask.drpQuiz.addSelectionHandler(new SelectComboHandler<Option>()
     	{
 			@Override

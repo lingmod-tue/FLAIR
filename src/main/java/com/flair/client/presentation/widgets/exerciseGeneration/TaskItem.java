@@ -28,6 +28,7 @@ import gwt.material.design.addins.client.combobox.MaterialComboBox;
 import gwt.material.design.addins.client.combobox.events.SelectItemEvent;
 import gwt.material.design.addins.client.combobox.events.SelectItemEvent.SelectComboHandler;
 import gwt.material.design.client.constants.Color;
+import gwt.material.design.client.constants.RadioButtonType;
 import gwt.material.design.client.ui.MaterialButton;
 import gwt.material.design.client.ui.MaterialCheckBox;
 import gwt.material.design.client.ui.MaterialCollapsibleItem;
@@ -219,21 +220,13 @@ public class TaskItem extends LocalizedComposite {
     MaterialCheckBox chkFormAnalytic;
     @UiField
     MaterialCheckBox chkFormSynthetic;
-    @UiField
     MaterialRadioButton rbtPerSentence;
-    @UiField
     MaterialRadioButton rbtSingleTask;
-    @UiField
     MaterialRadioButton rbtMainClause;
-    @UiField
     MaterialRadioButton rbtIfClause;
-    @UiField
     MaterialRadioButton rbtEitherClause;
-    @UiField
     MaterialRadioButton rbtBothClauses;
-    @UiField
     MaterialRadioButton rbt1Verb;
-    @UiField
     MaterialRadioButton rbt2Verbs;
     @UiField
     MaterialDialog dlgDocumentSelection;
@@ -245,11 +238,27 @@ public class TaskItem extends LocalizedComposite {
     NumberSpinner spnNDistractors;
     @UiField
     MaterialCollapsibleItem expTask;
+    @UiField
+    MaterialRow rowRbtPerSentence;
+    @UiField
+    MaterialRow rowRbtTargetClauses;
+    @UiField
+    MaterialRow rowRbtIfClause;
+    @UiField
+    MaterialRow rowRbtEitherClause;
+    @UiField
+    MaterialRow rowRbtBothClauses;
+    @UiField
+    MaterialRow rowRbt1Verb;
+    @UiField
+    MaterialRow rowRbt2Verbs;
+    @UiField
+    MaterialRow rowRbtSingleTask;
     
     private ConstructionComponentsCollection constructionComponents;
     private ExerciseGenerationWidget parent;
     
-    public TaskItem(ExerciseGenerationWidget parent) {   
+    public TaskItem(ExerciseGenerationWidget parent, String name) {   
     	this.parent = parent;
     	
         initWidget(ourUiBinder.createAndBindUi(this));
@@ -299,6 +308,9 @@ public class TaskItem extends LocalizedComposite {
     			chkDistractorsOtherForm, chkDistractorsOtherVariant, chkDistractorsOtherPast, chkDistractorsOtherTense, 
         		chkDistractorsIncorrectForms, chkDistractorsWrongConditional, chkDistractorsWrongClause, chkDistractorsWrongSuffixUse, chkDistractorsWrongSuffix};
         
+        lblName.setText(name);
+
+        initRadiobuttons(name);
         initHandlers();
         visibilityManagers = new VisibilityManagerCollection(this);
         initUI();
@@ -380,6 +392,45 @@ public class TaskItem extends LocalizedComposite {
     	}
     	
     	return checked >= 2;
+    }
+    
+    /**
+     * Generates the radiobuttons.
+     * We cannot specify them in xml since the radiogroup names must be unique over all tasks.
+     */
+    private void initRadiobuttons(String taskName) {
+        String groupName = "scope" + taskName.replace(" ", "");
+        rbtPerSentence = new MaterialRadioButton(groupName, "1 exercise per sentence");
+        rbtPerSentence.setType(RadioButtonType.GAP);       
+        rowRbtPerSentence.add(rbtPerSentence);
+        rbtSingleTask = new MaterialRadioButton(groupName, "Single exercise");
+        rbtSingleTask.setType(RadioButtonType.GAP);       
+        rowRbtSingleTask.add(rbtSingleTask);
+        rbtPerSentence.setValue(true);
+
+        groupName = "targetClauses" + taskName.replace(" ", "");
+        rbtMainClause = new MaterialRadioButton(groupName, "Only main clause");
+        rbtMainClause.setType(RadioButtonType.GAP);       
+        rowRbtTargetClauses.add(rbtMainClause);
+        rbtIfClause = new MaterialRadioButton(groupName, "Only if-clause");
+        rbtIfClause.setType(RadioButtonType.GAP);       
+        rowRbtIfClause.add(rbtIfClause);
+        rbtEitherClause = new MaterialRadioButton(groupName, "Either clause");
+        rbtEitherClause.setType(RadioButtonType.GAP);       
+        rowRbtEitherClause.add(rbtEitherClause);
+        rbtBothClauses = new MaterialRadioButton(groupName, "Both clauses");
+        rbtBothClauses.setType(RadioButtonType.GAP);       
+        rowRbtBothClauses.add(rbtBothClauses);
+        rbtBothClauses.setValue(true);
+        
+        groupName = "verbSplitting" + taskName.replace(" ", "");
+        rbt1Verb = new MaterialRadioButton(groupName, "Entire verb cluster as single element");
+        rbt1Verb.setType(RadioButtonType.GAP);       
+        rowRbt1Verb.add(rbt1Verb);
+        rbt2Verbs = new MaterialRadioButton(groupName, "Form of 'be' and past participle as separate elements");
+        rbt2Verbs.setType(RadioButtonType.GAP);       
+        rowRbt2Verbs.add(rbt2Verbs);
+        rbt1Verb.setValue(true);
     }
     
     /**
@@ -788,7 +839,7 @@ public class TaskItem extends LocalizedComposite {
     	}
     	
     	// If we use both clauses of the conditional sentence as targets, we have double the amount of blanks
-    	if(topic.equals("'if'") && (exerciseType.equals("FiB") || exerciseType.equals("Select")) && rbtBothClauses.getValue()) {
+    	if(topic.equals("'if'") && rbtBothClauses.getValue()) {
     		nExercises = nExercises * 2;	
     	}
     	    	

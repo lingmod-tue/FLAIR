@@ -161,16 +161,8 @@
 					<m:MaterialRow padding="0" margin="0">
 						<m:MaterialLabel text="Scope:" />
 					</m:MaterialRow>
-					<m:MaterialRow padding="0" margin="0">
-						<m:MaterialRadioButton
-							ui:field="rbtPerSentence" value="true"
-							text="1 exercise per sentence" name="scope" type="GAP" />
-					</m:MaterialRow>
-					<m:MaterialRow padding="0" margin="0">
-						<m:MaterialRadioButton
-							ui:field="rbtSingleTask" text="Single exercise" name="scope"
-							type="GAP" />
-					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0" ui:field="rowRbtPerSentence" />
+					<m:MaterialRow padding="0" margin="0" ui:field="rowRbtSingleTask" />						
 				</m:MaterialRow>
 
 				<m:MaterialRow ui:field="grpCondTypes">
@@ -192,26 +184,10 @@
 					<m:MaterialRow padding="0" margin="0">
 						<m:MaterialLabel text="Target clauses:" />
 					</m:MaterialRow>
-					<m:MaterialRow padding="0" margin="0">
-						<m:MaterialRadioButton
-							ui:field="rbtMainClause" text="Only main clause"
-							name="targetClauses" type="GAP" />
-					</m:MaterialRow>
-					<m:MaterialRow padding="0" margin="0">
-						<m:MaterialRadioButton
-							ui:field="rbtIfClause" text="Only if-clause" name="targetClauses"
-							type="GAP" />
-					</m:MaterialRow>
-					<m:MaterialRow padding="0" margin="0">
-						<m:MaterialRadioButton
-							ui:field="rbtEitherClause" text="Either clause"
-							name="targetClauses" type="GAP" />
-					</m:MaterialRow>
-					<m:MaterialRow padding="0" margin="0">
-						<m:MaterialRadioButton
-							ui:field="rbtBothClauses" text="Both clauses"
-							name="targetClauses" type="GAP" value="true" />
-					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0" ui:field="rowRbtTargetClauses" />						
+					<m:MaterialRow padding="0" margin="0" ui:field="rowRbtIfClause" />						
+					<m:MaterialRow padding="0" margin="0" ui:field="rowRbtEitherClause" />						
+					<m:MaterialRow padding="0" margin="0" ui:field="rowRbtBothClauses" />						
 				</m:MaterialRow>
 
 				<m:MaterialRow ui:field="grpSentTypes">
@@ -298,16 +274,8 @@
 					<m:MaterialRow padding="0" margin="0">
 						<m:MaterialLabel text="Verb splitting:" />
 					</m:MaterialRow>
-					<m:MaterialRow padding="0" margin="0">
-						<m:MaterialRadioButton ui:field="rbt1Verb"
-							text="Entire verb cluster as single element" name="verbSplitting"
-							type="GAP" value="true" />
-					</m:MaterialRow>
-					<m:MaterialRow padding="0" margin="0">
-						<m:MaterialRadioButton ui:field="rbt2Verbs"
-							text="Form of 'be' and past participle as separate elements"
-							name="verbSplitting" type="GAP" />
-					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0" ui:field="rowRbt1Verb" />						
+					<m:MaterialRow padding="0" margin="0" ui:field="rowRbt2Verbs" />						
 				</m:MaterialRow>
 
 				<m:MaterialRow ui:field="grpTargetWords">
