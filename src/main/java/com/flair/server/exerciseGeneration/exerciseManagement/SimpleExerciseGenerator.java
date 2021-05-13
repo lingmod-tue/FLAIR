@@ -60,10 +60,9 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        HashSet<Construction> constructionsToRemove = new HashSet<>();
 	        for(Construction construction : settings.getExerciseSettings().getConstructions()) {
 	        	for(Construction otherConstruction : settings.getExerciseSettings().getConstructions()) {
-	        		if(construction != otherConstruction && (construction.getConstructionIndices().first >= otherConstruction.getConstructionIndices().first &&
-	        				construction.getConstructionIndices().first < otherConstruction.getConstructionIndices().second ||
-	        				otherConstruction.getConstructionIndices().first >= construction.getConstructionIndices().first &&
-	        						otherConstruction.getConstructionIndices().first < construction.getConstructionIndices().second)) {
+	        		if(construction != otherConstruction && 
+	        				(Math.max(construction.getConstructionIndices().first, otherConstruction.getConstructionIndices().first) < 
+	        						Math.min(construction.getConstructionIndices().second, otherConstruction.getConstructionIndices().second))) {
 	        					if(construction.getConstructionIndices().second - construction.getConstructionIndices().first > 
 	        							otherConstruction.getConstructionIndices().second - otherConstruction.getConstructionIndices().first) {
 	        						constructionsToRemove.add(otherConstruction);

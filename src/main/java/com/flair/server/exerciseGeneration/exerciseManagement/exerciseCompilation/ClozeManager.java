@@ -234,6 +234,19 @@ public class ClozeManager {
                 if(brackets.size() > 0) {
                 	construction.setBracketsText("(" + String.join(", ", brackets) + ")");
                 }
+            } else if((construction.getConstruction() == DetailedConstruction.WHICH ||
+            		construction.getConstruction() == DetailedConstruction.WHO ||
+            		construction.getConstruction() == DetailedConstruction.THAT ||
+            		construction.getConstruction() == DetailedConstruction.OTHERPRN) &&
+            		exerciseSettings.getContentType().equals("MultiDrag")) {
+            	ArrayList<Pair<Integer,Integer>> components = nlpManager.getRelativeClauseComponents(construction.getConstructionIndices());
+            	for(Pair<Integer, Integer> component : components) {
+            		if(!exerciseSettings.getPlainText().substring(component.first, component.second).matches("[\\p{Punct}\\s\\h]*")) {
+            			constructionsToAdd.add(new Construction(construction.getConstruction(), component));
+            		}
+            	}
+            	constructionsToRemove.add(construction);
+            	recheckForOverlappingConstructions = true;
             }
         }
 
@@ -250,10 +263,8 @@ public class ClozeManager {
 	        HashSet<Construction> activeConstructionsToRemove = new HashSet<>();
 	        for(Construction construction : exerciseSettings.getConstructions()) {
 	        	for(Construction otherConstruction : exerciseSettings.getConstructions()) {
-	        		if(construction != otherConstruction && (construction.getConstructionIndices().first >= otherConstruction.getConstructionIndices().first &&
-	        				construction.getConstructionIndices().first < otherConstruction.getConstructionIndices().second ||
-	        				otherConstruction.getConstructionIndices().first >= construction.getConstructionIndices().first &&
-	        						otherConstruction.getConstructionIndices().first < construction.getConstructionIndices().second)) {
+	        		if(construction != otherConstruction && (Math.max(construction.getConstructionIndices().first, otherConstruction.getConstructionIndices().first) < 
+    						Math.min(construction.getConstructionIndices().second, otherConstruction.getConstructionIndices().second))) {
 	        					if(construction.getConstructionIndices().second - construction.getConstructionIndices().first > 
 	        							otherConstruction.getConstructionIndices().second - otherConstruction.getConstructionIndices().first) {
 	        						activeConstructionsToRemove.add(otherConstruction);

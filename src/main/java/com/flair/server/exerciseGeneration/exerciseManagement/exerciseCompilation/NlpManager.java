@@ -1,6 +1,7 @@
 package com.flair.server.exerciseGeneration.exerciseManagement.exerciseCompilation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -993,6 +994,119 @@ public class NlpManager {
         } else if(modal.equals("will")) {
             return "would";
         } else return "would";
+    }
+    
+    /**
+     * Split a Relative sentence into its components (verb cluster and dependents of the main verb).
+     * @param constructionIndices	The construction indices
+     * @return						The start and end indices of the components
+     */
+    public ArrayList<Pair<Integer, Integer>> getRelativeClauseComponents(Pair<Integer, Integer> constructionIndices) {
+    	SentenceAnnotations sent = getRelevantSentence(constructionIndices);
+        if(sent == null) {
+            return null;
+        }
+        
+        IndexedWord mainVerb = null;
+        for(TypedDependency dependency : sent.getDependencyGraph()) {
+            if(dependency.dep().beginPosition() == constructionIndices.first) {
+                mainVerb = dependency.gov();
+                break;
+            }
+        }
+        
+        if(mainVerb == null) {
+        	return null;
+        }
+        
+        ArrayList<ArrayList<IndexedWord>> parts = new ArrayList<>();
+        ArrayList<IndexedWord> verbCluster = new ArrayList<>();
+        verbCluster.add(mainVerb);
+        for(TypedDependency dependency : sent.getDependencyGraph()) {
+            if(dependency.gov().beginPosition() == mainVerb.beginPosition()) {
+            	if(dependency.reln().getShortName().startsWith("aux")) {
+            		verbCluster.add(dependency.dep());
+            	} else if(dependency.dep().beginPosition() == constructionIndices.first) {
+            		// split the relative pronoun from its dependants
+            		ArrayList<IndexedWord> descendants = getDescendants(sent.getDependencyGraph(), dependency.dep());
+            		for(IndexedWord descendant : descendants) {
+                		parts.add(getAllDescendants(descendant, sent.getDependencyGraph()));
+            		}
+            		ArrayList<IndexedWord> pronounPart = new ArrayList<>();
+            		pronounPart.add(dependency.dep());
+            		parts.add(pronounPart);
+            	} else {
+            		parts.add(getAllDescendants(dependency.dep(), sent.getDependencyGraph()));
+            	}
+            }
+        }
+        parts.add(verbCluster);
+        
+        ArrayList<Pair<Integer, Integer>> partIndices = new ArrayList<>();
+        for(ArrayList<IndexedWord> part : parts) {
+        	Integer startIndex = null;
+        	Integer endIndex = null;
+        	for(IndexedWord w : part) {
+        		if(startIndex == null || w.beginPosition() < startIndex) {
+        			startIndex = w.beginPosition();
+        		}
+        		if(endIndex == null || w.endPosition() > endIndex) {
+        			endIndex = w.endPosition();
+        		}
+        	}
+        	
+        	// Check for overlaps
+        	ArrayList<Pair<Integer, Integer>> overlaps = new ArrayList<>();
+        	ArrayList<Pair<Integer, Integer>> partsToRemove = new ArrayList<>();
+        	ArrayList<Pair<Integer, Integer>> partsToAdd = new ArrayList<>();
+
+        	for(Pair<Integer, Integer> partIndex : partIndices) {
+        		if(startIndex >= partIndex.first && startIndex < partIndex.second || endIndex > partIndex.first && endIndex <= partIndex.second) {
+        			overlaps.add(partIndex);
+        		}
+        	}
+        	if(overlaps.size() > 0) {
+        		// split components
+    			HashSet<Integer> indices = new HashSet<>();
+				indices.add(startIndex);
+				indices.add(endIndex);
+				for(Pair<Integer, Integer> overlap : overlaps) {
+					indices.add(overlap.first);
+					indices.add(overlap.second);
+            		partIndices.remove(overlap);
+				}
+				
+				Integer[] orderedIndices = indices.toArray(new Integer[indices.size()]);
+				Arrays.sort(orderedIndices);
+				
+				for(int i = 0; i < orderedIndices.length - 1; i++) {
+					partIndices.add(new Pair<>(orderedIndices[i], orderedIndices[i + 1]));
+				}
+        	} else {
+        		partIndices.add(new Pair<>(startIndex, endIndex));
+        	}
+        }
+        
+        return partIndices;
+    }
+    
+    /**
+     * Recursively gets all descendants of an IndexedWord, including the governor itself.
+     * @return	The descendants of the governor.
+     */
+    private ArrayList<IndexedWord> getAllDescendants(IndexedWord governor, Collection<TypedDependency> dependencies) {
+    	ArrayList<IndexedWord> descendants = new ArrayList<>();
+    	
+    	ArrayList<IndexedWord> desc = new ArrayList<>();
+    	desc.add(governor);
+    	while(desc.size() > 0) {
+    		IndexedWord d = desc.get(0);
+    		desc.addAll(getDescendants(dependencies, d));
+    		descendants.add(d);
+    		desc.remove(0);
+    	}
+    	
+    	return descendants;
     }
     
 }
