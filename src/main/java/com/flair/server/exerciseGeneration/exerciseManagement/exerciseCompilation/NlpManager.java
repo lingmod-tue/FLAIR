@@ -122,13 +122,12 @@ public class NlpManager {
 
         // if clause: SBAR node with first direct child IN with only direct child if
         TregexPattern pattern = TregexPattern.compile("SBAR <, IN");
-        sent.getConstituentTree().pennPrint();
         List<Tree> leaves = sent.getConstituentTree().getLeaves();
 
         TregexMatcher matcher = pattern.matcher(sent.getConstituentTree());
         if(matcher.find()) {
             Tree match = matcher.getMatch();
-
+            
             // We don't have the indices in the tree, so we need to get them by mapping the tree leaves to the tokenized sentence
             Pair<Integer, Integer> clauseIndices = getIndices(leaves, match.getLeaves(), null, sent.getTokens());
             int ifClauseStartIndex = clauseIndices.first;
@@ -146,7 +145,7 @@ public class NlpManager {
                     if(dominationPath.size() > 2) { // the domination path includes match and sMatch
                         for (int i = 1; i < dominationPath.size() - 1; i++) {
                             Tree t = dominationPath.get(i);
-                            if ((t.nodeString().equals("S") || t.nodeString().equals("SQ")) && !match.dominates(t)) {
+                            if ((t.nodeString().equals("S") || t.nodeString().equals("SQ")) && !match.dominates(t) && t.dominates(match)) {
                                 containsS = true;
                                 break;
                             }
@@ -230,19 +229,48 @@ public class NlpManager {
         }
 
         ArrayList<CoreLabel> tokens = getRelevantTokens(sent, constructionIndices);
+                
         String previousPos = getPreviousPos(sent, tokens);
 
         Integer firstVerbStartIndex = null;
         Integer lastVerbEndIndex = null;
+        String previousVerbTag = null;
+        boolean isPassive = false;
         for (CoreLabel token : tokens) {
             String pos = token.tag();
 
-            if(pos.startsWith("VB") && !pos.equals("VB") || pos.equals("MD") || pos.equals("VB") && !previousPos.equals("TO")) {
+            if(pos.startsWith("VB") || pos.equals("MD")) {            	
                 if(firstVerbStartIndex == null) {
                     firstVerbStartIndex = token.beginPosition();
+                } else {               
+	                // If we have an inflected verb after another verb, it doesn't belong to the verb cluster anymore
+	                if(pos.matches("VB[DPZ]") && previousVerbTag != null) {
+	                	break;
+	                }
+	                // If we have a second modal, it doesn't belong to the verb cluster anymore
+	                if(pos.equals("MD") && previousVerbTag != null) {
+	                	break;
+	                }
+	                // If we have an infinitive or a to-infinintive after a past participle, it doesn't belong to the verb cluster anymore
+	                if(pos.equals("VB") && previousVerbTag.equals("VBN")) {
+	                	break;
+	                }
+	                // If we have anything after a present participle but a to-infinitive, it doesn't belong to the verb cluster anymore
+	                if(previousVerbTag.equals("VBG") && !(pos.equals("VB") && previousPos.equals("TO"))) {
+	                	break;
+	                }   
+	                // If it is a past participle of a passive construction, we don't want it in the verb cluster
+	                if(pos.equals("VBN") && isPassive) {
+	                	break;
+	                }
                 }
+                previousVerbTag = pos;
                 lastVerbEndIndex = token.endPosition();
-            }
+
+            	if(token.lemma().equals("be")) {
+    	        	isPassive = true;
+    	        }
+            }            
         }
 
         if(firstVerbStartIndex != null) {
@@ -922,6 +950,9 @@ public class NlpManager {
         boolean isPresent = hasInflectedPresent || modal != null && !isPerfect;
 
         Pair<String, String> lemma = getVerbLemma(constructionIndices, true);
+        if(lemma == null) {
+        	return null;
+        }
         return new TenseSettings(lemma.first, isInterrogative, hasNegation, isThirdPerson,
                 lemma.second, isPresent ? "present" : "past", false, isPerfect, modal);
     }

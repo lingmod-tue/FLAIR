@@ -22,6 +22,11 @@ import org.jsoup.nodes.Document;
  */
 public class WebBasicHtmlDownloader implements WebDownloader{
 
+	/**
+	 * Trusts all certificates.
+	 * @throws KeyManagementException
+	 * @throws NoSuchAlgorithmException
+	 */
 	 public static void enableSSLSocket() throws KeyManagementException, NoSuchAlgorithmException {
 	        HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier() {
 	            public boolean verify(String hostname, SSLSession session) {
@@ -49,9 +54,10 @@ public class WebBasicHtmlDownloader implements WebDownloader{
         try {
         	enableSSLSocket();
         	 
-            return Jsoup.connect(url)
+        	return Jsoup.connect(url).get();
+            /*return Jsoup.connect(url)
                     .method(Connection.Method.POST)
-                    .execute().parse();     
+                    .execute().parse();   */  
         } catch (KeyManagementException | NoSuchAlgorithmException | IOException e) {
 			e.printStackTrace();
 		} 

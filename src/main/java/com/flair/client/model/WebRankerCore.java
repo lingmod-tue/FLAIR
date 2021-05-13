@@ -1032,7 +1032,6 @@ public class WebRankerCore implements AbstractWebRankerCore {
         questgenpreview.setInterruptHandler(this::onInterruptQuestionGen);
         questgenpreview.setShowHandler(this::onQuestGenPreviewShow);
         exGen.setGenerateHandler(this::onGenerateExercises);
-        exGen.setGenerationCompleteHandler(this::onGenerationComplete);
 
         LocalizationEngine.get().addLanguageChangeHandler(l -> rankPreviewModule.refreshLocalization(l.newLang));
 
@@ -1329,6 +1328,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
     }
     
     private void onGenerationComplete(byte[] file, String fileName) {
+    	MaterialToast.fireToast("onGenerationComplete");
     	exGen.provideForDownload(file,fileName);
     }
 

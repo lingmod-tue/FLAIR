@@ -274,7 +274,6 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     }
 
     GenerateHandler startGenerationHandler;
-    GenerationCompleteHandler endGenerationHandler;
     
 	@Override
 	public void provideForDownload(byte[] file, String fileName) {	
@@ -298,9 +297,4 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
 		startGenerationHandler = handler;
 	}
 
-	@Override
-	public void setGenerationCompleteHandler(GenerationCompleteHandler handler) {
-		endGenerationHandler = handler;
-		
-	}
 }

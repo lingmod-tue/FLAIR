@@ -8,9 +8,6 @@ import com.flair.shared.exerciseGeneration.ExerciseSettings;
  * Generates exercises for the selected document
  */
 public interface ExerciseGenerationService {
-	interface GenerationCompleteHandler {
-		void handle(byte[] file, String fileName);
-	}
 	
 	interface GenerateHandler {
 		boolean handle(ArrayList<ExerciseSettings> settings);
@@ -21,6 +18,5 @@ public interface ExerciseGenerationService {
 
 	void setGenerateHandler(GenerateHandler handler);
 	
-	void setGenerationCompleteHandler(GenerationCompleteHandler handler);
 	void enableButton();
 }

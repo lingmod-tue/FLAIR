@@ -37,12 +37,14 @@ public class DistractorManager {
 
                     Pair<Pair<Integer, Integer>, Pair<Integer, Integer>> clauses = nlpManager.getConditionalClauses(construction.getConstructionIndices());
                     if(clauses != null) {   // should not be possible, we filtered out those which returned null in the brackets generation
-                        Pair<Integer, Integer> mainClauseConstructionIndices = nlpManager.extractVerbCluster(clauses.first);
-                        if (mainClauseConstructionIndices != null) {
-                            if(mainClauseConstructionIndices.first.equals(construction.getConstructionIndices().first)) {
-                                isMainClause = true;
-                            }
-                            mainClauseSettings = nlpManager.getConditionalClauseSpecifics(mainClauseConstructionIndices);
+                        if(clauses.first != null) {
+	                    	Pair<Integer, Integer> mainClauseConstructionIndices = nlpManager.extractVerbCluster(clauses.first);
+	                        if (mainClauseConstructionIndices != null) {
+	                            if(mainClauseConstructionIndices.first.equals(construction.getConstructionIndices().first)) {
+	                                isMainClause = true;
+	                            }
+	                            mainClauseSettings = nlpManager.getConditionalClauseSpecifics(mainClauseConstructionIndices);
+	                        }
                         }
                         Pair<Integer, Integer> ifClauseConstructionIndices = nlpManager.extractVerbCluster(clauses.second);
                         if (ifClauseConstructionIndices != null) {

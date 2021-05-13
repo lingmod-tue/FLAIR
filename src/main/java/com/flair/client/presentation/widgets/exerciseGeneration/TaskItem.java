@@ -660,7 +660,7 @@ public class TaskItem extends LocalizedComposite {
     	lblDocTitle.setText(doc.getTitle());
         lblDocumentForSelection.setText(doc.getText());
 		lblDocumentForSelection.setSelectionRange(0, doc.getText().length());
-		
+
 		relevantConstructionsInEntireDocument = new HashMap<String, Integer>();
     	calculateConstructionsOccurrences(relevantConstructionsInEntireDocument);
     	relevantConstructionsInSelectedDocumentPart = new HashMap<String, Integer>(relevantConstructionsInEntireDocument);  
@@ -927,13 +927,13 @@ public class TaskItem extends LocalizedComposite {
     	Pair<Integer, Integer> selectionIndices = calculateSelectionIndices();
     	int startIndex = selectionIndices.first;
     	int endIndex = selectionIndices.second + startIndex;
-    	
     	relevantConstructions.clear();
     	HashMap<String, ArrayList<Pair<Integer, Integer>>> constructionOccurrences = getConstructionsOccurrences(startIndex, endIndex);
+
     	for (HashMap.Entry<String, ArrayList<Pair<Integer, Integer>>> entry : constructionOccurrences.entrySet()) {
-    		relevantConstructions.put(entry.getKey(), entry.getValue().size());
+        	relevantConstructions.put(entry.getKey(), entry.getValue().size());
         }
-		  
+
 		int numberOfExercises = calculateNumberOfExercises();
     	setNumberExercisesText(numberOfExercises);
     	lblDocumentForSelection.setText(doc.getText());
@@ -1236,8 +1236,8 @@ public class TaskItem extends LocalizedComposite {
     public HashMap<String, ArrayList<Pair<Integer, Integer>>> getConstructionsOccurrences(int startIndex, int endIndex) {    
     	HashMap<String, ArrayList<Pair<Integer, Integer>>> relevantConstructions = 
     			new HashMap<String, ArrayList<Pair<Integer, Integer>>>();
-		                
-        // comparison
+
+    	// comparison
     	// comparatives and superlatives exclude elements like 'the', 'than'
     	//TODO: Maybe allow to specify in view whether to keep analytic forms as single markable or as separate
     	//we would have to multiply the occurrences of mark instances if this was selected
@@ -1254,7 +1254,7 @@ public class TaskItem extends LocalizedComposite {
 		// for conditional sentences, we put the entire sentences
     	addSingleWordConstructions(relevantConstructions, startIndex, endIndex, GrammaticalConstruction.CONDITIONALS_REAL, "condReal");
     	addSingleWordConstructions(relevantConstructions, startIndex, endIndex, GrammaticalConstruction.CONDITIONALS_UNREAL, "condUnreal");
-        	
+
         // passive combinations
         GrammaticalConstruction[] tenseConstructions = new GrammaticalConstruction[]{
         		GrammaticalConstruction.TENSE_PRESENT_SIMPLE,
@@ -1270,7 +1270,7 @@ public class TaskItem extends LocalizedComposite {
         		GrammaticalConstruction.TENSE_PRESENT_PERFECT,
         		GrammaticalConstruction.TENSE_PAST_PERFECT,
         };
-        
+
         ArrayList<ConstructionRange> passiveOccurrences = 
         		getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.PASSIVE_VOICE, doc);
         for(GrammaticalConstruction tenseConstruction : tenseConstructions) {
@@ -1302,7 +1302,7 @@ public class TaskItem extends LocalizedComposite {
 			relevantConstructions.put("passive-" + tenseConstruction.name(), passiveIndices);
 			relevantConstructions.put("active-" + tenseConstruction.name(), activeIndices);                               	
         }
-        
+
         tenseConstructions = new GrammaticalConstruction[]{
         		GrammaticalConstruction.TENSE_PAST_SIMPLE,
         		GrammaticalConstruction.TENSE_PRESENT_PERFECT,
@@ -1401,7 +1401,7 @@ public class TaskItem extends LocalizedComposite {
 			relevantConstructions.put(tenseConstruction.name() + "-stmt-affirm-irreg", indicesStatementAffirmativeIrregular);
 			relevantConstructions.put(tenseConstruction.name() + "-stmt-affirm-reg", indicesStatementAffirmativeRegular);
         }
-        
+
         // present tense combinations
         ArrayList<ConstructionRange> presentOccurrences = 
         		getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.TENSE_PRESENT_SIMPLE, doc);
@@ -1413,11 +1413,13 @@ public class TaskItem extends LocalizedComposite {
     	ArrayList<Pair<Integer, Integer>> indicesStatementAffirmativeNot3 = new ArrayList<Pair<Integer, Integer>>();
     	ArrayList<Pair<Integer, Integer>> indicesStatementNegative3 = new ArrayList<Pair<Integer, Integer>>();
     	ArrayList<Pair<Integer, Integer>> indicesStatementNegativeNot3 = new ArrayList<Pair<Integer, Integer>>();
-        for(ConstructionRange tenseOccurrence : presentOccurrences) {
+        
+    	for(ConstructionRange tenseOccurrence : presentOccurrences) {
         	// we take the first token since the inflected present verb is usually at the beginning of the sequence.
         	// It's just an approximation, but the best we can get without proper NLP processing.
         	String occurrenceText = doc.getText().substring(tenseOccurrence.getStart(), tenseOccurrence.getEnd()).split(" ")[0];
-        	boolean foundNegationOverlap = false;
+        	
+        	boolean foundNegationOverlap = false;        	
         	ConstructionRange negation = null;
         	for(ConstructionRange negationOccurrence : negationOccurrences) {
         		if(negationOccurrence.getEnd() >= tenseOccurrence.getStart() - 1 && negationOccurrence.getStart() <= tenseOccurrence.getEnd() + 1) {
@@ -1427,7 +1429,7 @@ public class TaskItem extends LocalizedComposite {
         			break;
         		}
         	}
-        	
+
         	boolean foundQuestionOverlap = false;
         	for(ConstructionRange questionOccurrence : questionOccurrences) {
         		if(tenseOccurrence.getStart() >= questionOccurrence.getStart() && tenseOccurrence.getEnd() <= questionOccurrence.getEnd()) {
@@ -1436,9 +1438,9 @@ public class TaskItem extends LocalizedComposite {
         			break;
         		}
         	}
-        	
-        	boolean isThirdPersonSingular = occurrenceText.endsWith("s") || occurrenceText.equals("doesn't") || 
-        			occurrenceText.equals("hasn't") || occurrenceText.equals("isn't");
+
+        	boolean isThirdPersonSingular = occurrenceText != null && (occurrenceText.endsWith("s") || occurrenceText.equals("doesn't") || 
+        			occurrenceText.equals("hasn't") || occurrenceText.equals("isn't"));
 
         	if(foundNegationOverlap) {
         		if(foundQuestionOverlap) {
@@ -1470,7 +1472,7 @@ public class TaskItem extends LocalizedComposite {
         		}
         	}
         }
-        
+
         relevantConstructions.put("present-question-neg-3", indicesQuestionNegative3);
 		relevantConstructions.put("present-question-neg-not3", indicesQuestionNegativeNot3);
 		relevantConstructions.put("present-stmt-neg-3", indicesStatementNegative3);

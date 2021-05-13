@@ -411,7 +411,9 @@ class ClientSessionState {
             name = generatedPackages.get(0).first + ".h5p";
         }
         
-        
+        if(outputFile == null) {
+        	outputFile = new byte[] {};
+        }
 		SmExGenEvent msg = new SmExGenEvent();
 		msg.setEvent(SmExGenEvent.EventType.JOB_COMPLETE);
 		msg.setFile(outputFile);
