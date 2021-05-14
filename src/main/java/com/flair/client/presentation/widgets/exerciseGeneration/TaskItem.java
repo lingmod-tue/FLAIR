@@ -71,6 +71,10 @@ public class TaskItem extends LocalizedComposite {
     @UiField
     MaterialButton btnApplyDocumentSelection;
     @UiField
+    MaterialButton btnRemoveSelection;
+    @UiField
+    MaterialButton btnReset;
+    @UiField
     MaterialButton btnDiscardDocumentSelection;
     @UiField
     MaterialButton btnUpdateDocument;
@@ -316,8 +320,8 @@ public class TaskItem extends LocalizedComposite {
         initUI();
     }
     
-    private int currentSelectionStartIndex = 0;
-    private int currentSelectionLength = 0;
+    private ArrayList<Pair<Integer, Integer>> removedParts = new ArrayList<>();
+    private ArrayList<Pair<Integer, Integer>> newlyRemovedParts = new ArrayList<>();
     private RankableDocument doc;
     
 
@@ -358,25 +362,6 @@ public class TaskItem extends LocalizedComposite {
     
     private final VisibilityManagerCollection visibilityManagers;
     
-    /**
-     * Calculates the start index and length of the selected document part within the previewed document.
-     * @return	The start index and length of the current selection
-     */
-    private Pair<Integer, Integer> calculateSelectionIndices() {
-    	String selectedPart = lblDocumentForSelection.getSelectedText();
-    	int startIndex;
-    	int length;
-    	if(selectedPart == null || selectedPart.length() == 0) {
-    		selectedPart = doc.getText();
-    		startIndex = 0;
-    		length = selectedPart.length();
-    	} else {
-    		startIndex = doc.getText().indexOf(selectedPart);
-    		length = selectedPart.length();
-    	}
-    	
-    	return new Pair<Integer, Integer>(startIndex, length);
-    }
     
     /**
      * Checks whether at least 2 of the given check boxes are visible and checked.
@@ -442,12 +427,59 @@ public class TaskItem extends LocalizedComposite {
 
         btnApplyDocumentSelection.addClickHandler(event -> {
         	dlgDocumentSelection.close();
+        	ArrayList<Pair<Integer, Integer>> partsToRemove = new ArrayList<>();
+        	for(Pair<Integer, Integer> newlyRemovedPart : newlyRemovedParts) {
+        		for(Pair<Integer, Integer> removedPart : removedParts) {
+        			// A previously removed part may be entirely contained in a newly removed part.
+        			// We then remove the contained part from the list
+        			if(newlyRemovedPart.first >= removedPart.first && newlyRemovedPart.first <= removedPart.second) {
+        				partsToRemove.add(removedPart);
+        			}
+        		}
+        	}
+        	for(Pair<Integer, Integer> part : partsToRemove) {
+        		removedParts.remove(part);
+        	}
+        	removedParts.addAll(newlyRemovedParts);
+        	
         	relevantConstructionsInSelectedDocumentPart = new HashMap<String, Integer>();
         	calculateConstructionsOccurrences(relevantConstructionsInSelectedDocumentPart);
         });
+        btnRemoveSelection.addClickHandler(event -> {
+        	int selectedPartStartIndex = lblDocumentForSelection.getCursorPos();
+        	int selectedPartEndIndex = selectedPartStartIndex + lblDocumentForSelection.getSelectionLength();
+        	ArrayList<Pair<Integer, Integer>> allRemovedParts = new ArrayList<>(removedParts);
+        	allRemovedParts.addAll(newlyRemovedParts);
+        	allRemovedParts.sort((c1, c2) -> c1.first < c2.first ? -1 : 1);
+        	for(Pair<Integer, Integer> removedPart : allRemovedParts) {
+        		if(removedPart.first <= selectedPartStartIndex) {
+        			selectedPartStartIndex += removedPart.second - removedPart.first;
+        			selectedPartEndIndex += removedPart.second - removedPart.first;
+        		} else if(removedPart.first < selectedPartEndIndex) {
+        			selectedPartEndIndex += removedPart.second - removedPart.first;
+        		} else {
+        			break;
+        		}
+        	}
+        	newlyRemovedParts.add(new Pair<>(selectedPartStartIndex, selectedPartStartIndex + lblDocumentForSelection.getSelectionLength()));
+        	lblDocumentForSelection.setText(lblDocumentForSelection.getText().substring(0, lblDocumentForSelection.getCursorPos()) + lblDocumentForSelection.getText().substring(lblDocumentForSelection.getCursorPos() + lblDocumentForSelection.getSelectionLength()));
+        });
+        btnReset.addClickHandler(event -> {
+        	lblDocumentForSelection.setText(doc.getText());
+        	removedParts.clear();
+        	newlyRemovedParts.clear();
+        });
         btnDiscardDocumentSelection.addClickHandler(event -> {
         	dlgDocumentSelection.close();
-    		lblDocumentForSelection.setSelectionRange(currentSelectionStartIndex, currentSelectionLength);
+    		newlyRemovedParts.clear();
+    		
+    		// Sort them from highest to lowest number so later removals don't interfere with previous indices
+        	removedParts.sort((c1, c2) -> c1.first < c2.first ? -1 : 1);
+        	String text = doc.getText();
+        	for(Pair<Integer, Integer> removedPart : removedParts) {
+        		text = text.substring(0, removedPart.first) + text.substring(removedPart.second);
+        	}
+        	lblDocumentForSelection.setText(text);
         });
         
     	btnDelete.addClickHandler(event -> {
@@ -455,10 +487,6 @@ public class TaskItem extends LocalizedComposite {
     	});
     	
     	btnSelectDocumentPart.addClickHandler(event -> {
-    		Pair<Integer, Integer> selectionIndices = calculateSelectionIndices();
-    		currentSelectionStartIndex = selectionIndices.first;
-    		currentSelectionLength = selectionIndices.second;
-    		    		
     		dlgDocumentSelection.open();
     		lblDocumentForSelection.setFocus(true);
     	});
@@ -710,7 +738,6 @@ public class TaskItem extends LocalizedComposite {
     	doc = DocumentPreviewPane.getInstance().getCurrentlyPreviewedDocument().getDocument();
     	lblDocTitle.setText(doc.getTitle());
         lblDocumentForSelection.setText(doc.getText());
-		lblDocumentForSelection.setSelectionRange(0, doc.getText().length());
 
 		relevantConstructionsInEntireDocument = new HashMap<String, Integer>();
     	calculateConstructionsOccurrences(relevantConstructionsInEntireDocument);
@@ -950,18 +977,22 @@ public class TaskItem extends LocalizedComposite {
     
     /**
      * Filters those constructions that are within the selected part of the document.
-     * @param startIndex 	The start index of the selected part within the document
-     * @param endIndex		The end index of the selected part within the document
      * @param construction	The construction under consideration
      * @param doc			The document containing the text and constructions
      * @return				The occurrences of the construction within the selected range
      */
-    private ArrayList<ConstructionRange> getConstructionsWithinSelectedPart(int startIndex, int endIndex, 
-    		GrammaticalConstruction construction, RankableDocument doc) {
+    private ArrayList<ConstructionRange> getConstructionsWithinSelectedPart(GrammaticalConstruction construction, RankableDocument doc) {
     	ArrayList<ConstructionRange> containedConstructions = new ArrayList<ConstructionRange>();
 		
     	for(ConstructionRange range : doc.getConstructionOccurrences(construction)) {
-    		if(range.getStart() >= startIndex && range.getEnd() <= endIndex) {
+    		boolean canBeUsed = true;
+    		for(Pair<Integer, Integer> removedPart : removedParts) {
+    			if(Math.max(range.getStart(), removedPart.first) < Math.min(range.getEnd(), removedPart.second)) {
+    				// The construction overlaps with a removed part, so we cannot use it
+    				canBeUsed = false;
+    			}
+    		}
+    		if(canBeUsed) {
     			containedConstructions.add(range);
     		}
     	}
@@ -974,12 +1005,8 @@ public class TaskItem extends LocalizedComposite {
      * Calculates the occurrences of constructions in the combinations relevant to exercise generation.
      */
     public void calculateConstructionsOccurrences(HashMap<String, Integer> relevantConstructions) {    
-    	// Calculate indices of the selected document part    	
-    	Pair<Integer, Integer> selectionIndices = calculateSelectionIndices();
-    	int startIndex = selectionIndices.first;
-    	int endIndex = selectionIndices.second + startIndex;
     	relevantConstructions.clear();
-    	HashMap<String, ArrayList<Pair<Integer, Integer>>> constructionOccurrences = getConstructionsOccurrences(startIndex, endIndex);
+    	HashMap<String, ArrayList<Pair<Integer, Integer>>> constructionOccurrences = getConstructionsOccurrences();
 
     	for (HashMap.Entry<String, ArrayList<Pair<Integer, Integer>>> entry : constructionOccurrences.entrySet()) {
         	relevantConstructions.put(entry.getKey(), entry.getValue().size());
@@ -987,8 +1014,6 @@ public class TaskItem extends LocalizedComposite {
 
 		int numberOfExercises = calculateNumberOfExercises();
     	setNumberExercisesText(numberOfExercises);
-    	lblDocumentForSelection.setText(doc.getText());
-		lblDocumentForSelection.setSelectionRange(startIndex, endIndex - startIndex);
     }
     
     /**
@@ -1128,13 +1153,9 @@ public class TaskItem extends LocalizedComposite {
      */
     public ExerciseSettings generateExerciseSettings() {
     	ArrayList<Construction> constructions = new ArrayList<>();
-    	
-    	Pair<Integer, Integer> selectionIndices = calculateSelectionIndices();
-    	int selectionStartIndex = selectionIndices.first;
-    	int selectionEndIndex = selectionIndices.second + selectionIndices.first;
 
     	HashMap<String, ArrayList<Pair<Integer, Integer>>> constructionOccurrences = 
-    			getConstructionsOccurrences(selectionStartIndex, selectionEndIndex);
+    			getConstructionsOccurrences();
     	ArrayList<String> configuredConstructions = determineConfiguredConstructions();
     	ArrayList<DistractorProperties> distractorProperties = getSelectedDistractors();
 		ArrayList<BracketsProperties> brackets = getSelectedBracketContents();
@@ -1181,13 +1202,6 @@ public class TaskItem extends LocalizedComposite {
     		brackets.add(BracketsProperties.LEMMA);
     	}
     	
-    	ArrayList<Pair<Integer, Integer>> removedParts = new ArrayList<>();
-    	if(selectionStartIndex > 0) {
-    		removedParts.add(new Pair<>(0, selectionStartIndex));
-    	}
-    	if(selectionEndIndex < doc.getText().length()) {
-    		removedParts.add(new Pair<>(selectionEndIndex, doc.getText().length()));
-    	}
     	return new ExerciseSettings(constructions, doc.getUrl(), doc.getText(), removedParts, 
     			type, getQuiz(), distractorProperties, brackets, spnNDistractors.getValue() - 1, lblName.getValue());
     }
@@ -1239,14 +1253,12 @@ public class TaskItem extends LocalizedComposite {
     /**
      * Splits constructions consisting of multiple tokens at whitespaces and adds the parts as individual occurrences to the list
      * @param relevantConstructions	The identified construction occurrences
-     * @param startIndex			The start index of the selected document part
-     * @param endIndex				The end index of the selected document part
      * @param gram					The grammatical construction
      * @param key					The name of the construction used as key in the has map
      */
     private void addMultiWordConstructions(HashMap<String, ArrayList<ConstructionRange>> relevantConstructions, 
-    		int startIndex, int endIndex, GrammaticalConstruction gram, String key) {
-    	ArrayList<ConstructionRange> findings = getConstructionsWithinSelectedPart(startIndex, endIndex, gram, doc);
+    		GrammaticalConstruction gram, String key) {
+    	ArrayList<ConstructionRange> findings = getConstructionsWithinSelectedPart(gram, doc);
 		ArrayList<Pair<Integer, Integer>> indices = new ArrayList<>();
 		for(ConstructionRange finding : findings) {
 			String entireConstruction = doc.getText().substring(finding.getStart(), finding.getEnd());
@@ -1270,14 +1282,12 @@ public class TaskItem extends LocalizedComposite {
     /**
      * Adds constructions consisting of a single token to the list
      * @param relevantConstructions	The identified construction occurrences
-     * @param startIndex			The start index of the selected document part
-     * @param endIndex				The end index of the selected document part
      * @param gram					The grammatical construction
      * @param key					The name of the construction used as key in the has map
      */
     private void addSingleWordConstructions(HashMap<String, ArrayList<Pair<Integer, Integer>>> relevantConstructions, 
-    		int startIndex, int endIndex, GrammaticalConstruction gram, String key) {
-    	ArrayList<ConstructionRange> findings = getConstructionsWithinSelectedPart(startIndex, endIndex, gram, doc);
+    		GrammaticalConstruction gram, String key) {
+    	ArrayList<ConstructionRange> findings = getConstructionsWithinSelectedPart(gram, doc);
 		ArrayList<Pair<Integer, Integer>> indices = new ArrayList<>();
 		for(ConstructionRange finding : findings) {			
 			indices.add(new Pair<>(finding.getStart(), finding.getEnd()));
@@ -1287,11 +1297,9 @@ public class TaskItem extends LocalizedComposite {
     
 /**
  * Determines the indices of occurrences of constructions in the combinations relevant to exercise generation.
- * @param startIndex	The start index of the selected document part
- * @param endIndex		The end index of the selected document part
  * @return				The indices of occurrences of constructions relevant to exercise generation
  */
-    public HashMap<String, ArrayList<Pair<Integer, Integer>>> getConstructionsOccurrences(int startIndex, int endIndex) {    
+    public HashMap<String, ArrayList<Pair<Integer, Integer>>> getConstructionsOccurrences() {    
     	HashMap<String, ArrayList<Pair<Integer, Integer>>> relevantConstructions = 
     			new HashMap<String, ArrayList<Pair<Integer, Integer>>>();
 
@@ -1300,18 +1308,18 @@ public class TaskItem extends LocalizedComposite {
     	//TODO: Maybe allow to specify in view whether to keep analytic forms as single markable or as separate
     	//we would have to multiply the occurrences of mark instances if this was selected
     	//for now, we keep them as one
-    	addSingleWordConstructions(relevantConstructions, startIndex, endIndex, GrammaticalConstruction.ADJECTIVE_COMPARATIVE_SHORT, "adj-comp-syn");
-    	addSingleWordConstructions(relevantConstructions, startIndex, endIndex, GrammaticalConstruction.ADJECTIVE_SUPERLATIVE_SHORT, "adj-sup-syn");		
-    	addSingleWordConstructions(relevantConstructions, startIndex, endIndex, GrammaticalConstruction.ADJECTIVE_COMPARATIVE_LONG, "adj-comp-ana");
-    	addSingleWordConstructions(relevantConstructions, startIndex, endIndex, GrammaticalConstruction.ADJECTIVE_SUPERLATIVE_LONG, "adj-sup-ana");
-    	addSingleWordConstructions(relevantConstructions, startIndex, endIndex, GrammaticalConstruction.ADVERB_COMPARATIVE_SHORT, "adv-comp-syn");		
-    	addSingleWordConstructions(relevantConstructions, startIndex, endIndex, GrammaticalConstruction.ADVERB_SUPERLATIVE_SHORT, "adv-sup-syn");		
-    	addSingleWordConstructions(relevantConstructions, startIndex, endIndex, GrammaticalConstruction.ADVERB_COMPARATIVE_LONG, "adv-comp-ana");
-    	addSingleWordConstructions(relevantConstructions, startIndex, endIndex, GrammaticalConstruction.ADVERB_SUPERLATIVE_LONG, "adv-sup-ana");
+    	addSingleWordConstructions(relevantConstructions, GrammaticalConstruction.ADJECTIVE_COMPARATIVE_SHORT, "adj-comp-syn");
+    	addSingleWordConstructions(relevantConstructions, GrammaticalConstruction.ADJECTIVE_SUPERLATIVE_SHORT, "adj-sup-syn");		
+    	addSingleWordConstructions(relevantConstructions, GrammaticalConstruction.ADJECTIVE_COMPARATIVE_LONG, "adj-comp-ana");
+    	addSingleWordConstructions(relevantConstructions, GrammaticalConstruction.ADJECTIVE_SUPERLATIVE_LONG, "adj-sup-ana");
+    	addSingleWordConstructions(relevantConstructions, GrammaticalConstruction.ADVERB_COMPARATIVE_SHORT, "adv-comp-syn");		
+    	addSingleWordConstructions(relevantConstructions, GrammaticalConstruction.ADVERB_SUPERLATIVE_SHORT, "adv-sup-syn");		
+    	addSingleWordConstructions(relevantConstructions, GrammaticalConstruction.ADVERB_COMPARATIVE_LONG, "adv-comp-ana");
+    	addSingleWordConstructions(relevantConstructions, GrammaticalConstruction.ADVERB_SUPERLATIVE_LONG, "adv-sup-ana");
 
 		// for conditional sentences, we put the entire sentences
-    	addSingleWordConstructions(relevantConstructions, startIndex, endIndex, GrammaticalConstruction.CONDITIONALS_REAL, "condReal");
-    	addSingleWordConstructions(relevantConstructions, startIndex, endIndex, GrammaticalConstruction.CONDITIONALS_UNREAL, "condUnreal");
+    	addSingleWordConstructions(relevantConstructions, GrammaticalConstruction.CONDITIONALS_REAL, "condReal");
+    	addSingleWordConstructions(relevantConstructions, GrammaticalConstruction.CONDITIONALS_UNREAL, "condUnreal");
 
         // passive combinations
         GrammaticalConstruction[] tenseConstructions = new GrammaticalConstruction[]{
@@ -1330,10 +1338,10 @@ public class TaskItem extends LocalizedComposite {
         };
 
         ArrayList<ConstructionRange> passiveOccurrences = 
-        		getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.PASSIVE_VOICE, doc);
+        		getConstructionsWithinSelectedPart(GrammaticalConstruction.PASSIVE_VOICE, doc);
         for(GrammaticalConstruction tenseConstruction : tenseConstructions) {
         	ArrayList<ConstructionRange> tenseOccurrences = 
-            		getConstructionsWithinSelectedPart(startIndex, endIndex, tenseConstruction, doc);
+            		getConstructionsWithinSelectedPart(tenseConstruction, doc);
     		ArrayList<Pair<Integer, Integer>> passiveIndices = new ArrayList<>();
     		ArrayList<Pair<Integer, Integer>> activeIndices = new ArrayList<>();
             for(ConstructionRange tenseOccurrence : tenseOccurrences) {
@@ -1368,17 +1376,17 @@ public class TaskItem extends LocalizedComposite {
         };
         
         ArrayList<ConstructionRange> negationOccurrences = 
-        		getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.NEGATION_NOT, doc);
-        negationOccurrences.addAll(getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.NEGATION_NT, doc));
+        		getConstructionsWithinSelectedPart(GrammaticalConstruction.NEGATION_NOT, doc);
+        negationOccurrences.addAll(getConstructionsWithinSelectedPart(GrammaticalConstruction.NEGATION_NT, doc));
         ArrayList<ConstructionRange> questionOccurrences = 
-        		getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.QUESTIONS_DIRECT, doc);
+        		getConstructionsWithinSelectedPart(GrammaticalConstruction.QUESTIONS_DIRECT, doc);
         ArrayList<ConstructionRange> irregularOccurrences = 
-        		getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.VERBS_IRREGULAR, doc);
+        		getConstructionsWithinSelectedPart(GrammaticalConstruction.VERBS_IRREGULAR, doc);
 
         // past tense combinations
         for(GrammaticalConstruction tenseConstruction : tenseConstructions) {
         	ArrayList<ConstructionRange> tenseOccurrences = 
-            		getConstructionsWithinSelectedPart(startIndex, endIndex, tenseConstruction, doc);
+            		getConstructionsWithinSelectedPart(tenseConstruction, doc);
     		ArrayList<Pair<Integer, Integer>> indicesQuestionAffirmativeRegular = new ArrayList<>();
     		ArrayList<Pair<Integer, Integer>> indicesQuestionAffirmativeIrregular = new ArrayList<>();
     		ArrayList<Pair<Integer, Integer>> indicesQuestionNegativeRegular = new ArrayList<>();
@@ -1462,7 +1470,7 @@ public class TaskItem extends LocalizedComposite {
 
         // present tense combinations
         ArrayList<ConstructionRange> presentOccurrences = 
-        		getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.TENSE_PRESENT_SIMPLE, doc);
+        		getConstructionsWithinSelectedPart(GrammaticalConstruction.TENSE_PRESENT_SIMPLE, doc);
         ArrayList<Pair<Integer, Integer>> indicesQuestionAffirmative3 = new ArrayList<Pair<Integer, Integer>>();
         ArrayList<Pair<Integer, Integer>> indicesQuestionAffirmativeNot3 = new ArrayList<Pair<Integer, Integer>>();
     	ArrayList<Pair<Integer, Integer>> indicesQuestionNegative3 = new ArrayList<Pair<Integer, Integer>>();
@@ -1542,7 +1550,7 @@ public class TaskItem extends LocalizedComposite {
 
 		// relative pronouns
 		ArrayList<ConstructionRange> relativeOccurrences = 
-        		getConstructionsWithinSelectedPart(startIndex, endIndex, GrammaticalConstruction.PRONOUNS_RELATIVE, doc);
+        		getConstructionsWithinSelectedPart(GrammaticalConstruction.PRONOUNS_RELATIVE, doc);
         ArrayList<Pair<Integer, Integer>> indicesWhoOccurrences = new ArrayList<Pair<Integer, Integer>>();
         ArrayList<Pair<Integer, Integer>> indicesWhichOccurrences = new ArrayList<Pair<Integer, Integer>>();
         ArrayList<Pair<Integer, Integer>> indicesThatOccurrences = new ArrayList<Pair<Integer, Integer>>();

@@ -491,8 +491,14 @@
 						readOnly="true" height="200px" />
 				</m:MaterialDialogContent>
 				<m:MaterialDialogFooter>
+				<m:MaterialButton
+						ui:field="btnRemoveSelection" text="Remove selection"
+						type="FLAT" />
+						<m:MaterialButton
+						ui:field="btnReset" text="Reset"
+						type="FLAT" />
 					<m:MaterialButton
-						ui:field="btnApplyDocumentSelection" text="Apply selection"
+						ui:field="btnApplyDocumentSelection" text="Apply"
 						type="FLAT" />
 					<m:MaterialButton
 						ui:field="btnDiscardDocumentSelection" text="Cancel" type="FLAT" />
