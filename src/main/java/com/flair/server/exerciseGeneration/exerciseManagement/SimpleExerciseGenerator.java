@@ -84,7 +84,7 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        distractorManager.generateDistractors(settings.getExerciseSettings(), nlpManager);
 	
 	        PlainTextPreparer plainTextPreparer = new PlainTextPreparer(); 
-	        plainTextPreparer.prepareIndices(settings.getExerciseSettings());
+	        plainTextPreparer.prepareIndices(settings.getExerciseSettings(), nlpManager);
 	
 	        Indexer indexer = new Indexer();
 	        ArrayList<Fragment> res = indexer.matchHtmlToPlainText(settings.getExerciseSettings(), doc.wholeText());

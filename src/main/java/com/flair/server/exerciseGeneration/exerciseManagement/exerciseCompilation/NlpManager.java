@@ -39,6 +39,8 @@ public class NlpManager {
     private OpenNlpParser lemmatizer;
 
     private ArrayList<SentenceAnnotations> sentences = new ArrayList<>();
+    
+    public ArrayList<SentenceAnnotations> getSentences() { return sentences; }
 
     /**
      * Annotates a text sentence-wise with tokenization, constituency and dependency parse

@@ -11,8 +11,7 @@ public class ExerciseSettings implements IsSerializable{
     private ArrayList<Construction> constructions;
     private String url;
     private String plainText;
-    private int selectionStartIndex;
-    private int selectionEndIndex;
+    private ArrayList<Pair<Integer, Integer>> removedParts;
     private String contentType;
     private String quiz;
     private ArrayList<DistractorProperties> distractors;
@@ -23,14 +22,13 @@ public class ExerciseSettings implements IsSerializable{
     public ExerciseSettings() {}
     
     public ExerciseSettings(ArrayList<Construction> constructions, String url,
-                            String plainText, int selectionStartIndex, int selectionEndIndex,
+                            String plainText, ArrayList<Pair<Integer, Integer>> removedParts,
                             String contentType, String quiz, ArrayList<DistractorProperties> distractors, 
                             ArrayList<BracketsProperties> brackets, int nDistractors, String taskName) {
         this.constructions = constructions;
         this.url = url;
         this.plainText = plainText;
-        this.selectionStartIndex = selectionStartIndex;
-        this.selectionEndIndex = selectionEndIndex;
+        this.removedParts = removedParts;
         this.contentType = contentType;
         this.quiz = quiz;
         this.distractors = distractors;
@@ -48,8 +46,7 @@ public class ExerciseSettings implements IsSerializable{
     public ArrayList<Construction> getConstructions() { return constructions; }
     public String getUrl() { return url; }
     public String getPlainText() { return plainText; }
-    public int getSelectionStartIndex() { return selectionStartIndex; }
-    public int getSelectionEndIndex() { return selectionEndIndex; }
+    public ArrayList<Pair<Integer, Integer>> getRemovedParts() { return removedParts; }
     public String getContentType() { return contentType; }
     public String getQuiz() { return quiz; }
     public ArrayList<DistractorProperties> getDistractors() { return distractors; }

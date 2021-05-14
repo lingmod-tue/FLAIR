@@ -1181,7 +1181,14 @@ public class TaskItem extends LocalizedComposite {
     		brackets.add(BracketsProperties.LEMMA);
     	}
     	
-    	return new ExerciseSettings(constructions, doc.getUrl(), doc.getText(), selectionStartIndex, selectionEndIndex, 
+    	ArrayList<Pair<Integer, Integer>> removedParts = new ArrayList<>();
+    	if(selectionStartIndex > 0) {
+    		removedParts.add(new Pair<>(0, selectionStartIndex));
+    	}
+    	if(selectionEndIndex < doc.getText().length()) {
+    		removedParts.add(new Pair<>(selectionStartIndex, doc.getText().length()));
+    	}
+    	return new ExerciseSettings(constructions, doc.getUrl(), doc.getText(), removedParts, 
     			type, getQuiz(), distractorProperties, brackets, spnNDistractors.getValue() - 1, lblName.getValue());
     }
     
