@@ -149,6 +149,7 @@ public class Indexer {
 
     /**
      * Merges the fragments of the same sentence into 1 fragment.
+     * Merges all adjoining not displayed elements into 1 element.
      * Discards all fragments that couldn't be matched unambiguously.
      * @param fragments The fragments into which the plain text was split with corresponding indices in the HTML text
      * @param htmlText The HTML string
@@ -160,7 +161,8 @@ public class Indexer {
         for(Fragment fragment : fragments) {
             if(fragment.isUnambiguousMatch()) {
                 if(previousFragment != null) {
-                    if (previousFragment.getSentenceIndex() == fragment.getSentenceIndex()) {
+                    if (previousFragment.getSentenceIndex() == fragment.getSentenceIndex() || 
+                    		!previousFragment.isDisplay() && !fragment.isDisplay()) {
                         previousFragment.getBlanksBoundaries().addAll(fragment.getBlanksBoundaries());
                         previousFragment = new Fragment(
                                 htmlText.substring(previousFragment.getStartIndex(), fragment.getEndIndex()),

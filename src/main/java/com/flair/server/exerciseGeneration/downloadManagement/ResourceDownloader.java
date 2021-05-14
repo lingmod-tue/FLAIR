@@ -116,7 +116,7 @@ public class ResourceDownloader {
 
             return content.toString();
         } catch (IOException e) {
-			ServerLogger.get().error(e, "Non-fatal error. Exception: " + e.toString());
+			//ServerLogger.get().error(e, "Non-fatal error. Exception: " + e.toString());
             return null;
         }
     }

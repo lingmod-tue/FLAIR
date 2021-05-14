@@ -3,6 +3,7 @@ package com.flair.server.exerciseGeneration.exerciseManagement.domManipulation;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
+import org.jsoup.select.Elements;
 
 import com.flair.shared.exerciseGeneration.Pair;
 
@@ -37,6 +38,11 @@ public class Matcher {
      * Counter for unique naming of plain text elements
      */
     private int plainTextCounter = 1;
+    
+    /**
+     * Not displayed text elements that are to be removed;
+     */
+    ArrayList<Element> removedTextNodes = new ArrayList<>();
 
     /**
      * Extracts plain text fragments, sentences and constructions from a HTML document.
@@ -45,13 +51,15 @@ public class Matcher {
      */
     public MatchResult prepareDomForSplitting(Element doc){
         replacePlainText(doc);
+        removeNotDisplayedElements(doc);
+
         ArrayList<Pair<String, Integer>> usedConstructions = new ArrayList<>();
         for(int i = 0; i < constructions.size(); i++) {
             usedConstructions.add(new Pair<>(constructions.get(i), usedConstructionIndices.get(i)));
         }
         return new MatchResult(sentenceBoundaryElements, plainTextElements, usedConstructions);
     }
-
+    
     /**
      * Recursively traverses the DOM and extracts all text nodes.
      * Identifies plain text elements and sentences.
@@ -78,7 +86,30 @@ public class Matcher {
 
         for(Pair<TextNode, ArrayList<Element>> replacement : replacements){
             performDomModifications(replacement.second, replacement.first);
-        }
+        }        
+    }
+    
+    /**
+     * Removes text elements which were removed along with any enclosing elements which don't contain a not removed text element.
+     */
+    private void removeNotDisplayedElements(Element doc) {
+    	Elements elements = doc.select("span[data-remove]");
+    	while(elements.size() > 0) {
+    		Element element = elements.get(0);
+    		Element parent = element.parent();
+    		Element currentElementToRemove = element;
+    		while(parent != null) {
+    			String parentText = parent.outerHtml();
+    			if(!parentText.contains("<span data-plaintextplaceholder>")) {
+    				currentElementToRemove = parent;
+    				parent = parent.parent();
+    			} else {
+    				parent = null;
+    			}
+    		}
+    		currentElementToRemove.remove();
+    		elements = doc.select("span[data-remove]");
+    	}    	
     }
 
     /**
@@ -134,7 +165,7 @@ public class Matcher {
 
         return replacementElements;
     }
-
+    
     /**
      * Checks whether a fragment boundary is in the node text.
      * If this is the case, anything before the fragment is put into a span element and the fragment text into another one.
@@ -173,6 +204,13 @@ public class Matcher {
             if (indexedSentence.isSentenceEnd() && endIndex == indexedSentence.getEndIndex()) {
                 addElementToSentenceBoundaryElements(false, replacement, indexedSentence.getSentenceIndex());
             }
+        } else {
+        	// we save the boundary elements of not displayed parts to later delete them
+        	Element replacement = ElementCreator.createRemoveReplacementElement();
+        	replacementElements.add(replacement);
+        	if(indexedSentence.getStartIndex() == startIndex || indexedSentence.getEndIndex() == endIndex) {
+        		removedTextNodes.add(replacement);
+        	}
         }
 
         if (textEndIndex > indexedSentence.getEndIndex()) { // there's something after the match
@@ -187,7 +225,7 @@ public class Matcher {
             }
         }
     }
-
+    
     /**
      * Adds the element representing a sentence boundary to the global list.
      * @param isStartElement	True if we are dealing with a sentence start

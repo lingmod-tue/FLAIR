@@ -1131,7 +1131,7 @@ public class TaskItem extends LocalizedComposite {
     	
     	Pair<Integer, Integer> selectionIndices = calculateSelectionIndices();
     	int selectionStartIndex = selectionIndices.first;
-    	int selectionEndIndex = selectionIndices.second;
+    	int selectionEndIndex = selectionIndices.second + selectionIndices.first;
 
     	HashMap<String, ArrayList<Pair<Integer, Integer>>> constructionOccurrences = 
     			getConstructionsOccurrences(selectionStartIndex, selectionEndIndex);
@@ -1186,7 +1186,7 @@ public class TaskItem extends LocalizedComposite {
     		removedParts.add(new Pair<>(0, selectionStartIndex));
     	}
     	if(selectionEndIndex < doc.getText().length()) {
-    		removedParts.add(new Pair<>(selectionStartIndex, doc.getText().length()));
+    		removedParts.add(new Pair<>(selectionEndIndex, doc.getText().length()));
     	}
     	return new ExerciseSettings(constructions, doc.getUrl(), doc.getText(), removedParts, 
     			type, getQuiz(), distractorProperties, brackets, spnNDistractors.getValue() - 1, lblName.getValue());

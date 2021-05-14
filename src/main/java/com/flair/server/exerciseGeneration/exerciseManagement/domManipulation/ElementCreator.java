@@ -54,4 +54,13 @@ public class ElementCreator {
         Element el = d.select("span").first();
         return el;
     }
+    
+    /**
+     * Creates a DOM element with the attribute data-remove.
+	 * @param id	The number of the question
+     * @return		The generated DOM element <span data-remove></span>
+	 */
+    public static Element createRemoveReplacementElement(){
+        return createHtmlElement("data-remove", "");
+    }
 }

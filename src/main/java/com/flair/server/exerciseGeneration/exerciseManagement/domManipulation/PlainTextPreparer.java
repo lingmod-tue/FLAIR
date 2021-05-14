@@ -50,9 +50,7 @@ public class PlainTextPreparer {
                     sentence = sentence.substring(0, sentence.length() - 1);
                 }
                 sentence = sentence.trim();
-                if(sentence.length() > 0) {
-                    sentenceStartIndices.add(sentenceStartIndex);
-                    
+                if(sentence.length() > 0) {                    
                     // Split at displayed parts change
                     ArrayList<Integer> partsStartIndices = new ArrayList<>();
                     partsStartIndices.add(sentenceStartIndex);
@@ -78,6 +76,7 @@ public class PlainTextPreparer {
                     			}
                     		}
                             sentences.add(new Pair<>(Normalizer.normalizeText(plainText.substring(partStartIndex, partEndIndex)), display));
+                            sentenceStartIndices.add(partStartIndex);
                     	}
                     }                    
                 }
