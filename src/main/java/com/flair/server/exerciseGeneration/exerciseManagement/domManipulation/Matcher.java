@@ -102,7 +102,9 @@ public class Matcher {
     				parent = null;
     			}
     		}
-    		currentElementToRemove.remove();
+    		if(currentElementToRemove.parent() != null) {
+    			currentElementToRemove.remove();
+    		}
     		elements = doc.select("span[data-remove]");
     	}    	
     }

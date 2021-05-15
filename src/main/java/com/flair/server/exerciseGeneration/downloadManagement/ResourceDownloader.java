@@ -85,10 +85,13 @@ public class ResourceDownloader {
                     byte[] resourceContent = IOUtils.toByteArray(inputStream);
                     DownloadedResource resource = new DownloadedResource(nextOutputName, resourceContent);
                     writeLock.lock();
-                    if(!downloadedResources.containsKey(urlString)) {
-                    	downloadedResources.put(urlString, resource);
+                    try {
+	                    if(!downloadedResources.containsKey(urlString)) {
+	                    	downloadedResources.put(urlString, resource);
+	                    }
+                    } finally {
+                    	writeLock.unlock();
                     }
-                    writeLock.unlock();
                     // Make sure that we return the resource that is in the hash set
                     // if another thread put it in since we checked, it doesn't actually contain our resource
                     // we would get problems then when accumulating the resources for a quiz

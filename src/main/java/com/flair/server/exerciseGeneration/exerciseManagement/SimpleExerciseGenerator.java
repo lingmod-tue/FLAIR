@@ -73,7 +73,11 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        clozeManager.prepareBlanks(settings.getExerciseSettings(), nlpManager, fragments);
 	        DistractorManager distractorManager = new DistractorManager(); 
 	        ArrayList<String> usedConstructions = distractorManager.generateDistractors(settings.getExerciseSettings(), nlpManager, fragments);
-		        
+		    
+	        if(usedConstructions.size() == 0) {
+	        	return null;
+	        }
+	        
 	        Matcher matcher = new Matcher(fragments);
 	        MatchResult matchResult = matcher.prepareDomForSplitting(doc);
 	        HtmlManager htmlManager = new HtmlManager();
