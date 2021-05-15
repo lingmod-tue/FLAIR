@@ -12,11 +12,16 @@ public interface ExerciseGenerationService {
 	interface GenerateHandler {
 		boolean handle(ArrayList<ExerciseSettings> settings);
 	}
+	
+	interface InterruptHandler {
+		void handle();
+	}
 
 
 	void provideForDownload(byte[] file, String fileName);
 
 	void setGenerateHandler(GenerateHandler handler);
-	
+	void setInterruptHandler(InterruptHandler handler);
+
 	void enableButton();
 }

@@ -900,7 +900,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
     private WebSearchService search;
     private UserPromptService prompt;
     private CorpusUploadService upload;
-    ExerciseGenerationService exGen;
+    private ExerciseGenerationService exGen;
     private CustomKeywordService keywords;
     private VisualizerService visualizer;
     private OperationCancelService cancel;
@@ -1032,6 +1032,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
         questgenpreview.setInterruptHandler(this::onInterruptQuestionGen);
         questgenpreview.setShowHandler(this::onQuestGenPreviewShow);
         exGen.setGenerateHandler(this::onGenerateExercises);
+        exGen.setInterruptHandler(this::onInterruptExGen);
 
         LocalizationEngine.get().addLanguageChangeHandler(l -> rankPreviewModule.refreshLocalization(l.newLang));
 
@@ -1327,9 +1328,17 @@ public class WebRankerCore implements AbstractWebRankerCore {
         return true;
     }
     
-    private void onGenerationComplete(byte[] file, String fileName) {
-    	MaterialToast.fireToast("onGenerationComplete");
-    	exGen.provideForDownload(file,fileName);
+    private void onInterruptExGen() {
+        if (exGenPoller.isRunning())
+        	exGenPoller.stop();
+
+        exGen.enableButton();
+        
+        CmActiveOperationCancel msg = new CmActiveOperationCancel();
+        msg.setActiveOperationExpected(false);
+        serverMessageChannel.send(msg, () -> {
+        }, (e, m) -> {
+        });
     }
 
     private void onCancelOp() {

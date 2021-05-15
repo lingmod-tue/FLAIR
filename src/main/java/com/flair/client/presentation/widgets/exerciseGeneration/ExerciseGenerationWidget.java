@@ -253,7 +253,8 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     
     @Override
     public void enableButton() {
-    	btnGenerateExercises.setEnabled(true);
+    	btnGenerateExercises.setText("Generate exercises");
+    	btnGenerateExercises.setBackgroundColor(Color.ORANGE);
     	spnGenerating.setVisible(false);
     }
     
@@ -262,24 +263,29 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
      */
     private void generateExercises()
     {
-    	btnGenerateExercises.setEnabled(false);
-    	spnGenerating.setVisible(true);
-        ArrayList<ExerciseSettings> exerciseSettings = new ArrayList<>();
-    	for(Widget existingTask : wdgtTasks.getChildrenList()) {
-    		if (((TaskItem)existingTask).icoOk.isVisible()) {
-    			exerciseSettings.add(((TaskItem)existingTask).generateExerciseSettings());
-    		}
+    	if(btnGenerateExercises.getText().equals("Cancel")) {
+    		interruptHandler.handle();
+    	} else {
+	    	btnGenerateExercises.setText("Cancel");
+	    	btnGenerateExercises.setBackgroundColor(Color.RED);    	
+	    	spnGenerating.setVisible(true);
+	        ArrayList<ExerciseSettings> exerciseSettings = new ArrayList<>();
+	    	for(Widget existingTask : wdgtTasks.getChildrenList()) {
+	    		if (((TaskItem)existingTask).icoOk.isVisible()) {
+	    			exerciseSettings.add(((TaskItem)existingTask).generateExerciseSettings());
+	    		}
+	    	}
+	    	
+	    	startGenerationHandler.handle(exerciseSettings);
     	}
-    	
-    	startGenerationHandler.handle(exerciseSettings);
     }
 
     GenerateHandler startGenerationHandler;
+    InterruptHandler interruptHandler;
     
 	@Override
 	public void provideForDownload(byte[] file, String fileName) {	
-		btnGenerateExercises.setEnabled(true);
-    	spnGenerating.setVisible(false);
+		enableButton();
     	
 		if(file != null && file.length > 0) {
 			if (!chkDontShowCopyrightNoticeUI.getValue()) {
@@ -296,6 +302,11 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
 	@Override
 	public void setGenerateHandler(GenerateHandler handler) {
 		startGenerationHandler = handler;
+	}
+
+	@Override
+	public void setInterruptHandler(InterruptHandler handler) {
+		interruptHandler = handler;
 	}
 
 }
