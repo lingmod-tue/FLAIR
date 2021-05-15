@@ -1,17 +1,23 @@
 package com.flair.server.exerciseGeneration.downloadManagement;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.zip.GZIPInputStream;
+
 import org.apache.commons.io.IOUtils;
 
 import com.flair.server.exerciseGeneration.exerciseManagement.DownloadedResource;
 import com.flair.server.utilities.ServerLogger;
-
-import java.io.*;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.zip.GZIPInputStream;
 
 public class ResourceDownloader {
 
@@ -21,28 +27,24 @@ public class ResourceDownloader {
     public ResourceDownloader(boolean downlaod){
         this.download = downlaod;
     }
-
+    
     /**
-     * The file names of the downloaded resources with the corresponding byte content and HTML document to which it belongs
+     * Mapping of original resource names against downloaded resources
+     * Downloaded resources contain the file names of the downloaded resources with the corresponding byte content and HTML document to which it belongs
      */
-    private ArrayList<DownloadedResource> downloadedResources = new ArrayList<>();
+    private Map<String, DownloadedResource> downloadedResources = Collections.synchronizedMap(new HashMap<>());
 
     /**
      * Retrieves the downloaded resources.
      * @return The downloaded resources
      */
-    public ArrayList<DownloadedResource> getDownloadedResources() { return downloadedResources; }
+    public Map<String, DownloadedResource> getDownloadedResources() { return downloadedResources; }
 
     /**
      * Indicates whether to really download the resources.
      * Can be used to turn off downloading for debugging.
      */
     private Boolean download;
-
-    /**
-     * Mapping of original resource names against newly assigned names of the downloaded resources
-     */
-    private HashMap<String, String> resources = new HashMap<>();
 
     /**
      * Counter for processed files to be used to generate unique file names
@@ -56,6 +58,9 @@ public class ResourceDownloader {
     		"mp3", "mp4", "m4a", "odp", "ods", "odt", "ogg", "otf", "patch", "pdf", "png", "ppt", "pptx", "rtf", "svg", "swf", "textile", 
     		"tif", "tiff", "ttf", "txt", "wav", "webm", "woff", "woff2", "xls", "xlsx", "xml", "md", "vtt", "webvtt"};
 
+    ReentrantLock lock = new ReentrantLock();
+    ReentrantLock writeLock = new ReentrantLock();
+    
     /**
      * Downloads the file form the provided url and assigns a new name.
      * If the file format is supported by H5P, the extension is kept; otherwise, it is set to jpeg
@@ -63,34 +68,44 @@ public class ResourceDownloader {
      * @param parentFileUrl The URL of the CSS file if it was extracted from a CSS file; otherwise null
      * @return              The name of the new file if it has been downloaded successfully; otherwise the absolute url
      */
-    public String downloadFile(URL url, URL parentFileUrl) {
+    public DownloadedResource downloadFile(URL url, URL parentFileUrl) {
         String urlString = url.toString();
         String outputName = urlString;
-        if(resources.containsKey(urlString)){
-            outputName = resources.get(urlString);
+        if(downloadedResources.containsKey(urlString)){
+        	return downloadedResources.get(urlString);
         } else if(download){
-            String fileExtension = urlString.substring(urlString.lastIndexOf(".") + 1);
-            String nextOutputName = Arrays.asList(allowedFileExtensions).contains(fileExtension) ?
-                    "tempResourceName" + fileNumber++ + "." + fileExtension :
-                    "tempResourceName" + fileNumber++ + ".jpeg";
+    		String fileExtension = urlString.substring(urlString.lastIndexOf(".") + 1);
 
-            try (InputStream inputStream = url.openStream()){
-                byte[] resourceContent = IOUtils.toByteArray(inputStream);
-                resources.put(urlString, nextOutputName);
-                downloadedResources.add(new DownloadedResource(nextOutputName, resourceContent));
-                outputName = nextOutputName;
-            } catch (IOException e) {
-                // If the url was taken form a css resource file, sometimes the relative paths are formed from the base site
-                // and sometimes from the css file path
-                // we therefore try both
-                if(parentFileUrl != null){
-                    return downloadFile(parentFileUrl, null);
+        	if(Arrays.asList(allowedFileExtensions).contains(fileExtension)) {
+                lock.lock();	// make sure that the fileNumber is really unique
+                String nextOutputName = "tempResourceName" + fileNumber++ + "." + fileExtension;
+                lock.unlock();
+                
+                try (InputStream inputStream = url.openStream()){
+                    byte[] resourceContent = IOUtils.toByteArray(inputStream);
+                    DownloadedResource resource = new DownloadedResource(nextOutputName, resourceContent);
+                    writeLock.lock();
+                    if(!downloadedResources.containsKey(urlString)) {
+                    	downloadedResources.put(urlString, resource);
+                    }
+                    writeLock.unlock();
+                    // Make sure that we return the resource that is in the hash set
+                    // if another thread put it in since we checked, it doesn't actually contain our resource
+                    // we would get problems then when accumulating the resources for a quiz
+                    return downloadedResources.get(urlString);
+                } catch (IOException e) {
+                    // If the url was taken form a css resource file, sometimes the relative paths are formed from the base site
+                    // and sometimes from the css file path
+                    // we therefore try both
+                    if(parentFileUrl != null){
+                        return downloadFile(parentFileUrl, null);
+                    }
+                    ServerLogger.get().info("Could not open file " + urlString);
                 }
-                ServerLogger.get().info("Could not open file " + urlString);
-            }
+        	}            
         }
 
-        return outputName;
+        return new DownloadedResource(outputName);
     }
 
     /**
@@ -98,7 +113,7 @@ public class ResourceDownloader {
      * @param url   The URL from which the resource needs to be downloaded
      * @return      The content of the resource
      */
-    public String downloadFileContent(URL url) {
+    public static String downloadFileContent(URL url) {
         try {
             URLConnection con = url.openConnection();
 

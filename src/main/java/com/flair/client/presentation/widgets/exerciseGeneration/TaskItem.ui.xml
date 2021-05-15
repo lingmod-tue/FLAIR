@@ -73,7 +73,7 @@
 					textAlign="CENTER" textColor="BLACK" width="100%"
 					addStyleNames="{style.bgGrey} {style.lowercase}" waves="DEFAULT" />
 			</m:MaterialRow>
-
+			
 			<m:MaterialRow margin="0" padding="0">
 				<m:MaterialLabel text="Exercise settings"
 					ui:field="lblSettings" textColor="BLACK" fontWeight="BOLD"

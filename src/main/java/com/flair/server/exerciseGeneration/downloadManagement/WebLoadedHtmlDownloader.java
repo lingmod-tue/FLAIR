@@ -14,6 +14,7 @@ import java.util.logging.Level;
 
 /**
  * Html downloader which executes JavaScript and Ajax scripts before downloading the resulting DOM
+ * This parser isn't working out. We get really ugly results and it's never better than with the basic loader.
  */
 public class WebLoadedHtmlDownloader implements WebDownloader {
 

@@ -1,9 +1,13 @@
 package com.flair.server.exerciseGeneration.exerciseManagement;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 
 import com.flair.server.exerciseGeneration.downloadManagement.HtmlManager;
+import com.flair.server.exerciseGeneration.downloadManagement.ResourceDownloader;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
 import com.flair.server.exerciseGeneration.exerciseManagement.domManipulation.Fragment;
 import com.flair.server.exerciseGeneration.exerciseManagement.domManipulation.HtmlSplitter;
@@ -25,20 +29,19 @@ import com.flair.shared.exerciseGeneration.ExerciseSettings;
 
 import edu.stanford.nlp.util.Pair;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-
 public class SimpleExerciseGenerator extends ExerciseGenerator {
 
     @Override
-	public byte[] generateExercise(ContentTypeSettings settings, ArrayList<Pair<String, byte[]>> resources, 
-			CoreNlpParser parser, SimpleNlgParser generator, OpenNlpParser lemmatizer) {
-        JsonComponents jsonComponents = prepareExercise(settings, parser, generator, lemmatizer);
+	public byte[] generateExercise(ContentTypeSettings settings,
+			CoreNlpParser parser, SimpleNlgParser generator, OpenNlpParser lemmatizer, ResourceDownloader resourceDownloader) {
+        JsonComponents jsonComponents = prepareExercise(settings, parser, generator, lemmatizer, resourceDownloader);
 
     	if(jsonComponents != null) {
 	        ArrayList<JsonComponents> helper = new ArrayList<>();
 	        helper.add(jsonComponents);
-	        return createH5pPackage(settings, helper, resources);
+	        
+	        ArrayList<Pair<String, byte[]>> relevantResources = getRelevantResources(settings.getResources());
+	        return createH5pPackage(settings, helper, relevantResources);
     	} else {
     		return null;
     	}
@@ -49,7 +52,8 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
      * @param settings  The content type settings
      * @return          The extracted exercise components relevant for the JSON configuration
      */
-    public JsonComponents prepareExercise(ContentTypeSettings settings, CoreNlpParser parser, SimpleNlgParser generator, OpenNlpParser lemmatizer) {
+    public JsonComponents prepareExercise(ContentTypeSettings settings, CoreNlpParser parser, SimpleNlgParser generator, 
+    		OpenNlpParser lemmatizer, ResourceDownloader resourceDownloader) {
     	if(settings.getDoc() != null) {
 	        // We cannot operate on the same document for all exercises (in-place modifications), so we create a copy
 	        Element doc = Jsoup.parse(settings.getDoc().toString());
@@ -91,7 +95,9 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	
 	        Matcher matcher = new Matcher(res);
 	        MatchResult matchResult = matcher.prepareDomForSplitting(doc);
-	        doc = HtmlManager.makeHtmlEmbeddable(doc);
+	        HtmlManager htmlManager = new HtmlManager();
+	        ArrayList<DownloadedResource> resources = htmlManager.extractResources(settings.getExerciseSettings().getUrl(), resourceDownloader, doc);
+	        settings.getResources().addAll(resources);
 	        SentenceManager sentenceManager = new SentenceManager();
 	        ArrayList<String> sentenceHtml = sentenceManager.extractSentencesFromDom(matchResult.getSentenceBoundaryElements());
 	        HtmlSplitter splitter = new HtmlSplitter();

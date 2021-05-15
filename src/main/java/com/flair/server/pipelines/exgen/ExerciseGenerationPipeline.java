@@ -3,6 +3,7 @@ package com.flair.server.pipelines.exgen;
 import java.util.ArrayList;
 import java.util.Properties;
 
+import com.flair.server.exerciseGeneration.downloadManagement.ResourceDownloader;
 import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.OpenNlpParser;
 import com.flair.server.parser.SimpleNlgParser;
@@ -42,7 +43,6 @@ public final class ExerciseGenerationPipeline {
 	private final Lazy<SimpleNlgParser> generator;
 	private final Lazy<OpenNlpParser> lemmatizer;
 
-
 	private ExerciseGenerationPipeline() {
 		ThreadPool.Builder threadPoolBuilder = ThreadPool.get().builder();
 		downloadExecutor = threadPoolBuilder
@@ -61,7 +61,7 @@ public final class ExerciseGenerationPipeline {
         generator = Lazy.of(() -> generatorFactory.create(Language.ENGLISH, null));
         
         OpenNlpParser.Factory lemmatizerFactory = OpenNlpParser.factory();
-        lemmatizer = Lazy.of(() -> lemmatizerFactory.create(Language.ENGLISH, null));
+        lemmatizer = Lazy.of(() -> lemmatizerFactory.create(Language.ENGLISH, null));        
 	}
 
 	private Properties initializeAnnotationProperties() {
@@ -86,11 +86,13 @@ public final class ExerciseGenerationPipeline {
 		ArrayList<ExerciseSettings> settings;
 		ExerciseGenerationOp.ExGenComplete exGenComplete;
 		ExerciseGenerationOp.JobComplete jobComplete;
+		ResourceDownloader resourceDownloader;
 
 		private ExerciseGenerationOpBuilder() {}
 
 		public ExerciseGenerationOpBuilder settings(ArrayList<ExerciseSettings> settings) {
 			this.settings = settings;
+			this.resourceDownloader = new ResourceDownloader(settings.get(0).isDownloadResources());
 			return this;
 		}
 		
@@ -103,13 +105,14 @@ public final class ExerciseGenerationPipeline {
 			this.jobComplete = handler;
 			return this;
 		}
+		
 
 		public PipelineOp<ExerciseGenerationOp.Input, ExerciseGenerationOp.Output> build() {
 			if (settings == null)
 				throw new IllegalStateException("Invalid exercise settings");
 			
 			ExerciseGenerationOp.Input input = new ExerciseGenerationOp.Input(settings, downloadExecutor, exGenExecutor, 
-					exGenComplete, jobComplete, parser.get(), generator.get(), lemmatizer.get());
+					exGenComplete, jobComplete, parser.get(), generator.get(), lemmatizer.get(), resourceDownloader);
 
 			return new ExerciseGenerationOp(input);
 		}

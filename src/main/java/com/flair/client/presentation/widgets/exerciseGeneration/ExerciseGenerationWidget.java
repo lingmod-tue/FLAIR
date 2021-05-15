@@ -60,6 +60,8 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     @UiField
     MaterialCheckBox chkDontShowCopyrightNoticeUI;
     @UiField
+    MaterialCheckBox chkDownloadResources;
+    @UiField
     MaterialButton btnCloseCopyrightNoticeUI;
     @UiField
     MaterialTitle titleCopyrightNoticeUI;

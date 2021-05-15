@@ -292,18 +292,20 @@ public class NlpManager {
     private String getPreviousPos(SentenceAnnotations sent, ArrayList<CoreLabel> tokens) {
         // get the POS of the last token not contained in the construction, if any
         String previousPos = "";
-        int firstTokenIndex = sent.getTokens().indexOf(tokens.get(0));
-        if(firstTokenIndex > 0) {
-            previousPos = sent.getTokens().get(firstTokenIndex - 1).tag();
-        }
-
-        // if there is no previous token in this sentence, get the POS of the last token of the previous sentence, if any
-        if(previousPos.equals("")) {
-            int sentenceIndex = sentences.indexOf(sent);
-            if (sentenceIndex > 0) {
-                SentenceAnnotations previousSentence = sentences.get(sentenceIndex - 1);
-                previousPos = previousSentence.getTokens().get(previousSentence.getTokens().size() - 1).tag();
-            }
+        if(tokens.size() > 0) {
+	        int firstTokenIndex = sent.getTokens().indexOf(tokens.get(0));
+	        if(firstTokenIndex > 0) {
+	            previousPos = sent.getTokens().get(firstTokenIndex - 1).tag();
+	        }
+	
+	        // if there is no previous token in this sentence, get the POS of the last token of the previous sentence, if any
+	        if(previousPos.equals("")) {
+	            int sentenceIndex = sentences.indexOf(sent);
+	            if (sentenceIndex > 0) {
+	                SentenceAnnotations previousSentence = sentences.get(sentenceIndex - 1);
+	                previousPos = previousSentence.getTokens().get(previousSentence.getTokens().size() - 1).tag();
+	            }
+	        }
         }
 
         return previousPos;

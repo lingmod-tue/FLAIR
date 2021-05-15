@@ -6,6 +6,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.jsoup.nodes.Element;
 
+import com.flair.server.exerciseGeneration.downloadManagement.ResourceDownloader;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.FillInTheBlanksSettings;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.FindSettings;
@@ -40,6 +41,7 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
 		final CoreNlpParser parser;
 		final SimpleNlgParser generator;
 		final OpenNlpParser lemmatizer;
+		final ResourceDownloader resourceDownloader;
 		
 		Input(ArrayList<ExerciseSettings> settings,
 				AsyncExecutorService downloadExecutor,
@@ -48,7 +50,8 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
 		      JobComplete jobComplete,
 		      CoreNlpParser parser,
 		      SimpleNlgParser generator, 
-		      OpenNlpParser lemmatizer) {
+		      OpenNlpParser lemmatizer, 
+		      ResourceDownloader resourceDownloader) {
 			this.settings = settings;		
 			this.downloadExecutor = downloadExecutor;
 			this.exGenExecutor = exGenExecutor;
@@ -57,6 +60,7 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
 			this.parser = parser;
 			this.generator = generator;
 			this.lemmatizer = lemmatizer;
+			this.resourceDownloader = resourceDownloader;
 		}
 	}
 
@@ -98,7 +102,7 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
 						
 						if(allDocumentsDownloaded) {
 							settingsStates.set(i, new Pair<>(entry.first, true));	// set state of exercise to handled
-							scheduler.newTask(ExGenTask.factory(contentTypeSettings, input.parser, input.generator, input.lemmatizer))
+							scheduler.newTask(ExGenTask.factory(contentTypeSettings, input.parser, input.generator, input.lemmatizer, input.resourceDownloader))
 							.with(input.exGenExecutor)
 							.then(this::linkTasks)
 							.queue();
@@ -109,7 +113,7 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
 							
 							contentTypeSettings.setDoc(r.document);
 				            contentTypeSettings.setResources(r.resources);
-							scheduler.newTask(ExGenTask.factory(contentTypeSettings, input.parser, input.generator, input.lemmatizer))
+							scheduler.newTask(ExGenTask.factory(contentTypeSettings, input.parser, input.generator, input.lemmatizer, input.resourceDownloader))
 							.with(input.exGenExecutor)
 							.then(this::linkTasks)
 							.queue();
@@ -191,7 +195,7 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
         });
         
         for (HashMap.Entry<String, Element> entry : documents.entrySet()) {
-        	scheduler.newTask(WebsiteDownloadTask.factory(entry.getKey()))
+        	scheduler.newTask(WebsiteDownloadTask.factory(entry.getKey(), input.resourceDownloader))
 			.with(input.downloadExecutor)
 			.then(this::linkTasks)
 			.queue();

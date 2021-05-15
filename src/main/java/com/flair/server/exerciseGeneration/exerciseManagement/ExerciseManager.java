@@ -1,10 +1,8 @@
 package com.flair.server.exerciseGeneration.exerciseManagement;
 
 
-import java.util.ArrayList;
-
+import com.flair.server.exerciseGeneration.downloadManagement.ResourceDownloader;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
-import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.QuizSettings;
 import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.OpenNlpParser;
 import com.flair.server.parser.SimpleNlgParser;
@@ -19,36 +17,15 @@ public class ExerciseManager {
 	 * @param settings	The exercise settings
 	 * @return			The byte array of the generated H5P package
 	 */
-    public Pair<String, byte[]> generateExercises(ContentTypeSettings settings, CoreNlpParser parser, SimpleNlgParser generator, OpenNlpParser lemmatizer) {
+    public Pair<String, byte[]> generateExercises(ContentTypeSettings settings, CoreNlpParser parser, SimpleNlgParser generator, 
+    		OpenNlpParser lemmatizer, ResourceDownloader resourceDownloader) {
     	try {
-	        ArrayList<Pair<String, byte[]>> relevantResources = new ArrayList<>();
-	    	if(settings instanceof QuizSettings) {
-	            for(ContentTypeSettings contentTypeSettings : ((QuizSettings)settings).getExercises()){
-	                relevantResources.addAll(getRelevantResources(contentTypeSettings.getResources()));
-	            }
-	        } else {
-	            relevantResources.addAll(getRelevantResources(settings.getResources()));
-	        }
-	        
-	        return new Pair<>(settings.getName(), settings.getExerciseGenerator().generateExercise(settings, relevantResources, parser, generator, lemmatizer));       
+	        return new Pair<>(settings.getName(), 
+	        		settings.getExerciseGenerator().generateExercise(settings, parser, generator, lemmatizer, resourceDownloader));       
     	} catch(Exception e) {
 			ServerLogger.get().error(e, "Exercise could not be generated. Exception: " + e.toString());
     		return null;
     	}
-    }
-    
-    /**
-     * Retrieves the downloaded resources.
-     * @param resources    The downloaded resources
-     * @return             The file names and byte content of the downloaded resources
-     */
-    private ArrayList<Pair<String, byte[]>> getRelevantResources(ArrayList<DownloadedResource> resources) {
-        ArrayList<Pair<String, byte[]>> relevantResources = new ArrayList<>();
-        for(DownloadedResource downloadedResource : resources) {
-        	relevantResources.add(new Pair<>(downloadedResource.getFileName(), downloadedResource.getFileContent()));
-        }
-
-        return relevantResources;
     }
 
 }

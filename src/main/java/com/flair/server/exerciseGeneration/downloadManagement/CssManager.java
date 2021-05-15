@@ -1,8 +1,13 @@
 package com.flair.server.exerciseGeneration.downloadManagement;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.flair.server.exerciseGeneration.exerciseManagement.DownloadedResource;
+
+import edu.stanford.nlp.util.Pair;
 
 
 public class CssManager {
@@ -15,10 +20,11 @@ public class CssManager {
      * @param cssContent The CSS string
      * @param resourceDownloader The resource downloader
      * @param parentUrl The URL of the css file from which the URL was extracted
-     * @return The new CSS string with replaced URLs
+     * @return The new CSS string with replaced URLs and the downloaded resources
      */
-    public String handleUrls(String siteUrl, String cssContent, ResourceDownloader resourceDownloader, String parentUrl) {
+    public Pair<String, ArrayList<DownloadedResource>> handleUrls(String siteUrl, String cssContent, ResourceDownloader resourceDownloader, String parentUrl) {
         Matcher m = Pattern.compile("(?<=url\\()(.*?)(?=\\))").matcher(cssContent);
+        ArrayList<DownloadedResource> downloadedResources = new ArrayList<>();
         while (m.find()) {
             String url = m.group();
             int dotIndex = url.lastIndexOf(".");
@@ -29,13 +35,15 @@ public class CssManager {
                     absoluteParentUrl = UrlManager.getUrl(url, parentUrl);
                 }
                 if(absoluteUrl != null) {
-                    String outputName = resourceDownloader.downloadFile(absoluteUrl, absoluteParentUrl);
+                	DownloadedResource resource = resourceDownloader.downloadFile(absoluteUrl, absoluteParentUrl);
+                	downloadedResources.add(resource);
+                    String outputName = resource.getFileName();
                     cssContent = cssContent.replace("url(" + url + ")", "url(" + outputName + ")");
                 }
             }
         }
 
-        return cssContent;
+        return new Pair<>(cssContent, downloadedResources);
     }
 
     /**

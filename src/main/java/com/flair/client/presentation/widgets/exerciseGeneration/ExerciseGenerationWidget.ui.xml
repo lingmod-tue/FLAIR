@@ -31,6 +31,11 @@
 					width="100%" textAlign="CENTER" textColor="BLACK"
 					addStyleNames="{style.bgGrey}" waves="DEFAULT" />
 			</m:MaterialRow>
+			<m:MaterialRow>
+				<m:MaterialCheckBox
+							ui:field="chkDownloadResources" value="false" text="Download resources" />
+			</m:MaterialRow>
+			
 			<m:MaterialRow textAlign="CENTER" marginTop="10">
 				<m:MaterialColumn grid="l10 m10 s10"
 					textAlign="CENTER">

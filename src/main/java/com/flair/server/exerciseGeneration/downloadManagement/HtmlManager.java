@@ -6,7 +6,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import com.flair.server.exerciseGeneration.exerciseManagement.DownloadedResource;
 import com.flair.server.utilities.ServerLogger;
+
+import edu.stanford.nlp.util.Pair;
 
 import java.io.IOException;
 import java.net.URL;
@@ -38,128 +41,180 @@ public class HtmlManager {
 
         return e;
     }
+    
+    /**
+     * Downloads the html document, makes resource urls (including in style tags) absolute and removes script tags
+     * @param url                   The url of the website
+     * @param resourceDownloader    The Resource downloader
+     * @return                      The html document and the downloaded resources
+     */
+    public Pair<Element, ArrayList<DownloadedResource>> getHtml(String url, ResourceDownloader resourceDownloader) {
+    	Pair<Element, ArrayList<DownloadedResource>> res = prepareHtml(url, resourceDownloader);
+    	return new Pair<>(makeHtmlEmbeddable(res.first), res.second);
+    }
 
     /**
      * Downloads the html document, makes resource urls (including in style tags) absolute and removes script tags
-     * Extracts question elements from the html document
      * @param url                   The url of the website
-     * @param downloadResources     The downloaded resources of all HTML pages
      * @param resourceDownloader    The Resource downloader
-     * @return                      The html document
+     * @return                      The html document and the downloaded resources
      */
-    public Element prepareHtml(String url, boolean downloadResources, ResourceDownloader resourceDownloader) {
-        Document doc;
-
-        // This parser is not working out. We get really ugly results and it's never better than with the basic loader.
-        /*
-        try {
-            // We first try to download the page after executing javascript and ajax contents
-            WebLoadedHtmlDownloader downlaoder = new WebLoadedHtmlDownloader();
-            doc = downlaoder.download(url);
-
-            // this gives us weird results for noscript tags (it escapes all the html characters)
-            for(Element noscriptElement : doc.select("noscript")) {
-                noscriptElement.remove();
-            }
-        } catch (Exception e) {
-            // If the first approach fails, we just download the html content
-            WebBasicHtmlDownloader downloader = new WebBasicHtmlDownloader();
-            doc = downloader.download(url);
-        }
-
-         */
-
+    public Pair<Element, ArrayList<DownloadedResource>> prepareHtml(String url, ResourceDownloader resourceDownloader) {
         WebBasicHtmlDownloader downloader = new WebBasicHtmlDownloader();
-        doc = downloader.download(url);
+        Document doc = downloader.download(url);
+        
+        ArrayList<DownloadedResource> downloadedResources = new ArrayList<>();
 
         if(doc != null) {
-            for (Element element : doc.getAllElements()) {
-                String tag = element.tagName().toLowerCase();
-
-                if(tag.equalsIgnoreCase("base")){
-                    url = getAttributeValue(element, "href");
-                } else if (tag.equalsIgnoreCase("script")) {
-                    // Java script causes fatal errors if anything is wrong
-                    // We therefore remove any javascript components
-                    element.remove();
-                } else if(tag.equalsIgnoreCase("blockquote") || tag.equalsIgnoreCase("q") || tag.equalsIgnoreCase("del") || tag.equalsIgnoreCase("ins")) {
-                    handleResourceAttribute(element, url, "cite", null, false, true);
-                } else if(tag.equalsIgnoreCase("a") || tag.equalsIgnoreCase("area")) {
-                    handleResourceAttribute(element, url, "href", null, false, true);
-                } else if(tag.equalsIgnoreCase("button") || tag.equalsIgnoreCase("input")) {
-                    handleResourceAttribute(element, url, "formaction", null, false, true);
-                } else if(tag.equalsIgnoreCase("form")) {
-                    handleResourceAttribute(element, url, "action", null, false, true);
-                } else if(tag.equalsIgnoreCase("audio") || tag.equalsIgnoreCase("track") || tag.equalsIgnoreCase("video") || tag.equalsIgnoreCase("embed")) {
-                    handleResourceAttribute(element, url, "src", resourceDownloader, true, true);
-                } else if(tag.equalsIgnoreCase("iframe")) {
-                    String content = getAttributeValue(element, "srcdoc");
-                    // srcdoc overrides src, so we only check src if there is no srcdoc attribute
-                    if(content != null) {
-                        handleExternalHtml(element, url, downloadResources, resourceDownloader);
-                    }
-                } else if(tag.equalsIgnoreCase("portal") || tag.equalsIgnoreCase("frame")) {
-                    if(handleExternalHtml(element, url, downloadResources, resourceDownloader)) {
-                        element.tagName("iframe");
-                    }
-                } else if(tag.equalsIgnoreCase("object")) {
-                    String baseUrl = getAttributeValue(element, "codebase");
-                    if(baseUrl == null){
-                        baseUrl = url;
-                    }
-
-                    String archiveValue = getAttributeValue(element, "archive");
-                    if(archiveValue != null){
-                        String[] resources = archiveValue.trim().split(" ");
-                        ArrayList<String> newResources = new ArrayList<>();
-                        for(String resource : resources) {
-                            URL absoluteUrl = UrlManager.getUrl(resource, baseUrl);
-                            String newResource = resourceDownloader.downloadFile(absoluteUrl, null);
-                            newResources.add(newResource);
-                        }
-                        String newValue = String.join(" ", newResources);
-                        if(!newValue.equals(archiveValue)) {
-                            element.attr("archive", newValue);
-                        }
-                    }
-
-                    handleResourceAttribute(element, baseUrl, "data", resourceDownloader, true, false);
-                } else if(tag.equalsIgnoreCase("img") || tag.equalsIgnoreCase("source")) {
-                    handleResourceAttribute(element, url, "src", resourceDownloader, true, false);
-
-                    handleSrcset(element, url, resourceDownloader, "srcset");
-                } else if (tag.equalsIgnoreCase("link")) {
-                    String relValue = getAttributeValue(element, "rel");
-                    boolean isStylesheet = false;
-                    if(relValue != null){
-                        String[] parts = relValue.split(" ");
-                        for(String part : parts){
-                            if(part.equalsIgnoreCase("stylesheet")){
-                                isStylesheet = true;
-                            }
-                        }
-                    }
-                    if(!isStylesheet) {
-                        String asValue = getAttributeValue(element, "as");
-                        if(asValue != null && asValue.equals("style")){
+        	for(Element element : doc.select("base")) {
+        		url = getAttributeValue(element, "href");
+        	}
+        	for(Element element : doc.select("script")) {
+        		// Java script causes fatal errors if anything is wrong
+                // We therefore remove any javascript components
+                element.remove();
+        	}        	
+        	// we have to do this before the link elements, otherwise we treat replaced styleheets twice!
+        	for(Element element : doc.select("style")) {
+        		downloadedResources.addAll(handleCssContent(url, element, element.html(), resourceDownloader, null));
+        	}
+        	for(Element element : doc.select("link")) {
+        		String relValue = getAttributeValue(element, "rel");
+                boolean isStylesheet = false;
+                if(relValue != null){
+                    String[] parts = relValue.split(" ");
+                    for(String part : parts){
+                        if(part.equalsIgnoreCase("stylesheet")){
                             isStylesheet = true;
                         }
                     }
-
-                    if (isStylesheet) {
-                        handleCssResource(element, url, resourceDownloader);
-                    } else{
-                        handleResourceAttribute(element, url, "href", resourceDownloader, true, false);
-
-                        handleSrcset(element, url, resourceDownloader, "imagesrcset");
-                    }
-                } else if (tag.equalsIgnoreCase("style")) {
-                    handleCssContent(url, element, element.html(), resourceDownloader, null);
                 }
+                if(!isStylesheet) {
+                    String asValue = getAttributeValue(element, "as");
+                    if(asValue != null && asValue.equals("style")){
+                        isStylesheet = true;
+                    }
+                }
+
+                if (isStylesheet) {
+                	downloadedResources.addAll(handleCssResource(element, url, resourceDownloader));
+                } 
+            }
+        	for(Element element : doc.select("iframe")) {
+        		String content = getAttributeValue(element, "srcdoc");
+                // srcdoc overrides src, so we only check src if there is no srcdoc attribute
+                if(content != null) {
+                    ArrayList<DownloadedResource> resources = handleExternalHtml(element, url, resourceDownloader);
+                    if(resources != null) {
+                    	downloadedResources.addAll(resources);
+                    }
+                }        	
+            }
+        	for(Element element : doc.select("portal,frame")) {
+        		ArrayList<DownloadedResource> resources = handleExternalHtml(element, url, resourceDownloader);
+        		if(resources != null) {
+                    element.tagName("iframe");
+                    downloadedResources.addAll(resources);
+                }     	
             }
         }
 
-        return doc;
+        return new Pair<>(doc, downloadedResources);
+    }
+    
+    /**
+     * Determines the relevant resource attribute of a HTML tag.
+     * @param tag	The HTML tag
+     * @return		The name of the resource attribute
+     */
+    private String getAttributeName(String tag) {
+    	if(tag.equals("blockquote") || tag.equals("q") || tag.equals("del") || tag.equals("ins")) {
+    		return "cite";
+    	}
+    	if(tag.equals("a") || tag.equals("area")) {
+    		return "href";
+    	}
+    	if(tag.equals("button") || tag.equals("input")) {
+    		return "formaction";
+    	}
+    	if(tag.equals("form")) {
+    		return "action";
+    	}
+    	return null;
+    }
+    
+    public ArrayList<DownloadedResource> extractResources(String url, ResourceDownloader resourceDownloader, Element doc) {
+    	ArrayList<DownloadedResource> downloadedResources = new ArrayList<>();
+    	
+        if(doc != null) {
+        	for(Element element : doc.select("base")) {
+        		url = getAttributeValue(element, "href");
+        	}
+        	for(Element element : doc.select("blockquote,q,del,ins,a,area,button,input,form")) {
+        		DownloadedResource resource = handleResourceAttribute(element, url, getAttributeName(element.tagName().toLowerCase()), resourceDownloader, true);
+        		if(resource != null) {
+        			downloadedResources.add(resource);
+        		}
+        	}
+        	for(Element element : doc.select("audio,track,video,embed")) {
+        		DownloadedResource resource = handleResourceAttribute(element, url, "src", resourceDownloader, true);
+        		if(resource != null) {
+        			downloadedResources.add(resource);
+        		}
+        	}
+        	for(Element element : doc.select("object")) {
+        		String baseUrl = getAttributeValue(element, "codebase");
+                if(baseUrl == null){
+                    baseUrl = url;
+                }
+
+                String archiveValue = getAttributeValue(element, "archive");
+                if(archiveValue != null){
+                    String[] resources = archiveValue.trim().split(" ");
+                    ArrayList<String> newResources = new ArrayList<>();
+                    for(String resource : resources) {
+                        URL absoluteUrl = UrlManager.getUrl(resource, baseUrl);
+                        DownloadedResource downloadedResource = resourceDownloader.downloadFile(absoluteUrl, null);
+                        downloadedResources.add(downloadedResource);
+                        newResources.add(downloadedResource.getFileName());
+                    }
+                    String newValue = String.join(" ", newResources);
+                    if(!newValue.equals(archiveValue)) {
+                        element.attr("archive", newValue);
+                    }
+                }
+
+                DownloadedResource resource = handleResourceAttribute(element, baseUrl, "data", resourceDownloader, false);
+        		if(resource != null) {
+        			downloadedResources.add(resource);
+        		}
+            }
+        	for(Element element : doc.select("img,source")) {
+        		DownloadedResource resource = handleResourceAttribute(element, url, "src", resourceDownloader, false);
+        		if(resource != null) {
+        			downloadedResources.add(resource);
+        		}
+                downloadedResources.addAll(handleSrcset(element, url, resourceDownloader, "srcset"));
+            }
+        	for(Element element : doc.select("link")) {  
+        		DownloadedResource resource = handleResourceAttribute(element, url, "href", resourceDownloader, false);
+        		if(resource != null) {
+        			downloadedResources.add(resource);
+        		}
+        		downloadedResources.addAll(handleSrcset(element, url, resourceDownloader, "imagesrcset"));
+            }
+        	for(Element element : doc.select("iframe")) {
+        		String content = getAttributeValue(element, "srcdoc");
+                if(content != null) {
+                	try {
+	                	downloadedResources.addAll(extractResources(getAttributeValue(element, "src"), resourceDownloader, Jsoup.parse(content)));
+                	}
+                	catch(Exception e) {}
+                }        	
+            }
+        }   
+        
+        return downloadedResources;
     }
 
     /**
@@ -189,16 +244,18 @@ public class HtmlManager {
      * @param resourceDownloader    The HtmlManagement.ResourceDownloader
      * @param srcSetName            The name of the resource set attribute
      */
-    private void handleSrcset(Element element, String url, ResourceDownloader resourceDownloader, String srcSetName){
+    private ArrayList<DownloadedResource> handleSrcset(Element element, String url, ResourceDownloader resourceDownloader, String srcSetName){
         String srcSetValue = getAttributeValue(element, srcSetName);
+        ArrayList<DownloadedResource> downloadedResources = new ArrayList<>();
         if(srcSetValue != null){
             String [] resources = srcSetValue.split(",");
             ArrayList<String> newResources = new ArrayList<>();
             for(String resource : resources){
                 String[] resourceSpecifics = resource.trim().split(" ");
                 URL absoluteUrl = UrlManager.getUrl(resourceSpecifics[0], url);
-                String newResourceName = resourceDownloader.downloadFile(absoluteUrl, null);
-                resourceSpecifics[0] = newResourceName;
+                DownloadedResource downloadedResource = resourceDownloader.downloadFile(absoluteUrl, null);
+                resourceSpecifics[0] = downloadedResource.getFileName();
+                downloadedResources.add(downloadedResource);
                 newResources.add(String.join(" ", resourceSpecifics));
             }
             String newValue = String.join(", ", newResources);
@@ -206,6 +263,8 @@ public class HtmlManager {
                 element.attr(srcSetName, newValue);
             }
         }
+        
+        return downloadedResources;
     }
 
     /**
@@ -213,22 +272,22 @@ public class HtmlManager {
      * Replaces the old element with an iframe element containing the downloaded content
      * @param element               The HTML element in which the html reference was found (iframe, frame or portal)
      * @param siteUrl               The URL of the base site
-     * @param downloadResources     The already downloaded resources
      * @param resourceDownloader    The resource downloader
      * @return true if a reference to an external html page was found and the content downloaded; otherwise false
      */
-    private boolean handleExternalHtml(Element element, String siteUrl, boolean downloadResources, ResourceDownloader resourceDownloader) {
+    private ArrayList<DownloadedResource> handleExternalHtml(Element element, String siteUrl, ResourceDownloader resourceDownloader) {
         String src = getAttributeValue(element, "src");
         if (src != null) {
             String absoluteUrl = UrlManager.getUrl(src, siteUrl).toString();
             HtmlManager iframeHtmlManager = new HtmlManager();
-            String iframeContent = HtmlManager.makeHtmlEmbeddable(iframeHtmlManager.prepareHtml(absoluteUrl, downloadResources, resourceDownloader)).toString().replaceAll("\\s+", " ");
+            Pair<Element,ArrayList<DownloadedResource>> res = iframeHtmlManager.prepareHtml(absoluteUrl, resourceDownloader);
+            String iframeContent = res.first.toString().replaceAll("\\s", " ");
             element.attr("srcdoc", iframeContent);
-            element.removeAttr("src");
+            element.attr("src", absoluteUrl);
 
-            return true;
+            return res.second;
         }
-        return false;
+        return null;
     }
 
     /**
@@ -236,18 +295,21 @@ public class HtmlManager {
      * @param element               The HTML element in which the CSS resource file was specified
      * @param siteUrl               The URL of the base site
      * @param resourceDownloader    The HtmlManagement.ResourceDownloader
+     * @return 
      */
-    private void handleCssResource(Element element, String siteUrl, ResourceDownloader resourceDownloader) {
+    private ArrayList<DownloadedResource> handleCssResource(Element element, String siteUrl, ResourceDownloader resourceDownloader) {
         String src = getAttributeValue(element, "href");
         if(src != null){
             URL url = UrlManager.getUrl(src, siteUrl);
-            String content = resourceDownloader.downloadFileContent(url);
+            String content = ResourceDownloader.downloadFileContent(url);
 
             if(content != null) {
                 content = content.replaceAll("/\\*.*?\\*/", "");
-                handleCssContent(siteUrl, element, content, resourceDownloader, url.toString());
+                return handleCssContent(siteUrl, element, content, resourceDownloader, url.toString());
             }
         }
+        
+        return new ArrayList<>();
     }
 
     /**
@@ -258,16 +320,20 @@ public class HtmlManager {
      * @param resourceDownloader    The resource downloader
      * @param parentUrl             The URL of the CSS file if the URL was extracted from a CSS resource file; otherwise null
      */
-    private static void handleCssContent(String siteUrl, Element element, String cssContent,
+    private static ArrayList<DownloadedResource> handleCssContent(String siteUrl, Element element, String cssContent,
                                          ResourceDownloader resourceDownloader, String parentUrl) {
     	CssManager cssManager = new CssManager();
-        cssContent = cssManager.handleUrls(siteUrl, cssContent, resourceDownloader, parentUrl);
+    	Pair<String, ArrayList<DownloadedResource>> res = cssManager.handleUrls(siteUrl, cssContent, resourceDownloader, parentUrl);
+        cssContent = res.first;
         cssContent = cssManager.replaceNonEmbeddableTagSelectors(cssContent);
 
         String replacement = "<style>" + cssContent + "</style>";
         Document d = Jsoup.parse(replacement);
         Element el = d.select("style").first();
         element.replaceWith(el);
+        
+        
+        return res.second;
     }
 
     /**
@@ -295,11 +361,14 @@ public class HtmlManager {
      * @param downloadResource      Indicates whether to download the resource
      * @param downloadWebpages      <code>true</code> if the resource should be downloaded if it is a web page; otherwise <code>false</code>
      */
-    private static void handleResourceAttribute(Element element, String siteUrl, String srcAttribute,
-                                                ResourceDownloader resourceDownloader, boolean downloadResource,
+    private DownloadedResource handleResourceAttribute(Element element, String siteUrl, String srcAttribute,
+                                                ResourceDownloader resourceDownloader,
                                                 boolean downloadWebpages) {
         String src = getAttributeValue(element, srcAttribute);
+        
+        DownloadedResource downloadedResource = null;
         if (src != null) {
+            boolean downloadResource = src.contains(".");
             URL absoluteUrl = UrlManager.getUrl(src, siteUrl);
 
             if(!downloadWebpages){
@@ -308,7 +377,8 @@ public class HtmlManager {
 
             String outputName;
             if(downloadResource) {
-                outputName = resourceDownloader.downloadFile(absoluteUrl, null);
+            	downloadedResource = resourceDownloader.downloadFile(absoluteUrl, null);
+                outputName = downloadedResource.getFileName();
             } else {
                 outputName = absoluteUrl.toString();
             }
@@ -317,5 +387,7 @@ public class HtmlManager {
                 element.attr(srcAttribute, outputName);
             }
         }
+        
+        return downloadedResource;
     }
 }

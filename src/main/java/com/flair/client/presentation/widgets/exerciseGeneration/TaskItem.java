@@ -1203,7 +1203,7 @@ public class TaskItem extends LocalizedComposite {
     	}
     	
     	return new ExerciseSettings(constructions, doc.getUrl(), doc.getText(), removedParts, 
-    			type, getQuiz(), distractorProperties, brackets, spnNDistractors.getValue() - 1, lblName.getValue());
+    			type, getQuiz(), distractorProperties, brackets, spnNDistractors.getValue() - 1, lblName.getValue(), parent.chkDownloadResources.getValue());
     }
     
     /**

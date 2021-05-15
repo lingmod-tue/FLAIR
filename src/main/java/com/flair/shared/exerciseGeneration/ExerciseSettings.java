@@ -18,13 +18,14 @@ public class ExerciseSettings implements IsSerializable{
     private ArrayList<BracketsProperties> brackets;
     private int nDistractors;
     private String taskName;
+    private boolean downloadResources;
 
     public ExerciseSettings() {}
     
     public ExerciseSettings(ArrayList<Construction> constructions, String url,
                             String plainText, ArrayList<Pair<Integer, Integer>> removedParts,
                             String contentType, String quiz, ArrayList<DistractorProperties> distractors, 
-                            ArrayList<BracketsProperties> brackets, int nDistractors, String taskName) {
+                            ArrayList<BracketsProperties> brackets, int nDistractors, String taskName, boolean downloadResources) {
         this.constructions = constructions;
         this.url = url;
         this.plainText = plainText;
@@ -35,6 +36,7 @@ public class ExerciseSettings implements IsSerializable{
         this.brackets = brackets;
         this.nDistractors = nDistractors;
         this.taskName = taskName;
+        this.downloadResources = downloadResources;
     }
 
     public void setSentences(ArrayList<Pair<String, Boolean>> sentences) { this.sentences = sentences; }
@@ -53,5 +55,6 @@ public class ExerciseSettings implements IsSerializable{
     public ArrayList<BracketsProperties> getBrackets() { return brackets; }
     public int getnDistractors() { return nDistractors; }
 	public String getTaskName() { return taskName; }
+	public boolean isDownloadResources() { return downloadResources; }
 
 }

@@ -3,6 +3,7 @@ package com.flair.server.exerciseGeneration.exerciseManagement;
 
 import org.json.simple.parser.ParseException;
 
+import com.flair.server.exerciseGeneration.downloadManagement.ResourceDownloader;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
 import com.flair.server.exerciseGeneration.exerciseManagement.domManipulation.ZipManager;
 import com.flair.server.parser.CoreNlpParser;
@@ -23,8 +24,8 @@ public abstract class ExerciseGenerator {
 	 * @param resources	The downloaded resources of the web page for which the exercise is generated
 	 * @return			The byte array of the generated H5P file
 	 */
-    public abstract byte[] generateExercise(ContentTypeSettings settings, ArrayList<Pair<String, byte[]>> resources, 
-    		CoreNlpParser parser, SimpleNlgParser generator, OpenNlpParser lemmatizer);
+    public abstract byte[] generateExercise(ContentTypeSettings settings,
+    		CoreNlpParser parser, SimpleNlgParser generator, OpenNlpParser lemmatizer, ResourceDownloader resourceDownloader);
 
     /**
      * Writes the extracted components to the JSON configuration file and zips everything into a H5P package.
@@ -46,6 +47,22 @@ public abstract class ExerciseGenerator {
     	} else {
     		return null;
     	}
+    }
+        
+    /**
+     * Retrieves the downloaded resources.
+     * @param resources    The downloaded resources
+     * @return             The file names and byte content of the downloaded resources
+     */
+    protected ArrayList<Pair<String, byte[]>> getRelevantResources(ArrayList<DownloadedResource> resources) {
+        ArrayList<Pair<String, byte[]>> relevantResources = new ArrayList<>();
+        for(DownloadedResource downloadedResource : resources) {
+        	if(downloadedResource.getFileContent() != null && !relevantResources.stream().anyMatch(r -> r.first.equals(downloadedResource.getFileName()))) {
+        		relevantResources.add(new Pair<>(downloadedResource.getFileName(), downloadedResource.getFileContent()));
+        	}
+        }
+
+        return relevantResources;
     }
 
 }
