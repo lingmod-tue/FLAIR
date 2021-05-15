@@ -1,5 +1,7 @@
 package com.flair.server.exerciseGeneration.exerciseManagement.domManipulation;
 
+import com.flair.shared.exerciseGeneration.Construction;
+
 public class Blank {
     /**
      * The boundary index of the blank in the entire text.
@@ -9,34 +11,30 @@ public class Blank {
     private int boundaryIndex;
 
     /**
-     * The brackets text.
-     * Only set for end indices.
-     */
-    private String text = "";
-
-    /**
      * The index of the construction in the original list of all constructions.
      * Only set for end indices.
      */
-    private Integer blankIndex;
+    int constructionIndex;
     
-    private int constructionIndex;
+    /**
+     * The construction to which the boundary belongs.
+     * Only set for end indices.
+     */
+    private Construction construction;
 
     public Blank(int boundaryIndex, int constructionIndex) {
-    	this(boundaryIndex, constructionIndex, "", null);
+    	this(boundaryIndex, constructionIndex, null);
     }
 
-    public Blank(int boundaryIndex, int constructionIndex, String text, Integer blankIndex) {
+    public Blank(int boundaryIndex, int constructionIndex, Construction construction) {
         this.boundaryIndex = boundaryIndex;
         this.constructionIndex = constructionIndex;
-        this.text = text;
-        this.blankIndex = blankIndex;
+        this.construction = construction;
     }
 
     public int getBoundaryIndex() { return boundaryIndex; }
-    public String getText() { return text; }
-    public Integer getBlankIndex() { return blankIndex; }
     public int getConstructionIndex() { return constructionIndex; }
+    public Construction getConstruction() { return construction; }
 
-    public void setBoundaryIndex(int boundaryIndex) { this.boundaryIndex = boundaryIndex; }
+	public void setBoundaryIndex(int boundaryIndex) { this.boundaryIndex = boundaryIndex; }
 }

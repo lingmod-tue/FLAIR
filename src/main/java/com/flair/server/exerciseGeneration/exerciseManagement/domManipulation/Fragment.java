@@ -2,6 +2,8 @@ package com.flair.server.exerciseGeneration.exerciseManagement.domManipulation;
 
 import java.util.ArrayList;
 
+import com.flair.shared.exerciseGeneration.Construction;
+
 public class Fragment {
 
     private String text;

@@ -22,7 +22,6 @@ public class Matcher {
     private ArrayList<Boundaries> sentenceBoundaryElements = new ArrayList<>();
     private HashMap<Integer, String> plainTextElements = new HashMap<>();
     private ArrayList<String> constructions = new ArrayList<>();
-    private ArrayList<Integer> usedConstructionIndices = new ArrayList<>();
 
     /**
      * Indicates if a construction has been opened but not yet been closed.
@@ -53,11 +52,7 @@ public class Matcher {
         replacePlainText(doc);
         removeNotDisplayedElements(doc);
 
-        ArrayList<Pair<String, Integer>> usedConstructions = new ArrayList<>();
-        for(int i = 0; i < constructions.size(); i++) {
-            usedConstructions.add(new Pair<>(constructions.get(i), usedConstructionIndices.get(i)));
-        }
-        return new MatchResult(sentenceBoundaryElements, plainTextElements, usedConstructions);
+        return new MatchResult(sentenceBoundaryElements, plainTextElements);
     }
     
     /**
@@ -261,7 +256,7 @@ public class Matcher {
         ArrayList<Blank> containedBoundaries = new ArrayList<>();
         for(Blank constructionBoundary : boundaryIndices) {
             int constructionBoundaryIndex = constructionBoundary.getBoundaryIndex();
-            boolean isStartIndex = constructionBoundary.getBlankIndex() == null;
+            boolean isStartIndex = constructionBoundary.getConstruction() == null;
             if(isStartIndex && constructionBoundaryIndex >= startIndex && constructionBoundaryIndex < startIndex + text.length() ||
             		!isStartIndex && constructionBoundaryIndex > startIndex && constructionBoundaryIndex <= startIndex + text.length()) {
                 containedBoundaries.add(constructionBoundary);
@@ -280,8 +275,8 @@ public class Matcher {
                     startIndex = containedBoundaries.get(0).getBoundaryIndex();
 
                     // it's a closing tag, so we add the brackets
-                    sb.append(containedBoundaries.get(0).getText()).append(" ");
-                    usedConstructionIndices.add(containedBoundaries.get(0).getBlankIndex());
+                    sb.append(containedBoundaries.get(0).getConstruction().getBracketsText()).append(" ");
+                    containedBoundaries.get(0).getConstruction().setConstructionText(constructions.get(constructions.size() - 1));
 
                     containedBoundaries.remove(0);
                     inConstruction = false;

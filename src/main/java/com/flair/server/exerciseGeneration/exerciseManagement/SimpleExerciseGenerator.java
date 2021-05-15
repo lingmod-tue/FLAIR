@@ -1,7 +1,6 @@
 package com.flair.server.exerciseGeneration.exerciseManagement;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
@@ -17,6 +16,7 @@ import com.flair.server.exerciseGeneration.exerciseManagement.domManipulation.Ma
 import com.flair.server.exerciseGeneration.exerciseManagement.domManipulation.PlainTextPreparer;
 import com.flair.server.exerciseGeneration.exerciseManagement.domManipulation.SentenceManager;
 import com.flair.server.exerciseGeneration.exerciseManagement.exerciseCompilation.ClozeManager;
+import com.flair.server.exerciseGeneration.exerciseManagement.exerciseCompilation.ConstructionPreparer;
 import com.flair.server.exerciseGeneration.exerciseManagement.exerciseCompilation.DistractorManager;
 import com.flair.server.exerciseGeneration.exerciseManagement.exerciseCompilation.InstructionsManager;
 import com.flair.server.exerciseGeneration.exerciseManagement.exerciseCompilation.NlpManager;
@@ -59,41 +59,22 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        Element doc = Jsoup.parse(settings.getDoc().toString());
 	
 	        NlpManager nlpManager = new NlpManager(parser, generator, settings.getExerciseSettings().getPlainText(), lemmatizer);
-
-	        // Remove overlapping constructions (can occur e.g. with synthetic and analytic comparatives)
-	        HashSet<Construction> constructionsToRemove = new HashSet<>();
-	        for(Construction construction : settings.getExerciseSettings().getConstructions()) {
-	        	for(Construction otherConstruction : settings.getExerciseSettings().getConstructions()) {
-	        		if(construction != otherConstruction && 
-	        				(Math.max(construction.getConstructionIndices().first, otherConstruction.getConstructionIndices().first) < 
-	        						Math.min(construction.getConstructionIndices().second, otherConstruction.getConstructionIndices().second))) {
-	        					if(construction.getConstructionIndices().second - construction.getConstructionIndices().first > 
-	        							otherConstruction.getConstructionIndices().second - otherConstruction.getConstructionIndices().first) {
-	        						constructionsToRemove.add(otherConstruction);
-	        					} else {
-	        						constructionsToRemove.add(construction);
-	        					}
-	        		}
-
-	        	}
-	        }
 	        
-	        for(Construction construction : constructionsToRemove) {
-	        	settings.getExerciseSettings().getConstructions().remove(construction);
-	        }
-	        
-	        ClozeManager clozeManager = new ClozeManager();
-	        clozeManager.prepareBlanks(settings.getExerciseSettings(), nlpManager);
-	        DistractorManager distractorManager = new DistractorManager(); // we need the original indices, so we need to generate distractors for all possible blanks
-	        distractorManager.generateDistractors(settings.getExerciseSettings(), nlpManager);
-	
+	        ConstructionPreparer constructionPreparer = new ConstructionPreparer();
+	        constructionPreparer.prepareConstructions(settings.getExerciseSettings(), nlpManager);
+	        	        
 	        PlainTextPreparer plainTextPreparer = new PlainTextPreparer(); 
 	        plainTextPreparer.prepareIndices(settings.getExerciseSettings(), nlpManager);
 	
 	        Indexer indexer = new Indexer();
-	        ArrayList<Fragment> res = indexer.matchHtmlToPlainText(settings.getExerciseSettings(), doc.wholeText());
+	        ArrayList<Fragment> fragments = indexer.matchHtmlToPlainText(settings.getExerciseSettings(), doc.wholeText());
 	
-	        Matcher matcher = new Matcher(res);
+	        ClozeManager clozeManager = new ClozeManager();
+	        clozeManager.prepareBlanks(settings.getExerciseSettings(), nlpManager, fragments);
+	        DistractorManager distractorManager = new DistractorManager(); 
+	        ArrayList<String> usedConstructions = distractorManager.generateDistractors(settings.getExerciseSettings(), nlpManager, fragments);
+		        
+	        Matcher matcher = new Matcher(fragments);
 	        MatchResult matchResult = matcher.prepareDomForSplitting(doc);
 	        HtmlManager htmlManager = new HtmlManager();
 	        ArrayList<DownloadedResource> resources = htmlManager.extractResources(settings.getExerciseSettings().getUrl(), resourceDownloader, doc);
@@ -110,8 +91,7 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	            ((SimpleExerciseJsonManager)settings.getJsonManager()).escapeAsterisks(pureHtmlElements);
 	        }
 	
-	        ArrayList<String> usedConstructions = updateConstructions(settings.getExerciseSettings(), matchResult.getConstructions());
-	        String taskDescription = InstructionsManager.componseTaskDescription(settings.getExerciseSettings(), nlpManager);	       
+	        String taskDescription = InstructionsManager.componseTaskDescription(settings.getExerciseSettings(), nlpManager, fragments);	       
 	
 	        return new JsonComponents(orderedPlainTextElements, pureHtmlElements, usedConstructions,
 	                settings.getJsonManager(), settings.getContentTypeLibrary(), settings.getResourceFolder(), assembleDistractors(settings.getExerciseSettings()), taskDescription);
@@ -136,36 +116,4 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
         return distractors;
     }
     
-    /**
-     * Removes unused constructions and sets the construction text for the remaining constructions.
-     * @param settings                  The exercise settings containing the constructions
-     * @param arrayList         The used constructions with their index in the original list of all constructions in the exercise settings
-     */
-    private ArrayList<String> updateConstructions(ExerciseSettings settings, ArrayList<com.flair.shared.exerciseGeneration.Pair<String, Integer>> arrayList) {
-        ArrayList<String> usedConstructionTexts = new ArrayList<>();
-        ArrayList<Construction> constructionsToRemove = new ArrayList<>();
-        for(int i = 0; i < settings.getConstructions().size(); i++) {
-            com.flair.shared.exerciseGeneration.Pair<String, Integer> matchingConstruction = null;
-            for(com.flair.shared.exerciseGeneration.Pair<String, Integer> usedConstruction : arrayList) {
-                if(usedConstruction.second == i) {
-                    matchingConstruction = usedConstruction;
-                    break;
-                }
-            }
-            if(matchingConstruction != null) {
-                settings.getConstructions().get(i).setConstructionText(matchingConstruction.first);
-                usedConstructionTexts.add(matchingConstruction.first);
-            } else {
-                // we want to make sure that we don't corrupt indices by removing elements by index, so we better save the elements to remove
-                constructionsToRemove.add(settings.getConstructions().get(i));
-            }
-        }
-
-        for(Construction construction : constructionsToRemove) {
-            settings.getConstructions().remove(construction);
-        }
-
-        return usedConstructionTexts;
-    }
-
 }

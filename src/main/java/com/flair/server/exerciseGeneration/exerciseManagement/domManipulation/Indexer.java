@@ -218,7 +218,7 @@ public class Indexer {
                     fragment.getBlanksBoundaries().add(new Blank(blanksStartIndex + htmlToPlainTextOffset, plainTextIndices.indexOf(plainTextConstruction)));
                 }
                 if(blanksEndIndex > fragmentStartIndex && blanksEndIndex <= fragmentEndIndex) {
-                    fragment.getBlanksBoundaries().add(new Blank(blanksEndIndex + htmlToPlainTextOffset, plainTextIndices.indexOf(plainTextConstruction), plainTextConstruction.getBracketsText(), plainTextIndices.indexOf(plainTextConstruction)));
+                    fragment.getBlanksBoundaries().add(new Blank(blanksEndIndex + htmlToPlainTextOffset, plainTextIndices.indexOf(plainTextConstruction), plainTextConstruction));
                 }
             }
         }

@@ -478,7 +478,6 @@ public class NlpManager {
         Integer endIndex = null;
 
         // "more" and "most" are also tagged RBR, so we take the last relevant token
-        String lemma = null;
         for (CoreLabel token : tokens) {
             String pos = token.tag();
             if (pos.startsWith("RB") || pos.startsWith("JJ")) {
@@ -519,7 +518,7 @@ public class NlpManager {
      * @param construction          The type of grammatical construction
      * @return                      The active sentence corresponding to the passive construction at the specified indices
      */
-    public Pair<String, Pair<Integer, Integer>> getActiveSentence(Pair<Integer, Integer> constructionIndices,
+    public String getActiveSentence(Pair<Integer, Integer> constructionIndices,
                                                                    String plainText, DetailedConstruction construction) {
         ArrayList<Pair<Integer, Integer>> components = getPassiveSentenceComponents(constructionIndices);
         if(components == null) {
@@ -586,12 +585,26 @@ public class NlpManager {
                     plainText.substring(components.get(4).first, components.get(4).second);
         }
 
-        int sentenceStartindex = sent.getTokens().get(0).beginPosition();
+        return activeSentence;
+    }
+    
+    /**
+     * Determines the start and end indices of a sentence in which a construction is contained, excluding sentence-final punctuation.
+     * @param constructionIndices	The start and end indices of the construction
+     * @return						The sentence start and end indices
+     */
+    public Pair<Integer, Integer> getSentenceIndices(Pair<Integer, Integer> constructionIndices) {
+		SentenceAnnotations sent = getRelevantSentence(constructionIndices);
+		if(sent == null) {
+			return null;
+		}
+		
+		int sentenceStartIndex = sent.getTokens().get(0).beginPosition();
         int lastTokenIndex = sent.getTokens().size() - (sent.getTokens().get(sent.getTokens().size() - 1).word().matches("\\p{Punct}") ? 2 : 1);
         int sentenceEndIndex = sent.getTokens().get(lastTokenIndex).endPosition();
-
-        return new Pair<>(activeSentence, new Pair<>(sentenceStartindex, sentenceEndIndex));
-    }
+        
+        return new Pair<>(sentenceStartIndex, sentenceEndIndex);
+	}
 
     /**
      * Determines the start and end indices of the tokens governed directly or indirectly by the root, including the root itself

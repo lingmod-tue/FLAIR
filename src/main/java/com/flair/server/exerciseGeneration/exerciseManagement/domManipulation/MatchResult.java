@@ -7,16 +7,13 @@ import com.flair.shared.exerciseGeneration.Pair;
 
 public class MatchResult {
 
-    public MatchResult(ArrayList<Boundaries> sentenceBoundaryElements, HashMap<Integer, String> plainTextElements,
-    		ArrayList<Pair<String, Integer>> constructions) {
+    public MatchResult(ArrayList<Boundaries> sentenceBoundaryElements, HashMap<Integer, String> plainTextElements) {
         this.sentenceBoundaryElements = sentenceBoundaryElements;
         this.plainTextElements = plainTextElements;
-        this.constructions = constructions;
     }
 
     private ArrayList<Boundaries> sentenceBoundaryElements;
     private HashMap<Integer, String> plainTextElements;
-    private ArrayList<Pair<String, Integer>> constructions;
     
     public ArrayList<Boundaries> getSentenceBoundaryElements() {
         return sentenceBoundaryElements;
@@ -26,7 +23,4 @@ public class MatchResult {
         return plainTextElements;
     }
 
-    public ArrayList<Pair<String, Integer>> getConstructions() {
-        return constructions;
-    }
 }

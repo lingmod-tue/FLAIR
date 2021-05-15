@@ -3,6 +3,8 @@ package com.flair.server.exerciseGeneration.exerciseManagement.exerciseCompilati
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import com.flair.server.exerciseGeneration.exerciseManagement.domManipulation.Blank;
+import com.flair.server.exerciseGeneration.exerciseManagement.domManipulation.Fragment;
 import com.flair.shared.exerciseGeneration.BracketsProperties;
 import com.flair.shared.exerciseGeneration.Construction;
 import com.flair.shared.exerciseGeneration.DetailedConstruction;
@@ -12,10 +14,16 @@ import edu.stanford.nlp.util.Pair;
 
 public class InstructionsManager {
 
-	public static String componseTaskDescription(ExerciseSettings settings, NlpManager nlpManager) {
+	public static String componseTaskDescription(ExerciseSettings settings, NlpManager nlpManager, ArrayList<Fragment> fragments) {
         HashSet<DetailedConstruction> constructions = new HashSet<>();
-        for(Construction construction : settings.getConstructions()) {
-            constructions.add(construction.getConstruction());
+        ArrayList<Construction> usedConstructions = new ArrayList<>();
+        for(Fragment fragment : fragments) {
+        	for(Blank blank : fragment.getBlanksBoundaries()) {
+        		if(blank.getConstruction() != null) {
+                    constructions.add(blank.getConstruction().getConstruction());
+                    usedConstructions.add(blank.getConstruction());
+        		}
+        	}
         }
 
         String instructions = "";
@@ -214,7 +222,7 @@ public class InstructionsManager {
         
         if(addLemmas) {
         	ArrayList<String> lemmas = new ArrayList<>();
-        	for(Construction construction : settings.getConstructions()) {
+        	for(Construction construction : usedConstructions) {
             	String lemma = null;
                 if(isVerbLemma) {
                 	LemmatizedVerbCluster verbCluster = nlpManager.getLemmatizedVerbConstruction(construction.getOriginalConstructionIndices(), false, false);

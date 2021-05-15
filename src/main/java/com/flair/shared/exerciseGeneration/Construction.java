@@ -32,6 +32,9 @@ public class Construction implements IsSerializable {
     public void setConstructionIndices(Pair<Integer, Integer> constructionIndices) {
         this.constructionIndices = constructionIndices;
     }
+    public void setOriginalConstructionIndices(Pair<Integer, Integer> constructionIndices) {
+        this.originalConstructionIndices = constructionIndices;
+    }
     public void setConstructionText(String constructionText) { this.constructionText = constructionText; }
     public void setDistractors(ArrayList<String> distractors) { this.distractors = distractors; }
 }
