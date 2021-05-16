@@ -266,8 +266,14 @@ public class DistractorManager {
 	                            options.add(randomForm);
 	                            incorrectOptions.remove(randomForm);
 	                        }
+	                        
+	                        ArrayList<String> distractors = new ArrayList<>(options);
+	                        while(distractors.size() > exerciseSettings.getnDistractors()) {
+	                        	int index = new Random().nextInt(distractors.size());
+	                        	distractors.remove(index);
+	                        }
 	
-	                        ArrayList<String> distractors = capitalize(options, constructionText);                    
+	                        distractors = capitalize(distractors, constructionText);                    
 	                        
 	                        // Add the distractors to the settings
 	                        Collections.shuffle(distractors);
@@ -309,7 +315,7 @@ public class DistractorManager {
      * @param correctForm	The correct form
      * @return				The capitalized distractors if the correct form is capitalized, otherwise the original distractors
      */
-    private ArrayList<String> capitalize(HashSet<String> options, String correctForm) {
+    private ArrayList<String> capitalize(ArrayList<String> options, String correctForm) {
        	if(Character.isUpperCase(correctForm.charAt(0))) {
             ArrayList<String> distractors = new ArrayList<>();
             for(String option: options) {

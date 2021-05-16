@@ -1,8 +1,10 @@
 package com.flair.server.exerciseGeneration.exerciseManagement.jsonManagement;
 
+import java.util.ArrayList;
+
 import org.json.simple.JSONObject;
 
-public class AdvancedFIBJsonManager extends ExerciseWithSeparateBlanksJsonManager {
+public class AdvancedFIBJsonManager extends ExerciseWithInlineBlanksJsonManager {
 
     public AdvancedFIBJsonManager(boolean useBlanks) {
         this.useBlanks = useBlanks;
@@ -25,4 +27,16 @@ public class AdvancedFIBJsonManager extends ExerciseWithSeparateBlanksJsonManage
         jsonObject.put("internalId", internalId + "");
     }
 
+    @Override
+    protected String getPlacehholderReplacement(String construction, ArrayList<String> distractorList) {
+        //TODO: store feedback with distractors
+        distractorList.add(0, construction);
+        ArrayList<String> options = new ArrayList<>();
+        for(String distractor : distractorList) {
+            // escape special symbols
+            options.add(distractor.replace("|", "||").replace(":", "::").replace("/", "//"));
+        }
+        return "*" + String.join("|", options) + "*";
+    }
+    
 }

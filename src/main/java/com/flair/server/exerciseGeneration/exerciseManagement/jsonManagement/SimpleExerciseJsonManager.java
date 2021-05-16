@@ -7,6 +7,8 @@ import org.json.simple.parser.ParseException;
 
 import com.flair.server.exerciseGeneration.exerciseManagement.JsonComponents;
 
+import edu.stanford.nlp.util.Pair;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -33,9 +35,10 @@ public abstract class SimpleExerciseJsonManager extends JsonManager {
 
         jsonObject.put("taskDescription", jsonComponents.get(0).getTaskDescription());
 
-        ArrayList<String> constructions = orderBlanks(jsonComponents.get(0).getPlainTextElements(), jsonComponents.get(0).getConstructions());
-        addQuestionsToJson(jsonObject, jsonComponents.get(0).getPlainTextElements(), constructions);
-        addBlanksToJson(jsonObject, constructions, jsonComponents.get(0).getDistractors());
+        Pair<ArrayList<String>, ArrayList<ArrayList<String>>> orderedElements = orderBlanks(jsonComponents.get(0).getPlainTextElements(), jsonComponents.get(0).getConstructions(),
+        		jsonComponents.get(0).getDistractors());
+        addQuestionsToJson(jsonObject, jsonComponents.get(0).getPlainTextElements(), orderedElements.first, jsonComponents.get(0).getDistractors());
+        addBlanksToJson(jsonObject, orderedElements.first, orderedElements.second);
         JSONArray htmlArray = new JSONArray();
         htmlArray.addAll(jsonComponents.get(0).getPureHtmlElements());
         addHtmlElementsToJson(jsonObject, htmlArray);
@@ -50,8 +53,9 @@ public abstract class SimpleExerciseJsonManager extends JsonManager {
      * @param unorderedBlanks 	The blanks texts in the order in which they were extracted
      * @return 					The ordered blanks list
      */
-    private ArrayList<String> orderBlanks(ArrayList<String> plainTextArray, ArrayList<String> unorderedBlanks) {
+    private Pair<ArrayList<String>, ArrayList<ArrayList<String>>> orderBlanks(ArrayList<String> plainTextArray, ArrayList<String> unorderedBlanks, ArrayList<ArrayList<String>> unorderedDistractors) {
         ArrayList<String> blanks = new ArrayList<>();
+        ArrayList<ArrayList<String>> distractors = new ArrayList<>();
 
         for(int i = 0; i < plainTextArray.size(); i++) {
             String plainText = plainTextArray.get(i);
@@ -62,6 +66,9 @@ public abstract class SimpleExerciseJsonManager extends JsonManager {
                 int blanksIndex = Integer.parseInt(plainText.substring(indexStart, indexEnd));
 
                 blanks.add(unorderedBlanks.get(blanksIndex));
+                if(distractors.size() > 0) {
+                	distractors.add(unorderedDistractors.get(blanksIndex));
+                }
                 plainText = plainText.substring(0, placeholderIndex) + "<span data-blank></span>" + plainText.substring(indexEnd + 9);
 
                 placeholderIndex = plainText.indexOf("<span data-blank=\"", placeholderIndex + 1);
@@ -69,7 +76,7 @@ public abstract class SimpleExerciseJsonManager extends JsonManager {
             }
         }
 
-        return blanks;
+        return new Pair<>(blanks, distractors);
     }
 
     /**
@@ -90,7 +97,7 @@ public abstract class SimpleExerciseJsonManager extends JsonManager {
      * @param constructions 	The extracted constructions
      */
     protected abstract void addQuestionsToJson(JSONObject jsonObject, ArrayList<String> plainTextElements,
-                                               ArrayList<String> constructions);
+                                               ArrayList<String> constructions, ArrayList<ArrayList<String>> distractors);
 
     /**
      * Adds the pure HTML elements to the JSON object.
