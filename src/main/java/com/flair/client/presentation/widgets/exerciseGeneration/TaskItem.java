@@ -239,6 +239,8 @@ public class TaskItem extends LocalizedComposite {
     @UiField
     MaterialIcon icoInvalid;
     @UiField
+    MaterialIcon icoWarning;
+    @UiField
     NumberSpinner spnNDistractors;
     @UiField
     MaterialCollapsibleItem expTask;
@@ -932,6 +934,7 @@ public class TaskItem extends LocalizedComposite {
 
     	icoOk.setVisible(false);
 		icoInvalid.setVisible(true);
+		icoWarning.setVisible(false);
 		
 		if(exerciseType.equals("Exercise Type") || topic.equals("Topic")) {
 			lblNumberExercises.setText("Select a grammar topic and an exercise type to enable exercise generation.");
@@ -946,8 +949,12 @@ public class TaskItem extends LocalizedComposite {
     			lblNumberExercises.setText("No exercises can be generated for the current settings.");
         		lblNumberExercises.setTextColor(Color.RED);
     		} else {
-        		lblNumberExercises.setTextColor(Color.BLACK);
-        		icoOk.setVisible(true);
+        		lblNumberExercises.setTextColor(numberOfExercises >= 5 ? Color.BLACK : Color.ORANGE);
+        		if(numberOfExercises >= 5) {
+        			icoOk.setVisible(true);
+        		} else {
+        			icoWarning.setVisible(true);
+        		}
         		icoInvalid.setVisible(false);
     			if(exerciseType.equals("FiB") || exerciseType.equals("Select")) {
             		lblNumberExercises.setText("A maximum of " + numberOfExercises + " blanks can be generated for the current settings.");

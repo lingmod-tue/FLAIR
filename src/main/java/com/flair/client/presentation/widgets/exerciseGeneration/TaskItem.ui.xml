@@ -46,6 +46,8 @@
 						textColor="GREEN" ui:field="icoOk" />
 					<m:MaterialIcon iconType="ERROR" textColor="RED"
 						ui:field="icoInvalid" visible="false" />
+					<m:MaterialIcon iconType="WARNING" textColor="ORANGE"
+						ui:field="icoWarning" visible="false" />
 				</m:MaterialColumn>
 			</m:MaterialRow>
 		</m:MaterialCollapsibleHeader>
