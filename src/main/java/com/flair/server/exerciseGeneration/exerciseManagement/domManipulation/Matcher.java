@@ -50,8 +50,6 @@ public class Matcher {
      */
     public MatchResult prepareDomForSplitting(Element doc){
         replacePlainText(doc);
-        removeNotDisplayedElements(doc);
-
         return new MatchResult(sentenceBoundaryElements, plainTextElements);
     }
     
@@ -84,31 +82,6 @@ public class Matcher {
         }        
     }
     
-    /**
-     * Removes text elements which were removed along with any enclosing elements which don't contain a not removed text element.
-     */
-    private void removeNotDisplayedElements(Element doc) {
-    	Elements elements = doc.select("span[data-remove]");
-    	while(elements.size() > 0) {
-    		Element element = elements.get(0);
-    		Element parent = element.parent();
-    		Element currentElementToRemove = element;
-    		while(parent != null) {
-    			String parentText = parent.outerHtml();
-    			if(!parentText.contains("<span data-plaintextplaceholder>")) {
-    				currentElementToRemove = parent;
-    				parent = parent.parent();
-    			} else {
-    				parent = null;
-    			}
-    		}
-    		if(currentElementToRemove.parent() != null) {
-    			currentElementToRemove.remove();
-    		}
-    		elements = doc.select("span[data-remove]");
-    	}    	
-    }
-
     /**
      * Replaces the text node with the newly created span elements once they have all been created.
      * We cannot modify the DOM while we are still iterating through the children, so we need to do this all afterwards in 1 go.

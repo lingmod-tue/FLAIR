@@ -216,6 +216,45 @@ public class HtmlManager {
         
         return downloadedResources;
     }
+    
+    /**
+     * Removes text elements which were removed along with any enclosing elements which don't contain a not removed text element.
+     */
+    public static void removeNotDisplayedElements(Element doc) {
+    	Elements elements = doc.select("span[data-remove]");
+    	while(elements.size() > 0) {
+    		Element element = elements.get(0);
+    		Element parent = element.parent();
+    		Element currentElementToRemove = element;
+    		while(parent != null) {
+    			String parentText = parent.outerHtml();
+    			if(!parentText.contains("<span data-plaintextplaceholder>")) {
+    				currentElementToRemove = parent;
+    				parent = parent.parent();
+    			} else {
+    				parent = null;
+    			}
+    		}
+    		if(currentElementToRemove.parent() != null) {
+    			currentElementToRemove.remove();
+    		}
+    		elements = doc.select("span[data-remove]");
+    	}    	
+    }
+    
+    /**
+     * Replace anchor elements with spans.
+     * Needed for Mark the Words exercises where words cannot be links.
+     * @param doc	The HTML document
+     */
+    public static void removeLinks(Element doc) {
+    	for(Element link : doc.select("a")) {
+    		String content = link.html();
+			if(content.contains("<span data-plaintextplaceholder>")) {
+				link.tagName("span");
+			}
+    	}
+    }
 
     /**
      * Checks whether the resource at the provided URL is a webpage

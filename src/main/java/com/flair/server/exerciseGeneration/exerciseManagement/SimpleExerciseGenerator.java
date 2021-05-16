@@ -60,17 +60,11 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	
 	        NlpManager nlpManager = new NlpManager(parser, generator, settings.getExerciseSettings().getPlainText(), lemmatizer);
 	        
-	        ConstructionPreparer constructionPreparer = new ConstructionPreparer();
-	        constructionPreparer.prepareConstructions(settings.getExerciseSettings(), nlpManager);
-	        	        
-	        PlainTextPreparer plainTextPreparer = new PlainTextPreparer(); 
-	        plainTextPreparer.prepareIndices(settings.getExerciseSettings(), nlpManager);
+	        new ConstructionPreparer().prepareConstructions(settings.getExerciseSettings(), nlpManager);	        	        
+	        new PlainTextPreparer().prepareIndices(settings.getExerciseSettings(), nlpManager);
+	        ArrayList<Fragment> fragments = new Indexer().matchHtmlToPlainText(settings.getExerciseSettings(), doc.wholeText());
 	
-	        Indexer indexer = new Indexer();
-	        ArrayList<Fragment> fragments = indexer.matchHtmlToPlainText(settings.getExerciseSettings(), doc.wholeText());
-	
-	        ClozeManager clozeManager = new ClozeManager();
-	        clozeManager.prepareBlanks(settings.getExerciseSettings(), nlpManager, fragments);
+	        new ClozeManager().prepareBlanks(settings.getExerciseSettings(), nlpManager, fragments);
 	        DistractorManager distractorManager = new DistractorManager(); 
 	        ArrayList<String> usedConstructions = distractorManager.generateDistractors(settings.getExerciseSettings(), nlpManager, fragments);
 		    
@@ -78,10 +72,13 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        	return null;
 	        }
 	        
-	        Matcher matcher = new Matcher(fragments);
-	        MatchResult matchResult = matcher.prepareDomForSplitting(doc);
-	        HtmlManager htmlManager = new HtmlManager();
-	        ArrayList<DownloadedResource> resources = htmlManager.extractResources(settings.getExerciseSettings().getUrl(), resourceDownloader, doc);
+	        MatchResult matchResult = new Matcher(fragments).prepareDomForSplitting(doc);
+	        HtmlManager.removeNotDisplayedElements(doc);
+	        if(settings.getExerciseSettings().getContentType().equals("Mark")) {
+	        	HtmlManager.removeLinks(doc);
+	        }
+	        
+	        ArrayList<DownloadedResource> resources = new HtmlManager().extractResources(settings.getExerciseSettings().getUrl(), resourceDownloader, doc);
 	        settings.getResources().addAll(resources);
 	        SentenceManager sentenceManager = new SentenceManager();
 	        ArrayList<String> sentenceHtml = sentenceManager.extractSentencesFromDom(matchResult.getSentenceBoundaryElements());
