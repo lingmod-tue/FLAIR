@@ -37,4 +37,6 @@ public class Construction implements IsSerializable {
     }
     public void setConstructionText(String constructionText) { this.constructionText = constructionText; }
     public void setDistractors(ArrayList<String> distractors) { this.distractors = distractors; }
+	public void setConstruction(DetailedConstruction construction) { this.construction = construction; }
+    
 }

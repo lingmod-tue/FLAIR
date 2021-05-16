@@ -59,10 +59,6 @@ public class TenseSettings implements ParameterSettings {
         this(lemma, interrogative, negated, thirdSingular, subject, tense, progressive, perfect, null);
     }
 
-    public TenseSettings(String lemma, boolean interrogative, boolean negated, boolean thirdSingular, String subject) {
-        this(lemma, interrogative, negated, thirdSingular, subject, "", false, false);
-    }
-
     public String getLemma() {
         return lemma;
     }

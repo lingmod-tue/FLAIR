@@ -123,6 +123,53 @@ public class ConstructionPreparer {
                 	                	                	
                     constructionsToRemove.add(construction);
                 }
+            } else if(construction.getConstruction().toString().startsWith("QUEST") || construction.getConstruction().toString().startsWith("STMT")){
+            	// Check if the 3rd pers. is correct
+            	Boolean isThirdPerson = nlpManager.isThirdSingular(construction.getConstructionIndices());
+            	if(isThirdPerson == null) {
+            		constructionsToRemove.add(construction);
+            	} else {
+            		boolean isLabelledThirdPerson = construction.getConstruction().toString().endsWith("_3");
+            		if(isThirdPerson != isLabelledThirdPerson) {
+            			// check if we actually want the construction
+            			if(isThirdPerson && !exerciseSettings.getConstructions().stream().anyMatch((c) -> c.toString().endsWith("_3")) ||
+            					!isThirdPerson && !exerciseSettings.getConstructions().stream().anyMatch((c) -> c.toString().endsWith("_NOT3"))) {
+            				constructionsToRemove.add(construction);
+            			} else {
+            				DetailedConstruction correctConstruction;
+            				if(isThirdPerson) {
+            					if(construction.getConstruction().toString().startsWith("QUEST")) {
+            						if(construction.getConstruction().toString().contains("_NEG_")) {
+            							correctConstruction = DetailedConstruction.QUEST_NEG_3;
+            						} else {
+            							correctConstruction = DetailedConstruction.QUEST_AFFIRM_3;
+            						}
+            					} else {
+            						if(construction.getConstruction().toString().contains("_NEG_")) {
+            							correctConstruction = DetailedConstruction.STMT_NEG_3;
+            						} else {
+            							correctConstruction = DetailedConstruction.STMT_AFFIRM_3;
+            						}	
+            					}
+            				} else {
+            					if(construction.getConstruction().toString().startsWith("QUEST")) {
+            						if(construction.getConstruction().toString().contains("_NEG_")) {
+            							correctConstruction = DetailedConstruction.QUEST_NEG_NOT3;
+            						} else {
+            							correctConstruction = DetailedConstruction.QUEST_AFFIRM_NOT3;
+            						}
+            					} else {
+            						if(construction.getConstruction().toString().contains("_NEG_")) {
+            							correctConstruction = DetailedConstruction.STMT_NEG_NOT3;
+            						} else {
+            							correctConstruction = DetailedConstruction.STMT_AFFIRM_NOT3;
+            						}	
+            					}
+            				}
+            				construction.setConstruction(correctConstruction);
+            			} 
+            		}
+            	}
             } else if((construction.getConstruction().toString().startsWith("PAST") || construction.getConstruction().toString().startsWith("PRES")) && 
                     exerciseSettings.getContentType().equals("SingleDrag") && 
                     construction.getConstructionIndices().second - construction.getConstructionIndices().first > 30) {                	
@@ -131,8 +178,7 @@ public class ConstructionPreparer {
 					construction.setConstructionIndices(new Pair<>(mainVerb.beginPosition(), mainVerb.endPosition()));
 					construction.setOriginalConstructionIndices(new Pair<>(mainVerb.beginPosition(), mainVerb.endPosition()));
 				}
-        	}
-            else if((construction.getConstruction() == DetailedConstruction.WHICH ||
+        	} else if((construction.getConstruction() == DetailedConstruction.WHICH ||
             		construction.getConstruction() == DetailedConstruction.WHO ||
             		construction.getConstruction() == DetailedConstruction.THAT ||
             		construction.getConstruction() == DetailedConstruction.OTHERPRN) &&

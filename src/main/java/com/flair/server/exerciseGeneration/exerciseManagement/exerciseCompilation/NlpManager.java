@@ -12,6 +12,7 @@ import com.flair.server.parser.SimpleNlgParser;
 import com.flair.shared.exerciseGeneration.DetailedConstruction;
 import com.flair.shared.exerciseGeneration.Pair;
 
+import ch.qos.logback.core.subst.Token;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.IndexedWord;
@@ -918,8 +919,55 @@ public class NlpManager {
                 }
             }
         }
+        
+        // if we haven't found a subject so far, we
+        Integer subjectIndex = null;
+        if(subject == null) {
+        	for(int i = 0; i < sent.getTokens().size(); i++) {
+        		CoreLabel word = sent.getTokens().get(i);
+        		if(word.beginPosition() < constructionIndices.first) {
+        			if(word.tag().startsWith("NN") || word.tag().equals("PRP")) {
+        				subjectIndex = i;
+        			}
+        		} else {
+        			break;
+        		}
+        	}
+        }
+        if(subjectIndex != null) {
+        	subject = sent.getTokens().get(subjectIndex).word();
+        	if(subjectIndex > 0 && (sent.getTokens().get(subjectIndex - 1).tag().equals("DT") || 
+        			sent.getTokens().get(subjectIndex - 1).tag().equals("PRP$"))) {
+        		subject = sent.getTokens().get(subjectIndex - 1) + " " + subject;
+        	}
+        }
 
         return subject;
+    }
+    
+    /**
+     * Checks if a simple present verb construction is 3rd ps. sg.
+     * @param constructionIndices	The start and end indices of the verb construction
+     * @return						<c>true</c> if it is 3rd ps. sg.; <c>false</c> if it is not; <c>null</c> if it couldn't be determined
+     */
+    public Boolean isThirdSingular(Pair<Integer, Integer> constructionIndices) {
+    	SentenceAnnotations sent = getRelevantSentence(constructionIndices);
+        if(sent == null) {
+            return null;
+        }
+        
+        Boolean isThirdPerson = null;
+        ArrayList<CoreLabel> tokens = getRelevantTokens(sent, constructionIndices);
+        for(CoreLabel token : tokens) {
+        	if(token.tag().equals("VBZ")) {
+        		return true;
+        	} else if(token.tag().equals("VBP")) {
+        		// We want to make sure that there is no other 3rd ps. verb, so we don't break out of the loop
+        		isThirdPerson = false;
+        	}
+        }
+        
+        return isThirdPerson;
     }
 
     /**
