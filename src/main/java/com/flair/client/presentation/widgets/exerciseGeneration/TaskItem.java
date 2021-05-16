@@ -970,6 +970,7 @@ public class TaskItem extends LocalizedComposite {
     						lblNumberExercises.setText("No exercises can be generated for the current settings.");
     		        		lblNumberExercises.setTextColor(Color.RED);
     		        		icoOk.setVisible(false);
+    		        		icoWarning.setVisible(false);
     		        		icoInvalid.setVisible(true);
     					} else {
     						lblNumberExercises.setText("A maximum of " + numberOfExercises + " target words can be generated for the current settings.");
