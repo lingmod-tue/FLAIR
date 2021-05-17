@@ -38,7 +38,6 @@ import gwt.material.design.client.ui.MaterialLabel;
 import gwt.material.design.client.ui.MaterialLink;
 import gwt.material.design.client.ui.MaterialRadioButton;
 import gwt.material.design.client.ui.MaterialRow;
-import gwt.material.design.client.ui.MaterialToast;
 import gwt.material.design.client.ui.html.Option;
 
 public class TaskItem extends LocalizedComposite {
@@ -863,7 +862,6 @@ public class TaskItem extends LocalizedComposite {
      */
     private int calculateNumberOfExercises() {
     	String topic = getTopic();
-    	String exerciseType = getExerciseType();
     	ArrayList<String> constructionsToConsider = determineConfiguredConstructions();
 
     	int nExercises = 0;

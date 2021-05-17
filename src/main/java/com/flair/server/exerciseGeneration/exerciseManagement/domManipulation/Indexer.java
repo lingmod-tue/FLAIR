@@ -35,8 +35,8 @@ public class Indexer {
         fragments = recheckMatches(fragments, htmlText);
         addSentenceFinalPunctuation(fragments, htmlText);
         addBlanksIndicesToFragments(fragments, exerciseSettings.getConstructions());
+        fragments = mergeFragments(fragments, htmlText);
         matchIndicesToNonNormalizedHtml(fragments, originalHtml, htmlText);
-        fragments = mergeFragments(fragments, originalHtml);
         removeIncompleteConstructions(fragments);
         trimBlanks(fragments, originalHtml);
         fragments = insertNotContainedFragments(fragments, originalHtml);
