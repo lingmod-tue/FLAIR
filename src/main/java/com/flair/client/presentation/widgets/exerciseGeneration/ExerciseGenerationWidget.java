@@ -243,7 +243,7 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     public void setGenerateExercisesEnabled() {
     	boolean hasValidExercise = false;
     	for(Widget existingTask : wdgtTasks.getChildrenList()) {
-    		if (((TaskItem)existingTask).icoOk.isVisible()) {
+    		if (((TaskItem)existingTask).icoOk.isVisible() || ((TaskItem)existingTask).icoWarning.isVisible()) {
     			hasValidExercise = true;
     		}
     	}

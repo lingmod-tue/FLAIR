@@ -108,7 +108,7 @@
 				</m:MaterialColumn>
 				<m:MaterialColumn grid='s4 m4 l4' padding="0"
 					margin="0">
-					<m:MaterialLabel text="Quiz:" margin="0" padding="0"/>
+					<m:MaterialLabel text="Quiz:" margin="0" padding="0" ui:field="lblQuiz"/>
 					<ma:combobox.MaterialComboBox
 						textColor="GREY" ui:field="drpQuiz" margin="0" padding="0">
 					</ma:combobox.MaterialComboBox>

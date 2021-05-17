@@ -54,6 +54,7 @@ public class TaskItem extends LocalizedComposite {
     interface TaskItemLocalizationBinder extends LocalizationBinder<TaskItem> {
     }
     
+
     @UiField
     MaterialComboBox<Option> drpTopic;
     @UiField
@@ -86,6 +87,8 @@ public class TaskItem extends LocalizedComposite {
     MaterialLabel lblTensesWords;
     @UiField
     MaterialLabel lblDocTitle;
+    @UiField
+    MaterialLabel lblQuiz;
     @UiField
     TextArea lblDocumentForSelection;
     @UiField
@@ -237,8 +240,10 @@ public class TaskItem extends LocalizedComposite {
     @UiField
     MaterialIcon icoOk;
     @UiField
+	@LocalizedField(type = LocalizedFieldType.TOOLTIP_MATERIAL)
     MaterialIcon icoInvalid;
     @UiField
+	@LocalizedField(type = LocalizedFieldType.TOOLTIP_MATERIAL)
     MaterialIcon icoWarning;
     @UiField
     NumberSpinner spnNDistractors;

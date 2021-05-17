@@ -109,8 +109,11 @@ ExerciseGenerationWidget	btnAddTask	Add Task
 ExerciseGenerationWidget	btnDeleteTasks	Delete all Tasks
 ExerciseGenerationWidget	btnGenerateExercises	Generate Exercises
 
+TaskItem	icoInvalid	No exercises can be generated for the current settings.
+TaskItem	icoWarning	The document contains very few exercise targets. It might not be possible to generate an exercise.
 TaskItem	btnDelete	Delete
 TaskItem	btnSelectDocumentPart	Select document part
+TaskItem	lblQuiz	Exercises with the same selected quiz will be accumulated into a Question Set. Select --- to geenrate a simple exercise.
 
 ExportDocumentWidget	btnCopyDocumentPreviewUI	Copy to clipboard
 ExportDocumentWidget	btnExportDocumentPreviewToWordUI	Export as word document

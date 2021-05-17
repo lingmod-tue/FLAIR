@@ -33,9 +33,10 @@
 			</m:MaterialRow>
 			<m:MaterialRow>
 				<m:MaterialCheckBox
-							ui:field="chkDownloadResources" value="false" text="Download resources" />
+					ui:field="chkDownloadResources" value="false"
+					text="Download resources" />
 			</m:MaterialRow>
-			
+
 			<m:MaterialRow textAlign="CENTER" marginTop="10">
 				<m:MaterialColumn grid="l10 m10 s10"
 					textAlign="CENTER">
@@ -57,10 +58,12 @@
 		<m:MaterialDialog ui:field="mdlCopyrightNoticeUI"
 			type="DEFAULT" dismissible="true">
 			<m:MaterialDialogContent>
-				<m:MaterialTitle ui:field="titleCopyrightNoticeUI" 
-					title="Please respect the copyright of the texts!" description="desc" />
+				<m:MaterialTitle ui:field="titleCopyrightNoticeUI"
+					title="Please respect the copyright of the texts!"
+					description="desc" />
 				<m:MaterialCheckBox
-					ui:field="chkDontShowCopyrightNoticeUI" text="Do not show this notification again." type="FILLED" />
+					ui:field="chkDontShowCopyrightNoticeUI"
+					text="Do not show this notification again." type="FILLED" />
 			</m:MaterialDialogContent>
 			<m:MaterialDialogFooter>
 				<m:MaterialButton

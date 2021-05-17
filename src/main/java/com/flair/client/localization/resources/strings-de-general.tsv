@@ -26,7 +26,6 @@ _common-strings_	KEYWORDS	Schlüsselwörter
 _common-strings_	CUSTOM_VOCAB	Benutzerdefiniertes Vokabular
 _common-strings_	FEATURE_NOT_SUPPORTED	Dieses Feature ist im Moment noch nicht unterstützt.
 
-
 _common-strings_	LINK_COPY_TO_CLIPBOARD_SUCCESSFUL	Link wurde erfolgreich in die Zwischenablage kopiert!
 _common-strings_	COPY_TEXT_FORMATTING	Um die Textformatierung (farbliche Hervorhebung der Konstruktionen etc.) zu übernehmen, aktivieren Sie die Checkbox. Wenn Sie den Text ohne Formatierung kopieren/speichern möchten, dann deaktivieren Sie die Checkbox.
 _common-strings_	TEXT_COPY_TEXT_TO_CLIPBOARD	Ausgewählten Text in Zwischenablage kopieren
@@ -110,8 +109,11 @@ ExerciseGenerationWidget	btnAddTask	Neue Aufgabe
 ExerciseGenerationWidget	btnDeleteTasks	Alle Aufgaben löschen
 ExerciseGenerationWidget	btnGenerateExercises	Aufgaben generieren
 
+TaskItem	icoInvalid	Für diese Einstellungen können keine Aufgaben generiert werden.
+TaskItem	icoWarning	Das Dokument enthält nur wenige Zielkonstrukte. Eine Aufgabengenerierung ist eventuell nicht möglich.
 TaskItem	btnDelete	Löschen
 TaskItem	btnSelectDocumentPart	Textauszug wählen
+TaskItem	lblQuiz	Aufgaben, für die dasselbe Quiz ausgewählt wird, werden in einem Question Set gebündelt. Wird kein Quiz ausgewählt (---), wird eine einfache Aufgabe erstellt.
 
 ExportDocumentWidget	btnCopyDocumentPreviewUI	In Zwischenablage kopieren
 ExportDocumentWidget	btnExportDocumentPreviewToWordUI	Als Word-Dokument exportieren
