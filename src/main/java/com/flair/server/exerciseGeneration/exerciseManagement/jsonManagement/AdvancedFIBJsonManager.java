@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import org.json.simple.JSONObject;
 
-public class AdvancedFIBJsonManager extends ExerciseWithInlineBlanksJsonManager {
+public class AdvancedFIBJsonManager extends SimpleExerciseJsonManager {
 
     public AdvancedFIBJsonManager(boolean useBlanks) {
         this.useBlanks = useBlanks;

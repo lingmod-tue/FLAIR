@@ -96,8 +96,27 @@ public abstract class SimpleExerciseJsonManager extends JsonManager {
      * @param plainTextElements	The extracted plain text
      * @param constructions 	The extracted constructions
      */
-    protected abstract void addQuestionsToJson(JSONObject jsonObject, ArrayList<String> plainTextElements,
-                                               ArrayList<String> constructions, ArrayList<ArrayList<String>> distractors);
+    protected void addQuestionsToJson(JSONObject jsonObject, ArrayList<String> plainTextElements,
+            ArrayList<String> constructions, ArrayList<ArrayList<String>> distractors) {
+		StringBuilder sb = new StringBuilder();
+		for(String plainTextElement : plainTextElements) {
+		plainTextElement = plainTextElement.replace("*", "**"); // escape asterisks used to designate blanks
+		          
+		while(plainTextElement.contains("<span data-blank></span>")) {
+		ArrayList<String> distractorList = new ArrayList<>();
+		if(distractors.size() > 0) {
+		distractorList = distractors.get(0);
+		distractors.remove(0);
+		}
+		
+		plainTextElement = plainTextElement.replaceFirst("<span data-blank></span>", getPlacehholderReplacement(constructions.get(0), distractorList));
+		constructions.remove(0);
+		}
+		sb.append(plainTextElement);
+		}
+		
+		jsonObject.put("textField", sb.toString());
+	}
 
     /**
      * Adds the pure HTML elements to the JSON object.
@@ -114,13 +133,21 @@ public abstract class SimpleExerciseJsonManager extends JsonManager {
      * @param blanks 		The extracted blanks texts
      * @param distractors	The distractors (wrong choices) for Single Choice exercises
      */
-    protected abstract void addBlanksToJson(JSONObject jsonObject, ArrayList<String> blanks,
-                                            ArrayList<ArrayList<String>> distractors);
+    protected void addBlanksToJson(JSONObject jsonObject, ArrayList<String> blanks, ArrayList<ArrayList<String>> distractors){}
 
     /**
      * Allows to set other attributes in the JSON file particular to a specific content type.
      * @param jsonObject	The JSON object
      */
-    protected abstract void setExerciseSpecificAttributes(JSONObject jsonObject);
+    protected void setExerciseSpecificAttributes(JSONObject jsonObject) {}
+    
+    /**
+     * Puts together the string for an inline blank definition.
+     * @param construction  The correct solution
+     * @return              The blank definition
+     */
+    protected String getPlacehholderReplacement(String construction, ArrayList<String> distractorList) {
+        return "*" + construction + "*";
+    }
 
 }

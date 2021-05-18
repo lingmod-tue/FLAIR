@@ -2,7 +2,7 @@ package com.flair.server.exerciseGeneration.exerciseManagement.jsonManagement;
 
 import java.util.ArrayList;
 
-public class FindJsonManager extends ExerciseWithInlineBlanksJsonManager {
+public class FindJsonManager extends SimpleExerciseJsonManager {
 
     @Override
     protected String getPlacehholderReplacement(String construction, ArrayList<String> distractorList) {
