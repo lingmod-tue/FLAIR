@@ -108,10 +108,8 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
      */
     private ArrayList<ArrayList<String>> assembleDistractors(ExerciseSettings settings) {
         ArrayList<ArrayList<String>> distractors = new ArrayList<>();
-        if(settings.getContentType().equals("Select")) {
-            for(Construction construction : settings.getConstructions()) {
-                distractors.add(construction.getDistractors());
-            }
+        for(Construction construction : settings.getConstructions()) {
+            distractors.add(construction.getDistractors());
         }
 
         return distractors;
