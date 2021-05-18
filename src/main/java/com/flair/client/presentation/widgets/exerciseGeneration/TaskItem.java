@@ -38,6 +38,7 @@ import gwt.material.design.client.ui.MaterialLabel;
 import gwt.material.design.client.ui.MaterialLink;
 import gwt.material.design.client.ui.MaterialRadioButton;
 import gwt.material.design.client.ui.MaterialRow;
+import gwt.material.design.client.ui.MaterialToast;
 import gwt.material.design.client.ui.html.Option;
 
 public class TaskItem extends LocalizedComposite {
@@ -450,6 +451,10 @@ public class TaskItem extends LocalizedComposite {
         	
         	relevantConstructionsInSelectedDocumentPart = new HashMap<String, Integer>();
         	calculateConstructionsOccurrences(relevantConstructionsInSelectedDocumentPart);
+        	
+        	btnApplyDocumentSelection.setEnabled(false);
+    		btnDiscardDocumentSelection.setEnabled(false);
+    		btnReset.setEnabled(removedParts.size() > 0);
         });
         btnRemoveSelection.addClickHandler(event -> {
         	int selectedPartStartIndex = lblDocumentForSelection.getCursorPos();
@@ -469,11 +474,18 @@ public class TaskItem extends LocalizedComposite {
         	}
         	newlyRemovedParts.add(new Pair<>(selectedPartStartIndex, selectedPartStartIndex + lblDocumentForSelection.getSelectionLength()));
         	lblDocumentForSelection.setText(lblDocumentForSelection.getText().substring(0, lblDocumentForSelection.getCursorPos()) + lblDocumentForSelection.getText().substring(lblDocumentForSelection.getCursorPos() + lblDocumentForSelection.getSelectionLength()));
+        
+    		btnRemoveSelection.setEnabled(false);
+    		btnApplyDocumentSelection.setEnabled(true);
+    		btnDiscardDocumentSelection.setEnabled(true);
         });
         btnReset.addClickHandler(event -> {
         	lblDocumentForSelection.setText(doc.getText());
         	removedParts.clear();
         	newlyRemovedParts.clear();
+        	
+        	btnApplyDocumentSelection.setEnabled(true);
+    		btnDiscardDocumentSelection.setEnabled(true);
         });
         btnDiscardDocumentSelection.addClickHandler(event -> {
         	dlgDocumentSelection.close();
@@ -486,6 +498,17 @@ public class TaskItem extends LocalizedComposite {
         		text = text.substring(0, removedPart.first) + text.substring(removedPart.second);
         	}
         	lblDocumentForSelection.setText(text);
+        	
+        	btnApplyDocumentSelection.setEnabled(false);
+    		btnDiscardDocumentSelection.setEnabled(false);
+        });
+        
+        lblDocumentForSelection.addClickHandler(event -> {
+        	if(lblDocumentForSelection.getSelectedText().length() > 0) {
+        		btnRemoveSelection.setEnabled(true);
+        	} else {
+        		btnRemoveSelection.setEnabled(false);
+        	}
         });
         
     	btnDelete.addClickHandler(event -> {

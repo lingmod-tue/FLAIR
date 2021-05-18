@@ -7,7 +7,6 @@
 	xmlns:flair="urn:import:com.flair.client.presentation.widgets">
 	<ui:style>
 	.bgGrey {
-		width: 70%;
 		background-color: #cecac1;
 	}
 	
@@ -46,8 +45,8 @@
 						textColor="GREEN" ui:field="icoOk" />
 					<m:MaterialIcon iconType="ERROR" textColor="RED"
 						ui:field="icoInvalid" visible="false" />
-					<m:MaterialIcon iconType="WARNING" textColor="ORANGE"
-						ui:field="icoWarning" visible="false" />
+					<m:MaterialIcon iconType="WARNING"
+						textColor="ORANGE" ui:field="icoWarning" visible="false" />
 				</m:MaterialColumn>
 			</m:MaterialRow>
 		</m:MaterialCollapsibleHeader>
@@ -75,7 +74,7 @@
 					textAlign="CENTER" textColor="BLACK" width="100%"
 					addStyleNames="{style.bgGrey} {style.lowercase}" waves="DEFAULT" />
 			</m:MaterialRow>
-			
+
 			<m:MaterialRow margin="0" padding="0">
 				<m:MaterialLabel text="Exercise settings"
 					ui:field="lblSettings" textColor="BLACK" fontWeight="BOLD"
@@ -83,14 +82,16 @@
 
 				<m:MaterialColumn grid='s4 m4 l4' padding="0"
 					margin="0">
-					<m:MaterialLabel text="Topic:" margin="0" padding="0"/>
+					<m:MaterialLabel text="Topic:" margin="0"
+						padding="0" />
 					<ma:combobox.MaterialComboBox
 						textColor="GREY" ui:field="drpTopic" margin="0" padding="0"
 						marginRight="10" />
 				</m:MaterialColumn>
 				<m:MaterialColumn grid='s4 m4 l4' padding="0"
 					margin="0">
-					<m:MaterialLabel text="Task type:" margin="0" padding="0" />
+					<m:MaterialLabel text="Task type:" margin="0"
+						padding="0" />
 					<ma:combobox.MaterialComboBox
 						textColor="GREY" ui:field="drpType" margin="0" padding="0"
 						marginRight="10">
@@ -108,7 +109,8 @@
 				</m:MaterialColumn>
 				<m:MaterialColumn grid='s4 m4 l4' padding="0"
 					margin="0">
-					<m:MaterialLabel text="Quiz:" margin="0" padding="0" ui:field="lblQuiz"/>
+					<m:MaterialLabel text="Quiz:" margin="0"
+						padding="0" ui:field="lblQuiz" />
 					<ma:combobox.MaterialComboBox
 						textColor="GREY" ui:field="drpQuiz" margin="0" padding="0">
 					</ma:combobox.MaterialComboBox>
@@ -163,8 +165,10 @@
 					<m:MaterialRow padding="0" margin="0">
 						<m:MaterialLabel text="Scope:" />
 					</m:MaterialRow>
-					<m:MaterialRow padding="0" margin="0" ui:field="rowRbtPerSentence" />
-					<m:MaterialRow padding="0" margin="0" ui:field="rowRbtSingleTask" />						
+					<m:MaterialRow padding="0" margin="0"
+						ui:field="rowRbtPerSentence" />
+					<m:MaterialRow padding="0" margin="0"
+						ui:field="rowRbtSingleTask" />
 				</m:MaterialRow>
 
 				<m:MaterialRow ui:field="grpCondTypes">
@@ -186,10 +190,14 @@
 					<m:MaterialRow padding="0" margin="0">
 						<m:MaterialLabel text="Target clauses:" />
 					</m:MaterialRow>
-					<m:MaterialRow padding="0" margin="0" ui:field="rowRbtTargetClauses" />						
-					<m:MaterialRow padding="0" margin="0" ui:field="rowRbtIfClause" />						
-					<m:MaterialRow padding="0" margin="0" ui:field="rowRbtEitherClause" />						
-					<m:MaterialRow padding="0" margin="0" ui:field="rowRbtBothClauses" />						
+					<m:MaterialRow padding="0" margin="0"
+						ui:field="rowRbtTargetClauses" />
+					<m:MaterialRow padding="0" margin="0"
+						ui:field="rowRbtIfClause" />
+					<m:MaterialRow padding="0" margin="0"
+						ui:field="rowRbtEitherClause" />
+					<m:MaterialRow padding="0" margin="0"
+						ui:field="rowRbtBothClauses" />
 				</m:MaterialRow>
 
 				<m:MaterialRow ui:field="grpSentTypes">
@@ -276,8 +284,10 @@
 					<m:MaterialRow padding="0" margin="0">
 						<m:MaterialLabel text="Verb splitting:" />
 					</m:MaterialRow>
-					<m:MaterialRow padding="0" margin="0" ui:field="rowRbt1Verb" />						
-					<m:MaterialRow padding="0" margin="0" ui:field="rowRbt2Verbs" />						
+					<m:MaterialRow padding="0" margin="0"
+						ui:field="rowRbt1Verb" />
+					<m:MaterialRow padding="0" margin="0"
+						ui:field="rowRbt2Verbs" />
 				</m:MaterialRow>
 
 				<m:MaterialRow ui:field="grpTargetWords">
@@ -465,8 +475,8 @@
 					<m:MaterialRow padding="0" margin="0">
 						<m:MaterialColumn grid='s8 m8 l8' padding="0"
 							margin="0">
-							<m:MaterialLabel text="Number of dropdown options "
-								textColor="GREY" />
+							<m:MaterialLabel
+								text="Number of dropdown options " textColor="GREY" />
 						</m:MaterialColumn>
 						<m:MaterialColumn grid='s4 m4 l4' padding="0"
 							margin="0">
@@ -477,7 +487,8 @@
 				</m:MaterialRow>
 
 				<m:MaterialRow>
-					<m:MaterialLabel ui:field="lblNumberExercises" paddingTop="10" />
+					<m:MaterialLabel ui:field="lblNumberExercises"
+						paddingTop="10" />
 				</m:MaterialRow>
 
 
@@ -493,17 +504,21 @@
 						readOnly="true" height="200px" />
 				</m:MaterialDialogContent>
 				<m:MaterialDialogFooter>
-				<m:MaterialButton
-						ui:field="btnRemoveSelection" text="Remove selection"
-						type="FLAT" />
-						<m:MaterialButton
-						ui:field="btnReset" text="Reset"
-						type="FLAT" />
+					<m:MaterialButton ui:field="btnRemoveSelection"
+						text="Remove selection" type="FLAT" enabled="false"
+						textAlign="CENTER" textColor="BLACK"
+						addStyleNames="{style.bgGrey}" waves="DEFAULT" margin="10" />
 					<m:MaterialButton
-						ui:field="btnApplyDocumentSelection" text="Apply"
-						type="FLAT" />
+						ui:field="btnApplyDocumentSelection" text="Apply" type="FLAT"
+						enabled="false" textAlign="CENTER" textColor="BLACK"
+						addStyleNames="{style.bgGrey}" waves="DEFAULT" margin="10" />
 					<m:MaterialButton
-						ui:field="btnDiscardDocumentSelection" text="Cancel" type="FLAT" />
+						ui:field="btnDiscardDocumentSelection" text="Cancel" type="FLAT"
+						enabled="false" textAlign="CENTER" textColor="BLACK"
+						addStyleNames="{style.bgGrey}" waves="DEFAULT" margin="10" />
+					<m:MaterialButton ui:field="btnReset" text="Reset"
+						type="FLAT" enabled="false" textAlign="CENTER" textColor="BLACK"
+						addStyleNames="{style.bgGrey}" waves="DEFAULT" margin="10" />
 				</m:MaterialDialogFooter>
 			</m:MaterialDialog>
 		</m:MaterialCollapsibleBody>
