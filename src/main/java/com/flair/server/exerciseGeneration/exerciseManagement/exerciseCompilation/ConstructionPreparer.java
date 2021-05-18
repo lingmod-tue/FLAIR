@@ -53,6 +53,15 @@ public class ConstructionPreparer {
                         newConstructions.add(new ConditionalConstruction(construction.getConstruction(), ifClauseConstructionIndices, false, mainClauseConstructionIndices));
                     }
                     
+                    if(exerciseSettings.getContentType().equals("MultiDrag")) {
+                    	if(newConstructions.size() < 2) {
+	                    	// we can't use it for a multi-exercise Drag & Drop task if we don't have both clauses
+	                    	newConstructions.clear();
+                    	} else {
+                    		addDistractors(exerciseSettings, new ArrayList<Construction>(newConstructions));                       	
+                        }
+                    }
+                    
                     for(ConditionalConstruction newConstruction : newConstructions) {                    	
                     	// try to limit the construction to max. 30 characters
                     	if(exerciseSettings.getContentType().equals("SingleDrag") && 
@@ -104,6 +113,7 @@ public class ConstructionPreparer {
                     }
                 } else if(exerciseSettings.getContentType().endsWith("Drag")) {
                 	ArrayList<Pair<Integer, Integer>> components = nlpManager.getPassiveSentenceComponents(construction.getConstructionIndices());
+                	ArrayList<Construction> newConstructions = new ArrayList<>();
                 	if(components != null) {
 	                	for(int i = 1; i <= 3; i++) {
 	                		if(components.get(i) != null) {
@@ -111,16 +121,21 @@ public class ConstructionPreparer {
 	        	                    ArrayList<Pair<Integer, Integer>> parts = nlpManager.splitParticiple(components.get(i));
 	        	                    if(parts != null) { // if the splitting wasn't successful, we keep it as entire cluster
 	        	                        for (Pair<Integer, Integer> part : parts) {
-	        	                            constructionsToAdd.add(new Construction(construction.getConstruction(), part));
+	        	                        	newConstructions.add(new Construction(construction.getConstruction(), part));
 	        	                        }
 	        	                    }
 	                        	} else {                			
-	                        		constructionsToAdd.add(new Construction(construction.getConstruction(), components.get(i)));
+	                        		newConstructions.add(new Construction(construction.getConstruction(), components.get(i)));
 	                        	}
 	                        }
 	                	}
                 	}
-                	                	                	
+                	
+                	if(exerciseSettings.getContentType().equals("MultiDrag")) {  
+                		addDistractors(exerciseSettings, newConstructions);
+                	}
+                	 
+                	constructionsToAdd.addAll(newConstructions);
                     constructionsToRemove.add(construction);
                 }
             } else if(construction.getConstruction().toString().startsWith("QUEST") || construction.getConstruction().toString().startsWith("STMT")){
@@ -184,11 +199,16 @@ public class ConstructionPreparer {
             		construction.getConstruction() == DetailedConstruction.OTHERPRN) &&
             		exerciseSettings.getContentType().equals("MultiDrag")) {
             	ArrayList<Pair<Integer,Integer>> components = nlpManager.getRelativeClauseComponents(construction.getConstructionIndices());
+            	ArrayList<Construction> newConstructions = new ArrayList<>();
             	for(Pair<Integer, Integer> component : components) {
             		if(!exerciseSettings.getPlainText().substring(component.first, component.second).matches("[\\p{Punct}\\s\\h]*")) {
-            			constructionsToAdd.add(new Construction(construction.getConstruction(), component));
+            			newConstructions.add(new Construction(construction.getConstruction(), component));
             		}
             	}
+            	
+            	addDistractors(exerciseSettings, newConstructions);
+            	
+            	constructionsToAdd.addAll(newConstructions);
             	constructionsToRemove.add(construction);
             }
         }
@@ -221,6 +241,28 @@ public class ConstructionPreparer {
         for(Construction construction : activeConstructionsToRemove) {
         	exerciseSettings.getConstructions().remove(construction);
         }
+    }
+    
+    private void addDistractors(ExerciseSettings exerciseSettings, ArrayList<Construction> newConstructions) {
+    	// We won't have feedback for the draggables of possible merged sentences, but in those cases, the standard feedback 'wrong word' should be fine
+    	// we set the values of the other draggables of the sub-exercise as "distractors"
+    	// some of the constructions might later be deleted, but then they simply will never be matched
+    	//TODO: maybe store the constructions in the Construction, later check if they are contained in any fragment and then extract then for distractors
+    	// Otherwise, we cannot guarantee that there are at least 2 draggables per exercise
+		HashSet<String> distractors = new HashSet<>();
+    	for(Construction newConstruction : newConstructions) {
+        	String text = exerciseSettings.getPlainText().substring(newConstruction.getOriginalConstructionIndices().first, newConstruction.getOriginalConstructionIndices().second);
+    		distractors.add(text);
+    	}
+    	
+    	for(Construction newConstruction : newConstructions) {
+    		for(String distractor : distractors) {
+    			String text = exerciseSettings.getPlainText().substring(newConstruction.getOriginalConstructionIndices().first, newConstruction.getOriginalConstructionIndices().second);
+        		if(!text.equals(distractor)) {
+        			newConstruction.getDistractors().add(distractor);
+        		}
+    		}
+    	}
     }
 
 }

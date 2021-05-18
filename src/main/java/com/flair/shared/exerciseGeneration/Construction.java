@@ -11,7 +11,7 @@ public class Construction implements IsSerializable {
     private Pair<Integer, Integer> originalConstructionIndices;
     private String bracketsText = "";
     private String constructionText = "";
-    private ArrayList<String> distractors;
+    private ArrayList<String> distractors = new ArrayList<>();
 
     public Construction() {}
     

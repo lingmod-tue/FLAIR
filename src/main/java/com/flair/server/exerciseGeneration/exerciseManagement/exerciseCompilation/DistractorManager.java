@@ -27,7 +27,6 @@ public class DistractorManager {
 		ArrayList<Integer> constructionsToRemove = new ArrayList<>();
 
         if(exerciseSettings.getContentType().equals("Select")) {
-
         	for(Fragment fragment : fragments) {
                 for(Blank blank : fragment.getBlanksBoundaries()) {
                 	Construction construction = blank.getConstruction();
@@ -282,29 +281,61 @@ public class DistractorManager {
                 	}
                 }
         	}             
-        }
-        
+        } else if(exerciseSettings.getContentType().equals("SingleDrag")) {
+        	// we set the values of the other draggables as "distractors"
+        	ArrayList<String> distractors = new ArrayList<>();
         	for(Fragment fragment : fragments) {
-        		ArrayList<Blank> blanksToRemove = new ArrayList<>();
-        		for(Blank blank : fragment.getBlanksBoundaries()) {
-        			if(blank.getConstruction() != null) {
-        				boolean isUsed = true;
-        		        for(int constructionToRemove : constructionsToRemove) {
-	            			if(blank.getConstructionIndex() == constructionToRemove) {
-	            				blanksToRemove.add(blank);
-	            				isUsed = false;
-	            			}
-        		        }
-        		        if(isUsed) {
-        		        	Pair<Integer, Integer> constructionIndices = blank.getConstruction().getOriginalConstructionIndices();
-            				usedConstructions.add(exerciseSettings.getPlainText().substring(constructionIndices.first, constructionIndices.second));
-        		        }
-        			}
-        		}
-        		for(Blank blank : blanksToRemove) {
-        			fragment.getBlanksBoundaries().remove(blank);
-        		}
+                for(Blank blank : fragment.getBlanksBoundaries()) {
+                	Construction construction = blank.getConstruction();
+                	if(construction != null) {
+                    	String text = exerciseSettings.getPlainText().substring(construction.getOriginalConstructionIndices().first, construction.getOriginalConstructionIndices().second);
+                		distractors.add(text);
+                	}
+                }
         	}
+        	
+        	if(distractors.size() < 2) {
+        		// we cannot generate an exercise for Drag & Drop with less than 2 targets
+        		return new ArrayList<String>();
+        	}
+        	
+        	HashSet<String> uniqueDistractors = new HashSet<>(distractors);
+        	for(Fragment fragment : fragments) {
+                for(Blank blank : fragment.getBlanksBoundaries()) {
+                	Construction construction = blank.getConstruction();
+                	if(construction != null) {
+                		for(String distractor : uniqueDistractors) {
+                			String text = exerciseSettings.getPlainText().substring(construction.getOriginalConstructionIndices().first, construction.getOriginalConstructionIndices().second);
+                    		if(!text.equals(distractor)) {
+                    			construction.getDistractors().add(distractor);
+                    		}
+                		}
+                	}
+                }
+        	}
+        } 
+        
+    	for(Fragment fragment : fragments) {
+    		ArrayList<Blank> blanksToRemove = new ArrayList<>();
+    		for(Blank blank : fragment.getBlanksBoundaries()) {
+    			if(blank.getConstruction() != null) {
+    				boolean isUsed = true;
+    		        for(int constructionToRemove : constructionsToRemove) {
+            			if(blank.getConstructionIndex() == constructionToRemove) {
+            				blanksToRemove.add(blank);
+            				isUsed = false;
+            			}
+    		        }
+    		        if(isUsed) {
+    		        	Pair<Integer, Integer> constructionIndices = blank.getConstruction().getOriginalConstructionIndices();
+        				usedConstructions.add(exerciseSettings.getPlainText().substring(constructionIndices.first, constructionIndices.second));
+    		        }
+    			}
+    		}
+    		for(Blank blank : blanksToRemove) {
+    			fragment.getBlanksBoundaries().remove(blank);
+    		}
+    	}
         
         return usedConstructions;
     }
