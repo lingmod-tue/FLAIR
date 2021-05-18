@@ -12,6 +12,7 @@ public class Construction implements IsSerializable {
     private String bracketsText = "";
     private String constructionText = "";
     private ArrayList<String> distractors = new ArrayList<>();
+    private ArrayList<Construction> sentenceConstructions = new ArrayList<>();
 
     public Construction() {}
     
@@ -27,6 +28,7 @@ public class Construction implements IsSerializable {
     public String getBracketsText() { return bracketsText; }
     public String getConstructionText() { return constructionText; }
     public ArrayList<String> getDistractors() { return distractors; }
+	public ArrayList<Construction> getSentenceConstructions() { return sentenceConstructions; }
 
     public void setBracketsText(String bracketsText) { this.bracketsText = bracketsText; }
     public void setConstructionIndices(Pair<Integer, Integer> constructionIndices) {

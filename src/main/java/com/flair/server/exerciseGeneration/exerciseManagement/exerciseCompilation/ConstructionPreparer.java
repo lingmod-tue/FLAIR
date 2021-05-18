@@ -244,22 +244,10 @@ public class ConstructionPreparer {
     }
     
     private void addDistractors(ExerciseSettings exerciseSettings, ArrayList<Construction> newConstructions) {
-    	// We won't have feedback for the draggables of possible merged sentences, but in those cases, the standard feedback 'wrong word' should be fine
-    	// we set the values of the other draggables of the sub-exercise as "distractors"
-    	// some of the constructions might later be deleted, but then they simply will never be matched
-    	//TODO: maybe store the constructions in the Construction, later check if they are contained in any fragment and then extract then for distractors
-    	// Otherwise, we cannot guarantee that there are at least 2 draggables per exercise
-		HashSet<String> distractors = new HashSet<>();
     	for(Construction newConstruction : newConstructions) {
-        	String text = exerciseSettings.getPlainText().substring(newConstruction.getOriginalConstructionIndices().first, newConstruction.getOriginalConstructionIndices().second);
-    		distractors.add(text);
-    	}
-    	
-    	for(Construction newConstruction : newConstructions) {
-    		for(String distractor : distractors) {
-    			String text = exerciseSettings.getPlainText().substring(newConstruction.getOriginalConstructionIndices().first, newConstruction.getOriginalConstructionIndices().second);
-        		if(!text.equals(distractor)) {
-        			newConstruction.getDistractors().add(distractor);
+    		for(Construction otherConstruction : newConstructions) {
+        		if(newConstruction != otherConstruction) {
+        			newConstruction.getSentenceConstructions().add(otherConstruction);
         		}
     		}
     	}

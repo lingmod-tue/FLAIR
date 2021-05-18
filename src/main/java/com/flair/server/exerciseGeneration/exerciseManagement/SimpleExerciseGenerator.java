@@ -65,8 +65,7 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        ArrayList<Fragment> fragments = new Indexer().matchHtmlToPlainText(settings.getExerciseSettings(), doc.wholeText());
 	
 	        new ClozeManager().prepareBlanks(settings.getExerciseSettings(), nlpManager, fragments);
-	        DistractorManager distractorManager = new DistractorManager(); 
-	        ArrayList<String> usedConstructions = distractorManager.generateDistractors(settings.getExerciseSettings(), nlpManager, fragments);
+	        ArrayList<String> usedConstructions = new DistractorManager().generateDistractors(settings.getExerciseSettings(), nlpManager, fragments);
 		    
 	        if(usedConstructions.size() == 0) {
 	        	return null;

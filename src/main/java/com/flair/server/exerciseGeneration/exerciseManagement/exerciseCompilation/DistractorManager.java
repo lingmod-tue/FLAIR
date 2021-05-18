@@ -294,7 +294,7 @@ public class DistractorManager {
                 }
         	}
         	
-        	if(distractors.size() < 2) {
+        	if(distractors.size() < 1) {
         		// we cannot generate an exercise for Drag & Drop with less than 2 targets
         		return new ArrayList<String>();
         	}
@@ -309,16 +309,49 @@ public class DistractorManager {
                     		if(!text.equals(distractor)) {
                     			construction.getDistractors().add(distractor);
                     		}
+            				usedConstructions.add(text);
                 		}
+                	}
+                }
+        	}
+        }  else if(exerciseSettings.getContentType().equals("MultiDrag")) {
+        	// We won't have feedback for the draggables of possible merged sentences, but in those cases, the standard feedback 'wrong word' should be fine
+        	// we set the values of the other draggables of the sub-exercise as "distractors"
+        	ArrayList<Construction> usedConstructionList = new ArrayList<>();
+        	for(Fragment fragment : fragments) {
+                for(Blank blank : fragment.getBlanksBoundaries()) {
+                	Construction construction = blank.getConstruction();
+                	if(construction != null) {
+                		usedConstructionList.add(construction);
+                	}
+                }
+        	}
+        	        	
+        	for(Fragment fragment : fragments) {
+                for(Blank blank : fragment.getBlanksBoundaries()) {
+                	Construction construction = blank.getConstruction();
+                	if(construction != null) {
+        				String text = exerciseSettings.getPlainText().substring(construction.getOriginalConstructionIndices().first, construction.getOriginalConstructionIndices().second);
+                		for(Construction otherConstruction : construction.getSentenceConstructions()) {
+                			if(usedConstructionList.contains(otherConstruction)) {
+                				String distractor = exerciseSettings.getPlainText().substring(otherConstruction.getOriginalConstructionIndices().first, otherConstruction.getOriginalConstructionIndices().second);
+                        		if(!text.equals(distractor)) {
+                        			construction.getDistractors().add(distractor);
+                        		}
+                			}
+                		}
+                		if(construction.getDistractors().size() < 1) {
+	                        constructionsToRemove.add(blank.getConstructionIndex());
+                		} 
                 	}
                 }
         	}
         } 
         
-    	for(Fragment fragment : fragments) {
-    		ArrayList<Blank> blanksToRemove = new ArrayList<>();
-    		for(Blank blank : fragment.getBlanksBoundaries()) {
-    			if(blank.getConstruction() != null) {
+        if(!exerciseSettings.getContentType().equals("SingleDrag")) {
+	    	for(Fragment fragment : fragments) {
+	    		ArrayList<Blank> blanksToRemove = new ArrayList<>();
+	    		for(Blank blank : fragment.getBlanksBoundaries()) {
     				boolean isUsed = true;
     		        for(int constructionToRemove : constructionsToRemove) {
             			if(blank.getConstructionIndex() == constructionToRemove) {
@@ -326,16 +359,16 @@ public class DistractorManager {
             				isUsed = false;
             			}
     		        }
-    		        if(isUsed) {
+    		        if(blank.getConstruction() != null && isUsed) {
     		        	Pair<Integer, Integer> constructionIndices = blank.getConstruction().getOriginalConstructionIndices();
         				usedConstructions.add(exerciseSettings.getPlainText().substring(constructionIndices.first, constructionIndices.second));
     		        }
-    			}
-    		}
-    		for(Blank blank : blanksToRemove) {
-    			fragment.getBlanksBoundaries().remove(blank);
-    		}
-    	}
+	    		}
+	    		for(Blank blank : blanksToRemove) {
+	    			fragment.getBlanksBoundaries().remove(blank);
+	    		}
+	    	}
+        }
         
         return usedConstructions;
     }
