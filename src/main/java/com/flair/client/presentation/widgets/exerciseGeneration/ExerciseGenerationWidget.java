@@ -271,7 +271,7 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
 	    	spnGenerating.setVisible(true);
 	        ArrayList<ExerciseSettings> exerciseSettings = new ArrayList<>();
 	    	for(Widget existingTask : wdgtTasks.getChildrenList()) {
-	    		if (((TaskItem)existingTask).icoOk.isVisible()) {
+	    		if (((TaskItem)existingTask).icoOk.isVisible() || ((TaskItem)existingTask).icoWarning.isVisible()) {
 	    			exerciseSettings.add(((TaskItem)existingTask).generateExerciseSettings());
 	    		}
 	    	}

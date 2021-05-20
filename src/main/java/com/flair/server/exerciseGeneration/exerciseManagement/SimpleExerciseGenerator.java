@@ -24,8 +24,6 @@ import com.flair.server.exerciseGeneration.exerciseManagement.jsonManagement.Sim
 import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.OpenNlpParser;
 import com.flair.server.parser.SimpleNlgParser;
-import com.flair.shared.exerciseGeneration.Construction;
-import com.flair.shared.exerciseGeneration.ExerciseSettings;
 
 import edu.stanford.nlp.util.Pair;
 
@@ -65,9 +63,9 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        ArrayList<Fragment> fragments = new Indexer().matchHtmlToPlainText(settings.getExerciseSettings(), doc.wholeText());
 	
 	        new ClozeManager().prepareBlanks(settings.getExerciseSettings(), nlpManager, fragments);
-	        ArrayList<String> usedConstructions = new DistractorManager().generateDistractors(settings.getExerciseSettings(), nlpManager, fragments);
+	        com.flair.shared.exerciseGeneration.Pair<ArrayList<String>,ArrayList<ArrayList<String>>> usedConstructions = new DistractorManager().generateDistractors(settings.getExerciseSettings(), nlpManager, fragments);
 		    
-	        if(usedConstructions.size() == 0) {
+	        if(usedConstructions == null || usedConstructions.first.size() == 0) {
 	        	return null;
 	        }
 	        
@@ -93,25 +91,11 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	
 	        String taskDescription = InstructionsManager.componseTaskDescription(settings.getExerciseSettings(), nlpManager, fragments);	       
 	
-	        return new JsonComponents(orderedPlainTextElements, pureHtmlElements, usedConstructions,
-	                settings.getJsonManager(), settings.getContentTypeLibrary(), settings.getResourceFolder(), assembleDistractors(settings.getExerciseSettings()), taskDescription);
+	        return new JsonComponents(orderedPlainTextElements, pureHtmlElements, usedConstructions.first,
+	                settings.getJsonManager(), settings.getContentTypeLibrary(), settings.getResourceFolder(), usedConstructions.second, taskDescription);
     	} else {
     		return null;
     	}
     }
-    
-    /**
-     * Collects the distractors for Single Choice exercises from the individual constructions into a single ArrayList.
-     * @param settings	The exercise settings
-     * @return			The distractors per construction
-     */
-    private ArrayList<ArrayList<String>> assembleDistractors(ExerciseSettings settings) {
-        ArrayList<ArrayList<String>> distractors = new ArrayList<>();
-        for(Construction construction : settings.getConstructions()) {
-            distractors.add(construction.getDistractors());
-        }
 
-        return distractors;
-    }
-    
 }

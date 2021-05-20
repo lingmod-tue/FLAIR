@@ -37,8 +37,7 @@ public abstract class SimpleExerciseJsonManager extends JsonManager {
 
         Pair<ArrayList<String>, ArrayList<ArrayList<String>>> orderedElements = orderBlanks(jsonComponents.get(0).getPlainTextElements(), jsonComponents.get(0).getConstructions(),
         		jsonComponents.get(0).getDistractors());
-        addQuestionsToJson(jsonObject, jsonComponents.get(0).getPlainTextElements(), orderedElements.first, jsonComponents.get(0).getDistractors());
-        addBlanksToJson(jsonObject, orderedElements.first, orderedElements.second);
+        addQuestionsToJson(jsonObject, jsonComponents.get(0).getPlainTextElements(), orderedElements.first, orderedElements.second);
         JSONArray htmlArray = new JSONArray();
         htmlArray.addAll(jsonComponents.get(0).getPureHtmlElements());
         addHtmlElementsToJson(jsonObject, htmlArray);
@@ -66,7 +65,7 @@ public abstract class SimpleExerciseJsonManager extends JsonManager {
                 int blanksIndex = Integer.parseInt(plainText.substring(indexStart, indexEnd));
 
                 blanks.add(unorderedBlanks.get(blanksIndex));
-                if(distractors.size() > 0) {
+                if(unorderedDistractors.size() > 0) {
                 	distractors.add(unorderedDistractors.get(blanksIndex));
                 }
                 plainText = plainText.substring(0, placeholderIndex) + "<span data-blank></span>" + plainText.substring(indexEnd + 9);
@@ -126,14 +125,6 @@ public abstract class SimpleExerciseJsonManager extends JsonManager {
     protected void addHtmlElementsToJson(JSONObject jsonObject, JSONArray htmlElements){
         ((JSONObject)jsonObject.get("htmlElementsGroup")).put("htmlElements", htmlElements);
     }
-
-    /**
-     * Adds the extracted blanks texts to the JSON object.
-     * @param jsonObject 	The JSON object
-     * @param blanks 		The extracted blanks texts
-     * @param distractors	The distractors (wrong choices) for Single Choice exercises
-     */
-    protected void addBlanksToJson(JSONObject jsonObject, ArrayList<String> blanks, ArrayList<ArrayList<String>> distractors){}
 
     /**
      * Allows to set other attributes in the JSON file particular to a specific content type.

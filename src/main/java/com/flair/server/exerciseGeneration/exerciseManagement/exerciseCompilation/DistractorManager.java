@@ -22,8 +22,9 @@ public class DistractorManager {
      * Generates distractors for Single Choice exercises.
      * @param exerciseSettings  The exercise settings
      */
-    public ArrayList<String> generateDistractors(ExerciseSettings exerciseSettings, NlpManager nlpManager, ArrayList<Fragment> fragments) {
+    public Pair<ArrayList<String>, ArrayList<ArrayList<String>>> generateDistractors(ExerciseSettings exerciseSettings, NlpManager nlpManager, ArrayList<Fragment> fragments) {
     	ArrayList<String> usedConstructions = new ArrayList<>();
+    	ArrayList<ArrayList<String>> usedDistractors = new ArrayList<>();
 		ArrayList<Integer> constructionsToRemove = new ArrayList<>();
 
         if(exerciseSettings.getContentType().equals("Select")) {
@@ -296,7 +297,7 @@ public class DistractorManager {
         	
         	if(distractors.size() < 1) {
         		// we cannot generate an exercise for Drag & Drop with less than 2 targets
-        		return new ArrayList<String>();
+        		return null;
         	}
         	
         	HashSet<String> uniqueDistractors = new HashSet<>(distractors);
@@ -304,13 +305,13 @@ public class DistractorManager {
                 for(Blank blank : fragment.getBlanksBoundaries()) {
                 	Construction construction = blank.getConstruction();
                 	if(construction != null) {
+            			String text = exerciseSettings.getPlainText().substring(construction.getOriginalConstructionIndices().first, construction.getOriginalConstructionIndices().second);
                 		for(String distractor : uniqueDistractors) {
-                			String text = exerciseSettings.getPlainText().substring(construction.getOriginalConstructionIndices().first, construction.getOriginalConstructionIndices().second);
                     		if(!text.equals(distractor)) {
                     			construction.getDistractors().add(distractor);
                     		}
-            				usedConstructions.add(text);
                 		}
+        				usedConstructions.add(text);
                 	}
                 }
         	}
@@ -362,6 +363,7 @@ public class DistractorManager {
     		        if(blank.getConstruction() != null && isUsed) {
     		        	Pair<Integer, Integer> constructionIndices = blank.getConstruction().getOriginalConstructionIndices();
         				usedConstructions.add(exerciseSettings.getPlainText().substring(constructionIndices.first, constructionIndices.second));
+        				usedDistractors.add(blank.getConstruction().getDistractors());
     		        }
 	    		}
 	    		for(Blank blank : blanksToRemove) {
@@ -370,7 +372,7 @@ public class DistractorManager {
 	    	}
         }
         
-        return usedConstructions;
+        return new Pair<>(usedConstructions, usedDistractors);
     }
     
     /**
