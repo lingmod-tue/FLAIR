@@ -227,6 +227,8 @@ public class TaskItem extends LocalizedComposite {
     MaterialCheckBox chkFormAnalytic;
     @UiField
     MaterialCheckBox chkFormSynthetic;
+    @UiField
+    MaterialCheckBox chkNTargets;
     MaterialRadioButton rbtPerSentence;
     MaterialRadioButton rbtSingleTask;
     MaterialRadioButton rbtMainClause;
@@ -265,6 +267,8 @@ public class TaskItem extends LocalizedComposite {
     MaterialRow rowRbt2Verbs;
     @UiField
     MaterialRow rowRbtSingleTask;
+    @UiField
+    MaterialRow grpNumberTargets;
     
     private ConstructionComponentsCollection constructionComponents;
     private ExerciseGenerationWidget parent;
@@ -1218,6 +1222,10 @@ public class TaskItem extends LocalizedComposite {
     			} else {
     				type = "SingleDrag";
     			}
+    		}
+    	} else if(type.equals("Mark")) {
+    		if(grpNumberTargets.isVisible() && chkNTargets.getValue()) {
+    			brackets.add(BracketsProperties.N_TARGETS);
     		}
     	}
     	

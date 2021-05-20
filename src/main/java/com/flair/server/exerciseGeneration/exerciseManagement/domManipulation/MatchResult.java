@@ -3,8 +3,6 @@ package com.flair.server.exerciseGeneration.exerciseManagement.domManipulation;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.flair.shared.exerciseGeneration.Pair;
-
 public class MatchResult {
 
     public MatchResult(ArrayList<Boundaries> sentenceBoundaryElements, HashMap<Integer, String> plainTextElements) {

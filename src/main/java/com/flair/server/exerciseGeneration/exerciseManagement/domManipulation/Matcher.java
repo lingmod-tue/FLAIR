@@ -1,15 +1,14 @@
 package com.flair.server.exerciseGeneration.exerciseManagement.domManipulation;
 
-import org.jsoup.nodes.Element;
-import org.jsoup.nodes.Node;
-import org.jsoup.nodes.TextNode;
-import org.jsoup.select.Elements;
-
-import com.flair.shared.exerciseGeneration.Pair;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
+import org.jsoup.nodes.TextNode;
+
+import com.flair.shared.exerciseGeneration.Pair;
 
 
 public class Matcher {

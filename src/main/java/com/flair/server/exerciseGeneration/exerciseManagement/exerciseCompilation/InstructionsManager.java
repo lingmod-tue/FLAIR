@@ -79,6 +79,9 @@ public class InstructionsManager {
                 instructions = "Select the correct " + formType + " forms from the dropdowns.";
             } else if(settings.getContentType().equals("Mark")) {
                 instructions = "Click all " + formType + " forms in the text.";
+                if(settings.getBrackets().contains(BracketsProperties.N_TARGETS)) {
+                	instructions += " The text contains " + usedConstructions.size() + " " + formType + " forms.";
+                }
             } else if(settings.getContentType().endsWith("Drag")) {
                 instructions = "Drag the " + formType + " forms into the empty slots to form correct sentences.";
             }
@@ -145,6 +148,9 @@ public class InstructionsManager {
                 instructions = "Select the correct " + tense + " forms from the dropdowns.";
             } else if(settings.getContentType().equals("Mark")) {
                 instructions = "Click all " + tense + " forms in the text.";
+                if(settings.getBrackets().contains(BracketsProperties.N_TARGETS)) {
+                	instructions += " The text contains " + usedConstructions.size() + " " + tense + " forms.";
+                }
             }
         } else if(constructions.stream().anyMatch((construction) ->
                 construction.toString().startsWith("PAST") || construction.toString().startsWith("PRES"))) {
@@ -177,6 +183,9 @@ public class InstructionsManager {
                 instructions = "Select the correct " + tense + " forms from the dropdowns.";
             } else if(settings.getContentType().equals("Mark")) {
                 instructions = "Click all " + tense.replace(" or ", " and ") + " forms in the text.";
+                if(settings.getBrackets().contains(BracketsProperties.N_TARGETS)) {
+                	instructions += " The text contains " + usedConstructions.size() + " " + " forms to find.";
+                }
             } else if(settings.getContentType().endsWith("Drag")) {
                 instructions = "Drag the " + tense.replace(" or ", " and ") + " forms into the empty slots to form correct sentences.";
             }
@@ -184,35 +193,36 @@ public class InstructionsManager {
                 construction == DetailedConstruction.WHO || construction == DetailedConstruction.WHICH ||
                         construction == DetailedConstruction.THAT || construction == DetailedConstruction.OTHERPRN)) {
             // Relative pronouns
-
-            String specification = "";
-            if(!constructions.stream().anyMatch((construction) -> construction == DetailedConstruction.OTHERPRN)) {
-                ArrayList<String> containedPronouns = new ArrayList<>();
-                ArrayList<Pair<String, String>> pronouns = new ArrayList<>();
-                pronouns.add(new Pair<>("who", "WHO"));
-                pronouns.add(new Pair<>("which", "WHICH"));
-                pronouns.add(new Pair<>("that", "THAT"));
-
-                for(Pair<String, String> pronoun : pronouns) {
-                    if(constructions.stream().anyMatch((construction) -> construction.toString().equals(pronoun.second))) {
-                        containedPronouns.add(pronoun.first);
-                    }
-                }
-
-                specification = String.join(", ", containedPronouns);
-                int lastCommaIndex = specification.lastIndexOf(",");
-                if(lastCommaIndex != -1) {
-                    specification = specification.substring(0, lastCommaIndex) + " or" + specification.substring(lastCommaIndex + 1);
-                }
-                specification = " (" + specification + ")";
-            }
-
             if(settings.getContentType().equals("FiB")) {
+                String specification = "";
+                if(!constructions.stream().anyMatch((construction) -> construction == DetailedConstruction.OTHERPRN)) {
+                    ArrayList<String> containedPronouns = new ArrayList<>();
+                    ArrayList<Pair<String, String>> pronouns = new ArrayList<>();
+                    pronouns.add(new Pair<>("who", "WHO"));
+                    pronouns.add(new Pair<>("which", "WHICH"));
+                    pronouns.add(new Pair<>("that", "THAT"));
+
+                    for(Pair<String, String> pronoun : pronouns) {
+                        if(constructions.stream().anyMatch((construction) -> construction.toString().equals(pronoun.second))) {
+                            containedPronouns.add(pronoun.first);
+                        }
+                    }
+
+                    specification = String.join(", ", containedPronouns);
+                    int lastCommaIndex = specification.lastIndexOf(",");
+                    if(lastCommaIndex != -1) {
+                        specification = specification.substring(0, lastCommaIndex) + " or" + specification.substring(lastCommaIndex + 1);
+                    }
+                    specification = " (" + specification + ")";
+                }
                 instructions = "Insert the correct relative pronouns" + specification + ".";
             } else if(settings.getContentType().equals("Select")) {
                 instructions = "Select the correct relative pronouns from the dropdowns.";
             } else if(settings.getContentType().equals("Mark")) {
                 instructions = "Click all relative pronouns in the text.";
+                if(settings.getBrackets().contains(BracketsProperties.N_TARGETS)) {
+                	instructions += " The text contains " + usedConstructions.size() + " relative pronouns.";
+                }
             } else if(settings.getContentType().equals("MultiDrag")) {
                 instructions = "Drag the words into the empty slots to form correct sentences.";
             } else if(settings.getContentType().equals("SingleDrag")) {

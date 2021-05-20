@@ -380,6 +380,18 @@
 					</m:MaterialRow>
 				</m:MaterialRow>
 
+				<m:MaterialRow ui:field="grpNumberTargets">
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialLabel text="Task description:"
+							textColor="BLACK" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox ui:field="chkNTargets"
+							value="true"
+							text="Include number of target words" />
+					</m:MaterialRow>
+				</m:MaterialRow>
+
 				<m:MaterialRow ui:field="grpBrackets">
 					<m:MaterialRow padding="0" margin="0">
 						<m:MaterialLabel text="Brackets content:"
@@ -404,7 +416,7 @@
 					</m:MaterialRow>
 					<m:MaterialRow padding="0" margin="0">
 						<m:MaterialCheckBox ui:field="chkBracketsWill"
-							value="true" text="'will' for main clauses" />
+							value="true" text="Modal of main clauses" />
 					</m:MaterialRow>
 					<m:MaterialRow padding="0" margin="0">
 						<m:MaterialCheckBox

@@ -12,7 +12,6 @@ import com.flair.server.parser.SimpleNlgParser;
 import com.flair.shared.exerciseGeneration.DetailedConstruction;
 import com.flair.shared.exerciseGeneration.Pair;
 
-import ch.qos.logback.core.subst.Token;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.IndexedWord;
@@ -399,23 +398,6 @@ public class NlpManager {
         ArrayList<Pair<String, String>> remainingParts = new ArrayList<>();
         for(Pair<String, String> constructionPart : constructionParts) {
             if(!(constructionPart.second.startsWith(posToRemove) && !constructionPart.second.equals(posToRemove))) {
-                remainingParts.add(constructionPart);
-            }
-        }
-
-        return remainingParts;
-    }
-
-    /**
-     * Removes tokens whose POS equals the provided string from the list.
-     * @param constructionParts The tokens list
-     * @param posToRemove       The POS of the tokens to remove
-     * @return                  The tokens list without tokens having the provided POS
-     */
-    private ArrayList<Pair<String, String>> removeTokens(ArrayList<Pair<String, String>> constructionParts, String posToRemove) {
-        ArrayList<Pair<String, String>> remainingParts = new ArrayList<>();
-        for(Pair<String, String> constructionPart : constructionParts) {
-            if(!constructionPart.second.equals(posToRemove)) {
                 remainingParts.add(constructionPart);
             }
         }
@@ -1154,10 +1136,7 @@ public class NlpManager {
         	}
         	
         	// Check for overlaps
-        	ArrayList<Pair<Integer, Integer>> overlaps = new ArrayList<>();
-        	ArrayList<Pair<Integer, Integer>> partsToRemove = new ArrayList<>();
-        	ArrayList<Pair<Integer, Integer>> partsToAdd = new ArrayList<>();
-
+        	ArrayList<Pair<Integer, Integer>> overlaps = new ArrayList<>();        	
         	for(Pair<Integer, Integer> partIndex : partIndices) {
         		if(startIndex >= partIndex.first && startIndex < partIndex.second || endIndex > partIndex.first && endIndex <= partIndex.second) {
         			overlaps.add(partIndex);
