@@ -33,6 +33,9 @@ public class Indexer {
         }
 
         fragments = recheckMatches(fragments, htmlText);
+        Collections.sort(fragments,
+                (c1, c2) -> c1.getStartIndex() < c2.getStartIndex() ? -1 : 1);
+        fragments = checkForBorderAmbiguities(fragments, htmlText);
         addSentenceFinalPunctuation(fragments, htmlText);
         addBlanksIndicesToFragments(fragments, exerciseSettings.getConstructions());
         fragments = mergeFragments(fragments, htmlText);
@@ -45,6 +48,69 @@ public class Indexer {
     }
 
     /**
+     * Checks if the end of a fragment could also be appended to the beginning of the next and
+     * if the beginning of a fragment could also be appended to the end of the previous.
+     * Marks the fragment as ambiguous if this is the case.
+     * @param fragments	The identified fragments
+     * @param htmlText	The normalized HTML plain text
+     * @return			The modified fragments including new fragments for the ambiguous parts
+     */
+    private ArrayList<Fragment> checkForBorderAmbiguities(ArrayList<Fragment> fragments, String htmlText) {
+    	ArrayList<Fragment> newFragments = new ArrayList<>();
+    	Fragment previousFragment = null;
+		for(Fragment fragment : fragments) {
+			if(previousFragment != null) {
+				if(previousFragment.getEndIndex() < fragment.getStartIndex()) {
+					// Check end of previous fragment
+					String textBetween = htmlText.substring(previousFragment.getEndIndex(), fragment.getStartIndex());
+					StringBuilder ambiguousText = new StringBuilder();
+					while(textBetween.length() > 0 && previousFragment.getText().length() > 0 && previousFragment.getText().charAt(previousFragment.getText().length() - 1) == (textBetween.charAt(textBetween.length() - 1))) {
+						// it's ambiguous (could belong to either fragment), so we can't use it for a construction
+						previousFragment.setText(previousFragment.getText().substring(0, previousFragment.getText().length() - 1));
+						previousFragment.setEndIndex(previousFragment.getEndIndex() - 1);
+						ambiguousText.insert(0, textBetween.substring(textBetween.length() - 1));
+						textBetween = textBetween.substring(0, textBetween.length() - 1);
+					}
+					
+					newFragments.add(previousFragment);
+					if(ambiguousText.length() > 0) {
+						// create new ambiguous fragment
+						newFragments.add(new Fragment(ambiguousText.toString(), previousFragment.getSentenceIndex(), 
+								previousFragment.getPlainTextStartIndex() + previousFragment.getText().length(), previousFragment.isDisplay()));
+					}
+					
+					// check start of current fragment
+					textBetween = htmlText.substring(previousFragment.getEndIndex(), fragment.getStartIndex());
+					ambiguousText = new StringBuilder();
+					while(textBetween.length() > 0 && fragment.getText().length() > 0 && fragment.getText().charAt(0) == (textBetween.charAt(0))) {
+						// it's ambiguous (could belong to either fragment), so we can't use it for a construction
+						fragment.setText(fragment.getText().substring(1));
+						fragment.setStartIndex(fragment.getStartIndex() + 1);
+						fragment.setPlainTextStartIndex(fragment.getPlainTextStartIndex() + 1);
+						ambiguousText.append(textBetween.substring(0, 1));
+						textBetween = textBetween.substring(1);
+					}
+					
+					if(ambiguousText.length() > 0) {
+						// create new ambiguous fragment
+						newFragments.add(new Fragment(ambiguousText.toString(), fragment.getSentenceIndex(), 
+								fragment.getPlainTextStartIndex() - ambiguousText.length(), fragment.isDisplay()));
+					}
+				} else {
+					newFragments.add(previousFragment);
+				}
+			}
+			
+			previousFragment = fragment;
+		}
+		if(fragments.size() > 0) {
+			newFragments.add(fragments.get(fragments.size() - 1));
+		}
+		
+		return newFragments;
+	}
+
+	/**
      * Inserts fragments for html text that is not contained in the plain text.
      * Such fragments can never have constructions, thus not be a sentence.
      * @param fragments The matched fragments corresponding to plain text fragments
@@ -461,4 +527,5 @@ public class Indexer {
 
         return null;
     }
+
 }
