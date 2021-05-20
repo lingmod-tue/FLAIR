@@ -360,15 +360,17 @@ public class Indexer {
             }
             fragmentText = fragmentText.trim();
 
-            int startIndex = htmlText.indexOf(fragmentText);
-            if (startIndex != -1) { //we have at least 1 match
-                int secondIndex = htmlText.indexOf(fragmentText, startIndex + 1);
-                if (secondIndex == -1) { // we have exactly 1 match
-                    return new Fragment(
-                            fragmentText, startIndex + startIndexOffset,
-                            startIndex + startIndexOffset + fragmentText.length(),
-                            sentenceIndex, true, plainTextStartIndex, display);
-                }
+            if(fragmentText.length() > 0) {
+	            int startIndex = htmlText.indexOf(fragmentText);
+	            if (startIndex != -1) { //we have at least 1 match
+	                int secondIndex = htmlText.indexOf(fragmentText, startIndex + 1);
+	                if (secondIndex == -1) { // we have exactly 1 match
+	                    return new Fragment(
+	                            fragmentText, startIndex + startIndexOffset,
+	                            startIndex + startIndexOffset + fragmentText.length(),
+	                            sentenceIndex, true, plainTextStartIndex, display);
+	                }
+	            }
             }
         }
 
