@@ -38,7 +38,6 @@ import gwt.material.design.client.ui.MaterialLabel;
 import gwt.material.design.client.ui.MaterialLink;
 import gwt.material.design.client.ui.MaterialRadioButton;
 import gwt.material.design.client.ui.MaterialRow;
-import gwt.material.design.client.ui.MaterialToast;
 import gwt.material.design.client.ui.html.Option;
 
 public class TaskItem extends LocalizedComposite {
@@ -430,6 +429,31 @@ public class TaskItem extends LocalizedComposite {
     }
     
     /**
+     * Determines all removed parts including the currently removed ones which are not contained in another removed part.
+     * @return	The removed parts not contained in another removed part
+     */
+    private ArrayList<Pair<Integer, Integer>> getNotOverlappingRemovedParts() {
+    	ArrayList<Pair<Integer, Integer>> allRemovedParts = new ArrayList<>(newlyRemovedParts);       	        	        	
+		for(Pair<Integer, Integer> removedPart : removedParts) {
+			boolean canUse = true;
+			for(Pair<Integer, Integer> newlyRemovedPart : newlyRemovedParts) {
+    			// A previously removed part may be entirely contained in a newly removed part.
+    			// We then do not add it to the removed parts list
+    			if(!(removedPart.first >= newlyRemovedPart.first && removedPart.second <= newlyRemovedPart.second)) {
+    				canUse = false;
+    				break;
+    			}
+    		}
+			if(canUse) {
+				allRemovedParts.add(removedPart);
+			}
+    	}       	        	        	
+    	allRemovedParts.sort((c1, c2) -> c1.first < c2.first ? -1 : 1);
+    	
+    	return allRemovedParts;
+    }
+    
+    /**
      * Initializes all handlers.
      */
     private void initHandlers() {
@@ -438,34 +462,22 @@ public class TaskItem extends LocalizedComposite {
 
         btnApplyDocumentSelection.addClickHandler(event -> {
         	dlgDocumentSelection.close();
-        	ArrayList<Pair<Integer, Integer>> partsToRemove = new ArrayList<>();
-        	for(Pair<Integer, Integer> newlyRemovedPart : newlyRemovedParts) {
-        		for(Pair<Integer, Integer> removedPart : removedParts) {
-        			// A previously removed part may be entirely contained in a newly removed part.
-        			// We then remove the contained part from the list
-        			if(newlyRemovedPart.first >= removedPart.first && newlyRemovedPart.first <= removedPart.second) {
-        				partsToRemove.add(removedPart);
-        			}
-        		}
-        	}
-        	for(Pair<Integer, Integer> part : partsToRemove) {
-        		removedParts.remove(part);
-        	}
-        	removedParts.addAll(newlyRemovedParts);
+        	        	
+        	removedParts = getNotOverlappingRemovedParts();
+        	newlyRemovedParts.clear();
         	
         	relevantConstructionsInSelectedDocumentPart = new HashMap<String, Integer>();
         	calculateConstructionsOccurrences(relevantConstructionsInSelectedDocumentPart);
         	
         	btnApplyDocumentSelection.setEnabled(false);
     		btnDiscardDocumentSelection.setEnabled(false);
-    		btnReset.setEnabled(removedParts.size() > 0);
+    		btnReset.setEnabled(removedParts.size() > 0);    		
         });
         btnRemoveSelection.addClickHandler(event -> {
         	int selectedPartStartIndex = lblDocumentForSelection.getCursorPos();
         	int selectedPartEndIndex = selectedPartStartIndex + lblDocumentForSelection.getSelectionLength();
-        	ArrayList<Pair<Integer, Integer>> allRemovedParts = new ArrayList<>(removedParts);
-        	allRemovedParts.addAll(newlyRemovedParts);
-        	allRemovedParts.sort((c1, c2) -> c1.first < c2.first ? -1 : 1);
+        	
+        	ArrayList<Pair<Integer, Integer>> allRemovedParts = getNotOverlappingRemovedParts();    	        	        	  		
         	for(Pair<Integer, Integer> removedPart : allRemovedParts) {
         		if(removedPart.first <= selectedPartStartIndex) {
         			selectedPartStartIndex += removedPart.second - removedPart.first;
@@ -476,6 +488,7 @@ public class TaskItem extends LocalizedComposite {
         			break;
         		}
         	}
+        	
         	newlyRemovedParts.add(new Pair<>(selectedPartStartIndex, selectedPartStartIndex + lblDocumentForSelection.getSelectionLength()));
         	lblDocumentForSelection.setText(lblDocumentForSelection.getText().substring(0, lblDocumentForSelection.getCursorPos()) + lblDocumentForSelection.getText().substring(lblDocumentForSelection.getCursorPos() + lblDocumentForSelection.getSelectionLength()));
         
@@ -771,6 +784,9 @@ public class TaskItem extends LocalizedComposite {
     	doc = DocumentPreviewPane.getInstance().getCurrentlyPreviewedDocument().getDocument();
     	lblDocTitle.setText(doc.getTitle());
         lblDocumentForSelection.setText(doc.getText());
+        
+        removedParts.clear();
+        newlyRemovedParts.clear();
 
 		relevantConstructionsInEntireDocument = new HashMap<String, Integer>();
     	calculateConstructionsOccurrences(relevantConstructionsInEntireDocument);

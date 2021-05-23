@@ -6,8 +6,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class ExerciseSettings implements IsSerializable{
 
-    private ArrayList<Pair<String, Boolean>> sentences;
-    private ArrayList<Integer> sentenceStartIndices;
+    private ArrayList<Pair<Integer, Integer>> sentenceIndices;
     private ArrayList<Construction> constructions;
     private String url;
     private String plainText;
@@ -39,12 +38,10 @@ public class ExerciseSettings implements IsSerializable{
         this.downloadResources = downloadResources;
     }
 
-    public void setSentences(ArrayList<Pair<String, Boolean>> sentences) { this.sentences = sentences; }
-    public void setSentenceStartIndices(ArrayList<Integer> sentenceStartIndices) {
-        this.sentenceStartIndices = sentenceStartIndices; }
+    public void setSentenceIndices(ArrayList<Pair<Integer, Integer>> sentenceIndices) {
+        this.sentenceIndices = sentenceIndices; }
 
-    public ArrayList<Pair<String, Boolean>> getSentences() { return sentences; }
-    public ArrayList<Integer> getSentenceStartIndices(){ return sentenceStartIndices; }
+    public ArrayList<Pair<Integer, Integer>> getSentenceIndices(){ return sentenceIndices; }
     public ArrayList<Construction> getConstructions() { return constructions; }
     public String getUrl() { return url; }
     public String getPlainText() { return plainText; }

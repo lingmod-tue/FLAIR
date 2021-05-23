@@ -16,16 +16,16 @@ public class PlainTextPreparer {
 	 * Calculates the indices of sentences and blanks in the normalized plain text.
 	 * @param settings	The exercise settings from the client
 	 */
-    public void prepareIndices(ExerciseSettings settings, NlpManager nlpManager) {
+    public String prepareIndices(ExerciseSettings settings, NlpManager nlpManager) {
         Collections.sort(settings.getConstructions(),
                 (c1, c2) -> c1.getConstructionIndices().first < c2.getConstructionIndices().first ? -1 : 1);
 
-        Pair<ArrayList<Integer>, ArrayList<Pair<String, Boolean>>> res = normalizePlainText(settings.getPlainText(), settings.getRemovedParts(),
-                settings.getConstructions(), nlpManager);
+        Pair<ArrayList<Pair<Integer, Integer>>, String> res = normalizePlainText(settings.getPlainText(), settings.getRemovedParts(),
+                        settings.getConstructions(), nlpManager);
 
         // Construction indices are modified in-place, we just need to set the sentences and sentence start indices
-        settings.setSentences(res.second);
-        settings.setSentenceStartIndices(res.first);
+        settings.setSentenceIndices(res.first);
+        return res.second;
     }
 
     /**
@@ -33,57 +33,34 @@ public class PlainTextPreparer {
      * Saves the texts and start indices per sentence.
      * @return			The sentence indices and the split sentences in the normalized plain text
      */
-    private Pair<ArrayList<Integer>, ArrayList<Pair<String, Boolean>>> splitSentences(NlpManager nlpManager, String plainText, 
-    		ArrayList<Pair<Integer, Integer>> removedParts) {
-        ArrayList<Integer> sentenceStartIndices = new ArrayList<>();
-        ArrayList<Pair<String, Boolean>> sentences = new ArrayList<>();
-        
-        
+    private ArrayList<Pair<Integer,Integer>> splitSentences(NlpManager nlpManager, String plainText, ArrayList<Pair<Integer, Integer>> removedParts, 
+    		ArrayList<Construction> constructions) {
+    	//TODO: split sentences only if they contain a construction
+
+        ArrayList<Pair<Integer, Integer>> sentenceIndices = new ArrayList<>();        
+
         for(SentenceAnnotations sent : nlpManager.getSentences()) {
         	if(sent.getTokens().size() > 0) {
 	        	int sentenceStartIndex = sent.getTokens().get(0).beginPosition();
 	        	int sentenceEndIndex = sent.getTokens().get(sent.getTokens().size() - 1).endPosition();
-	        	String sentence = plainText.substring(sentenceStartIndex, sentenceEndIndex);
 	        	
-	        	// Sentence-final punctuation is sometimes added by the framework, so we can't rely on it existing in the HTML text
-                if (sentence.substring(sentence.length() - 1).matches("[.;,]")) {
-                    sentence = sentence.substring(0, sentence.length() - 1);
-                }
-                sentence = sentence.trim();
-                if(sentence.length() > 0) {                    
-                    // Split at displayed parts change
-                    ArrayList<Integer> partsStartIndices = new ArrayList<>();
-                    partsStartIndices.add(sentenceStartIndex);
-                    for(Pair<Integer, Integer> removedPart : removedParts) {
-                    	if(removedPart.first >= sentenceStartIndex && removedPart.first < sentenceStartIndex + sentence.length()) {
-                    		partsStartIndices.add(removedPart.first);
-                    	}
-                    	if(removedPart.second > sentenceStartIndex && removedPart.second <= sentenceStartIndex + sentence.length()) {
-                    		partsStartIndices.add(removedPart.second);
+                if(sentenceEndIndex - sentenceStartIndex > 0) {  
+                	// we only extract sentences which contain at least 1 construction
+                	boolean containsConstruction = false;
+                    for(Construction construction : constructions) {
+                    	if(construction.getConstructionIndices().first >= sentenceStartIndex && construction.getConstructionIndices().second < sentenceEndIndex) {
+                    		containsConstruction = true;
+                    		break;
                     	}
                     }
-                    
-                    partsStartIndices.add(sentenceEndIndex);
-                    for(int i = 0; i < partsStartIndices.size() - 1; i++) {
-                    	int partStartIndex = partsStartIndices.get(i);
-                    	int partEndIndex = partsStartIndices.get(i + 1);
-                    	if(partEndIndex - partStartIndex > 0) {
-                    		boolean display = true;
-                    		for(Pair<Integer, Integer> removedPart : removedParts) {
-                    			if(partStartIndex >= removedPart.first && partStartIndex < removedPart.second) {
-                    				display = false;
-                    				break;
-                    			}
-                    		}
-                            sentences.add(new Pair<>(Normalizer.normalizeText(plainText.substring(partStartIndex, partEndIndex)), display));
-                            sentenceStartIndices.add(partStartIndex);
-                    	}
-                    }                    
+                    if(containsConstruction) {
+                    	sentenceIndices.add(new Pair<>(sentenceStartIndex, sentenceEndIndex));
+                    }                
                 }
         	}
         }
 
-        return new Pair<>(sentenceStartIndices, sentences);
+        return sentenceIndices;
     }
 
     /**
@@ -96,7 +73,8 @@ public class PlainTextPreparer {
      */
     private void matchIndicesToNormalizedPlainText(String plainText, String originalPlainText,
                                                    ArrayList<Pair<Integer, Integer>> constructionIndices,
-                                                   ArrayList<Integer> sentenceStartIndices) {
+                                                   ArrayList<Pair<Integer, Integer>> sentenceIndices,
+                                                   ArrayList<Pair<Integer, Integer>> removedParts) {
         int offset = 0;
 
         for(int i = 0; i < plainText.length();) {
@@ -105,14 +83,22 @@ public class PlainTextPreparer {
                     Pair<Integer, Integer> constructionIndex = constructionIndices.get(n);
                     if (constructionIndex.second > i) {
                         int newKey = constructionIndex.first > i ? constructionIndex.first - 1: constructionIndex.first;
-                        constructionIndices.set(n, new Pair<Integer, Integer>(newKey, constructionIndex.second - 1));
+                        constructionIndices.set(n, new Pair<>(newKey, constructionIndex.second - 1));
                     }
                 }
-                for (int n = 0; n < sentenceStartIndices.size(); n++) {
-                    int sentenceStartIndex = sentenceStartIndices.get(n);
-                    if (sentenceStartIndex > i) {
-                        sentenceStartIndices.set(n, sentenceStartIndex - 1);
+                for (int n = 0; n < sentenceIndices.size(); n++) {
+                	Pair<Integer, Integer> sentenceIndex = sentenceIndices.get(n);
+                    if (sentenceIndex.second > i) {
+                        int newKey = sentenceIndex.first > i ? sentenceIndex.first - 1: sentenceIndex.first;
+                        sentenceIndices.set(n, new Pair<>(newKey, sentenceIndex.second - 1));
                     }
+                }
+                for (int n = 0; n < removedParts.size(); n++) {
+                	Pair<Integer, Integer> removedPartIndex = removedParts.get(n);
+                	if (removedPartIndex.second > i) {
+                		int newKey = removedPartIndex.first > i ? removedPartIndex.first - 1: removedPartIndex.first;
+                		removedParts.set(n, new Pair<>(newKey, removedPartIndex.second - 1));
+                	}
                 }
                 offset++;
             } else{
@@ -128,25 +114,25 @@ public class PlainTextPreparer {
      * @param constructions			The blanks
      * @return						The sentence indices and the split sentences in the normalized plain text
      */
-    private Pair<ArrayList<Integer>, ArrayList<Pair<String, Boolean>>> normalizePlainText(String plainText, 
+    private Pair<ArrayList<Pair<Integer, Integer>>, String> normalizePlainText(String plainText, 
     		ArrayList<Pair<Integer, Integer>> removedParts, ArrayList<Construction> constructions, NlpManager nlpManager) {
         ArrayList<Pair<Integer, Integer>> constructionIndices = new ArrayList<>();
         for(Construction c : constructions) {
             constructionIndices.add(c.getConstructionIndices());
         }
 
-        Pair<ArrayList<Integer>, ArrayList<Pair<String, Boolean>>> res = splitSentences(nlpManager, plainText, removedParts);
+        ArrayList<Pair<Integer,Integer>> sentenceIndices = splitSentences(nlpManager, plainText, removedParts, constructions);
 
         String originalPlainText = Normalizer.normalizeWhitespaces(plainText);
-        plainText = Normalizer.normalizeText(plainText.trim());
+        String normalizedPlainTextString = Normalizer.normalizeText(plainText.trim());
 
-        matchIndicesToNormalizedPlainText(plainText, originalPlainText, constructionIndices, res.first);
+        matchIndicesToNormalizedPlainText(normalizedPlainTextString, originalPlainText, constructionIndices, sentenceIndices, removedParts);
 
         for(int i = 0; i < constructionIndices.size(); i++) {
             constructions.get(i).setConstructionIndices(constructionIndices.get(i));
         }
 
-        return res;
+        return new Pair<>(sentenceIndices, normalizedPlainTextString);
     }
 
 }

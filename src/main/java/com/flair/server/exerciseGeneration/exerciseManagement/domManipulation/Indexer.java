@@ -5,6 +5,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import org.apache.commons.text.diff.EditScript;
+import org.apache.commons.text.diff.StringsComparator;
+
 import com.flair.shared.exerciseGeneration.Construction;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
 import com.flair.shared.exerciseGeneration.Pair;
@@ -17,28 +20,15 @@ public class Indexer {
      * @param htmlText The HTML text of the DOM
      * @return Fragment, sentence and blanks indices
      */
-    public ArrayList<Fragment> matchHtmlToPlainText(ExerciseSettings exerciseSettings, String htmlText){
-        ArrayList<Pair<String, Boolean>> sentences = exerciseSettings.getSentences();
-
-        String originalHtml = Normalizer.normalizeWhitespaces(htmlText);
+    public ArrayList<Fragment> matchHtmlToPlainText(ExerciseSettings exerciseSettings, String htmlText, String plainText){
+    	String originalHtml = Normalizer.normalizeWhitespaces(htmlText);
         htmlText = Normalizer.normalizeText(htmlText);
-        ArrayList<Fragment> fragments = new ArrayList<>();
+        ArrayList<Fragment> fragments = getUnambiguousFragments(htmlText, plainText);
 
-        // initialize all sentences as unresolved fragments with entire html text as search space
-        for(int i = 0; i < sentences.size(); i++) {
-            String sentence = sentences.get(i).first;
-            Fragment newFragment = new Fragment(sentence, 0, htmlText.length(), i, false,
-                    exerciseSettings.getSentenceStartIndices().get(i), sentences.get(i).second);
-            fragments.add(newFragment);
-        }
-
-        fragments = recheckMatches(fragments, htmlText);
-        Collections.sort(fragments,
-                (c1, c2) -> c1.getStartIndex() < c2.getStartIndex() ? -1 : 1);
-        fragments = checkForBorderAmbiguities(fragments, htmlText);
         addSentenceFinalPunctuation(fragments, htmlText);
+        fragments = splitDisplayedParts(fragments, exerciseSettings.getRemovedParts());	// needs to be done before sentence splitting to preserve the sentence indices
+        fragments = splitSentences(fragments, exerciseSettings.getSentenceIndices());
         addBlanksIndicesToFragments(fragments, exerciseSettings.getConstructions());
-        fragments = mergeFragments(fragments, htmlText);
         matchIndicesToNonNormalizedHtml(fragments, originalHtml, htmlText);
         removeIncompleteConstructions(fragments);
         trimBlanks(fragments, originalHtml);
@@ -46,69 +36,157 @@ public class Indexer {
 
         return fragments;
     }
-
+    
     /**
-     * Checks if the end of a fragment could also be appended to the beginning of the next and
-     * if the beginning of a fragment could also be appended to the end of the previous.
-     * Marks the fragment as ambiguous if this is the case.
-     * @param fragments	The identified fragments
-     * @param htmlText	The normalized HTML plain text
-     * @return			The modified fragments including new fragments for the ambiguous parts
+     * Splits the identified fragments at start and end indices of parts.
+     * Can be used for splitting at sentence boundaries or for removed parts.
+     * @param fragments		The identified fragments
+     * @param parts			The normalized plain text indices of the parts
+     * @return				The new list of fragments
      */
-    private ArrayList<Fragment> checkForBorderAmbiguities(ArrayList<Fragment> fragments, String htmlText) {
+    private ArrayList<Fragment> splitFragmentsAtPartsBoundaries(ArrayList<Fragment> fragments, ArrayList<Pair<Integer, Integer>> parts) {
     	ArrayList<Fragment> newFragments = new ArrayList<>();
-    	Fragment previousFragment = null;
+		
 		for(Fragment fragment : fragments) {
-			if(previousFragment != null) {
-				if(previousFragment.getEndIndex() < fragment.getStartIndex()) {
-					// Check end of previous fragment
-					String textBetween = htmlText.substring(previousFragment.getEndIndex(), fragment.getStartIndex());
-					StringBuilder ambiguousText = new StringBuilder();
-					while(textBetween.length() > 0 && previousFragment.getText().length() > 0 && previousFragment.getText().charAt(previousFragment.getText().length() - 1) == (textBetween.charAt(textBetween.length() - 1))) {
-						// it's ambiguous (could belong to either fragment), so we can't use it for a construction
-						previousFragment.setText(previousFragment.getText().substring(0, previousFragment.getText().length() - 1));
-						previousFragment.setEndIndex(previousFragment.getEndIndex() - 1);
-						ambiguousText.insert(0, textBetween.substring(textBetween.length() - 1));
-						textBetween = textBetween.substring(0, textBetween.length() - 1);
-					}
-					
-					newFragments.add(previousFragment);
-					if(ambiguousText.length() > 0) {
-						// create new ambiguous fragment
-						newFragments.add(new Fragment(ambiguousText.toString(), previousFragment.getSentenceIndex(), 
-								previousFragment.getPlainTextStartIndex() + previousFragment.getText().length(), previousFragment.isDisplay()));
-					}
-					
-					// check start of current fragment
-					textBetween = htmlText.substring(previousFragment.getEndIndex(), fragment.getStartIndex());
-					ambiguousText = new StringBuilder();
-					while(textBetween.length() > 0 && fragment.getText().length() > 0 && fragment.getText().charAt(0) == (textBetween.charAt(0))) {
-						// it's ambiguous (could belong to either fragment), so we can't use it for a construction
-						fragment.setText(fragment.getText().substring(1));
-						fragment.setStartIndex(fragment.getStartIndex() + 1);
-						fragment.setPlainTextStartIndex(fragment.getPlainTextStartIndex() + 1);
-						ambiguousText.append(textBetween.substring(0, 1));
-						textBetween = textBetween.substring(1);
-					}
-					
-					if(ambiguousText.length() > 0) {
-						// create new ambiguous fragment
-						newFragments.add(new Fragment(ambiguousText.toString(), fragment.getSentenceIndex(), 
-								fragment.getPlainTextStartIndex() - ambiguousText.length(), fragment.isDisplay()));
-					}
-				} else {
-					newFragments.add(previousFragment);
+			int newStartIndex = 0;
+			for(Pair<Integer, Integer> part : parts) {
+				int partStartIndex = part.first;
+				int partEndIndex = part.second;
+				int fragmentStartIndex = fragment.getPlainTextStartIndex();
+				int fragmentEndIndex = fragmentStartIndex + fragment.getText().length();
+				
+				if(partStartIndex > fragmentStartIndex + newStartIndex && partStartIndex < fragmentEndIndex) {
+					// we're entering a part, so the text before gets its own fragment
+					String newText = fragment.getText().substring(newStartIndex, partStartIndex - fragmentStartIndex);
+					int newStart = fragment.getStartIndex() + newStartIndex;
+					newFragments.add(new Fragment(
+							newText,
+							newStart,
+							newStart + newText.length(),
+							fragment.getPlainTextStartIndex() + newStartIndex,
+							fragment.isDisplay()));		
+					newStartIndex = partStartIndex - fragmentStartIndex;
+				}
+				if(partEndIndex > fragmentStartIndex + newStartIndex && partEndIndex < fragmentEndIndex) {
+					// we're leaving a part, so we create a new fragment for the previous text
+					String newText = fragment.getText().substring(newStartIndex, partEndIndex - fragmentStartIndex);
+					int newStart = fragment.getStartIndex() + newStartIndex;
+					newFragments.add(new Fragment(
+							newText,
+							newStart,
+							newStart + newText.length(),
+							fragment.getPlainTextStartIndex() + newStartIndex,
+							fragment.isDisplay()));
+					newStartIndex = partEndIndex - fragmentStartIndex;
 				}
 			}
 			
-			previousFragment = fragment;
-		}
-		if(fragments.size() > 0) {
-			newFragments.add(fragments.get(fragments.size() - 1));
+			// There's something after the last split
+			if(newStartIndex < fragment.getPlainTextStartIndex() + fragment.getText().length()) {
+				newFragments.add(new Fragment(
+						fragment.getText().substring(newStartIndex),
+						fragment.getStartIndex() + newStartIndex,
+						fragment.getEndIndex(),
+						fragment.getPlainTextStartIndex() + newStartIndex,
+						fragment.isDisplay()));
+			}
 		}
 		
 		return newFragments;
-	}
+    }
+    
+    /**
+     * Splits the identified fragments if part of them is to be removed. Adds the removal information to the fragments.
+     * @param fragments		The identified fragments
+     * @param removedParts	The normalized plain text indices of the removed parts
+     * @return				The new list of fragments
+     */
+    private ArrayList<Fragment> splitDisplayedParts(ArrayList<Fragment> fragments, ArrayList<Pair<Integer, Integer>> removedParts) {
+		ArrayList<Fragment> newFragments = splitFragmentsAtPartsBoundaries(fragments, removedParts);
+		addDisplayInformationToFragments(newFragments, removedParts);
+		
+		return newFragments;
+    }
+    
+    /**
+     * Adds display information to the fragments.
+     * @param fragments		The fragments split at sentence boundaries
+     * @param removedParts	The indices of the removed parts in the normalized plain text
+     */
+    private void addDisplayInformationToFragments(ArrayList<Fragment> fragments, ArrayList<Pair<Integer, Integer>> removedParts) {
+    	for(int i = 0; i < removedParts.size(); i++) {
+    		for(Fragment fragment : fragments) {
+    			int fragmentStartIndex = fragment.getPlainTextStartIndex();
+    			int fragmentEndIndex = fragmentStartIndex + fragment.getText().length();
+    			int partStartIndex = removedParts.get(i).first;
+    			int partEndIndex = removedParts.get(i).second;
+    			
+    			if(fragmentStartIndex >= partStartIndex && fragmentEndIndex <= partEndIndex) {
+    				fragment.setDisplay(false);
+    			}    			
+			}
+    	}
+    }
+    
+    /**
+     * Splits the identified fragments if part of them is to be removed. Adds the sentence boundary information to the fragments.
+     * @param fragments		The identified fragments
+     * @param sentences		The normalized plain text indices of the sentences
+     * @return				The new list of fragments
+     */
+    private ArrayList<Fragment> splitSentences(ArrayList<Fragment> fragments, ArrayList<Pair<Integer, Integer>> sentences) {
+		ArrayList<Fragment> newFragments = splitFragmentsAtPartsBoundaries(fragments, sentences);
+		addSentenceIndicesToFragments(newFragments, sentences);
+		
+		return newFragments;
+    }
+    
+    /**
+     * Adds sentence start and sentence end information to the fragments.
+     * @param fragments	The fragments split at sentence boundaries
+     * @param sentences	The sentence indices in the normalized plain text
+     */
+    private void addSentenceIndicesToFragments(ArrayList<Fragment> fragments, ArrayList<Pair<Integer, Integer>> sentences) {
+    	Collections.sort(fragments,
+                (c1, c2) -> c1.getStartIndex() < c2.getStartIndex() ? -1 : 1);
+    	Collections.sort(sentences,
+                (c1, c2) -> c1.first < c2.first ? -1 : 1);
+    	
+    	for(int i = 0; i < sentences.size(); i++) {
+    		Fragment potentialSentenceEnd = null;
+    		boolean foundStart = false;
+    		for(Fragment fragment : fragments) {
+    			int fragmentStartIndex = fragment.getPlainTextStartIndex();
+    			int fragmentEndIndex = fragmentStartIndex + fragment.getText().length();
+    			int sentenceStartIndex = sentences.get(i).first;
+    			int sentenceEndIndex = sentences.get(i).second;
+    			
+    			if(fragmentStartIndex >= sentenceStartIndex && fragmentEndIndex <= sentenceEndIndex) {
+    				fragment.setSentenceIndex(i + 1);
+    			}
+    			if(!foundStart && fragment.isDisplay() && fragment.getPlainTextStartIndex() >= sentenceStartIndex) {
+    				fragment.setSentenceStart(true);
+    				foundStart = true;
+    			}
+				if(fragment.getPlainTextStartIndex() + fragment.getText().length() <= sentenceEndIndex) {
+					if(fragment.isDisplay()) {
+						potentialSentenceEnd = fragment;
+					}
+				} else {
+					break;
+				}
+			}
+    		// if we don't have a fragment for sentence end of the last sentence, we take the last displayed fragment
+    		if(potentialSentenceEnd == null) {
+    			int j = fragments.size() - 1;
+    			while(j >= 0 && !fragments.get(j).isDisplay()) {
+    				j--;
+    			}
+    			potentialSentenceEnd = fragments.get(j);
+    		}
+    		potentialSentenceEnd.setSentenceEnd(true);
+    	}
+    }
 
 	/**
      * Inserts fragments for html text that is not contained in the plain text.
@@ -126,8 +204,7 @@ public class Indexer {
             if(fragment.getStartIndex() > lastEndIndex) {
                 boolean display = fragment.isDisplay() && (i == 0 || fragments.get(i - 1).isDisplay());
 
-                newFragments.add(new Fragment(lastEndIndex, fragment.getStartIndex(), false, false,
-                        null, display));
+                newFragments.add(new Fragment(lastEndIndex, fragment.getStartIndex(), display));
             }
 
             newFragments.add(fragment);
@@ -135,8 +212,8 @@ public class Indexer {
         }
 
         if(lastEndIndex < htmlText.length()) {
-            newFragments.add(new Fragment(lastEndIndex, htmlText.length(), false, false,
-                    null, newFragments.size() > 0 && newFragments.get(newFragments.size() - 1).isDisplay()));
+        	boolean display = newFragments.size() > 0 && newFragments.get(newFragments.size() - 1).isDisplay();
+            newFragments.add(new Fragment(lastEndIndex, htmlText.length(), display));
         }
 
         return newFragments;
@@ -198,70 +275,18 @@ public class Indexer {
      * @param htmlText The non-normalized HTML text.
      */
     private void trimBlanks(ArrayList<Fragment> fragments, String htmlText){
-        boolean isStartBoundary = true;
         for(Fragment fragment : fragments) {
             for(int k = 0; k < fragment.getBlanksBoundaries().size(); k++) {
             	Blank blank = fragment.getBlanksBoundaries().get(k);
                 int blanksIndex = blank.getBoundaryIndex();
+                boolean isStartBoundary = blank.getConstruction() == null;
                 while(("" + htmlText.charAt(isStartBoundary ? blanksIndex : blanksIndex - 1)).matches("[\\s\\h]")) {
                     blanksIndex += isStartBoundary ? 1 : -1;
                 }
 
                 fragment.getBlanksBoundaries().get(k).setBoundaryIndex(blanksIndex);
-                isStartBoundary = !isStartBoundary;
             }
         }
-    }
-
-    /**
-     * Merges the fragments of the same sentence into 1 fragment.
-     * Merges all adjoining not displayed elements into 1 element.
-     * Discards all fragments that couldn't be matched unambiguously.
-     * @param fragments The fragments into which the plain text was split with corresponding indices in the HTML text
-     * @param htmlText The HTML string
-     * @return The merged and filtered fragments
-     */
-    private ArrayList<Fragment> mergeFragments(ArrayList<Fragment> fragments, String htmlText) {
-        ArrayList<Fragment> validFragments = new ArrayList<>();
-        Fragment previousFragment = null;
-        for(Fragment fragment : fragments) {
-            if(fragment.isUnambiguousMatch()) {
-                if(previousFragment != null) {
-                    if (previousFragment.getSentenceIndex() == fragment.getSentenceIndex() || 
-                    		!previousFragment.isDisplay() && !fragment.isDisplay()) {
-                        previousFragment.getBlanksBoundaries().addAll(fragment.getBlanksBoundaries());
-                        previousFragment = new Fragment(
-                                htmlText.substring(previousFragment.getStartIndex(), fragment.getEndIndex()),
-                                previousFragment.getStartIndex(),
-                                fragment.getEndIndex(),
-                                fragment.getSentenceIndex(),
-                                previousFragment.getPlainTextStartIndex(),
-                                true,
-                                previousFragment.getBlanksBoundaries(),
-                                previousFragment.isDisplay());
-                    } else {
-                        validFragments.add(previousFragment);
-                        previousFragment = fragment;
-                    }
-                } else {
-                    previousFragment = fragment;
-                }
-            }
-            Collections.sort(fragment.getBlanksBoundaries(), (blank1, blank2) -> blank1.getBoundaryIndex() < blank2.getBoundaryIndex() ? -1 : 1);
-        }
-        if(previousFragment != null) {
-            validFragments.add(previousFragment);
-        }
-
-        for(Fragment fragment : validFragments) {
-        	// all new Fragments are both sentence start and sentence end if they contain at least 1 construction
-            if(fragment.getBlanksBoundaries().size() > 0) {
-                fragment.setSentenceStart(true);
-                fragment.setSentenceEnd(true);
-            }
-        }
-
-        return validFragments;
     }
 
     /**
@@ -315,217 +340,18 @@ public class Indexer {
     }
 
     /**
-     * Recursively tries to match fragments and parts thereof against their search window.
-     * The search window is adjusted as neighbouring fragments are determined.
-     * @param fragments The current splitting of the plain text with markings whether they have been matched successfully
-     * @param htmlText The HTML text
-     * @return The fragments into which the plain text has been split
+     * Identifies differences between the flair plain text and the HTML plain text.
+     * Generates fragments with both indices.
+     * @param htmlPlainText		The normalized HTML plain text
+     * @param flairPlainText	The normalized FLAIR plain text
+     * @return					The identified fragments
      */
-    private ArrayList<Fragment> recheckMatches(ArrayList<Fragment> fragments, String htmlText) {
-        boolean foundMatch = true;
-        boolean allSentencesDone = false;
+    public ArrayList<Fragment> getUnambiguousFragments(String htmlPlainText, String flairPlainText) {
+        EditScript<Character> es = new StringsComparator(htmlPlainText, flairPlainText).getScript();
+        MyersCommandVisitor cv = new MyersCommandVisitor(flairPlainText);
+        es.visit(cv);
 
-        while(!allSentencesDone && foundMatch) {
-            foundMatch = false;
-            allSentencesDone = true;
-            ArrayList<Fragment> newFragments = new ArrayList<>();
-
-            for (int i = 0; i < fragments.size(); i++) {
-                Fragment fragment = fragments.get(i);
-                if (!fragment.isUnambiguousMatch()) {
-                    Integer startIndex = getEndOfPreviousUnambiguousFragment(newFragments);
-                    Integer endIndex = getStartOfNextUnambiguousFragment(i, fragments);
-
-                    if (startIndex == null) {
-                        startIndex = 0;
-                    }
-                    if (endIndex == null) {
-                        endIndex = htmlText.length();
-                    }
-
-                    Pair<Boolean, Boolean> res = matchFragment(startIndex, endIndex, htmlText, fragment.getText(),
-                            fragment.getSentenceIndex(), fragment.getPlainTextStartIndex(), newFragments,
-                            foundMatch, allSentencesDone, fragment.isDisplay());
-                    foundMatch = res.first;
-                    allSentencesDone = res.second;
-                } else {
-                    newFragments.add(fragment);
-                }
-            }
-
-            fragments = newFragments;
-        }
-
-        return fragments;
+        return cv.getFragments();
     }
-
-    /**
-     * Recursively matches parts of a plain text to the HTML text until the end of the plain text fragment is reached.
-     * @param startIndex The index in the entire HTML text at which we want to start the mapping (to reduce the search space)
-     * @param endIndex The index in the entire HTML text until which we search mappings (to reduce the search space)
-     * @param htmlText The entire HTML text
-     * @param fragmentText The plain text we want to match
-     * @param fragmentSentenceIndex The index of the sentence to which the plain text (fragment) belongs
-     * @param fragmentPlainTextStartIndex The start index of the fragment in the plain text
-     * @param newFragments The already handled fragments in this iteration
-     * @param foundMatch Indicates whether a match has been found in an earlier handled fragment
-     * @param allSentencesDone Indicates whether all fragment parts have been covered in the earlier handled fragments
-     * @return Whether a match has been found and whether all fragment parts could be matched in the so far handled fragments (including the current one)
-     */
-    private Pair<Boolean, Boolean> matchFragment(int startIndex, int endIndex, String htmlText, String fragmentText, int fragmentSentenceIndex,
-                               int fragmentPlainTextStartIndex, ArrayList<Fragment> newFragments,
-                                                 boolean foundMatch, boolean allSentencesDone, boolean display) {
-        while(fragmentText.length() > 0) {
-            String searchText = htmlText.substring(startIndex, endIndex);
-
-            Fragment foundFragment = matchReducingFromBack(searchText, fragmentText, fragmentSentenceIndex, startIndex,
-                    fragmentPlainTextStartIndex, display);
-            if (foundFragment != null) {
-                foundMatch = true;
-                int offset = foundFragment.getPlainTextStartIndex() - fragmentPlainTextStartIndex;
-                if (offset > 0) { // there is still some unmatched part before
-                    Fragment newFragment = new Fragment(fragmentText.substring(0, offset), fragmentSentenceIndex,
-                            fragmentPlainTextStartIndex, display);
-                    newFragments.add(newFragment);
-                    allSentencesDone = false;
-                }
-                newFragments.add(foundFragment);
-
-                // there might still be some unmatched part after
-                int newStart = offset + foundFragment.getText().length();
-                startIndex = foundFragment.getEndIndex();
-                fragmentText = fragmentText.substring(newStart);
-                fragmentPlainTextStartIndex = foundFragment.getPlainTextStartIndex() + foundFragment.getText().length();
-            } else {
-                newFragments.add(new Fragment(fragmentText, fragmentSentenceIndex, fragmentPlainTextStartIndex, display));
-                allSentencesDone = false;
-                fragmentText = "";
-            }
-        }
-
-        return new Pair<>(foundMatch, allSentencesDone);
-    }
-
-    /**
-     * Tries to match a given string to the HTML text
-     * @param htmlText The HTML text
-     * @param fragmentText The string to match
-     * @param sentenceIndex The index of the sentence the string belongs to
-     * @param startIndexOffset The index in the original fragment text at which the string starts
-     * @param plainTextStartIndex The index in the plain text at which the original fragment text starts
-     * @return The fragment if the string could be matched unambiguously; otherwise null
-     */
-    private Fragment tryMatchString(String htmlText, String fragmentText, int sentenceIndex, int startIndexOffset,
-                                    int plainTextStartIndex, boolean display) {
-        // Whitespaces can be very different in the HTML text than in the plain text
-        if(fragmentText.trim().length() > 0) {
-            // We remove trailing punctuation because that's sometimes added to the text although it's not in the HTML text
-            while(fragmentText.length() > 0 && fragmentText.charAt(0) <= '\u0020'){ // trim removes anything smaller than this
-                fragmentText = fragmentText.substring(1);
-                plainTextStartIndex++;
-            }
-            fragmentText = fragmentText.trim();
-
-            if(fragmentText.length() > 0) {
-	            int startIndex = htmlText.indexOf(fragmentText);
-	            if (startIndex != -1) { //we have at least 1 match
-	                int secondIndex = htmlText.indexOf(fragmentText, startIndex + 1);
-	                if (secondIndex == -1) { // we have exactly 1 match
-	                    return new Fragment(
-	                            fragmentText, startIndex + startIndexOffset,
-	                            startIndex + startIndexOffset + fragmentText.length(),
-	                            sentenceIndex, true, plainTextStartIndex, display);
-	                }
-	            }
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Tries to match the plain text against the HTML text by recursively removing a character from the end of the plain text
-     * until an unambiguous match is found.
-     * @param htmlText The HTML text (fragment) in which the plain text fragment needs to be found
-     * @param fragmentText The text of the (partial) plain text fragment
-     * @param sentenceIndex The index of the sentence to which the plain text fragment belongs
-     * @param startIndexOffset The index at which the HTML text starts in the entire HTML text
-     * @param plainTextStartIndex The index in the plain text at which the original fragment starts
-     * @return The fragment which could be matched unambiguously if any was found; otherwise null
-     */
-    private Fragment matchReducingFromBack(String htmlText, String fragmentText, int sentenceIndex, int startIndexOffset,
-                                           int plainTextStartIndex, boolean display) {
-        Fragment foundFragment = null;
-        while(foundFragment == null && fragmentText.length() > 0) {
-            foundFragment = tryMatchString(htmlText, fragmentText, sentenceIndex, startIndexOffset,
-                    plainTextStartIndex, display);
-            if (foundFragment == null && fragmentText.length() > 1) {
-                foundFragment = matchReducingFromFront(htmlText, fragmentText, sentenceIndex, startIndexOffset,
-                        plainTextStartIndex, display);
-            }
-            fragmentText = fragmentText.substring(0, fragmentText.length() - 1);
-        }
-
-        return foundFragment;
-    }
-
-    /**
-     * Tries to match the plain text against the HTML text by recursively removing a character from the front of the plain text
-     * until an unambiguous match is found.
-     * @param htmlText The HTML text (fragment) in which the plain text fragment needs to be found
-     * @param fragmentText The text of the (partial) plain text fragment
-     * @param sentenceIndex The index of the sentence to which the plain text fragment belongs
-     * @param startIndexOffset The index at which the HTML text starts in the entire HTML text
-     * @param plainTextStartIndex The index in the plain text at which the original fragment starts
-     * @return The fragment which could be matched unambiguously if any was found; otherwise null
-     */
-    private Fragment matchReducingFromFront(String htmlText, String fragmentText, int sentenceIndex,
-                                            int startIndexOffset, int plainTextStartIndex, boolean display) {
-        Fragment foundFragment = null;
-
-        while (fragmentText.length() > 1) {
-            fragmentText = fragmentText.substring(1);
-            plainTextStartIndex++;
-
-            foundFragment = tryMatchString(htmlText, fragmentText, sentenceIndex,
-                    startIndexOffset, plainTextStartIndex, display);
-        }
-
-        return foundFragment;
-    }
-
-    /**
-     * Determines the index at which the most previous fragment ends which has been matched unambiguously.
-     * @param fragments The fragments into which the plain text is currently split
-     * @return The end index of the last unambiguous fragment before the current fragment
-     */
-    private Integer getEndOfPreviousUnambiguousFragment(ArrayList<Fragment> fragments) {
-        for(int i = fragments.size() - 1; i >= 0; i--) {
-            if(fragments.get(i).isUnambiguousMatch()) {
-                return fragments.get(i).getEndIndex();
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Determines the index at which the nex fragment starts which has been matched unambiguously.
-     * @param currentFragmentIndex The index of the current fragment
-     * @param fragments The fragments into which the plain text is currently split
-     * @return The start index of the first unambiguous fragment after the current fragment
-     */
-    private Integer getStartOfNextUnambiguousFragment(int currentFragmentIndex, ArrayList<Fragment> fragments) {
-        if(currentFragmentIndex + 1 < fragments.size()) {
-            Fragment nextFragment = fragments.get(currentFragmentIndex + 1);
-            if(nextFragment.isUnambiguousMatch()) {
-                return nextFragment.getStartIndex();
-            } else {
-                return getStartOfNextUnambiguousFragment(currentFragmentIndex + 1, fragments);
-            }
-        }
-
-        return null;
-    }
-
+    
 }

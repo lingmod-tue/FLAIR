@@ -38,11 +38,6 @@ public class Matcher {
     private int plainTextCounter = 1;
     
     /**
-     * Not displayed text elements that are to be removed;
-     */
-    ArrayList<Element> removedTextNodes = new ArrayList<>();
-
-    /**
      * Extracts plain text fragments, sentences and constructions from a HTML document.
      * @param doc	The HTML document
      * @return 		The start and end elements of each identified sentence, the extracted plain text elements and the extracted constructions
@@ -174,12 +169,9 @@ public class Matcher {
                 addElementToSentenceBoundaryElements(false, replacement, indexedSentence.getSentenceIndex());
             }
         } else {
-        	// we save the boundary elements of not displayed parts to later delete them
+        	// we save the not displayed parts to later delete them
         	Element replacement = ElementCreator.createRemoveReplacementElement();
         	replacementElements.add(replacement);
-        	if(indexedSentence.getStartIndex() == startIndex || indexedSentence.getEndIndex() == endIndex) {
-        		removedTextNodes.add(replacement);
-        	}
         }
 
         if (textEndIndex > indexedSentence.getEndIndex()) { // there's something after the match

@@ -58,9 +58,9 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	
 	        NlpManager nlpManager = new NlpManager(parser, generator, settings.getExerciseSettings().getPlainText(), lemmatizer);
 	        
-	        new ConstructionPreparer().prepareConstructions(settings.getExerciseSettings(), nlpManager);	        	        
-	        new PlainTextPreparer().prepareIndices(settings.getExerciseSettings(), nlpManager);
-	        ArrayList<Fragment> fragments = new Indexer().matchHtmlToPlainText(settings.getExerciseSettings(), doc.wholeText());
+	        new ConstructionPreparer().prepareConstructions(settings.getExerciseSettings(), nlpManager);	
+	        String normalizedPlainText = new PlainTextPreparer().prepareIndices(settings.getExerciseSettings(), nlpManager);
+	        ArrayList<Fragment> fragments = new Indexer().matchHtmlToPlainText(settings.getExerciseSettings(), doc.wholeText(), normalizedPlainText);
 	
 	        new ClozeManager().prepareBlanks(settings.getExerciseSettings(), nlpManager, fragments);
 	        com.flair.shared.exerciseGeneration.Pair<ArrayList<String>,ArrayList<ArrayList<String>>> usedConstructions = new DistractorManager().generateDistractors(settings.getExerciseSettings(), nlpManager, fragments);
