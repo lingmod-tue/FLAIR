@@ -18,6 +18,7 @@ import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.interop.dtos.RankableDocument;
 import com.flair.shared.interop.dtos.RankableDocument.ConstructionRange;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -38,6 +39,7 @@ import gwt.material.design.client.ui.MaterialLabel;
 import gwt.material.design.client.ui.MaterialLink;
 import gwt.material.design.client.ui.MaterialRadioButton;
 import gwt.material.design.client.ui.MaterialRow;
+import gwt.material.design.client.ui.MaterialToast;
 import gwt.material.design.client.ui.html.Option;
 
 public class TaskItem extends LocalizedComposite {
@@ -474,27 +476,7 @@ public class TaskItem extends LocalizedComposite {
     		btnReset.setEnabled(removedParts.size() > 0);    		
         });
         btnRemoveSelection.addClickHandler(event -> {
-        	int selectedPartStartIndex = lblDocumentForSelection.getCursorPos();
-        	int selectedPartEndIndex = selectedPartStartIndex + lblDocumentForSelection.getSelectionLength();
-        	
-        	ArrayList<Pair<Integer, Integer>> allRemovedParts = getNotOverlappingRemovedParts();    	        	        	  		
-        	for(Pair<Integer, Integer> removedPart : allRemovedParts) {
-        		if(removedPart.first <= selectedPartStartIndex) {
-        			selectedPartStartIndex += removedPart.second - removedPart.first;
-        			selectedPartEndIndex += removedPart.second - removedPart.first;
-        		} else if(removedPart.first < selectedPartEndIndex) {
-        			selectedPartEndIndex += removedPart.second - removedPart.first;
-        		} else {
-        			break;
-        		}
-        	}
-        	
-        	newlyRemovedParts.add(new Pair<>(selectedPartStartIndex, selectedPartStartIndex + lblDocumentForSelection.getSelectionLength()));
-        	lblDocumentForSelection.setText(lblDocumentForSelection.getText().substring(0, lblDocumentForSelection.getCursorPos()) + lblDocumentForSelection.getText().substring(lblDocumentForSelection.getCursorPos() + lblDocumentForSelection.getSelectionLength()));
-        
-    		btnRemoveSelection.setEnabled(false);
-    		btnApplyDocumentSelection.setEnabled(true);
-    		btnDiscardDocumentSelection.setEnabled(true);
+        	removeSelectionEventHanlder();
         });
         btnReset.addClickHandler(event -> {
         	lblDocumentForSelection.setText(doc.getText());
@@ -525,6 +507,12 @@ public class TaskItem extends LocalizedComposite {
         		btnRemoveSelection.setEnabled(true);
         	} else {
         		btnRemoveSelection.setEnabled(false);
+        	}
+        });
+        
+        lblDocumentForSelection.addKeyDownHandler(event -> {
+        	if(event.getNativeKeyCode() == KeyCodes.KEY_DELETE) {
+        		removeSelectionEventHanlder();
         	}
         });
         
@@ -603,7 +591,31 @@ public class TaskItem extends LocalizedComposite {
     	}
     }
     
-    /**
+    private void removeSelectionEventHanlder() {
+    	int selectedPartStartIndex = lblDocumentForSelection.getCursorPos();
+    	int selectedPartEndIndex = selectedPartStartIndex + lblDocumentForSelection.getSelectionLength();
+    	
+    	ArrayList<Pair<Integer, Integer>> allRemovedParts = getNotOverlappingRemovedParts();    	        	        	  		
+    	for(Pair<Integer, Integer> removedPart : allRemovedParts) {
+    		if(removedPart.first <= selectedPartStartIndex) {
+    			selectedPartStartIndex += removedPart.second - removedPart.first;
+    			selectedPartEndIndex += removedPart.second - removedPart.first;
+    		} else if(removedPart.first < selectedPartEndIndex) {
+    			selectedPartEndIndex += removedPart.second - removedPart.first;
+    		} else {
+    			break;
+    		}
+    	}
+    	
+    	newlyRemovedParts.add(new Pair<>(selectedPartStartIndex, selectedPartStartIndex + lblDocumentForSelection.getSelectionLength()));
+    	lblDocumentForSelection.setText(lblDocumentForSelection.getText().substring(0, lblDocumentForSelection.getCursorPos()) + lblDocumentForSelection.getText().substring(lblDocumentForSelection.getCursorPos() + lblDocumentForSelection.getSelectionLength()));
+    
+		btnRemoveSelection.setEnabled(false);
+		btnApplyDocumentSelection.setEnabled(true);
+		btnDiscardDocumentSelection.setEnabled(true);
+	}
+
+	/**
      * Event handler method for when the Active sentence checkbox has been clicked.
      * Hides the brackets option for sentence type if only passive sentence are used and displays the Active sentence brackets option.
      */
