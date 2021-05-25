@@ -123,7 +123,7 @@ public abstract class SimpleExerciseJsonManager extends JsonManager {
      * @param htmlElements 	The pure HTML elements
      */
     protected void addHtmlElementsToJson(JSONObject jsonObject, JSONArray htmlElements){
-        ((JSONObject)jsonObject.get("htmlElementsGroup")).put("htmlElements", htmlElements);
+    	jsonObject.put("htmlElements", htmlElements);
     }
 
     /**
