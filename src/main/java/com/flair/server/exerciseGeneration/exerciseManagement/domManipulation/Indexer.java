@@ -8,6 +8,8 @@ import java.util.Map.Entry;
 import org.apache.commons.text.diff.EditScript;
 import org.apache.commons.text.diff.StringsComparator;
 
+import com.flair.server.exerciseGeneration.exerciseManagement.exerciseCompilation.NlpManager;
+import com.flair.server.exerciseGeneration.exerciseManagement.exerciseCompilation.SentenceAnnotations;
 import com.flair.shared.exerciseGeneration.Construction;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
 import com.flair.shared.exerciseGeneration.Pair;
@@ -20,19 +22,20 @@ public class Indexer {
      * @param htmlText The HTML text of the DOM
      * @return Fragment, sentence and blanks indices
      */
-    public ArrayList<Fragment> matchHtmlToPlainText(ExerciseSettings exerciseSettings, String htmlText, String plainText){
-    	String originalHtml = Normalizer.normalizeWhitespaces(htmlText);
-        htmlText = Normalizer.normalizeText(htmlText);
+    public ArrayList<Fragment> matchHtmlToPlainText(ExerciseSettings exerciseSettings, String htmlText, NlpManager nlpManager){
+    	Collections.sort(exerciseSettings.getConstructions(),
+                (c1, c2) -> c1.getConstructionIndices().first < c2.getConstructionIndices().first ? -1 : 1);
+    	
+    	String plainText = Normalizer.normalizeWhitespaces(exerciseSettings.getPlainText());
+    	htmlText = Normalizer.normalizeWhitespaces(htmlText);
         ArrayList<Fragment> fragments = getUnambiguousFragments(htmlText, plainText);
 
-        addSentenceFinalPunctuation(fragments, htmlText);
         fragments = splitDisplayedParts(fragments, exerciseSettings.getRemovedParts());	// needs to be done before sentence splitting to preserve the sentence indices
-        fragments = splitSentences(fragments, exerciseSettings.getSentenceIndices());
+        fragments = splitSentences(fragments, nlpManager, exerciseSettings.getConstructions());
         addBlanksIndicesToFragments(fragments, exerciseSettings.getConstructions());
-        matchIndicesToNonNormalizedHtml(fragments, originalHtml, htmlText);
         removeIncompleteConstructions(fragments);
-        trimBlanks(fragments, originalHtml);
-        fragments = insertNotContainedFragments(fragments, originalHtml);
+        trimBlanks(fragments, htmlText);
+        fragments = insertNotContainedFragments(fragments, htmlText);
 
         return fragments;
     }
@@ -134,11 +137,44 @@ public class Indexer {
      * @param sentences		The normalized plain text indices of the sentences
      * @return				The new list of fragments
      */
-    private ArrayList<Fragment> splitSentences(ArrayList<Fragment> fragments, ArrayList<Pair<Integer, Integer>> sentences) {
+    private ArrayList<Fragment> splitSentences(ArrayList<Fragment> fragments, NlpManager nlpManager, ArrayList<Construction> constructions) {
+    	ArrayList<Pair<Integer, Integer>> sentences = getSentenceBoundaries(nlpManager, constructions);
 		ArrayList<Fragment> newFragments = splitFragmentsAtPartsBoundaries(fragments, sentences);
 		addSentenceIndicesToFragments(newFragments, sentences);
 		
 		return newFragments;
+    }
+    
+    /**
+     * Splits the plain text into sentences.
+     * Saves the texts and start indices per sentence.
+     * @return			The sentence indices and the split sentences in the normalized plain text
+     */
+    private ArrayList<Pair<Integer,Integer>> getSentenceBoundaries(NlpManager nlpManager, ArrayList<Construction> constructions) {
+        ArrayList<Pair<Integer, Integer>> sentenceIndices = new ArrayList<>();        
+
+        for(SentenceAnnotations sent : nlpManager.getSentences()) {
+        	if(sent.getTokens().size() > 0) {
+	        	int sentenceStartIndex = sent.getTokens().get(0).beginPosition();
+	        	int sentenceEndIndex = sent.getTokens().get(sent.getTokens().size() - 1).endPosition();
+	        	
+                if(sentenceEndIndex - sentenceStartIndex > 0) {  
+                	// we only extract sentences which contain at least 1 construction
+                	boolean containsConstruction = false;
+                    for(Construction construction : constructions) {
+                    	if(construction.getConstructionIndices().first >= sentenceStartIndex && construction.getConstructionIndices().second < sentenceEndIndex) {
+                    		containsConstruction = true;
+                    		break;
+                    	}
+                    }
+                    if(containsConstruction) {
+                    	sentenceIndices.add(new Pair<>(sentenceStartIndex, sentenceEndIndex));
+                    }                
+                }
+        	}
+        }
+
+        return sentenceIndices;
     }
     
     /**
@@ -219,56 +255,6 @@ public class Indexer {
         return newFragments;
     }
     
-    /**
-     * Adds trailing punctuation which were excluded from sentences for better matching
-     * if they haven't been matched to another sentence.
-     * @param fragments The identified plain text fragments
-     * @param htmlText The normalized HTML text
-     */
-    private void addSentenceFinalPunctuation(ArrayList<Fragment> fragments, String htmlText) {
-        for(int i = 0; i < fragments.size(); i++) {
-            Fragment fragment = fragments.get(i);
-            if((i + 1 < fragments.size() && fragment.getEndIndex() < fragments.get(i + 1).getStartIndex() ||
-                    i == fragments.size() - 1 && fragment.getEndIndex() < htmlText.length()) &&
-                    (htmlText.charAt(fragment.getEndIndex()) + "").matches("[.;,]")) {
-                fragment.setEndIndex(fragment.getEndIndex() + 1);
-            }
-        }
-    }
-
-    /**
-     * Corrects the start and end indices of the fragments in the entire HTML text to fit the non-normalized HTML text
-     * @param fragments The matched plain text fragments
-     * @param originalHtml The non-normalized HTML text
-     * @param normalizedHtml The normalized HTML text
-     */
-    private void matchIndicesToNonNormalizedHtml(ArrayList<Fragment> fragments, String originalHtml, String normalizedHtml) {
-        int offset = 0;
-
-        for(int i = 0; i < normalizedHtml.length();) {
-            if(originalHtml.charAt(i + offset) != normalizedHtml.charAt(i)) {
-                for (Fragment fragment : fragments) {
-                    if (fragment.getStartIndex() >= i + offset) {
-                        fragment.setStartIndex(fragment.getStartIndex() + 1);
-                    }
-                    if (fragment.getEndIndex() >= i + offset) {
-                        fragment.setEndIndex(fragment.getEndIndex() + 1);
-                    }
-                    for(int k = 0; k < fragment.getBlanksBoundaries().size(); k++) {
-                    	Blank blank = fragment.getBlanksBoundaries().get(k);
-                        int blanksIndex = blank.getBoundaryIndex();
-                        if (blanksIndex >= i + offset) {
-                        	fragment.getBlanksBoundaries().get(k).setBoundaryIndex(blanksIndex + 1);
-                        }
-                    }
-                }
-                offset++;
-            } else{
-                i++;
-            }
-        }
-    }
-
     /**
      * Removes leading and trailing whitespaces from constructions.
      * @param fragments The detected plain text fragments

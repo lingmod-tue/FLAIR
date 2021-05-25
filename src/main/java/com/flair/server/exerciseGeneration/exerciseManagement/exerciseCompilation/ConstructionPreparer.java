@@ -69,12 +69,10 @@ public class ConstructionPreparer {
                     		if(newConstruction.isMainClause()) {
                     			if(mainClauseConstructionIndices != null) {
                     				newConstruction.setConstructionIndices(mainClauseConstructionIndices);  
-                    				newConstruction.setOriginalConstructionIndices(mainClauseConstructionIndices);  
                     			}
                     		} else {
                     			if(ifClauseConstructionIndices != null) {
                     				newConstruction.setConstructionIndices(ifClauseConstructionIndices);
-                    				newConstruction.setOriginalConstructionIndices(ifClauseConstructionIndices);  
                     			}
                     		}
                     			
@@ -82,7 +80,6 @@ public class ConstructionPreparer {
             					CoreLabel mainVerb = nlpManager.getMainVerb(newConstruction.getConstructionIndices());
             					if(mainVerb != null) {
             						newConstruction.setConstructionIndices(new Pair<>(mainVerb.beginPosition(), mainVerb.endPosition()));
-            						newConstruction.setOriginalConstructionIndices(new Pair<>(mainVerb.beginPosition(), mainVerb.endPosition()));
             					}
             				}
                     	}
@@ -98,7 +95,6 @@ public class ConstructionPreparer {
 					Pair<Integer,Integer> mainComparison = nlpManager.getMainComparison(construction.getConstructionIndices());
 					if(mainComparison != null) {
 						construction.setConstructionIndices(mainComparison);
-						construction.setOriginalConstructionIndices(mainComparison);
 					}
             	}
             } else if(construction.getConstruction().toString().startsWith("PASSIVE") ||
@@ -107,7 +103,6 @@ public class ConstructionPreparer {
                 	Pair<Integer, Integer> sentenceIndices = nlpManager.getSentenceIndices(construction.getConstructionIndices());
                     if (sentenceIndices != null) {
                         construction.setConstructionIndices(sentenceIndices);
-						construction.setOriginalConstructionIndices(sentenceIndices);
                     } else {
                         constructionsToRemove.add(construction);
                     }
@@ -191,7 +186,6 @@ public class ConstructionPreparer {
             	CoreLabel mainVerb = nlpManager.getMainVerb(construction.getConstructionIndices());
 				if(mainVerb != null) {
 					construction.setConstructionIndices(new Pair<>(mainVerb.beginPosition(), mainVerb.endPosition()));
-					construction.setOriginalConstructionIndices(new Pair<>(mainVerb.beginPosition(), mainVerb.endPosition()));
 				}
         	} else if((construction.getConstruction() == DetailedConstruction.WHICH ||
             		construction.getConstruction() == DetailedConstruction.WHO ||

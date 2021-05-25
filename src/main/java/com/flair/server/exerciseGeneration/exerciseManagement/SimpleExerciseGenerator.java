@@ -13,7 +13,6 @@ import com.flair.server.exerciseGeneration.exerciseManagement.domManipulation.Ht
 import com.flair.server.exerciseGeneration.exerciseManagement.domManipulation.Indexer;
 import com.flair.server.exerciseGeneration.exerciseManagement.domManipulation.MatchResult;
 import com.flair.server.exerciseGeneration.exerciseManagement.domManipulation.Matcher;
-import com.flair.server.exerciseGeneration.exerciseManagement.domManipulation.PlainTextPreparer;
 import com.flair.server.exerciseGeneration.exerciseManagement.domManipulation.SentenceManager;
 import com.flair.server.exerciseGeneration.exerciseManagement.exerciseCompilation.ClozeManager;
 import com.flair.server.exerciseGeneration.exerciseManagement.exerciseCompilation.ConstructionPreparer;
@@ -59,8 +58,7 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        NlpManager nlpManager = new NlpManager(parser, generator, settings.getExerciseSettings().getPlainText(), lemmatizer);
 	        
 	        new ConstructionPreparer().prepareConstructions(settings.getExerciseSettings(), nlpManager);	
-	        String normalizedPlainText = new PlainTextPreparer().prepareIndices(settings.getExerciseSettings(), nlpManager);
-	        ArrayList<Fragment> fragments = new Indexer().matchHtmlToPlainText(settings.getExerciseSettings(), doc.wholeText(), normalizedPlainText);
+	        ArrayList<Fragment> fragments = new Indexer().matchHtmlToPlainText(settings.getExerciseSettings(), doc.wholeText(), nlpManager);
 	
 	        new ClozeManager().prepareBlanks(settings.getExerciseSettings(), nlpManager, fragments);
 	        com.flair.shared.exerciseGeneration.Pair<ArrayList<String>,ArrayList<ArrayList<String>>> usedConstructions = new DistractorManager().generateDistractors(settings.getExerciseSettings(), nlpManager, fragments);

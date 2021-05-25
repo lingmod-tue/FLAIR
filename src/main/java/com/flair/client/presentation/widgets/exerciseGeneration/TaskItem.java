@@ -309,7 +309,7 @@ public class TaskItem extends LocalizedComposite {
         		grpClauses, grpScope, grpPronouns, grpVerbSplitting, grpTargetWords, grpSentTypes, chkPastSimple, chkPresentPerfect, 
         		chkPastPerfect, chkScopeActive, chkWho, chkWhich, chkThat, chkOtherRelPron, chk3Pers, chkNot3Pers, chkAffirmativeSent, 
         		chkNegatedSent, chkQuestions, chkStatements, chkRegularVerbs, chkIrregularVerbs, chkscopeType1, chkscopeType2, 
-        		chkPosAdj, chkPosAdv, chkFormComparatives, chkFormSuperlatives, chkFormSynthetic, chkFormAnalytic
+        		chkPosAdj, chkPosAdv, chkFormComparatives, chkFormSuperlatives, chkFormSynthetic, chkFormAnalytic, grpNumberTargets
         };
         
         controlsToReset = new Widget[] {chkPosAdj, chkPosAdv, chkFormComparatives, chkFormSuperlatives, chkFormSynthetic, chkFormAnalytic, chkscopeType1,

@@ -235,7 +235,7 @@ public class InstructionsManager {
         	for(Construction construction : usedConstructions) {
             	String lemma = null;
                 if(isVerbLemma) {
-                	LemmatizedVerbCluster verbCluster = nlpManager.getLemmatizedVerbConstruction(construction.getOriginalConstructionIndices(), false, false);
+                	LemmatizedVerbCluster verbCluster = nlpManager.getLemmatizedVerbConstruction(construction.getConstructionIndices(), false, false);
                 	if(verbCluster != null) {
                 		if(verbCluster.getMainLemma() == null) {
                 			if(verbCluster.getModal() == null) {
@@ -252,11 +252,11 @@ public class InstructionsManager {
                 		}
                 	}
                 } else {
-                	lemma = nlpManager.getLemmaOfComparison(construction.getOriginalConstructionIndices());
+                	lemma = nlpManager.getLemmaOfComparison(construction.getConstructionIndices());
                 }
                 
             	if(lemma == null) {
-            		lemmas.add(settings.getPlainText().substring(construction.getOriginalConstructionIndices().first, construction.getOriginalConstructionIndices().second));
+            		lemmas.add(settings.getPlainText().substring(construction.getConstructionIndices().first, construction.getConstructionIndices().second));
             	} else {
             		lemmas.add(lemma);
             	}

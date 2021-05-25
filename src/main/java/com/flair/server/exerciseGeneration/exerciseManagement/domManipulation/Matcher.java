@@ -20,7 +20,6 @@ public class Matcher {
     private ArrayList<Fragment> indexedSentences;
     private ArrayList<Boundaries> sentenceBoundaryElements = new ArrayList<>();
     private HashMap<Integer, String> plainTextElements = new HashMap<>();
-    private ArrayList<String> constructions = new ArrayList<>();
 
     /**
      * Indicates if a construction has been opened but not yet been closed.
@@ -36,6 +35,7 @@ public class Matcher {
      * Counter for unique naming of plain text elements
      */
     private int plainTextCounter = 1;
+    private int blanksCounter = 0;
     
     /**
      * Extracts plain text fragments, sentences and constructions from a HTML document.
@@ -233,31 +233,23 @@ public class Matcher {
         while(text.length() > 0) {
             if (inConstruction) {
                 if(containedBoundaries.size() > 0) {
-                    // add the beginning of this text until the construction boundary to the last construction
-                    constructions.set(constructions.size() - 1,
-                            constructions.get(constructions.size() - 1) +
-                            text.substring(0, containedBoundaries.get(0).getBoundaryIndex() - startIndex));
+                    // remove the text which is part of a construction
                     text = text.substring(containedBoundaries.get(0).getBoundaryIndex() - startIndex);
                     startIndex = containedBoundaries.get(0).getBoundaryIndex();
 
                     // it's a closing tag, so we add the brackets
                     sb.append(containedBoundaries.get(0).getConstruction().getBracketsText()).append(" ");
-                    containedBoundaries.get(0).getConstruction().setConstructionText(constructions.get(constructions.size() - 1));
 
                     containedBoundaries.remove(0);
                     inConstruction = false;
                 } else {
-                    // add the entire text to the last construction
-                    constructions.set(constructions.size() - 1,
-                            constructions.get(constructions.size() - 1) + text);
                     text = "";
                 }
             } else {
                 if (containedBoundaries.size() > 0) {
                 	sb.append(text, 0, containedBoundaries.get(0).getBoundaryIndex() - startIndex);
-                    sb.append(ElementCreator.createBlanksPlaceholderElement(constructions.size()));
+                    sb.append(ElementCreator.createBlanksPlaceholderElement(blanksCounter++));
                     inConstruction = true;
-                    constructions.add("");
                     text = text.substring(containedBoundaries.get(0).getBoundaryIndex() - startIndex);
                     startIndex = containedBoundaries.get(0).getBoundaryIndex();
                     containedBoundaries.remove(0);

@@ -29,7 +29,7 @@ public class ClozeManager {
 		                ArrayList<String> brackets = new ArrayList<>();
 	
 			            if(construction.getConstruction().toString().startsWith("COND")) {     
-		                	LemmatizedVerbCluster lemmatizedVerb = nlpManager.getLemmatizedVerbConstruction(construction.getOriginalConstructionIndices(), false, false);
+		                	LemmatizedVerbCluster lemmatizedVerb = nlpManager.getLemmatizedVerbConstruction(construction.getConstructionIndices(), false, false);
 		                    if(exerciseSettings.getBrackets().contains(BracketsProperties.LEMMA)) {
 		                        if(lemmatizedVerb != null) {
 		                            brackets.add(lemmatizedVerb.getLemmatizedCluster());
@@ -52,7 +52,7 @@ public class ClozeManager {
 			            } else if(construction.getConstruction().toString().startsWith("ADJ") ||
 			                        construction.getConstruction().toString().startsWith("ADV")) {
 		                    if(exerciseSettings.getBrackets().contains(BracketsProperties.LEMMA)) {
-		                        String lemma = nlpManager.getLemmaOfComparison(construction.getOriginalConstructionIndices());
+		                        String lemma = nlpManager.getLemmaOfComparison(construction.getConstructionIndices());
 		                        if(lemma != null) {
 		                            brackets.add(lemma);
 		                        } else {
@@ -72,7 +72,7 @@ public class ClozeManager {
 			            } else if(construction.getConstruction().toString().startsWith("PASSIVE") ||
 			                    construction.getConstruction().toString().startsWith("ACTIVE")) {
 		                    if (exerciseSettings.getBrackets().contains(BracketsProperties.ACTIVE_SENTENCE)) {
-		                        String activeSentence = nlpManager.getActiveSentence(construction.getOriginalConstructionIndices(), exerciseSettings.getPlainText(), construction.getConstruction());
+		                        String activeSentence = nlpManager.getActiveSentence(construction.getConstructionIndices(), exerciseSettings.getPlainText(), construction.getConstruction());
 		                        if (activeSentence != null) {
 		                            brackets.add(activeSentence);
 		                        } else {
@@ -80,7 +80,7 @@ public class ClozeManager {
 		                            break;
 		                        }
 		                    } else {
-		                    	LemmatizedVerbCluster lemmatizedVerb = nlpManager.getLemmatizedVerbConstruction(construction.getOriginalConstructionIndices(), true, true);
+		                    	LemmatizedVerbCluster lemmatizedVerb = nlpManager.getLemmatizedVerbConstruction(construction.getConstructionIndices(), true, true);
 		                        if(exerciseSettings.getBrackets().contains(BracketsProperties.LEMMA)) {
 		                            if(lemmatizedVerb != null) {
 		                                brackets.add(lemmatizedVerb.getLemmatizedCluster());
@@ -132,7 +132,7 @@ public class ClozeManager {
 			                            construction.getConstruction().toString().startsWith("STMT") ||
 			                            construction.getConstruction().toString().startsWith("PAST") ||
 			                            construction.getConstruction().toString().startsWith("PRES")) {
-			                LemmatizedVerbCluster lemmatizedVerb = nlpManager.getLemmatizedVerbConstruction(construction.getOriginalConstructionIndices(), true, false);
+			                LemmatizedVerbCluster lemmatizedVerb = nlpManager.getLemmatizedVerbConstruction(construction.getConstructionIndices(), true, false);
 			                if(exerciseSettings.getBrackets().contains(BracketsProperties.LEMMA)) {
 			                    if(lemmatizedVerb != null) {
 			                    	String lemmaCluster = lemmatizedVerb.getLemmatizedCluster();

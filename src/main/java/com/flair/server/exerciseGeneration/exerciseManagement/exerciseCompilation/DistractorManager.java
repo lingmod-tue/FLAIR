@@ -32,7 +32,7 @@ public class DistractorManager {
                 for(Blank blank : fragment.getBlanksBoundaries()) {
                 	Construction construction = blank.getConstruction();
                 	if(construction != null) {
-	                	String constructionText = exerciseSettings.getPlainText().substring(construction.getOriginalConstructionIndices().first, construction.getOriginalConstructionIndices().second);
+	                	String constructionText = exerciseSettings.getPlainText().substring(construction.getConstructionIndices().first, construction.getConstructionIndices().second);
 	                    HashSet<String> options = new HashSet<>();
 	                    HashSet<String> incorrectFormOptions = new HashSet<>();
 	
@@ -95,7 +95,7 @@ public class DistractorManager {
 	                        boolean isComparative = construction.getConstruction().toString().contains("_COMP_");
 	                        boolean isSynthetic = construction.getConstruction().toString().endsWith("SYN");
 	                        boolean isAdjective = name.startsWith("ADJ");
-	                        String lemma = nlpManager.getLemmaOfComparison(construction.getOriginalConstructionIndices());
+	                        String lemma = nlpManager.getLemmaOfComparison(construction.getConstructionIndices());
 	
 	                        ArrayList<Pair<Boolean, Boolean>> parameterConstellations = new ArrayList<>();
 	                        parameterConstellations.add(new Pair<>(isSynthetic, isComparative));
@@ -128,7 +128,7 @@ public class DistractorManager {
 	                        }
 	                    } else if(name.startsWith("QUEST") || name.startsWith("STMT")){
 	                        boolean is3Sg = construction.getConstruction().toString().endsWith("_3");
-	                        CoreLabel mainVerb = nlpManager.getMainVerb(construction.getOriginalConstructionIndices());
+	                        CoreLabel mainVerb = nlpManager.getMainVerb(construction.getConstructionIndices());
 	                        
 	                        if(mainVerb != null) {
 	    	                    ArrayList<Boolean> parameterConstellations = new ArrayList<>();
@@ -138,7 +138,7 @@ public class DistractorManager {
 	    	                        parameterConstellations.add(!is3Sg);
 	    	                    }
 	    	                    
-	    	                    String subject = nlpManager.getSubject(mainVerb.beginPosition(), construction.getOriginalConstructionIndices());
+	    	                    String subject = nlpManager.getSubject(mainVerb.beginPosition(), construction.getConstructionIndices());
 	    	                    if(subject == null) {
 	    	                    	subject = is3Sg ? "he" : "they";
 	    	                    }
@@ -149,16 +149,16 @@ public class DistractorManager {
 	    	                        	String option = nlpManager.generateCorrectForm(new TenseSettings(mainVerb.lemma(), false,
 	    	                                    false, parameterConstellation, subject, "present",
 	    	                                    false, false));
-	    	                        	option = exerciseSettings.getPlainText().substring(construction.getOriginalConstructionIndices().first, mainVerb.beginPosition()) +
-	    	                        			option + exerciseSettings.getPlainText().substring(mainVerb.endPosition(), construction.getOriginalConstructionIndices().second);	                        			
+	    	                        	option = exerciseSettings.getPlainText().substring(construction.getConstructionIndices().first, mainVerb.beginPosition()) +
+	    	                        			option + exerciseSettings.getPlainText().substring(mainVerb.endPosition(), construction.getConstructionIndices().second);	                        			
 	    	                            options.add(option);
 	    	                        }
 	    	                        if(exerciseSettings.getDistractors().contains(DistractorProperties.INCORRECT_FORMS)) {
 	    	                        	HashSet<String> o = nlpManager.generateIncorrectForms(new TenseSettings(mainVerb.lemma(), false,
 	    	                                    false, parameterConstellation, subject, "present",false, false));
 	    	                            for(String option : o) {
-	    	                            	option = exerciseSettings.getPlainText().substring(construction.getOriginalConstructionIndices().first, mainVerb.beginPosition()) +
-	    		                        			option + exerciseSettings.getPlainText().substring(mainVerb.endPosition(), construction.getOriginalConstructionIndices().second);	                        			
+	    	                            	option = exerciseSettings.getPlainText().substring(construction.getConstructionIndices().first, mainVerb.beginPosition()) +
+	    		                        			option + exerciseSettings.getPlainText().substring(mainVerb.endPosition(), construction.getConstructionIndices().second);	                        			
 	    	                            	incorrectFormOptions.add(option);
 	    	                            }	                        	
 	    	                        }
@@ -169,7 +169,7 @@ public class DistractorManager {
 	                        String tense = construction.getConstruction().toString().startsWith("PAST") ? "past" : "present";
 	                        boolean isInterrogative = construction.getConstruction().toString().contains("_QUEST_");
 	                        Pair<String, String> lemma =
-	                                nlpManager.getVerbLemma(construction.getOriginalConstructionIndices(), isInterrogative);
+	                                nlpManager.getVerbLemma(construction.getConstructionIndices(), isInterrogative);
 	                        boolean isNegated = construction.getConstruction().toString().contains("_NEG_");
 	
 	                        if(lemma != null) {
@@ -190,7 +190,7 @@ public class DistractorManager {
 	    	                    
 	    	                    // get other components excluding the verb and negation
 	    	                    String otherComponents = "";
-	    	                    LemmatizedVerbCluster verbCluster = nlpManager.getLemmatizedVerbConstruction(construction.getOriginalConstructionIndices(), true, false);
+	    	                    LemmatizedVerbCluster verbCluster = nlpManager.getLemmatizedVerbConstruction(construction.getConstructionIndices(), true, false);
 	    	                    if(verbCluster != null) {
 	    	                    	otherComponents = String.join(" ", verbCluster.getNonLemmatizedComponents());
 	    	                    	otherComponents.replaceAll(" n[o']t ", " ");
@@ -231,7 +231,7 @@ public class DistractorManager {
 	                            construction.getConstruction() == DetailedConstruction.OTHERPRN) {
 	                        // We make sure to only include those pronouns as distractors which actually occur in the text
 	                        for(Construction c : exerciseSettings.getConstructions()) {
-	                        	String text = exerciseSettings.getPlainText().substring(c.getOriginalConstructionIndices().first, c.getOriginalConstructionIndices().second);
+	                        	String text = exerciseSettings.getPlainText().substring(c.getConstructionIndices().first, c.getConstructionIndices().second);
 	                            options.add(text);
 	                        }
 	                    }
@@ -289,7 +289,7 @@ public class DistractorManager {
                 for(Blank blank : fragment.getBlanksBoundaries()) {
                 	Construction construction = blank.getConstruction();
                 	if(construction != null) {
-                    	String text = exerciseSettings.getPlainText().substring(construction.getOriginalConstructionIndices().first, construction.getOriginalConstructionIndices().second);
+                    	String text = exerciseSettings.getPlainText().substring(construction.getConstructionIndices().first, construction.getConstructionIndices().second);
                 		distractors.add(text);
                 	}
                 }
@@ -305,7 +305,7 @@ public class DistractorManager {
                 for(Blank blank : fragment.getBlanksBoundaries()) {
                 	Construction construction = blank.getConstruction();
                 	if(construction != null) {
-            			String text = exerciseSettings.getPlainText().substring(construction.getOriginalConstructionIndices().first, construction.getOriginalConstructionIndices().second);
+            			String text = exerciseSettings.getPlainText().substring(construction.getConstructionIndices().first, construction.getConstructionIndices().second);
                 		for(String distractor : uniqueDistractors) {
                     		if(!text.equals(distractor)) {
                     			construction.getDistractors().add(distractor);
@@ -332,10 +332,10 @@ public class DistractorManager {
                 for(Blank blank : fragment.getBlanksBoundaries()) {
                 	Construction construction = blank.getConstruction();
                 	if(construction != null) {
-        				String text = exerciseSettings.getPlainText().substring(construction.getOriginalConstructionIndices().first, construction.getOriginalConstructionIndices().second);
+        				String text = exerciseSettings.getPlainText().substring(construction.getConstructionIndices().first, construction.getConstructionIndices().second);
                 		for(Construction otherConstruction : construction.getSentenceConstructions()) {
                 			if(usedConstructionList.contains(otherConstruction)) {
-                				String distractor = exerciseSettings.getPlainText().substring(otherConstruction.getOriginalConstructionIndices().first, otherConstruction.getOriginalConstructionIndices().second);
+                				String distractor = exerciseSettings.getPlainText().substring(otherConstruction.getConstructionIndices().first, otherConstruction.getConstructionIndices().second);
                         		if(!text.equals(distractor)) {
                         			construction.getDistractors().add(distractor);
                         		}
@@ -361,7 +361,7 @@ public class DistractorManager {
             			}
     		        }
     		        if(blank.getConstruction() != null && isUsed) {
-    		        	Pair<Integer, Integer> constructionIndices = blank.getConstruction().getOriginalConstructionIndices();
+    		        	Pair<Integer, Integer> constructionIndices = blank.getConstruction().getConstructionIndices();
         				usedConstructions.add(exerciseSettings.getPlainText().substring(constructionIndices.first, constructionIndices.second));
         				usedDistractors.add(blank.getConstruction().getDistractors());
     		        }
