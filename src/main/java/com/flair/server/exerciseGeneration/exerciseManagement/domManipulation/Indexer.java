@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.text.diff.EditScript;
 import org.apache.commons.text.diff.StringsComparator;
@@ -22,7 +24,7 @@ public class Indexer {
      * @param htmlText The HTML text of the DOM
      * @return Fragment, sentence and blanks indices
      */
-    public ArrayList<Fragment> matchHtmlToPlainText(ExerciseSettings exerciseSettings, String htmlText, NlpManager nlpManager){
+    public Pair<ArrayList<Fragment>, Pair<Integer, Integer>> matchHtmlToPlainText(ExerciseSettings exerciseSettings, String htmlText, NlpManager nlpManager){
     	Collections.sort(exerciseSettings.getConstructions(),
                 (c1, c2) -> c1.getConstructionIndices().first < c2.getConstructionIndices().first ? -1 : 1);
     	
@@ -35,9 +37,55 @@ public class Indexer {
         addBlanksIndicesToFragments(fragments, exerciseSettings.getConstructions());
         removeIncompleteConstructions(fragments);
         trimBlanks(fragments, htmlText);
+        Pair<Integer, Integer> textIndices = determineTextBoundaries(fragments, htmlText, plainText, exerciseSettings.isOnlyText());
         fragments = insertNotContainedFragments(fragments, htmlText);
 
-        return fragments;
+        return new Pair<>(fragments, textIndices);
+    }
+    
+    /**
+     * Determines the indices in the HTML plain text of the first and last characters of the FLAIR plain text.
+     * @param fragments		The extracted fragments
+     * @param htmlText		The HTML plain text
+     * @param plainText		The FLAIR plain text
+     * @param getBoundaries	<c>true</c> if the boundary indices are to be determined; otherwise <c>fasle</c>
+     * @return				The start and end indices of the FLAIR plain text in the HTMl plain text; null for either if their could not be defined
+     */
+    private Pair<Integer, Integer> determineTextBoundaries(ArrayList<Fragment> fragments, String htmlText, String plainText, boolean getBoundaries) {
+    	Integer startIndex = null;
+        Integer endIndex = null;
+        
+        if(getBoundaries) {
+	        if(fragments.size() > 0) {
+	            if (fragments.get(0).getPlainTextStartIndex() == 0) {
+	                startIndex = fragments.get(0).getStartIndex();
+	            }
+	            Fragment lastFragment = fragments.get(fragments.size() - 1);
+	            if(lastFragment.getPlainTextStartIndex() + lastFragment.getText().length() == plainText.length()){
+	                endIndex = lastFragment.getEndIndex();
+	            }
+	        }
+	        if(startIndex == null) {
+	            Pattern pattern = Pattern.compile("[\\s\\h]");
+	            Matcher matcher = pattern.matcher(htmlText);
+	            if(matcher.find()){
+	                startIndex = matcher.start();
+	            }
+	        }
+	        if(endIndex == null && htmlText.length() > 0) {
+	            endIndex = htmlText.length();
+	            while((htmlText.charAt(endIndex - 1) + "").matches("[\\s\\h]")) {
+	                endIndex--;
+	            }
+	        }
+	        if(endIndex != null && endIndex > 0) {
+	            endIndex --;
+	        } else {
+	            endIndex = null;
+	        }
+        }
+        
+        return new Pair<>(startIndex, endIndex);
     }
     
     /**

@@ -13,13 +13,15 @@ import com.flair.shared.exerciseGeneration.Pair;
 
 public class Matcher {
 
-    public Matcher(ArrayList<Fragment> matchedFragments){
+    public Matcher(ArrayList<Fragment> matchedFragments, Pair<Integer, Integer> textIndices){
         this.indexedSentences = matchedFragments;
+        this.textIndices = textIndices;
     }
 
     private ArrayList<Fragment> indexedSentences;
     private ArrayList<Boundaries> sentenceBoundaryElements = new ArrayList<>();
     private HashMap<Integer, String> plainTextElements = new HashMap<>();
+    Pair<Integer, Integer> textIndices;
 
     /**
      * Indicates if a construction has been opened but not yet been closed.
@@ -38,13 +40,22 @@ public class Matcher {
     private int blanksCounter = 0;
     
     /**
+     * Start node of the FLAIR plain text
+     */
+    private Node startNode = null;
+    /**
+     * End node of the FLAIR plain text
+     */
+    private Node endNode = null;
+    
+    /**
      * Extracts plain text fragments, sentences and constructions from a HTML document.
      * @param doc	The HTML document
      * @return 		The start and end elements of each identified sentence, the extracted plain text elements and the extracted constructions
      */
     public MatchResult prepareDomForSplitting(Element doc){
         replacePlainText(doc);
-        return new MatchResult(sentenceBoundaryElements, plainTextElements);
+        return new MatchResult(sentenceBoundaryElements, plainTextElements, new Pair<>(startNode, endNode));
     }
     
     /**
@@ -65,7 +76,15 @@ public class Matcher {
                 // Replace the TextNode with the newly created Elements
                 replacements.add(new Pair<>((TextNode)node, replacementElements));
 
-                textIndex += ((TextNode) node).getWholeText().length();
+                int length = ((TextNode) node).getWholeText().length();
+                if(textIndices.first != null && textIndices.first >= textIndex && textIndices.first < textIndex + length &&
+                        replacementElements.size() > 0) {
+                    startNode = replacementElements.get(0);
+                }
+                if(textIndices.second != null && textIndices.second > textIndex && textIndices.second <= textIndex + length && replacementElements.size() > 0) {
+                    endNode = replacementElements.get(replacementElements.size() - 1);
+                }
+                textIndex += length;
             } else if(node instanceof Element) {
                 replacePlainText((Element)node);
             }

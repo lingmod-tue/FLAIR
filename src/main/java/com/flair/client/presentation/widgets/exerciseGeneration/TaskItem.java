@@ -230,6 +230,8 @@ public class TaskItem extends LocalizedComposite {
     MaterialCheckBox chkFormSynthetic;
     @UiField
     MaterialCheckBox chkNTargets;
+    @UiField
+    MaterialCheckBox chkOnlyText;
     MaterialRadioButton rbtPerSentence;
     MaterialRadioButton rbtSingleTask;
     MaterialRadioButton rbtMainClause;
@@ -1273,7 +1275,8 @@ public class TaskItem extends LocalizedComposite {
     	}
     	
     	return new ExerciseSettings(constructions, doc.getUrl(), doc.getText(), removedParts, 
-    			type, getQuiz(), distractorProperties, brackets, spnNDistractors.getValue() - 1, lblName.getValue(), parent.chkDownloadResources.getValue());
+    			type, getQuiz(), distractorProperties, brackets, spnNDistractors.getValue() - 1, lblName.getValue(), 
+    			parent.chkDownloadResources.getValue(), chkOnlyText.getValue());
     }
     
     /**

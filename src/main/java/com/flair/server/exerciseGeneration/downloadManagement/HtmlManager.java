@@ -4,6 +4,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
 import com.flair.server.exerciseGeneration.exerciseManagement.DownloadedResource;
@@ -240,6 +241,52 @@ public class HtmlManager {
     		}
     		elements = doc.select("span[data-remove]");
     	}    	
+    }
+    
+    /**
+     * Removes any elements before and after the FLAIR plain text.
+     * @param pair The first and last element of the plain text
+     */
+    public static void removeNonText(com.flair.shared.exerciseGeneration.Pair<Node,Node> pair) {
+        removeSiblings(pair.first, true);
+        removeSiblings(pair.second, false);
+    }
+
+    /**
+     * Removes any previous or succeeding siblings of the boundary node, dependingon the isStart flag.
+     * @param boundaryNode	The start or end node representing the first or last element contained in the plain text
+     * @param isStart <c>true</c> if previous elements need to be deleted; <c>false</c> if succeeding elements are deleted
+     */
+    private static void removeSiblings(Node boundaryNode, boolean isStart) {
+        if(boundaryNode != null) {
+            // Get the node's ancestors
+            ArrayList<Node> ancestors = new ArrayList<>();
+            Node parentNode = boundaryNode.parent();
+            while (parentNode != null) {
+                ancestors.add(parentNode);
+                parentNode = parentNode.parent();
+            }
+
+            // Check for relevant siblings in boundary node and ancestors
+            Node parent = boundaryNode;
+            while (parent != null) {
+                // Remove relevant siblings
+                Node sibling = isStart ? parent.previousSibling() : parent.nextSibling();
+                while (sibling != null) {
+                    // Check if sibling's parent can also be removed
+                    Node siblingParent = sibling.parent();
+                    while (siblingParent != null && !ancestors.contains(siblingParent)) {
+                        sibling = siblingParent;
+                        siblingParent = siblingParent.parent();
+                    }
+
+                    Node nextRelevantSibling = isStart ? sibling.previousSibling() : sibling.nextSibling();
+                    sibling.remove();
+                    sibling = nextRelevantSibling;
+                }
+                parent = parent.parent();
+            }
+        }
     }
     
     /**

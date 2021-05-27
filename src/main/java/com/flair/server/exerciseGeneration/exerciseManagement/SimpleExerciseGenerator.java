@@ -58,22 +58,25 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        NlpManager nlpManager = new NlpManager(parser, generator, settings.getExerciseSettings().getPlainText(), lemmatizer);
 	        
 	        new ConstructionPreparer().prepareConstructions(settings.getExerciseSettings(), nlpManager);	
-	        ArrayList<Fragment> fragments = new Indexer().matchHtmlToPlainText(settings.getExerciseSettings(), doc.wholeText(), nlpManager);
+	        com.flair.shared.exerciseGeneration.Pair<ArrayList<Fragment>,com.flair.shared.exerciseGeneration.Pair<Integer,Integer>> res = new Indexer().matchHtmlToPlainText(settings.getExerciseSettings(), doc.wholeText(), nlpManager);
 	
-	        new ClozeManager().prepareBlanks(settings.getExerciseSettings(), nlpManager, fragments);
-	        com.flair.shared.exerciseGeneration.Pair<ArrayList<String>,ArrayList<ArrayList<String>>> usedConstructions = new DistractorManager().generateDistractors(settings.getExerciseSettings(), nlpManager, fragments);
+	        new ClozeManager().prepareBlanks(settings.getExerciseSettings(), nlpManager, res.first);
+	        com.flair.shared.exerciseGeneration.Pair<ArrayList<String>,ArrayList<ArrayList<String>>> usedConstructions 
+	        		= new DistractorManager().generateDistractors(settings.getExerciseSettings(), nlpManager, res.first);
 		    
 	        if(usedConstructions == null || usedConstructions.first.size() == 0) {
 	        	return null;
 	        }
 	        
-	        MatchResult matchResult = new Matcher(fragments).prepareDomForSplitting(doc);
+	        MatchResult matchResult = new Matcher(res.first, res.second).prepareDomForSplitting(doc);
+	        HtmlManager.removeNonText(matchResult.getTextBoundaries());
 	        HtmlManager.removeNotDisplayedElements(doc);
 	        if(settings.getExerciseSettings().getContentType().equals("Mark")) {
 	        	HtmlManager.removeLinks(doc);
 	        }
 	        
-	        ArrayList<DownloadedResource> resources = new HtmlManager().extractResources(settings.getExerciseSettings().getUrl(), resourceDownloader, doc);
+	        ArrayList<DownloadedResource> resources = new HtmlManager().extractResources(settings.getExerciseSettings().getUrl(), 
+	        		resourceDownloader, doc);
 	        settings.getResources().addAll(resources);
 	        SentenceManager sentenceManager = new SentenceManager();
 	        ArrayList<String> sentenceHtml = sentenceManager.extractSentencesFromDom(matchResult.getSentenceBoundaryElements());
@@ -87,10 +90,11 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	            ((SimpleExerciseJsonManager)settings.getJsonManager()).escapeAsterisks(pureHtmlElements);
 	        }
 	
-	        String taskDescription = InstructionsManager.componseTaskDescription(settings.getExerciseSettings(), nlpManager, fragments);	       
+	        String taskDescription = InstructionsManager.componseTaskDescription(settings.getExerciseSettings(), nlpManager, res.first);	       
 	
 	        return new JsonComponents(orderedPlainTextElements, pureHtmlElements, usedConstructions.first,
-	                settings.getJsonManager(), settings.getContentTypeLibrary(), settings.getResourceFolder(), usedConstructions.second, taskDescription);
+	                settings.getJsonManager(), settings.getContentTypeLibrary(), settings.getResourceFolder(), 
+	                usedConstructions.second, taskDescription);
     	} else {
     		return null;
     	}
