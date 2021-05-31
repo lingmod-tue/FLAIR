@@ -28,15 +28,13 @@ public class AdvancedFIBJsonManager extends SimpleExerciseJsonManager {
     }
 
     @Override
-    protected String getPlacehholderReplacement(String construction, ArrayList<String> distractorList) {
-        //TODO: store feedback with distractors
-        distractorList.add(0, construction);
-        ArrayList<String> options = new ArrayList<>();
-        for(String distractor : distractorList) {
-            // escape special symbols
-            options.add(distractor.replace("|", "||").replace(":", "::").replace("/", "//"));
+    protected String getPlacehholderReplacement(String construction, ArrayList<String> distractorList, String feedbackId, JSONObject jsonObject) {
+        construction = construction.replace(":", "::").replace("/", "//");
+        if(addFeedbackToJson(jsonObject, feedbackId, distractorList)) {
+            construction += ":" + feedbackId;
         }
-        return "*" + String.join("|", options) + "*";
+
+        return "*" + construction + "*";
     }
     
 }

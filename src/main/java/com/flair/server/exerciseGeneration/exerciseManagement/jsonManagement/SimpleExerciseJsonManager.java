@@ -98,20 +98,23 @@ public abstract class SimpleExerciseJsonManager extends JsonManager {
     protected void addQuestionsToJson(JSONObject jsonObject, ArrayList<String> plainTextElements,
             ArrayList<String> constructions, ArrayList<ArrayList<String>> distractors) {
 		StringBuilder sb = new StringBuilder();
-		for(String plainTextElement : plainTextElements) {
-		plainTextElement = plainTextElement.replace("*", "**"); // escape asterisks used to designate blanks
-		          
-		while(plainTextElement.contains("<span data-blank></span>")) {
-		ArrayList<String> distractorList = new ArrayList<>();
-		if(distractors.size() > 0) {
-		distractorList = distractors.get(0);
-		distractors.remove(0);
-		}
+		int feedbackId = 1;
 		
-		plainTextElement = plainTextElement.replaceFirst("<span data-blank></span>", getPlacehholderReplacement(constructions.get(0), distractorList));
-		constructions.remove(0);
-		}
-		sb.append(plainTextElement);
+		for(String plainTextElement : plainTextElements) {
+			plainTextElement = plainTextElement.replace("*", "**"); // escape asterisks used to designate blanks
+			          
+			while(plainTextElement.contains("<span data-blank></span>")) {
+				ArrayList<String> distractorList = new ArrayList<>();
+				if(distractors.size() > 0) {
+					distractorList = distractors.get(0);
+					distractors.remove(0);
+				}
+				
+				plainTextElement = plainTextElement.replaceFirst("<span data-blank></span>", getPlacehholderReplacement(constructions.get(0), distractorList, "feedback" + feedbackId, jsonObject));
+				feedbackId++;
+				constructions.remove(0);
+			}
+			sb.append(plainTextElement);
 		}
 		
 		jsonObject.put("textField", sb.toString());
@@ -137,8 +140,41 @@ public abstract class SimpleExerciseJsonManager extends JsonManager {
      * @param construction  The correct solution
      * @return              The blank definition
      */
-    protected String getPlacehholderReplacement(String construction, ArrayList<String> distractorList) {
+    protected String getPlacehholderReplacement(String construction, ArrayList<String> distractorList, String feedbackId, JSONObject jsonObject) {
         return "*" + construction + "*";
+    }
+    
+    /**
+     * Adds feedback elements per blank to JSON.
+     * @param jsonObject	The JSON object
+     * @param feedbackId	The feedback id referenced in the inline specification
+     * @param distractors	The distractors of the current blank
+     * @return				<c>true</c> if any feedback elements were added; otherwise <c>false</c>
+     */
+    protected boolean addFeedbackToJson(JSONObject jsonObject, String feedbackId, ArrayList<String> distractors) {
+        JSONArray incorrectAnswers = new JSONArray();
+        for(int i = 0; i < distractors.size(); i++) {
+            String distractor = distractors.get(i);
+
+            if(distractor.trim().length() > 0) {
+                JSONObject incorrectAnswer = new JSONObject();
+                incorrectAnswer.put("incorrectAnswerText", distractor);
+                //TODO: store feedback with distractors
+                incorrectAnswer.put("incorrectAnswerFeedback", "");
+                incorrectAnswers.add(incorrectAnswer);
+            }
+        }
+
+        if(incorrectAnswers.size() > 0) {
+            JSONObject feedbackObject = new JSONObject();
+            feedbackObject.put("feedbackId", feedbackId);
+            feedbackObject.put("incorrectAnswersList", incorrectAnswers);
+            ((JSONArray) jsonObject.get("blanksFeedback")).add(feedbackObject);
+
+            return true;
+        }
+
+        return false;
     }
 
 }
