@@ -268,6 +268,7 @@ class ClientSessionState {
 
 		endActiveOperation(true);
 		temporaryClientData.questGenData = null;
+		generatedPackages.clear();
 	}
 
 
