@@ -52,6 +52,8 @@ public class WebsiteDownloadTask implements AsyncTask<WebsiteDownloadTask.Result
 		} catch (TimeoutException ex) {
 			ServerLogger.get().error("Webpage download task timed-out for " + url + ".");
 			error = true;
+		} catch(InterruptedException ex) {
+			error = true;
 		} catch (Throwable ex) {
 			ServerLogger.get().error(ex, "Webpage download task encountered an error. Exception: " + ex.toString());
 			error = true;
