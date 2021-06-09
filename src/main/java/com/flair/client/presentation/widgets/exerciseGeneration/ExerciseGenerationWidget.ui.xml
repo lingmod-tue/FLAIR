@@ -31,10 +31,15 @@
 					width="100%" textAlign="CENTER" textColor="BLACK"
 					addStyleNames="{style.bgGrey}" waves="DEFAULT" />
 			</m:MaterialRow>
-			<m:MaterialRow>
-				<m:MaterialCheckBox
+			<m:MaterialRow paddingTop="0" paddingBottom="0" marginBottom="0">
+				<m:MaterialCheckBox 
 					ui:field="chkDownloadResources" value="false"
 					text="Download resources" />
+			</m:MaterialRow>
+			<m:MaterialRow paddingTop="0" paddingBottom="0" marginTop="0">
+				<m:MaterialCheckBox
+					ui:field="chkGenerateFeedback" value="true"
+					text="Generate feedback" />
 			</m:MaterialRow>
 
 			<m:MaterialRow textAlign="CENTER" marginTop="10">

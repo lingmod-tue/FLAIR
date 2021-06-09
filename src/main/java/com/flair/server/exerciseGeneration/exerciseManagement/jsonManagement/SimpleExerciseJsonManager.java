@@ -35,7 +35,7 @@ public abstract class SimpleExerciseJsonManager extends JsonManager {
 
         jsonObject.put("taskDescription", jsonComponents.get(0).getTaskDescription());
 
-        Pair<ArrayList<String>, ArrayList<ArrayList<String>>> orderedElements = orderBlanks(jsonComponents.get(0).getPlainTextElements(), jsonComponents.get(0).getConstructions(),
+        Pair<ArrayList<String>, ArrayList<ArrayList<Pair<String, String>>>> orderedElements = orderBlanks(jsonComponents.get(0).getPlainTextElements(), jsonComponents.get(0).getConstructions(),
         		jsonComponents.get(0).getDistractors());
         addQuestionsToJson(jsonObject, jsonComponents.get(0).getPlainTextElements(), orderedElements.first, orderedElements.second);
         JSONArray htmlArray = new JSONArray();
@@ -52,9 +52,10 @@ public abstract class SimpleExerciseJsonManager extends JsonManager {
      * @param unorderedBlanks 	The blanks texts in the order in which they were extracted
      * @return 					The ordered blanks list
      */
-    private Pair<ArrayList<String>, ArrayList<ArrayList<String>>> orderBlanks(ArrayList<String> plainTextArray, ArrayList<String> unorderedBlanks, ArrayList<ArrayList<String>> unorderedDistractors) {
+    private Pair<ArrayList<String>, ArrayList<ArrayList<Pair<String, String>>>> orderBlanks(ArrayList<String> plainTextArray, 
+    		ArrayList<String> unorderedBlanks, ArrayList<ArrayList<Pair<String, String>>> unorderedDistractors) {
         ArrayList<String> blanks = new ArrayList<>();
-        ArrayList<ArrayList<String>> distractors = new ArrayList<>();
+        ArrayList<ArrayList<Pair<String, String>>> distractors = new ArrayList<>();
 
         for(int i = 0; i < plainTextArray.size(); i++) {
             String plainText = plainTextArray.get(i);
@@ -96,7 +97,7 @@ public abstract class SimpleExerciseJsonManager extends JsonManager {
      * @param constructions 	The extracted constructions
      */
     protected void addQuestionsToJson(JSONObject jsonObject, ArrayList<String> plainTextElements,
-            ArrayList<String> constructions, ArrayList<ArrayList<String>> distractors) {
+            ArrayList<String> constructions, ArrayList<ArrayList<Pair<String, String>>> distractors) {
 		StringBuilder sb = new StringBuilder();
 		int feedbackId = 1;
 		
@@ -104,7 +105,7 @@ public abstract class SimpleExerciseJsonManager extends JsonManager {
 			plainTextElement = plainTextElement.replace("*", "**"); // escape asterisks used to designate blanks
 			          
 			while(plainTextElement.contains("<span data-blank></span>")) {
-				ArrayList<String> distractorList = new ArrayList<>();
+				ArrayList<Pair<String, String>> distractorList = new ArrayList<>();
 				if(distractors.size() > 0) {
 					distractorList = distractors.get(0);
 					distractors.remove(0);
@@ -140,7 +141,7 @@ public abstract class SimpleExerciseJsonManager extends JsonManager {
      * @param construction  The correct solution
      * @return              The blank definition
      */
-    protected String getPlacehholderReplacement(String construction, ArrayList<String> distractorList, String feedbackId, JSONObject jsonObject) {
+    protected String getPlacehholderReplacement(String construction, ArrayList<Pair<String, String>> distractorList, String feedbackId, JSONObject jsonObject) {
         return "*" + construction + "*";
     }
     
@@ -151,16 +152,17 @@ public abstract class SimpleExerciseJsonManager extends JsonManager {
      * @param distractors	The distractors of the current blank
      * @return				<c>true</c> if any feedback elements were added; otherwise <c>false</c>
      */
-    protected boolean addFeedbackToJson(JSONObject jsonObject, String feedbackId, ArrayList<String> distractors) {
+    protected boolean addFeedbackToJson(JSONObject jsonObject, String feedbackId, ArrayList<Pair<String, String>> distractors) {
         JSONArray incorrectAnswers = new JSONArray();
         for(int i = 0; i < distractors.size(); i++) {
-            String distractor = distractors.get(i);
+        	Pair<String, String> distractor = distractors.get(i);
 
-            if(distractor.trim().length() > 0) {
+            if(distractor.first.trim().length() > 0) {
                 JSONObject incorrectAnswer = new JSONObject();
-                incorrectAnswer.put("incorrectAnswerText", distractor);
-                //TODO: store feedback with distractors
-                incorrectAnswer.put("incorrectAnswerFeedback", "");
+                incorrectAnswer.put("incorrectAnswerText", distractor.first);
+                if(distractor.second != null && !distractor.second.trim().equals("")) {
+                    incorrectAnswer.put("incorrectAnswerFeedback", distractor.second);
+                }
                 incorrectAnswers.add(incorrectAnswer);
             }
         }

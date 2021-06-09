@@ -362,12 +362,12 @@ public class TaskItem extends LocalizedComposite {
     /**
      * The occurrences of constructions relevant to exercise generation in the currently selected document part.
      */
-    private HashMap<String, Integer> relevantConstructionsInSelectedDocumentPart = null;
+    private HashMap<String, ArrayList<Pair<Integer, Integer>>> relevantConstructionsInSelectedDocumentPart = null;
     
     /**
      * The occurrences of constructions relevant to exercise generation in the current document.
      */
-    public HashMap<String, Integer> relevantConstructionsInEntireDocument = null;
+    public HashMap<String, ArrayList<Pair<Integer, Integer>>> relevantConstructionsInEntireDocument = null;
     
     /**
      * The possible topics for the dropdown.
@@ -470,7 +470,7 @@ public class TaskItem extends LocalizedComposite {
         	removedParts = getNotOverlappingRemovedParts();
         	newlyRemovedParts.clear();
         	
-        	relevantConstructionsInSelectedDocumentPart = new HashMap<String, Integer>();
+        	relevantConstructionsInSelectedDocumentPart = new HashMap<String, ArrayList<Pair<Integer, Integer>>>();
         	calculateConstructionsOccurrences(relevantConstructionsInSelectedDocumentPart);
         	
         	btnApplyDocumentSelection.setEnabled(false);
@@ -802,9 +802,9 @@ public class TaskItem extends LocalizedComposite {
         removedParts.clear();
         newlyRemovedParts.clear();
 
-		relevantConstructionsInEntireDocument = new HashMap<String, Integer>();
+		relevantConstructionsInEntireDocument = new HashMap<String, ArrayList<Pair<Integer, Integer>>>();
     	calculateConstructionsOccurrences(relevantConstructionsInEntireDocument);
-    	relevantConstructionsInSelectedDocumentPart = new HashMap<String, Integer>(relevantConstructionsInEntireDocument);  
+    	relevantConstructionsInSelectedDocumentPart = new HashMap<String, ArrayList<Pair<Integer, Integer>>>(relevantConstructionsInEntireDocument);  
 
     	String selecteTopic = getSelectedTopic();
     	drpTopic.clear();
@@ -924,7 +924,7 @@ public class TaskItem extends LocalizedComposite {
     	int nExercises = 0;
     	
     	for(String constructionToConsider : constructionsToConsider) {
-    		nExercises += relevantConstructionsInSelectedDocumentPart.get(constructionToConsider);
+    		nExercises += relevantConstructionsInSelectedDocumentPart.get(constructionToConsider).size();
     	}
     	
     	// If we use both clauses of the conditional sentence as targets, we have double the amount of blanks
@@ -987,6 +987,7 @@ public class TaskItem extends LocalizedComposite {
 	/**
      * Sets the text on whether and  how many exercises can be generated according to the selected topic and exercise type,
      * the individual parameter settings and the selected document.
+     * Hides the Generate feedback checkbox if the exercise text contains no constructions which support feedback.
      */
     private void setNumberExercisesText(int numberOfExercises) {
     	String topic = getTopic();
@@ -1041,6 +1042,39 @@ public class TaskItem extends LocalizedComposite {
     	}
 		
 		parent.setGenerateExercisesEnabled();
+		parent.setFeedbackGenerationVisiblity();
+    }
+    
+    /**
+     * Checks if any contained construction supports feedback generation.
+     * @return <c>true</c> if the selected text contains at least 1 construction which supports feedback generation; otherwise <c>false</c>.
+     */
+    public boolean supportsFeedbackGeneration() {
+    	String type = getExerciseType();
+    	String topic = getTopic();
+
+    	// If the type doesn't support feedback or the settings always result in multi-word constructions, we don't need to check the constructions
+    	if(type.equals("Mark") || type.equals("Drag") || type.equals("FiB") && topic.equals("Passive") && chkBracketsActiveSentence.getValue()) {
+    		return false;
+    	}
+    	
+    	// If we post-process the constructions, we don't know whether feedback is supported, so we enable the checkbox just in case
+    	if(topic.equals("'if'")) {
+    		return true;
+    	}          
+            
+    	for(String constructionToConsider : determineConfiguredConstructions()) {
+    		for(Pair<Integer, Integer> construction : relevantConstructionsInSelectedDocumentPart.get(constructionToConsider)) {
+
+        		if(!doc.getText().substring(construction.first, construction.second).trim().matches(".*?[\\s\\h].*?")) {
+        			// at least 1 construction does not contain a whitespace, meaning that it is a single word which thus supports feedback generation
+        			return true;
+        		}
+    		}
+    	}
+    	
+    	// If we get here, we haven't found a construction supporting feedback
+    	return false;
     }
     
     /**
@@ -1072,12 +1106,12 @@ public class TaskItem extends LocalizedComposite {
     /**
      * Calculates the occurrences of constructions in the combinations relevant to exercise generation.
      */
-    public void calculateConstructionsOccurrences(HashMap<String, Integer> relevantConstructions) {    
+    public void calculateConstructionsOccurrences(HashMap<String, ArrayList<Pair<Integer, Integer>>> relevantConstructions) {    
     	relevantConstructions.clear();
     	HashMap<String, ArrayList<Pair<Integer, Integer>>> constructionOccurrences = getConstructionsOccurrences();
 
     	for (HashMap.Entry<String, ArrayList<Pair<Integer, Integer>>> entry : constructionOccurrences.entrySet()) {
-        	relevantConstructions.put(entry.getKey(), entry.getValue().size());
+        	relevantConstructions.put(entry.getKey(), entry.getValue());
         }
 
 		int numberOfExercises = calculateNumberOfExercises();
@@ -1106,7 +1140,7 @@ public class TaskItem extends LocalizedComposite {
     	int numberOccurrences = 0;
     	
 		for(String name : getPartConstructionNames(topic, constructionName, group)) {
-			numberOccurrences += relevantConstructionsInEntireDocument.get(name);
+			numberOccurrences += relevantConstructionsInEntireDocument.get(name).size();
 		}
 
 		return numberOccurrences;
@@ -1276,7 +1310,7 @@ public class TaskItem extends LocalizedComposite {
     	
     	return new ExerciseSettings(constructions, doc.getUrl(), doc.getText(), removedParts, 
     			type, getQuiz(), distractorProperties, brackets, spnNDistractors.getValue() - 1, lblName.getValue(), 
-    			parent.chkDownloadResources.getValue(), chkOnlyText.getValue());
+    			parent.chkDownloadResources.getValue(), chkOnlyText.getValue(), parent.chkGenerateFeedback.getValue());
     }
     
     /**

@@ -26,6 +26,7 @@ import gwt.material.design.client.ui.MaterialCheckBox;
 import gwt.material.design.client.ui.MaterialCollapsible;
 import gwt.material.design.client.ui.MaterialPreLoader;
 import gwt.material.design.client.ui.MaterialTitle;
+import gwt.material.design.client.ui.MaterialToast;
 import gwt.material.design.client.ui.html.Option;
 
 public class ExerciseGenerationWidget extends LocalizedComposite implements ExerciseGenerationService {
@@ -61,6 +62,8 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     MaterialCheckBox chkDontShowCopyrightNoticeUI;
     @UiField
     MaterialCheckBox chkDownloadResources;
+    @UiField
+    MaterialCheckBox chkGenerateFeedback;
     @UiField
     MaterialButton btnCloseCopyrightNoticeUI;
     @UiField
@@ -278,6 +281,22 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
 	    	
 	    	startGenerationHandler.handle(exerciseSettings);
     	}
+    }
+    
+    /**
+     * Checks for all tasks whether they contain targets which support feedback generation.
+     * Hides the checkbox if no such task exists.
+     */
+    public void setFeedbackGenerationVisiblity() {
+    	boolean setVisible = false;
+    	for(Widget existingTask : wdgtTasks.getChildrenList()) {
+    		if (((TaskItem)existingTask).supportsFeedbackGeneration()) {
+    			setVisible = true;
+    			break;
+    		}
+    	}
+    	
+    	chkGenerateFeedback.setVisible(setVisible);
     }
 
     GenerateHandler startGenerationHandler;

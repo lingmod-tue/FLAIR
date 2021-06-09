@@ -17,12 +17,15 @@ import com.flair.server.exerciseGeneration.exerciseManagement.domManipulation.Se
 import com.flair.server.exerciseGeneration.exerciseManagement.exerciseCompilation.ClozeManager;
 import com.flair.server.exerciseGeneration.exerciseManagement.exerciseCompilation.ConstructionPreparer;
 import com.flair.server.exerciseGeneration.exerciseManagement.exerciseCompilation.DistractorManager;
+import com.flair.server.exerciseGeneration.exerciseManagement.exerciseCompilation.FeedbackManager;
 import com.flair.server.exerciseGeneration.exerciseManagement.exerciseCompilation.InstructionsManager;
 import com.flair.server.exerciseGeneration.exerciseManagement.exerciseCompilation.NlpManager;
 import com.flair.server.exerciseGeneration.exerciseManagement.jsonManagement.SimpleExerciseJsonManager;
 import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.OpenNlpParser;
 import com.flair.server.parser.SimpleNlgParser;
+import com.flair.shared.exerciseGeneration.Construction;
+import com.flair.shared.exerciseGeneration.ExerciseSettings;
 
 import edu.stanford.nlp.util.Pair;
 
@@ -61,10 +64,10 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        com.flair.shared.exerciseGeneration.Pair<ArrayList<Fragment>,com.flair.shared.exerciseGeneration.Pair<Integer,Integer>> res = new Indexer().matchHtmlToPlainText(settings.getExerciseSettings(), doc.wholeText(), nlpManager);
 	
 	        new ClozeManager().prepareBlanks(settings.getExerciseSettings(), nlpManager, res.first);
-	        com.flair.shared.exerciseGeneration.Pair<ArrayList<String>,ArrayList<ArrayList<String>>> usedConstructions 
+	        ArrayList<Construction> usedConstructions 
 	        		= new DistractorManager().generateDistractors(settings.getExerciseSettings(), nlpManager, res.first);
 		    
-	        if(usedConstructions == null || usedConstructions.first.size() == 0) {
+	        if(usedConstructions == null || usedConstructions.size() == 0) {
 	        	return null;
 	        }
 	        
@@ -92,9 +95,19 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	
 	        String taskDescription = InstructionsManager.componseTaskDescription(settings.getExerciseSettings(), nlpManager, res.first);	       
 	
-	        return new JsonComponents(orderedPlainTextElements, pureHtmlElements, usedConstructions.first,
+	        ArrayList<String> constructionTexts = new ArrayList<>();
+	        ArrayList<ArrayList<String>> distractorTexts = new ArrayList<>();
+	        for(Construction usedConstruction : usedConstructions) {
+	        	constructionTexts.add(usedConstruction.getConstructionText());
+	        	distractorTexts.add(usedConstruction.getDistractors());
+	        }
+	        
+	        ArrayList<ArrayList<Pair<String, String>>> distractors = 
+	        		new FeedbackManager().generateFeedback(usedConstructions, settings.getExerciseSettings(), nlpManager);
+	        
+	        return new JsonComponents(orderedPlainTextElements, pureHtmlElements, constructionTexts,
 	                settings.getJsonManager(), settings.getContentTypeLibrary(), settings.getResourceFolder(), 
-	                usedConstructions.second, taskDescription);
+	                distractors, taskDescription);
     	} else {
     		return null;
     	}

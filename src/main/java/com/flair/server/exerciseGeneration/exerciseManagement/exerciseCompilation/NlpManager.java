@@ -111,6 +111,17 @@ public class NlpManager {
 
         return relevantTokens;
     }
+    
+    public String getSentenceText(Pair<Integer, Integer> constructionIndices, String plainText){
+        SentenceAnnotations sent = getRelevantSentence(constructionIndices);
+        if(sent == null) {
+            return null;
+        }
+        
+		int sentenceStartIndex = sent.getTokens().get(0).beginPosition();
+		int sentenceEndIndex = sent.getTokens().get(sent.getTokens().size() - 1).endPosition();
+		return plainText.substring(sentenceStartIndex, sentenceEndIndex);
+    }
 
     /**
      * Extracts the indices of the if-clause and the main clause of a conditional sentence.

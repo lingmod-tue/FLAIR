@@ -22,9 +22,8 @@ public class DistractorManager {
      * Generates distractors for Single Choice exercises.
      * @param exerciseSettings  The exercise settings
      */
-    public Pair<ArrayList<String>, ArrayList<ArrayList<String>>> generateDistractors(ExerciseSettings exerciseSettings, NlpManager nlpManager, ArrayList<Fragment> fragments) {
-    	ArrayList<String> usedConstructions = new ArrayList<>();
-    	ArrayList<ArrayList<String>> usedDistractors = new ArrayList<>();
+    public ArrayList<Construction> generateDistractors(ExerciseSettings exerciseSettings, NlpManager nlpManager, ArrayList<Fragment> fragments) {
+    	ArrayList<Construction> usedConstructions = new ArrayList<>();
 		ArrayList<Integer> constructionsToRemove = new ArrayList<>();
 
         if(exerciseSettings.getContentType().equals("Select")) {
@@ -311,7 +310,8 @@ public class DistractorManager {
                     			construction.getDistractors().add(distractor);
                     		}
                 		}
-        				usedConstructions.add(text);
+                		construction.setConstructionText(text);
+        				usedConstructions.add(construction);
                 	}
                 }
         	}
@@ -362,8 +362,9 @@ public class DistractorManager {
     		        }
     		        if(blank.getConstruction() != null && isUsed) {
     		        	Pair<Integer, Integer> constructionIndices = blank.getConstruction().getConstructionIndices();
-        				usedConstructions.add(exerciseSettings.getPlainText().substring(constructionIndices.first, constructionIndices.second));
-        				usedDistractors.add(blank.getConstruction().getDistractors());
+    		        	String constructionText = exerciseSettings.getPlainText().substring(constructionIndices.first, constructionIndices.second);
+        				blank.getConstruction().setConstructionText(constructionText);
+    		        	usedConstructions.add(blank.getConstruction());
     		        }
 	    		}
 	    		for(Blank blank : blanksToRemove) {
@@ -372,7 +373,7 @@ public class DistractorManager {
 	    	}
         }
         
-        return new Pair<>(usedConstructions, usedDistractors);
+        return usedConstructions;
     }
     
     /**
