@@ -149,21 +149,37 @@ public class HtmlManager {
     	
         if(doc != null) {
         	for(Element element : doc.select("base")) {
+        		if (Thread.currentThread().isInterrupted()) {
+    	        	return null;
+    	        }
+        		
         		url = getAttributeValue(element, "href");
         	}
         	for(Element element : doc.select("blockquote,q,del,ins,a,area,button,input,form")) {
+        		if (Thread.currentThread().isInterrupted()) {
+    	        	return null;
+    	        }
+        		
         		DownloadedResource resource = handleResourceAttribute(element, url, getAttributeName(element.tagName().toLowerCase()), resourceDownloader, true);
         		if(resource != null) {
         			downloadedResources.add(resource);
         		}
         	}
         	for(Element element : doc.select("audio,track,video,embed")) {
+        		if (Thread.currentThread().isInterrupted()) {
+    	        	return null;
+    	        }
+        		
         		DownloadedResource resource = handleResourceAttribute(element, url, "src", resourceDownloader, true);
         		if(resource != null) {
         			downloadedResources.add(resource);
         		}
         	}
         	for(Element element : doc.select("object")) {
+        		if (Thread.currentThread().isInterrupted()) {
+    	        	return null;
+    	        }
+        		
         		String baseUrl = getAttributeValue(element, "codebase");
                 if(baseUrl == null){
                     baseUrl = url;
@@ -191,6 +207,10 @@ public class HtmlManager {
         		}
             }
         	for(Element element : doc.select("img,source")) {
+        		if (Thread.currentThread().isInterrupted()) {
+    	        	return null;
+    	        }
+        		
         		DownloadedResource resource = handleResourceAttribute(element, url, "src", resourceDownloader, false);
         		if(resource != null) {
         			downloadedResources.add(resource);
@@ -198,6 +218,10 @@ public class HtmlManager {
                 downloadedResources.addAll(handleSrcset(element, url, resourceDownloader, "srcset"));
             }
         	for(Element element : doc.select("link")) {  
+        		if (Thread.currentThread().isInterrupted()) {
+    	        	return null;
+    	        }
+        		
         		DownloadedResource resource = handleResourceAttribute(element, url, "href", resourceDownloader, false);
         		if(resource != null) {
         			downloadedResources.add(resource);
@@ -205,6 +229,10 @@ public class HtmlManager {
         		downloadedResources.addAll(handleSrcset(element, url, resourceDownloader, "imagesrcset"));
             }
         	for(Element element : doc.select("iframe")) {
+        		if (Thread.currentThread().isInterrupted()) {
+    	        	return null;
+    	        }
+        		
         		String content = getAttributeValue(element, "srcdoc");
                 if(content != null) {
                 	try {

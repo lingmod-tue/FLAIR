@@ -26,6 +26,8 @@ public abstract class ExerciseGenerator {
 	 */
     public abstract byte[] generateExercise(ContentTypeSettings settings,
     		CoreNlpParser parser, SimpleNlgParser generator, OpenNlpParser lemmatizer, ResourceDownloader resourceDownloader);
+    
+    public abstract void cancelGeneration();
 
     /**
      * Writes the extracted components to the JSON configuration file and zips everything into a H5P package.

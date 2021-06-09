@@ -30,7 +30,7 @@ public final class AsyncJob implements Cancellable {
 		}
 
 		synchronized void cancel() {
-			wrapper.cancel(false);
+			wrapper.cancel(true);
 		}
 
 		ExecutingTask(AsyncTask<R> wrapped, AsyncContinuation<R> continuation) {

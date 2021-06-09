@@ -39,23 +39,23 @@ public class ExGenTask implements AsyncTask<ExGenTask.Result> {
 
 	@Override
 	public Result run() {		
-		Pair<String, byte[]> file;
+		Pair<String, byte[]> file = new Pair<>(null, null);
 		long startTime = 0;
 		boolean error = false;
 
+		ExerciseManager exerciseManager = new ExerciseManager(settings);
 		try {
 			startTime = System.currentTimeMillis();
 			file = ThreadPool.get().invokeAndWait(new FutureTask<>(() -> {
-				ExerciseManager exerciseManger = new ExerciseManager();
-		        return exerciseManger.generateExercises(settings, parser, generator, lemmatizer, resourceDownloader);
+		        return exerciseManager.generateExercises(settings, parser, generator, lemmatizer, resourceDownloader);
 			}), Constants.EXERCISE_GENERATION_TASK_TIMEOUT, Constants.TIMEOUT_UNIT);
 		} catch (TimeoutException ex) {
 			ServerLogger.get().error("Exercise generation task timed-out.");
-			file = null;
+		} catch(InterruptedException ex) {
+			exerciseManager.stopExecution();
 			error = true;
 		} catch (Throwable ex) {
 			ServerLogger.get().error(ex, "Exercise generation task encountered an error. Exception: " + ex.toString());
-			file = null;
 			error = true;
 		}
 

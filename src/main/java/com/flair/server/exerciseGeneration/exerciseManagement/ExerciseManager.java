@@ -12,6 +12,19 @@ import edu.stanford.nlp.util.Pair;
 
 public class ExerciseManager {
 
+	private ExerciseGenerator exerciseGenerator;
+	
+	public ExerciseManager(ContentTypeSettings settings) {
+		this.exerciseGenerator = settings.getExerciseGenerator();
+	}
+	
+	/**
+	 * Stops the execution if the task is interrupted.
+	 */
+	public void stopExecution() {
+		exerciseGenerator.cancelGeneration();
+	}
+	
 	/**
 	 * Generates a H5P exercise for the provided settings.
 	 * @param settings	The exercise settings

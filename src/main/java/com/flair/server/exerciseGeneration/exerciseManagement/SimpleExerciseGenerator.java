@@ -31,6 +31,8 @@ import edu.stanford.nlp.util.Pair;
 
 public class SimpleExerciseGenerator extends ExerciseGenerator {
 
+	private boolean isCancelled = false;
+	
     @Override
 	public byte[] generateExercise(ContentTypeSettings settings,
 			CoreNlpParser parser, SimpleNlgParser generator, OpenNlpParser lemmatizer, ResourceDownloader resourceDownloader) {
@@ -58,16 +60,38 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        // We cannot operate on the same document for all exercises (in-place modifications), so we create a copy
 	        Element doc = Jsoup.parse(settings.getDoc().toString());
 	
+	        if (isCancelled) {
+	        	return null;
+	        }
+	        
 	        NlpManager nlpManager = new NlpManager(parser, generator, settings.getExerciseSettings().getPlainText(), lemmatizer);
 	        
 	        new ConstructionPreparer().prepareConstructions(settings.getExerciseSettings(), nlpManager);	
+	        
+	        if (isCancelled) {
+	        	return null;
+	        }
+	        
 	        com.flair.shared.exerciseGeneration.Pair<ArrayList<Fragment>,com.flair.shared.exerciseGeneration.Pair<Integer,Integer>> res = new Indexer().matchHtmlToPlainText(settings.getExerciseSettings(), doc.wholeText(), nlpManager);
 	
+	        if (isCancelled) {
+	        	return null;
+	        }
+	        
 	        new ClozeManager().prepareBlanks(settings.getExerciseSettings(), nlpManager, res.first);
+	        
+	        if (isCancelled) {
+	        	return null;
+	        }
+	        
 	        ArrayList<Construction> usedConstructions 
 	        		= new DistractorManager().generateDistractors(settings.getExerciseSettings(), nlpManager, res.first);
 		    
 	        if(usedConstructions == null || usedConstructions.size() == 0) {
+	        	return null;
+	        }
+	        
+	        if (isCancelled) {
 	        	return null;
 	        }
 	        
@@ -78,23 +102,47 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        	HtmlManager.removeLinks(doc);
 	        }
 	        
+	        if (isCancelled) {
+	        	return null;
+	        }
+	        
 	        ArrayList<DownloadedResource> resources = new HtmlManager().extractResources(settings.getExerciseSettings().getUrl(), 
 	        		resourceDownloader, doc);
+	        
+	        if (isCancelled) {
+	        	return null;
+	        }
+	        
 	        settings.getResources().addAll(resources);
 	        SentenceManager sentenceManager = new SentenceManager();
 	        ArrayList<String> sentenceHtml = sentenceManager.extractSentencesFromDom(matchResult.getSentenceBoundaryElements());
-	        HtmlSplitter splitter = new HtmlSplitter();
-	
+
+	        if (isCancelled) {
+	        	return null;
+	        }
+	        
 	        ArrayList<String> orderedPlainTextElements = new ArrayList<>();
-	        ArrayList<String> pureHtmlElements = splitter.preparePureHtmlElements(doc.toString(), sentenceHtml,
+	        ArrayList<String> pureHtmlElements = new HtmlSplitter().preparePureHtmlElements(doc.toString(), sentenceHtml,
 	        		matchResult.getPlainTextElements(), orderedPlainTextElements);
 	
+	        if (isCancelled) {
+	        	return null;
+	        }
+	        
 	        if (settings.isEscapeAsterisksInHtml()) {
 	            ((SimpleExerciseJsonManager)settings.getJsonManager()).escapeAsterisks(pureHtmlElements);
 	        }
 	
+	        if (isCancelled) {
+	        	return null;
+	        }
+	        
 	        String taskDescription = InstructionsManager.componseTaskDescription(settings.getExerciseSettings(), nlpManager, res.first);	       
 	
+	        if (isCancelled) {
+	        	return null;
+	        }
+	        
 	        ArrayList<String> constructionTexts = new ArrayList<>();
 	        ArrayList<ArrayList<String>> distractorTexts = new ArrayList<>();
 	        for(Construction usedConstruction : usedConstructions) {
@@ -105,6 +153,10 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        ArrayList<ArrayList<Pair<String, String>>> distractors = 
 	        		new FeedbackManager().generateFeedback(usedConstructions, settings.getExerciseSettings(), nlpManager);
 	        
+	        if (isCancelled) {
+	        	return null;
+	        }
+	        
 	        return new JsonComponents(orderedPlainTextElements, pureHtmlElements, constructionTexts,
 	                settings.getJsonManager(), settings.getContentTypeLibrary(), settings.getResourceFolder(), 
 	                distractors, taskDescription);
@@ -112,5 +164,10 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
     		return null;
     	}
     }
+
+	@Override
+	public void cancelGeneration() {
+		isCancelled = true;
+	}
 
 }
