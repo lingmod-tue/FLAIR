@@ -1,13 +1,52 @@
 package com.flair.client.model;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import com.flair.client.ClientEndPoint;
 import com.flair.client.interop.messaging.ClientMessageChannel;
 import com.flair.client.interop.messaging.MessagePoller;
-import com.flair.client.localization.*;
-import com.flair.client.model.interfaces.*;
+import com.flair.client.localization.CommonLocalizationTags;
+import com.flair.client.localization.DefaultLocalizationProviders;
+import com.flair.client.localization.GrammaticalConstructionLocalizationProvider;
+import com.flair.client.localization.LocalizationEngine;
+import com.flair.client.localization.LocalizationStringTable;
+import com.flair.client.model.interfaces.AbstractDocumentAnnotator;
+import com.flair.client.model.interfaces.AbstractDocumentRanker;
+import com.flair.client.model.interfaces.AbstractWebRankerCore;
+import com.flair.client.model.interfaces.ConstructionSettingsProfile;
+import com.flair.client.model.interfaces.DocumentAnnotatorInput;
+import com.flair.client.model.interfaces.DocumentAnnotatorOutput;
+import com.flair.client.model.interfaces.DocumentRankerInput;
+import com.flair.client.model.interfaces.DocumentRankerOutput;
+import com.flair.client.model.interfaces.SettingsExportService;
+import com.flair.client.model.interfaces.WebRankerAnalysis;
 import com.flair.client.presentation.ToastNotification;
-import com.flair.client.presentation.interfaces.*;
+import com.flair.client.presentation.interfaces.AbstractDocumentPreviewPane;
+import com.flair.client.presentation.interfaces.AbstractDocumentResultsPane;
+import com.flair.client.presentation.interfaces.AbstractRankerSettingsPane;
+import com.flair.client.presentation.interfaces.AbstractResultItem;
 import com.flair.client.presentation.interfaces.AbstractResultItem.Type;
+import com.flair.client.presentation.interfaces.AbstractWebRankerPresenter;
+import com.flair.client.presentation.interfaces.CompletedResultItem;
+import com.flair.client.presentation.interfaces.CorpusUploadService;
+import com.flair.client.presentation.interfaces.CustomKeywordService;
+import com.flair.client.presentation.interfaces.DocumentCompareService;
+import com.flair.client.presentation.interfaces.DocumentPreviewPaneInput;
+import com.flair.client.presentation.interfaces.ExerciseGenerationService;
+import com.flair.client.presentation.interfaces.HistoryViewerService;
+import com.flair.client.presentation.interfaces.InProgressResultItem;
+import com.flair.client.presentation.interfaces.OperationCancelService;
+import com.flair.client.presentation.interfaces.QuestionGeneratorPreviewService;
+import com.flair.client.presentation.interfaces.SettingsUrlExporterView;
+import com.flair.client.presentation.interfaces.UserPromptService;
+import com.flair.client.presentation.interfaces.VisualizerService;
+import com.flair.client.presentation.interfaces.WebSearchService;
 import com.flair.client.presentation.widgets.GenericWeightSlider;
 import com.flair.client.presentation.widgets.GrammaticalConstructionWeightSlider;
 import com.flair.client.presentation.widgets.LanguageSpecificConstructionSliderBundle;
@@ -21,7 +60,12 @@ import com.flair.shared.interop.dtos.DocumentDTO;
 import com.flair.shared.interop.dtos.RankableDocument;
 import com.flair.shared.interop.dtos.RankableWebSearchResult;
 import com.flair.shared.interop.dtos.UploadedDocument;
-import com.flair.shared.interop.messaging.client.*;
+import com.flair.shared.interop.messaging.client.CmActiveOperationCancel;
+import com.flair.shared.interop.messaging.client.CmCustomCorpusParseStart;
+import com.flair.shared.interop.messaging.client.CmExGenStart;
+import com.flair.shared.interop.messaging.client.CmQuestionGenEagerParse;
+import com.flair.shared.interop.messaging.client.CmQuestionGenStart;
+import com.flair.shared.interop.messaging.client.CmWebSearchParseStart;
 import com.flair.shared.interop.messaging.server.SmCustomCorpusEvent;
 import com.flair.shared.interop.messaging.server.SmError;
 import com.flair.shared.interop.messaging.server.SmExGenEvent;
@@ -34,10 +78,9 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.Window;
+
 import gwt.material.design.client.constants.Color;
 import gwt.material.design.client.ui.MaterialToast;
-
-import java.util.*;
 
 /*
  * Monolithic controller component for the various widgets and services
@@ -1058,12 +1101,8 @@ public class WebRankerCore implements AbstractWebRankerCore {
     }
     
     private void onSmExGenEvent(SmExGenEvent msg) {
-        //switch (msg.getEvent()) {
-        //    case JOB_COMPLETE:
-                exGenPoller.stop();
-                exGen.provideForDownload(msg.getFile(), msg.getFileName());
-        //        break;
-        //}
+        exGenPoller.stop();        
+        exGen.provideForDownload(msg.getFile(), msg.getFileName());
     }
 
     private void onRestoreProcess(WebRankerAnalysis p) {

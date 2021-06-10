@@ -35,7 +35,7 @@ public class SmExGenEvent implements Message.Payload {
 
 	@Override
 	public String name() {
-		return "SmQuestionGenEvent";
+		return "SmExGenEvent";
 	}
 	@Override
 	public String desc() {

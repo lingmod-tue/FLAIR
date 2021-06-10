@@ -7,9 +7,17 @@ import com.flair.shared.interop.InteropService;
 import com.flair.shared.interop.messaging.Message;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class InteropServiceImpl extends RemoteServiceServlet implements InteropService {
 	private void validateClientId(ClientIdToken clientId) throws InvalidClientIdentificationTokenException {
@@ -41,4 +49,29 @@ public class InteropServiceImpl extends RemoteServiceServlet implements InteropS
 		validateClientId(clientId);
 		return ServerMessagingSwitchboard.get().onPullToClient(clientId);
 	}
+	
+    @Override
+    public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
+    	Thread currentThread = Thread.currentThread();
+        Timer timer = new Timer();
+        TimerTask timerTask = new TimerTask() {
+      	  @Override
+      	  public void run() {
+      		  try {
+      			  currentThread.interrupt();
+      			  currentThread.stop();
+	        	  //currentThread.destroy();
+      		  } catch(Exception e) {}
+      	  }
+      	};
+      	
+      	// Kill the thread after 10mins
+      	// The methods are deprecated, but the RCP implementation doesn't care for interrupts, so we have to kill the thread the hard way
+        timer.schedule(timerTask, (long)(10000*60));
+        
+        super.service(req, res);
+        
+        timerTask.cancel();
+        timer = null;
+    }
 }

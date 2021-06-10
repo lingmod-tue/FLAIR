@@ -1,5 +1,14 @@
 package com.flair.client.interop.messaging;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
+
 import com.flair.client.ClientEndPoint;
 import com.flair.client.utilities.ClientLogger;
 import com.flair.shared.exceptions.InvalidClientIdentificationTokenException;
@@ -10,8 +19,6 @@ import com.flair.shared.interop.messaging.MessageReceivedHandler;
 import com.flair.shared.interop.messaging.server.SmClientMessageConsumed;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.rpc.AsyncCallback;
-
-import java.util.*;
 
 public class ClientMessageChannel {
 	private final class MessagePollerImpl implements MessagePoller {
@@ -50,7 +57,7 @@ public class ClientMessageChannel {
 
 			this.remainingTicks -= elapsedTicks;
 			this.elapsedTicks += elapsedTicks;
-
+			
 			inbox.addAll(newMessages);
 
 			if (this.elapsedTicks >= timeout && inbox.isEmpty()) {
@@ -62,9 +69,9 @@ public class ClientMessageChannel {
 				} catch (Throwable ex) {
 					ClientLogger.get().error(ex, "Message timeout handler raised an exception! Exception: " + ex);
 				}
+				this.elapsedTicks = 0;
 			} else if (this.remainingTicks <= 0) {
 				this.remainingTicks = interval;
-				this.elapsedTicks = 0;
 
 				for (Message<?> msg : inbox) {
 					P payload = (P) msg.getPayload();
