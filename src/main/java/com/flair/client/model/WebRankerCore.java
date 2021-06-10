@@ -1101,8 +1101,8 @@ public class WebRankerCore implements AbstractWebRankerCore {
     }
     
     private void onSmExGenEvent(SmExGenEvent msg) {
-        exGenPoller.stop();        
-        exGen.provideForDownload(msg.getFile(), msg.getFileName());
+        exGenPoller.stop();  
+	    exGen.provideForDownload(msg.getFile(), msg.getFileName());
     }
 
     private void onRestoreProcess(WebRankerAnalysis p) {
@@ -1429,5 +1429,14 @@ public class WebRankerCore implements AbstractWebRankerCore {
     public void addEndOperationHandler(EventHandler<EndOperation> handler) {
         eventEndProc.addHandler(handler);
     }
+
+	@Override
+	public void handleServerTimeout() {
+		if(exGenPoller.isRunning()) {
+			exGenPoller.stop();
+			ToastNotification.fire(getLocalizedString(LocalizationTags.OP_TIMEDOUT.toString()), 5000);
+			exGen.enableButton();
+		}
+	}
 
 }

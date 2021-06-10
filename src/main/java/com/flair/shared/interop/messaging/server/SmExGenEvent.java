@@ -4,8 +4,7 @@ import com.flair.shared.interop.messaging.Message;
 
 public class SmExGenEvent implements Message.Payload {
 	public enum EventType {
-		JOB_COMPLETE,
-		GENERATION_COMPLETE
+		JOB_COMPLETE
 	}
 
 	private EventType event = EventType.JOB_COMPLETE;

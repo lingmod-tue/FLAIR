@@ -65,4 +65,6 @@ public interface AbstractWebRankerCore {
 
 	void addBeginOperationHandler(GenericEventSource.EventHandler<BeginOperation> handler);
 	void addEndOperationHandler(GenericEventSource.EventHandler<EndOperation> handler);
+	
+	void handleServerTimeout();
 }

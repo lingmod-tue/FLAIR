@@ -260,10 +260,20 @@ public class ClientMessageChannel {
 		if (pollingServer)
 			return;
 
+		Timer responseTimer = new Timer() {
+			@Override
+			public void run() {
+				ClientEndPoint.get().getWebRanker().handleServerTimeout();
+				updateTimerState();
+			}
+		};
+		
 		pollingServer = true;
 		AsyncCallback<ArrayList<Message<? extends Message.Payload>>> callback = new AsyncCallback<ArrayList<Message<? extends Message.Payload>>>() {
 			@Override
 			public void onFailure(Throwable caught) {
+				responseTimer.cancel();
+				
 				ClientLogger.get().error(caught, "Message retrieval failed with the following exception: " + caught);
 				updateTimerState();
 
@@ -274,6 +284,8 @@ public class ClientMessageChannel {
 			}
 			@Override
 			public void onSuccess(ArrayList<Message<? extends Message.Payload>> result) {
+				responseTimer.cancel();
+
 				processIncomingServerMessages(result);
 				updateTimerState();
 
@@ -281,6 +293,9 @@ public class ClientMessageChannel {
 			}
 		};
 		interopService.MessagingReceive(clientId, callback);
+      	
+      	// time out after 5mins
+		responseTimer.schedule(5000*60); 
 	}
 
 	private void processIncomingServerMessages(List<Message<? extends Message.Payload>> messages) {

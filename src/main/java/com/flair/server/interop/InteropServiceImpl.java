@@ -65,9 +65,9 @@ public class InteropServiceImpl extends RemoteServiceServlet implements InteropS
       	  }
       	};
       	
-      	// Kill the thread after 10mins
+      	// Kill the thread after 5mins
       	// The methods are deprecated, but the RCP implementation doesn't care for interrupts, so we have to kill the thread the hard way
-        timer.schedule(timerTask, (long)(10000*60));
+        timer.schedule(timerTask, (long)(5000*60));
         
         super.service(req, res);
         

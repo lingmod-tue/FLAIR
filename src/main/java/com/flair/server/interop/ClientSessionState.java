@@ -33,6 +33,8 @@ import edu.stanford.nlp.util.Pair;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.stream.Collectors;
 
 class ClientSessionState {
@@ -383,7 +385,7 @@ class ClientSessionState {
 		messageChannel.send(msg);
 
 		// reset operation state
-		endActiveOperation(false);
+		endActiveOperation(false);               
 	}
 	
 	
