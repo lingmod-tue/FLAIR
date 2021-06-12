@@ -94,6 +94,23 @@ public class NlpManager {
         }
         return null;
     }
+    
+    /**
+     * Identifies the index of the sentence which contains the construction delimited by the given indices.
+     * @param constructionIndices	The start and end indices of the construction in the plain text
+     * @return						The index of the sentence containing the construction in the list of NLP processed sentences
+     */
+    private Integer getSentenceIndex(Pair<Integer, Integer> constructionIndices) {
+    	for (int i = 0; i < sentences.size(); i++) {
+    		SentenceAnnotations sent = sentences.get(i);
+    		
+            if (sent.getTokens().get(0).beginPosition() <= constructionIndices.first && 
+            		sent.getTokens().get(sent.getTokens().size() - 1).endPosition() >= constructionIndices.second) {
+                return i;
+            }
+        }
+        return null;
+    }
 
     /**
      * Determines the tokens within the construction boundaries.
@@ -121,6 +138,39 @@ public class NlpManager {
 		int sentenceStartIndex = sent.getTokens().get(0).beginPosition();
 		int sentenceEndIndex = sent.getTokens().get(sent.getTokens().size() - 1).endPosition();
 		return plainText.substring(sentenceStartIndex, sentenceEndIndex);
+    }
+    
+    /**
+     * Determines the string values of the sentence preceding that of the construction and its previous sentence.
+     * @param constructionIndices	The start and end indices of the plain text construction
+     * @param plainText				The plain text
+     * @return						The string values of the sentence preceding that in which the construction is contained 
+     * 								and the preceding sentence and the construction sentence split into before construction, construction and after construction
+     */
+    public Pair<String, String[]> getSentenceTexts(Pair<Integer, Integer> constructionIndices, String plainText){
+    	Integer sentenceIndex = getSentenceIndex(constructionIndices);
+    	if(sentenceIndex == null) {
+    		return null;
+    	}
+    	
+    	// If we don't have a preceding sentence, we set the empty string
+    	String previousSentence = "";
+    	if(sentenceIndex > 0) {
+    		List<CoreLabel> previousSent = sentences.get(sentenceIndex - 1).getTokens();
+    		int previousSentenceStartIndex = previousSent.get(0).beginPosition();
+    		int previousSentenceEndIndex = previousSent.get(previousSent.size() - 1).endPosition();
+    		previousSentence = plainText.substring(previousSentenceStartIndex, previousSentenceEndIndex);
+    	}
+        
+    	List<CoreLabel> sent = sentences.get(sentenceIndex).getTokens();
+		int sentenceStartIndex = sent.get(0).beginPosition();
+		int sentenceEndIndex = sent.get(sent.size() - 1).endPosition();
+		
+		String beforeConstruction = plainText.substring(sentenceStartIndex, constructionIndices.first);
+		String construction = plainText.substring(constructionIndices.first, constructionIndices.second);
+		String afterConstruction = plainText.substring(constructionIndices.second, sentenceEndIndex);
+		
+		return new Pair<>(previousSentence, new String[] {beforeConstruction, construction, afterConstruction});
     }
 
     /**
