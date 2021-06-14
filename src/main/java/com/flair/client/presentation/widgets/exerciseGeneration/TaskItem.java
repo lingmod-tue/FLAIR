@@ -1058,6 +1058,7 @@ public class TaskItem extends LocalizedComposite {
     		return false;
     	}
     	
+    	/*
     	// If we post-process the constructions, we don't know whether feedback is supported, so we enable the checkbox just in case
     	if(topic.equals("'if'")) {
     		return true;
@@ -1075,6 +1076,9 @@ public class TaskItem extends LocalizedComposite {
     	
     	// If we get here, we haven't found a construction supporting feedback
     	return false;
+    	*/
+    	
+    	return true;
     }
     
     /**
