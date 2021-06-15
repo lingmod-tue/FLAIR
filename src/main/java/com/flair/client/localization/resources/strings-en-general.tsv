@@ -105,8 +105,8 @@ DocumentPreviewPane	COLUMN_WEIGHT	Weight
 DocumentPreviewPane	COLUMN_HITS	Count
 DocumentPreviewPane	COLUMN_RELFREQ	Relative Frequency %
 
-ExerciseGenerationWidget	btnAddTask	Add Task
-ExerciseGenerationWidget	btnDeleteTasks	Delete all Tasks
+ExerciseGenerationWidget	btnAddTask	Add Exercise
+ExerciseGenerationWidget	btnDeleteTasks	Delete all Exercises
 ExerciseGenerationWidget	btnGenerateExercises	Generate Exercises
 
 TaskItem	icoInvalid	No exercises can be generated for the current settings.

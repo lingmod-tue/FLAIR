@@ -120,11 +120,11 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
      * Creates a new task widget and adds it to the displayed tasks.
      */
     private void addTask() {
-    	String name = "Task 1";
+    	String name = "Exercise 1";
     	List<Widget> existingTasks = wdgtTasks.getChildrenList();
     	if(existingTasks.size() > 0) {
     		int lastNumber = Integer.parseInt(((TaskItem)existingTasks.get(existingTasks.size() - 1)).lblName.getText().split(" ")[1]);
-    		name = "Task " + (lastNumber + 1);
+    		name = "Exercise " + (lastNumber + 1);
     	}
     	TaskItem newTask = new TaskItem(this, name);
     	newTask.drpQuiz.addSelectionHandler(new SelectComboHandler<Option>()
