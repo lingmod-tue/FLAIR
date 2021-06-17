@@ -1,4 +1,4 @@
-package com.flair.server.exerciseGeneration.exerciseManagement.exerciseCompilation;
+package com.flair.server.exerciseGeneration.exerciseManagement.temp;
 
 import com.flair.shared.exerciseGeneration.Construction;
 import com.flair.shared.exerciseGeneration.DetailedConstruction;
