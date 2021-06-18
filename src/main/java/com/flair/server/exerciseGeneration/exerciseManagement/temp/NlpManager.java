@@ -146,8 +146,9 @@ public class NlpManager {
      * @param plainText				The plain text
      * @return						The string values of the sentence preceding that in which the construction is contained 
      * 								and the preceding sentence and the construction sentence split into before construction, construction and after construction
+     * 								and the start index of the sentence
      */
-    public Pair<String, String[]> getSentenceTexts(Pair<Integer, Integer> constructionIndices, String plainText){
+    public Pair<Pair<String, String[]>, Integer> getSentenceTexts(Pair<Integer, Integer> constructionIndices, String plainText){
     	Integer sentenceIndex = getSentenceIndex(constructionIndices);
     	if(sentenceIndex == null) {
     		return null;
@@ -170,7 +171,7 @@ public class NlpManager {
 		String construction = plainText.substring(constructionIndices.first, constructionIndices.second);
 		String afterConstruction = plainText.substring(constructionIndices.second, sentenceEndIndex);
 		
-		return new Pair<>(previousSentence, new String[] {beforeConstruction, construction, afterConstruction});
+		return new Pair<>(new Pair<>(previousSentence, new String[] {beforeConstruction, construction, afterConstruction}), sentenceStartIndex);
     }
 
     /**

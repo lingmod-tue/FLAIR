@@ -112,16 +112,16 @@ public class FeedbackManager {
 		
 		if(settings.getContentType().equals("Select") || settings.getContentType().equals("FiB") && !settings.getBrackets().contains(BracketsProperties.ACTIVE_SENTENCE)) {
 			for(Construction construction : usedConstructions) {
-				com.flair.shared.exerciseGeneration.Pair<String, String[]> sentenceTexts = nlpManager.getSentenceTexts(construction.getConstructionIndices(), settings.getPlainText());
+				com.flair.shared.exerciseGeneration.Pair<com.flair.shared.exerciseGeneration.Pair<String, String[]>, Integer> sentenceTexts = nlpManager.getSentenceTexts(construction.getConstructionIndices(), settings.getPlainText());
 				boolean supportsFeedback = false;
 				if(sentenceTexts != null) {
 					JSONObject item = new JSONObject();
 					item.put("prompt", sentenceTexts.first);
-    				String targetAnswer = sentenceTexts.second[0] + sentenceTexts.second[1] + sentenceTexts.second[2];
+    				String targetAnswer = sentenceTexts.first.second[0] + sentenceTexts.first.second[1] + sentenceTexts.first.second[2];
 					item.put("unmodifiedDocumentSentence", targetAnswer);
 					JSONArray targetSpan = new JSONArray();
-					targetSpan.add(construction.getConstructionIndices().first);
-					targetSpan.add(construction.getConstructionIndices().second);
+					targetSpan.add(construction.getConstructionIndices().first - sentenceTexts.second);
+					targetSpan.add(construction.getConstructionIndices().second - sentenceTexts.second);
 					item.put("targetSpan", targetSpan);
 					activityItems.add(item);
 					supportsFeedback = true;
