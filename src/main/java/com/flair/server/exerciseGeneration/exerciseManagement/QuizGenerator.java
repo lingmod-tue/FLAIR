@@ -9,8 +9,7 @@ import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagem
 import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.OpenNlpParser;
 import com.flair.server.parser.SimpleNlgParser;
-
-import edu.stanford.nlp.util.Pair;
+import com.flair.shared.exerciseGeneration.Pair;
 
 public class QuizGenerator extends ExerciseGenerator {
 	

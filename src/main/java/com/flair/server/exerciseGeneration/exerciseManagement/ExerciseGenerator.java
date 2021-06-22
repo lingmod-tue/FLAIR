@@ -10,8 +10,7 @@ import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.OpenNlpParser;
 import com.flair.server.parser.SimpleNlgParser;
 import com.flair.server.utilities.ServerLogger;
-
-import edu.stanford.nlp.util.Pair;
+import com.flair.shared.exerciseGeneration.Pair;
 
 import java.io.IOException;
 import java.util.ArrayList;

@@ -3,8 +3,7 @@ package com.flair.server.exerciseGeneration.exerciseManagement;
 import java.util.ArrayList;
 
 import com.flair.server.exerciseGeneration.exerciseManagement.jsonManagement.JsonManager;
-
-import edu.stanford.nlp.util.Pair;
+import com.flair.shared.exerciseGeneration.Pair;
 
 public class JsonComponents {
 

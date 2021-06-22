@@ -5,18 +5,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Properties;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
@@ -32,8 +27,7 @@ import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.exerciseGeneration.BracketsProperties;
 import com.flair.shared.exerciseGeneration.Construction;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
-
-import edu.stanford.nlp.util.Pair;
+import com.flair.shared.exerciseGeneration.Pair;
 
 public class FeedbackManager {
 
@@ -56,9 +50,9 @@ public class FeedbackManager {
 	 * @param nlpManager		The NLP manager
 	 * @return					A list of distractors with associated feedback per construction
 	 */
-    public ArrayList<ArrayList<Pair<String, String>>> generateFeedback(ArrayList<Construction> usedConstructions, 
+    public ArrayList<ArrayList<Pair<Pair<String, Boolean>, String>>> generateFeedback(ArrayList<Construction> usedConstructions, 
     		ExerciseSettings settings, NlpManager nlpManager) {
-    	ArrayList<ArrayList<Pair<String, String>>> distractors = new ArrayList<>();
+    	ArrayList<ArrayList<Pair<Pair<String, Boolean>, String>>> distractors = new ArrayList<>();
     	JSONArray responseObject = null;
     	
     	if(settings.isGenerateFeedback() && settings.getContentType().equals("FiB") || settings.getContentType().equals("Select") ) {
@@ -89,8 +83,8 @@ public class FeedbackManager {
     	// If we don't get distractors from the feedback generation, we use the ones we generated ourselves
 		if(distractors == null || distractors.size() == 0) {
 			for(Construction construction : settings.getConstructions()) {
-				ArrayList<Pair<String, String>> currentDistractors = new ArrayList<>();
-				for(String distractor : construction.getDistractors()) {
+				ArrayList<Pair<Pair<String, Boolean>, String>> currentDistractors = new ArrayList<>();
+				for(Pair<String, Boolean> distractor : construction.getDistractors()) {
 					currentDistractors.add(new Pair<>(distractor, null));
 				}
 				distractors.add(currentDistractors);
@@ -112,11 +106,11 @@ public class FeedbackManager {
 		
 		if(settings.getContentType().equals("Select") || settings.getContentType().equals("FiB") && !settings.getBrackets().contains(BracketsProperties.ACTIVE_SENTENCE)) {
 			for(Construction construction : usedConstructions) {
-				com.flair.shared.exerciseGeneration.Pair<com.flair.shared.exerciseGeneration.Pair<String, String[]>, Integer> sentenceTexts = nlpManager.getSentenceTexts(construction.getConstructionIndices(), settings.getPlainText());
+				Pair<Pair<String, String[]>, Integer> sentenceTexts = nlpManager.getSentenceTexts(construction.getConstructionIndices(), settings.getPlainText());
 				boolean supportsFeedback = false;
 				if(sentenceTexts != null) {
 					JSONObject item = new JSONObject();
-					item.put("prompt", sentenceTexts.first);
+					item.put("prompt", sentenceTexts.first.first);
     				String targetAnswer = sentenceTexts.first.second[0] + sentenceTexts.first.second[1] + sentenceTexts.first.second[2];
 					item.put("unmodifiedDocumentSentence", targetAnswer);
 					JSONArray targetSpan = new JSONArray();
@@ -274,30 +268,31 @@ public class FeedbackManager {
      * @param exerciseItemFeedbacks	The feedback items from the microservice
      */
     private void addFeedbackToDistractors(Construction construction, 
-    		ExerciseSettings settings, JSONObject exerciseItemFeedbacks, ArrayList<ArrayList<Pair<String, String>>> distractors) {
+    		ExerciseSettings settings, JSONObject exerciseItemFeedbacks, 
+    		ArrayList<ArrayList<Pair<Pair<String, Boolean>, String>>> distractors) {
     	
-    	ArrayList<Pair<String, String>> currentDistractors = new ArrayList<>();
-    	ArrayList<String> usedDistractors = new ArrayList<>();
+    	ArrayList<Pair<Pair<String, Boolean>, String>> currentDistractors = new ArrayList<>();
+    	ArrayList<Pair<String, Boolean>> usedDistractors = new ArrayList<>();
 
     	for(Iterator iterator = exerciseItemFeedbacks.keySet().iterator(); iterator.hasNext();) {
 			String targetHypothesis = (String) iterator.next();
 			String feedback = (String) ((JSONObject)exerciseItemFeedbacks.get(targetHypothesis)).get("feedbackMessage");
 			
 	    	if(settings.getContentType().equals("Select")) {
-				for(String distractor : construction.getDistractors()) {
-					if(targetHypothesis.equals(distractor)) {
+				for(Pair<String, Boolean> distractor : construction.getDistractors()) {
+					if(targetHypothesis.equals(distractor.first)) {
 						currentDistractors.add(new Pair<>(distractor, feedback));
 						usedDistractors.add(distractor);
 					} 
 				}
 			} else {
-				currentDistractors.add(new Pair<>(targetHypothesis, feedback));
+				currentDistractors.add(new Pair<>(new Pair<>(targetHypothesis, false), feedback));
 			}
 		}  
     	
     	// Add distractors without feedback for Single Choice exercises
     	if(settings.getContentType().equals("Select")) {
-			for(String distractor : construction.getDistractors()) {
+			for(Pair<String, Boolean> distractor : construction.getDistractors()) {
 				if(!usedDistractors.contains(distractor)) {
 					currentDistractors.add(new Pair<>(distractor, null));
 				} 

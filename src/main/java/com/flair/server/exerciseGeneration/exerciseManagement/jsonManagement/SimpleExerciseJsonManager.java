@@ -6,8 +6,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.flair.server.exerciseGeneration.exerciseManagement.JsonComponents;
-
-import edu.stanford.nlp.util.Pair;
+import com.flair.shared.exerciseGeneration.Pair;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -241,41 +241,17 @@ public class DistractorManager {
 	                    if(options.size() == 0 && incorrectFormOptions.size() == 0) {
 	                        constructionsToRemove.add(blank.getConstructionIndex());
 	                    } else {
-	                        ArrayList<String> incorrectOptions = new ArrayList<>(incorrectFormOptions);
-	                        Collections.shuffle(incorrectOptions);
-	                        if(options.size() > 0) {
-	                            // We don't want too many incorrect forms, so we take half as many as correctly formed variants and only pad if necessary
-	                            int incorrectFormsToAdd = options.size() / 2;
-	                            for(int i = 0; i < incorrectFormsToAdd && incorrectOptions.size() > 0; i++) {
-	                                int randomIndex = new Random().nextInt(incorrectOptions.size());
-	                                String randomForm = incorrectOptions.get(randomIndex);
-	                                int previousSize = options.size();
-	                                options.add(randomForm);
-	                                if(previousSize == options.size()) {    // the option had already been in the set
-	                                    i--;
-	                                }
-	                                incorrectOptions.remove(randomForm);
-	                            }
+	                    	ArrayList<Pair<String, Boolean>> distractors = new ArrayList<>();
+	                    	ArrayList<String> incorrectDistractors = capitalize(new ArrayList<>(incorrectFormOptions), constructionText);
+	                        for(String incorrectDistractor : incorrectDistractors) {
+	                        	distractors.add(new Pair<>(incorrectDistractor, true));
 	                        }
-	
-	                        // Add incorrect forms until we have the necessary distractor number or no more options to add
-	                        while(options.size() < exerciseSettings.getnDistractors() && incorrectOptions.size() > 0) {
-	                            int randomIndex = new Random().nextInt(incorrectOptions.size());
-	                            String randomForm = incorrectOptions.get(randomIndex);
-	                            options.add(randomForm);
-	                            incorrectOptions.remove(randomForm);
+	                        ArrayList<String> correctDistractors = capitalize(new ArrayList<>(options), constructionText);
+	                        for(String correctDistractor : correctDistractors) {
+	                        	distractors.add(new Pair<>(correctDistractor, false));
 	                        }
-	                        
-	                        ArrayList<String> distractors = new ArrayList<>(options);
-	                        while(distractors.size() > exerciseSettings.getnDistractors()) {
-	                        	int index = new Random().nextInt(distractors.size());
-	                        	distractors.remove(index);
-	                        }
-	
-	                        distractors = capitalize(distractors, constructionText);                    
-	                        
+	                    	
 	                        // Add the distractors to the settings
-	                        Collections.shuffle(distractors);
 	                        construction.setDistractors(distractors);
 	                    }
                 	}
@@ -307,7 +283,7 @@ public class DistractorManager {
             			String text = exerciseSettings.getPlainText().substring(construction.getConstructionIndices().first, construction.getConstructionIndices().second);
                 		for(String distractor : uniqueDistractors) {
                     		if(!text.equals(distractor)) {
-                    			construction.getDistractors().add(distractor);
+                    			construction.getDistractors().add(new Pair<>(distractor, false));
                     		}
                 		}
                 		construction.setConstructionText(text);
@@ -337,7 +313,7 @@ public class DistractorManager {
                 			if(usedConstructionList.contains(otherConstruction)) {
                 				String distractor = exerciseSettings.getPlainText().substring(otherConstruction.getConstructionIndices().first, otherConstruction.getConstructionIndices().second);
                         		if(!text.equals(distractor)) {
-                        			construction.getDistractors().add(distractor);
+                        			construction.getDistractors().add(new Pair<>(distractor, false));
                         		}
                 			}
                 		}
@@ -374,6 +350,104 @@ public class DistractorManager {
         }
         
         return usedConstructions;
+    }
+    
+    /**
+     * Reduces the amount of distractors to the specified number for Single Choice exercises.
+     * @param distractors	The distractors including information on whether they incorrect forms with feedback per construction
+     * @param nDistractors	The specified number of distractors
+     * @param isSelect		<c>true</c> if it is a Single Choice exercise; otherwise <c>false</c>
+     * @return				The selected distractors with feedback per construction
+     */
+    public ArrayList<ArrayList<Pair<String, String>>> chooseDistractors(ArrayList<ArrayList<Pair<Pair<String,Boolean>,String>>> distractors, 
+    		int nDistractors, boolean isSelect) {
+    	ArrayList<ArrayList<Pair<String, String>>> returnList = new ArrayList<>();
+    	
+    	for(ArrayList<Pair<Pair<String, Boolean>, String>> construction : distractors) {
+    		if(isSelect) {
+    			HashSet<Pair<String, String>> options = new HashSet<>();
+	        	ArrayList<Pair<String, String>> incorrectOptions = new ArrayList<>();
+	        	ArrayList<Pair<String, String>> optionsWithoutFeedback = new ArrayList<>();
+	        	ArrayList<Pair<String, String>> incorrectOptionsWithoutFeedback = new ArrayList<>();
+	        	
+	        	for(Pair<Pair<String, Boolean>, String> distractor : construction) {
+	        		if(distractor.first.second) {
+	        			if(distractor.second == null || distractor.second.equals("")) {
+	            			incorrectOptionsWithoutFeedback.add(new Pair<>(distractor.first.first, distractor.second));
+	        			} else {
+	            			incorrectOptions.add(new Pair<>(distractor.first.first, distractor.second));
+	        			}
+	        		} else {
+	        			if(distractor.second == null || distractor.second.equals("")) {
+	        				optionsWithoutFeedback.add(new Pair<>(distractor.first.first, distractor.second));
+	        			} else {
+	        				options.add(new Pair<>(distractor.first.first, distractor.second));
+	        			}
+	        		}
+	        	}
+	        	
+	        	Collections.shuffle(incorrectOptions);
+	        	Collections.shuffle(incorrectOptionsWithoutFeedback);
+	        	Collections.shuffle(optionsWithoutFeedback);
+	
+	            if(options.size() > 0) {
+	                // We don't want too many incorrect forms, so we take half as many as correctly formed variants and only pad if necessary
+	                int incorrectFormsToAdd = options.size() / 2;
+	                for(int i = 0; i < incorrectFormsToAdd && incorrectOptions.size() > 0; i++) {
+	                    int randomIndex = new Random().nextInt(incorrectOptions.size());
+	                    Pair<String,String> randomForm = incorrectOptions.get(randomIndex);
+	                    int previousSize = options.size();
+	                    options.add(randomForm);
+	                    if(previousSize == options.size()) {    // the option had already been in the set
+	                        i--;
+	                    }
+	                    incorrectOptions.remove(randomForm);
+	                }
+	            }
+	            
+	            // Add correct forms without feedback until we have the necessary distractor number or no more options to add
+	            while(options.size() < nDistractors && optionsWithoutFeedback.size() > 0) {
+	                int randomIndex = new Random().nextInt(optionsWithoutFeedback.size());
+	                Pair<String,String> randomForm = optionsWithoutFeedback.get(randomIndex);
+	                options.add(randomForm);
+	                optionsWithoutFeedback.remove(randomForm);
+	            }
+	
+	            // Add incorrect forms until we have the necessary distractor number or no more options to add
+	            while(options.size() < nDistractors && incorrectOptions.size() > 0) {
+	                int randomIndex = new Random().nextInt(incorrectOptions.size());
+	                Pair<String,String> randomForm = incorrectOptions.get(randomIndex);
+	                options.add(randomForm);
+	                incorrectOptions.remove(randomForm);
+	            }
+	            
+	            // Add incorrect forms without feedback until we have the necessary distractor number or no more options to add
+	            while(options.size() < nDistractors && incorrectOptionsWithoutFeedback.size() > 0) {
+	                int randomIndex = new Random().nextInt(incorrectOptionsWithoutFeedback.size());
+	                Pair<String,String> randomForm = incorrectOptionsWithoutFeedback.get(randomIndex);
+	                options.add(randomForm);
+	                incorrectOptionsWithoutFeedback.remove(randomForm);
+	            }
+	            
+	            ArrayList<Pair<String, String>> usedDistractors = new ArrayList<>(options);
+	            while(usedDistractors.size() > nDistractors) {
+	            	int index = new Random().nextInt(usedDistractors.size());
+	            	usedDistractors.remove(index);
+	            }
+	            
+	            // Add the distractors to the settings
+	            Collections.shuffle(usedDistractors);
+	            returnList.add(usedDistractors);
+    		} else {
+    			ArrayList<Pair<String, String>> usedDistractors = new ArrayList<>();
+    			for(Pair<Pair<String, Boolean>, String> distractor : construction) {
+    				usedDistractors.add(new Pair<>(distractor.first.first, distractor.second));
+    			}
+	            returnList.add(usedDistractors);
+    		}
+    	}
+    	
+    	return returnList;
     }
     
     /**

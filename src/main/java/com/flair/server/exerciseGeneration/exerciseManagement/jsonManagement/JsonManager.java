@@ -21,7 +21,8 @@ public abstract class JsonManager {
     /**
      * Adds the htmlElements and the questions to the content.json file
      *
-     * @param jsonComponents    The extracted exercise components necessary to build the JSON configuration
+     * @param jsonComponents    The extracted exercise components necessary to @Override
+	build the JSON configuration
      * @param folderName        The resource folder of the content type
      * @return                  The JSON object for the entire JSON content file
      * @throws IOException    	File exception if the writer cannot write to the output file

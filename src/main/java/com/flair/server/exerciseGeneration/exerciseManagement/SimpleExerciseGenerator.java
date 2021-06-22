@@ -25,9 +25,7 @@ import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.OpenNlpParser;
 import com.flair.server.parser.SimpleNlgParser;
 import com.flair.shared.exerciseGeneration.Construction;
-import com.flair.shared.exerciseGeneration.ExerciseSettings;
-
-import edu.stanford.nlp.util.Pair;
+import com.flair.shared.exerciseGeneration.Pair;
 
 public class SimpleExerciseGenerator extends ExerciseGenerator {
 
@@ -84,8 +82,9 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        	return null;
 	        }
 	        
+	        DistractorManager distractorManager = new DistractorManager();
 	        ArrayList<Construction> usedConstructions 
-	        		= new DistractorManager().generateDistractors(settings.getExerciseSettings(), nlpManager, res.first);
+	        		= distractorManager.generateDistractors(settings.getExerciseSettings(), nlpManager, res.first);
 		    
 	        if(usedConstructions == null || usedConstructions.size() == 0) {
 	        	return null;
@@ -144,22 +143,24 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        }
 	        
 	        ArrayList<String> constructionTexts = new ArrayList<>();
-	        ArrayList<ArrayList<String>> distractorTexts = new ArrayList<>();
 	        for(Construction usedConstruction : usedConstructions) {
 	        	constructionTexts.add(usedConstruction.getConstructionText());
-	        	distractorTexts.add(usedConstruction.getDistractors());
 	        }
 	        
-	        ArrayList<ArrayList<Pair<String, String>>> distractors = 
+	        ArrayList<ArrayList<Pair<com.flair.shared.exerciseGeneration.Pair<String,Boolean>,String>>> distractors = 
 	        		new FeedbackManager().generateFeedback(usedConstructions, settings.getExerciseSettings(), nlpManager);
 	        
 	        if (isCancelled) {
 	        	return null;
 	        }
 	        
+	        ArrayList<ArrayList<Pair<String,String>>> usedDistractors = 
+	        		distractorManager.chooseDistractors(
+	        				distractors, settings.getExerciseSettings().getnDistractors(), settings.getExerciseSettings().getContentType().equals("Select"));
+	        
 	        return new JsonComponents(orderedPlainTextElements, pureHtmlElements, constructionTexts,
 	                settings.getJsonManager(), settings.getContentTypeLibrary(), settings.getResourceFolder(), 
-	                distractors, taskDescription);
+	                usedDistractors, taskDescription);
     	} else {
     		return null;
     	}
