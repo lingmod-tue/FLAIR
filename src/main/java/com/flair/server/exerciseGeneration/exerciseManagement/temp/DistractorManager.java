@@ -12,6 +12,7 @@ import com.flair.shared.exerciseGeneration.Construction;
 import com.flair.shared.exerciseGeneration.DetailedConstruction;
 import com.flair.shared.exerciseGeneration.DistractorProperties;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
+import com.flair.shared.exerciseGeneration.ExerciseType;
 import com.flair.shared.exerciseGeneration.Pair;
 
 import edu.stanford.nlp.ling.CoreLabel;
@@ -26,7 +27,7 @@ public class DistractorManager {
     	ArrayList<Construction> usedConstructions = new ArrayList<>();
 		ArrayList<Integer> constructionsToRemove = new ArrayList<>();
 
-        if(exerciseSettings.getContentType().equals("Select")) {
+        if(exerciseSettings.getContentType().equals(ExerciseType.SINGLE_CHOICE)) {
         	for(Fragment fragment : fragments) {
                 for(Blank blank : fragment.getBlanksBoundaries()) {
                 	Construction construction = blank.getConstruction();
@@ -257,7 +258,7 @@ public class DistractorManager {
                 	}
                 }
         	}             
-        } else if(exerciseSettings.getContentType().equals("SingleDrag")) {
+        } else if(exerciseSettings.getContentType().equals(ExerciseType.DRAG_SINGLE)) {
         	// we set the values of the other draggables as "distractors"
         	ArrayList<String> distractors = new ArrayList<>();
         	for(Fragment fragment : fragments) {
@@ -291,7 +292,7 @@ public class DistractorManager {
                 	}
                 }
         	}
-        }  else if(exerciseSettings.getContentType().equals("MultiDrag")) {
+        }  else if(exerciseSettings.getContentType().equals(ExerciseType.DRAG_MULTI)) {
         	// We won't have feedback for the draggables of possible merged sentences, but in those cases, the standard feedback 'wrong word' should be fine
         	// we set the values of the other draggables of the sub-exercise as "distractors"
         	ArrayList<Construction> usedConstructionList = new ArrayList<>();
@@ -325,7 +326,7 @@ public class DistractorManager {
         	}
         } 
         
-        if(!exerciseSettings.getContentType().equals("SingleDrag")) {
+        if(!exerciseSettings.getContentType().equals(ExerciseType.DRAG_SINGLE)) {
 	    	for(Fragment fragment : fragments) {
 	    		ArrayList<Blank> blanksToRemove = new ArrayList<>();
 	    		for(Blank blank : fragment.getBlanksBoundaries()) {

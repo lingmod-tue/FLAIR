@@ -9,6 +9,7 @@ import com.flair.shared.exerciseGeneration.BracketsProperties;
 import com.flair.shared.exerciseGeneration.Construction;
 import com.flair.shared.exerciseGeneration.DetailedConstruction;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
+import com.flair.shared.exerciseGeneration.ExerciseType;
 import com.flair.shared.exerciseGeneration.Pair;
 
 import edu.stanford.nlp.ling.CoreLabel;
@@ -37,11 +38,11 @@ public class ConstructionPreparer {
                     Pair<Integer, Integer> mainClauseConstructionIndices = null;
                     Pair<Integer, Integer> ifClauseConstructionIndices = null;
 
-                    if (clauses.first != null && exerciseSettings.getContentType().equals("Select") || 
+                    if (clauses.first != null && exerciseSettings.getContentType().equals(ExerciseType.SINGLE_CHOICE) || 
                     		exerciseSettings.getBrackets().contains(BracketsProperties.MAIN_CLAUSE) || r == 1) {
                         mainClauseConstructionIndices = nlpManager.extractVerbCluster(clauses.first);                        
                     }
-                    if (clauses.second != null && exerciseSettings.getContentType().equals("Select") || 
+                    if (clauses.second != null && exerciseSettings.getContentType().equals(ExerciseType.SINGLE_CHOICE) || 
                     		exerciseSettings.getBrackets().contains(BracketsProperties.IF_CLAUSE) || r == 2) {
                         ifClauseConstructionIndices = nlpManager.extractVerbCluster(clauses.second);                        
                     }
@@ -53,7 +54,7 @@ public class ConstructionPreparer {
                         newConstructions.add(new ConditionalConstruction(construction.getConstruction(), ifClauseConstructionIndices, false, mainClauseConstructionIndices));
                     }
                     
-                    if(exerciseSettings.getContentType().equals("MultiDrag")) {
+                    if(exerciseSettings.getContentType().equals(ExerciseType.DRAG_MULTI)) {
                     	if(newConstructions.size() < 2) {
 	                    	// we can't use it for a multi-exercise Drag & Drop task if we don't have both clauses
 	                    	newConstructions.clear();
@@ -64,7 +65,7 @@ public class ConstructionPreparer {
                     
                     for(ConditionalConstruction newConstruction : newConstructions) {                    	
                     	// try to limit the construction to max. 30 characters
-                    	if(exerciseSettings.getContentType().equals("SingleDrag") && 
+                    	if(exerciseSettings.getContentType().equals(ExerciseType.DRAG_SINGLE) && 
                     			newConstruction.getConstructionIndices().second - newConstruction.getConstructionIndices().first > 30) {
                     		if(newConstruction.isMainClause()) {
                     			if(mainClauseConstructionIndices != null) {
@@ -89,9 +90,9 @@ public class ConstructionPreparer {
                 constructionsToRemove.add(construction);
             } else if(construction.getConstruction().toString().startsWith("ADJ") ||
                         construction.getConstruction().toString().startsWith("ADV")) {
-                if (exerciseSettings.getContentType().equals("Mark")) {
+                if (exerciseSettings.getContentType().equals(ExerciseType.MARK)) {
                     //TODO: if we decide to allow the client to specify whether to split synthetic forms for mark, we have to do that here
-                } else if(exerciseSettings.getContentType().equals("SingleDrag") && construction.getConstructionIndices().second - construction.getConstructionIndices().first > 30) {                	
+                } else if(exerciseSettings.getContentType().equals(ExerciseType.DRAG_SINGLE) && construction.getConstructionIndices().second - construction.getConstructionIndices().first > 30) {                	
 					Pair<Integer,Integer> mainComparison = nlpManager.getMainComparison(construction.getConstructionIndices());
 					if(mainComparison != null) {
 						construction.setConstructionIndices(mainComparison);
@@ -99,14 +100,14 @@ public class ConstructionPreparer {
             	}
             } else if(construction.getConstruction().toString().startsWith("PASSIVE") ||
                     construction.getConstruction().toString().startsWith("ACTIVE")) {
-                if(exerciseSettings.getContentType().equals("FiB") && exerciseSettings.getBrackets().contains(BracketsProperties.ACTIVE_SENTENCE)) {
+                if(exerciseSettings.getContentType().equals(ExerciseType.FIB) && exerciseSettings.getBrackets().contains(BracketsProperties.ACTIVE_SENTENCE)) {
                 	Pair<Integer, Integer> sentenceIndices = nlpManager.getSentenceIndices(construction.getConstructionIndices());
                     if (sentenceIndices != null) {
                         construction.setConstructionIndices(sentenceIndices);
                     } else {
                         constructionsToRemove.add(construction);
                     }
-                } else if(exerciseSettings.getContentType().endsWith("Drag")) {
+                } else if(exerciseSettings.getContentType().equals(ExerciseType.DRAG_MULTI) || exerciseSettings.getContentType().equals(ExerciseType.DRAG_SINGLE)) {
                 	ArrayList<Pair<Integer, Integer>> components = nlpManager.getPassiveSentenceComponents(construction.getConstructionIndices());
                 	ArrayList<Construction> newConstructions = new ArrayList<>();
                 	if(components != null) {
@@ -126,7 +127,7 @@ public class ConstructionPreparer {
 	                	}
                 	}
                 	
-                	if(exerciseSettings.getContentType().equals("MultiDrag")) {  
+                	if(exerciseSettings.getContentType().equals(ExerciseType.DRAG_MULTI)) {  
                 		addDistractors(exerciseSettings, newConstructions);
                 	}
                 	 
@@ -181,7 +182,7 @@ public class ConstructionPreparer {
             		}
             	}
             } else if((construction.getConstruction().toString().startsWith("PAST") || construction.getConstruction().toString().startsWith("PRES")) && 
-                    exerciseSettings.getContentType().equals("SingleDrag") && 
+                    exerciseSettings.getContentType().equals(ExerciseType.DRAG_SINGLE) && 
                     construction.getConstructionIndices().second - construction.getConstructionIndices().first > 30) {                	
             	CoreLabel mainVerb = nlpManager.getMainVerb(construction.getConstructionIndices());
 				if(mainVerb != null) {
@@ -191,7 +192,7 @@ public class ConstructionPreparer {
             		construction.getConstruction() == DetailedConstruction.WHO ||
             		construction.getConstruction() == DetailedConstruction.THAT ||
             		construction.getConstruction() == DetailedConstruction.OTHERPRN) &&
-            		exerciseSettings.getContentType().equals("MultiDrag")) {
+            		exerciseSettings.getContentType().equals(ExerciseType.DRAG_MULTI)) {
             	ArrayList<Pair<Integer,Integer>> components = nlpManager.getRelativeClauseComponents(construction.getConstructionIndices());
             	ArrayList<Construction> newConstructions = new ArrayList<>();
             	for(Pair<Integer, Integer> component : components) {

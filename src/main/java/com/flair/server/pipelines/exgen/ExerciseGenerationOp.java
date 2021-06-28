@@ -21,6 +21,7 @@ import com.flair.server.pipelines.common.PipelineOp;
 import com.flair.server.scheduler.AsyncExecutorService;
 import com.flair.server.scheduler.AsyncJob;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
+import com.flair.shared.exerciseGeneration.ExerciseType;
 
 import edu.stanford.nlp.util.Pair;
 
@@ -138,15 +139,15 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
 		HashMap<String, ArrayList<ContentTypeSettings>> configs = new HashMap<>();
         for(ExerciseSettings settings : input.settings) {
             ContentTypeSettings contentTypeSettings;
-            if(settings.getContentType().equals("FiB")) {
+            if(settings.getContentType().equals(ExerciseType.FIB)) {
                 contentTypeSettings = new FillInTheBlanksSettings(settings.getTaskName());
-            } else if(settings.getContentType().equals("Select")) {
+            } else if(settings.getContentType().equals(ExerciseType.SINGLE_CHOICE)) {
                 contentTypeSettings = new SingleChoiceSettings(settings.getTaskName());
-            } else if(settings.getContentType().equals("SingleDrag")) {
+            } else if(settings.getContentType().equals(ExerciseType.DRAG_SINGLE)) {
                 contentTypeSettings = new SingleDragDropSettings(settings.getTaskName());
-            } else if(settings.getContentType().equals("MultiDrag")) {
+            } else if(settings.getContentType().equals(ExerciseType.DRAG_MULTI)) {
                 contentTypeSettings = new MultiDragDropSettings(settings.getTaskName());
-            } else if(settings.getContentType().equals("Mark")) {
+            } else if(settings.getContentType().equals(ExerciseType.MARK)) {
                 contentTypeSettings = new FindSettings(settings.getTaskName());
             } else {
                 throw new IllegalArgumentException();

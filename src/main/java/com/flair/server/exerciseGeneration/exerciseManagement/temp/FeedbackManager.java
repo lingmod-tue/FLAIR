@@ -27,6 +27,7 @@ import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.exerciseGeneration.BracketsProperties;
 import com.flair.shared.exerciseGeneration.Construction;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
+import com.flair.shared.exerciseGeneration.ExerciseType;
 import com.flair.shared.exerciseGeneration.Pair;
 
 public class FeedbackManager {
@@ -55,7 +56,7 @@ public class FeedbackManager {
     	ArrayList<ArrayList<Pair<Pair<String, Boolean>, String>>> distractors = new ArrayList<>();
     	JSONArray responseObject = null;
     	
-    	if(settings.isGenerateFeedback() && settings.getContentType().equals("FiB") || settings.getContentType().equals("Select") ) {
+    	if(settings.isGenerateFeedback() && settings.getContentType().equals(ExerciseType.FIB) || settings.getContentType().equals(ExerciseType.SINGLE_CHOICE) ) {
     		JSONObject requestObject = prepareJsonRequest(settings, usedConstructions, nlpManager);
     		
     		if(requestObject != null) {
@@ -104,7 +105,8 @@ public class FeedbackManager {
     private JSONObject prepareJsonRequest(ExerciseSettings settings, ArrayList<Construction> usedConstructions, NlpManager nlpManager) { 	
 		JSONArray activityItems = new JSONArray();
 		
-		if(settings.getContentType().equals("Select") || settings.getContentType().equals("FiB") && !settings.getBrackets().contains(BracketsProperties.ACTIVE_SENTENCE)) {
+		if(settings.getContentType().equals(ExerciseType.SINGLE_CHOICE) || 
+				settings.getContentType().equals(ExerciseType.FIB) && !settings.getBrackets().contains(BracketsProperties.ACTIVE_SENTENCE)) {
 			for(Construction construction : usedConstructions) {
 				Pair<Pair<String, String[]>, Integer> sentenceTexts = nlpManager.getSentenceTexts(construction.getConstructionIndices(), settings.getPlainText());
 				boolean supportsFeedback = false;
@@ -127,7 +129,6 @@ public class FeedbackManager {
 		if(activityItems.size() > 0) {
 			JSONObject activitySpecification = new JSONObject();
 			activitySpecification.put("items", activityItems);
-			activitySpecification.put("exerciseType", settings.getContentType());
 			
 			String topic = "";
 			if(settings.getConstructions().size() > 0) {
@@ -151,9 +152,12 @@ public class FeedbackManager {
 			}
 			
 			activitySpecification.put("exerciseTopic", topic);
-			activitySpecification.put("exerciseType", settings.getContentType());
+			activitySpecification.put("exerciseType", settings.getContentType().toString());
+			
+			JSONObject requestObject = new JSONObject();
+			requestObject.put("activitySpecification", activitySpecification);
 			    		   		
-			return activitySpecification;    	
+			return requestObject;    	
 		}
 		
 		return null;
@@ -166,7 +170,7 @@ public class FeedbackManager {
      */
     private JSONArray getResponseFromMicroservice(JSONObject requestObject) {
     	try {    		
-    		String payload = "activitySpecification=" + requestObject.toJSONString();
+    		String payload = requestObject.toJSONString();
             StringEntity entity = new StringEntity(payload, ContentType.APPLICATION_FORM_URLENCODED);            
             
             // set a 30s timeout
@@ -278,7 +282,7 @@ public class FeedbackManager {
 			String targetHypothesis = (String) iterator.next();
 			String feedback = (String) ((JSONObject)exerciseItemFeedbacks.get(targetHypothesis)).get("feedbackMessage");
 			
-	    	if(settings.getContentType().equals("Select")) {
+	    	if(settings.getContentType().equals(ExerciseType.SINGLE_CHOICE)) {
 				for(Pair<String, Boolean> distractor : construction.getDistractors()) {
 					if(targetHypothesis.equals(distractor.first)) {
 						currentDistractors.add(new Pair<>(distractor, feedback));
@@ -291,7 +295,7 @@ public class FeedbackManager {
 		}  
     	
     	// Add distractors without feedback for Single Choice exercises
-    	if(settings.getContentType().equals("Select")) {
+    	if(settings.getContentType().equals(ExerciseType.SINGLE_CHOICE)) {
 			for(Pair<String, Boolean> distractor : construction.getDistractors()) {
 				if(!usedDistractors.contains(distractor)) {
 					currentDistractors.add(new Pair<>(distractor, null));

@@ -13,6 +13,7 @@ import com.flair.shared.exerciseGeneration.BracketsProperties;
 import com.flair.shared.exerciseGeneration.Construction;
 import com.flair.shared.exerciseGeneration.DistractorProperties;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
+import com.flair.shared.exerciseGeneration.ExerciseType;
 import com.flair.shared.exerciseGeneration.Pair;
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.interop.dtos.RankableDocument;
@@ -1313,7 +1314,7 @@ public class TaskItem extends LocalizedComposite {
     	}
     	
     	return new ExerciseSettings(constructions, doc.getUrl(), doc.getText(), removedParts, 
-    			type, getQuiz(), distractorProperties, brackets, spnNDistractors.getValue() - 1, lblName.getValue(), 
+    			ExerciseType.getEnum(type), getQuiz(), distractorProperties, brackets, spnNDistractors.getValue() - 1, lblName.getValue(), 
     			parent.chkDownloadResources.getValue(), chkOnlyText.getValue(), parent.chkGenerateFeedback.getValue());
     }
     

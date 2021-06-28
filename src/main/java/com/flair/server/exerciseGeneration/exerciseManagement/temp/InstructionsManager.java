@@ -9,6 +9,7 @@ import com.flair.shared.exerciseGeneration.BracketsProperties;
 import com.flair.shared.exerciseGeneration.Construction;
 import com.flair.shared.exerciseGeneration.DetailedConstruction;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
+import com.flair.shared.exerciseGeneration.ExerciseType;
 
 import edu.stanford.nlp.util.Pair;
 
@@ -38,16 +39,16 @@ public class InstructionsManager {
                     "conditional" :
                     hasRealConditionals ? "real conditional" : "unreal conditional";
 
-            if(settings.getContentType().equals("FiB")) {
+            if(settings.getContentType().equals(ExerciseType.FIB)) {
             	addLemmas = !settings.getBrackets().contains(BracketsProperties.LEMMA);
                 String target = !addLemmas ?
                         "the verbs in brackets" :
                         "one of the following verbs. Each word may be used only once";
 
                 instructions = "Insert the correct forms of " + target + " to form " + conditionalType + "sentences.";
-            } else if(settings.getContentType().equals("Select")) {
+            } else if(settings.getContentType().equals(ExerciseType.SINGLE_CHOICE)) {
                 instructions = "Select the correct verb forms from the dropdowns to form " + conditionalType + "sentences.";
-            } else if(settings.getContentType().endsWith("Drag")) {
+            } else if(settings.getContentType().equals(ExerciseType.DRAG_MULTI) || settings.getContentType().equals(ExerciseType.DRAG_SINGLE)) {
                 instructions = "Drag the verbs into the empty slots to form " + conditionalType + "sentences.";
             }
         } else if(constructions.stream().anyMatch((construction) -> construction.toString().startsWith("ADJ") ||
@@ -60,7 +61,7 @@ public class InstructionsManager {
                     "comparison" :
                     hasComparatives ? "comparative" : "superlative";
 
-            if(settings.getContentType().equals("FiB")) {
+            if(settings.getContentType().equals(ExerciseType.FIB)) {
                 boolean hasAdjectives = constructions.stream().anyMatch((construction) -> construction.toString().startsWith("ADJ"));
                 boolean hasAdverbs = constructions.stream().anyMatch((construction) -> construction.toString().startsWith("ADV"));
 
@@ -75,20 +76,20 @@ public class InstructionsManager {
                         "one of the following " + pos + ". Each word may only be used once";
 
                 instructions = "Insert the correct " + formType + " forms of " + target + ".";
-            } else if(settings.getContentType().equals("Select")) {
+            } else if(settings.getContentType().equals(ExerciseType.SINGLE_CHOICE)) {
                 instructions = "Select the correct " + formType + " forms from the dropdowns.";
-            } else if(settings.getContentType().equals("Mark")) {
+            } else if(settings.getContentType().equals(ExerciseType.MARK)) {
                 instructions = "Click all " + formType + " forms in the text.";
                 if(settings.getBrackets().contains(BracketsProperties.N_TARGETS)) {
                 	instructions += " The text contains " + usedConstructions.size() + " " + formType + " forms.";
                 }
-            } else if(settings.getContentType().endsWith("Drag")) {
+            } else if(settings.getContentType().equals(ExerciseType.DRAG_MULTI) || settings.getContentType().equals(ExerciseType.DRAG_SINGLE)) {
                 instructions = "Drag the " + formType + " forms into the empty slots to form correct sentences.";
             }
         } else if(constructions.stream().anyMatch((construction) -> construction.toString().startsWith("PASSIVE") ||
                 construction.toString().startsWith("ACTIVE"))) {
             // Passive
-            if(settings.getContentType().equals("FiB")) {
+            if(settings.getContentType().equals(ExerciseType.FIB)) {
                 if(settings.getBrackets().contains(BracketsProperties.ACTIVE_SENTENCE)) {
                     instructions = "Transform the active sentences given in brackets into passive sentences.";
                 } else {
@@ -129,7 +130,7 @@ public class InstructionsManager {
                         instructions = " Use the correct tense (" + tense + ").";
                     }
                 }
-            } else if(settings.getContentType().endsWith("Drag")) {
+            } else if(settings.getContentType().equals(ExerciseType.DRAG_MULTI) || settings.getContentType().equals(ExerciseType.DRAG_SINGLE)) {
                 instructions = "Drag the words into the empty slots to form correct sentences.";
             }
         } else if(constructions.stream().anyMatch((construction) -> construction.toString().startsWith("QUEST") ||
@@ -137,16 +138,16 @@ public class InstructionsManager {
             // Present
             String tense = "simple present";
 
-            if(settings.getContentType().equals("FiB")) {
+            if(settings.getContentType().equals(ExerciseType.FIB)) {
             	addLemmas = !settings.getBrackets().contains(BracketsProperties.LEMMA);
                 String target = !addLemmas ?
                         "the verbs in brackets" :
                         "one of the following verbs. Each word may only be used once";
 
                 instructions = "Insert the correct " + tense + " forms of " + target + ".";
-            } else if(settings.getContentType().equals("Select")) {
+            } else if(settings.getContentType().equals(ExerciseType.SINGLE_CHOICE)) {
                 instructions = "Select the correct " + tense + " forms from the dropdowns.";
-            } else if(settings.getContentType().equals("Mark")) {
+            } else if(settings.getContentType().equals(ExerciseType.MARK)) {
                 instructions = "Click all " + tense + " forms in the text.";
                 if(settings.getBrackets().contains(BracketsProperties.N_TARGETS)) {
                 	instructions += " The text contains " + usedConstructions.size() + " " + tense + " forms.";
@@ -172,28 +173,28 @@ public class InstructionsManager {
                             containedTenses.get(0) + " or " + containedTenses.get(1) :
                             containedTenses.get(0);
 
-            if(settings.getContentType().equals("FiB")) {
+            if(settings.getContentType().equals(ExerciseType.FIB)) {
             	addLemmas = !settings.getBrackets().contains(BracketsProperties.LEMMA);
                 String target = !addLemmas ?
                         "the verbs in brackets" :
                         "one of the following verbs. Each word may only be used once";
 
                 instructions = "Insert the correct " + tense + " forms of " + target + ".";
-            } else if(settings.getContentType().equals("Select")) {
+            } else if(settings.getContentType().equals(ExerciseType.SINGLE_CHOICE)) {
                 instructions = "Select the correct " + tense + " forms from the dropdowns.";
-            } else if(settings.getContentType().equals("Mark")) {
+            } else if(settings.getContentType().equals(ExerciseType.MARK)) {
                 instructions = "Click all " + tense.replace(" or ", " and ") + " forms in the text.";
                 if(settings.getBrackets().contains(BracketsProperties.N_TARGETS)) {
                 	instructions += " The text contains " + usedConstructions.size() + " " + " forms to find.";
                 }
-            } else if(settings.getContentType().endsWith("Drag")) {
+            } else if(settings.getContentType().equals(ExerciseType.DRAG_MULTI) || settings.getContentType().equals(ExerciseType.DRAG_SINGLE)) {
                 instructions = "Drag the " + tense.replace(" or ", " and ") + " forms into the empty slots to form correct sentences.";
             }
         } else if(constructions.stream().anyMatch((construction) ->
                 construction == DetailedConstruction.WHO || construction == DetailedConstruction.WHICH ||
                         construction == DetailedConstruction.THAT || construction == DetailedConstruction.OTHERPRN)) {
             // Relative pronouns
-            if(settings.getContentType().equals("FiB")) {
+            if(settings.getContentType().equals(ExerciseType.FIB)) {
                 String specification = "";
                 if(!constructions.stream().anyMatch((construction) -> construction == DetailedConstruction.OTHERPRN)) {
                     ArrayList<String> containedPronouns = new ArrayList<>();
@@ -216,16 +217,16 @@ public class InstructionsManager {
                     specification = " (" + specification + ")";
                 }
                 instructions = "Insert the correct relative pronouns" + specification + ".";
-            } else if(settings.getContentType().equals("Select")) {
+            } else if(settings.getContentType().equals(ExerciseType.SINGLE_CHOICE)) {
                 instructions = "Select the correct relative pronouns from the dropdowns.";
-            } else if(settings.getContentType().equals("Mark")) {
+            } else if(settings.getContentType().equals(ExerciseType.MARK)) {
                 instructions = "Click all relative pronouns in the text.";
                 if(settings.getBrackets().contains(BracketsProperties.N_TARGETS)) {
                 	instructions += " The text contains " + usedConstructions.size() + " relative pronouns.";
                 }
-            } else if(settings.getContentType().equals("MultiDrag")) {
+            } else if(settings.getContentType().equals(ExerciseType.DRAG_MULTI)) {
                 instructions = "Drag the words into the empty slots to form correct sentences.";
-            } else if(settings.getContentType().equals("SingleDrag")) {
+            } else if(settings.getContentType().equals(ExerciseType.DRAG_SINGLE)) {
                 instructions = "Drag the relative pronouns into the empty slots to form correct sentences.";
             }
         }

@@ -25,6 +25,7 @@ import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.OpenNlpParser;
 import com.flair.server.parser.SimpleNlgParser;
 import com.flair.shared.exerciseGeneration.Construction;
+import com.flair.shared.exerciseGeneration.ExerciseType;
 import com.flair.shared.exerciseGeneration.Pair;
 
 public class SimpleExerciseGenerator extends ExerciseGenerator {
@@ -97,7 +98,7 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        MatchResult matchResult = new Matcher(res.first, res.second).prepareDomForSplitting(doc);
 	        HtmlManager.removeNonText(matchResult.getTextBoundaries());
 	        HtmlManager.removeNotDisplayedElements(doc);
-	        if(settings.getExerciseSettings().getContentType().equals("Mark")) {
+	        if(settings.getExerciseSettings().getContentType().equals(ExerciseType.MARK)) {
 	        	HtmlManager.removeLinks(doc);
 	        }
 	        
@@ -156,7 +157,7 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        
 	        ArrayList<ArrayList<Pair<String,String>>> usedDistractors = 
 	        		distractorManager.chooseDistractors(
-	        				distractors, settings.getExerciseSettings().getnDistractors(), settings.getExerciseSettings().getContentType().equals("Select"));
+	        				distractors, settings.getExerciseSettings().getnDistractors(), settings.getExerciseSettings().getContentType().equals(ExerciseType.SINGLE_CHOICE));
 	        
 	        return new JsonComponents(orderedPlainTextElements, pureHtmlElements, constructionTexts,
 	                settings.getJsonManager(), settings.getContentTypeLibrary(), settings.getResourceFolder(), 

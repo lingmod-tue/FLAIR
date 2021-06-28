@@ -9,6 +9,7 @@ import com.flair.shared.exerciseGeneration.BracketsProperties;
 import com.flair.shared.exerciseGeneration.Construction;
 import com.flair.shared.exerciseGeneration.DetailedConstruction;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
+import com.flair.shared.exerciseGeneration.ExerciseType;
 
 public class ClozeManager {
 
@@ -19,7 +20,7 @@ public class ClozeManager {
 	 * @param generator			The Simple NLG generator
 	 */
     public void prepareBlanks(ExerciseSettings exerciseSettings, NlpManager nlpManager, ArrayList<Fragment> fragments) {
-        if(exerciseSettings.getContentType().equals("FiB")){
+        if(exerciseSettings.getContentType().equals(ExerciseType.FIB)){
 	        ArrayList<Integer> constructionsToRemove = new ArrayList<>();
 	
 	        for(Fragment fragment : fragments) {
