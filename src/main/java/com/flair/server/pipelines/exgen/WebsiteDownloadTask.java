@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeoutException;
 
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import com.flair.server.exerciseGeneration.downloadManagement.HtmlManager;
@@ -16,16 +17,18 @@ import com.flair.server.utilities.ServerLogger;
 import edu.stanford.nlp.util.Pair;
 
 public class WebsiteDownloadTask implements AsyncTask<WebsiteDownloadTask.Result> {
-	public static WebsiteDownloadTask factory(String url, ResourceDownloader resourceDownloader) {
-		return new WebsiteDownloadTask(url, resourceDownloader);
+	public static WebsiteDownloadTask factory(String url, ResourceDownloader resourceDownloader, Element plainText) {
+		return new WebsiteDownloadTask(url, resourceDownloader, plainText);
 	}
 
 	private final String url;
+	private final Element plainText;
 	ResourceDownloader resourceDownloader;
 
-	private WebsiteDownloadTask(String url, ResourceDownloader resourceDownloader) {
+	private WebsiteDownloadTask(String url, ResourceDownloader resourceDownloader, Element plainText) {
 		this.url = url;
 		this.resourceDownloader = resourceDownloader;
+		this.plainText = plainText;
 	}
 
 
@@ -41,7 +44,7 @@ public class WebsiteDownloadTask implements AsyncTask<WebsiteDownloadTask.Result
 			
 			HtmlManager htmlManager = new HtmlManager();
 			Pair<Element, ArrayList<DownloadedResource>> output = ThreadPool.get().invokeAndWait(new FutureTask<>(() -> {
-		        return htmlManager.getHtml(url, resourceDownloader);		        
+		        return htmlManager.getHtml(url, resourceDownloader, plainText);		        
 			}), Constants.DOWNLOAD_TASK_TIMEOUT, Constants.TIMEOUT_UNIT);
 			if(output != null) {
 				doc = output.first;

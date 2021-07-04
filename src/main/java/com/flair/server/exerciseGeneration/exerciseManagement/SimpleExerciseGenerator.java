@@ -71,7 +71,8 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        	return null;
 	        }
 	        
-	        com.flair.shared.exerciseGeneration.Pair<ArrayList<Fragment>,com.flair.shared.exerciseGeneration.Pair<Integer,Integer>> res = new Indexer().matchHtmlToPlainText(settings.getExerciseSettings(), doc.wholeText(), nlpManager);
+	        Pair<ArrayList<Fragment>,Pair<Integer,Integer>> res = 
+	        		new Indexer().matchHtmlToPlainText(settings.getExerciseSettings(), doc.wholeText(), nlpManager);
 	
 	        if (isCancelled) {
 	        	return null;

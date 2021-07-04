@@ -1,5 +1,6 @@
 package com.flair.server.exerciseGeneration.downloadManagement;
 
+import org.apache.bcel.generic.NEW;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Document;
@@ -9,6 +10,7 @@ import org.jsoup.select.Elements;
 
 import com.flair.server.exerciseGeneration.exerciseManagement.DownloadedResource;
 import com.flair.server.utilities.ServerLogger;
+import com.gargoylesoftware.htmlunit.javascript.host.dom.Text;
 
 import edu.stanford.nlp.util.Pair;
 
@@ -49,9 +51,13 @@ public class HtmlManager {
      * @param resourceDownloader    The Resource downloader
      * @return                      The html document and the downloaded resources
      */
-    public Pair<Element, ArrayList<DownloadedResource>> getHtml(String url, ResourceDownloader resourceDownloader) {
-    	Pair<Element, ArrayList<DownloadedResource>> res = prepareHtml(url, resourceDownloader);
-    	return new Pair<>(makeHtmlEmbeddable(res.first), res.second);
+    public Pair<Element, ArrayList<DownloadedResource>> getHtml(String url, ResourceDownloader resourceDownloader, Element plainText) {
+    	if(url.length() == 0) {
+    		return new Pair<>(plainText, new ArrayList<DownloadedResource>());
+    	} else {
+	    	Pair<Element, ArrayList<DownloadedResource>> res = prepareHtml(url, resourceDownloader);
+	    	return new Pair<>(makeHtmlEmbeddable(res.first), res.second);
+    	}
     }
 
     /**

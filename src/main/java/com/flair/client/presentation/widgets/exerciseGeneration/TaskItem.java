@@ -807,7 +807,7 @@ public class TaskItem extends LocalizedComposite {
     	calculateConstructionsOccurrences(relevantConstructionsInEntireDocument);
     	relevantConstructionsInSelectedDocumentPart = new HashMap<String, ArrayList<Pair<Integer, Integer>>>(relevantConstructionsInEntireDocument);  
 
-    	String selecteTopic = getSelectedTopic();
+    	String selecteTopic = getTopic();
     	drpTopic.clear();
     	
     	// Add the no topic option
@@ -830,19 +830,6 @@ public class TaskItem extends LocalizedComposite {
     	}
     	
     	setExerciseSettingsVisibilities();
-    }
-    
-    /**
-     * Gets the value of the currently selected topic.
-     * @return	The value of the currently selected quiz, if any; otherwise the empty string
-     */
-    private String getSelectedTopic() {    	
-    	//We get a ClassCastException when we try to access the first list element, so we just iterate over the (only) element
-    	for(Object o : drpTopic.getSelectedValue()) {
-    		return o.toString();
-    	}   		
-    	
-    	return "";
     }
     
     /**
@@ -1143,7 +1130,7 @@ public class TaskItem extends LocalizedComposite {
      */
     public int getNumberOfConstructionOccurrences(String constructionName, String topic, int group) {
     	int numberOccurrences = 0;
-    	
+
 		for(String name : getPartConstructionNames(topic, constructionName, group)) {
 			numberOccurrences += relevantConstructionsInEntireDocument.get(name).size();
 		}

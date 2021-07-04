@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 
 import com.flair.server.exerciseGeneration.downloadManagement.ResourceDownloader;
@@ -182,9 +183,15 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
 
         HashMap<String, Element> documents = new HashMap<>();
         for(ExerciseSettings settings : input.settings) {
-            if (!documents.containsKey(settings.getUrl())) {
-                documents.put(settings.getUrl(), null);
-            }
+        	if(settings.getUrl().length() == 0) {
+        		if (!documents.containsKey(settings.getPlainText())) {
+	                documents.put(settings.getPlainText(), Jsoup.parse("<span>" + settings.getPlainText().replace("\n", "<br>") + "</span>"));
+	            }
+        	} else {
+	            if (!documents.containsKey(settings.getUrl())) {
+	                documents.put(settings.getUrl(), null);
+	            }
+        	}
         }
         
         AsyncJob.Scheduler scheduler = AsyncJob.Scheduler.newJob(j -> {
@@ -196,7 +203,7 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
         });
         
         for (HashMap.Entry<String, Element> entry : documents.entrySet()) {
-        	scheduler.newTask(WebsiteDownloadTask.factory(entry.getKey(), input.resourceDownloader))
+        	scheduler.newTask(WebsiteDownloadTask.factory(entry.getValue() == null ? entry.getKey() : "", input.resourceDownloader, entry.getValue()))
 			.with(input.downloadExecutor)
 			.then(this::linkTasks)
 			.queue();
