@@ -432,6 +432,10 @@
 							value="true" text="Tense" />
 					</m:MaterialRow>
 					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox ui:field="chkBracketsProgressive"
+							value="true" text="Simple/Progressive" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
 						<m:MaterialCheckBox
 							ui:field="chkBracketsActiveSentence" value="true"
 							text="Active Sentence" />
@@ -462,6 +466,11 @@
 						<m:MaterialCheckBox
 							ui:field="chkDistractorsOtherTense" value="true"
 							text="Correct forms in future or present tenses" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox
+							ui:field="chkDistractorsProgressive" value="true"
+							text="Correct forms in simple/progressive counterpart" />
 					</m:MaterialRow>
 					<m:MaterialRow padding="0" margin="0">
 						<m:MaterialCheckBox

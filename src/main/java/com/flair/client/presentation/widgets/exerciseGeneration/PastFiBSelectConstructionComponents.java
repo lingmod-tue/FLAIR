@@ -16,6 +16,9 @@ public class PastFiBSelectConstructionComponents extends ConstructionComponents 
 		firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(this.taskItem.chkPastSimple, "TENSE_PAST_SIMPLE"));
 		firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(this.taskItem.chkPresentPerfect, "TENSE_PRESENT_PERFECT"));
 		firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(this.taskItem.chkPastPerfect, "TENSE_PAST_PERFECT"));
+		firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(this.taskItem.chkPastProgressive, "TENSE_PAST_PROGRESSIVE"));
+		firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(this.taskItem.chkPresentPerfectProg, "TENSE_PRESENT_PERFECT_PROGRESSIVE"));
+		firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(this.taskItem.chkPastPerfectProg, "TENSE_PAST_PERFECT_PROGRESSIVE"));
 		
 		ArrayList<Pair<MaterialCheckBox, String>> secondLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
 		secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(this.taskItem.chkQuestions, "question"));

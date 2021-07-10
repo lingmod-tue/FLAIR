@@ -142,6 +142,8 @@ public class TaskItem extends LocalizedComposite {
     @UiField
     MaterialCheckBox chkBracketsTense;
     @UiField
+    MaterialCheckBox chkBracketsProgressive;
+    @UiField
     MaterialCheckBox chkBracketsActiveSentence;
     @UiField
     MaterialCheckBox chkDistractorsOtherForm;
@@ -151,6 +153,8 @@ public class TaskItem extends LocalizedComposite {
     MaterialCheckBox chkDistractorsOtherPast;
     @UiField
     MaterialCheckBox chkDistractorsOtherTense;
+    @UiField
+    MaterialCheckBox chkDistractorsProgressive;
     @UiField
     MaterialCheckBox chkDistractorsIncorrectForms;
     @UiField
@@ -287,6 +291,7 @@ public class TaskItem extends LocalizedComposite {
         distractorOptions.add(new Pair<MaterialCheckBox, DistractorProperties>(chkDistractorsOtherVariant, DistractorProperties.OTHER_VARIANT));
         distractorOptions.add(new Pair<MaterialCheckBox, DistractorProperties>(chkDistractorsOtherPast, DistractorProperties.OTHER_PAST));
         distractorOptions.add(new Pair<MaterialCheckBox, DistractorProperties>(chkDistractorsOtherTense, DistractorProperties.OTHER_TENSE));
+        distractorOptions.add(new Pair<MaterialCheckBox, DistractorProperties>(chkDistractorsProgressive, DistractorProperties.PROGRESSIVE));
         distractorOptions.add(new Pair<MaterialCheckBox, DistractorProperties>(chkDistractorsIncorrectForms, DistractorProperties.INCORRECT_FORMS));
         distractorOptions.add(new Pair<MaterialCheckBox, DistractorProperties>(chkDistractorsWrongConditional, DistractorProperties.WRONG_CONDITIONAL));
         distractorOptions.add(new Pair<MaterialCheckBox, DistractorProperties>(chkDistractorsWrongClause, DistractorProperties.WRONG_CLAUSE));
@@ -300,13 +305,15 @@ public class TaskItem extends LocalizedComposite {
         bracketsOptions.add(new Pair<MaterialCheckBox, BracketsProperties>(chkBracketsWill, BracketsProperties.WILL));
         bracketsOptions.add(new Pair<MaterialCheckBox, BracketsProperties>(chkBracketsSentenceType, BracketsProperties.SENTENCE_TYPE));
         bracketsOptions.add(new Pair<MaterialCheckBox, BracketsProperties>(chkBracketsTense, BracketsProperties.TENSE));
+        bracketsOptions.add(new Pair<MaterialCheckBox, BracketsProperties>(chkBracketsProgressive, BracketsProperties.PROGRESSIVE));
         bracketsOptions.add(new Pair<MaterialCheckBox, BracketsProperties>(chkBracketsActiveSentence, BracketsProperties.ACTIVE_SENTENCE));
 
         
         settingsWidgets = new Widget[] {
         		grpBrackets, chkBracketsLemma, chkBracketsConditional, chkBracketsPos, chkBracketsForm, chkBracketsWill, 
-        		chkBracketsSentenceType, chkBracketsTense, chkBracketsActiveSentence, 
+        		chkBracketsSentenceType, chkBracketsTense, chkBracketsProgressive, chkBracketsActiveSentence, 
         		grpDistractors, chkDistractorsOtherForm, chkDistractorsOtherVariant, chkDistractorsOtherPast, chkDistractorsOtherTense, 
+        		chkDistractorsProgressive,
         		chkDistractorsIncorrectForms, chkDistractorsWrongConditional, chkDistractorsWrongClause, chkDistractorsWrongSuffixUse,
         		chkDistractorsWrongSuffix, grpPos, grpCompForm, grpForms, grpVerbPerson, grpVerbForms, grpSentenceTypes, grpTenses,
         		lblTensesSentences, chkPresentSimple, chkFutureSimple, chkPresentProgressive, chkPastProgressive, chkFutureProgressive, 
@@ -323,8 +330,8 @@ public class TaskItem extends LocalizedComposite {
     			chkFuturePerfect, chkPresentPerfectProg, chkPastPerfectProg, chkFuturePerfectProg, chkAffirmativeSent, chkNegatedSent, chkQuestions, 
     			chkStatements, chkRegularVerbs, chkIrregularVerbs, chk3Pers, chkNot3Pers, chkWho, chkWhich, chkThat, chkOtherRelPron, rbtPerSentence,
     			chkBracketsLemma, chkBracketsPos, chkBracketsForm, chkBracketsConditional, chkBracketsWill, chkBracketsSentenceType, chkBracketsTense,
-    			chkBracketsActiveSentence,
-    			chkDistractorsOtherForm, chkDistractorsOtherVariant, chkDistractorsOtherPast, chkDistractorsOtherTense, 
+    			chkBracketsActiveSentence, chkBracketsProgressive,
+    			chkDistractorsOtherForm, chkDistractorsOtherVariant, chkDistractorsOtherPast, chkDistractorsOtherTense, chkDistractorsProgressive,
         		chkDistractorsIncorrectForms, chkDistractorsWrongConditional, chkDistractorsWrongClause, chkDistractorsWrongSuffixUse, chkDistractorsWrongSuffix};
         
         lblName.setText(name);
@@ -1175,6 +1182,9 @@ public class TaskItem extends LocalizedComposite {
 			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "TENSE_PAST_SIMPLE"));
 			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "TENSE_PRESENT_PERFECT"));
 			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "TENSE_PAST_PERFECT"));
+			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "TENSE_PAST_PROGRESSIVE"));
+			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "TENSE_PRESENT_PERFECT_PROGRESSIVE"));
+			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "TENSE_PAST_PERFECT_PROGRESSIVE"));
 			
 			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "question"));
 			secondLevelConstructions. add(new Pair<MaterialCheckBox, String>(null, "stmt"));
@@ -1471,7 +1481,10 @@ public class TaskItem extends LocalizedComposite {
         tenseConstructions = new GrammaticalConstruction[]{
         		GrammaticalConstruction.TENSE_PAST_SIMPLE,
         		GrammaticalConstruction.TENSE_PRESENT_PERFECT,
-        		GrammaticalConstruction.TENSE_PAST_PERFECT
+        		GrammaticalConstruction.TENSE_PAST_PERFECT,
+        		GrammaticalConstruction.TENSE_PAST_PROGRESSIVE,
+        		GrammaticalConstruction.TENSE_PAST_PERFECT_PROGRESSIVE,
+        		GrammaticalConstruction.TENSE_PRESENT_PERFECT_PROGRESSIVE
         };
         
         ArrayList<ConstructionRange> negationOccurrences = 

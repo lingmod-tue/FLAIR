@@ -1,13 +1,10 @@
 package com.flair.server.exerciseGeneration.exerciseManagement.temp;
 
-import simplenlg.features.*;
-import simplenlg.framework.NLGElement;
-
 import java.util.HashSet;
 
 import com.flair.server.parser.SimpleNlgParser;
 
-public class PresentProgressiveGenerator extends TenseGenerator {
+public class PresentProgressiveGenerator extends ProgressiveGenerator {
 
     public PresentProgressiveGenerator(SimpleNlgParser generator) {
         super(generator);
@@ -110,6 +107,8 @@ public class PresentProgressiveGenerator extends TenseGenerator {
                 for(String participle : participles) {
                     incorrectForms.add("are " + participle);    // we also want 'I are' and "he are" forms as incorrect forms
                     incorrectForms.add("be " + participle);
+                    incorrectForms.add("do " + participle);    // incorrect auxiliary
+                    incorrectForms.add("does " + participle);
 
                     if (((TenseSettings)settings).isThirdSingular()) {
                         incorrectForms.add("is " + participle);
@@ -121,35 +120,5 @@ public class PresentProgressiveGenerator extends TenseGenerator {
         }
 
         return  incorrectForms;
-    }
-
-    /**
-     * Generates incorrect present participle forms for the given lemma.
-     * @param lemma Verb lemma
-     * @return      Incorrect present participle forms
-     */
-    private HashSet<String> generateIncorrectPresentParticipleForms(String lemma) {
-        HashSet<String> incorrectForms = new HashSet<>();
-
-        if(lemma.substring(lemma.length() - 1).matches("[^aeiouyw]")) {
-            incorrectForms.add(lemma + lemma.substring(lemma.length() - 1) + "ing");   // incorrect if the trailing consonant shouldn't be doubled
-        } else if(lemma.endsWith("e")) {
-            incorrectForms.add(lemma.substring(0, lemma.length() - 1) + "ing");   // incorrect if the trailing 'e' shouldn't be dropped
-        }
-
-        return incorrectForms;
-    }
-
-    /**
-     * Generates the correct present participle form for the given lemma.
-     * @param lemma The verb lemma
-     * @return      The correct present participle
-     */
-    private String generateCorrectPresentParticipleForm(String lemma) {
-        NLGElement p = generator.nlgFactory().createVerbPhrase(lemma);
-        p.setFeature(Feature.TENSE, Tense.PRESENT);
-        p.setFeature(Feature.PROGRESSIVE, true);
-
-        return generator.realiser().realise(p).toString().substring(2);
     }
 }

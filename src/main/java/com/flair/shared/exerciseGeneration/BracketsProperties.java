@@ -8,6 +8,7 @@ public enum BracketsProperties {
     WILL,
     SENTENCE_TYPE,
     TENSE,
+    PROGRESSIVE,
     ACTIVE_SENTENCE,
     VERB_SPLITTING,
     IF_CLAUSE,

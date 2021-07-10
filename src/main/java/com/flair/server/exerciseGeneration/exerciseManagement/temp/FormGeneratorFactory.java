@@ -8,15 +8,27 @@ public class FormGeneratorFactory {
     	if(settings instanceof TenseSettings) {
     		if(((TenseSettings) settings).getTense().equals("present")) {
                 if(((TenseSettings) settings).isPerfect()) {
-                    return new PresentPerfectGenerator(generator);
+                	if(((TenseSettings) settings).isProgressive()) {
+                		return new PresentPerfectProgressiveGenerator(generator);
+                	} else {
+                		return new PresentPerfectGenerator(generator);
+                	}
                 } else {
                     return new SimplePresentGenerator(generator);
                 }
             } else if(((TenseSettings) settings).getTense().equals("past")) {
                 if(((TenseSettings) settings).isPerfect()) {
-                    return new PastPerfectGenerator(generator);
+                	if(((TenseSettings) settings).isProgressive()) {
+                		return new PastPerfectProgressiveGenerator(generator);
+                	} else {
+                		return new PastPerfectGenerator(generator);
+                	}
                 } else {
-                    return new SimplePastGenerator(generator);
+                	if(((TenseSettings) settings).isProgressive()) {
+                		return new PastProgressiveGenerator(generator);
+                	} else {
+                		return new SimplePastGenerator(generator);
+                	}
                 }
             } else if(((TenseSettings) settings).getTense().equals("future")) {
                 if(((TenseSettings) settings).isPerfect()) {

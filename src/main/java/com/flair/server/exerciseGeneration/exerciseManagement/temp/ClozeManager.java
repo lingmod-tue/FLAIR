@@ -170,11 +170,17 @@ public class ClozeManager {
 			                if(construction.getConstruction().toString().contains("_NEG_")) {
 			                    brackets.add("neg");
 			                }
-			                if((construction.getConstruction().toString().startsWith("PAST") || construction.getConstruction().toString().startsWith("PRES")) &&
-			                        exerciseSettings.getBrackets().contains(BracketsProperties.TENSE)) {
-			                    String tense = construction.getConstruction().toString().startsWith("PASTSMP") ? "simple past" :
-			                            construction.getConstruction().toString().startsWith("PRESPERF") ? "present perfect" : "past perfect";
-			                    brackets.add(tense);
+			                if((construction.getConstruction().toString().startsWith("PAST") || construction.getConstruction().toString().startsWith("PRES"))) {
+			                	if(exerciseSettings.getBrackets().contains(BracketsProperties.TENSE)) {
+				                	String tense = construction.getConstruction().toString().startsWith("PASTSMP") ? "simple past" :
+				                            construction.getConstruction().toString().startsWith("PRESPERF") ? "present perfect" : "past perfect";
+				                    brackets.add(tense);
+			                	}
+			                    
+			                    if(exerciseSettings.getBrackets().contains(BracketsProperties.PROGRESSIVE)) {
+			                        String prog = construction.getConstruction().toString().contains("PRG_") ? "progressive" : "simple";			                       
+			                        brackets.add(prog);
+			                    }
 			                }
 			            } 
 	

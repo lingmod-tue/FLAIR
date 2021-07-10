@@ -3,6 +3,10 @@ package com.flair.server.exerciseGeneration.exerciseManagement.temp;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import org.apache.bcel.generic.NEW;
+import org.netlib.util.booleanW;
+
+import com.coremedia.iso.boxes.ProgressiveDownloadInformationBox;
 import com.flair.server.exerciseGeneration.exerciseManagement.domManipulation.Blank;
 import com.flair.server.exerciseGeneration.exerciseManagement.domManipulation.Fragment;
 import com.flair.shared.exerciseGeneration.BracketsProperties;
@@ -127,7 +131,7 @@ public class InstructionsManager {
                             tense = tense.substring(0, lastCommaIndex) + " or" + tense.substring(lastCommaIndex + 1);
                         }
 
-                        instructions = " Use the correct tense (" + tense + ").";
+                        instructions += " Use the correct tense (" + tense + ").";
                     }
                 }
             } else if(settings.getContentType().equals(ExerciseType.DRAG_MULTI) || settings.getContentType().equals(ExerciseType.DRAG_SINGLE)) {
@@ -177,9 +181,22 @@ public class InstructionsManager {
             	addLemmas = !settings.getBrackets().contains(BracketsProperties.LEMMA);
                 String target = !addLemmas ?
                         "the verbs in brackets" :
-                        "one of the following verbs. Each word may only be used once";
+                        "one of the following verbs. Each word may only be used once";                           
 
-                instructions = "Insert the correct " + tense + " forms of " + target + ".";
+                String progressiveString = "";
+                if (!settings.getBrackets().contains(BracketsProperties.PROGRESSIVE)) {
+                	boolean hasProgressive = constructions.stream().anyMatch((construction) -> construction.toString().contains("PRG_"));
+                	boolean hasSimple = constructions.stream().anyMatch((construction) -> !construction.toString().contains("PRG_"));
+
+                    progressiveString = hasProgressive && hasSimple ? "simple or progressive " : 
+                    	hasProgressive ? "progressive " : "simple tense ";
+                }
+                
+                instructions = "Insert the correct " + progressiveString + "forms of " + target + ".";
+                
+                if (!settings.getBrackets().contains(BracketsProperties.TENSE)) {
+                    instructions += " Use the correct tense (" + tense + ").";
+                }               
             } else if(settings.getContentType().equals(ExerciseType.SINGLE_CHOICE)) {
                 instructions = "Select the correct " + tense + " forms from the dropdowns.";
             } else if(settings.getContentType().equals(ExerciseType.MARK)) {

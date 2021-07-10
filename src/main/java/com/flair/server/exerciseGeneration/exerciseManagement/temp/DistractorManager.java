@@ -6,6 +6,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Random;
 
+import org.apache.bcel.generic.NEW;
+import org.netlib.util.booleanW;
+
 import com.flair.server.exerciseGeneration.exerciseManagement.domManipulation.Blank;
 import com.flair.server.exerciseGeneration.exerciseManagement.domManipulation.Fragment;
 import com.flair.shared.exerciseGeneration.Construction;
@@ -165,29 +168,41 @@ public class DistractorManager {
 	    	                    }
 	                        } 
 	                    } else if(name.startsWith("PAST") || name.startsWith("PRES")) {
-	                        boolean isPerfect = construction.getConstruction().toString().contains("PERF_");
+	                        boolean isPerfect = construction.toString().startsWith("PASTPERF") || construction.toString().startsWith("PRESPERF");
 	                        String tense = construction.getConstruction().toString().startsWith("PAST") ? "past" : "present";
+	                    	boolean isProgressive = construction.getConstruction().toString().contains("PRG_");
 	                        boolean isInterrogative = construction.getConstruction().toString().contains("_QUEST_");
 	                        Pair<String, String> lemma =
 	                                nlpManager.getVerbLemma(construction.getConstructionIndices(), isInterrogative);
 	                        boolean isNegated = construction.getConstruction().toString().contains("_NEG_");
 	
 	                        if(lemma != null) {
-	    	                    ArrayList<Pair<Boolean, String>> parameterConstellations = new ArrayList<>();
+	                        	//[((isPerfect, isProgessive), tense)]
+	    	                    ArrayList<Pair<Pair<Boolean, Boolean>, String>> parameterConstellations = new ArrayList<>();
 	    	
 	    	                    if(exerciseSettings.getDistractors().contains(DistractorProperties.OTHER_PAST)) {
-	    	                        parameterConstellations.add(new Pair<>(true, "present"));
-	    	                        parameterConstellations.add(new Pair<>(false, "present"));
-	    	                        parameterConstellations.add(new Pair<>(true, "past"));
+	    	                        parameterConstellations.add(new Pair<>(new Pair<>(true, isProgressive), "present"));
+	    	                        parameterConstellations.add(new Pair<>(new Pair<>(false, isProgressive), "present"));
+	    	                        parameterConstellations.add(new Pair<>(new Pair<>(true, isProgressive), "past"));
 	    	                    } else {
-	    	                        parameterConstellations.add(new Pair<>(isPerfect, tense));
+	    	                        parameterConstellations.add(new Pair<>(new Pair<>(isPerfect, isProgressive), tense));
 	    	                    }
 	    	                    if(exerciseSettings.getDistractors().contains(DistractorProperties.OTHER_TENSE)) {
-	    	                        parameterConstellations.add(new Pair<>(true, "future"));
-	    	                        parameterConstellations.add(new Pair<>(false, "future"));
-	    	                        parameterConstellations.add(new Pair<>(false, "past"));
+	    	                        parameterConstellations.add(new Pair<>(new Pair<>(true, isProgressive), "future"));
+	    	                        parameterConstellations.add(new Pair<>(new Pair<>(false, isProgressive), "future"));
+	    	                        parameterConstellations.add(new Pair<>(new Pair<>(false, isProgressive), "past"));
 	    	                    }
 	    	                    
+	    	                    if(exerciseSettings.getDistractors().contains(DistractorProperties.PROGRESSIVE)) {
+		    	                    ArrayList<Pair<Pair<Boolean, Boolean>, String>> newParameterConstellations = new ArrayList<>();
+		    	                    for(Pair<Pair<Boolean, Boolean>, String> parameterConstellation : parameterConstellations) {
+		    	                    	newParameterConstellations.add(
+		    	                    			new Pair<>(new Pair<>(parameterConstellation.first.first, !parameterConstellation.first.second), parameterConstellation.second));
+
+		    	                    }
+		    	                    parameterConstellations.addAll(newParameterConstellations);
+	    	                    }
+	    	                    	    	                    	    	                    
 	    	                    // get other components excluding the verb and negation
 	    	                    String otherComponents = "";
 	    	                    LemmatizedVerbCluster verbCluster = nlpManager.getLemmatizedVerbConstruction(construction.getConstructionIndices(), true, false);
@@ -208,20 +223,20 @@ public class DistractorManager {
 	    	                    	}
 	    	                    }
 	    	                    
-	    	                    for (Pair<Boolean, String> parameterConstellation : parameterConstellations) {
+	    	                    for (Pair<Pair<Boolean, Boolean>, String> parameterConstellation : parameterConstellations) {
 	    	                        for (int j = 0; j <= 1; j++) {
-	    	                            // We don't know if we have a 3rd pers. sing. form or not, so we calculate both forms also for the correct parameter settings
-	    	                            options.add(nlpManager.generateCorrectForm(new TenseSettings(lemma.first, isInterrogative,
+	    	                        	// We don't know if we have a 3rd pers. sing. form or not, so we calculate both forms also for the correct parameter settings
+    	                        		options.add(nlpManager.generateCorrectForm(new TenseSettings(lemma.first, isInterrogative,
 	    	                                    isNegated, j == 0, lemma.second, parameterConstellation.second,
-	    	                                    false, parameterConstellation.first)) + otherComponents);
+	    	                                    !parameterConstellation.first.second, parameterConstellation.first.first)) + otherComponents);
 	    	                            if (exerciseSettings.getDistractors().contains(DistractorProperties.INCORRECT_FORMS)) {
 	    	                            	HashSet<String> incorrectForms = nlpManager.generateIncorrectForms(new TenseSettings(lemma.first, isInterrogative,
 	    	                                        isNegated, j == 0, lemma.second, parameterConstellation.second,
-	    	                                        false, parameterConstellation.first));
+	    	                                        !parameterConstellation.first.second, parameterConstellation.first.first));
 	    	                            	for(String incorrectForm : incorrectForms) {
 	    	                            		incorrectFormOptions.add(incorrectForm + otherComponents);
 	    	                            	}
-	    	                            }
+	    	                            }	    	                        	
 	    	                        }
 	    	                    }
 	                        }

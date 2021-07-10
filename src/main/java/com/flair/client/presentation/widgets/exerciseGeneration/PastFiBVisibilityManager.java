@@ -17,6 +17,7 @@ public class PastFiBVisibilityManager extends VisibilityManager {
 		visibleSettings.add(taskItem.grpBrackets);
 		visibleSettings.add(taskItem.chkBracketsLemma);
 		visibleSettings.add(taskItem.chkBracketsTense);
+		visibleSettings.add(taskItem.chkBracketsProgressive);
 		visibleSettings.add(taskItem.grpSentenceTypes);
 		addConstructionIfOccurs("affirm", "Past", 3, visibleSettings, taskItem.chkAffirmativeSent, numberExercises);   			
 		addConstructionIfOccurs("neg", "Past", 3, visibleSettings, taskItem.chkNegatedSent, numberExercises);   			
@@ -26,7 +27,10 @@ public class PastFiBVisibilityManager extends VisibilityManager {
 		visibleSettings.add(taskItem.lblTensesWords);
 		addConstructionIfOccurs("TENSE_PAST_SIMPLE", "Past", 1, visibleSettings, taskItem.chkPastSimple, numberExercises);
 		addConstructionIfOccurs("TENSE_PRESENT_PERFECT", "Past", 1, visibleSettings, taskItem.chkPresentPerfect, numberExercises);
-		addConstructionIfOccurs("TENSE_PAST_PERFECT", "Past", 1, visibleSettings, taskItem.chkPastPerfect, numberExercises);       			
+		addConstructionIfOccurs("TENSE_PAST_PERFECT", "Past", 1, visibleSettings, taskItem.chkPastPerfect, numberExercises);            
+		addConstructionIfOccurs("TENSE_PAST_PROGRESSIVE", "Past", 1, visibleSettings, taskItem.chkPastProgressive, numberExercises);
+		addConstructionIfOccurs("TENSE_PRESENT_PERFECT_PROGRESSIVE", "Past", 1, visibleSettings, taskItem.chkPresentPerfectProg, numberExercises);
+		addConstructionIfOccurs("TENSE_PAST_PERFECT_PROGRESSIVE", "Past", 1, visibleSettings, taskItem.chkPastPerfectProg, numberExercises);  			
 		visibleSettings.add(taskItem.grpVerbForms);
 		addConstructionIfOccurs("irreg", "Past", 4, visibleSettings, taskItem.chkIrregularVerbs, numberExercises);   
 		addConstructionIfOccurs("reg", "Past", 4, visibleSettings, taskItem.chkRegularVerbs, numberExercises);

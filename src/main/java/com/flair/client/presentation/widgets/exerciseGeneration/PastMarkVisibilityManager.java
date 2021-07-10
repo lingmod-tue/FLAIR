@@ -18,7 +18,10 @@ public class PastMarkVisibilityManager extends VisibilityManager {
 		visibleSettings.add(taskItem.lblTensesWords);
 		addConstructionIfOccurs("TENSE_PAST_SIMPLE", "Past", 1, visibleSettings, taskItem.chkPastSimple, numberExercises);
 		addConstructionIfOccurs("TENSE_PRESENT_PERFECT", "Past", 1, visibleSettings, taskItem.chkPresentPerfect, numberExercises);
-		addConstructionIfOccurs("TENSE_PAST_PERFECT", "Past", 1, visibleSettings, taskItem.chkPastPerfect, numberExercises);       			
+		addConstructionIfOccurs("TENSE_PAST_PERFECT", "Past", 1, visibleSettings, taskItem.chkPastPerfect, numberExercises);        
+		addConstructionIfOccurs("TENSE_PAST_PROGRESSIVE", "Past", 1, visibleSettings, taskItem.chkPastProgressive, numberExercises);
+		addConstructionIfOccurs("TENSE_PRESENT_PERFECT_PROGRESSIVE", "Past", 1, visibleSettings, taskItem.chkPresentPerfectProg, numberExercises);
+		addConstructionIfOccurs("TENSE_PAST_PERFECT_PROGRESSIVE", "Past", 1, visibleSettings, taskItem.chkPastPerfectProg, numberExercises);      			
 		visibleSettings.add(taskItem.grpVerbForms);
 		addConstructionIfOccurs("irreg", "Past", 4, visibleSettings, taskItem.chkIrregularVerbs, numberExercises);   
 		addConstructionIfOccurs("reg", "Past", 4, visibleSettings, taskItem.chkRegularVerbs, numberExercises);  

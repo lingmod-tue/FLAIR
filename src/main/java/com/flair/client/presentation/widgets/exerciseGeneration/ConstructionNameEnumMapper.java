@@ -122,6 +122,54 @@ public class ConstructionNameEnumMapper {
 			return DetailedConstruction.PASTPERF_STMT_AFFIRM_REG;
 		case "TENSE_PAST_PERFECT-stmt-affirm-irreg":
 			return DetailedConstruction.PASTPERF_STMT_AFFIRM_IRREG;
+		case "TENSE_PAST_PROGRESSIVE-question-neg-irreg":
+			return DetailedConstruction.PASTSMPPRG_QUEST_NEG_IRREG;
+		case "TENSE_PAST_PROGRESSIVE-question-neg-reg":
+			return DetailedConstruction.PASTSMPPRG_QUEST_NEG_REG;
+		case "TENSE_PAST_PROGRESSIVE-stmt-neg-irreg":
+			return DetailedConstruction.PASTSMPPRG_STMT_NEG_IRREG;
+		case "TENSE_PAST_PROGRESSIVE-stmt-neg-reg":
+			return DetailedConstruction.PASTSMPPRG_STMT_NEG_REG;
+		case "TENSE_PAST_PROGRESSIVE-question-affirm-irreg":
+			return DetailedConstruction.PASTSMPPRG_QUEST_AFFIRM_IRREG;
+		case "TENSE_PAST_PROGRESSIVE-question-affirm-reg":
+			return DetailedConstruction.PASTSMPPRG_QUEST_AFFIRM_REG;
+		case "TENSE_PAST_PROGRESSIVE-stmt-affirm-reg":
+			return DetailedConstruction.PASTSMPPRG_STMT_AFFIRM_REG;
+		case "TENSE_PAST_PROGRESSIVE-stmt-affirm-irreg":
+			return DetailedConstruction.PASTSMPPRG_STMT_AFFIRM_IRREG;
+		case "TENSE_PAST_PERFECT_PROGRESSIVE-question-neg-irreg":
+			return DetailedConstruction.PASTPERFPRG_QUEST_NEG_IRREG;
+		case "TENSE_PAST_PERFECT_PROGRESSIVE-question-neg-reg":
+			return DetailedConstruction.PASTPERFPRG_QUEST_NEG_REG;
+		case "TENSE_PAST_PERFECT_PROGRESSIVE-stmt-neg-irreg":
+			return DetailedConstruction.PASTPERFPRG_STMT_NEG_IRREG;
+		case "TENSE_PAST_PERFECT_PROGRESSIVE-stmt-neg-reg":
+			return DetailedConstruction.PASTPERFPRG_STMT_NEG_REG;
+		case "TENSE_PAST_PERFECT_PROGRESSIVE-question-affirm-irreg":
+			return DetailedConstruction.PASTPERFPRG_QUEST_AFFIRM_IRREG;
+		case "TENSE_PAST_PERFECT_PROGRESSIVE-question-affirm-reg":
+			return DetailedConstruction.PASTPERFPRG_QUEST_AFFIRM_REG;
+		case "TENSE_PAST_PERFECT_PROGRESSIVE-stmt-affirm-reg":
+			return DetailedConstruction.PASTPERFPRG_STMT_AFFIRM_REG;
+		case "TENSE_PAST_PERFECT_PROGRESSIVE-stmt-affirm-irreg":
+			return DetailedConstruction.PASTPERFPRG_STMT_AFFIRM_IRREG;
+		case "TENSE_PRESENT_PERFECT_PROGRESSIVE-question-neg-irreg":
+			return DetailedConstruction.PRESPERFPRG_QUEST_NEG_IRREG;
+		case "TENSE_PRESENT_PERFECT_PROGRESSIVE-question-neg-reg":
+			return DetailedConstruction.PRESPERFPRG_QUEST_NEG_REG;
+		case "TENSE_PRESENT_PERFECT_PROGRESSIVE-stmt-neg-irreg":
+			return DetailedConstruction.PRESPERFPRG_STMT_NEG_IRREG;
+		case "TENSE_PRESENT_PERFECT_PROGRESSIVE-stmt-neg-reg":
+			return DetailedConstruction.PRESPERFPRG_STMT_NEG_REG;
+		case "TENSE_PRESENT_PERFECT_PROGRESSIVE-question-affirm-irreg":
+			return DetailedConstruction.PRESPERFPRG_QUEST_AFFIRM_IRREG;
+		case "TENSE_PRESENT_PERFECT_PROGRESSIVE-question-affirm-reg":
+			return DetailedConstruction.PRESPERFPRG_QUEST_AFFIRM_REG;
+		case "TENSE_PRESENT_PERFECT_PROGRESSIVE-stmt-affirm-reg":
+			return DetailedConstruction.PRESPERFPRG_STMT_AFFIRM_REG;
+		case "TENSE_PRESENT_PERFECT_PROGRESSIVE-stmt-affirm-irreg":
+			return DetailedConstruction.PRESPERFPRG_STMT_AFFIRM_IRREG;
 		case "present-question-neg-3":
 			return DetailedConstruction.QUEST_NEG_3;
 		case "present-question-neg-not3":
