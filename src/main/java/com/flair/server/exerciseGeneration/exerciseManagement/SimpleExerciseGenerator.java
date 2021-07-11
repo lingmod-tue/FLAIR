@@ -58,6 +58,7 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
     	if(settings.getDoc() != null) {
 	        // We cannot operate on the same document for all exercises (in-place modifications), so we create a copy
 	        Element doc = Jsoup.parse(settings.getDoc().toString());
+	        doc = HtmlManager.makeHtmlEmbeddable(doc);
 	
 	        if (isCancelled) {
 	        	return null;

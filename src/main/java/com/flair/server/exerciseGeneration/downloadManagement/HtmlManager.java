@@ -56,7 +56,7 @@ public class HtmlManager {
     		return new Pair<>(plainText, new ArrayList<DownloadedResource>());
     	} else {
 	    	Pair<Element, ArrayList<DownloadedResource>> res = prepareHtml(url, resourceDownloader);
-	    	return new Pair<>(makeHtmlEmbeddable(res.first), res.second);
+	    	return new Pair<>(res.first, res.second);
     	}
     }
 
