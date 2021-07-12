@@ -3,6 +3,8 @@ package com.flair.client.presentation.widgets.exerciseGeneration;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.netlib.util.booleanW;
+
 import com.flair.client.localization.LocalizedComposite;
 import com.flair.client.localization.LocalizedFieldType;
 import com.flair.client.localization.annotations.LocalizedField;
@@ -42,6 +44,7 @@ import gwt.material.design.client.ui.MaterialRadioButton;
 import gwt.material.design.client.ui.MaterialRow;
 import gwt.material.design.client.ui.MaterialToast;
 import gwt.material.design.client.ui.html.Option;
+import java_cup.internal_error;
 
 public class TaskItem extends LocalizedComposite {
 	
@@ -376,7 +379,7 @@ public class TaskItem extends LocalizedComposite {
      * The occurrences of constructions relevant to exercise generation in the current document.
      */
     public HashMap<String, ArrayList<Pair<Integer, Integer>>> relevantConstructionsInEntireDocument = null;
-    
+
     /**
      * The possible topics for the dropdown.
      */
@@ -785,7 +788,7 @@ public class TaskItem extends LocalizedComposite {
     	VisibilityManager visibilityManager = visibilityManagers.getVisibilityManger(topic, exerciseType);
     	ArrayList<Widget> visibleSettings;
     	if(visibilityManager != null) {
-    		numberOfExercises = calculateNumberOfExercises();
+    		numberOfExercises = calculatePossibleNumberOfExercises();
     		visibleSettings = visibilityManager.getVisibleWidgets(numberOfExercises);
     	} else {
         	visibleSettings = new ArrayList<Widget>();
@@ -793,7 +796,7 @@ public class TaskItem extends LocalizedComposite {
     	    	
     	setSettingsVisibility(visibleSettings);  	
     	
-    	setNumberExercisesText(numberOfExercises);
+    	setNumberExercisesText(calculateNumberOfExercises());
     }
     
 
@@ -813,7 +816,7 @@ public class TaskItem extends LocalizedComposite {
 		relevantConstructionsInEntireDocument = new HashMap<String, ArrayList<Pair<Integer, Integer>>>();
     	calculateConstructionsOccurrences(relevantConstructionsInEntireDocument);
     	relevantConstructionsInSelectedDocumentPart = new HashMap<String, ArrayList<Pair<Integer, Integer>>>(relevantConstructionsInEntireDocument);  
-
+    	
     	String selecteTopic = getTopic();
     	drpTopic.clear();
     	
@@ -863,7 +866,7 @@ public class TaskItem extends LocalizedComposite {
      * Determines the constructions which are targeted by the exercise according to the current parameter settings.
      * @return	The list of targeted constructions
      */
-    private ArrayList<String> determineConfiguredConstructions() {
+    private ArrayList<String> determineConfiguredConstructions(boolean checkForValue) {
     	String topic = getTopic();
     	String exerciseType = getExerciseType();
     	
@@ -871,37 +874,37 @@ public class TaskItem extends LocalizedComposite {
 
     	if(topic.equals("Passive")) {
     		if(exerciseType.equals("FiB")) {    			    			    			
-    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPassiveFiBComponents());    			
+    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPassiveFiBComponents(), checkForValue);    			
     		} else if(exerciseType.equals("Drag")) {
-    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPassiveDragComponents());    	
+    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPassiveDragComponents(), checkForValue);    	
     		}
     	} else if(topic.equals("Relatives")) {
     		if(exerciseType.equals("FiB") || exerciseType.equals("Mark") || exerciseType.equals("Drag") && rbtPerSentence.getValue()) {
-    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getRelativesFiBMarkComponents());  
+    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getRelativesFiBMarkComponents(), checkForValue);  
     		} else if (exerciseType.equals("Select")) {
-    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getRelativesSelectComponents());  
+    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getRelativesSelectComponents(), checkForValue);  
     		} else if(exerciseType.equals("Drag") && !rbtPerSentence.getValue()) {
-    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getRelativesDragComponents());      			
+    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getRelativesDragComponents(), checkForValue);      			
     		}
     	} else if(topic.equals("Present")) {
     		if(exerciseType.equals("FiB") || exerciseType.equals("Select")) {       			
-    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPresentFiBSelectComponents());
+    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPresentFiBSelectComponents(), checkForValue);
     		} else if(exerciseType.equals("Mark")) {     			
-    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPresentMarkComponents());   			
+    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPresentMarkComponents(), checkForValue);   			
     		}
     	} else if(topic.equals("Past")) {
     		if(exerciseType.equals("FiB") || exerciseType.equals("Select")) {    			
-    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPastFiBSelectComponents());    			
+    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPastFiBSelectComponents(), checkForValue);    			
     		} else if(exerciseType.equals("Mark") || exerciseType.equals("Drag")) {    			
-    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPastMarkDragComponents());    			
+    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPastMarkDragComponents(), checkForValue);    			
     		} 
     	} else if(topic.equals("'if'")) {
     		if(exerciseType.equals("FiB") || exerciseType.equals("Select") || exerciseType.equals("Drag")) {
-    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getConditionalComponents());    	
+    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getConditionalComponents(), checkForValue);    	
     		} 
     	} else if(topic.equals("Compare")) {
 			if(exerciseType.equals("FiB") || exerciseType.equals("Select") || exerciseType.equals("Mark") || exerciseType.equals("Drag")) {
-    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getComparativeComponents());  
+    			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getComparativeComponents(), checkForValue);  
     		}
     	}
     	
@@ -909,17 +912,17 @@ public class TaskItem extends LocalizedComposite {
     }
 
     /**
-     * Calculates the number of exercises that can be generated for the current document with the current parameter settings.
+     * Calculates the number of exercises that can be generated for the current document.
      * @return The number of exercises that can be generated.
      */
-    private int calculateNumberOfExercises() {
+    private int calculateRelevantNumberOfExercises(HashMap<String, ArrayList<Pair<Integer, Integer>>> constructions, boolean checkForValue) {
     	String topic = getTopic();
-    	ArrayList<String> constructionsToConsider = determineConfiguredConstructions();
+    	ArrayList<String> constructionsToConsider = determineConfiguredConstructions(checkForValue);
 
     	int nExercises = 0;
     	
     	for(String constructionToConsider : constructionsToConsider) {
-    		nExercises += relevantConstructionsInSelectedDocumentPart.get(constructionToConsider).size();
+    		nExercises += constructions.get(constructionToConsider).size();
     	}
     	
     	// If we use both clauses of the conditional sentence as targets, we have double the amount of blanks
@@ -931,16 +934,33 @@ public class TaskItem extends LocalizedComposite {
     }
     
     /**
+     * Calculates the number of exercises that can be generated for the current document regardless of the current parameter settings.
+     * @return The number of exercises that can be generated.
+     */
+    private int calculatePossibleNumberOfExercises() {
+    	return calculateRelevantNumberOfExercises(relevantConstructionsInEntireDocument, false);
+    }
+    
+    /**
+     * Calculates the number of exercises that can be generated for the current document with the current parameter settings.
+     * @return The number of exercises that can be generated.
+     */
+    private int calculateNumberOfExercises() {
+    	return calculateRelevantNumberOfExercises(relevantConstructionsInSelectedDocumentPart, true);
+    }
+    
+    /**
      * Creates all combinations of constructions for the checked settings.
      * @param 	constructionComponent A list of the individual constructions making up a more complex (more detailed) construction. 
      * 			Each construction consists of a list of possible values.
      * @return	The list of construction names corresponding to relevantConstructions names
      */
-    private ArrayList<String> getConstructionNamesFromSettings(ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> constructionLevels) {
+    private ArrayList<String> getConstructionNamesFromSettings(ArrayList<ArrayList<Pair<MaterialCheckBox, String>>> constructionLevels,
+    		boolean checkForValue) {
 		ArrayList<String> initialConstructionNames = new ArrayList<String>();
     	if(constructionLevels.size() > 0) {
     		for(Pair<MaterialCheckBox, String> firstLevelConstruction : constructionLevels.get(0)) {
-    			if(firstLevelConstruction.first == null ||  firstLevelConstruction.first.getValue()) {
+    			if(firstLevelConstruction.first == null || !checkForValue ||  firstLevelConstruction.first.getValue()) {
     				initialConstructionNames.add(firstLevelConstruction.second);
     			}   		
     		}
@@ -950,7 +970,7 @@ public class TaskItem extends LocalizedComposite {
     				if(initialConstructionNames.size() > 0) {
     					ArrayList<String> currentConstructionNames = new ArrayList<String>();
     					for(Pair<MaterialCheckBox, String> currentLevelConstruction : constructionLevels.get(i)) {
-    						if(currentLevelConstruction.first == null || currentLevelConstruction.first.getValue()) {
+    						if(currentLevelConstruction.first == null || !checkForValue || currentLevelConstruction.first.getValue()) {
     							for(String initialConstructionName : initialConstructionNames) {
     			    				currentConstructionNames.add(initialConstructionName + "-" + currentLevelConstruction.second);
     							}
@@ -1249,7 +1269,7 @@ public class TaskItem extends LocalizedComposite {
 			}
 		}
 		
-		return getConstructionNamesFromSettings(constructionLevels);    	
+		return getConstructionNamesFromSettings(constructionLevels, true);    	
     }
     
     /**
@@ -1260,7 +1280,7 @@ public class TaskItem extends LocalizedComposite {
 
     	HashMap<String, ArrayList<Pair<Integer, Integer>>> constructionOccurrences = 
     			getConstructionsOccurrences();
-    	ArrayList<String> configuredConstructions = determineConfiguredConstructions();
+    	ArrayList<String> configuredConstructions = determineConfiguredConstructions(true);
     	ArrayList<DistractorProperties> distractorProperties = getSelectedDistractors();
 		ArrayList<BracketsProperties> brackets = getSelectedBracketContents();
 		

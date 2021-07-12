@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.google.gwt.user.client.ui.Widget;
 
 import gwt.material.design.client.ui.MaterialCheckBox;
+import gwt.material.design.client.ui.MaterialToast;
 
 public abstract class VisibilityManager {
 
@@ -35,9 +36,12 @@ public abstract class VisibilityManager {
     	if(numberOccurrences > 0) {
 			visibleSettings.add(widget);
 			
+			MaterialToast.fireToast(construction + ": " + numberOccurrences + " - " + numberExercises);
+			
 			if(widget instanceof MaterialCheckBox) {
 				if(numberOccurrences == numberExercises) {
 					((MaterialCheckBox) widget).setEnabled(false);
+					((MaterialCheckBox) widget).setValue(true);
 				} else {
 					((MaterialCheckBox) widget).setEnabled(true);
 				}
