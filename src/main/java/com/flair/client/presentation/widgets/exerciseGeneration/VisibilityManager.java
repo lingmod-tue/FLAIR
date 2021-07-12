@@ -35,8 +35,8 @@ public abstract class VisibilityManager {
     	if(numberOccurrences > 0) {
 			visibleSettings.add(widget);
 			
-			if(numberOccurrences == numberExercises) {
-				if(widget instanceof MaterialCheckBox) {
+			if(widget instanceof MaterialCheckBox) {
+				if(numberOccurrences == numberExercises) {
 					((MaterialCheckBox) widget).setEnabled(false);
 				} else {
 					((MaterialCheckBox) widget).setEnabled(true);
