@@ -35,9 +35,7 @@ public abstract class VisibilityManager {
     	int numberOccurrences = taskItem.getNumberOfConstructionOccurrences(construction, topic, group);
     	if(numberOccurrences > 0) {
 			visibleSettings.add(widget);
-			
-			MaterialToast.fireToast(construction + ": " + numberOccurrences + " - " + numberExercises);
-			
+						
 			if(widget instanceof MaterialCheckBox) {
 				if(numberOccurrences == numberExercises) {
 					((MaterialCheckBox) widget).setEnabled(false);
