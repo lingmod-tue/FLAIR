@@ -13,9 +13,9 @@ public class RelativesSelectConstructionComponents extends ConstructionComponent
 		super(taskItem);
 
 		ArrayList<Pair<MaterialCheckBox, String>> firstLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();			
-		firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(this.taskItem.chkScopePassive, "who"));
-		firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(this.taskItem.chkScopePassive, "which"));
-		firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(this.taskItem.chkScopePassive, "that"));
+		firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(this.taskItem.chkWho, "who"));
+		firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(this.taskItem.chkWhich, "which"));
+		firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(this.taskItem.chkThat, "that"));
 		
 		constructionLevels = new ArrayList<ArrayList<Pair<MaterialCheckBox, String>>>(); 
 		constructionLevels.add(firstLevelConstructions);

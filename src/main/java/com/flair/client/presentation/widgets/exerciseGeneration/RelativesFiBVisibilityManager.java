@@ -14,7 +14,6 @@ public class RelativesFiBVisibilityManager extends VisibilityManager {
 	public ArrayList<Widget> getVisibleWidgets(int numberExercises) {
 		ArrayList<Widget> visibleSettings = new ArrayList<Widget>();
 		
-		visibleSettings.add(taskItem.grpTenses);
 		visibleSettings.add(taskItem.grpPronouns);
 		addConstructionIfOccurs("who", "Relatives", 1, visibleSettings, taskItem.chkWho, numberExercises);   			
 		addConstructionIfOccurs("which", "Relatives", 1, visibleSettings, taskItem.chkWhich, numberExercises);   			

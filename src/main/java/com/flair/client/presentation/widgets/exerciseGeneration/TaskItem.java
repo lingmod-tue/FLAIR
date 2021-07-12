@@ -589,7 +589,10 @@ public class TaskItem extends LocalizedComposite {
     	chkIrregularVerbs.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
     	chk3Pers.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
     	chkNot3Pers.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
-    	chkWho.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
+    	chkWho.addClickHandler(e -> {
+    		MaterialToast.fireToast("clicked");
+    		setNumberExercisesText(calculateNumberOfExercises());
+    	});
     	chkWhich.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
     	chkThat.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
     	chkOtherRelPron.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));  	
