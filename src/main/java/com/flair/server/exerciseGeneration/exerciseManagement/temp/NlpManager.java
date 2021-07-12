@@ -86,7 +86,6 @@ public class NlpManager {
     private SentenceAnnotations getRelevantSentence(Pair<Integer, Integer> constructionIndices) {
         // We always operate on the entire sentence to facilitate NLP processing.
         for (SentenceAnnotations sent : sentences) {
-
             if (sent.getTokens().get(0).beginPosition() <= constructionIndices.first && 
             		sent.getTokens().get(sent.getTokens().size() - 1).endPosition() >= constructionIndices.second) {
                 return sent;

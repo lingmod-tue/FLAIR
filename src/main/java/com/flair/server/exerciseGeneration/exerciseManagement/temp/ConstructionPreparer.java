@@ -38,12 +38,12 @@ public class ConstructionPreparer {
                     Pair<Integer, Integer> mainClauseConstructionIndices = null;
                     Pair<Integer, Integer> ifClauseConstructionIndices = null;
 
-                    if (clauses.first != null && exerciseSettings.getContentType().equals(ExerciseType.SINGLE_CHOICE) || 
-                    		exerciseSettings.getBrackets().contains(BracketsProperties.MAIN_CLAUSE) || r == 1) {
+                    if (clauses.first != null && (exerciseSettings.getContentType().equals(ExerciseType.SINGLE_CHOICE) || 
+                    		exerciseSettings.getBrackets().contains(BracketsProperties.MAIN_CLAUSE) || r == 1)) {
                         mainClauseConstructionIndices = nlpManager.extractVerbCluster(clauses.first);                        
                     }
-                    if (clauses.second != null && exerciseSettings.getContentType().equals(ExerciseType.SINGLE_CHOICE) || 
-                    		exerciseSettings.getBrackets().contains(BracketsProperties.IF_CLAUSE) || r == 2) {
+                    if (clauses.second != null && (exerciseSettings.getContentType().equals(ExerciseType.SINGLE_CHOICE) || 
+                    		exerciseSettings.getBrackets().contains(BracketsProperties.IF_CLAUSE) || r == 2)) {
                         ifClauseConstructionIndices = nlpManager.extractVerbCluster(clauses.second);                        
                     }
                     

@@ -1004,7 +1004,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
         
         exGenPoller = serverMessageChannel.messagePoller()
                 .interval(POLLING_INTERVAL)
-                .timeout(TIMEOUT_INTERVAL)
+                .timeout(TIMEOUT_INTERVAL * 2)
                 .onTimeout(() -> {
                     ToastNotification.fire(getLocalizedString(LocalizationTags.OP_TIMEDOUT.toString()), 5000);
                     exGen.enableButton();
