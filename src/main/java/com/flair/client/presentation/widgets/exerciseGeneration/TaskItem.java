@@ -1,6 +1,7 @@
 package com.flair.client.presentation.widgets.exerciseGeneration;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import org.netlib.util.booleanW;
@@ -1121,14 +1122,12 @@ public class TaskItem extends LocalizedComposite {
     	return containedConstructions;
     }
     
-    
     /**
      * Calculates the occurrences of constructions in the combinations relevant to exercise generation.
      */
-    public void calculateConstructionsOccurrences(HashMap<String, ArrayList<Pair<Integer, Integer>>> relevantConstructions) {    
+    public void calculateConstructionsOccurrences(HashMap<String, ArrayList<Pair<Integer, Integer>>> relevantConstructions) {   
     	relevantConstructions.clear();
     	HashMap<String, ArrayList<Pair<Integer, Integer>>> constructionOccurrences = getConstructionsOccurrences();
-
     	for (HashMap.Entry<String, ArrayList<Pair<Integer, Integer>>> entry : constructionOccurrences.entrySet()) {
         	relevantConstructions.put(entry.getKey(), entry.getValue());
         }

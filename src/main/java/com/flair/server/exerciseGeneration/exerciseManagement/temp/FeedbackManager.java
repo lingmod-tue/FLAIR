@@ -9,20 +9,29 @@ import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Properties;
 
+import javax.measure.spi.SystemOfUnits;
+
+import org.apache.bcel.generic.NEW;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import com.beust.jcommander.internal.Console;
 import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.exerciseGeneration.BracketsProperties;
 import com.flair.shared.exerciseGeneration.Construction;
@@ -30,9 +39,12 @@ import com.flair.shared.exerciseGeneration.ExerciseSettings;
 import com.flair.shared.exerciseGeneration.ExerciseType;
 import com.flair.shared.exerciseGeneration.Pair;
 
+import java_cup.internal_error;
+
 public class FeedbackManager {
 
 	private static final Properties PROPERTIES = new Properties();
+	private static final int BATCH_SIZE = 1;
 
 	static {
 		try {
@@ -42,7 +54,37 @@ public class FeedbackManager {
 		}
 	}
 	
-	ArrayList<Pair<Construction, Boolean>> feedbackSupport = new ArrayList<>();
+	private ArrayList<Pair<Construction, Boolean>> feedbackSupport = new ArrayList<>();
+	
+	/**
+	 * Determines the exercise topic.
+	 * @param settings The exercise settings.
+	 * @return The topic
+	 */
+	private String getTopic(ExerciseSettings settings) {
+		String topic = "";
+		if(settings.getConstructions().size() > 0) {
+			if(settings.getConstructions().get(0).getConstruction().toString().startsWith("COND")) {
+				topic = "Conditional";
+			} else if(settings.getConstructions().get(0).getConstruction().toString().startsWith("ADJ") || 
+					settings.getConstructions().get(0).getConstruction().toString().startsWith("ADV")) {
+				topic = "Comparison";
+			} else if(settings.getConstructions().get(0).getConstruction().toString().startsWith("QUEST") || 
+					settings.getConstructions().get(0).getConstruction().toString().startsWith("STMT")) {
+				topic = "Simple Present";
+			} else if(settings.getConstructions().get(0).getConstruction().toString().startsWith("PAST") || 
+					settings.getConstructions().get(0).getConstruction().toString().startsWith("PRES")) {
+				topic = "Past tenses";
+			} else if(settings.getConstructions().get(0).getConstruction().toString().startsWith("PASSIVE") || 
+					settings.getConstructions().get(0).getConstruction().toString().startsWith("ACTIVE")) {
+				topic = "Passive";
+			} else {
+				topic = "Relative pronouns";
+			}
+		}
+		
+		return topic;
+	}
 	
 	/**
      * Generates feedback for distractors.
@@ -54,14 +96,32 @@ public class FeedbackManager {
     public ArrayList<ArrayList<Pair<Pair<String, Boolean>, String>>> generateFeedback(ArrayList<Construction> usedConstructions, 
     		ExerciseSettings settings, NlpManager nlpManager) {
     	ArrayList<ArrayList<Pair<Pair<String, Boolean>, String>>> distractors = new ArrayList<>();
-    	JSONArray responseObject = null;
-    	
-    	if(settings.isGenerateFeedback() && settings.getContentType().equals(ExerciseType.FIB) || settings.getContentType().equals(ExerciseType.SINGLE_CHOICE) ) {
-    		JSONObject requestObject = prepareJsonRequest(settings, usedConstructions, nlpManager);
+    	JSONArray responseObject = new JSONArray();
+
+    	if(settings.isGenerateFeedback() && 
+    			(settings.getContentType().equals(ExerciseType.FIB) && !settings.getBrackets().contains(BracketsProperties.ACTIVE_SENTENCE)
+    					|| settings.getContentType().equals(ExerciseType.SINGLE_CHOICE)
+    			)) {
     		
-    		if(requestObject != null) {
-    			responseObject = getResponseFromMicroservice(requestObject);
-    		}
+    		int startIndex = 0;
+    		while(startIndex < usedConstructions.size()) {
+    			int endIndex = startIndex + BATCH_SIZE > usedConstructions.size() ? usedConstructions.size() : startIndex + BATCH_SIZE;
+    			List<Construction> batchList = usedConstructions.subList(startIndex, endIndex);
+        		startIndex = endIndex;
+    			JSONObject requestObject = 
+        				prepareJsonRequest(batchList, nlpManager, getTopic(settings), settings.getContentType(), settings.getPlainText());
+        		
+        		if(requestObject != null) {
+        			JSONArray r = getResponseFromMicroservice(requestObject);
+        			if(r != null) {
+        				responseObject.addAll(r);
+        			} else {
+        				for(int j = 0; j < usedConstructions.size(); j++) {
+        					responseObject.add(new JSONObject());
+        				}
+        			}
+        		}
+    		}   		
     	}
     	
     	if(responseObject != null) {
@@ -102,62 +162,37 @@ public class FeedbackManager {
      * @param nlpManager		The NLP manager
      * @return					The JSON object for the microservice request body
      */
-    private JSONObject prepareJsonRequest(ExerciseSettings settings, ArrayList<Construction> usedConstructions, NlpManager nlpManager) { 	
+    private JSONObject prepareJsonRequest(List<Construction> usedConstructions, NlpManager nlpManager, 
+    		String topic, ExerciseType contentType, String plainText) { 	
 		JSONArray activityItems = new JSONArray();
 		
-		if(settings.getContentType().equals(ExerciseType.SINGLE_CHOICE) || 
-				settings.getContentType().equals(ExerciseType.FIB) && !settings.getBrackets().contains(BracketsProperties.ACTIVE_SENTENCE)) {
-			for(Construction construction : usedConstructions) {
-				Pair<Pair<String, String[]>, Integer> sentenceTexts = nlpManager.getSentenceTexts(construction.getConstructionIndices(), settings.getPlainText());
-				boolean supportsFeedback = false;
-				if(sentenceTexts != null) {
-					JSONObject item = new JSONObject();
-					item.put("prompt", sentenceTexts.first.first);
-    				String targetAnswer = sentenceTexts.first.second[0] + sentenceTexts.first.second[1] + sentenceTexts.first.second[2];
-					item.put("unmodifiedDocumentSentence", targetAnswer);
-					JSONArray targetSpan = new JSONArray();
-					targetSpan.add(construction.getConstructionIndices().first - sentenceTexts.second);
-					targetSpan.add(construction.getConstructionIndices().second - sentenceTexts.second);
-					item.put("targetSpan", targetSpan);
-					activityItems.add(item);
-					supportsFeedback = true;
-				}	
-				feedbackSupport.add(new Pair<>(construction, supportsFeedback));
-			}
+		for(Construction construction : usedConstructions) {
+			Pair<Pair<String, String[]>, Integer> sentenceTexts = 
+					nlpManager.getSentenceTexts(construction.getConstructionIndices(), plainText);
+			boolean supportsFeedback = false;
+			if(sentenceTexts != null) {
+				JSONObject item = new JSONObject();
+				item.put("prompt", sentenceTexts.first.first);
+				String targetAnswer = sentenceTexts.first.second[0] + sentenceTexts.first.second[1] + sentenceTexts.first.second[2];
+				item.put("targetAnswer", targetAnswer);
+				JSONArray targetSpan = new JSONArray();
+				targetSpan.add(construction.getConstructionIndices().first - sentenceTexts.second);
+				targetSpan.add(construction.getConstructionIndices().second - sentenceTexts.second);
+				item.put("targetSpan", targetSpan);
+				activityItems.add(item);
+				supportsFeedback = true;
+			}	
+			feedbackSupport.add(new Pair<>(construction, supportsFeedback));
 		}
 		
 		if(activityItems.size() > 0) {
 			JSONObject activitySpecification = new JSONObject();
 			activitySpecification.put("items", activityItems);
-			
-			String topic = "";
-			if(settings.getConstructions().size() > 0) {
-				if(settings.getConstructions().get(0).getConstruction().toString().startsWith("COND")) {
-					topic = "Conditional";
-				} else if(settings.getConstructions().get(0).getConstruction().toString().startsWith("ADJ") || 
-						settings.getConstructions().get(0).getConstruction().toString().startsWith("ADV")) {
-					topic = "Comparison";
-				} else if(settings.getConstructions().get(0).getConstruction().toString().startsWith("QUEST") || 
-						settings.getConstructions().get(0).getConstruction().toString().startsWith("STMT")) {
-					topic = "Simple Present";
-				} else if(settings.getConstructions().get(0).getConstruction().toString().startsWith("PAST") || 
-						settings.getConstructions().get(0).getConstruction().toString().startsWith("PRES")) {
-					topic = "Past tenses";
-				} else if(settings.getConstructions().get(0).getConstruction().toString().startsWith("PASSIVE") || 
-						settings.getConstructions().get(0).getConstruction().toString().startsWith("ACTIVE")) {
-					topic = "Passive";
-				} else {
-					topic = "Relative pronouns";
-				}
-			}
-			
+						
 			activitySpecification.put("exerciseTopic", topic);
-			activitySpecification.put("exerciseType", settings.getContentType().toString());
-			
-			JSONObject requestObject = new JSONObject();
-			requestObject.put("activitySpecification", activitySpecification);
-			    		   		
-			return requestObject;    	
+			activitySpecification.put("exerciseType", contentType.toString());    		   		
+			 		   		
+			return activitySpecification;
 		}
 		
 		return null;
@@ -168,13 +203,19 @@ public class FeedbackManager {
      * @param requestObject	The requestObject containing the information on the targets for which feedback needs to be generated
      * @return				The response from the microservice if successful; otherwise null
      */
-    private JSONArray getResponseFromMicroservice(JSONObject requestObject) {
-    	try {    		
+    private JSONArray getResponseFromMicroservice(JSONObject activitySpec) {
+    	try {    	
+    		JSONObject requestObject = new JSONObject();
+    		requestObject.put("activitySpecification", activitySpec.toJSONString());
+    		
     		String payload = requestObject.toJSONString();
-            StringEntity entity = new StringEntity(payload, ContentType.APPLICATION_FORM_URLENCODED);            
-            
-            // set a 30s timeout
-            int timeout = 30 * 1000;
+    		StringEntity entity = new StringEntity(payload, ContentType.APPLICATION_JSON);  
+    		
+    		//List <NameValuePair> parameters = new ArrayList <NameValuePair>();
+    		//parameters.add(new BasicNameValuePair("activitySpecification", payload));
+    		            
+            // set a 5min timeout
+            int timeout = 5 * 60 * 1000;
             RequestConfig config = RequestConfig.custom()
               .setConnectTimeout(timeout)
               .setConnectionRequestTimeout(timeout)
@@ -183,6 +224,7 @@ public class FeedbackManager {
             
             
             HttpPost request = new HttpPost(PROPERTIES.getProperty("url"));
+            //request.setEntity(new UrlEncodedFormEntity(parameters));
             request.setEntity(entity);
 
             HttpResponse response = null;
@@ -192,7 +234,7 @@ public class FeedbackManager {
             	ex.printStackTrace();
             }
             
-            if(response == null) {
+            if(response == null || response.getStatusLine().getStatusCode() == 500) {
             	return null;
             }
             
@@ -218,8 +260,16 @@ public class FeedbackManager {
 	            JSONObject responseObject = null;
 	            try {
 	                responseObject = (JSONObject) parser.parse(body);
+	                if(responseObject != null && responseObject.containsKey("message")) {
+	                	ServerLogger.get().info((String)responseObject.get("message"));
+	                }
 	                if(responseObject != null && responseObject.containsKey("externalFeedbackResourceBundlesJson")) {
-				    	return (JSONArray)responseObject.get("externalFeedbackResourceBundlesJson");
+	                	JSONArray feedbacksArray = (JSONArray) parser.parse((String)responseObject.get("externalFeedbackResourceBundlesJson"));
+	                	if(((JSONArray)activitySpec.get("items")).size() == feedbacksArray.size()) {
+	                		return feedbacksArray;
+	                	} else {
+	                		return null;
+	                	}
 				    }
 	            } catch (ParseException e) {
 	                e.printStackTrace();

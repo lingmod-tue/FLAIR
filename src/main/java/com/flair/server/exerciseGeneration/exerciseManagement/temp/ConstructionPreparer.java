@@ -143,8 +143,8 @@ public class ConstructionPreparer {
             		boolean isLabelledThirdPerson = construction.getConstruction().toString().endsWith("_3");
             		if(isThirdPerson != isLabelledThirdPerson) {
             			// check if we actually want the construction
-            			if(isThirdPerson && !exerciseSettings.getConstructions().stream().anyMatch((c) -> c.toString().endsWith("_3")) ||
-            					!isThirdPerson && !exerciseSettings.getConstructions().stream().anyMatch((c) -> c.toString().endsWith("_NOT3"))) {
+            			if(isThirdPerson && !exerciseSettings.getConstructions().stream().anyMatch((c) -> c.getConstruction().toString().endsWith("_3")) ||
+            					!isThirdPerson && !exerciseSettings.getConstructions().stream().anyMatch((c) -> c.getConstruction().toString().endsWith("_NOT3"))) {
             				constructionsToRemove.add(construction);
             			} else {
             				DetailedConstruction correctConstruction;

@@ -23,6 +23,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.netlib.util.booleanW;
+
 /**
  * Implementation of English language parsing logic for the Stanford parser
  *
@@ -392,8 +394,13 @@ class EnglishParsingLogic implements ParsingLogic {
 		int willStart = -1;
 		int haveStart = -1;
 		IndexedWord theVerb = null;
+		boolean resetWillStart = false;
 
 		for (TypedDependency dependency : dependencies) {
+			if(resetWillStart) {
+				willStart = -1;
+				resetWillStart = false;
+			}
 			String rel = dependency.reln().getShortName().toLowerCase(); // dependency relation
 			IndexedWord gov = dependency.gov();
 			IndexedWord dep = dependency.dep();
@@ -537,7 +544,7 @@ class EnglishParsingLogic implements ParsingLogic {
 								dependency.toString());
 						willDoneFound = false;
 						willHaveDoneFound = false;
-						willStart = -1;
+						resetWillStart = true;
 					}
 
 				} // after willHaveDoneFound is found : Future Perfect, Passive (perfect)

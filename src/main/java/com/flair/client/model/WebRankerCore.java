@@ -1006,6 +1006,10 @@ public class WebRankerCore implements AbstractWebRankerCore {
                 .interval(POLLING_INTERVAL)
                 .timeout(TIMEOUT_INTERVAL * 2)
                 .onTimeout(() -> {
+                	CmActiveOperationCancel msg = new CmActiveOperationCancel();
+                    msg.setActiveOperationExpected(false);
+                    serverMessageChannel.send(msg, () -> {}, (e, me) -> {});
+             
                     ToastNotification.fire(getLocalizedString(LocalizationTags.OP_TIMEDOUT.toString()), 5000);
                     exGen.enableButton();
                 })
