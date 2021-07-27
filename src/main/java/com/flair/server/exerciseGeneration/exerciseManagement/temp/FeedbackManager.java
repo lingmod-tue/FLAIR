@@ -12,26 +12,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
-import javax.measure.spi.SystemOfUnits;
-
-import org.apache.bcel.generic.NEW;
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.HTTP;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import com.beust.jcommander.internal.Console;
 import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.exerciseGeneration.BracketsProperties;
 import com.flair.shared.exerciseGeneration.Construction;
@@ -39,12 +31,10 @@ import com.flair.shared.exerciseGeneration.ExerciseSettings;
 import com.flair.shared.exerciseGeneration.ExerciseType;
 import com.flair.shared.exerciseGeneration.Pair;
 
-import java_cup.internal_error;
-
 public class FeedbackManager {
 
 	private static final Properties PROPERTIES = new Properties();
-	private static final int BATCH_SIZE = 1;
+	private static final int BATCH_SIZE = 50;
 
 	static {
 		try {
@@ -97,48 +87,50 @@ public class FeedbackManager {
     		ExerciseSettings settings, NlpManager nlpManager) {
     	ArrayList<ArrayList<Pair<Pair<String, Boolean>, String>>> distractors = new ArrayList<>();
     	JSONArray responseObject = new JSONArray();
+    	ArrayList<Pair<List<Construction>, JSONArray>> feedbackBatches = new ArrayList<>();
 
     	if(settings.isGenerateFeedback() && 
     			(settings.getContentType().equals(ExerciseType.FIB) && !settings.getBrackets().contains(BracketsProperties.ACTIVE_SENTENCE)
     					|| settings.getContentType().equals(ExerciseType.SINGLE_CHOICE)
     			)) {
-    		
     		int startIndex = 0;
     		while(startIndex < usedConstructions.size()) {
     			int endIndex = startIndex + BATCH_SIZE > usedConstructions.size() ? usedConstructions.size() : startIndex + BATCH_SIZE;
     			List<Construction> batchList = usedConstructions.subList(startIndex, endIndex);
-        		startIndex = endIndex;
-    			JSONObject requestObject = 
-        				prepareJsonRequest(batchList, nlpManager, getTopic(settings), settings.getContentType(), settings.getPlainText());
-        		
-        		if(requestObject != null) {
-        			JSONArray r = getResponseFromMicroservice(requestObject);
-        			if(r != null) {
-        				responseObject.addAll(r);
-        			} else {
-        				for(int j = 0; j < usedConstructions.size(); j++) {
-        					responseObject.add(new JSONObject());
-        				}
-        			}
-        		}
-    		}   		
+    			feedbackBatches.add(new Pair<>(batchList, null));
+        		startIndex = endIndex;	
+    		}  
+    		
+    		String topic = getTopic(settings);
+    		for(Pair<List<Construction>, JSONArray> feedbackBatch : feedbackBatches) {
+    			Runnable r = new MicroserviceCall(feedbackBatch, nlpManager, topic, settings.getContentType(), settings.getPlainText());
+    			new Thread(r).start();
+    		}
     	}
     	
-    	if(responseObject != null) {
-	    	int i = 0;
-	    	for(Object exerciseItem : responseObject) {
-	    		Construction construction = null;
-	    		while(i < feedbackSupport.size() && construction == null) {
-	    			if(feedbackSupport.get(i).second) {
-	    				construction = feedbackSupport.get(i).first;
-	    			}
-	    			i++;
-	    		}
-	    		
-	    		try {
-	    			addFeedbackToDistractors(construction, settings, (JSONObject)exerciseItem, distractors);
-	    		} catch(Exception e) { }        		
-	    	}
+    	while(feedbackBatches.stream().anyMatch(batch -> batch.second == null)) {
+    		try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {}
+    	}
+    	
+    	for(Pair<List<Construction>, JSONArray> feedbackBatch : feedbackBatches) {
+           	responseObject.addAll(feedbackBatch.second);
+    	}
+    	
+    	int i = 0;
+    	for(Object exerciseItem : responseObject) {
+    		Construction construction = null;
+    		while(i < feedbackSupport.size() && construction == null) {
+    			if(feedbackSupport.get(i).second) {
+    				construction = feedbackSupport.get(i).first;
+    			}
+    			i++;
+    		}
+    		
+    		try {
+    			addFeedbackToDistractors(construction, settings, (JSONObject)exerciseItem, distractors);
+    		} catch(Exception e) { }        		
     	}
     	
     	// If we don't get distractors from the feedback generation, we use the ones we generated ourselves
@@ -210,10 +202,7 @@ public class FeedbackManager {
     		
     		String payload = requestObject.toJSONString();
     		StringEntity entity = new StringEntity(payload, ContentType.APPLICATION_JSON);  
-    		
-    		//List <NameValuePair> parameters = new ArrayList <NameValuePair>();
-    		//parameters.add(new BasicNameValuePair("activitySpecification", payload));
-    		            
+    		         
             // set a 5min timeout
             int timeout = 5 * 60 * 1000;
             RequestConfig config = RequestConfig.custom()
@@ -224,7 +213,6 @@ public class FeedbackManager {
             
             
             HttpPost request = new HttpPost(PROPERTIES.getProperty("url"));
-            //request.setEntity(new UrlEncodedFormEntity(parameters));
             request.setEntity(entity);
 
             HttpResponse response = null;
@@ -275,36 +263,6 @@ public class FeedbackManager {
 	                e.printStackTrace();
 	            }
             }
-            
-            /*
-			
-			HttpURLConnection con = (HttpURLConnection)url.openConnection();
-			con.setRequestMethod("POST");
-			con.setRequestProperty("Content-Type", "application/json; utf-8");
-			con.setRequestProperty("Accept", "application/json");
-			con.setDoOutput(true);
-			
-			try(OutputStream os = con.getOutputStream()) {
-			    byte[] input = requestObject.toJSONString().getBytes("utf-8");
-			    os.write(input, 0, input.length);			
-			}
-							
-			try(BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"))) {
-			    StringBuilder response = new StringBuilder();
-			    String responseLine = null;
-			    while ((responseLine = br.readLine()) != null) {
-			        response.append(responseLine.trim());
-			    }
-			    
-			    JSONParser parser = new JSONParser();
-			    JSONObject responseObject = (JSONObject) parser.parse(response.toString());
-			    if(responseObject != null && responseObject.containsKey("externalFeedbackResourceBundlesJson")) {
-			    	return (JSONArray)responseObject.get("externalFeedbackResourceBundlesJson");
-			    }
-			} catch (ParseException e) {
-				e.printStackTrace();
-			}
-			*/
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -330,18 +288,21 @@ public class FeedbackManager {
 
     	for(Iterator iterator = exerciseItemFeedbacks.keySet().iterator(); iterator.hasNext();) {
 			String targetHypothesis = (String) iterator.next();
-			String feedback = (String) ((JSONObject)exerciseItemFeedbacks.get(targetHypothesis)).get("feedbackMessage");
-			
-	    	if(settings.getContentType().equals(ExerciseType.SINGLE_CHOICE)) {
-				for(Pair<String, Boolean> distractor : construction.getDistractors()) {
-					if(targetHypothesis.equals(distractor.first)) {
-						currentDistractors.add(new Pair<>(distractor, feedback));
-						usedDistractors.add(distractor);
-					} 
-				}
-			} else {
-				currentDistractors.add(new Pair<>(new Pair<>(targetHypothesis, false), feedback));
-			}
+    		if(!(((JSONObject)exerciseItemFeedbacks.get(targetHypothesis)).containsKey("diagnosisCode") &&
+    				((JSONObject)exerciseItemFeedbacks.get(targetHypothesis)).get("diagnosisCode").equals("TARGET_ANSWER"))) {
+    			String feedback = (String) ((JSONObject)exerciseItemFeedbacks.get(targetHypothesis)).get("feedbackMessage");
+    			
+    	    	if(settings.getContentType().equals(ExerciseType.SINGLE_CHOICE)) {
+    				for(Pair<String, Boolean> distractor : construction.getDistractors()) {
+    					if(targetHypothesis.equals(distractor.first)) {
+    						currentDistractors.add(new Pair<>(distractor, feedback));
+    						usedDistractors.add(distractor);
+    					} 
+    				}
+    			} else {
+    				currentDistractors.add(new Pair<>(new Pair<>(targetHypothesis, false), feedback));
+    			}
+    		}		
 		}  
     	
     	// Add distractors without feedback for Single Choice exercises
@@ -354,6 +315,45 @@ public class FeedbackManager {
 		}
     			
 		distractors.add(currentDistractors);
+    }
+    
+    private class MicroserviceCall implements Runnable {
+
+		public MicroserviceCall(Pair<List<Construction>, JSONArray> feedbackBatch, NlpManager nlpManager, String topic, 
+				   ExerciseType contentType, String plainText) {
+			this.feedbackBatch = feedbackBatch;
+			this.nlpManager = nlpManager;
+			this.topic = topic;
+			this.contentType = contentType;
+			this.plainText = plainText;
+		}
+		   
+		private final Pair<List<Construction>, JSONArray> feedbackBatch;
+		private final NlpManager nlpManager;
+		private final String topic;
+		private final ExerciseType contentType; 
+		private final String plainText;
+	
+		/**
+		 * Calls the microservice and stores the returned feedback with the corresponding Constructions
+		 */
+		public void run() {
+    		JSONObject requestObject = prepareJsonRequest(feedbackBatch.first, nlpManager, topic, contentType, plainText);
+    		JSONArray r = null;
+    		
+	       	if(requestObject != null) {
+	       		r = getResponseFromMicroservice(requestObject);
+	       	}
+	       	
+	       	if(r == null) {
+       			r = new JSONArray();
+       			for(int j = 0; j < feedbackBatch.first.size(); j++) {
+       				r.add(new JSONObject());
+       			}
+       		} 
+			
+   			feedbackBatch.second = r;
+		}
     }
    
 }

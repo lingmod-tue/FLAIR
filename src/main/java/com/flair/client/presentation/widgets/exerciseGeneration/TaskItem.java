@@ -1070,29 +1070,9 @@ public class TaskItem extends LocalizedComposite {
     	String topic = getTopic();
 
     	// If the type doesn't support feedback or the settings always result in multi-word constructions, we don't need to check the constructions
-    	if(type.equals("Mark") || type.equals("Drag") || type.equals("FiB") && topic.equals("Passive") && chkBracketsActiveSentence.getValue()) {
+    	if(type.equals("Mark") || type.equals("Drag")) {
     		return false;
     	}
-    	
-    	/*
-    	// If we post-process the constructions, we don't know whether feedback is supported, so we enable the checkbox just in case
-    	if(topic.equals("'if'")) {
-    		return true;
-    	}          
-            
-    	for(String constructionToConsider : determineConfiguredConstructions()) {
-    		for(Pair<Integer, Integer> construction : relevantConstructionsInSelectedDocumentPart.get(constructionToConsider)) {
-
-        		if(!doc.getText().substring(construction.first, construction.second).trim().matches(".*?[\\s\\h].*?")) {
-        			// at least 1 construction does not contain a whitespace, meaning that it is a single word which thus supports feedback generation
-        			return true;
-        		}
-    		}
-    	}
-    	
-    	// If we get here, we haven't found a construction supporting feedback
-    	return false;
-    	*/
     	
     	return true;
     }
