@@ -1004,7 +1004,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
         
         exGenPoller = serverMessageChannel.messagePoller()
                 .interval(POLLING_INTERVAL)
-                .timeout(TIMEOUT_INTERVAL * 2)
+                .timeout(TIMEOUT_INTERVAL * 5)
                 .onTimeout(() -> {
                 	CmActiveOperationCancel msg = new CmActiveOperationCancel();
                     msg.setActiveOperationExpected(false);

@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
@@ -19,11 +20,13 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.eclipse.jdt.internal.core.dom.rewrite.LineInformation;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import com.flair.server.exerciseGeneration.exerciseManagement.resourceManagement.ResourceLoader;
 import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.exerciseGeneration.BracketsProperties;
 import com.flair.shared.exerciseGeneration.Construction;
@@ -34,7 +37,7 @@ import com.flair.shared.exerciseGeneration.Pair;
 public class FeedbackManager {
 
 	private static final Properties PROPERTIES = new Properties();
-	private static final int BATCH_SIZE = 50;
+	private static final int BATCH_SIZE = 20;
 
 	static {
 		try {
@@ -44,7 +47,23 @@ public class FeedbackManager {
 		}
 	}
 	
+	public FeedbackManager() {
+		InputStream content = ResourceLoader.loadFile("feedbackLinks.tsv");
+		try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(content))) {
+		      String line;
+		      while ((line = bufferedReader.readLine()) != null) {
+		    	  String[] lineItems = line.split("\t");
+		    	  if(lineItems.length == 2) {
+		    		  feedbackLinks.put(lineItems[0], lineItems[1]);
+		    	  }
+		      }
+		    } catch (IOException e) {
+				e.printStackTrace();
+			}
+	}
+	
 	private ArrayList<Pair<Construction, Boolean>> feedbackSupport = new ArrayList<>();
+	private HashMap<String, String> feedbackLinks = new HashMap<String, String>();
 	
 	/**
 	 * Determines the exercise topic.
@@ -203,8 +222,8 @@ public class FeedbackManager {
     		String payload = requestObject.toJSONString();
     		StringEntity entity = new StringEntity(payload, ContentType.APPLICATION_JSON);  
     		         
-            // set a 5min timeout
-            int timeout = 5 * 60 * 1000;
+            // set a 15min timeout
+            int timeout = 15 * 60 * 1000;
             RequestConfig config = RequestConfig.custom()
               .setConnectTimeout(timeout)
               .setConnectionRequestTimeout(timeout)
@@ -222,7 +241,10 @@ public class FeedbackManager {
             	ex.printStackTrace();
             }
             
-            if(response == null || response.getStatusLine().getStatusCode() == 500) {
+            if(response == null || response.getStatusLine().getStatusCode() != 200) {
+            	if(response != null) {
+            		ServerLogger.get().info("Feedback service returned with code " + response.getStatusLine().getStatusCode());
+            	}
             	return null;
             }
             
@@ -291,6 +313,9 @@ public class FeedbackManager {
     		if(!(((JSONObject)exerciseItemFeedbacks.get(targetHypothesis)).containsKey("diagnosisCode") &&
     				((JSONObject)exerciseItemFeedbacks.get(targetHypothesis)).get("diagnosisCode").equals("TARGET_ANSWER"))) {
     			String feedback = (String) ((JSONObject)exerciseItemFeedbacks.get(targetHypothesis)).get("feedbackMessage");
+    			for (String key : feedbackLinks.keySet()) {
+    				feedback = feedback.replaceAll("href=\"/media/lif/WebContent/" + key + ".html", "href=\"" + feedbackLinks.get(key));
+    			}
     			
     	    	if(settings.getContentType().equals(ExerciseType.SINGLE_CHOICE)) {
     				for(Pair<String, Boolean> distractor : construction.getDistractors()) {

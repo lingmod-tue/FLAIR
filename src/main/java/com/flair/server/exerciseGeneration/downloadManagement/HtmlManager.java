@@ -81,7 +81,7 @@ public class HtmlManager {
                 // We therefore remove any javascript components
                 element.remove();
         	}        	
-        	// we have to do this before the link elements, otherwise we treat replaced styleheets twice!
+        	// we have to do this before the link elements, otherwise we treat replaced stylesheets twice!
         	for(Element element : doc.select("style")) {
         		downloadedResources.addAll(handleCssContent(url, element, element.html(), resourceDownloader, null));
         	}
@@ -161,92 +161,74 @@ public class HtmlManager {
         		
         		url = getAttributeValue(element, "href");
         	}
-        	for(Element element : doc.select("blockquote,q,del,ins,a,area,button,input,form")) {
+        	
+        	for (Element element : doc.getAllElements()) {
         		if (Thread.currentThread().isInterrupted()) {
     	        	return null;
     	        }
-        		
-        		DownloadedResource resource = handleResourceAttribute(element, url, getAttributeName(element.tagName().toLowerCase()), resourceDownloader, true);
-        		if(resource != null) {
-        			downloadedResources.add(resource);
-        		}
-        	}
-        	for(Element element : doc.select("audio,track,video,embed")) {
-        		if (Thread.currentThread().isInterrupted()) {
-    	        	return null;
-    	        }
-        		
-        		DownloadedResource resource = handleResourceAttribute(element, url, "src", resourceDownloader, true);
-        		if(resource != null) {
-        			downloadedResources.add(resource);
-        		}
-        	}
-        	for(Element element : doc.select("object")) {
-        		if (Thread.currentThread().isInterrupted()) {
-    	        	return null;
-    	        }
-        		
-        		String baseUrl = getAttributeValue(element, "codebase");
-                if(baseUrl == null){
-                    baseUrl = url;
-                }
+                String tag = element.tagName().toLowerCase();
 
-                String archiveValue = getAttributeValue(element, "archive");
-                if(archiveValue != null){
-                    String[] resources = archiveValue.trim().split(" ");
-                    ArrayList<String> newResources = new ArrayList<>();
-                    for(String resource : resources) {
-                        URL absoluteUrl = UrlManager.getUrl(resource, baseUrl);
-                        DownloadedResource downloadedResource = resourceDownloader.downloadFile(absoluteUrl, null);
-                        downloadedResources.add(downloadedResource);
-                        newResources.add(downloadedResource.getFileName());
+                if(tag.equalsIgnoreCase("blockquote") || tag.equalsIgnoreCase("q") || tag.equalsIgnoreCase("del") || 
+                		tag.equalsIgnoreCase("ins") || tag.equalsIgnoreCase("a") || tag.equalsIgnoreCase("area") || 
+                		tag.equalsIgnoreCase("button") || tag.equalsIgnoreCase("input") || tag.equalsIgnoreCase("form")){
+                	DownloadedResource resource = handleResourceAttribute(element, url, getAttributeName(tag), resourceDownloader, true);
+            		if(resource != null) {
+            			downloadedResources.add(resource);
+            		}
+                } else if(tag.equalsIgnoreCase("audio") || tag.equalsIgnoreCase("track") || tag.equalsIgnoreCase("video") || 
+                		tag.equalsIgnoreCase("embed")){
+                	DownloadedResource resource = handleResourceAttribute(element, url, "src", resourceDownloader, true);
+            		if(resource != null) {
+            			downloadedResources.add(resource);
+            		}
+                } else if(tag.equalsIgnoreCase("object")){
+                	String baseUrl = getAttributeValue(element, "codebase");
+                    if(baseUrl == null){
+                        baseUrl = url;
                     }
-                    String newValue = String.join(" ", newResources);
-                    if(!newValue.equals(archiveValue)) {
-                        element.attr("archive", newValue);
-                    }
-                }
 
-                DownloadedResource resource = handleResourceAttribute(element, baseUrl, "data", resourceDownloader, false);
-        		if(resource != null) {
-        			downloadedResources.add(resource);
-        		}
-            }
-        	for(Element element : doc.select("img,source")) {
-        		if (Thread.currentThread().isInterrupted()) {
-    	        	return null;
-    	        }
-        		
-        		DownloadedResource resource = handleResourceAttribute(element, url, "src", resourceDownloader, false);
-        		if(resource != null) {
-        			downloadedResources.add(resource);
-        		}
-                downloadedResources.addAll(handleSrcset(element, url, resourceDownloader, "srcset"));
-            }
-        	for(Element element : doc.select("link")) {  
-        		if (Thread.currentThread().isInterrupted()) {
-    	        	return null;
-    	        }
-        		
-        		DownloadedResource resource = handleResourceAttribute(element, url, "href", resourceDownloader, false);
-        		if(resource != null) {
-        			downloadedResources.add(resource);
-        		}
-        		downloadedResources.addAll(handleSrcset(element, url, resourceDownloader, "imagesrcset"));
-            }
-        	for(Element element : doc.select("iframe")) {
-        		if (Thread.currentThread().isInterrupted()) {
-    	        	return null;
-    	        }
-        		
-        		String content = getAttributeValue(element, "srcdoc");
-                if(content != null) {
-                	try {
-	                	downloadedResources.addAll(extractResources(getAttributeValue(element, "src"), resourceDownloader, Jsoup.parse(content)));
-                	}
-                	catch(Exception e) {}
-                }        	
-            }
+                    String archiveValue = getAttributeValue(element, "archive");
+                    if(archiveValue != null){
+                        String[] resources = archiveValue.trim().split(" ");
+                        ArrayList<String> newResources = new ArrayList<>();
+                        for(String resource : resources) {
+                            URL absoluteUrl = UrlManager.getUrl(resource, baseUrl);
+                            DownloadedResource downloadedResource = resourceDownloader.downloadFile(absoluteUrl, null);
+                            downloadedResources.add(downloadedResource);
+                            newResources.add(downloadedResource.getFileName());
+                        }
+                        String newValue = String.join(" ", newResources);
+                        if(!newValue.equals(archiveValue)) {
+                            element.attr("archive", newValue);
+                        }
+                    }
+
+                    DownloadedResource resource = handleResourceAttribute(element, baseUrl, "data", resourceDownloader, false);
+            		if(resource != null) {
+            			downloadedResources.add(resource);
+            		}
+                } else if(tag.equalsIgnoreCase("img") || tag.equalsIgnoreCase("source")){
+                	DownloadedResource resource = handleResourceAttribute(element, url, "src", resourceDownloader, false);
+            		if(resource != null) {
+            			downloadedResources.add(resource);
+            		}
+                    downloadedResources.addAll(handleSrcset(element, url, resourceDownloader, "srcset"));
+                } else if(tag.equalsIgnoreCase("link")){
+                	DownloadedResource resource = handleResourceAttribute(element, url, "href", resourceDownloader, false);
+            		if(resource != null) {
+            			downloadedResources.add(resource);
+            		}
+            		downloadedResources.addAll(handleSrcset(element, url, resourceDownloader, "imagesrcset"));
+                } else if(tag.equalsIgnoreCase("iframe")){
+                	String content = getAttributeValue(element, "srcdoc");
+                    if(content != null) {
+                    	try {
+    	                	downloadedResources.addAll(extractResources(getAttributeValue(element, "src"), resourceDownloader, Jsoup.parse(content)));
+                    	}
+                    	catch(Exception e) {}
+                    }
+                } 
+        	}
         }   
         
         return downloadedResources;
