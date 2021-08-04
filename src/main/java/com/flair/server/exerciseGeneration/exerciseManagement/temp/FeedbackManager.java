@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.config.RequestConfig;
@@ -20,7 +21,6 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.eclipse.jdt.internal.core.dom.rewrite.LineInformation;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -35,9 +35,15 @@ import com.flair.shared.exerciseGeneration.ExerciseType;
 import com.flair.shared.exerciseGeneration.Pair;
 
 public class FeedbackManager {
+	
+	private enum ExecutionMode {
+		PARALLEL,
+		SEQUENTIAL
+	}
 
 	private static final Properties PROPERTIES = new Properties();
-	private static final int BATCH_SIZE = 20;
+	private static final int BATCH_SIZE = 5;
+	private static final ExecutionMode mode = ExecutionMode.SEQUENTIAL;
 
 	static {
 		try {
@@ -64,6 +70,12 @@ public class FeedbackManager {
 	
 	private ArrayList<Pair<Construction, Boolean>> feedbackSupport = new ArrayList<>();
 	private HashMap<String, String> feedbackLinks = new HashMap<String, String>();
+	private ReentrantLock lock = new ReentrantLock();
+	private boolean isCancelled = false;
+	
+	public void cancelGeneration() {
+		isCancelled = true;
+	}
 	
 	/**
 	 * Determines the exercise topic.
@@ -122,15 +134,25 @@ public class FeedbackManager {
     		
     		String topic = getTopic(settings);
     		for(Pair<List<Construction>, JSONArray> feedbackBatch : feedbackBatches) {
-    			Runnable r = new MicroserviceCall(feedbackBatch, nlpManager, topic, settings.getContentType(), settings.getPlainText());
-    			new Thread(r).start();
+    			if(isCancelled) {
+    				return null;
+    			}
+    			
+    			if(mode == ExecutionMode.PARALLEL) {
+	    			Runnable r = new MicroserviceCall(feedbackBatch, nlpManager, topic, settings.getContentType(), settings.getPlainText());
+	    			new Thread(r).start();
+    			} else {
+    				callMicroservice(feedbackBatch, nlpManager, topic, settings.getContentType(), settings.getPlainText());
+    			}
     		}
     	}
     	
-    	while(feedbackBatches.stream().anyMatch(batch -> batch.second == null)) {
-    		try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {}
+    	if(mode == ExecutionMode.PARALLEL) {
+	    	while(feedbackBatches.stream().anyMatch(batch -> batch.second == null)) {
+	    		try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {}
+	    	}
     	}
     	
     	for(Pair<List<Construction>, JSONArray> feedbackBatch : feedbackBatches) {
@@ -193,7 +215,9 @@ public class FeedbackManager {
 				activityItems.add(item);
 				supportsFeedback = true;
 			}	
+			lock.lock();
 			feedbackSupport.add(new Pair<>(construction, supportsFeedback));
+			lock.unlock();
 		}
 		
 		if(activityItems.size() > 0) {
@@ -241,12 +265,30 @@ public class FeedbackManager {
             	ex.printStackTrace();
             }
             
+            // Start block for deployment version
             if(response == null || response.getStatusLine().getStatusCode() != 200) {
             	if(response != null) {
             		ServerLogger.get().info("Feedback service returned with code " + response.getStatusLine().getStatusCode());
             	}
             	return null;
             }
+            // End block for deployment version
+
+            /*
+            // Start block for evaluation version
+            while(response != null && response.getStatusLine().getStatusCode() != 200) {
+    			if(isCancelled) {
+    				return null;
+    			}
+    			
+            	try {
+                	response = httpClient.execute(request);        
+                } catch(SocketTimeoutException ex) {
+                	ex.printStackTrace();
+                }
+            }
+            // End block for evaluation version
+            */
             
             String body = null;
             InputStream inputStream = response.getEntity().getContent();
@@ -363,22 +405,27 @@ public class FeedbackManager {
 		 * Calls the microservice and stores the returned feedback with the corresponding Constructions
 		 */
 		public void run() {
-    		JSONObject requestObject = prepareJsonRequest(feedbackBatch.first, nlpManager, topic, contentType, plainText);
-    		JSONArray r = null;
-    		
-	       	if(requestObject != null) {
-	       		r = getResponseFromMicroservice(requestObject);
-	       	}
-	       	
-	       	if(r == null) {
-       			r = new JSONArray();
-       			for(int j = 0; j < feedbackBatch.first.size(); j++) {
-       				r.add(new JSONObject());
-       			}
-       		} 
-			
-   			feedbackBatch.second = r;
+			callMicroservice(feedbackBatch, nlpManager, topic, contentType, plainText);    		
 		}
+    }
+    
+    private void callMicroservice(Pair<List<Construction>, JSONArray> feedbackBatch, NlpManager nlpManager, String topic, 
+			   ExerciseType contentType, String plainText) {
+    	JSONObject requestObject = prepareJsonRequest(feedbackBatch.first, nlpManager, topic, contentType, plainText);
+		JSONArray r = null;
+		
+       	if(requestObject != null) {
+       		r = getResponseFromMicroservice(requestObject);
+       	}
+       	
+       	if(r == null) {
+   			r = new JSONArray();
+   			for(int j = 0; j < feedbackBatch.first.size(); j++) {
+   				r.add(new JSONObject());
+   			}
+   		} 
+		
+		feedbackBatch.second = r;
     }
    
 }

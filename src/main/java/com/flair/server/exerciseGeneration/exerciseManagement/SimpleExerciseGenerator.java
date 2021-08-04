@@ -24,7 +24,6 @@ import com.flair.server.exerciseGeneration.exerciseManagement.temp.NlpManager;
 import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.OpenNlpParser;
 import com.flair.server.parser.SimpleNlgParser;
-import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.exerciseGeneration.Construction;
 import com.flair.shared.exerciseGeneration.ExerciseType;
 import com.flair.shared.exerciseGeneration.Pair;
@@ -66,36 +65,28 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        }
 	        
 	        NlpManager nlpManager = new NlpManager(parser, generator, settings.getExerciseSettings().getPlainText(), lemmatizer);
-	        ServerLogger.get().info("Start NLP processing: construction preparation");
 	        new ConstructionPreparer().prepareConstructions(settings.getExerciseSettings(), nlpManager);	
-	        ServerLogger.get().info("End NLP processing: construction preparation");
 
 	        if (isCancelled) {
 	        	return null;
 	        }
-	        ServerLogger.get().info("Start matching");
 
 	        Pair<ArrayList<Fragment>,Pair<Integer,Integer>> res = 
 	        		new Indexer().matchHtmlToPlainText(settings.getExerciseSettings(), doc.wholeText(), nlpManager);
-	        ServerLogger.get().info("End matching");
 
 	        if (isCancelled) {
 	        	return null;
 	        }
-	        ServerLogger.get().info("Start NLP processing: brackets");
 
 	        new ClozeManager().prepareBlanks(settings.getExerciseSettings(), nlpManager, res.first);
-	        ServerLogger.get().info("End NLP processing: brackets");
 
 	        if (isCancelled) {
 	        	return null;
 	        }
-	        ServerLogger.get().info("Start NLP processing: distractors");
 
 	        DistractorManager distractorManager = new DistractorManager();
 	        ArrayList<Construction> usedConstructions 
 	        		= distractorManager.generateDistractors(settings.getExerciseSettings(), nlpManager, res.first);
-	        ServerLogger.get().info("End NLP processing: distractors");
 
 	        if(usedConstructions == null || usedConstructions.size() == 0) {
 	        	return null;
@@ -104,7 +95,6 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        if (isCancelled) {
 	        	return null;
 	        }
-	        ServerLogger.get().info("Start HTML preparation");
 
 	        MatchResult matchResult = new Matcher(res.first, res.second).prepareDomForSplitting(doc);
 	        HtmlManager.removeNonText(matchResult.getTextBoundaries());
@@ -112,21 +102,17 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        if(settings.getExerciseSettings().getContentType().equals(ExerciseType.MARK)) {
 	        	HtmlManager.removeLinks(doc);
 	        }
-	        ServerLogger.get().info("End HTML preparation");
 
 	        if (isCancelled) {
 	        	return null;
 	        }
-	        ServerLogger.get().info("Start resource downloading");
 
 	        ArrayList<DownloadedResource> resources = new HtmlManager().extractResources(settings.getExerciseSettings().getUrl(), 
 	        		resourceDownloader, doc);
-	        ServerLogger.get().info("End resource downloading");
 
 	        if (isCancelled) {
 	        	return null;
 	        }
-	        ServerLogger.get().info("Start prepare JSON");
 
 	        settings.getResources().addAll(resources);
 	        SentenceManager sentenceManager = new SentenceManager();
@@ -151,11 +137,8 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        if (isCancelled) {
 	        	return null;
 	        }
-	        ServerLogger.get().info("End prepare JSON");
-	        ServerLogger.get().info("Start NLP processing: task description");
 
 	        String taskDescription = InstructionsManager.componseTaskDescription(settings.getExerciseSettings(), nlpManager, res.first);	       
-	        ServerLogger.get().info("End NLP processing: task description");
 
 	        if (isCancelled) {
 	        	return null;
@@ -165,21 +148,17 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        for(Construction usedConstruction : usedConstructions) {
 	        	constructionTexts.add(usedConstruction.getConstructionText());
 	        }
-	        ServerLogger.get().info("Start generate feedback");
 
 	        ArrayList<ArrayList<Pair<com.flair.shared.exerciseGeneration.Pair<String,Boolean>,String>>> distractors = 
 	        		new FeedbackManager().generateFeedback(usedConstructions, settings.getExerciseSettings(), nlpManager);
-	        ServerLogger.get().info("End generate feedback");
 
 	        if (isCancelled) {
 	        	return null;
 	        }
-	        ServerLogger.get().info("Start NLP processing: select distractors");
 
 	        ArrayList<ArrayList<Pair<String,String>>> usedDistractors = 
 	        		distractorManager.chooseDistractors(
 	        				distractors, settings.getExerciseSettings().getnDistractors(), settings.getExerciseSettings().getContentType().equals(ExerciseType.SINGLE_CHOICE));
-	        ServerLogger.get().info("End NLP processing: select distractors");
 
 	        return new JsonComponents(orderedPlainTextElements, pureHtmlElements, constructionTexts,
 	                settings.getJsonManager(), settings.getContentTypeLibrary(), settings.getResourceFolder(), 
