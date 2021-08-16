@@ -8,6 +8,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import com.flair.server.exerciseGeneration.exerciseManagement.ResultComponents;
 import com.flair.server.exerciseGeneration.exerciseManagement.resourceManagement.ResourceLoader;
 import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.exerciseGeneration.Pair;
@@ -19,13 +20,13 @@ public class ZipManager {
      * @param generatedPackages The H5P packages representing the generated tasks
      * @return      The byte array of the created zip file
      */
-    public static byte[] zipH5PPackages(ArrayList<edu.stanford.nlp.util.Pair<String,byte[]>> generatedPackages) {
+    public static byte[] zipH5PPackages(ArrayList<ResultComponents> generatedPackages) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream);
         try {
             for (int i = 0; i < generatedPackages.size(); i++) {
-                byte[] task = generatedPackages.get(i).second;
-                ZipEntry zipEntry = new ZipEntry(generatedPackages.get(i).first + ".h5p");
+                byte[] task = generatedPackages.get(i).getFileContent();
+                ZipEntry zipEntry = new ZipEntry(generatedPackages.get(i).getFileName() + ".h5p");
                 zipOutputStream.putNextEntry(zipEntry);
                 zipOutputStream.write(task);
                 zipOutputStream.closeEntry();

@@ -1,10 +1,7 @@
 package com.flair.client.presentation.widgets.exerciseGeneration;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-
-import org.netlib.util.booleanW;
 
 import com.flair.client.localization.LocalizedComposite;
 import com.flair.client.localization.LocalizedFieldType;
@@ -25,6 +22,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
@@ -43,9 +41,7 @@ import gwt.material.design.client.ui.MaterialLabel;
 import gwt.material.design.client.ui.MaterialLink;
 import gwt.material.design.client.ui.MaterialRadioButton;
 import gwt.material.design.client.ui.MaterialRow;
-import gwt.material.design.client.ui.MaterialToast;
 import gwt.material.design.client.ui.html.Option;
-import java_cup.internal_error;
 
 public class TaskItem extends LocalizedComposite {
 	
@@ -78,13 +74,14 @@ public class TaskItem extends LocalizedComposite {
     @UiField
     MaterialButton btnApplyDocumentSelection;
     @UiField
-    MaterialButton btnRemoveSelection;
-    @UiField
     MaterialButton btnReset;
     @UiField
-    MaterialButton btnDiscardDocumentSelection;
-    @UiField
+	@LocalizedField(type = LocalizedFieldType.TOOLTIP_MATERIAL)
     MaterialButton btnUpdateDocument;
+    @UiField
+    MaterialButton btnPreviewExercise;
+    @UiField
+    MaterialButton btnCloseExercisePreview;
     @UiField
     MaterialLabel lblNumberExercises;
     @UiField
@@ -252,6 +249,8 @@ public class TaskItem extends LocalizedComposite {
     @UiField
     MaterialDialog dlgDocumentSelection;
     @UiField
+    MaterialDialog dlgExercisePreview;
+    @UiField
     MaterialIcon icoOk;
     @UiField
 	@LocalizedField(type = LocalizedFieldType.TOOLTIP_MATERIAL)
@@ -281,6 +280,8 @@ public class TaskItem extends LocalizedComposite {
     MaterialRow rowRbtSingleTask;
     @UiField
     MaterialRow grpNumberTargets;
+    @UiField
+    HTMLPanel htmlContent;
     
     private ConstructionComponentsCollection constructionComponents;
     private ExerciseGenerationWidget parent;
@@ -475,6 +476,8 @@ public class TaskItem extends LocalizedComposite {
     private void initHandlers() {
     	dlgDocumentSelection.removeFromParent();
         RootPanel.get().add(dlgDocumentSelection);
+        dlgExercisePreview.removeFromParent();
+        RootPanel.get().add(dlgExercisePreview);
 
         btnApplyDocumentSelection.addClickHandler(event -> {
         	dlgDocumentSelection.close();
@@ -486,11 +489,11 @@ public class TaskItem extends LocalizedComposite {
         	calculateConstructionsOccurrences(relevantConstructionsInSelectedDocumentPart);
         	
         	btnApplyDocumentSelection.setEnabled(false);
-    		btnDiscardDocumentSelection.setEnabled(false);
     		btnReset.setEnabled(removedParts.size() > 0);    		
         });
-        btnRemoveSelection.addClickHandler(event -> {
-        	removeSelectionEventHanlder();
+        
+        btnCloseExercisePreview.addClickHandler(event -> {
+        	dlgExercisePreview.close();       	        		
         });
         btnReset.addClickHandler(event -> {
         	lblDocumentForSelection.setText(doc.getText());
@@ -498,34 +501,10 @@ public class TaskItem extends LocalizedComposite {
         	newlyRemovedParts.clear();
         	
         	btnApplyDocumentSelection.setEnabled(true);
-    		btnDiscardDocumentSelection.setEnabled(true);
-        });
-        btnDiscardDocumentSelection.addClickHandler(event -> {
-        	dlgDocumentSelection.close();
-    		newlyRemovedParts.clear();
-    		
-    		// Sort them from highest to lowest number so later removals don't interfere with previous indices
-        	removedParts.sort((c1, c2) -> c1.first < c2.first ? -1 : 1);
-        	String text = doc.getText();
-        	for(Pair<Integer, Integer> removedPart : removedParts) {
-        		text = text.substring(0, removedPart.first) + text.substring(removedPart.second);
-        	}
-        	lblDocumentForSelection.setText(text);
-        	
-        	btnApplyDocumentSelection.setEnabled(false);
-    		btnDiscardDocumentSelection.setEnabled(false);
-        });
-        
-        lblDocumentForSelection.addClickHandler(event -> {
-        	if(lblDocumentForSelection.getSelectedText().length() > 0) {
-        		btnRemoveSelection.setEnabled(true);
-        	} else {
-        		btnRemoveSelection.setEnabled(false);
-        	}
         });
         
         lblDocumentForSelection.addKeyDownHandler(event -> {
-        	if(event.getNativeKeyCode() == KeyCodes.KEY_DELETE) {
+        	if(event.getNativeKeyCode() == KeyCodes.KEY_DELETE || event.getNativeKeyCode() == KeyCodes.KEY_BACKSPACE) {
         		removeSelectionEventHanlder();
         	}
         });
@@ -537,6 +516,10 @@ public class TaskItem extends LocalizedComposite {
     	btnSelectDocumentPart.addClickHandler(event -> {
     		dlgDocumentSelection.open();
     		lblDocumentForSelection.setFocus(true);
+    	});
+    	
+    	btnPreviewExercise.addClickHandler(event -> {
+    		dlgExercisePreview.open();
     	});
     	
     	btnUpdateDocument.addClickHandler(event -> {
@@ -624,9 +607,7 @@ public class TaskItem extends LocalizedComposite {
     	newlyRemovedParts.add(new Pair<>(selectedPartStartIndex, selectedPartStartIndex + lblDocumentForSelection.getSelectionLength()));
     	lblDocumentForSelection.setText(lblDocumentForSelection.getText().substring(0, lblDocumentForSelection.getCursorPos()) + lblDocumentForSelection.getText().substring(lblDocumentForSelection.getCursorPos() + lblDocumentForSelection.getSelectionLength()));
     
-		btnRemoveSelection.setEnabled(false);
 		btnApplyDocumentSelection.setEnabled(true);
-		btnDiscardDocumentSelection.setEnabled(true);
 	}
 
 	/**
@@ -705,9 +686,9 @@ public class TaskItem extends LocalizedComposite {
      */
     private void initUI() {
     	possibleTopics = new ArrayList<Pair<String, String>>();
-    	possibleTopics.add(new Pair<String, String>("Comparison", "Compare"));
-    	possibleTopics.add(new Pair<String, String>("Present simple", "Present"));
-    	possibleTopics.add(new Pair<String, String>("Past tenses", "Past"));
+    	possibleTopics.add(new Pair<String, String>("Comparative", "Compare"));
+    	possibleTopics.add(new Pair<String, String>("Simple Present", "Present"));
+    	possibleTopics.add(new Pair<String, String>("Past tense", "Past"));
     	possibleTopics.add(new Pair<String, String>("Passive", "Passive"));
     	possibleTopics.add(new Pair<String, String>("Conditionals", "'if'"));
     	possibleTopics.add(new Pair<String, String>("Relative Pronouns", "Relatives"));
@@ -1016,6 +997,7 @@ public class TaskItem extends LocalizedComposite {
 		if(exerciseType.equals("Exercise Type") || topic.equals("Topic")) {
 			lblNumberExercises.setText("Select a grammar topic and an exercise type to enable exercise generation.");
     		lblNumberExercises.setTextColor(Color.GREY);
+    		icoInvalid.setVisible(false);
 		} else if(topic.equals("Passive") && exerciseType.equals("Select") || 
 				topic.equals("'if'") && exerciseType.equals("Mark") || topic.equals("Present") && exerciseType.equals("Drag") || 
 				exerciseType.equals("Select") && !topic.equals("Relatives") && !hasCheckedDistractors()) {

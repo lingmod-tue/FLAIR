@@ -6,6 +6,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.flair.server.exerciseGeneration.exerciseManagement.JsonComponents;
+import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
 import com.flair.shared.exerciseGeneration.Pair;
 
 import java.io.IOException;
@@ -13,6 +14,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public abstract class SimpleExerciseJsonManager extends JsonManager {
 
@@ -23,7 +25,7 @@ public abstract class SimpleExerciseJsonManager extends JsonManager {
     protected static int internalId = 0;
 
     @Override
-    public JSONObject modifyJsonContent(ArrayList<JsonComponents> jsonComponents, String folderName)
+    public Pair<JSONObject, HashMap<String, String>> modifyJsonContent(ContentTypeSettings settings, ArrayList<JsonComponents> jsonComponents, String folderName)
             throws IOException, ParseException {
         internalId++;
 
@@ -41,10 +43,98 @@ public abstract class SimpleExerciseJsonManager extends JsonManager {
         htmlArray.addAll(jsonComponents.get(0).getPureHtmlElements());
         addHtmlElementsToJson(jsonObject, htmlArray);
         setExerciseSpecificAttributes(jsonObject);
+        
+        String preview = generatePreviewHtml(jsonObject, settings.isEscapeAsterisksInHtml());
 
-        return jsonObject;
+        HashMap<String, String> previews = new HashMap<>();
+        previews.put(settings.getName(), preview);
+        return new Pair<>(jsonObject, previews);
     }
+    
+    /**
+     * Generates the Preview HTML for display in FLAIR.
+     * @param jsonObject The JSON object containing the HTML and plain text elements
+     * @return The HTML string
+     */
+    private String generatePreviewHtml(JSONObject jsonObject, boolean escapeHtml) {
+    	StringBuilder htmlPreview = new StringBuilder();
+    	String plainText = (String)jsonObject.get("textField");
+    	for(Object htmlElement : (JSONArray)jsonObject.get("htmlElements")) {
+    		String htmlString = (String)htmlElement;
+    		if(htmlString.startsWith("sentenceHtml ")) {
+    			int startIndex = htmlString.indexOf(" ", 13) + 1;
+    			if(escapeHtml) {
+    				htmlString = htmlString.replace("**", "*");
+    			}
+    			htmlPreview.append(htmlString.substring(startIndex).replace("ltRep;", "<").replace("quotRep;", "\"")
+    					.replace("gtRep;", ">").replace("#039Rep;", "'").replace("ampRep;", "&"));
+    		} else {
+    			String question = "";
+    			int firstQuestionIndex = plainText.indexOf("<span data-internal");
+    	        if (firstQuestionIndex != -1) {
+    	            int nextQuestionIndex = plainText.indexOf("<span data-internal", firstQuestionIndex + 1);
+    	            if (nextQuestionIndex != -1) {
+    	                question = plainText.substring(0, nextQuestionIndex);
+    	                plainText = plainText.substring(nextQuestionIndex);
+    	            } else {
+    	            	question = plainText;
+    	                plainText = "";
+    	            }
+    	        }
+    	        
+    	        question = insertTargetDummies(question);    	        
+    	        htmlPreview.append(question);
+    		}
+    	}
+    	
+    	return htmlPreview.toString();
+    }
+    
+    abstract String getTargetDummy(String constructionText);
 
+    protected String insertTargetDummies(String htmlPreview) {
+    	StringBuilder modifiedPreview = new StringBuilder();
+		int indexAfterLastAsterisk = 0;
+		int nextAsteriskIndex = getNextNotEscapedCharacter(htmlPreview, 0, "*");
+		while(nextAsteriskIndex != -1) {
+			int constructionStartIndex = nextAsteriskIndex;
+			nextAsteriskIndex = getNextNotEscapedCharacter(htmlPreview, nextAsteriskIndex + 1, "*");
+			
+			if(nextAsteriskIndex != -1) {	
+				String constructionText = htmlPreview.substring(constructionStartIndex + 1, nextAsteriskIndex);
+				modifiedPreview.append(htmlPreview.substring(indexAfterLastAsterisk, constructionStartIndex));
+				modifiedPreview.append(getTargetDummy(constructionText));
+
+				indexAfterLastAsterisk = nextAsteriskIndex + 1;
+				nextAsteriskIndex = getNextNotEscapedCharacter(htmlPreview, nextAsteriskIndex + 1, "*");
+			}
+		}
+		
+		if(indexAfterLastAsterisk < htmlPreview.length()) {
+			modifiedPreview.append(htmlPreview.substring(indexAfterLastAsterisk));
+		}
+		
+		return modifiedPreview.toString().replace("**", "*");
+    }
+    
+    protected int getNextNotEscapedCharacter(String text, int startIndex, String character) {
+    	int index = text.indexOf(character, startIndex);
+        String nextCharacter = "";
+        if (index != -1 && index < text.length() - 1) {
+            nextCharacter = text.substring(index + 1, index + 2);
+        }
+        while (nextCharacter.equals(character)) {
+            index = text.indexOf(character, index + 2);
+            if (index != -1 && index < text.length() - 1) {
+                nextCharacter = text.substring(index + 1, index + 2);
+            } else {
+                nextCharacter = "";
+            }
+        }
+
+        return index;
+    }
+        
     /**
      * Reorders the blanks to make sure that the order is chronological.
      * @param plainTextArray 	The plain text sentences

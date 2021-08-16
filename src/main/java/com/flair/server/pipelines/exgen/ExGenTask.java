@@ -1,10 +1,12 @@
 package com.flair.server.pipelines.exgen;
 
+import java.util.HashMap;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeoutException;
 
 import com.flair.server.exerciseGeneration.downloadManagement.ResourceDownloader;
 import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseManager;
+import com.flair.server.exerciseGeneration.exerciseManagement.ResultComponents;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
 import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.OpenNlpParser;
@@ -39,7 +41,7 @@ public class ExGenTask implements AsyncTask<ExGenTask.Result> {
 
 	@Override
 	public Result run() {		
-		Pair<String, byte[]> file = new Pair<>(null, null);
+		ResultComponents file = null;
 		long startTime = 0;
 		boolean error = false;
 
@@ -60,19 +62,21 @@ public class ExGenTask implements AsyncTask<ExGenTask.Result> {
 		}
 
 		long endTime = System.currentTimeMillis();
-		if (!error)
-			ServerLogger.get().info("Exercise " + file.first + " generated in " + (endTime - startTime) + " ms");
+		if (!error && file != null)
+			ServerLogger.get().info("Exercise " + file.getFileName() + " generated in " + (endTime - startTime) + " ms");
 
-		return new Result(file.second, file.first);
+		return new Result(file.getFileContent(), file.getFileName(), file.getPreviews());
 	}
 
 	static final class Result {
 		final byte[] file;
 		final String fileName;
+		final HashMap<String, String> previews;
 
-		Result(byte[] file, String fileName) {
+		Result(byte[] file, String fileName, HashMap<String, String> previews) {
 			this.file = file;
 			this.fileName = fileName;
+			this.previews = previews;
 		}
 	}
 }

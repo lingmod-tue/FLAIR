@@ -52,7 +52,7 @@
 			   <!-- preview -->
 			   <m:MaterialCollapsibleItem>
 			     <m:MaterialCollapsibleHeader>
-			       <m:MaterialLink text="Document Preview" iconType="ARROW_DROP_DOWN" iconPosition="LEFT" textColor="BLACK"/>
+			       <m:MaterialLink text="Preview Document" iconType="ARROW_DROP_DOWN" iconPosition="LEFT" textColor="BLACK"/>
 			     </m:MaterialCollapsibleHeader>
 			     <m:MaterialCollapsibleBody>
 				     <m:MaterialRow marginBottom="20">

@@ -1,5 +1,7 @@
 package com.flair.shared.interop.messaging.server;
 
+import java.util.HashMap;
+
 import com.flair.shared.interop.messaging.Message;
 
 public class SmExGenEvent implements Message.Payload {
@@ -10,6 +12,7 @@ public class SmExGenEvent implements Message.Payload {
 	private EventType event = EventType.JOB_COMPLETE;
 	private byte[] file;
 	private String fileName;
+	private HashMap<String, String> previews;
 
 	public SmExGenEvent() {}
 
@@ -30,6 +33,12 @@ public class SmExGenEvent implements Message.Payload {
 	}
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
+	}
+	public HashMap<String, String> getPreviews() {
+		return previews;
+	}
+	public void setPreviews(HashMap<String, String> previews) {
+		this.previews = previews;
 	}
 
 	@Override

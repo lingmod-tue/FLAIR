@@ -38,5 +38,14 @@ public class AdvancedFIBJsonManager extends SimpleExerciseJsonManager {
 
         return "*" + construction + "*";
     }
+
+	@Override
+	String getTargetDummy(String constructionText) {
+		if(useBlanks) {
+			return " <input type=\"text\" style=\"background-color:greenYellow; width:60px;\" placeholder=\"" + constructionText + "\"> ";
+		} else {
+			return " <select style=\"background-color:greenYellow;\"><option>" + constructionText + "</option></select> ";
+		}
+	}
     
 }

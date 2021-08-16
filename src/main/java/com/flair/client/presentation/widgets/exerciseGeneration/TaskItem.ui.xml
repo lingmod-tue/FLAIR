@@ -51,39 +51,8 @@
 			</m:MaterialRow>
 		</m:MaterialCollapsibleHeader>
 		<m:MaterialCollapsibleBody padding="10">
-			<m:MaterialRow marginBottom="0" padding="0">
-				<m:MaterialLabel text="Document" textColor="BLACK"
-					fontWeight="BOLD" />
-			</m:MaterialRow>
-			<m:MaterialRow marginTop="0" padding="0">
-				<m:MaterialColumn grid='s8 m8 l8' padding="0"
-					margin="0" paddingRight="10">
-					<m:MaterialLabel ui:field="lblDocTitle" />
-				</m:MaterialColumn>
-				<m:MaterialColumn grid='s4 m4 l4' padding="0"
-					margin="0">
-					<m:MaterialButton ui:field="btnUpdateDocument"
-						width="100%" paddingLeft="10" paddingRight="10" textAlign="CENTER"
-						textColor="BLACK" text="Update"
-						addStyleNames="{style.bgGrey} {style.lowercase}" waves="DEFAULT" />
-				</m:MaterialColumn>
-			</m:MaterialRow>
-
-			<m:MaterialRow>
-				<m:MaterialButton ui:field="btnSelectDocumentPart"
-					textAlign="CENTER" textColor="BLACK" width="100%"
-					addStyleNames="{style.bgGrey} {style.lowercase}" waves="DEFAULT" />
-			</m:MaterialRow>
-			<m:MaterialRow>
-				<m:MaterialCheckBox ui:field="chkOnlyText"
-							value="false" text="Use only sections with text" />
-			</m:MaterialRow>
-
-			<m:MaterialRow margin="0" padding="0">
-				<m:MaterialLabel text="Exercise settings"
-					ui:field="lblSettings" textColor="BLACK" fontWeight="BOLD"
-					marginTop="20" marginBottom="5" />
-
+		
+		<m:MaterialRow margin="0" padding="0">			
 				<m:MaterialColumn grid='s4 m4 l4' padding="0"
 					margin="0">
 					<m:MaterialLabel text="Topic:" margin="0"
@@ -113,13 +82,48 @@
 				</m:MaterialColumn>
 				<m:MaterialColumn grid='s4 m4 l4' padding="0"
 					margin="0">
-					<m:MaterialLabel text="Quiz:" margin="0"
+					<m:MaterialLabel text="(Quiz:)" margin="0"
 						padding="0" ui:field="lblQuiz" />
 					<ma:combobox.MaterialComboBox
 						textColor="GREY" ui:field="drpQuiz" margin="0" padding="0">
 					</ma:combobox.MaterialComboBox>
 				</m:MaterialColumn>
 			</m:MaterialRow>
+			
+			<m:MaterialRow marginBottom="0" padding="0">
+				<m:MaterialLabel text="Document" textColor="BLACK"
+					fontWeight="BOLD" />
+			</m:MaterialRow>
+			<m:MaterialRow marginTop="0" padding="0">
+				<m:MaterialColumn grid='s8 m8 l8' padding="0"
+					margin="0" paddingRight="10">
+					<m:MaterialLabel ui:field="lblDocTitle" />
+				</m:MaterialColumn>
+				<m:MaterialColumn grid='s4 m4 l4' padding="0"
+					margin="0">
+					<m:MaterialButton ui:field="btnUpdateDocument"
+						width="100%" paddingLeft="10" paddingRight="10" textAlign="CENTER"
+						textColor="BLACK" text="Update"
+						addStyleNames="{style.bgGrey} {style.lowercase}" waves="DEFAULT" />
+				</m:MaterialColumn>
+			</m:MaterialRow>
+
+			<m:MaterialRow>
+				<m:MaterialButton ui:field="btnSelectDocumentPart"
+					textAlign="CENTER" textColor="BLACK" width="100%"
+					addStyleNames="{style.bgGrey} {style.lowercase}" waves="DEFAULT" />
+			</m:MaterialRow>
+			<m:MaterialRow>
+				<m:MaterialCheckBox ui:field="chkOnlyText"
+							value="false" text="Use only sections with text" />
+			</m:MaterialRow>
+
+			
+			
+				<m:MaterialLabel text="Exercise settings"
+					ui:field="lblSettings" textColor="BLACK" fontWeight="BOLD"
+					marginTop="20" marginBottom="5" />
+				
 			<m:MaterialRow>
 				<m:MaterialRow ui:field="grpPos">
 					<m:MaterialRow padding="0" margin="0">
@@ -515,7 +519,12 @@
 					<m:MaterialLabel ui:field="lblNumberExercises"
 						paddingTop="10" />
 				</m:MaterialRow>
-
+				
+				<m:MaterialRow>
+					<m:MaterialButton ui:field="btnPreviewExercise" text="Preview generated exercise"
+						type="FLAT" visible="false" textAlign="CENTER" textColor="BLACK"
+						addStyleNames="{style.bgGrey}" waves="DEFAULT" margin="10" />
+				</m:MaterialRow>
 
 			</m:MaterialRow>
 
@@ -523,26 +532,33 @@
 			<m:MaterialDialog ui:field="dlgDocumentSelection"
 				type="DEFAULT" dismissible="true">
 				<m:MaterialDialogContent>
-					<m:MaterialTitle title="Document part selection"
-						description="Mark the document part that you want to use." />
+					<m:MaterialTitle title="Clean up text used for exercise"
+						description="LÖSCHEN. Select the parts you want to remove and delete them by hitting the backspace or the Del key." />
 					<g:TextArea ui:field="lblDocumentForSelection"
 						readOnly="true" height="200px" />
 				</m:MaterialDialogContent>
 				<m:MaterialDialogFooter>
-					<m:MaterialButton ui:field="btnRemoveSelection"
-						text="Remove selection" type="FLAT" enabled="false"
-						textAlign="CENTER" textColor="BLACK"
-						addStyleNames="{style.bgGrey}" waves="DEFAULT" margin="10" />
 					<m:MaterialButton
-						ui:field="btnApplyDocumentSelection" text="Apply" type="FLAT"
-						enabled="false" textAlign="CENTER" textColor="BLACK"
-						addStyleNames="{style.bgGrey}" waves="DEFAULT" margin="10" />
-					<m:MaterialButton
-						ui:field="btnDiscardDocumentSelection" text="Cancel" type="FLAT"
+						ui:field="btnApplyDocumentSelection" text="Done" type="FLAT"
 						enabled="false" textAlign="CENTER" textColor="BLACK"
 						addStyleNames="{style.bgGrey}" waves="DEFAULT" margin="10" />
 					<m:MaterialButton ui:field="btnReset" text="Reset"
 						type="FLAT" enabled="false" textAlign="CENTER" textColor="BLACK"
+						addStyleNames="{style.bgGrey}" waves="DEFAULT" margin="10" />
+				</m:MaterialDialogFooter>
+			</m:MaterialDialog>
+			
+			<!-- Exercise preview popup -->
+			<m:MaterialDialog ui:field="dlgExercisePreview"
+				type="DEFAULT" dismissible="true" height="100%" width="100%">
+				<m:MaterialDialogContent height="100%" width="100%">
+					<m:MaterialTitle title="Exercise Preview" />
+					<g:HTMLPanel ui:field="htmlContent" height="100%"/>
+				</m:MaterialDialogContent>
+				<m:MaterialDialogFooter>
+					<m:MaterialButton
+						ui:field="btnCloseExercisePreview" text="Close" type="FLAT"
+						textAlign="CENTER" textColor="BLACK"
 						addStyleNames="{style.bgGrey}" waves="DEFAULT" margin="10" />
 				</m:MaterialDialogFooter>
 			</m:MaterialDialog>

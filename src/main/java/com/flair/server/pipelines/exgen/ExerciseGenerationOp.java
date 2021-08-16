@@ -8,6 +8,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 
 import com.flair.server.exerciseGeneration.downloadManagement.ResourceDownloader;
+import com.flair.server.exerciseGeneration.exerciseManagement.ResultComponents;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.FillInTheBlanksSettings;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.FindSettings;
@@ -27,8 +28,8 @@ import com.flair.shared.exerciseGeneration.ExerciseType;
 import edu.stanford.nlp.util.Pair;
 
 public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input, ExerciseGenerationOp.Output> {
-	public interface ExGenComplete extends EventHandler<Pair<String, byte[]>> {}
-	public interface JobComplete extends EventHandler<Pair<String, byte[]>> {}
+	public interface ExGenComplete extends EventHandler<ResultComponents> {}
+	public interface JobComplete extends EventHandler<ResultComponents> {}
 	
 	private final ReentrantLock lock = new ReentrantLock();
 	private final ArrayList<Pair<ContentTypeSettings, Boolean>> settingsStates = new ArrayList<>();
@@ -67,10 +68,10 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
 	}
 
 	public static final class Output {
-		public final Pair<String, byte[]> file;
+		public final ResultComponents file;
 
 		Output() {
-			this.file = new Pair<String, byte[]>("", new byte[] {});
+			this.file = new ResultComponents("", new byte[] {}, new HashMap<String, String>());
 		}
 	}
 
@@ -129,7 +130,7 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
 				scheduler.fire();
 		});
 		taskLinker.addHandler(ExGenTask.Result.class, (j, r) -> {
-			safeInvoke(() -> input.exGenComplete.handle(new Pair<>(r.fileName, r.file)),
+			safeInvoke(() -> input.exGenComplete.handle(new ResultComponents(r.fileName, r.file, r.previews)),
 						"Exception in generation complete handler");
 		});
 	}

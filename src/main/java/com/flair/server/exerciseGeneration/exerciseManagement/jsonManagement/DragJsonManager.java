@@ -17,5 +17,10 @@ public class DragJsonManager extends SimpleExerciseJsonManager {
 
         return "*" + construction + "*";
     }
-    
+
+    @Override
+	String getTargetDummy(String constructionText) {
+		return " <button style=\"background-color:greenYellow;\">" + constructionText + "</button> ";
+	}
+
 }

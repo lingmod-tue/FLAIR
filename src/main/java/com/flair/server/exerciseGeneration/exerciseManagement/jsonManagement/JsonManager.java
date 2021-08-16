@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
@@ -13,8 +14,10 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
 import com.flair.server.exerciseGeneration.exerciseManagement.JsonComponents;
+import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
 import com.flair.server.exerciseGeneration.exerciseManagement.resourceManagement.ResourceLoader;
 import com.flair.server.utilities.ServerLogger;
+import com.flair.shared.exerciseGeneration.Pair;
 
 public abstract class JsonManager {
 
@@ -24,11 +27,11 @@ public abstract class JsonManager {
      * @param jsonComponents    The extracted exercise components necessary to @Override
 	build the JSON configuration
      * @param folderName        The resource folder of the content type
-     * @return                  The JSON object for the entire JSON content file
+     * @return                  The JSON object for the entire JSON content file and the HTML string for the preview in FLAIR
      * @throws IOException    	File exception if the writer cannot write to the output file
      * @throws ParseException 	JSON exception if the file cannot be parsed
      */
-    public abstract JSONObject modifyJsonContent(ArrayList<JsonComponents> jsonComponents, String folderName)
+    public abstract Pair<JSONObject, HashMap<String, String>> modifyJsonContent(ContentTypeSettings settings, ArrayList<JsonComponents> jsonComponents, String folderName)
             throws IOException, ParseException;
 
     /**

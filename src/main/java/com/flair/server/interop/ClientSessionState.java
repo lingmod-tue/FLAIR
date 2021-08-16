@@ -1,9 +1,20 @@
 package com.flair.server.interop;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+
+import org.apache.commons.collections.map.HashedMap;
+
 import com.flair.server.crawler.SearchResult;
 import com.flair.server.document.AbstractDocument;
 import com.flair.server.document.AbstractDocumentSource;
 import com.flair.server.document.DocumentCollection;
+import com.flair.server.exerciseGeneration.exerciseManagement.ResultComponents;
 import com.flair.server.exerciseGeneration.exerciseManagement.domManipulation.ZipManager;
 import com.flair.server.grammar.DefaultVocabularyList;
 import com.flair.server.interop.messaging.ServerMessageChannel;
@@ -22,20 +33,16 @@ import com.flair.shared.interop.dtos.DocumentDTO;
 import com.flair.shared.interop.dtos.QuestionDTO;
 import com.flair.shared.interop.dtos.RankableDocument;
 import com.flair.shared.interop.dtos.RankableDocumentImpl;
-import com.flair.shared.interop.messaging.client.*;
+import com.flair.shared.interop.messaging.client.CmActiveOperationCancel;
+import com.flair.shared.interop.messaging.client.CmCustomCorpusParseStart;
+import com.flair.shared.interop.messaging.client.CmExGenStart;
+import com.flair.shared.interop.messaging.client.CmQuestionGenEagerParse;
+import com.flair.shared.interop.messaging.client.CmQuestionGenStart;
+import com.flair.shared.interop.messaging.client.CmWebSearchParseStart;
 import com.flair.shared.interop.messaging.server.SmCustomCorpusEvent;
 import com.flair.shared.interop.messaging.server.SmExGenEvent;
 import com.flair.shared.interop.messaging.server.SmQuestionGenEvent;
 import com.flair.shared.interop.messaging.server.SmWebSearchParseEvent;
-
-import edu.stanford.nlp.util.Pair;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.stream.Collectors;
 
 class ClientSessionState {
 	private final ClientIdToken clientId;
@@ -46,7 +53,7 @@ class ClientSessionState {
 	// GramParsingPipelineOp -> DocumentDTO -> Document (parsed by the QuestionGenerationPipeline)
 	private final ClientPipelineOp2DocumentMap questGenLinkingData;
 	private final TemporaryClientData temporaryClientData;
-    private final ArrayList<Pair<String, byte[]>> generatedPackages = new ArrayList<>();
+    private final ArrayList<ResultComponents> generatedPackages = new ArrayList<>();
 
 	ClientSessionState(ClientIdToken tok) {
 		clientId = tok;
@@ -389,7 +396,7 @@ class ClientSessionState {
 	}
 	
 	
-	private synchronized void onExerciseGenerationOpGenerationComplete(Pair<String, byte[]> file) {
+	private synchronized void onExerciseGenerationOpGenerationComplete(ResultComponents file) {
 		if (!pipelineOpCache.hasActiveOp())
 			throw new ServerRuntimeException("Invalid exercise generation generation complete event!");
 
@@ -404,14 +411,21 @@ class ClientSessionState {
 
 		ServerLogger.get().info("Generated " + generatedPackages.size() + " exercises");
 		
+		HashMap<String, String> previews = new HashMap<>();
 		byte[] outputFile = new byte[] {};
         String name = "";
         if(generatedPackages.size() > 1) {
             outputFile = ZipManager.zipH5PPackages(generatedPackages);
             name = "exercises.zip";
+            for(ResultComponents res : generatedPackages) {
+	            for (Entry<String, String> entry : res.getPreviews().entrySet()) {
+	            	previews.put(entry.getKey(), entry.getValue());
+	            }
+            }
         } else if(generatedPackages.size() > 0) {
-            outputFile = generatedPackages.get(0).second;
-            name = generatedPackages.get(0).first + ".h5p";
+            outputFile = generatedPackages.get(0).getFileContent();
+            name = generatedPackages.get(0).getFileName() + ".h5p";
+            previews = generatedPackages.get(0).getPreviews();
         }
         
         if(outputFile == null) {
@@ -421,6 +435,7 @@ class ClientSessionState {
 		msg.setEvent(SmExGenEvent.EventType.JOB_COMPLETE);
 		msg.setFile(outputFile);
 		msg.setFileName(name);
+		msg.setPreviews(previews);
 		messageChannel.send(msg);
 
 		generatedPackages.clear();

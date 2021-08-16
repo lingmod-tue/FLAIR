@@ -1,6 +1,7 @@
 package com.flair.client.presentation.interfaces;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
 
@@ -18,7 +19,7 @@ public interface ExerciseGenerationService {
 	}
 
 
-	void provideForDownload(byte[] file, String fileName);
+	void provideForDownload(byte[] file, String fileName, HashMap<String, String> previews);
 
 	void setGenerateHandler(GenerateHandler handler);
 	void setInterruptHandler(InterruptHandler handler);

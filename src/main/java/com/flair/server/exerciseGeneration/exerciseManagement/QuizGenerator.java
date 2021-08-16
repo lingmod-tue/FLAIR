@@ -2,6 +2,7 @@ package com.flair.server.exerciseGeneration.exerciseManagement;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.flair.server.exerciseGeneration.downloadManagement.ResourceDownloader;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
@@ -17,7 +18,7 @@ public class QuizGenerator extends ExerciseGenerator {
 	private SimpleExerciseGenerator currentGenerator = null;
 
     @Override
-    public byte[] generateExercise(ContentTypeSettings settings,
+    public Pair<byte[], HashMap<String, String>> generateExercise(ContentTypeSettings settings,
     		CoreNlpParser parser, SimpleNlgParser g, OpenNlpParser lemmatizer, ResourceDownloader resourceDownloader) {
         ArrayList<JsonComponents> exerciseComponents = new ArrayList<>();
         for(ContentTypeSettings taskSettings : ((QuizSettings)settings).getExercises()) {

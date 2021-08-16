@@ -2,7 +2,9 @@ package com.flair.client.presentation.widgets.exerciseGeneration;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import com.flair.client.localization.LocalizedComposite;
 import com.flair.client.localization.LocalizedFieldType;
@@ -15,6 +17,7 @@ import com.flair.shared.exerciseGeneration.ExerciseSettings;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
@@ -153,11 +156,6 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     	if(wdgtTasks.getChildrenList().size() == 0) {
             addTask();
     	}
-		/*for(Widget task : wdgtTasks.getChildren()) {
-			if(task instanceof TaskItem) {
-				((TaskItem)task).initializeRelevantConstructions();
-			}
-		}*/
     }
     
     /**
@@ -303,7 +301,7 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     InterruptHandler interruptHandler;
     
 	@Override
-	public void provideForDownload(byte[] file, String fileName) {	
+	public void provideForDownload(byte[] file, String fileName, HashMap<String, String> previews) {	
 		enableButton();
     	
 		if(file != null && file.length > 0) {
@@ -311,6 +309,19 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
                 titleCopyrightNoticeUI.setDescription("The configured exercises were generated successfully for the selected document. Please respect the copyright of the texts!");
                 mdlCopyrightNoticeUI.open();
             }
+			
+			for (Entry<String, String> entry : previews.entrySet()) {
+				for(Widget existingTask : wdgtTasks.getChildrenList()) {
+		    		if (existingTask instanceof TaskItem && ((TaskItem)existingTask).lblName.getValue().equals(entry.getKey())) {
+		    			((TaskItem)existingTask).btnPreviewExercise.setVisible(true);
+		    			((TaskItem)existingTask).htmlContent.clear();
+		    			HTML contents = new HTML();
+		    			contents.setHTML("<iframe width='100%' height='400px' srcdoc='" + entry.getValue().replace("'", "\"") + "'> IFrames are not supported by your browser.</iframe>");
+		    			((TaskItem)existingTask).htmlContent.add(contents);
+		    			break;
+		    		}
+		    	}
+			}
 			
 	        JSUtility.exportToZip(file, fileName);
     	} else {

@@ -1,6 +1,7 @@
 package com.flair.server.exerciseGeneration.exerciseManagement;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
@@ -33,7 +34,7 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	private boolean isCancelled = false;
 	
     @Override
-	public byte[] generateExercise(ContentTypeSettings settings,
+	public Pair<byte[], HashMap<String, String>> generateExercise(ContentTypeSettings settings,
 			CoreNlpParser parser, SimpleNlgParser generator, OpenNlpParser lemmatizer, ResourceDownloader resourceDownloader) {
         JsonComponents jsonComponents = prepareExercise(settings, parser, generator, lemmatizer, resourceDownloader);
 

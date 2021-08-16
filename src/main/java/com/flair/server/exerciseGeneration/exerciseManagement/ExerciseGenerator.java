@@ -1,6 +1,7 @@
 package com.flair.server.exerciseGeneration.exerciseManagement;
 
 
+import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
 import com.flair.server.exerciseGeneration.downloadManagement.ResourceDownloader;
@@ -14,6 +15,7 @@ import com.flair.shared.exerciseGeneration.Pair;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public abstract class ExerciseGenerator {
 
@@ -23,7 +25,7 @@ public abstract class ExerciseGenerator {
 	 * @param resources	The downloaded resources of the web page for which the exercise is generated
 	 * @return			The byte array of the generated H5P file
 	 */
-    public abstract byte[] generateExercise(ContentTypeSettings settings,
+    public abstract Pair<byte[], HashMap<String, String>> generateExercise(ContentTypeSettings settings,
     		CoreNlpParser parser, SimpleNlgParser generator, OpenNlpParser lemmatizer, ResourceDownloader resourceDownloader);
     
     public abstract void cancelGeneration();
@@ -35,12 +37,12 @@ public abstract class ExerciseGenerator {
      * @param resources				The downloaded resources
      * @return						The byte array of the generated H5P file
      */
-    protected byte[] createH5pPackage(ContentTypeSettings settings, ArrayList<JsonComponents> exerciseComponents,
+    protected Pair<byte[], HashMap<String, String>> createH5pPackage(ContentTypeSettings settings, ArrayList<JsonComponents> exerciseComponents,
                                       ArrayList<Pair<String, byte[]>> resources) {
     	if(exerciseComponents.size() > 0) {
 	        try {
-	            String jsonContent = settings.getJsonManager().modifyJsonContent(exerciseComponents, settings.getResourceFolder()).toString();
-	            return ZipManager.generateModifiedZipFile(settings.getResourceFolder(), jsonContent, resources);
+	            Pair<JSONObject, HashMap<String, String>> jsonContent = settings.getJsonManager().modifyJsonContent(settings, exerciseComponents, settings.getResourceFolder());
+	            return new Pair<>(ZipManager.generateModifiedZipFile(settings.getResourceFolder(), jsonContent.first.toString(), resources), jsonContent.second);
 	        } catch (ParseException | IOException e) {
 				ServerLogger.get().error(e, "Files could not be zipped. Exception: " + e.toString());
 	            return null;
