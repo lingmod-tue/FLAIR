@@ -22,14 +22,10 @@
 				accordion="false" grid="s12 m12 l12" margin="0" padding="0"
 				visible="false" marginTop="20" marginBottom="20" />
 
-			<m:MaterialRow marginTop="10">
-				<m:MaterialButton ui:field="btnAddTask"
-					width="100%" textAlign="CENTER" textColor="BLACK"
-					addStyleNames="{style.bgGrey}" waves="DEFAULT" marginBottom="10"
-					marginTop="10" />
-				<m:MaterialButton ui:field="btnDeleteTasks"
-					width="100%" textAlign="CENTER" textColor="BLACK"
-					addStyleNames="{style.bgGrey}" waves="DEFAULT" />
+			<m:MaterialRow margin="0" padding="0">
+				<m:MaterialIcon ui:field="btnAddTask" iconType="ADD_CIRCLE_OUTLINE"
+					textColor="GREEN" backgroundColor="WHITE" iconPosition="RIGHT"
+					waves="DEFAULT" margin="0" padding="0" />
 			</m:MaterialRow>
 			<m:MaterialRow paddingTop="0" paddingBottom="0" marginBottom="0">
 				<m:MaterialCheckBox 
@@ -54,6 +50,9 @@
 						ui:field="spnGenerating" visible="false">
 						<m:MaterialSpinner color="BLUE_ONLY" />
 					</m:MaterialPreLoader>
+					<m:MaterialIcon ui:field="icoDownload" iconType="FILE_DOWNLOAD"
+					textColor="BLACK" backgroundColor="WHITE" iconPosition="RIGHT"
+					waves="DEFAULT" margin="0" padding="0" visible="false"/>
 				</m:MaterialColumn>
 			</m:MaterialRow>
 

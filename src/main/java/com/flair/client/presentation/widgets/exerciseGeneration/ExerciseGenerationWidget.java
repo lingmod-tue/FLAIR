@@ -27,6 +27,7 @@ import gwt.material.design.client.constants.Color;
 import gwt.material.design.client.ui.MaterialButton;
 import gwt.material.design.client.ui.MaterialCheckBox;
 import gwt.material.design.client.ui.MaterialCollapsible;
+import gwt.material.design.client.ui.MaterialIcon;
 import gwt.material.design.client.ui.MaterialPreLoader;
 import gwt.material.design.client.ui.MaterialTitle;
 import gwt.material.design.client.ui.MaterialToast;
@@ -49,16 +50,16 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     @UiField
     MaterialCollapsible wdgtTasks;
     @UiField
-    @LocalizedField(type = LocalizedFieldType.TEXT_BUTTON)
-    MaterialButton btnAddTask;
-    @UiField
-    @LocalizedField(type = LocalizedFieldType.TEXT_BUTTON)
-    MaterialButton btnDeleteTasks;
+    @LocalizedField(type = LocalizedFieldType.TOOLTIP_MATERIAL)
+    MaterialIcon btnAddTask;
     @UiField
     @LocalizedField(type = LocalizedFieldType.TEXT_BUTTON)
     MaterialButton btnGenerateExercises;
     @UiField
     MaterialPreLoader spnGenerating;
+    @UiField
+    @LocalizedField(type = LocalizedFieldType.TOOLTIP_MATERIAL)
+    MaterialIcon icoDownload;
     @UiField
     gwt.material.design.client.ui.MaterialDialog mdlCopyrightNoticeUI;
     @UiField
@@ -71,6 +72,9 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     MaterialButton btnCloseCopyrightNoticeUI;
     @UiField
     MaterialTitle titleCopyrightNoticeUI;
+    
+    private byte[] generatedExercises = null;
+    private String fileName = null;
     
         
     public ExerciseGenerationWidget() {
@@ -92,18 +96,8 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
         });
 
     	btnAddTask.addClickHandler(event -> addTask());
-    	btnDeleteTasks.addClickHandler(event -> deleteAllTasks());
     	btnGenerateExercises.addClickHandler(event -> generateExercises());
-    }
-    
-    /**
-     * Deletes all task widgets and removes them from the view.
-     */
-    private void deleteAllTasks() {
-    	List<Widget> existingTasks = wdgtTasks.getChildrenList();
-    	for(Widget existingTask : existingTasks) {
-    		deleteTask((TaskItem)existingTask);
-    	}
+    	icoDownload.addClickHandler(event -> provideFileForDownload());
     }
     
     /**
@@ -152,13 +146,7 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     /**
      * Updates the construction counts when the selected document has been changed.
      */
-    public void initConstructionsOccurrences() {
-    	for(Widget task : wdgtTasks.getChildren()) {
-			if(task instanceof TaskItem) {
-				((TaskItem)task).initializeRelevantConstructions();
-			}
-		}
-    	
+    public void initConstructionsOccurrences() {    	
     	if(wdgtTasks.getChildrenList().size() == 0) {
             addTask();
     	}
@@ -170,7 +158,8 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
      */
     public boolean hasValidTasks() {
     	for(Widget task : wdgtTasks.getChildrenList()) {
-            if(task instanceof TaskItem && ((TaskItem)task).icoOk.isVisible()) {
+            if(task instanceof TaskItem && 
+            		(((TaskItem)task).icoValidity.isVisible() && !((TaskItem)task).icoValidity.getTextColor().equals(Color.RED))) {
             	return true;
             }
     	}
@@ -248,14 +237,7 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
      * Disables it otherwise.
      */
     public void setGenerateExercisesEnabled() {
-    	boolean hasValidExercise = false;
-    	for(Widget existingTask : wdgtTasks.getChildrenList()) {
-    		if (((TaskItem)existingTask).icoOk.isVisible() || ((TaskItem)existingTask).icoWarning.isVisible()) {
-    			hasValidExercise = true;
-    		}
-    	}
-    	
-    	btnGenerateExercises.setEnabled(hasValidExercise);
+    	btnGenerateExercises.setEnabled(hasValidTasks());
     }
     
     @Override
@@ -278,7 +260,7 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
 	    	spnGenerating.setVisible(true);
 	        ArrayList<ExerciseSettings> exerciseSettings = new ArrayList<>();
 	    	for(Widget existingTask : wdgtTasks.getChildrenList()) {
-	    		if (((TaskItem)existingTask).icoOk.isVisible() || ((TaskItem)existingTask).icoWarning.isVisible()) {
+	    		if (((TaskItem)existingTask).icoValidity.isVisible() && !((TaskItem)existingTask).icoValidity.getTextColor().equals(Color.RED)) {
 	    			exerciseSettings.add(((TaskItem)existingTask).generateExerciseSettings());
 	    		}
 	    	}
@@ -309,12 +291,11 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
 	@Override
 	public void provideForDownload(byte[] file, String fileName, HashMap<String, String> previews) {	
 		enableButton();
+		generatedExercises = file;
+		this.fileName = fileName;
     	
 		if(file != null && file.length > 0) {
-			if (!chkDontShowCopyrightNoticeUI.getValue()) {
-                titleCopyrightNoticeUI.setDescription("The configured exercises were generated successfully for the selected document. Please respect the copyright of the texts!");
-                mdlCopyrightNoticeUI.open();
-            }
+			icoDownload.setVisible(true);
 			
 			for (Entry<String, String> entry : previews.entrySet()) {
 				for(Widget existingTask : wdgtTasks.getChildrenList()) {
@@ -328,13 +309,20 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
 		    		}
 		    	}
 			}
-			
-	        JSUtility.exportToZip(file, fileName);
     	} else {
             ToastNotification.fire("We're sorry, no exercises could be generated. Please try with another document.");
     	}
 	}
 
+	private void provideFileForDownload() {
+		if (!chkDontShowCopyrightNoticeUI.getValue()) {
+            titleCopyrightNoticeUI.setDescription("The configured exercises were generated successfully for the selected document. Please respect the copyright of the texts!");
+            mdlCopyrightNoticeUI.open();
+        }
+		
+        JSUtility.exportToZip(generatedExercises, fileName);
+	}
+	
 	@Override
 	public void setGenerateHandler(GenerateHandler handler) {
 		startGenerationHandler = handler;

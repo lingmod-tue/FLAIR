@@ -31,6 +31,7 @@ import gwt.material.design.addins.client.combobox.MaterialComboBox;
 import gwt.material.design.addins.client.combobox.events.SelectItemEvent;
 import gwt.material.design.addins.client.combobox.events.SelectItemEvent.SelectComboHandler;
 import gwt.material.design.client.constants.Color;
+import gwt.material.design.client.constants.IconType;
 import gwt.material.design.client.constants.RadioButtonType;
 import gwt.material.design.client.ui.MaterialButton;
 import gwt.material.design.client.ui.MaterialCheckBox;
@@ -66,8 +67,7 @@ public class TaskItem extends LocalizedComposite {
     @UiField
     Option optTypeDefault;
     @UiField
-    @LocalizedField(type = LocalizedFieldType.TEXT_BUTTON)
-    MaterialButton btnDelete;
+    MaterialIcon btnDelete;
     @UiField
     @LocalizedField(type = LocalizedFieldType.TEXT_BUTTON)
     MaterialButton btnSelectDocumentPart;
@@ -76,11 +76,16 @@ public class TaskItem extends LocalizedComposite {
     @UiField
     MaterialButton btnReset;
     @UiField
+	@LocalizedField(type = LocalizedFieldType.TOOLTIP_MATERIAL)
+    MaterialButton btnUpdateDocument;
+    @UiField
     MaterialButton btnPreviewExercise;
     @UiField
     MaterialButton btnCloseExercisePreview;
     @UiField
     MaterialLabel lblNumberExercises;
+    @UiField
+    MaterialLabel lblSelectTypeTopic;
     @UiField
     MaterialLabel lblTensesSentences;
     @UiField
@@ -248,13 +253,7 @@ public class TaskItem extends LocalizedComposite {
     @UiField
     MaterialDialog dlgExercisePreview;
     @UiField
-    MaterialIcon icoOk;
-    @UiField
-	@LocalizedField(type = LocalizedFieldType.TOOLTIP_MATERIAL)
-    MaterialIcon icoInvalid;
-    @UiField
-	@LocalizedField(type = LocalizedFieldType.TOOLTIP_MATERIAL)
-    MaterialIcon icoWarning;
+    MaterialIcon icoValidity;
     @UiField
     NumberSpinner spnNDistractors;
     @UiField
@@ -517,6 +516,10 @@ public class TaskItem extends LocalizedComposite {
     	
     	btnPreviewExercise.addClickHandler(event -> {
     		dlgExercisePreview.open();
+    	});
+    	
+    	btnUpdateDocument.addClickHandler(event -> {
+    		initializeRelevantConstructions();
     	});
     	    
     	drpTopic.addSelectionHandler(new SelectComboHandler<Option>()
@@ -983,14 +986,16 @@ public class TaskItem extends LocalizedComposite {
     	String topic = getTopic();
     	String exerciseType = getExerciseType();
 
-    	icoOk.setVisible(false);
-		icoInvalid.setVisible(true);
-		icoWarning.setVisible(false);
+    	icoValidity.setVisible(true);
+    	icoValidity.setIconType(IconType.ERROR);
+		icoValidity.setTextColor(Color.RED);
+		lblNumberExercises.setVisible(true);
+		lblSelectTypeTopic.setVisible(false);
 		
 		if(exerciseType.equals("Exercise Type") || topic.equals("Topic")) {
-			lblNumberExercises.setText("Select a grammar topic and an exercise type to enable exercise generation.");
-    		lblNumberExercises.setTextColor(Color.GREY);
-    		icoInvalid.setVisible(false);
+			lblSelectTypeTopic.setVisible(true);
+    		lblNumberExercises.setVisible(false);
+        	icoValidity.setVisible(false);
 		} else if(topic.equals("Passive") && exerciseType.equals("Select") || 
 				topic.equals("'if'") && exerciseType.equals("Mark") || topic.equals("Present") && exerciseType.equals("Drag") || 
 				exerciseType.equals("Select") && !topic.equals("Relatives") && !hasCheckedDistractors()) {
@@ -1003,11 +1008,12 @@ public class TaskItem extends LocalizedComposite {
     		} else {
         		lblNumberExercises.setTextColor(numberOfExercises >= 5 ? Color.BLACK : Color.ORANGE);
         		if(numberOfExercises >= 5) {
-        			icoOk.setVisible(true);
+        			icoValidity.setIconType(IconType.CHECK_CIRCLE);
+        			icoValidity.setTextColor(Color.GREEN);
         		} else {
-        			icoWarning.setVisible(true);
+        			icoValidity.setIconType(IconType.WARNING);
+        			icoValidity.setTextColor(Color.ORANGE);
         		}
-        		icoInvalid.setVisible(false);
     			if(exerciseType.equals("FiB") || exerciseType.equals("Select")) {
             		lblNumberExercises.setText("A maximum of " + numberOfExercises + " blanks can be generated for the current settings.");
     			} else if(exerciseType.equals("Mark")) {
@@ -1021,9 +1027,8 @@ public class TaskItem extends LocalizedComposite {
     						// We need at least 2 target words for drag & drop to make sense
     						lblNumberExercises.setText("No exercises can be generated for the current settings.");
     		        		lblNumberExercises.setTextColor(Color.RED);
-    		        		icoOk.setVisible(false);
-    		        		icoWarning.setVisible(false);
-    		        		icoInvalid.setVisible(true);
+    		        		icoValidity.setIconType(IconType.ERROR);
+    	        			icoValidity.setTextColor(Color.RED);
     					} else {
     						lblNumberExercises.setText("A maximum of " + numberOfExercises + " target words can be generated for the current settings.");
     					}
@@ -1035,6 +1040,7 @@ public class TaskItem extends LocalizedComposite {
 		parent.setGenerateExercisesEnabled();
 		parent.setFeedbackGenerationVisiblity();
 		btnPreviewExercise.setVisible(false);
+		parent.icoDownload.setVisible(false);
     }
     
     /**

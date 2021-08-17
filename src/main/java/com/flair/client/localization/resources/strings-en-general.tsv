@@ -108,12 +108,15 @@ DocumentPreviewPane	COLUMN_RELFREQ	Relative Frequency %
 ExerciseGenerationWidget	btnAddTask	Add Exercise
 ExerciseGenerationWidget	btnDeleteTasks	Delete all Exercises
 ExerciseGenerationWidget	btnGenerateExercises	Generate Exercises
+ExerciseGenerationWidget	icoDownload	Download generated exercises
+
 
 TaskItem	icoInvalid	No exercises can be generated for the current settings.
 TaskItem	icoWarning	The document contains very few exercise targets. It might not be possible to generate an exercise.
 TaskItem	btnDelete	Delete
 TaskItem	btnSelectDocumentPart	Select document part
 TaskItem	lblQuiz	Exercises with the same selected quiz will be accumulated into a Question Set. Select --- to geenrate a simple exercise.
+TaskItem	btnUpdateDocument	Change the document used for the exercise to the current selection.
 
 ExportDocumentWidget	btnCopyDocumentPreviewUI	Copy to clipboard
 ExportDocumentWidget	btnExportDocumentPreviewToWordUI	Export as word document

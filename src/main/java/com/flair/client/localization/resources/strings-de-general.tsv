@@ -108,12 +108,14 @@ DocumentPreviewPane	COLUMN_RELFREQ	Relative Häufigkeit in %
 ExerciseGenerationWidget	btnAddTask	Neue Aufgabe
 ExerciseGenerationWidget	btnDeleteTasks	Alle Aufgaben löschen
 ExerciseGenerationWidget	btnGenerateExercises	Aufgaben generieren
+ExerciseGenerationWidget	icoDownload	Generierte Aufgaben herunterladen
 
 TaskItem	icoInvalid	Für diese Einstellungen können keine Aufgaben generiert werden.
 TaskItem	icoWarning	Das Dokument enthält nur wenige Zielkonstrukte. Eine Aufgabengenerierung ist eventuell nicht möglich.
 TaskItem	btnDelete	Löschen
 TaskItem	btnSelectDocumentPart	Textauszug wählen
 TaskItem	lblQuiz	Aufgaben, für die dasselbe Quiz ausgewählt wird, werden in einem Question Set gebündelt. Wird kein Quiz ausgewählt (---), wird eine einfache Aufgabe erstellt.
+TaskItem	btnUpdateDocument	Die markierte Seite zur Aufgabengenerierung verwenden.
 
 ExportDocumentWidget	btnCopyDocumentPreviewUI	In Zwischenablage kopieren
 ExportDocumentWidget	btnExportDocumentPreviewToWordUI	Als Word-Dokument exportieren

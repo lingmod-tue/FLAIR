@@ -27,31 +27,32 @@
 	<m:MaterialCollapsibleItem ui:field="expTask">
 		<m:MaterialCollapsibleHeader>
 			<m:MaterialRow margin="0" padding="0">
-				<m:MaterialColumn grid='s6 m6 l6' margin="0"
+				<m:MaterialColumn grid='s11 m11 l11' margin="0"
 					padding="0">
 					<m:MaterialLink ui:field="lblName"
 						iconType="ARROW_DROP_DOWN" iconPosition="LEFT" textColor="BLACK"
 						margin="0" />
-				</m:MaterialColumn>
-				<m:MaterialColumn grid='s5 m5 l5' textAlign="RIGHT"
-					margin="0" padding="0">
-					<m:MaterialButton ui:field="btnDelete"
-						textAlign="CENTER" textColor="BLACK" margin="0"
-						addStyleNames="{style.bgGrey}" waves="DEFAULT" marginBottom="10"
-						paddingLeft="10" paddingRight="10" marginTop="10" />
-				</m:MaterialColumn>
-				<m:MaterialColumn grid='s1 m1 l1'>
-					<m:MaterialIcon iconType="CHECK_CIRCLE"
-						textColor="GREEN" ui:field="icoOk" />
-					<m:MaterialIcon iconType="ERROR" textColor="RED"
-						ui:field="icoInvalid" visible="false" />
-					<m:MaterialIcon iconType="WARNING"
-						textColor="ORANGE" ui:field="icoWarning" visible="false" />
+					<m:MaterialIcon ui:field="icoValidity" iconPosition="RIGHT"/>
+						</m:MaterialColumn>
+				<m:MaterialColumn grid='s1 m1 l1'
+					margin="0" padding="0" >
+					<m:MaterialIcon ui:field="btnDelete" waves="LIGHT" 
+						iconType="CLOSE" textColor="RED" iconPosition="RIGHT"
+						margin="0" padding="0"/>
 				</m:MaterialColumn>
 			</m:MaterialRow>
 		</m:MaterialCollapsibleHeader>
 		<m:MaterialCollapsibleBody padding="10">
 		
+		<m:MaterialLabel text="Exercise settings"
+					ui:field="lblSettings" textColor="BLACK" fontWeight="BOLD"
+					marginTop="0" marginBottom="5" />
+		<m:MaterialRow margin="0" padding="0">
+					<m:MaterialLabel ui:field="lblSelectTypeTopic" 
+					text="Select a grammar topic and task type:"
+					textColor="GREY" paddingTop="0" paddingBottom="0" marginBottom="0" marginTop="0" />
+				</m:MaterialRow>
+					
 		<m:MaterialRow margin="0" padding="0">			
 				<m:MaterialColumn grid='s4 m4 l4' padding="0"
 					margin="0">
@@ -95,24 +96,28 @@
 					fontWeight="BOLD" />
 			</m:MaterialRow>
 			<m:MaterialRow marginTop="0" padding="0">
-				<m:MaterialLabel ui:field="lblDocTitle" />
+				<m:MaterialColumn grid='s8 m8 l8' padding="0"
+					margin="0" paddingRight="10">
+					<m:MaterialLabel ui:field="lblDocTitle" />
+				</m:MaterialColumn>
+				<m:MaterialColumn grid='s4 m4 l4' padding="0"
+					margin="0">
+					<m:MaterialButton ui:field="btnUpdateDocument"
+						width="100%" paddingLeft="10" paddingRight="10" textAlign="CENTER"
+						textColor="BLACK" text="Update"
+						addStyleNames="{style.bgGrey} {style.lowercase}" waves="DEFAULT" />
+				</m:MaterialColumn>
 			</m:MaterialRow>
 
 			<m:MaterialRow>
 				<m:MaterialButton ui:field="btnSelectDocumentPart"
-					textAlign="CENTER" textColor="BLACK" width="100%"
+					textAlign="CENTER" textColor="BLACK"
 					addStyleNames="{style.bgGrey} {style.lowercase}" waves="DEFAULT" />
 			</m:MaterialRow>
 			<m:MaterialRow>
 				<m:MaterialCheckBox ui:field="chkOnlyText"
 							value="false" text="Use only sections with text" />
 			</m:MaterialRow>
-
-			
-			
-				<m:MaterialLabel text="Exercise settings"
-					ui:field="lblSettings" textColor="BLACK" fontWeight="BOLD"
-					marginTop="20" marginBottom="5" />
 				
 			<m:MaterialRow>
 				<m:MaterialRow ui:field="grpPos">
@@ -378,7 +383,7 @@
 					</m:MaterialRow>
 				</m:MaterialRow>
 
-				<m:MaterialRow ui:field="grpNumberTargets">
+				<m:MaterialRow ui:field="grpNumberTargets" padding="0" margin="0">
 					<m:MaterialRow padding="0" margin="0">
 						<m:MaterialLabel text="Task description:"
 							textColor="BLACK" />
@@ -505,12 +510,12 @@
 					</m:MaterialRow>
 				</m:MaterialRow>
 
-				<m:MaterialRow>
+				<m:MaterialRow margin="0" padding="0">
 					<m:MaterialLabel ui:field="lblNumberExercises"
 						paddingTop="10" />
 				</m:MaterialRow>
 				
-				<m:MaterialRow>
+				<m:MaterialRow margin="0" padding="0">
 					<m:MaterialButton ui:field="btnPreviewExercise" text="Preview generated exercise"
 						type="FLAT" visible="false" textAlign="CENTER" textColor="BLACK"
 						addStyleNames="{style.bgGrey}" waves="DEFAULT" margin="10" />
