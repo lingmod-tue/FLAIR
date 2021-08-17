@@ -95,17 +95,7 @@
 					fontWeight="BOLD" />
 			</m:MaterialRow>
 			<m:MaterialRow marginTop="0" padding="0">
-				<m:MaterialColumn grid='s8 m8 l8' padding="0"
-					margin="0" paddingRight="10">
-					<m:MaterialLabel ui:field="lblDocTitle" />
-				</m:MaterialColumn>
-				<m:MaterialColumn grid='s4 m4 l4' padding="0"
-					margin="0">
-					<m:MaterialButton ui:field="btnUpdateDocument"
-						width="100%" paddingLeft="10" paddingRight="10" textAlign="CENTER"
-						textColor="BLACK" text="Update"
-						addStyleNames="{style.bgGrey} {style.lowercase}" waves="DEFAULT" />
-				</m:MaterialColumn>
+				<m:MaterialLabel ui:field="lblDocTitle" />
 			</m:MaterialRow>
 
 			<m:MaterialRow>

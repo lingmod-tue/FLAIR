@@ -113,7 +113,6 @@ TaskItem	icoInvalid	No exercises can be generated for the current settings.
 TaskItem	icoWarning	The document contains very few exercise targets. It might not be possible to generate an exercise.
 TaskItem	btnDelete	Delete
 TaskItem	btnSelectDocumentPart	Select document part
-TaskItem	btnUpdateDocument	Change the document used for the exercise to the current selection.
 TaskItem	lblQuiz	Exercises with the same selected quiz will be accumulated into a Question Set. Select --- to geenrate a simple exercise.
 
 ExportDocumentWidget	btnCopyDocumentPreviewUI	Copy to clipboard

@@ -76,9 +76,6 @@ public class TaskItem extends LocalizedComposite {
     @UiField
     MaterialButton btnReset;
     @UiField
-	@LocalizedField(type = LocalizedFieldType.TOOLTIP_MATERIAL)
-    MaterialButton btnUpdateDocument;
-    @UiField
     MaterialButton btnPreviewExercise;
     @UiField
     MaterialButton btnCloseExercisePreview;
@@ -520,10 +517,6 @@ public class TaskItem extends LocalizedComposite {
     	
     	btnPreviewExercise.addClickHandler(event -> {
     		dlgExercisePreview.open();
-    	});
-    	
-    	btnUpdateDocument.addClickHandler(event -> {
-    		initializeRelevantConstructions();
     	});
     	    
     	drpTopic.addSelectionHandler(new SelectComboHandler<Option>()
@@ -1041,6 +1034,7 @@ public class TaskItem extends LocalizedComposite {
 		
 		parent.setGenerateExercisesEnabled();
 		parent.setFeedbackGenerationVisiblity();
+		btnPreviewExercise.setVisible(false);
     }
     
     /**

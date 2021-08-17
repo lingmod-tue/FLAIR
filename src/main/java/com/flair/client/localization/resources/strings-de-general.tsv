@@ -113,7 +113,6 @@ TaskItem	icoInvalid	Für diese Einstellungen können keine Aufgaben generiert we
 TaskItem	icoWarning	Das Dokument enthält nur wenige Zielkonstrukte. Eine Aufgabengenerierung ist eventuell nicht möglich.
 TaskItem	btnDelete	Löschen
 TaskItem	btnSelectDocumentPart	Textauszug wählen
-TaskItem	btnUpdateDocument	Die markierte Seite zur Aufgabengenerierung verwenden.
 TaskItem	lblQuiz	Aufgaben, für die dasselbe Quiz ausgewählt wird, werden in einem Question Set gebündelt. Wird kein Quiz ausgewählt (---), wird eine einfache Aufgabe erstellt.
 
 ExportDocumentWidget	btnCopyDocumentPreviewUI	In Zwischenablage kopieren
