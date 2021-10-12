@@ -106,6 +106,8 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 	public ExerciseGenerationWidget wdgtExerciseGeneration;
     @UiField
     MaterialCollapsibleItem expExerciseGeneration;
+    @UiField
+    MaterialCollapsibleItem expDocPreview;
 
     State state;
     ShowHideHandler showhideHandler;
@@ -509,6 +511,7 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
 
     private void initUI() {
         pnlPreviewContainerUI.setWidth(PANEL_WIDTH + "px");
+        expDocPreview.expand();
         hide();
     }
 

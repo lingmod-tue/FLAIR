@@ -258,6 +258,11 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
 	    	btnGenerateExercises.setText("Cancel");
 	    	btnGenerateExercises.setBackgroundColor(Color.RED);    	
 	    	spnGenerating.setVisible(true);
+	    	icoDownload.setVisible(false);
+	    	for(Widget existingTask : wdgtTasks.getChildrenList()) {
+	    		((TaskItem)existingTask).btnPreviewExercise.setVisible(false);
+	    	}
+	    	
 	        ArrayList<ExerciseSettings> exerciseSettings = new ArrayList<>();
 	    	for(Widget existingTask : wdgtTasks.getChildrenList()) {
 	    		if (((TaskItem)existingTask).icoValidity.isVisible() && !((TaskItem)existingTask).icoValidity.getTextColor().equals(Color.RED)) {
@@ -303,7 +308,7 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
 		    			((TaskItem)existingTask).btnPreviewExercise.setVisible(true);
 		    			((TaskItem)existingTask).htmlContent.clear();
 		    			HTML contents = new HTML();
-		    			contents.setHTML("<iframe width='100%' height='400px' srcdoc='" + entry.getValue().replace("'", "\"") + "'> IFrames are not supported by your browser.</iframe>");
+		    			contents.setHTML("<iframe style='position:absolute; width: 95%; height:100%;padding-bottom:80px;border:none;' srcdoc='" + entry.getValue().replace("'", "\"") + "'> IFrames are not supported by your browser.</iframe>");
 		    			((TaskItem)existingTask).htmlContent.add(contents);
 		    			break;
 		    		}

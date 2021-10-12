@@ -28,7 +28,7 @@ public class HtmlManager {
      */
     public static Element makeHtmlEmbeddable(Element doc){
         //remove anything outside the html tag
-        Element e = doc.selectFirst("html");
+    	Element e = doc.selectFirst("html");
 
         //replace html, body and head tags with div tags
         e.tagName("article");
@@ -384,7 +384,7 @@ public class HtmlManager {
             HtmlManager iframeHtmlManager = new HtmlManager();
             Pair<Element,ArrayList<DownloadedResource>> res = iframeHtmlManager.prepareHtml(absoluteUrl, resourceDownloader);
             String iframeContent = res.first.toString().replaceAll("\\s", " ");
-            element.attr("srcdoc", iframeContent);
+            element.attr("srcdoc", iframeContent.replace("\"", "'"));
             element.attr("src", absoluteUrl);
 
             return res.second;

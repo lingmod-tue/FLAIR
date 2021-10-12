@@ -35,7 +35,10 @@ public class ExerciseManager {
     		OpenNlpParser lemmatizer, ResourceDownloader resourceDownloader) {
     	try {
 	        Pair<byte[], HashMap<String, String>> generatedExercise = 
-	        settings.getExerciseGenerator().generateExercise(settings, parser, generator, lemmatizer, resourceDownloader);     
+	        settings.getExerciseGenerator().generateExercise(settings, parser, generator, lemmatizer, resourceDownloader);    
+	        if(generatedExercise == null) {
+	        	return new ResultComponents(settings.getName(), null, null);
+	        }
     		return new ResultComponents(settings.getName(), generatedExercise.first, generatedExercise.second);
     	} catch(Exception e) {
 			ServerLogger.get().error(e, "Exercise could not be generated. Exception: " + e.toString());

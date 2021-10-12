@@ -10,9 +10,24 @@
 		background-color: #cecac1;
 	}
 	
-	.bgGrey:active, .bgGrey:hover, bgGrey:focus, bgGrey:visited, bgGrey:link
-		{
+	.bgGrey:active, .bgGrey:hover, bgGrey:focus, bgGrey:visited, bgGrey:link {
 		background-color: #cecac1;
+	}
+	
+	.bgGreen {
+		background-color: green;
+	}
+	
+	.bgGreen:active, .bgGreen:hover, bgGreen:focus, bgGreen:visited, bgGreen:link {
+		background-color: green;
+	}
+	
+	.bgBlue {
+		background-color: blue;
+	}
+	
+	.bgBlue:active, .bgBlue:hover, bgBlue:focus, bgBlue:visited, bgBlue:link {
+		background-color: blue;
 	}
 	
 	.lowercase {
@@ -517,8 +532,8 @@
 				
 				<m:MaterialRow margin="0" padding="0">
 					<m:MaterialButton ui:field="btnPreviewExercise" text="Preview generated exercise"
-						type="FLAT" visible="false" textAlign="CENTER" textColor="BLACK"
-						addStyleNames="{style.bgGrey}" waves="DEFAULT" margin="10" />
+						type="FLAT" visible="false" textAlign="CENTER" textColor="WHITE" backgroundColor="BLUE"
+						waves="DEFAULT" margin="10" />
 				</m:MaterialRow>
 
 			</m:MaterialRow>
@@ -546,9 +561,9 @@
 			<!-- Exercise preview popup -->
 			<m:MaterialDialog ui:field="dlgExercisePreview"
 				type="DEFAULT" dismissible="true" height="100%" width="100%">
-				<m:MaterialDialogContent height="100%" width="100%">
+				<m:MaterialDialogContent width="100%" height="100%">				
 					<m:MaterialTitle title="Exercise Preview" />
-					<g:HTMLPanel ui:field="htmlContent" height="100%"/>
+					<g:HTMLPanel ui:field="htmlContent"/>
 				</m:MaterialDialogContent>
 				<m:MaterialDialogFooter>
 					<m:MaterialButton

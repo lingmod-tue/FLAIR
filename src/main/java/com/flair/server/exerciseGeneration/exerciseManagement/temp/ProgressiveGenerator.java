@@ -21,6 +21,7 @@ public abstract class ProgressiveGenerator extends TenseGenerator {
     protected HashSet<String> generateIncorrectPresentParticipleForms(String lemma) {
         HashSet<String> incorrectForms = new HashSet<>();
 
+        incorrectForms.add(lemma + "ing");
         if(lemma.substring(lemma.length() - 1).matches("[^aeiouyw]")) {
             incorrectForms.add(lemma + lemma.substring(lemma.length() - 1) + "ing");   // incorrect if the trailing consonant shouldn't be doubled
         } else if(lemma.endsWith("e")) {

@@ -51,7 +51,7 @@
 						<m:MaterialSpinner color="BLUE_ONLY" />
 					</m:MaterialPreLoader>
 					<m:MaterialIcon ui:field="icoDownload" iconType="FILE_DOWNLOAD"
-					textColor="BLACK" backgroundColor="WHITE" iconPosition="RIGHT"
+					textColor="BLUE" backgroundColor="WHITE" iconPosition="RIGHT"
 					waves="DEFAULT" margin="0" padding="0" visible="false"/>
 				</m:MaterialColumn>
 			</m:MaterialRow>

@@ -65,6 +65,9 @@ public class ExGenTask implements AsyncTask<ExGenTask.Result> {
 		if (!error && file != null)
 			ServerLogger.get().info("Exercise " + file.getFileName() + " generated in " + (endTime - startTime) + " ms");
 
+		if(file == null) {
+			return new Result (null, null, null);
+		}
 		return new Result(file.getFileContent(), file.getFileName(), file.getPreviews());
 	}
 

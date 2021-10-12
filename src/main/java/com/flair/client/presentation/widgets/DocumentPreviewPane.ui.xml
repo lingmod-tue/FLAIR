@@ -50,7 +50,7 @@
 			<!-- Expandable -->
 			<m:MaterialCollapsible accordion="false" grid="s12 m12 l12" margin="0" padding="0">
 			   <!-- preview -->
-			   <m:MaterialCollapsibleItem>
+			   <m:MaterialCollapsibleItem ui:field="expDocPreview">
 			     <m:MaterialCollapsibleHeader>
 			       <m:MaterialLink text="Preview Document" iconType="ARROW_DROP_DOWN" iconPosition="LEFT" textColor="BLACK"/>
 			     </m:MaterialCollapsibleHeader>
