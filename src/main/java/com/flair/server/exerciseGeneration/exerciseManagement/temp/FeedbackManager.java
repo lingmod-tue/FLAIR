@@ -65,6 +65,12 @@ public class FeedbackManager {
 		      }
 		    } catch (IOException e) {
 				e.printStackTrace();
+			} finally {
+				try {
+					content.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 	}
 	
@@ -293,19 +299,19 @@ public class FeedbackManager {
             String body = null;
             InputStream inputStream = response.getEntity().getContent();
 
-            try(BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
-                if (inputStream != null) {
-                    StringBuilder sb = new StringBuilder();
-                    char[] charBuffer = new char[128];
-                    int bytesRead = -1;
-                    while ((bytesRead = reader.read(charBuffer)) > 0) {
-                        sb.append(charBuffer, 0, bytesRead);
-                    }
-                    body = sb.toString();
-                }
-            } catch (IOException ex) {
-            	ex.printStackTrace();
-            } 
+            if (inputStream != null) {
+	            try(BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+	                StringBuilder sb = new StringBuilder();
+	                char[] charBuffer = new char[128];
+	                int bytesRead = -1;
+	                while ((bytesRead = reader.read(charBuffer)) > 0) {
+	                    sb.append(charBuffer, 0, bytesRead);
+	                }
+	                body = sb.toString();
+	            } catch (IOException ex) {
+	            	ex.printStackTrace();
+	            } 
+	    	}
 
             if(body != null) {
 	            JSONParser parser = new JSONParser();

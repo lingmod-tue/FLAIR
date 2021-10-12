@@ -33,6 +33,8 @@ public abstract class SimpleExerciseJsonManager extends JsonManager {
 
         JSONParser jsonParser = new JSONParser();
         JSONObject jsonObject = (JSONObject)jsonParser.parse(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        
+        inputStream.close();
 
         jsonObject.put("taskDescription", jsonComponents.get(0).getTaskDescription());
 

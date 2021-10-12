@@ -32,6 +32,12 @@ public class OpenNlpParser implements ThreadSafeParser<OpenNlpParser,
 			lemmatizer = new DictionaryLemmatizer(dictLemmatizer);
 		} catch (IOException e) {
 			ServerLogger.get().error(e, "Non-fatal error. Exception: " + e.toString());
+		} finally {
+			try {
+				dictLemmatizer.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
     }
 

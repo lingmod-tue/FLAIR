@@ -40,7 +40,15 @@ public class ZipManager {
     			ServerLogger.get().error(e, "Non-fatal error. Exception: " + e.toString());
             }
         }
-        return byteArrayOutputStream.toByteArray();
+        
+        byte[] outputArray = byteArrayOutputStream.toByteArray();
+        try {
+			byteArrayOutputStream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        
+        return outputArray;
     }
 
     /**
@@ -51,9 +59,7 @@ public class ZipManager {
      */
     public static byte[] generateModifiedZipFile(String inputFilePath, String contentFileContent,
                                                   ArrayList<Pair<String, byte[]>> resources) {
-        try {
-        	ZipInputStream zipStream = new ZipInputStream(ResourceLoader.loadFile(inputFilePath));
-
+        try(ZipInputStream zipStream = new ZipInputStream(ResourceLoader.loadFile(inputFilePath))) {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             final ZipOutputStream outputStream = new ZipOutputStream(byteArrayOutputStream);
 
@@ -73,7 +79,14 @@ public class ZipManager {
 
             outputStream.close();
 
-            return byteArrayOutputStream.toByteArray();
+            byte[] outputArray = byteArrayOutputStream.toByteArray();
+            try {
+    			byteArrayOutputStream.close();
+    		} catch (IOException e) {
+    			e.printStackTrace();
+    		}
+            
+            return outputArray;            
         } catch (IOException e) {
 			ServerLogger.get().error(e, "File could not be zipped. Exception: " + e.toString());
         }

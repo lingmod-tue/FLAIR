@@ -41,8 +41,7 @@ public abstract class JsonManager {
      */
     protected InputStream getContentFileContent(String fileName) {
     	ZipFile zipFile = null;
-        try {
-        	ZipInputStream zipStream = new ZipInputStream(ResourceLoader.loadFile(fileName));
+        try(ZipInputStream zipStream = new ZipInputStream(ResourceLoader.loadFile(fileName))) {
             ZipEntry entry;
             while ((entry = zipStream.getNextEntry()) != null) {
                 if (entry.getName().equalsIgnoreCase("content/content.json")) {
@@ -52,7 +51,10 @@ public abstract class JsonManager {
                     while ((streamLength = zipStream.read(buffer)) > 0) {
                         outputStream.write(buffer, 0, Math.min(streamLength, buffer.length));
                     }
-                    return new ByteArrayInputStream(outputStream.toByteArray());
+                    
+                    ByteArrayInputStream returnStream = new ByteArrayInputStream(outputStream.toByteArray());
+                    outputStream.close();
+                    return returnStream;
                 }
             }
         } catch (IOException e) {

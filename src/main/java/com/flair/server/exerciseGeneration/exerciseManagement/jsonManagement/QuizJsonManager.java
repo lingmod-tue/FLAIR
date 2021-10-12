@@ -32,6 +32,8 @@ public class QuizJsonManager extends JsonManager {
 
         JSONParser jsonParser = new JSONParser();
         JSONObject jsonObject = (JSONObject)jsonParser.parse(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        
+        inputStream.close();
 
 
         JSONArray questionsArray = (JSONArray)jsonObject.get("questions");
