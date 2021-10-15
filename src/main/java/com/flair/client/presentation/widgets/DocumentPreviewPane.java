@@ -465,7 +465,13 @@ public class DocumentPreviewPane extends LocalizedComposite implements AbstractD
                     if (weightSelection.hasData())
                         icoHelpTextUI.setVisible(true);
                     
-                    wdgtExerciseGeneration.initConstructionsOccurrences();
+                    // We only use the document if it's in the selected language
+                	if(DocumentPreviewPane.getInstance().getCurrentlyPreviewedDocument().getDocument().getLanguage().equals(DocumentPreviewPane.getInstance().getCurrentLocale())) {
+                        wdgtExerciseGeneration.initConstructionsOccurrences();
+                	} else {
+                		wdgtExerciseGeneration.setVisible(wdgtExerciseGeneration.hasValidTasks());
+                        lblSelectExGenDoc.setVisible(!wdgtExerciseGeneration.hasValidTasks());
+                	}
 
                     break;
                 }

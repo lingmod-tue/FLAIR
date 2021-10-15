@@ -42,6 +42,7 @@ import gwt.material.design.client.ui.MaterialLabel;
 import gwt.material.design.client.ui.MaterialLink;
 import gwt.material.design.client.ui.MaterialRadioButton;
 import gwt.material.design.client.ui.MaterialRow;
+import gwt.material.design.client.ui.MaterialToast;
 import gwt.material.design.client.ui.html.Option;
 
 public class TaskItem extends LocalizedComposite {
@@ -784,6 +785,11 @@ public class TaskItem extends LocalizedComposite {
      * Sets the possible topics options in the dropdown.
      */
     public void initializeRelevantConstructions() {
+    	// We only use the document if it's in the selected language
+    	if(!DocumentPreviewPane.getInstance().getCurrentlyPreviewedDocument().getDocument().getLanguage().equals(DocumentPreviewPane.getInstance().getCurrentLocale())) {
+    		return;
+    	}
+    	
     	doc = DocumentPreviewPane.getInstance().getCurrentlyPreviewedDocument().getDocument();
     	lblDocTitle.setText(doc.getTitle());
         lblDocumentForSelection.setText(doc.getText());
@@ -818,6 +824,7 @@ public class TaskItem extends LocalizedComposite {
     	}
     	
     	setExerciseSettingsVisibilities();
+    	parent.setResourceDownloadVisiblity();
     }
     
     /**
@@ -1060,6 +1067,14 @@ public class TaskItem extends LocalizedComposite {
     }
     
     /**
+     * Determines whether the document used for exercise generation is a web document.
+     * @return	<c>true</c> if the document is a web document; otherwise <c>false</c>
+     */
+    public boolean usesWebDocument() {
+    	return doc.getUrl().length() != 0;
+    }
+    
+    /**
      * Filters those constructions that are within the selected part of the document.
      * @param construction	The construction under consideration
      * @param doc			The document containing the text and constructions
@@ -1293,7 +1308,7 @@ public class TaskItem extends LocalizedComposite {
     	
     	return new ExerciseSettings(constructions, doc.getUrl(), doc.getText(), removedParts, 
     			ExerciseType.getEnum(type), getQuiz(), distractorProperties, brackets, spnNDistractors.getValue() - 1, lblName.getValue(), 
-    			parent.chkDownloadResources.getValue(), chkOnlyText.getValue(), parent.chkGenerateFeedback.getValue());
+    			parent.chkDownloadResources.getValue(), chkOnlyText.getValue(), parent.chkGenerateFeedback.getValue(), doc.getLinkingId(), doc.getTitle(), "");
     }
     
     /**

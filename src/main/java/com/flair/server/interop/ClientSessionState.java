@@ -1,5 +1,14 @@
 package com.flair.server.interop;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -9,6 +18,8 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections.map.HashedMap;
+import org.apache.commons.io.IOUtils;
+import org.jsoup.Jsoup;
 
 import com.flair.server.crawler.SearchResult;
 import com.flair.server.document.AbstractDocument;
@@ -17,6 +28,7 @@ import com.flair.server.document.DocumentCollection;
 import com.flair.server.exerciseGeneration.exerciseManagement.ResultComponents;
 import com.flair.server.exerciseGeneration.exerciseManagement.domManipulation.ZipManager;
 import com.flair.server.grammar.DefaultVocabularyList;
+import com.flair.server.interop.TemporaryClientData.CustomCorpus;
 import com.flair.server.interop.messaging.ServerMessageChannel;
 import com.flair.server.interop.messaging.ServerMessagingSwitchboard;
 import com.flair.server.parser.KeywordSearcherInput;
@@ -38,6 +50,7 @@ import com.flair.shared.interop.messaging.client.CmCustomCorpusParseStart;
 import com.flair.shared.interop.messaging.client.CmExGenStart;
 import com.flair.shared.interop.messaging.client.CmQuestionGenEagerParse;
 import com.flair.shared.interop.messaging.client.CmQuestionGenStart;
+import com.flair.shared.interop.messaging.client.CmUpdateKeepAliveTimer;
 import com.flair.shared.interop.messaging.client.CmWebSearchParseStart;
 import com.flair.shared.interop.messaging.server.SmCustomCorpusEvent;
 import com.flair.shared.interop.messaging.server.SmExGenEvent;
@@ -73,6 +86,7 @@ class ClientSessionState {
 		messageChannel.addReceiveHandler(CmQuestionGenStart.class, this::onCmQuestionGenStart);
 		messageChannel.addReceiveHandler(CmExGenStart.class, this::onCmExGenStart);
 		messageChannel.addReceiveHandler(CmActiveOperationCancel.class, this::onCmActiveOperationCancel);
+		messageChannel.addReceiveHandler(CmUpdateKeepAliveTimer.class, this::onCmUpdateKeepAliveTimer);
 	}
 
 	private String beginNewOperation(PipelineOp.PipelineOpBuilder opBuilder) {
@@ -116,6 +130,7 @@ class ClientSessionState {
 
 	private synchronized void onCmCustomCorpusParseStart(CmCustomCorpusParseStart msg) {
 		List<CustomCorpusFile> uploadCache = temporaryClientData.customCorpusData.uploaded;
+
 		int numUploadedFiles = msg.getNumUploadedFiles();
 
 		if (numUploadedFiles > temporaryClientData.customCorpusData.uploaded.size()) {
@@ -144,6 +159,20 @@ class ClientSessionState {
 			keywordInput = new KeywordSearcherInput(msg.getKeywords());
 
 		// reset the cache as we have the files we need for the current op
+		temporaryClientData.customCorpusData.contents.clear();		
+		for(CustomCorpusFile c : uploadCache) {
+			try {
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				IOUtils.copy(c.getStream(), baos);			  
+				temporaryClientData.customCorpusData.contents.add(baos.toString());
+				byte[] bytes = baos.toByteArray();
+				ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+				temporaryClientData.customCorpusData.contents.add(baos.toString());
+				bais.close();
+				c.setStream(new ByteArrayInputStream(bytes));
+				baos.close();
+			} catch (IOException e) {}
+		}
 		uploadCache.clear();
 
 		List<AbstractDocumentSource> sources = new ArrayList<>();
@@ -260,6 +289,18 @@ class ClientSessionState {
 		if (pipelineOpCache.hasActiveOp())
 			throw new ServerRuntimeException("Another operation is still running");
 
+		// Get the uploaded file content if the document comes from custom file upload
+		for(ExerciseSettings exerciseSettings : settings) {
+			if(exerciseSettings.getFileName().length() > 0 && exerciseSettings.getId() != 0) {
+				List<String> uploadCache = temporaryClientData.customCorpusData.contents;
+
+				if(uploadCache != null && uploadCache.size() >= exerciseSettings.getId()) {
+					String fileStream = uploadCache.get(exerciseSettings.getId() - 1);
+					exerciseSettings.setFileContent(fileStream);
+				}
+			}
+		}
+				
 		ExerciseGenerationPipeline.ExerciseGenerationOpBuilder builder = ExerciseGenerationPipeline.get().generateExercises()
 				.settings(settings)
 				.onExGenComplete(e -> onExerciseGenerationOpGenerationComplete(e))
@@ -279,7 +320,10 @@ class ClientSessionState {
 		temporaryClientData.questGenData = null;
 		generatedPackages.clear();
 	}
-
+	
+	private synchronized void onCmUpdateKeepAliveTimer(CmUpdateKeepAliveTimer msg) {
+		ClientSessionManager.get().resetTimer(clientId);
+	}
 
 	private synchronized void onParseOpJobBegin(Iterable<AbstractDocumentSource> source) {
 		if (!pipelineOpCache.hasActiveOp())

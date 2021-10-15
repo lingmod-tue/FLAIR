@@ -56,7 +56,7 @@ public abstract class LocalizedComposite extends Composite implements LocalizedU
 		return LocalizationEngine.get().getLocalizedString(provider, tag);
 	}
 
-	protected Language getCurrentLocale() {
+	public Language getCurrentLocale() {
 		return LocalizationEngine.get().getLanguage();
 	}
 

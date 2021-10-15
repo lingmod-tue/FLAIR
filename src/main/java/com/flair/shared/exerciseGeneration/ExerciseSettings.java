@@ -2,6 +2,8 @@ package com.flair.shared.exerciseGeneration;
 
 import java.util.ArrayList;
 
+import org.jsoup.nodes.Element;
+
 import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class ExerciseSettings implements IsSerializable{
@@ -19,14 +21,17 @@ public class ExerciseSettings implements IsSerializable{
     private boolean downloadResources;
     private boolean onlyText;
     private boolean generateFeedback;
+    private int id;
+    private String fileName;
+    private String fileContent;
 
-    public ExerciseSettings() {}
+	public ExerciseSettings() {}
     
     public ExerciseSettings(ArrayList<Construction> constructions, String url,
                             String plainText, ArrayList<Pair<Integer, Integer>> removedParts,
                             ExerciseType contentType, String quiz, ArrayList<DistractorProperties> distractors, 
                             ArrayList<BracketsProperties> brackets, int nDistractors, String taskName, boolean downloadResources, 
-                            boolean onlyText, boolean generateFeedback) {
+                            boolean onlyText, boolean generateFeedback, int id, String fileName, String fileContent) {
         this.constructions = constructions;
         this.url = url;
         this.plainText = plainText;
@@ -40,6 +45,9 @@ public class ExerciseSettings implements IsSerializable{
         this.downloadResources = downloadResources;
         this.onlyText = onlyText;
         this.generateFeedback = generateFeedback;
+        this.id = id;
+        this.fileName = fileName;
+        this.fileContent = fileContent;
     }
 
     public ArrayList<Construction> getConstructions() { return constructions; }
@@ -55,5 +63,10 @@ public class ExerciseSettings implements IsSerializable{
 	public boolean isDownloadResources() { return downloadResources; }
 	public boolean isOnlyText() { return onlyText; }
 	public boolean isGenerateFeedback() { return generateFeedback; }
+    public int getId() { return id; }
+	public String getFileName() { return fileName; }
+	public String getFileContent() { return fileContent; }
+	
+	public void setFileContent(String fileContent) { this.fileContent = fileContent; }
 
 }

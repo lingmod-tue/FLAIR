@@ -41,11 +41,13 @@ public class ClientSessionManager {
 		private final ClientIdToken token;
 		private HttpSession session;
 		private ClientSessionState state;
+		private Timer keepAliveTimer;
 
 		SessionMetadata(ClientIdToken t, HttpSession s) {
 			token = t;
 			session = s;
 			state = new ClientSessionState(t);
+			keepAliveTimer = ClientSessionManager.get().initializeTimer(t);
 		}
 
 		void release() {
@@ -59,6 +61,12 @@ public class ClientSessionManager {
 		}
 		HttpSession getHttpSession() {
 			return session;
+		}
+		Timer getKeepAliveTimer() {
+			return keepAliveTimer;
+		}
+		void setKeepAliveTimer(Timer timer) {
+			this.keepAliveTimer = timer;
 		}
 	}
 
@@ -184,6 +192,29 @@ public class ClientSessionManager {
 		}
 
 		data.getState().handleCorpusUpload(files);
+	}
+	
+	private void startKeepAliveTimer(Timer timer, ClientIdToken tok) {
+		timer.schedule(new TimerTask() {
+			  @Override
+			  public void run() {
+				// remove the session after 10mins (we can miss 1 keep alive message from the client)
+				  invalidateAndRemove(tok);
+			  }
+			}, 10*60*1000);
+	}
+	
+	private Timer initializeTimer(ClientIdToken tok) {			
+		Timer timer = new Timer();
+		startKeepAliveTimer(timer, tok);		
+	    return timer;
+	}
+	
+	public void resetTimer(ClientIdToken tok) {
+		Timer timer = activeSessions.get(tok).getKeepAliveTimer();
+		timer.cancel();
+		timer.purge();
+		activeSessions.get(tok).setKeepAliveTimer(initializeTimer(tok));
 	}
 }
 

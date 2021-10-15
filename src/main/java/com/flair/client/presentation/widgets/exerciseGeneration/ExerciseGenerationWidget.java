@@ -12,6 +12,7 @@ import com.flair.client.localization.annotations.LocalizedField;
 import com.flair.client.localization.interfaces.LocalizationBinder;
 import com.flair.client.presentation.ToastNotification;
 import com.flair.client.presentation.interfaces.ExerciseGenerationService;
+import com.flair.client.presentation.widgets.DocumentPreviewPane;
 import com.flair.client.utilities.JSUtility;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
 import com.google.gwt.core.client.GWT;
@@ -111,12 +112,19 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     	}
     	
     	setGenerateExercisesEnabled();
+    	setResourceDownloadVisiblity();
+    	setFeedbackGenerationVisiblity();
     }
     
     /**
      * Creates a new task widget and adds it to the displayed tasks.
      */
     private void addTask() {
+    	// We only use the document if it's in the selected language
+    	if(!DocumentPreviewPane.getInstance().getCurrentlyPreviewedDocument().getDocument().getLanguage().equals(DocumentPreviewPane.getInstance().getCurrentLocale())) {
+    		return;
+    	}
+    	
     	String name = "Exercise 1";
     	List<Widget> existingTasks = wdgtTasks.getChildrenList();
     	if(existingTasks.size() > 0) {
@@ -288,6 +296,22 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     	}
     	
     	chkGenerateFeedback.setVisible(setVisible);
+    }
+    
+    /**
+     * Checks for all tasks whether they are generated on a web document.
+     * Hides the checkbox if no such task exists.
+     */
+    public void setResourceDownloadVisiblity() {
+    	boolean setVisible = false;
+    	for(Widget existingTask : wdgtTasks.getChildrenList()) {
+    		if (((TaskItem)existingTask).usesWebDocument()) {
+    			setVisible = true;
+    			break;
+    		}
+    	}
+    	
+    	chkDownloadResources.setVisible(setVisible);
     }
 
     GenerateHandler startGenerationHandler;

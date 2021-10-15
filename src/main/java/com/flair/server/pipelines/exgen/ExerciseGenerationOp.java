@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import com.flair.server.exerciseGeneration.downloadManagement.ResourceDownloader;
@@ -185,9 +186,18 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
         HashMap<String, Element> documents = new HashMap<>();
         for(ExerciseSettings settings : input.settings) {
         	if(settings.getUrl().length() == 0) {
-        		if (!documents.containsKey(settings.getPlainText())) {
-	                documents.put(settings.getPlainText(), Jsoup.parse("<span>" + settings.getPlainText().replace("\n", "<br>") + "</span>"));
-	            }
+        		if (!documents.containsKey(settings.getFileName())) {
+	        		try {
+	        			if(settings.getFileContent().contains("<html") && settings.getFileContent().contains("</html>")) {
+	        				Document doc = Jsoup.parse(settings.getFileContent());
+			                documents.put(settings.getFileName(), doc);
+	        			} else {
+			                documents.put(settings.getFileName(), Jsoup.parse("<span>" + settings.getPlainText().replace("\n", "<br>") + "</span>"));
+	        			}
+	        		} catch(Exception e) {
+		                documents.put(settings.getFileName(), Jsoup.parse("<span>" + settings.getPlainText().replace("\n", "<br>") + "</span>"));
+	        		}
+        		}
         	} else {
 	            if (!documents.containsKey(settings.getUrl())) {
 	                documents.put(settings.getUrl(), null);

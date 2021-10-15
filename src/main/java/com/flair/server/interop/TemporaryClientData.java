@@ -10,6 +10,7 @@ import java.util.List;
 final class TemporaryClientData {
 	static final class CustomCorpus {
 		List<CustomCorpusFile> uploaded = new ArrayList<>();
+		List<String> contents = new ArrayList<>();
 	}
 
 	static final class QuestionGen {

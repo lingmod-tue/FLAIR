@@ -65,6 +65,7 @@ import com.flair.shared.interop.messaging.client.CmCustomCorpusParseStart;
 import com.flair.shared.interop.messaging.client.CmExGenStart;
 import com.flair.shared.interop.messaging.client.CmQuestionGenEagerParse;
 import com.flair.shared.interop.messaging.client.CmQuestionGenStart;
+import com.flair.shared.interop.messaging.client.CmUpdateKeepAliveTimer;
 import com.flair.shared.interop.messaging.client.CmWebSearchParseStart;
 import com.flair.shared.interop.messaging.server.SmCustomCorpusEvent;
 import com.flair.shared.interop.messaging.server.SmError;
@@ -77,6 +78,7 @@ import com.flair.shared.utilities.GenericEventSource.EventHandler;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 
 import gwt.material.design.client.constants.Color;
@@ -959,6 +961,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
     private final MessagePoller questionGenPoller;
     private final MessagePoller exGenPoller;
     private boolean rerankFlag;
+    private Timer keepAliveTimer;
 
     private final GenericEventSource<BeginOperation> eventBeginProc;
     private final GenericEventSource<EndOperation> eventEndProc;
@@ -1019,6 +1022,20 @@ public class WebRankerCore implements AbstractWebRankerCore {
 
         eventBeginProc = new GenericEventSource<>();
         eventEndProc = new GenericEventSource<>();
+        
+        
+        
+        keepAliveTimer = new Timer() {
+            @Override
+            public void run() {
+            	// send keep alive message every 5mins
+				CmUpdateKeepAliveTimer msg = new CmUpdateKeepAliveTimer();
+				serverMessageChannel.send(msg, () -> {}, (e, me) -> {});
+            }
+          };
+
+          // Schedule the timer to run once in 5 seconds.
+          keepAliveTimer.scheduleRepeating(5*60*1000);
     }
 
     private void bindToPresenter(AbstractWebRankerPresenter presenter) {

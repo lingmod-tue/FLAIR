@@ -153,6 +153,11 @@ public class HtmlManager {
     public ArrayList<DownloadedResource> extractResources(String url, ResourceDownloader resourceDownloader, Element doc) {
     	ArrayList<DownloadedResource> downloadedResources = new ArrayList<>();
     	
+    	// Don't try to download anything for corpus upload files
+    	if(url.length() == 0) {
+    		return downloadedResources;
+    	}
+    	
         if(doc != null) {
         	for(Element element : doc.select("base")) {
         		if (Thread.currentThread().isInterrupted()) {

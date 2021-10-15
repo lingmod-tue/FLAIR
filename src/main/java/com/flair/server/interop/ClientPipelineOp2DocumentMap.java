@@ -7,6 +7,7 @@ import com.flair.shared.interop.dtos.DocumentDTO;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 final class ClientPipelineOp2DocumentMap {
 	private final Map<PipelineOp<?, ?>, Map<Integer, AbstractDocument>> dataStore = new HashMap<>();      // op > (linking id > document)
@@ -29,5 +30,14 @@ final class ClientPipelineOp2DocumentMap {
 
 	boolean contains(PipelineOp<?, ?> op, DocumentDTO dto) {
 		return get(op, dto) != null;
+	}
+	
+	AbstractDocument getDocumentIfExists(int linkingId) {
+		for (Entry<PipelineOp<?, ?>, Map<Integer, AbstractDocument>> entry : dataStore.entrySet()) {
+			if(entry.getValue().containsKey(linkingId)) {
+				return entry.getValue().get(linkingId);
+			}
+		}
+		return null;
 	}
 }
