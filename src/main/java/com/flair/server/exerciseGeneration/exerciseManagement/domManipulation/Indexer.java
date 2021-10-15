@@ -10,8 +10,8 @@ import java.util.regex.Pattern;
 import org.apache.commons.text.diff.EditScript;
 import org.apache.commons.text.diff.StringsComparator;
 
-import com.flair.server.exerciseGeneration.exerciseManagement.temp.NlpManager;
-import com.flair.server.exerciseGeneration.exerciseManagement.temp.SentenceAnnotations;
+import com.flair.server.exerciseGeneration.exerciseManagement.taskCompilation.NlpManager;
+import com.flair.server.exerciseGeneration.exerciseManagement.taskCompilation.SentenceAnnotations;
 import com.flair.shared.exerciseGeneration.Construction;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
 import com.flair.shared.exerciseGeneration.Pair;

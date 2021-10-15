@@ -1,4 +1,4 @@
-package com.flair.server.exerciseGeneration.exerciseManagement.temp;
+package com.flair.server.exerciseGeneration.exerciseManagement.taskCompilation;
 
 import simplenlg.features.Feature;
 import simplenlg.features.Tense;
@@ -8,15 +8,15 @@ import java.util.HashSet;
 
 import com.flair.server.parser.SimpleNlgParser;
 
-public class FuturePerfectGenerator extends TenseGenerator {
+public class PresentPerfectGenerator extends TenseGenerator {
 
-    public FuturePerfectGenerator(SimpleNlgParser generator) {
+    public PresentPerfectGenerator(SimpleNlgParser generator) {
         super(generator);
     }
 
     @Override
     public String generateCorrectForm(ParameterSettings settings) {
-        ((TenseSettings)settings).setTense("future");
+        ((TenseSettings)settings).setTense("present");
         ((TenseSettings)settings).setProgressive(false);
         ((TenseSettings)settings).setPerfect(true);
         return super.generateCorrectTenseForm(((TenseSettings)settings));
@@ -31,38 +31,51 @@ public class FuturePerfectGenerator extends TenseGenerator {
 
         if(((TenseSettings)settings).isInterrogative()) {
             if(((TenseSettings)settings).isNegated()) {
-                incorrectForms.add(((TenseSettings)settings).getSubject() + " not have " + correctParticiple);
-                incorrectForms.add(((TenseSettings)settings).getSubject() + " will not " + correctParticiple);
-                incorrectForms.add("won't " + ((TenseSettings)settings).getSubject() + " have " + ((TenseSettings)settings).getLemma());
+                incorrectForms.add(((TenseSettings)settings).getSubject() + " haven't " + correctParticiple);
+                incorrectForms.add(((TenseSettings)settings).getSubject() + " not " + correctParticiple);
+                incorrectForms.add(((TenseSettings)settings).getSubject() + " hasn't " + correctParticiple);
+
                 if(((TenseSettings)settings).isThirdSingular()) {
-                    incorrectForms.add("won't " + ((TenseSettings)settings).getSubject() + " has " + correctParticiple);
+                    incorrectForms.add("haven't " + ((TenseSettings)settings).getSubject() + " " + correctParticiple);
+                    incorrectForms.add("isn't " + ((TenseSettings)settings).getSubject() + " " + correctParticiple);
+                } else {
+                    incorrectForms.add("hasn't " + ((TenseSettings)settings).getSubject() + " " + correctParticiple);
+                    incorrectForms.add("aren't " + ((TenseSettings)settings).getSubject() + " " + correctParticiple);
                 }
             } else {
-                incorrectForms.add(((TenseSettings)settings).getSubject() + " will " + correctParticiple);
+                incorrectForms.add(((TenseSettings)settings).getSubject() + " has " + correctParticiple);
+                incorrectForms.add(((TenseSettings)settings).getSubject() + " have " + correctParticiple);
                 incorrectForms.add(((TenseSettings)settings).getSubject() + " " + correctParticiple);
-                incorrectForms.add("will " + ((TenseSettings)settings).getSubject() + " have " + ((TenseSettings)settings).getLemma());
+
                 if(((TenseSettings)settings).isThirdSingular()) {
-                    incorrectForms.add("will " + ((TenseSettings)settings).getSubject() + " has " + correctParticiple);
+                    incorrectForms.add("have " + ((TenseSettings)settings).getSubject() + " " + correctParticiple);
+                    incorrectForms.add("is " + ((TenseSettings)settings).getSubject() + " " + correctParticiple);
+                } else {
+                    incorrectForms.add("has " + ((TenseSettings)settings).getSubject() + " " + correctParticiple);
+                    incorrectForms.add("are " + ((TenseSettings)settings).getSubject() + " " + correctParticiple);
                 }
             }
         } else {
             if(((TenseSettings)settings).isNegated()) {
                 if(((TenseSettings)settings).isThirdSingular()) {
-                    incorrectForms.add("won't has " + correctParticiple);
+                    incorrectForms.add("haven't " + correctParticiple);
+                    incorrectForms.add("isn't " + correctParticiple);
+                } else {
+                    incorrectForms.add("hasn't " + correctParticiple);
+                    incorrectForms.add("aren't " + correctParticiple);
                 }
                 incorrectForms.add("not " + correctParticiple);
-                incorrectForms.add("not have " + correctParticiple);
             } else {
                 HashSet<String> participles = generateIncorrectPastParticipleForms(((TenseSettings)settings).getLemma());
                 participles.add(correctParticiple);
 
                 for(String participle : participles) {
-                    incorrectForms.add("will " + participle);
-                    incorrectForms.add("will have " + ((TenseSettings)settings).getLemma());
-
                     if (((TenseSettings)settings).isThirdSingular()) {
-                        incorrectForms.add("will has " + participle);
-                        incorrectForms.add("will has " + ((TenseSettings)settings).getLemma());
+                        incorrectForms.add("have " + participle);
+                        incorrectForms.add("is " + participle);
+                    } else {
+                        incorrectForms.add("has " + participle);
+                        incorrectForms.add("are " + participle);
                     }
                 }
             }

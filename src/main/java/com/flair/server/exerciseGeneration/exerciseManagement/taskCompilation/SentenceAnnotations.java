@@ -1,4 +1,4 @@
-package com.flair.server.exerciseGeneration.exerciseManagement.temp;
+package com.flair.server.exerciseGeneration.exerciseManagement.taskCompilation;
 
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.trees.Tree;

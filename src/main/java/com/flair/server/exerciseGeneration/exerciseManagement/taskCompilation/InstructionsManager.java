@@ -1,12 +1,8 @@
-package com.flair.server.exerciseGeneration.exerciseManagement.temp;
+package com.flair.server.exerciseGeneration.exerciseManagement.taskCompilation;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import org.apache.bcel.generic.NEW;
-import org.netlib.util.booleanW;
-
-import com.coremedia.iso.boxes.ProgressiveDownloadInformationBox;
 import com.flair.server.exerciseGeneration.exerciseManagement.domManipulation.Blank;
 import com.flair.server.exerciseGeneration.exerciseManagement.domManipulation.Fragment;
 import com.flair.shared.exerciseGeneration.BracketsProperties;

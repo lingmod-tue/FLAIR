@@ -1,4 +1,4 @@
-package com.flair.server.exerciseGeneration.exerciseManagement.temp;
+package com.flair.server.exerciseGeneration.exerciseManagement.taskCompilation;
 
 import simplenlg.features.Feature;
 import simplenlg.features.Tense;

@@ -1,4 +1,4 @@
-package com.flair.server.exerciseGeneration.exerciseManagement.temp;
+package com.flair.server.exerciseGeneration.exerciseManagement.taskCompilation;
 
 public class TenseSettings implements ParameterSettings {
 
