@@ -27,6 +27,8 @@ class GermanParsingLogic implements ParsingLogic {
 		return new GermanParsingLogic(doc);
 	}
 
+	private boolean isCancelled = false;
+
 	private final AbstractDocument workingDoc;
 
 	private int dependencyCount;    // count dependencies - correspond to token count without punctuation
@@ -594,6 +596,10 @@ class GermanParsingLogic implements ParsingLogic {
 
 		List<CoreMap> sentences = docAnnotation.get(CoreAnnotations.SentencesAnnotation.class);
 		for (CoreMap itr : sentences) {
+			if(isCancelled) {
+				return;
+			}
+			
 			if (itr.size() > 0) {
 				Tree tree = itr.get(TreeCoreAnnotations.TreeAnnotation.class);
 				List<CoreLabel> words = itr.get(CoreAnnotations.TokensAnnotation.class);
@@ -632,5 +638,10 @@ class GermanParsingLogic implements ParsingLogic {
 		workingDoc.setNumWords(wordCount);
 		workingDoc.setNumTokens(tokenCount);
 		workingDoc.flagAsParsed(parser.createAnnotations(docAnnotation));
+	}
+
+	@Override
+	public void stopExecution() {
+		isCancelled = true;
 	}
 }

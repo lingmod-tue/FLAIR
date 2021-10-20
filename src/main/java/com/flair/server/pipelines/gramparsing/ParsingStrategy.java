@@ -13,6 +13,7 @@ final class ParsingStrategy extends CoreNlpParsingStrategy<ParserInput, ParserOu
 
 	private final ParserInput input;
 	private final ParserOutput output;
+	private ParsingLogic parsingLogic;
 
 	private ParsingStrategy(ParserInput input) {
 		this.input = input;
@@ -31,15 +32,27 @@ final class ParsingStrategy extends CoreNlpParsingStrategy<ParserInput, ParserOu
 	public void apply(CoreNlpParser parser) {
 		switch (input.language()) {
 		case ENGLISH:
-			EnglishParsingLogic.factory(input.source).apply(parser);
+			parsingLogic = EnglishParsingLogic.factory(input.source);
 			break;
 		case GERMAN:
-			GermanParsingLogic.factory(input.source).apply(parser);
+			parsingLogic =GermanParsingLogic.factory(input.source);
 			break;
 		default:
+			parsingLogic = null;
 			throw new IllegalStateException("GramParsingPipeline doesn't support the language " + input.language());
+		}
+		
+		if(parsingLogic != null) {
+			parsingLogic.apply(parser);
 		}
 	}
 
 	static Factory factory() { return new Factory(); }
+	
+	/**
+	 * Stops the execution if the task is interrupted.
+	 */
+	public void stopExecution() {
+		parsingLogic.stopExecution();
+	}
 }

@@ -57,6 +57,10 @@ public class DocParseTask implements AsyncTask<DocParseTask.Result> {
 			ServerLogger.get().error("Document parsing task timed-out for " + strategy.input().source.getDescription());
 			output = null;
 			error = true;
+		} catch(InterruptedException ex) {
+			strategy.stopExecution();
+			output = null;
+			error = true;
 		} catch (Throwable ex) {
 			ServerLogger.get().error(ex, "Document parsing task encountered an error. Exception: " + ex.toString());
 			output = null;

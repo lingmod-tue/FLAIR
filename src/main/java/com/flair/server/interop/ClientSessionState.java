@@ -1,25 +1,16 @@
 package com.flair.server.interop;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.io.IOUtils;
-import org.jsoup.Jsoup;
 
 import com.flair.server.crawler.SearchResult;
 import com.flair.server.document.AbstractDocument;
@@ -28,7 +19,6 @@ import com.flair.server.document.DocumentCollection;
 import com.flair.server.exerciseGeneration.exerciseManagement.ResultComponents;
 import com.flair.server.exerciseGeneration.exerciseManagement.domManipulation.ZipManager;
 import com.flair.server.grammar.DefaultVocabularyList;
-import com.flair.server.interop.TemporaryClientData.CustomCorpus;
 import com.flair.server.interop.messaging.ServerMessageChannel;
 import com.flair.server.interop.messaging.ServerMessagingSwitchboard;
 import com.flair.server.parser.KeywordSearcherInput;
@@ -319,6 +309,9 @@ class ClientSessionState {
 		endActiveOperation(true);
 		temporaryClientData.questGenData = null;
 		generatedPackages.clear();
+		if(temporaryClientData.customCorpusData != null && temporaryClientData.customCorpusData.uploaded != null) {
+			temporaryClientData.customCorpusData.uploaded.clear();
+		}
 	}
 	
 	private synchronized void onCmUpdateKeepAliveTimer(CmUpdateKeepAliveTimer msg) {

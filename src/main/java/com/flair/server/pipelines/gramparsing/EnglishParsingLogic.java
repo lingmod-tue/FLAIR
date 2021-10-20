@@ -35,6 +35,7 @@ class EnglishParsingLogic implements ParsingLogic {
 		return new EnglishParsingLogic(doc);
 	}
 
+	private boolean isCancelled = false;
 
 	private final AbstractDocument workingDoc;
 
@@ -1844,6 +1845,10 @@ class EnglishParsingLogic implements ParsingLogic {
 
 		List<CoreMap> sentences = docAnnotation.get(CoreAnnotations.SentencesAnnotation.class);
 		for (CoreMap itr : sentences) {
+			if(isCancelled) {
+				return;
+			}
+			
 			if (itr.size() > 0) {
 				Tree tree = itr.get(TreeCoreAnnotations.TreeAnnotation.class);
 				List<CoreLabel> words = itr.get(CoreAnnotations.TokensAnnotation.class);
@@ -1880,5 +1885,10 @@ class EnglishParsingLogic implements ParsingLogic {
 		workingDoc.setNumSentences(sentenceCount);
 		workingDoc.setNumCharacters(characterCount);
 		workingDoc.flagAsParsed(parser.createAnnotations(docAnnotation));
+	}
+
+	@Override
+	public void stopExecution() {
+		isCancelled = true;
 	}
 }
