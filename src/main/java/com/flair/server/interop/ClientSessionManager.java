@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -188,7 +189,9 @@ public class ClientSessionManager {
 			if (extIdx != -1)
 				orgName = orgName.substring(0, extIdx); // strip extension
 
-			files.add(new CustomCorpusFile(part.getInputStream(), orgName));
+			try(InputStream is = part.getInputStream()) {
+				files.add(new CustomCorpusFile(is, orgName));
+			}
 		}
 
 		data.getState().handleCorpusUpload(files);
@@ -198,10 +201,10 @@ public class ClientSessionManager {
 		timer.schedule(new TimerTask() {
 			  @Override
 			  public void run() {
-				// remove the session after 10mins (we can miss 1 keep alive message from the client)
-				  invalidateAndRemove(tok);
+				// remove the session after 6mins
+				  removeSession(tok);
 			  }
-			}, 10*60*1000);
+			}, 6*60*1000);
 	}
 	
 	private Timer initializeTimer(ClientIdToken tok) {			

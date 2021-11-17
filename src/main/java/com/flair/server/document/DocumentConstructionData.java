@@ -10,8 +10,8 @@ import java.util.List;
  * Represents basic properties of a construction for a specific document
  */
 public class DocumentConstructionData extends AbstractConstructionData {
-	private final AbstractDocument parentDocument;
 	private final ArrayList<ConstructionOccurrence> occurrences;
+	private final double parentGramL2Norm;
 
 	private boolean hasOccurence(int start, int end) {
 		for (ConstructionOccurrence itr : occurrences) {
@@ -26,7 +26,7 @@ public class DocumentConstructionData extends AbstractConstructionData {
 		super(type);
 
 		assert parent != null;
-		parentDocument = parent;
+		parentGramL2Norm = parent.getGramL2Norm();
 		occurrences = new ArrayList<>();
 	}
 
@@ -42,12 +42,12 @@ public class DocumentConstructionData extends AbstractConstructionData {
 		return 1.0 + Math.log(getFrequency());
 	}
 
-	public double getRelativeFrequency() {
-		return (double) getFrequency() / (double) parentDocument.getLength();
+	public double getRelativeFrequency(double parentDocumentLength) {
+		return (double) getFrequency() / parentDocumentLength;
 	}
 
 	public double getRelativeWeightedFrequency() {
-		return getWeightedFrequency() / parentDocument.getGramL2Norm();
+		return getWeightedFrequency() / parentGramL2Norm;
 	}
 
 	public boolean addOccurrence(int start, int end) {

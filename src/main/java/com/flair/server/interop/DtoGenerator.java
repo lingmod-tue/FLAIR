@@ -53,7 +53,7 @@ class DtoGenerator {
 			DocumentConstructionData data = source.getConstructionData(itr);
 			if (data.hasConstruction()) {
 				out.getConstructions().add(itr);
-				out.getRelFrequencies().put(itr, data.getRelativeFrequency());
+				out.getRelFrequencies().put(itr, data.getRelativeFrequency(source.getLength()));
 				out.getFrequencies().put(itr, data.getFrequency());
 
 				ArrayList<RankableDocumentImpl.ConstructionOccurrence> highlights = new ArrayList<>();

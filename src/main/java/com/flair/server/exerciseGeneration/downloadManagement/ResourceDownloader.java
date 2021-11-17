@@ -119,23 +119,20 @@ public class ResourceDownloader {
     public static String downloadFileContent(URL url) {
         try {
             URLConnection con = url.openConnection();
-            
-            InputStream is = con.getInputStream();
-
-            Reader r = "gzip".equals(con.getContentEncoding()) ?
-                    new InputStreamReader(new GZIPInputStream(is)) :
-                    new InputStreamReader(is);
-
             StringBuilder content = new StringBuilder();
-            try(BufferedReader reader = new BufferedReader(r)) {
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    content.append(line);
-                }
-            }
             
-            is.close();
-            
+            try(InputStream is = con.getInputStream()) {
+	            Reader r = "gzip".equals(con.getContentEncoding()) ?
+	                    new InputStreamReader(new GZIPInputStream(is)) :
+	                    new InputStreamReader(is);
+
+	            try(BufferedReader reader = new BufferedReader(r)) {
+	                String line;
+	                while ((line = reader.readLine()) != null) {
+	                    content.append(line);
+	                }
+	            }
+            }            
             return content.toString();
         } catch (IOException e) {
 			//ServerLogger.get().error(e, "Non-fatal error. Exception: " + e.toString());

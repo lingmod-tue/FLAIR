@@ -54,8 +54,8 @@ public class FeedbackManager {
 	}
 	
 	public FeedbackManager() {
-		InputStream content = ResourceLoader.loadFile("feedbackLinks.tsv");
-		try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(content))) {
+		try(InputStream content = ResourceLoader.loadFile("feedbackLinks.tsv"); 
+				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(content))) {
 		      String line;
 		      while ((line = bufferedReader.readLine()) != null) {
 		    	  String[] lineItems = line.split("\t");
@@ -65,12 +65,6 @@ public class FeedbackManager {
 		      }
 		    } catch (IOException e) {
 				e.printStackTrace();
-			} finally {
-				try {
-					content.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
 			}
 	}
 	

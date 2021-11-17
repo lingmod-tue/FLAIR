@@ -45,6 +45,7 @@ public class GzipResponseStream extends ServletOutputStream {
 		output.write(bytes);
 		output.flush();
 		output.close();
+		baos.close();
 		closed = true;
 	}
 

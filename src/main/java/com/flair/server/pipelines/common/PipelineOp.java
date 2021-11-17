@@ -51,6 +51,8 @@ public abstract class PipelineOp<I, O> implements Cancellable {
 		return this;
 	}
 	public boolean isExecuting() {
+		if(job == null) 
+			return false;
 		return job.isExecuting();
 	}
 	public void await() {
@@ -63,6 +65,8 @@ public abstract class PipelineOp<I, O> implements Cancellable {
 		return name;
 	}
 	public boolean isCancelled() {
+		if(job == null) 
+			return true;
 		return job.isCancelled();
 	}
 	public void cancel() {
@@ -80,5 +84,25 @@ public abstract class PipelineOp<I, O> implements Cancellable {
 	public O yield() {
 		await();
 		return output;
+	}
+	
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		
+		PipelineOp<I, O> that = (PipelineOp<I, O>) o;
+		
+		return job.equals(that.job) && input.equals(that.input) &&
+				output.equals(that.output) && taskLinker.equals(that.taskLinker) &&
+				name == that.name && launched == that.launched;
+	}
+	
+	@Override
+	public int hashCode() {
+		int hash = 7;
+		hash = 31 * hash + name.hashCode();
+		hash = 31 * hash + job.hashCode();
+		return hash;
 	}
 }

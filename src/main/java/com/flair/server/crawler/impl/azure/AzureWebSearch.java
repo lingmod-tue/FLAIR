@@ -12,6 +12,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
@@ -139,6 +140,12 @@ public class AzureWebSearch implements AbstractSearchAgentImpl {
 					results.add(newResult);
 				}
 			}
+		}
+		
+		try {
+			stream.close();
+		} catch(IOException e) {
+			e.printStackTrace();
 		}
 	}
 

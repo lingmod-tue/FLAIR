@@ -239,6 +239,28 @@ public class ServerMessagingSwitchboard {
 			outbox = outbox.stream().filter(e -> e.getPayload() instanceof SmClientMessageConsumed)
 						.sorted(Comparator.comparingLong(Message::getMessageId)).collect(Collectors.toCollection(ArrayDeque::new));
 		}
+		
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+			
+			ServerMessageChannelImpl that = (ServerMessageChannelImpl) o;
+			
+			return clientId.equals(that.clientId) && inbox.equals(that.inbox) &&
+					messageHandlers.equals(that.messageHandlers) && outbox.equals(that.outbox) &&
+					previousIncomingMessageId == that.previousIncomingMessageId &&
+					nextOutgoingMessageId == that.nextOutgoingMessageId &&
+					numOutOfOrderMessages == that.numOutOfOrderMessages &&
+					channelOpen == that.channelOpen;
+		}
+		
+		@Override
+		public int hashCode() {
+			int hash = 7;
+			hash = 31 * hash + clientId.hashCode();
+			return hash;
+		}
 	}
 
 	private final Map<ClientIdToken, ServerMessageChannelImpl> clientId2Channel;

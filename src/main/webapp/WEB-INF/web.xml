@@ -32,6 +32,11 @@
         <servlet-name>CorpusUpload</servlet-name>
         <servlet-class>com.flair.server.interop.CorpusUploadServlet</servlet-class>
 	</servlet>
+	
+	<servlet>
+        <servlet-name>NLPInit</servlet-name>
+        <servlet-class>com.flair.server.interop.NLPInitServlet</servlet-class>
+	</servlet>
 
     <servlet>
         <servlet-name>InteropService</servlet-name>
@@ -39,6 +44,11 @@
     </servlet>
 
     <servlet-mapping>
+        <servlet-name>NLPInit</servlet-name>
+        <url-pattern>/flair/NLPInit</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
         <servlet-name>CorpusUpload</servlet-name>
         <url-pattern>/flair/CorpusUploadEndpoint</url-pattern>
 	</servlet-mapping>

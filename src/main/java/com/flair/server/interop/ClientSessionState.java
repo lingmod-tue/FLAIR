@@ -132,13 +132,14 @@ class ClientSessionState {
 		if (start < 0)
 			start = 0;
 		List<CustomCorpusFile> uploadedFiles = new ArrayList<>(temporaryClientData.customCorpusData.uploaded.subList(start, end));
-		if (uploadedFiles.isEmpty())
+		if (!(start < end))
 			throw new ServerRuntimeException("No files uploaded for corpus-upload-parse operation for client " + clientId);
 
 		ServerLogger.get().info("Begin corpus-upload-parse -> Language: " + msg.getLanguage() + ", Uploaded Files: " + uploadedFiles.size());
 
 		if (pipelineOpCache.hasActiveOp()) {
 			ServerLogger.get().info("Another operation is in progress - Discarding file");
+			uploadCache.clear();
 			return;
 		}
 
@@ -148,36 +149,23 @@ class ClientSessionState {
 		else
 			keywordInput = new KeywordSearcherInput(msg.getKeywords());
 
-		// reset the cache as we have the files we need for the current op
-		temporaryClientData.customCorpusData.contents.clear();		
-		for(CustomCorpusFile c : uploadCache) {
-			try {
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				IOUtils.copy(c.getStream(), baos);			  
-				temporaryClientData.customCorpusData.contents.add(baos.toString());
-				byte[] bytes = baos.toByteArray();
-				ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-				temporaryClientData.customCorpusData.contents.add(baos.toString());
-				bais.close();
-				c.setStream(new ByteArrayInputStream(bytes));
-				baos.close();
-			} catch (IOException e) {}
-		}
-		uploadCache.clear();
-
 		List<AbstractDocumentSource> sources = new ArrayList<>();
 		try {
-			int i = 1;        // assign identifiers to the files for later use
-			for (CustomCorpusFile itr : uploadedFiles) {
-				sources.add(new UploadedFileDocumentSource(itr.getStream(),
-						itr.getFilename(),
-						msg.getLanguage(),
-						i));
-				i++;
+			for (int i = 0; i < uploadCache.size(); i++) {
+				if(i >= start && i < end) {
+					temporaryClientData.customCorpusData.contents.add(uploadCache.get(i).getStream().toString());
+					sources.add(new UploadedFileDocumentSource(uploadCache.get(i).getStream(),
+							uploadCache.get(i).getFilename(),
+							msg.getLanguage(),
+							i + 1));
+					i++;
+				}
 			}
 		} catch (Throwable ex) {
 			ServerLogger.get().error(ex, "Couldn't read custom corpus files");
 		}
+		
+		uploadCache.clear();
 
 		GramParsingPipeline.ParseOpBuilder builder = GramParsingPipeline.get().documentParse();
 		builder.lang(msg.getLanguage())
@@ -488,13 +476,15 @@ class ClientSessionState {
 	}
 
 	synchronized void release() {
-		if (pipelineOpCache.hasActiveOp()) {
+		if (pipelineOpCache != null && pipelineOpCache.hasActiveOp()) {
 			ServerLogger.get().warn("Pipeline operation is still executing at the time of shutdown. Status: "
 					+ pipelineOpCache.activeOp());
 
 			endActiveOperation(true);
 		}
 
-		ServerMessagingSwitchboard.get().closeChannel(messageChannel);
+		if(messageChannel != null) {
+			ServerMessagingSwitchboard.get().closeChannel(messageChannel);
+		}
 	}
 }

@@ -42,7 +42,6 @@ import gwt.material.design.client.ui.MaterialLabel;
 import gwt.material.design.client.ui.MaterialLink;
 import gwt.material.design.client.ui.MaterialRadioButton;
 import gwt.material.design.client.ui.MaterialRow;
-import gwt.material.design.client.ui.MaterialToast;
 import gwt.material.design.client.ui.html.Option;
 
 public class TaskItem extends LocalizedComposite {
@@ -1056,7 +1055,6 @@ public class TaskItem extends LocalizedComposite {
      */
     public boolean supportsFeedbackGeneration() {
     	String type = getExerciseType();
-    	String topic = getTopic();
 
     	// If the type doesn't support feedback or the settings always result in multi-word constructions, we don't need to check the constructions
     	if(type.equals("Mark") || type.equals("Drag")) {
@@ -1356,35 +1354,6 @@ public class TaskItem extends LocalizedComposite {
     
     
     /**
-     * Splits constructions consisting of multiple tokens at whitespaces and adds the parts as individual occurrences to the list
-     * @param relevantConstructions	The identified construction occurrences
-     * @param gram					The grammatical construction
-     * @param key					The name of the construction used as key in the has map
-     */
-    private void addMultiWordConstructions(HashMap<String, ArrayList<ConstructionRange>> relevantConstructions, 
-    		GrammaticalConstruction gram, String key) {
-    	ArrayList<ConstructionRange> findings = getConstructionsWithinSelectedPart(gram, doc);
-		ArrayList<Pair<Integer, Integer>> indices = new ArrayList<>();
-		for(ConstructionRange finding : findings) {
-			String entireConstruction = doc.getText().substring(finding.getStart(), finding.getEnd());
-			String[] parts = entireConstruction.split("\\s\\h");
-			int constructionStart = finding.getStart();
-			for(String part : parts) {
-				part = part.trim();
-				if(!part.equals("")){
-					int start = entireConstruction.indexOf(part);
-					int end = part.length() + start;
-					entireConstruction = entireConstruction.substring(end);
-					indices.add(new Pair<Integer, Integer>(start + constructionStart, end + constructionStart));
-					constructionStart += end;
-				}
-			}
-		}
-		relevantConstructions.put(key, findings);
-    }
-    
-    
-    /**
      * Adds constructions consisting of a single token to the list
      * @param relevantConstructions	The identified construction occurrences
      * @param gram					The grammatical construction
@@ -1400,10 +1369,10 @@ public class TaskItem extends LocalizedComposite {
 		relevantConstructions.put(key, indices);
     }
     
-/**
- * Determines the indices of occurrences of constructions in the combinations relevant to exercise generation.
- * @return				The indices of occurrences of constructions relevant to exercise generation
- */
+	/**
+	 * Determines the indices of occurrences of constructions in the combinations relevant to exercise generation.
+	 * @return				The indices of occurrences of constructions relevant to exercise generation
+	 */
     public HashMap<String, ArrayList<Pair<Integer, Integer>>> getConstructionsOccurrences() {    
     	HashMap<String, ArrayList<Pair<Integer, Integer>>> relevantConstructions = 
     			new HashMap<String, ArrayList<Pair<Integer, Integer>>>();
