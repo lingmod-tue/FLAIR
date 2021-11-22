@@ -13,6 +13,7 @@ import java.util.zip.ZipInputStream;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
+import com.flair.server.exerciseGeneration.OutputComponents;
 import com.flair.server.exerciseGeneration.exerciseManagement.JsonComponents;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
 import com.flair.server.exerciseGeneration.exerciseManagement.resourceManagement.ResourceLoader;
@@ -31,7 +32,7 @@ public abstract class JsonManager {
      * @throws IOException    	File exception if the writer cannot write to the output file
      * @throws ParseException 	JSON exception if the file cannot be parsed
      */
-    public abstract Pair<JSONObject, HashMap<String, String>> modifyJsonContent(ContentTypeSettings settings, ArrayList<JsonComponents> jsonComponents, String folderName)
+    public abstract OutputComponents modifyJsonContent(ContentTypeSettings settings, ArrayList<JsonComponents> jsonComponents, String folderName)
             throws IOException, ParseException;
 
     /**

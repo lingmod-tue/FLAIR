@@ -72,7 +72,7 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
 		public final ResultComponents file;
 
 		Output() {
-			this.file = new ResultComponents("", new byte[] {}, new HashMap<String, String>());
+			this.file = new ResultComponents("", new byte[] {}, new HashMap<String, String>(), new HashMap<String, byte[]>());
 		}
 	}
 
@@ -87,6 +87,7 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
 
 			lock.lock();
 			downloadedUrls.add(r.url);
+			int index = 0;
 			for(int i = 0; i < settingsStates.size(); i++) {
 				Pair<ContentTypeSettings, Boolean> entry = settingsStates.get(i);
 				if(!entry.second) {
@@ -97,6 +98,7 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
 							if(settings.getExerciseSettings().getUrl().equals(r.url)) {
 					            settings.setDoc(r.document);
 					            settings.setResources(r.resources);
+					            settings.setIndex(++index);
 							}
 							if(!downloadedUrls.contains(settings.getExerciseSettings().getUrl())) {
 								allDocumentsDownloaded = false;
@@ -117,6 +119,8 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
 							
 							contentTypeSettings.setDoc(r.document);
 				            contentTypeSettings.setResources(r.resources);
+				            contentTypeSettings.setIndex(++index);
+
 							scheduler.newTask(ExGenTask.factory(contentTypeSettings, input.parser, input.generator, input.lemmatizer, input.resourceDownloader))
 							.with(input.exGenExecutor)
 							.then(this::linkTasks)
@@ -131,7 +135,7 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
 				scheduler.fire();
 		});
 		taskLinker.addHandler(ExGenTask.Result.class, (j, r) -> {
-			safeInvoke(() -> input.exGenComplete.handle(new ResultComponents(r.fileName, r.file, r.previews)),
+			safeInvoke(() -> input.exGenComplete.handle(new ResultComponents(r.fileName, r.file, r.previews, r.xmls)),
 						"Exception in generation complete handler");
 		});
 	}

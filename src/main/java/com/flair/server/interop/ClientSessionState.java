@@ -437,11 +437,16 @@ class ClientSessionState {
 		ServerLogger.get().info("Generated " + generatedPackages.size() + " exercises");
 		
 		HashMap<String, String> previews = new HashMap<>();
+		byte[] xmlFile = new byte[] {};
 		byte[] outputFile = new byte[] {};
         String name = "";
+        String xmlName = "";
         if(generatedPackages.size() > 1) {
             outputFile = ZipManager.zipH5PPackages(generatedPackages);
+            xmlFile = ZipManager.zipXml(generatedPackages);
             name = "exercises.zip";
+            xmlName = "exercises.zip";
+
             for(ResultComponents res : generatedPackages) {
 	            for (Entry<String, String> entry : res.getPreviews().entrySet()) {
 	            	previews.put(entry.getKey(), entry.getValue());
@@ -451,6 +456,15 @@ class ClientSessionState {
             outputFile = generatedPackages.get(0).getFileContent();
             name = generatedPackages.get(0).getFileName() + ".h5p";
             previews = generatedPackages.get(0).getPreviews();
+            if(generatedPackages.get(0).getXmlFile() != null && generatedPackages.get(0).getXmlFile().size() > 1) {
+            	xmlFile = ZipManager.zipXml(generatedPackages);
+                xmlName = "exercises.zip";
+            } else if(generatedPackages.get(0).getXmlFile() != null && generatedPackages.get(0).getXmlFile().size() > 0) {
+            	for(byte[] f : generatedPackages.get(0).getXmlFile().values()) {
+            		xmlFile = f;
+            		xmlName = generatedPackages.get(0).getFileName() + ".xml";
+            	}
+            }
         }
         
         if(outputFile == null) {
@@ -461,6 +475,8 @@ class ClientSessionState {
 		msg.setFile(outputFile);
 		msg.setFileName(name);
 		msg.setPreviews(previews);
+		msg.setXmls(xmlFile);
+		msg.setXmlName(xmlName);
 		messageChannel.send(msg);
 
 		generatedPackages.clear();

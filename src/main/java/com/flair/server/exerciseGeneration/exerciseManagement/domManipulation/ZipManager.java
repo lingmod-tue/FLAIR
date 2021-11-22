@@ -4,6 +4,7 @@ package com.flair.server.exerciseGeneration.exerciseManagement.domManipulation;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -30,6 +31,38 @@ public class ZipManager {
                 zipOutputStream.putNextEntry(zipEntry);
                 zipOutputStream.write(task);
                 zipOutputStream.closeEntry();
+            }
+        } catch (IOException e) {
+			ServerLogger.get().error(e, "File could not be zipped. Exception: " + e.toString());
+        } finally {
+            try {
+                zipOutputStream.close();
+            } catch (IOException e) {
+    			ServerLogger.get().error(e, "Non-fatal error. Exception: " + e.toString());
+            }
+        }
+        
+        byte[] outputArray = byteArrayOutputStream.toByteArray();
+        try {
+			byteArrayOutputStream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+        
+        return outputArray;
+    }
+    
+    public static byte[] zipXml(ArrayList<ResultComponents> generatedPackages) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream);
+        try {
+            for (int i = 0; i < generatedPackages.size(); i++) {
+            	for(Entry<String, byte[]> entry : generatedPackages.get(i).getXmlFile().entrySet()) {
+	                ZipEntry zipEntry = new ZipEntry(entry.getKey() + ".xml");
+	                zipOutputStream.putNextEntry(zipEntry);
+	                zipOutputStream.write(entry.getValue());
+	                zipOutputStream.closeEntry();
+            	}
             }
         } catch (IOException e) {
 			ServerLogger.get().error(e, "File could not be zipped. Exception: " + e.toString());

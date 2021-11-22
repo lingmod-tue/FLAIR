@@ -15,8 +15,6 @@ import com.flair.server.scheduler.AsyncTask;
 import com.flair.server.scheduler.ThreadPool;
 import com.flair.server.utilities.ServerLogger;
 
-import edu.stanford.nlp.util.Pair;
-
 public class ExGenTask implements AsyncTask<ExGenTask.Result> {
 	public static ExGenTask factory(ContentTypeSettings settings, CoreNlpParser parser, SimpleNlgParser generator, 
 			OpenNlpParser lemmatizer, ResourceDownloader resourceDownloader) {
@@ -66,20 +64,22 @@ public class ExGenTask implements AsyncTask<ExGenTask.Result> {
 			ServerLogger.get().info("Exercise " + file.getFileName() + " generated in " + (endTime - startTime) + " ms");
 
 		if(file == null) {
-			return new Result (null, null, null);
+			return new Result (null, null, null, null);
 		}
-		return new Result(file.getFileContent(), file.getFileName(), file.getPreviews());
+		return new Result(file.getFileContent(), file.getFileName(), file.getPreviews(), file.getXmlFile());
 	}
 
 	static final class Result {
 		final byte[] file;
 		final String fileName;
 		final HashMap<String, String> previews;
+		final HashMap<String, byte[]> xmls;
 
-		Result(byte[] file, String fileName, HashMap<String, String> previews) {
+		Result(byte[] file, String fileName, HashMap<String, String> previews, HashMap<String, byte[]> xmls) {
 			this.file = file;
 			this.fileName = fileName;
 			this.previews = previews;
+			this.xmls = xmls;
 		}
 	}
 }

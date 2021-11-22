@@ -62,6 +62,9 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     @LocalizedField(type = LocalizedFieldType.TOOLTIP_MATERIAL)
     MaterialIcon icoDownload;
     @UiField
+    @LocalizedField(type = LocalizedFieldType.TOOLTIP_MATERIAL)
+    MaterialIcon icoXmlDownload;
+    @UiField
     gwt.material.design.client.ui.MaterialDialog mdlCopyrightNoticeUI;
     @UiField
     MaterialCheckBox chkDontShowCopyrightNoticeUI;
@@ -75,8 +78,9 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     MaterialTitle titleCopyrightNoticeUI;
     
     private byte[] generatedExercises = null;
+    private byte[] generatedXmlExercises = null;
     private String fileName = null;
-    
+    private String xmlFileName = null;
         
     public ExerciseGenerationWidget() {
         initWidget(ourUiBinder.createAndBindUi(this));
@@ -98,7 +102,8 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
 
     	btnAddTask.addClickHandler(event -> addTask());
     	btnGenerateExercises.addClickHandler(event -> generateExercises());
-    	icoDownload.addClickHandler(event -> provideFileForDownload());
+    	icoDownload.addClickHandler(event -> provideFileForDownload(generatedExercises, fileName));
+    	icoXmlDownload.addClickHandler(event -> provideFileForDownload(generatedXmlExercises, xmlFileName));
     }
     
     /**
@@ -267,6 +272,7 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
 	    	btnGenerateExercises.setBackgroundColor(Color.RED);    	
 	    	spnGenerating.setVisible(true);
 	    	icoDownload.setVisible(false);
+	    	icoXmlDownload.setVisible(false);
 	    	for(Widget existingTask : wdgtTasks.getChildrenList()) {
 	    		((TaskItem)existingTask).btnPreviewExercise.setVisible(false);
 	    	}
@@ -318,38 +324,53 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     InterruptHandler interruptHandler;
     
 	@Override
-	public void provideForDownload(byte[] file, String fileName, HashMap<String, String> previews) {	
+	public void provideForDownload(byte[] file, String fileName, HashMap<String, String> previews, byte[] xmls, String xmlName) {	
 		enableButton();
 		generatedExercises = file;
+		generatedXmlExercises = xmls;
 		this.fileName = fileName;
+		xmlFileName = xmlName;
+		boolean previewsSet = false;
     	
 		if(file != null && file.length > 0) {
 			icoDownload.setVisible(true);
-			
-			for (Entry<String, String> entry : previews.entrySet()) {
-				for(Widget existingTask : wdgtTasks.getChildrenList()) {
-		    		if (existingTask instanceof TaskItem && ((TaskItem)existingTask).lblName.getValue().equals(entry.getKey())) {
-		    			((TaskItem)existingTask).btnPreviewExercise.setVisible(true);
-		    			((TaskItem)existingTask).htmlContent.clear();
-		    			HTML contents = new HTML();
-		    			contents.setHTML("<iframe style='position:absolute; width: 95%; height:100%;padding-bottom:80px;border:none;' srcdoc='" + entry.getValue().replace("'", "\"") + "'> IFrames are not supported by your browser.</iframe>");
-		    			((TaskItem)existingTask).htmlContent.add(contents);
-		    			break;
-		    		}
-		    	}
-			}
+			setPreview(previews);	
+			previewsSet = true;
     	} else {
             ToastNotification.fire("We're sorry, no exercises could be generated. Please try with another document.");
     	}
+		
+		if(xmls != null && xmls.length > 0) {
+			icoXmlDownload.setVisible(true);
+			if(!previewsSet) {
+				setPreview(previews);
+				previewsSet = true;
+			}
+		}
+	}
+	
+	private void setPreview(HashMap<String, String> previews) {
+		for (Entry<String, String> entry : previews.entrySet()) {
+			for(Widget existingTask : wdgtTasks.getChildrenList()) {
+	    		if (existingTask instanceof TaskItem && ((TaskItem)existingTask).lblName.getValue().equals(entry.getKey())) {
+	    			((TaskItem)existingTask).btnPreviewExercise.setVisible(true);
+	    			((TaskItem)existingTask).htmlContent.clear();
+	    			HTML contents = new HTML();
+	    			contents.setHTML("<iframe style='position:absolute; width: 95%; height:100%;padding-bottom:80px;border:none;' srcdoc='" + entry.getValue().replace("'", "\"") + "'> IFrames are not supported by your browser.</iframe>");
+	    			((TaskItem)existingTask).htmlContent.add(contents);
+	    			break;
+	    		}
+	    	}
+		}
 	}
 
-	private void provideFileForDownload() {
+	private void provideFileForDownload(byte[] file, String fileName) {
 		if (!chkDontShowCopyrightNoticeUI.getValue()) {
             titleCopyrightNoticeUI.setDescription("The configured exercises were generated successfully for the selected document. Please respect the copyright of the texts!");
             mdlCopyrightNoticeUI.open();
         }
 		
-        JSUtility.exportToZip(generatedExercises, fileName);
+        JSUtility.exportToZip(file, fileName);
 	}
 	
 	@Override

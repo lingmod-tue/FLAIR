@@ -3,12 +3,13 @@ package com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManage
 import java.util.ArrayList;
 
 import com.flair.server.exerciseGeneration.exerciseManagement.QuizGenerator;
+import com.flair.server.exerciseGeneration.exerciseManagement.feedBookXmlManagement.QuizXmlManager;
 import com.flair.server.exerciseGeneration.exerciseManagement.jsonManagement.QuizJsonManager;
 
 public class QuizSettings extends ContentTypeSettings {
 
     public QuizSettings(ArrayList<ContentTypeSettings> exercises, String name) {
-        super("quiz.h5p", new QuizJsonManager(), true, new QuizGenerator(), "H5P.XQuestionSet 0.1", name);
+        super("quiz.h5p", new QuizJsonManager(), true, new QuizGenerator(), "H5P.XQuestionSet 0.1", name, new QuizXmlManager());
         this.exercises = exercises;
     }
 

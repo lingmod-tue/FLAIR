@@ -11,7 +11,7 @@ public class AdvancedFIBJsonManager extends SimpleExerciseJsonManager {
     public AdvancedFIBJsonManager(boolean useBlanks) {
         this.useBlanks = useBlanks;
     }
-
+    
     /**
      * True if we want to generate an FIB exercise.
      * False if we want to generate a single choice exercise.

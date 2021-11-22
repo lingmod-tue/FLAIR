@@ -4,6 +4,7 @@ package com.flair.server.exerciseGeneration.exerciseManagement;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
+import com.flair.server.exerciseGeneration.OutputComponents;
 import com.flair.server.exerciseGeneration.downloadManagement.ResourceDownloader;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
 import com.flair.server.exerciseGeneration.exerciseManagement.domManipulation.ZipManager;
@@ -25,7 +26,7 @@ public abstract class ExerciseGenerator {
 	 * @param resources	The downloaded resources of the web page for which the exercise is generated
 	 * @return			The byte array of the generated H5P file
 	 */
-    public abstract Pair<byte[], HashMap<String, String>> generateExercise(ContentTypeSettings settings,
+    public abstract OutputComponents generateExercise(ContentTypeSettings settings,
     		CoreNlpParser parser, SimpleNlgParser generator, OpenNlpParser lemmatizer, ResourceDownloader resourceDownloader);
     
     public abstract void cancelGeneration();
@@ -35,14 +36,19 @@ public abstract class ExerciseGenerator {
      * @param settings 				The settings of the content type
      * @param exerciseComponents	The extracted exercise components which need to be specified in the JSON configuration
      * @param resources				The downloaded resources
-     * @return						The byte array of the generated H5P file
+     * @return						The byte array of the generated H5P file, the preview and the FeedBook input XML string
      */
-    protected Pair<byte[], HashMap<String, String>> createH5pPackage(ContentTypeSettings settings, ArrayList<JsonComponents> exerciseComponents,
+    protected OutputComponents createH5pPackage(ContentTypeSettings settings, ArrayList<JsonComponents> exerciseComponents,
                                       ArrayList<Pair<String, byte[]>> resources) {
     	if(exerciseComponents.size() > 0) {
 	        try {
-	            Pair<JSONObject, HashMap<String, String>> jsonContent = settings.getJsonManager().modifyJsonContent(settings, exerciseComponents, settings.getResourceFolder());
-	            return new Pair<>(ZipManager.generateModifiedZipFile(settings.getResourceFolder(), jsonContent.first.toString(), resources), jsonContent.second);
+	            OutputComponents output = settings.getJsonManager().modifyJsonContent(settings, exerciseComponents, settings.getResourceFolder());
+	            output.setFeedBookXml(settings.getXmlManager()
+	            		.generateFeedBookInputXml(settings.isEscapeAsterisksInHtml(), output.getDistractors(), settings.getIndex(), 
+	            				output.getPlainText(), output.getHtmlElements(), output.getTaskDescription(), settings.getName(), output.getSimpleExercises()));
+	            byte[] h5pFile = ZipManager.generateModifiedZipFile(settings.getResourceFolder(), output.getH5pJson().toString(), resources);
+	            output.setH5pFile(h5pFile);
+	            return output;
 	        } catch (ParseException | IOException e) {
 				ServerLogger.get().error(e, "Files could not be zipped. Exception: " + e.toString());
 	            return null;

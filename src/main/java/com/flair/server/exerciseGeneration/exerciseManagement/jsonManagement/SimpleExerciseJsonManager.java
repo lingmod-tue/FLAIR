@@ -1,20 +1,28 @@
 package com.flair.server.exerciseGeneration.exerciseManagement.jsonManagement;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
-import com.flair.server.exerciseGeneration.exerciseManagement.JsonComponents;
-import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
-import com.flair.shared.exerciseGeneration.Pair;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.jsoup.Jsoup;
+
+import com.flair.server.exerciseGeneration.OutputComponents;
+import com.flair.server.exerciseGeneration.exerciseManagement.JsonComponents;
+import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
+import com.flair.server.exerciseGeneration.util.Utilities;
+import com.flair.shared.exerciseGeneration.Pair;
 
 public abstract class SimpleExerciseJsonManager extends JsonManager {
 
@@ -23,9 +31,9 @@ public abstract class SimpleExerciseJsonManager extends JsonManager {
      * Necessary for Advanced FiB exercises within a quiz.
      */
     protected static int internalId = 0;
-
+    
     @Override
-    public Pair<JSONObject, HashMap<String, String>> modifyJsonContent(ContentTypeSettings settings, ArrayList<JsonComponents> jsonComponents, String folderName)
+    public OutputComponents modifyJsonContent(ContentTypeSettings settings, ArrayList<JsonComponents> jsonComponents, String folderName)
             throws IOException, ParseException {
         internalId++;
 
@@ -40,17 +48,16 @@ public abstract class SimpleExerciseJsonManager extends JsonManager {
 
         Pair<ArrayList<String>, ArrayList<ArrayList<Pair<String, String>>>> orderedElements = orderBlanks(jsonComponents.get(0).getPlainTextElements(), jsonComponents.get(0).getConstructions(),
         		jsonComponents.get(0).getDistractors());
-        addQuestionsToJson(jsonObject, jsonComponents.get(0).getPlainTextElements(), orderedElements.first, orderedElements.second);
+        String plainText = addQuestionsToJson(jsonObject, jsonComponents.get(0).getPlainTextElements(), orderedElements.first, orderedElements.second);
         JSONArray htmlArray = new JSONArray();
         htmlArray.addAll(jsonComponents.get(0).getPureHtmlElements());
-        addHtmlElementsToJson(jsonObject, htmlArray);
+        ArrayList<String> htmlElements = addHtmlElementsToJson(jsonObject, htmlArray);
         setExerciseSpecificAttributes(jsonObject);
-        
-        String preview = generatePreviewHtml(jsonObject, settings.isEscapeAsterisksInHtml());
-
+                
         HashMap<String, String> previews = new HashMap<>();
-        previews.put(settings.getName(), preview);
-        return new Pair<>(jsonObject, previews);
+        previews.put(settings.getName(), generatePreviewHtml(jsonObject, settings.isEscapeAsterisksInHtml()));
+                
+        return new OutputComponents(jsonObject, previews, orderedElements.second, plainText, htmlElements, jsonComponents.get(0).getTaskDescription());
     }
     
     /**
@@ -92,15 +99,16 @@ public abstract class SimpleExerciseJsonManager extends JsonManager {
     	return htmlPreview.toString();
     }
     
+    
     abstract String getTargetDummy(String constructionText);
 
     protected String insertTargetDummies(String htmlPreview) {
     	StringBuilder modifiedPreview = new StringBuilder();
 		int indexAfterLastAsterisk = 0;
-		int nextAsteriskIndex = getNextNotEscapedCharacter(htmlPreview, 0, "*");
+		int nextAsteriskIndex = Utilities.getNextNotEscapedCharacter(htmlPreview, 0, "*");
 		while(nextAsteriskIndex != -1) {
 			int constructionStartIndex = nextAsteriskIndex;
-			nextAsteriskIndex = getNextNotEscapedCharacter(htmlPreview, nextAsteriskIndex + 1, "*");
+			nextAsteriskIndex = Utilities.getNextNotEscapedCharacter(htmlPreview, nextAsteriskIndex + 1, "*");
 			
 			if(nextAsteriskIndex != -1) {	
 				String constructionText = htmlPreview.substring(constructionStartIndex + 1, nextAsteriskIndex);
@@ -108,7 +116,7 @@ public abstract class SimpleExerciseJsonManager extends JsonManager {
 				modifiedPreview.append(getTargetDummy(constructionText));
 
 				indexAfterLastAsterisk = nextAsteriskIndex + 1;
-				nextAsteriskIndex = getNextNotEscapedCharacter(htmlPreview, nextAsteriskIndex + 1, "*");
+				nextAsteriskIndex = Utilities.getNextNotEscapedCharacter(htmlPreview, nextAsteriskIndex + 1, "*");
 			}
 		}
 		
@@ -119,23 +127,7 @@ public abstract class SimpleExerciseJsonManager extends JsonManager {
 		return modifiedPreview.toString().replace("**", "*");
     }
     
-    protected int getNextNotEscapedCharacter(String text, int startIndex, String character) {
-    	int index = text.indexOf(character, startIndex);
-        String nextCharacter = "";
-        if (index != -1 && index < text.length() - 1) {
-            nextCharacter = text.substring(index + 1, index + 2);
-        }
-        while (nextCharacter.equals(character)) {
-            index = text.indexOf(character, index + 2);
-            if (index != -1 && index < text.length() - 1) {
-                nextCharacter = text.substring(index + 1, index + 2);
-            } else {
-                nextCharacter = "";
-            }
-        }
 
-        return index;
-    }
         
     /**
      * Reorders the blanks to make sure that the order is chronological.
@@ -187,19 +179,20 @@ public abstract class SimpleExerciseJsonManager extends JsonManager {
      * @param plainTextElements	The extracted plain text
      * @param constructions 	The extracted constructions
      */
-    protected void addQuestionsToJson(JSONObject jsonObject, ArrayList<String> plainTextElements,
+    protected String addQuestionsToJson(JSONObject jsonObject, ArrayList<String> plainTextElements,
             ArrayList<String> constructions, ArrayList<ArrayList<Pair<String, String>>> distractors) {
 		StringBuilder sb = new StringBuilder();
 		int feedbackId = 1;
+		ArrayList<ArrayList<Pair<String, String>>> distractorsCopy = new ArrayList<>(distractors);
 		
 		for(String plainTextElement : plainTextElements) {
 			plainTextElement = plainTextElement.replace("*", "**"); // escape asterisks used to designate blanks
 			          
 			while(plainTextElement.contains("<span data-blank></span>")) {
 				ArrayList<Pair<String, String>> distractorList = new ArrayList<>();
-				if(distractors.size() > 0) {
-					distractorList = distractors.get(0);
-					distractors.remove(0);
+				if(distractorsCopy.size() > 0) {
+					distractorList = distractorsCopy.get(0);
+					distractorsCopy.remove(0);
 				}
 				
 				plainTextElement = plainTextElement.replaceFirst("<span data-blank></span>", getPlacehholderReplacement(constructions.get(0), distractorList, "feedback" + feedbackId, jsonObject));
@@ -209,7 +202,10 @@ public abstract class SimpleExerciseJsonManager extends JsonManager {
 			sb.append(plainTextElement);
 		}
 		
-		jsonObject.put("textField", sb.toString());
+		String plainText = sb.toString();
+		jsonObject.put("textField", plainText);
+		
+		return plainText;
 	}
 
     /**
@@ -217,8 +213,10 @@ public abstract class SimpleExerciseJsonManager extends JsonManager {
      * @param jsonObject 	The JSON object
      * @param htmlElements 	The pure HTML elements
      */
-    protected void addHtmlElementsToJson(JSONObject jsonObject, JSONArray htmlElements){
+    protected ArrayList<String> addHtmlElementsToJson(JSONObject jsonObject, JSONArray htmlElements){
     	jsonObject.put("htmlElements", htmlElements);
+    	
+    	return new ArrayList<>(htmlElements);
     }
 
     /**

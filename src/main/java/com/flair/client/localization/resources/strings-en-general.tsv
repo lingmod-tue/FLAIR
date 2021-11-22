@@ -109,6 +109,7 @@ ExerciseGenerationWidget	btnAddTask	Add Exercise
 ExerciseGenerationWidget	btnDeleteTasks	Delete all Exercises
 ExerciseGenerationWidget	btnGenerateExercises	Generate Exercises
 ExerciseGenerationWidget	icoDownload	Download generated exercises
+ExerciseGenerationWidget	icoXmlDownload	Download generated exercises as XML for FeedBook
 
 
 TaskItem	icoInvalid	No exercises can be generated for the current settings.

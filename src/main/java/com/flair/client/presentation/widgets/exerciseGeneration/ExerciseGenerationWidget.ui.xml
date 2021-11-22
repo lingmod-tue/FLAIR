@@ -39,20 +39,29 @@
 			</m:MaterialRow>
 
 			<m:MaterialRow textAlign="CENTER" marginTop="10">
-				<m:MaterialColumn grid="l10 m10 s10"
+				<m:MaterialColumn grid="l9 m9 s9"
 					textAlign="CENTER">
 					<m:MaterialButton ui:field="btnGenerateExercises"
 						backgroundColor="ORANGE" textColor="WHITE" enabled="false" />
 				</m:MaterialColumn>
-				<m:MaterialColumn grid="l2 m2 s2"
+				<m:MaterialColumn grid="l3 m3 s3"
 					textAlign="CENTER">
 					<m:MaterialPreLoader size="SMALL" margin="0"
 						ui:field="spnGenerating" visible="false">
 						<m:MaterialSpinner color="BLUE_ONLY" />
 					</m:MaterialPreLoader>
-					<m:MaterialIcon ui:field="icoDownload" iconType="FILE_DOWNLOAD"
-					textColor="BLUE" backgroundColor="WHITE" iconPosition="RIGHT"
-					waves="DEFAULT" margin="0" padding="0" visible="false"/>
+					<m:MaterialRow textAlign="CENTER" marginTop="10">
+						<m:MaterialColumn grid="l6 m6 s6" textAlign="RIGHT">
+							<m:MaterialIcon ui:field="icoDownload" iconType="FILE_DOWNLOAD"
+							textColor="BLUE" backgroundColor="WHITE" iconPosition="RIGHT"
+							waves="DEFAULT" margin="0" padding="0" visible="false"/>
+						</m:MaterialColumn>
+						<m:MaterialColumn grid="l6 m6 s6" textAlign="RIGHT">
+							<m:MaterialIcon ui:field="icoXmlDownload" iconType="IMPORT_EXPORT"
+							textColor="BLUE" backgroundColor="WHITE" iconPosition="RIGHT"
+							waves="DEFAULT" margin="0" padding="0" visible="false"/>
+						</m:MaterialColumn>
+					</m:MaterialRow>
 				</m:MaterialColumn>
 			</m:MaterialRow>
 

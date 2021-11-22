@@ -19,7 +19,7 @@ public interface ExerciseGenerationService {
 	}
 
 
-	void provideForDownload(byte[] file, String fileName, HashMap<String, String> previews);
+	void provideForDownload(byte[] file, String fileName, HashMap<String, String> previews, byte[] xmls, String xmlName);
 
 	void setGenerateHandler(GenerateHandler handler);
 	void setInterruptHandler(InterruptHandler handler);

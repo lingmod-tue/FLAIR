@@ -1,11 +1,14 @@
 package com.flair.server.exerciseGeneration.exerciseManagement;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 
+import com.flair.server.exerciseGeneration.OutputComponents;
 import com.flair.server.exerciseGeneration.downloadManagement.HtmlManager;
 import com.flair.server.exerciseGeneration.downloadManagement.ResourceDownloader;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
@@ -34,7 +37,7 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	private boolean isCancelled = false;
 	
     @Override
-	public Pair<byte[], HashMap<String, String>> generateExercise(ContentTypeSettings settings,
+	public OutputComponents generateExercise(ContentTypeSettings settings,
 			CoreNlpParser parser, SimpleNlgParser generator, OpenNlpParser lemmatizer, ResourceDownloader resourceDownloader) {
         JsonComponents jsonComponents = prepareExercise(settings, parser, generator, lemmatizer, resourceDownloader);
 
@@ -43,11 +46,25 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        helper.add(jsonComponents);
 	        
 	        ArrayList<Pair<String, byte[]>> relevantResources = getRelevantResources(settings.getResources());
-	        return createH5pPackage(settings, helper, relevantResources);
+	        OutputComponents output = createH5pPackage(settings, helper, relevantResources);
+	        if(output != null) {
+	        	output.setXmlFile(writeXmlToFile(output.getFeedBookXml()));
+	        }
+	        
+	        return output;
     	} else {
     		return null;
     	}
 	}
+    
+    private HashMap<String, byte[]> writeXmlToFile(HashMap<String, String> xml) {
+    	HashMap<String, byte[]> files = new HashMap<>();
+    	
+    	for(Entry<String, String> entry : xml.entrySet()) {
+    		files.put(entry.getKey(), entry.getValue().getBytes(StandardCharsets.UTF_8));
+    	}
+    	return files;
+    }
 
     /**
      * Extracts all exercise components relevant for the JSON configuration from the HTML based on the plain text.

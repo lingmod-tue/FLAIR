@@ -14,7 +14,9 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import com.flair.server.exerciseGeneration.OutputComponents;
 import com.flair.server.exerciseGeneration.exerciseManagement.JsonComponents;
+import com.flair.server.exerciseGeneration.exerciseManagement.ResultComponents;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.QuizSettings;
 import com.flair.shared.exerciseGeneration.Pair;
@@ -22,7 +24,7 @@ import com.flair.shared.exerciseGeneration.Pair;
 public class QuizJsonManager extends JsonManager {
 
     @Override
-    public Pair<JSONObject, HashMap<String, String>> modifyJsonContent(ContentTypeSettings settings, ArrayList<JsonComponents> jsonComponents, 
+    public OutputComponents modifyJsonContent(ContentTypeSettings settings, ArrayList<JsonComponents> jsonComponents, 
     		String folderName)
             throws IOException, ParseException {
         InputStream inputStream = getContentFileContent(folderName);
@@ -35,27 +37,31 @@ public class QuizJsonManager extends JsonManager {
 
         JSONArray questionsArray = (JSONArray)jsonObject.get("questions");
         HashMap<String, String> previewTexts = new HashMap<>();
+        ArrayList<OutputComponents> containedExercises = new ArrayList<>();
 
         int i = 0;
         for(JsonComponents exerciseJsonComponents : jsonComponents) {
             ArrayList<JsonComponents> helper = new ArrayList<>();
             helper.add(exerciseJsonComponents);
-            Pair<JSONObject, HashMap<String, String>> exerciseObject = exerciseJsonComponents.getJsonManager()
+            OutputComponents exerciseObject = exerciseJsonComponents.getJsonManager()
                     .modifyJsonContent(((QuizSettings)settings).getExercises().get(i), helper, null);
+            containedExercises.add(exerciseObject);
             
-            for (Entry<String, String> entry : exerciseObject.second.entrySet()) {
+            for (Entry<String, String> entry : exerciseObject.getPreviews().entrySet()) {
             	previewTexts.put(entry.getKey(), entry.getValue());
             }
-            
+                        
             JSONObject questionObject = new JSONObject();
-            questionObject.put("params", exerciseObject.first);
+            questionObject.put("params", exerciseObject.getH5pJson());
             questionObject.put("library", exerciseJsonComponents.getContentTypeLibrary());
             questionObject.put("subContentId", UUID.randomUUID().toString());
             questionsArray.add(questionObject);
             i++;
         }
 
-        return new Pair<>(jsonObject, previewTexts);
+        OutputComponents output = new OutputComponents(jsonObject, previewTexts, null, null, null, null);
+        output.setSimpleExercises(containedExercises);
+        return output;
     }
 
 }

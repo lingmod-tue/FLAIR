@@ -1,15 +1,13 @@
 package com.flair.server.exerciseGeneration.exerciseManagement;
 
 
-import java.util.HashMap;
-
+import com.flair.server.exerciseGeneration.OutputComponents;
 import com.flair.server.exerciseGeneration.downloadManagement.ResourceDownloader;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
 import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.OpenNlpParser;
 import com.flair.server.parser.SimpleNlgParser;
 import com.flair.server.utilities.ServerLogger;
-import com.flair.shared.exerciseGeneration.Pair;
 
 public class ExerciseManager {
 
@@ -34,12 +32,12 @@ public class ExerciseManager {
     public ResultComponents generateExercises(ContentTypeSettings settings, CoreNlpParser parser, SimpleNlgParser generator, 
     		OpenNlpParser lemmatizer, ResourceDownloader resourceDownloader) {
     	try {
-	        Pair<byte[], HashMap<String, String>> generatedExercise = 
+	        OutputComponents generatedExercise = 
 	        settings.getExerciseGenerator().generateExercise(settings, parser, generator, lemmatizer, resourceDownloader);    
 	        if(generatedExercise == null) {
-	        	return new ResultComponents(settings.getName(), null, null);
+	        	return new ResultComponents(settings.getName(), null, null, null);
 	        }
-    		return new ResultComponents(settings.getName(), generatedExercise.first, generatedExercise.second);
+    		return new ResultComponents(settings.getName(), generatedExercise.getH5pFile(), generatedExercise.getPreviews(), generatedExercise.getXmlFile());
     	} catch(Exception e) {
 			ServerLogger.get().error(e, "Exercise could not be generated. Exception: " + e.toString());
     		return null;
