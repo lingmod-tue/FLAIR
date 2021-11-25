@@ -34,7 +34,11 @@ public class PastFiBVisibilityManager extends VisibilityManager {
 		visibleSettings.add(taskItem.grpVerbForms);
 		addConstructionIfOccurs("irreg", "Past", 4, visibleSettings, taskItem.chkIrregularVerbs, numberExercises);   
 		addConstructionIfOccurs("reg", "Past", 4, visibleSettings, taskItem.chkRegularVerbs, numberExercises);
-		
+		visibleSettings.add(taskItem.grpInstructions);
+		visibleSettings.add(taskItem.chkLemmas);
+		visibleSettings.add(taskItem.chkProgressive);
+		visibleSettings.add(taskItem.chkTenses);
+
 		return visibleSettings;
 	}
 }

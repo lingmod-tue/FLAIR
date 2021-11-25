@@ -34,6 +34,8 @@ public class PassiveFiBVisibilityManager extends VisibilityManager {
 		addConstructionIfOccurs("TENSE_PAST_PERFECT", "Passive", 2, visibleSettings, taskItem.chkPastPerfect, numberExercises);
 		visibleSettings.add(taskItem.grpSentTypes);
 		addConstructionIfOccurs("active", "Passive", 1, visibleSettings, taskItem.chkScopeActive, numberExercises);	
+		visibleSettings.add(taskItem.grpInstructions);
+		visibleSettings.add(taskItem.chkTenses);
 		
 		return visibleSettings;
 	}

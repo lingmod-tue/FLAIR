@@ -13,8 +13,6 @@ public class SmExGenEvent implements Message.Payload {
 	private byte[] file;
 	private String fileName;
 	private HashMap<String, String> previews;
-	private byte[] xmls;
-	private String xmlName;
 
 	public SmExGenEvent() {}
 
@@ -41,20 +39,6 @@ public class SmExGenEvent implements Message.Payload {
 	}
 	public void setPreviews(HashMap<String, String> previews) {
 		this.previews = previews;
-	}
-	public byte[] getXmls() {
-		return xmls;
-	}
-	public void setXmls(byte[] xmls) {
-		this.xmls = xmls;
-	}
-
-	public String getXmlName() {
-		return xmlName;
-	}
-
-	public void setXmlName(String xmlName) {
-		this.xmlName = xmlName;
 	}
 
 	@Override

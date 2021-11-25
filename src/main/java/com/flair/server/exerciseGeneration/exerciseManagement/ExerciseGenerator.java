@@ -12,6 +12,7 @@ import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.OpenNlpParser;
 import com.flair.server.parser.SimpleNlgParser;
 import com.flair.server.utilities.ServerLogger;
+import com.flair.shared.exerciseGeneration.OutputFormat;
 import com.flair.shared.exerciseGeneration.Pair;
 
 import java.io.IOException;
@@ -43,9 +44,12 @@ public abstract class ExerciseGenerator {
     	if(exerciseComponents.size() > 0) {
 	        try {
 	            OutputComponents output = settings.getJsonManager().modifyJsonContent(settings, exerciseComponents, settings.getResourceFolder());
-	            output.setFeedBookXml(settings.getXmlManager()
-	            		.generateFeedBookInputXml(settings.isEscapeAsterisksInHtml(), output.getDistractors(), settings.getIndex(), 
-	            				output.getPlainText(), output.getHtmlElements(), output.getTaskDescription(), settings.getName(), output.getSimpleExercises()));
+	            if(settings.getXmlManager() != null && 
+	            		settings.getExerciseSettings().getOutputFormats().contains(OutputFormat.FEEDBOOK_XML)) {
+		            output.setFeedBookXml(settings.getXmlManager()
+		            		.generateFeedBookInputXml(settings.isEscapeAsterisksInHtml(), output.getDistractors(), settings.getIndex(), 
+		            				output.getPlainText(), output.getHtmlElements(), output.getTaskDescription(), settings.getName(), output.getSimpleExercises()));
+	            }
 	            byte[] h5pFile = ZipManager.generateModifiedZipFile(settings.getResourceFolder(), output.getH5pJson().toString(), resources);
 	            output.setH5pFile(h5pFile);
 	            return output;

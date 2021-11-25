@@ -58,6 +58,10 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	}
     
     private HashMap<String, byte[]> writeXmlToFile(HashMap<String, String> xml) {
+    	if(xml == null) {
+    		return null;
+    	}
+    	
     	HashMap<String, byte[]> files = new HashMap<>();
     	
     	for(Entry<String, String> entry : xml.entrySet()) {

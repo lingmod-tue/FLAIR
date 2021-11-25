@@ -17,7 +17,8 @@ public class PresentMarkVisibilityManager extends VisibilityManager {
 		visibleSettings.add(taskItem.grpVerbPerson);  
 		addConstructionIfOccurs("3", "Present", 4, visibleSettings, taskItem.chk3Pers, numberExercises);   			
 		addConstructionIfOccurs("not3", "Present", 4, visibleSettings, taskItem.chkNot3Pers, numberExercises); 
-		visibleSettings.add(taskItem.grpNumberTargets);
+		visibleSettings.add(taskItem.grpInstructions);
+		visibleSettings.add(taskItem.chkNTargets);
 
 		return visibleSettings;
 	}

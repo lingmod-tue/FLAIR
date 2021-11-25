@@ -19,7 +19,8 @@ public class RelativesMarkVisibilityManager extends VisibilityManager {
 		addConstructionIfOccurs("which", "Relatives", 1, visibleSettings, taskItem.chkWhich, numberExercises);   			
 		addConstructionIfOccurs("that", "Relatives", 1, visibleSettings, taskItem.chkThat, numberExercises);   			
 		addConstructionIfOccurs("otherRelPron", "Relatives", 1, visibleSettings, taskItem.chkOtherRelPron, numberExercises);
-		visibleSettings.add(taskItem.grpNumberTargets);
+		visibleSettings.add(taskItem.grpInstructions);
+		visibleSettings.add(taskItem.chkNTargets);
 
 		return visibleSettings;
 	}

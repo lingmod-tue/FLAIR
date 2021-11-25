@@ -22,6 +22,8 @@ public class ConditionalFiBVisibilityManager extends VisibilityManager {
 		addConstructionIfOccurs("condUnreal", "'if'", 1, visibleSettings, taskItem.chkscopeType1, numberExercises);  
 		addConstructionIfOccurs("condReal", "'if'", 1, visibleSettings, taskItem.chkscopeType2, numberExercises);    			
 		visibleSettings.add(taskItem.grpClauses);
+		visibleSettings.add(taskItem.grpInstructions);
+		visibleSettings.add(taskItem.chkLemmas);
 		
 		return visibleSettings;
 	}

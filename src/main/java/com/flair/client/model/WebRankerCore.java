@@ -1123,7 +1123,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
     
     private void onSmExGenEvent(SmExGenEvent msg) {
         exGenPoller.stop();  
-	    exGen.provideForDownload(msg.getFile(), msg.getFileName(), msg.getPreviews(), msg.getXmls(), msg.getXmlName());
+	    exGen.provideForDownload(msg.getFile(), msg.getFileName(), msg.getPreviews());
     }
 
     private void onRestoreProcess(WebRankerAnalysis p) {

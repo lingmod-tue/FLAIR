@@ -398,15 +398,30 @@
 					</m:MaterialRow>
 				</m:MaterialRow>
 
-				<m:MaterialRow ui:field="grpNumberTargets" padding="0" margin="0">
+				<m:MaterialRow ui:field="grpInstructions">
 					<m:MaterialRow padding="0" margin="0">
-						<m:MaterialLabel text="Task description:"
+						<m:MaterialLabel text="Instruction components:"
 							textColor="BLACK" />
 					</m:MaterialRow>
 					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox ui:field="chkLemmas"
+							value="false"
+							text="Lemmas" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox ui:field="chkTenses"
+							value="false"
+							text="Tense(s)" />
+					</m:MaterialRow>	
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox ui:field="chkProgressive"
+							value="false"
+							text="Simple/Progressive" />
+					</m:MaterialRow>									
+					<m:MaterialRow padding="0" margin="0">
 						<m:MaterialCheckBox ui:field="chkNTargets"
 							value="true"
-							text="Include number of target words" />
+							text="Number of target words" />
 					</m:MaterialRow>
 				</m:MaterialRow>
 

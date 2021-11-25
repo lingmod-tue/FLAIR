@@ -196,10 +196,10 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
 	        				Document doc = Jsoup.parse(settings.getFileContent());
 			                documents.put(settings.getFileName(), doc);
 	        			} else {
-			                documents.put(settings.getFileName(), Jsoup.parse("<span>" + settings.getPlainText().replace("\n", "<br>") + "</span>"));
+			                documents.put(settings.getFileName(), Jsoup.parse("<span>" + settings.getPlainText().trim().replace("\n", " <br> ") + "</span>"));
 	        			}
 	        		} catch(Exception e) {
-		                documents.put(settings.getFileName(), Jsoup.parse("<span>" + settings.getPlainText().replace("\n", "<br>") + "</span>"));
+		                documents.put(settings.getFileName(), Jsoup.parse("<span>" + settings.getPlainText().trim().replace("\n", " <br> ") + "</span>"));
 	        		}
         		}
         	} else {

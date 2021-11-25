@@ -23,7 +23,8 @@ public class CompareMarkVisibilityManager extends VisibilityManager {
 		visibleSettings.add(taskItem.grpForms);
 		addConstructionIfOccurs("syn", "Compare", 3, visibleSettings, taskItem.chkFormSynthetic, numberExercises); 
 		addConstructionIfOccurs("ana", "Compare", 3, visibleSettings, taskItem.chkFormAnalytic, numberExercises);
-		visibleSettings.add(taskItem.grpNumberTargets);
+		visibleSettings.add(taskItem.grpInstructions);
+		visibleSettings.add(taskItem.chkNTargets);
 		return visibleSettings;
 	}
 }

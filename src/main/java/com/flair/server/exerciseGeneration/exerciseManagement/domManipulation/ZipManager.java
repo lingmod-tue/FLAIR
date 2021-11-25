@@ -4,6 +4,7 @@ package com.flair.server.exerciseGeneration.exerciseManagement.domManipulation;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -15,50 +16,19 @@ import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.exerciseGeneration.Pair;
 
 public class ZipManager {
-
+	
     /**
-     * Zips all H5P packages into a zip file.
-     * @param generatedPackages The H5P packages representing the generated tasks
-     * @return      The byte array of the created zip file
+     * Zips all provided files into a zip file.  
+     * @param files	The files to zip
+     * @return	The zipped files
      */
-    public static byte[] zipH5PPackages(ArrayList<ResultComponents> generatedPackages) {
+    public static byte[] zipFiles(HashMap<String, byte[]> files) {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream);
         try {
-            for (int i = 0; i < generatedPackages.size(); i++) {
-                byte[] task = generatedPackages.get(i).getFileContent();
-                ZipEntry zipEntry = new ZipEntry(generatedPackages.get(i).getFileName() + ".h5p");
-                zipOutputStream.putNextEntry(zipEntry);
-                zipOutputStream.write(task);
-                zipOutputStream.closeEntry();
-            }
-        } catch (IOException e) {
-			ServerLogger.get().error(e, "File could not be zipped. Exception: " + e.toString());
-        } finally {
-            try {
-                zipOutputStream.close();
-            } catch (IOException e) {
-    			ServerLogger.get().error(e, "Non-fatal error. Exception: " + e.toString());
-            }
-        }
-        
-        byte[] outputArray = byteArrayOutputStream.toByteArray();
-        try {
-			byteArrayOutputStream.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-        
-        return outputArray;
-    }
-    
-    public static byte[] zipXml(ArrayList<ResultComponents> generatedPackages) {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream);
-        try {
-            for (int i = 0; i < generatedPackages.size(); i++) {
-            	for(Entry<String, byte[]> entry : generatedPackages.get(i).getXmlFile().entrySet()) {
-	                ZipEntry zipEntry = new ZipEntry(entry.getKey() + ".xml");
+            for (int i = 0; i < files.size(); i++) {
+            	for(Entry<String, byte[]> entry : files.entrySet()) {
+	                ZipEntry zipEntry = new ZipEntry(entry.getKey());
 	                zipOutputStream.putNextEntry(zipEntry);
 	                zipOutputStream.write(entry.getValue());
 	                zipOutputStream.closeEntry();

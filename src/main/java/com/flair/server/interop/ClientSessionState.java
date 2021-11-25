@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
 
 import org.apache.commons.io.IOUtils;
 
@@ -437,51 +438,75 @@ class ClientSessionState {
 		ServerLogger.get().info("Generated " + generatedPackages.size() + " exercises");
 		
 		HashMap<String, String> previews = new HashMap<>();
-		byte[] xmlFile = new byte[] {};
+		HashMap<String, byte[]> xmlFiles = new HashMap<>();
+		HashMap<String, byte[]> h5pFiles = new HashMap<>();
+		
+		for (ResultComponents result : generatedPackages) {
+			if(result.getXmlFile() != null) {
+	        	for(Entry<String, byte[]> entry : result.getXmlFile().entrySet()) {
+	        		if(entry.getValue() != null && entry.getValue().length > 0) {
+	            		xmlFiles.put(entry.getKey() + ".xml", entry.getValue());
+	        		}
+	        	}
+			}
+			if(result.getPreviews() != null) {
+	        	for(Entry<String, String> entry : result.getPreviews().entrySet()) {
+	        		if(entry.getValue() != null && entry.getValue().length() > 0) {
+	        			previews.put(entry.getKey(), entry.getValue());
+	        		}
+	        	}
+			}
+        	if(result.getFileContent() != null && result.getFileContent().length > 0) {
+        		h5pFiles.put(result.getFileName() + ".h5p", result.getFileContent());
+        	}
+        }
+		
+		HashMap<String, byte[]> outputFiles = new HashMap<>();
+
+		if(h5pFiles.size() > 1) {
+			//TODO modify zipper
+			outputFiles.put("h5pExercises.zip", ZipManager.zipFiles(h5pFiles));
+		} else if(h5pFiles.size() > 0) {
+			String fileName = getRandomHashMapEntry(h5pFiles);
+			outputFiles.put(fileName, h5pFiles.get(fileName));
+        }
+		
+		if(xmlFiles.size() > 1) {
+			//TODO
+			outputFiles.put("xmlExercises.zip", ZipManager.zipFiles(xmlFiles));
+		} else if(xmlFiles.size() > 0) {
+			String fileName = getRandomHashMapEntry(xmlFiles);
+			outputFiles.put(fileName, xmlFiles.get(fileName));
+        }
+		
 		byte[] outputFile = new byte[] {};
         String name = "";
-        String xmlName = "";
-        if(generatedPackages.size() > 1) {
-            outputFile = ZipManager.zipH5PPackages(generatedPackages);
-            xmlFile = ZipManager.zipXml(generatedPackages);
-            name = "exercises.zip";
-            xmlName = "exercises.zip";
 
-            for(ResultComponents res : generatedPackages) {
-	            for (Entry<String, String> entry : res.getPreviews().entrySet()) {
-	            	previews.put(entry.getKey(), entry.getValue());
-	            }
-            }
-        } else if(generatedPackages.size() > 0) {
-            outputFile = generatedPackages.get(0).getFileContent();
-            name = generatedPackages.get(0).getFileName() + ".h5p";
-            previews = generatedPackages.get(0).getPreviews();
-            if(generatedPackages.get(0).getXmlFile() != null && generatedPackages.get(0).getXmlFile().size() > 1) {
-            	xmlFile = ZipManager.zipXml(generatedPackages);
-                xmlName = "exercises.zip";
-            } else if(generatedPackages.get(0).getXmlFile() != null && generatedPackages.get(0).getXmlFile().size() > 0) {
-            	for(byte[] f : generatedPackages.get(0).getXmlFile().values()) {
-            		xmlFile = f;
-            		xmlName = generatedPackages.get(0).getFileName() + ".xml";
-            	}
-            }
-        }
-        
-        if(outputFile == null) {
-        	outputFile = new byte[] {};
-        }
+		if(outputFiles.size() > 1) {
+        	outputFile = ZipManager.zipFiles(outputFiles);
+            name = "exercises.zip";
+        } else if(outputFiles.size() > 0) {
+        	name = getRandomHashMapEntry(outputFiles);
+        	outputFile = outputFiles.get(name);
+        } 
+
 		SmExGenEvent msg = new SmExGenEvent();
 		msg.setEvent(SmExGenEvent.EventType.JOB_COMPLETE);
 		msg.setFile(outputFile);
 		msg.setFileName(name);
 		msg.setPreviews(previews);
-		msg.setXmls(xmlFile);
-		msg.setXmlName(xmlName);
 		messageChannel.send(msg);
 
 		generatedPackages.clear();
 		// reset operation state
 		endActiveOperation(false);
+	}
+	
+	private <T, S> T getRandomHashMapEntry(HashMap<T, S> map) {
+		for(Entry<T, S> entry : map.entrySet()) {
+			return entry.getKey();
+		}
+		return null;
 	}
 
 	synchronized void handleCorpusUpload(List<CustomCorpusFile> corpus) {

@@ -13,6 +13,5 @@ public enum BracketsProperties {
     VERB_SPLITTING,
     IF_CLAUSE,
     MAIN_CLAUSE,
-    EITHER_CLAUSE,
-    N_TARGETS
+    EITHER_CLAUSE
 }

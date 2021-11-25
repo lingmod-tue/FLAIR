@@ -62,9 +62,6 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     @LocalizedField(type = LocalizedFieldType.TOOLTIP_MATERIAL)
     MaterialIcon icoDownload;
     @UiField
-    @LocalizedField(type = LocalizedFieldType.TOOLTIP_MATERIAL)
-    MaterialIcon icoXmlDownload;
-    @UiField
     gwt.material.design.client.ui.MaterialDialog mdlCopyrightNoticeUI;
     @UiField
     MaterialCheckBox chkDontShowCopyrightNoticeUI;
@@ -73,14 +70,16 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     @UiField
     MaterialCheckBox chkGenerateFeedback;
     @UiField
+    MaterialCheckBox chkH5p;
+    @UiField
+    MaterialCheckBox chkFeedbookXml;
+    @UiField
     MaterialButton btnCloseCopyrightNoticeUI;
     @UiField
     MaterialTitle titleCopyrightNoticeUI;
     
     private byte[] generatedExercises = null;
-    private byte[] generatedXmlExercises = null;
     private String fileName = null;
-    private String xmlFileName = null;
         
     public ExerciseGenerationWidget() {
         initWidget(ourUiBinder.createAndBindUi(this));
@@ -103,7 +102,9 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     	btnAddTask.addClickHandler(event -> addTask());
     	btnGenerateExercises.addClickHandler(event -> generateExercises());
     	icoDownload.addClickHandler(event -> provideFileForDownload(generatedExercises, fileName));
-    	icoXmlDownload.addClickHandler(event -> provideFileForDownload(generatedXmlExercises, xmlFileName));
+    	
+    	chkH5p.addClickHandler(e -> setGenerateExercisesEnabled());
+    	chkFeedbookXml.addClickHandler(e -> setGenerateExercisesEnabled());
     }
     
     /**
@@ -250,7 +251,7 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
      * Disables it otherwise.
      */
     public void setGenerateExercisesEnabled() {
-    	btnGenerateExercises.setEnabled(hasValidTasks());
+    	btnGenerateExercises.setEnabled(hasValidTasks() && (chkH5p.getValue() || chkFeedbookXml.getValue()));
     }
     
     @Override
@@ -272,7 +273,6 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
 	    	btnGenerateExercises.setBackgroundColor(Color.RED);    	
 	    	spnGenerating.setVisible(true);
 	    	icoDownload.setVisible(false);
-	    	icoXmlDownload.setVisible(false);
 	    	for(Widget existingTask : wdgtTasks.getChildrenList()) {
 	    		((TaskItem)existingTask).btnPreviewExercise.setVisible(false);
 	    	}
@@ -324,29 +324,17 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     InterruptHandler interruptHandler;
     
 	@Override
-	public void provideForDownload(byte[] file, String fileName, HashMap<String, String> previews, byte[] xmls, String xmlName) {	
+	public void provideForDownload(byte[] file, String fileName, HashMap<String, String> previews) {	
 		enableButton();
 		generatedExercises = file;
-		generatedXmlExercises = xmls;
 		this.fileName = fileName;
-		xmlFileName = xmlName;
-		boolean previewsSet = false;
     	
 		if(file != null && file.length > 0) {
 			icoDownload.setVisible(true);
 			setPreview(previews);	
-			previewsSet = true;
     	} else {
             ToastNotification.fire("We're sorry, no exercises could be generated. Please try with another document.");
     	}
-		
-		if(xmls != null && xmls.length > 0) {
-			icoXmlDownload.setVisible(true);
-			if(!previewsSet) {
-				setPreview(previews);
-				previewsSet = true;
-			}
-		}
 	}
 	
 	private void setPreview(HashMap<String, String> previews) {

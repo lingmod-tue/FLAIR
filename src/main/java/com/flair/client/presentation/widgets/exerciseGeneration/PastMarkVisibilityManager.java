@@ -25,8 +25,9 @@ public class PastMarkVisibilityManager extends VisibilityManager {
 		visibleSettings.add(taskItem.grpVerbForms);
 		addConstructionIfOccurs("irreg", "Past", 4, visibleSettings, taskItem.chkIrregularVerbs, numberExercises);   
 		addConstructionIfOccurs("reg", "Past", 4, visibleSettings, taskItem.chkRegularVerbs, numberExercises);  
-		visibleSettings.add(taskItem.grpNumberTargets);
-		
+		visibleSettings.add(taskItem.grpInstructions);
+		visibleSettings.add(taskItem.chkNTargets);
+
 		return visibleSettings;
 	}
 }

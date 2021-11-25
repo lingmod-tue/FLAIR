@@ -99,9 +99,18 @@ public abstract class SimpleExerciseJsonManager extends JsonManager {
     	return htmlPreview.toString();
     }
     
-    
+    /**
+     * Provides a HTML element definition for a target construction.
+     * @param constructionText	The target answer
+     * @return	A HTML element definition for the given construction text
+     */
     abstract String getTargetDummy(String constructionText);
 
+    /**
+     * Replaces target construction placeholders with HTML elements in the preview HTML string.
+     * @param htmlPreview	The preview HTML string with placeholders for target constructions
+     * @return	The preview HTML string with HTML elements for target constructions
+     */
     protected String insertTargetDummies(String htmlPreview) {
     	StringBuilder modifiedPreview = new StringBuilder();
 		int indexAfterLastAsterisk = 0;

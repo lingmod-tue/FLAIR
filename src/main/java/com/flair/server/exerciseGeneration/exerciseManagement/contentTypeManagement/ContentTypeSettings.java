@@ -38,6 +38,7 @@ public abstract class ContentTypeSettings {
 
 	public String getResourceFolder() { return resourceFolder; }
     public JsonManager getJsonManager() { return jsonManager; }
+	public XmlManager getXmlManager() { return xmlManager; }
     public boolean isEscapeAsterisksInHtml() {return escapeAsterisksInHtml; }
     public ExerciseGenerator getExerciseGenerator() { return exerciseGenerator; }
     public String getContentTypeLibrary() { return contentTypeLibrary; }
@@ -51,6 +52,5 @@ public abstract class ContentTypeSettings {
     public void setDoc(Element doc) { this.doc = doc; }
 	public void setResources(ArrayList<DownloadedResource> resources) { this.resources = resources; }
 	public void setIndex(int index) { this.index = index; }
-	public XmlManager getXmlManager() { return xmlManager; }
 
 }

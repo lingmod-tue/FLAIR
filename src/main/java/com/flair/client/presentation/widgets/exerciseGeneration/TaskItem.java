@@ -14,6 +14,8 @@ import com.flair.shared.exerciseGeneration.Construction;
 import com.flair.shared.exerciseGeneration.DistractorProperties;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
 import com.flair.shared.exerciseGeneration.ExerciseType;
+import com.flair.shared.exerciseGeneration.InstructionsProperties;
+import com.flair.shared.exerciseGeneration.OutputFormat;
 import com.flair.shared.exerciseGeneration.Pair;
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.interop.dtos.RankableDocument;
@@ -237,6 +239,12 @@ public class TaskItem extends LocalizedComposite {
     @UiField
     MaterialCheckBox chkFormSynthetic;
     @UiField
+    MaterialCheckBox chkProgressive;
+    @UiField
+    MaterialCheckBox chkTenses;
+    @UiField
+    MaterialCheckBox chkLemmas;
+    @UiField
     MaterialCheckBox chkNTargets;
     @UiField
     MaterialCheckBox chkOnlyText;
@@ -275,7 +283,7 @@ public class TaskItem extends LocalizedComposite {
     @UiField
     MaterialRow rowRbtSingleTask;
     @UiField
-    MaterialRow grpNumberTargets;
+    MaterialRow grpInstructions;
     @UiField
     HTMLPanel htmlContent;
     
@@ -309,7 +317,14 @@ public class TaskItem extends LocalizedComposite {
         bracketsOptions.add(new Pair<MaterialCheckBox, BracketsProperties>(chkBracketsProgressive, BracketsProperties.PROGRESSIVE));
         bracketsOptions.add(new Pair<MaterialCheckBox, BracketsProperties>(chkBracketsActiveSentence, BracketsProperties.ACTIVE_SENTENCE));
 
+        instructionsOptions.add(new Pair<MaterialCheckBox, InstructionsProperties>(chkLemmas, InstructionsProperties.LEMMA));
+        instructionsOptions.add(new Pair<MaterialCheckBox, InstructionsProperties>(chkTenses, InstructionsProperties.TENSE));
+        instructionsOptions.add(new Pair<MaterialCheckBox, InstructionsProperties>(chkProgressive, InstructionsProperties.PROGRESSIVE));
+        instructionsOptions.add(new Pair<MaterialCheckBox, InstructionsProperties>(chkNTargets, InstructionsProperties.N_TARGETS));
         
+        formatOptions.add(new Pair<MaterialCheckBox, OutputFormat>(parent.chkH5p, OutputFormat.H5P));
+        formatOptions.add(new Pair<MaterialCheckBox, OutputFormat>(parent.chkFeedbookXml, OutputFormat.FEEDBOOK_XML));
+
         settingsWidgets = new Widget[] {
         		grpBrackets, chkBracketsLemma, chkBracketsConditional, chkBracketsPos, chkBracketsForm, chkBracketsWill, 
         		chkBracketsSentenceType, chkBracketsTense, chkBracketsProgressive, chkBracketsActiveSentence, 
@@ -322,7 +337,8 @@ public class TaskItem extends LocalizedComposite {
         		grpClauses, grpScope, grpPronouns, grpVerbSplitting, grpTargetWords, grpSentTypes, chkPastSimple, chkPresentPerfect, 
         		chkPastPerfect, chkScopeActive, chkWho, chkWhich, chkThat, chkOtherRelPron, chk3Pers, chkNot3Pers, chkAffirmativeSent, 
         		chkNegatedSent, chkQuestions, chkStatements, chkRegularVerbs, chkIrregularVerbs, chkscopeType1, chkscopeType2, 
-        		chkPosAdj, chkPosAdv, chkFormComparatives, chkFormSuperlatives, chkFormSynthetic, chkFormAnalytic, grpNumberTargets
+        		chkPosAdj, chkPosAdv, chkFormComparatives, chkFormSuperlatives, chkFormSynthetic, chkFormAnalytic, grpInstructions,
+        		chkLemmas, chkTenses, chkProgressive, chkNTargets
         };
         
         controlsToReset = new Widget[] {chkPosAdj, chkPosAdv, chkFormComparatives, chkFormSuperlatives, chkFormSynthetic, chkFormAnalytic, chkscopeType1,
@@ -362,6 +378,16 @@ public class TaskItem extends LocalizedComposite {
      * Checkboxes representing possible brackets options
      */
     private final ArrayList<Pair<MaterialCheckBox, BracketsProperties>> bracketsOptions = new ArrayList<>();
+    
+    /**
+     * Checkboxes representing possible instructions options
+     */
+    private final ArrayList<Pair<MaterialCheckBox, InstructionsProperties>> instructionsOptions = new ArrayList<>();
+    
+    /**
+     * Checkboxes representing possible outputFormats
+     */
+    private final ArrayList<Pair<MaterialCheckBox, OutputFormat>> formatOptions = new ArrayList<>();
     
     /**
      * Checkboxes and radiobuttons which need to be set to <code>true</code> when resetting the panel
@@ -1257,7 +1283,9 @@ public class TaskItem extends LocalizedComposite {
     	ArrayList<String> configuredConstructions = determineConfiguredConstructions(true);
     	ArrayList<DistractorProperties> distractorProperties = getSelectedDistractors();
 		ArrayList<BracketsProperties> brackets = getSelectedBracketContents();
-		
+		ArrayList<InstructionsProperties> instructions = getSelectedInstructionsContents();
+		ArrayList<OutputFormat> outputFormats = getSelectedOutputFormats();
+
     	for(String constructionToConsider : configuredConstructions) {
     		for(Pair<Integer, Integer> constructionIndices : constructionOccurrences.get(constructionToConsider)) {
     			Construction construction = new Construction(ConstructionNameEnumMapper.getEnum(constructionToConsider), 
@@ -1283,10 +1311,6 @@ public class TaskItem extends LocalizedComposite {
     				type = "SingleDrag";
     			}
     		}
-    	} else if(type.equals("Mark")) {
-    		if(grpNumberTargets.isVisible() && chkNTargets.getValue()) {
-    			brackets.add(BracketsProperties.N_TARGETS);
-    		}
     	}
     	
     	if(topic.equals("'if'")) {
@@ -1305,8 +1329,9 @@ public class TaskItem extends LocalizedComposite {
     	}
     	
     	return new ExerciseSettings(constructions, doc.getUrl(), doc.getText(), removedParts, 
-    			ExerciseType.getEnum(type), getQuiz(), distractorProperties, brackets, spnNDistractors.getValue() - 1, lblName.getValue(), 
-    			parent.chkDownloadResources.getValue(), chkOnlyText.getValue(), parent.chkGenerateFeedback.getValue(), doc.getLinkingId(), doc.getTitle(), "");
+    			ExerciseType.getEnum(type), getQuiz(), distractorProperties, brackets, instructions, spnNDistractors.getValue() - 1, lblName.getValue(), 
+    			parent.chkDownloadResources.getValue(), chkOnlyText.getValue(), parent.chkGenerateFeedback.getValue(), doc.getLinkingId(), doc.getTitle(), "",
+    			outputFormats);
     }
     
     /**
@@ -1337,6 +1362,36 @@ public class TaskItem extends LocalizedComposite {
     	}
     	
     	return brackets;
+    }
+    
+    /**
+     * Determines the selected instructions content properties.
+     * @return	The selected instructions properties
+     */
+    private ArrayList<InstructionsProperties> getSelectedInstructionsContents() {
+    	ArrayList<InstructionsProperties> instructions = new ArrayList<>();
+    	for(Pair<MaterialCheckBox, InstructionsProperties> option : instructionsOptions) {
+    		if(option.first.isVisible() && option.first.getValue()) {
+    			instructions.add(option.second);
+    		}
+    	}
+    	
+    	return instructions;
+    }
+    
+    /**
+     * Determines the selected output formats.
+     * @return	The selected output formats
+     */
+    private ArrayList<OutputFormat> getSelectedOutputFormats() {
+    	ArrayList<OutputFormat> formats = new ArrayList<>();
+    	for(Pair<MaterialCheckBox, OutputFormat> option : formatOptions) {
+    		if(option.first.getValue()) {
+    			formats.add(option.second);
+    		}
+    	}
+    	
+    	return formats;
     }
     
     /**

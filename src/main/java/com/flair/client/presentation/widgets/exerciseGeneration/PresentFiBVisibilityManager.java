@@ -24,7 +24,8 @@ public class PresentFiBVisibilityManager extends VisibilityManager {
 		addConstructionIfOccurs("neg", "Present", 3, visibleSettings, taskItem.chkNegatedSent, numberExercises);   			
 		addConstructionIfOccurs("question", "Present", 2, visibleSettings, taskItem.chkQuestions, numberExercises);   			
 		addConstructionIfOccurs("stmt", "Present", 2, visibleSettings, taskItem.chkStatements, numberExercises); 
-		
+		visibleSettings.add(taskItem.grpInstructions);
+		visibleSettings.add(taskItem.chkLemmas);
 		return visibleSettings;
 	}
 }

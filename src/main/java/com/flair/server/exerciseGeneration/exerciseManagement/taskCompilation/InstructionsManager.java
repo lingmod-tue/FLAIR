@@ -10,6 +10,7 @@ import com.flair.shared.exerciseGeneration.Construction;
 import com.flair.shared.exerciseGeneration.DetailedConstruction;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
 import com.flair.shared.exerciseGeneration.ExerciseType;
+import com.flair.shared.exerciseGeneration.InstructionsProperties;
 
 import edu.stanford.nlp.util.Pair;
 
@@ -29,6 +30,7 @@ public class InstructionsManager {
 
         String instructions = "";
         boolean addLemmas = false;
+        boolean hasLemmasInBrackets = false;
         boolean isVerbLemma = true;
         if(constructions.stream().anyMatch((construction) -> construction.toString().startsWith("COND"))) {
             // Conditionals
@@ -40,9 +42,10 @@ public class InstructionsManager {
                     hasRealConditionals ? "real conditional" : "unreal conditional";
 
             if(settings.getContentType().equals(ExerciseType.FIB)) {
-            	addLemmas = !settings.getBrackets().contains(BracketsProperties.LEMMA);
+            	addLemmas = settings.getInstructions().contains(InstructionsProperties.LEMMA);
+            	hasLemmasInBrackets = settings.getBrackets().contains(BracketsProperties.LEMMA);
                 String target = !addLemmas ?
-                        "the verbs in brackets" :
+                        (hasLemmasInBrackets ? "the verbs in brackets" : "the verbs") :
                         "one of the following verbs. Each word may be used only once";
 
                 instructions = "Insert the correct forms of " + target + " to form " + conditionalType + "sentences.";
@@ -69,10 +72,11 @@ public class InstructionsManager {
                         "adjectives and adverbs" :
                         hasAdjectives ? "adjectives" : "adverbs";
 
-                addLemmas = !settings.getBrackets().contains(BracketsProperties.LEMMA);
+                addLemmas = settings.getInstructions().contains(InstructionsProperties.LEMMA);
+            	hasLemmasInBrackets = settings.getBrackets().contains(BracketsProperties.LEMMA);
             	isVerbLemma = false;
                 String target = !addLemmas ?
-                        "the " + pos + " in brackets" :
+                		(hasLemmasInBrackets ? ("the " + pos + " in brackets") : ("the " + pos)) :
                         "one of the following " + pos + ". Each word may only be used once";
 
                 instructions = "Insert the correct " + formType + " forms of " + target + ".";
@@ -80,7 +84,7 @@ public class InstructionsManager {
                 instructions = "Select the correct " + formType + " forms from the dropdowns.";
             } else if(settings.getContentType().equals(ExerciseType.MARK)) {
                 instructions = "Click all " + formType + " forms in the text.";
-                if(settings.getBrackets().contains(BracketsProperties.N_TARGETS)) {
+                if(settings.getInstructions().contains(InstructionsProperties.N_TARGETS)) {
                 	instructions += " The text contains " + usedConstructions.size() + " " + formType + " forms.";
                 }
             } else if(settings.getContentType().equals(ExerciseType.DRAG_MULTI) || settings.getContentType().equals(ExerciseType.DRAG_SINGLE)) {
@@ -98,7 +102,7 @@ public class InstructionsManager {
 
                     instructions = "Insert the correct " + voice + " forms of the verbs in brackets.";
 
-                    if (!settings.getBrackets().contains(BracketsProperties.TENSE)) {
+                    if (settings.getInstructions().contains(InstructionsProperties.TENSE)) {
                         ArrayList<String> containedTenses = new ArrayList<>();
                         ArrayList<Pair<String, String>> pastTenses = new ArrayList<>();
                         pastTenses.add(new Pair<>("simple past", "PASTSMP"));
@@ -139,9 +143,10 @@ public class InstructionsManager {
             String tense = "simple present";
 
             if(settings.getContentType().equals(ExerciseType.FIB)) {
-            	addLemmas = !settings.getBrackets().contains(BracketsProperties.LEMMA);
+            	addLemmas = settings.getInstructions().contains(InstructionsProperties.LEMMA);
+            	hasLemmasInBrackets = settings.getBrackets().contains(BracketsProperties.LEMMA);
                 String target = !addLemmas ?
-                        "the verbs in brackets" :
+                		(hasLemmasInBrackets ? "the verbs in brackets" : "the verbs") :
                         "one of the following verbs. Each word may only be used once";
 
                 instructions = "Insert the correct " + tense + " forms of " + target + ".";
@@ -149,7 +154,7 @@ public class InstructionsManager {
                 instructions = "Select the correct " + tense + " forms from the dropdowns.";
             } else if(settings.getContentType().equals(ExerciseType.MARK)) {
                 instructions = "Click all " + tense + " forms in the text.";
-                if(settings.getBrackets().contains(BracketsProperties.N_TARGETS)) {
+                if(settings.getInstructions().contains(InstructionsProperties.N_TARGETS)) {
                 	instructions += " The text contains " + usedConstructions.size() + " " + tense + " forms.";
                 }
             }
@@ -174,13 +179,14 @@ public class InstructionsManager {
                             containedTenses.get(0);
 
             if(settings.getContentType().equals(ExerciseType.FIB)) {
-            	addLemmas = !settings.getBrackets().contains(BracketsProperties.LEMMA);
+            	addLemmas = settings.getInstructions().contains(InstructionsProperties.LEMMA);
+            	hasLemmasInBrackets = settings.getBrackets().contains(BracketsProperties.LEMMA);
                 String target = !addLemmas ?
-                        "the verbs in brackets" :
+                        (hasLemmasInBrackets ? "the verbs in brackets" : "the verbs") :
                         "one of the following verbs. Each word may only be used once";                           
 
                 String progressiveString = "";
-                if (!settings.getBrackets().contains(BracketsProperties.PROGRESSIVE)) {
+                if (settings.getInstructions().contains(InstructionsProperties.PROGRESSIVE)) {
                 	boolean hasProgressive = constructions.stream().anyMatch((construction) -> construction.toString().contains("PRG_"));
                 	boolean hasSimple = constructions.stream().anyMatch((construction) -> !construction.toString().contains("PRG_"));
 
@@ -190,14 +196,14 @@ public class InstructionsManager {
                 
                 instructions = "Insert the correct " + progressiveString + "forms of " + target + ".";
                 
-                if (!settings.getBrackets().contains(BracketsProperties.TENSE)) {
+                if (settings.getInstructions().contains(InstructionsProperties.TENSE)) {
                     instructions += " Use the correct tense (" + tense + ").";
                 }               
             } else if(settings.getContentType().equals(ExerciseType.SINGLE_CHOICE)) {
                 instructions = "Select the correct " + tense + " forms from the dropdowns.";
             } else if(settings.getContentType().equals(ExerciseType.MARK)) {
                 instructions = "Click all " + tense.replace(" or ", " and ") + " forms in the text.";
-                if(settings.getBrackets().contains(BracketsProperties.N_TARGETS)) {
+                if(settings.getInstructions().contains(InstructionsProperties.N_TARGETS)) {
                 	instructions += " The text contains " + usedConstructions.size() + " " + " forms to find.";
                 }
             } else if(settings.getContentType().equals(ExerciseType.DRAG_MULTI) || settings.getContentType().equals(ExerciseType.DRAG_SINGLE)) {
@@ -234,7 +240,7 @@ public class InstructionsManager {
                 instructions = "Select the correct relative pronouns from the dropdowns.";
             } else if(settings.getContentType().equals(ExerciseType.MARK)) {
                 instructions = "Click all relative pronouns in the text.";
-                if(settings.getBrackets().contains(BracketsProperties.N_TARGETS)) {
+                if(settings.getInstructions().contains(InstructionsProperties.N_TARGETS)) {
                 	instructions += " The text contains " + usedConstructions.size() + " relative pronouns.";
                 }
             } else if(settings.getContentType().equals(ExerciseType.DRAG_MULTI)) {

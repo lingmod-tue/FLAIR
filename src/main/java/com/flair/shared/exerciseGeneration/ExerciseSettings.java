@@ -16,6 +16,7 @@ public class ExerciseSettings implements IsSerializable{
     private String quiz;
     private ArrayList<DistractorProperties> distractors;
     private ArrayList<BracketsProperties> brackets;
+    private ArrayList<InstructionsProperties> instructions;
     private int nDistractors;
     private String taskName;
     private boolean downloadResources;
@@ -24,14 +25,16 @@ public class ExerciseSettings implements IsSerializable{
     private int id;
     private String fileName;
     private String fileContent;
+    private ArrayList<OutputFormat> outputFormats;
 
 	public ExerciseSettings() {}
     
     public ExerciseSettings(ArrayList<Construction> constructions, String url,
                             String plainText, ArrayList<Pair<Integer, Integer>> removedParts,
                             ExerciseType contentType, String quiz, ArrayList<DistractorProperties> distractors, 
-                            ArrayList<BracketsProperties> brackets, int nDistractors, String taskName, boolean downloadResources, 
-                            boolean onlyText, boolean generateFeedback, int id, String fileName, String fileContent) {
+                            ArrayList<BracketsProperties> brackets, ArrayList<InstructionsProperties> instructions, int nDistractors, String taskName, boolean downloadResources, 
+                            boolean onlyText, boolean generateFeedback, int id, String fileName, String fileContent,
+                            ArrayList<OutputFormat> outputFormats) {
         this.constructions = constructions;
         this.url = url;
         this.plainText = plainText;
@@ -48,6 +51,8 @@ public class ExerciseSettings implements IsSerializable{
         this.id = id;
         this.fileName = fileName;
         this.fileContent = fileContent;
+        this.instructions = instructions;
+        this.outputFormats = outputFormats;
     }
 
     public ArrayList<Construction> getConstructions() { return constructions; }
@@ -58,6 +63,7 @@ public class ExerciseSettings implements IsSerializable{
     public String getQuiz() { return quiz; }
     public ArrayList<DistractorProperties> getDistractors() { return distractors; }
     public ArrayList<BracketsProperties> getBrackets() { return brackets; }
+    public ArrayList<InstructionsProperties> getInstructions() { return instructions; }
     public int getnDistractors() { return nDistractors; }
 	public String getTaskName() { return taskName; }
 	public boolean isDownloadResources() { return downloadResources; }
@@ -66,7 +72,8 @@ public class ExerciseSettings implements IsSerializable{
     public int getId() { return id; }
 	public String getFileName() { return fileName; }
 	public String getFileContent() { return fileContent; }
-	
+	public ArrayList<OutputFormat> getOutputFormats() { return outputFormats; }
+
 	public void setFileContent(String fileContent) { this.fileContent = fileContent; }
 
 }
