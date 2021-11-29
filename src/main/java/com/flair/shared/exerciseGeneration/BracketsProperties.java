@@ -2,6 +2,7 @@ package com.flair.shared.exerciseGeneration;
 
 public enum BracketsProperties {
     LEMMA,
+    DISTRACTOR_LEMMA,
     POS,
     COMPARISON_FORM,
     CONDITIONAL_TYPE,

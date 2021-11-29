@@ -2,6 +2,8 @@ package com.flair.server.exerciseGeneration.exerciseManagement.taskCompilation;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Random;
 
 import com.flair.server.exerciseGeneration.exerciseManagement.domManipulation.Blank;
 import com.flair.server.exerciseGeneration.exerciseManagement.domManipulation.Fragment;
@@ -22,6 +24,7 @@ public class ClozeManager {
     public void prepareBlanks(ExerciseSettings exerciseSettings, NlpManager nlpManager, ArrayList<Fragment> fragments) {
         if(exerciseSettings.getContentType().equals(ExerciseType.FIB)){
 	        ArrayList<Integer> constructionsToRemove = new ArrayList<>();
+	        ArrayList<String> lemmas = new ArrayList<>();
 	
 	        for(Fragment fragment : fragments) {
 	        	for(Blank blank : fragment.getBlanksBoundaries()) {
@@ -31,9 +34,15 @@ public class ClozeManager {
 	
 			            if(construction.getConstruction().toString().startsWith("COND")) {     
 		                	LemmatizedVerbCluster lemmatizedVerb = nlpManager.getLemmatizedVerbConstruction(construction.getConstructionIndices(), false, false);
-		                    if(exerciseSettings.getBrackets().contains(BracketsProperties.LEMMA)) {
+		                	if(exerciseSettings.getBrackets().contains(BracketsProperties.LEMMA)) {
 		                        if(lemmatizedVerb != null) {
-		                            brackets.add(lemmatizedVerb.getLemmatizedCluster());
+		                        	String lemma = lemmatizedVerb.getLemmatizedCluster();
+		                        	if(exerciseSettings.getBrackets().contains(BracketsProperties.DISTRACTOR_LEMMA)) {
+		                        		lemmas.add(lemma);
+		                        		brackets.add(generateDistractorLemma(lemma));
+		                        	} else {
+			                            brackets.add(lemma);
+		                        	}
 		                        } else {
 		                        	constructionsToRemove.add(blank.getConstructionIndex());
 		                        	break;
@@ -55,7 +64,12 @@ public class ClozeManager {
 		                    if(exerciseSettings.getBrackets().contains(BracketsProperties.LEMMA)) {
 		                        String lemma = nlpManager.getLemmaOfComparison(construction.getConstructionIndices());
 		                        if(lemma != null) {
-		                            brackets.add(lemma);
+		                            if(exerciseSettings.getBrackets().contains(BracketsProperties.DISTRACTOR_LEMMA)) {
+		                        		lemmas.add(lemma);
+		                        		brackets.add(generateDistractorLemma(lemma));
+		                        	} else {
+			                            brackets.add(lemma);
+		                        	}
 		                        } else {
 		                            constructionsToRemove.add(blank.getConstructionIndex());
 		                            break;
@@ -150,7 +164,12 @@ public class ClozeManager {
 			                    		}
 			                    	}
 			                    	if(!lemmaCluster.trim().equals("")) {
-			                    		brackets.add(lemmaCluster);
+			                    		if(exerciseSettings.getBrackets().contains(BracketsProperties.DISTRACTOR_LEMMA)) {
+			                    			lemmas.add(lemmaCluster);
+			                        		brackets.add(generateDistractorLemma(lemmaCluster));
+			                        	} else {
+				                            brackets.add(lemmaCluster);
+			                        	}
 			                    	}
 			                    } else {
 			                        constructionsToRemove.add(blank.getConstructionIndex());
@@ -204,7 +223,40 @@ public class ClozeManager {
             		}
             	}
             }  	
+	        
+	        if(exerciseSettings.getBrackets().contains(BracketsProperties.DISTRACTOR_LEMMA)) {
+	        	for(Fragment fragment : fragments) {
+		        	for(Blank blank : fragment.getBlanksBoundaries()) {
+	                	Construction construction = blank.getConstruction();
+
+		        		if(construction != null && construction.getBracketsText() != null) {
+		                	String distractorLemma = "";
+			        		if(lemmas.size() > 1) {
+			        			while(distractorLemma.equals("") || 
+			        					construction.getBracketsText().contains(distractorLemma + "|<distractor_placeholder>") || 
+			        					construction.getBracketsText().contains("<distractor_placeholder>|" + distractorLemma)) {
+				        			Collections.shuffle(lemmas);
+				        			distractorLemma = lemmas.get(0);
+			        			}
+			        			
+			                	construction.setBracketsText(construction.getBracketsText().replace("<distractor_placeholder>", distractorLemma));
+			        		} else {
+			                	construction.setBracketsText(construction.getBracketsText().replace("|<distractor_placeholder>", "").replace("<distractor_placeholder>|", ""));
+			        		}
+		        		}
+		        	}
+	        	}
+        	}
         }
+    }
+    
+    private String generateDistractorLemma(String lemma) {
+    	int order = new Random().nextInt(2);
+		if(order == 0) {
+			return "<distractor_placeholder>|" + lemma;
+		} else {
+			return lemma + "|<distractor_placeholder>";
+		}
     }
 
 }

@@ -435,6 +435,10 @@
 							value="true" text="Lemma" />
 					</m:MaterialRow>
 					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialCheckBox ui:field="chkBracketsDistractorLemma"
+							value="true" text="Distractor lemma" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
 						<m:MaterialCheckBox ui:field="chkBracketsPos"
 							value="true" text="POS" />
 					</m:MaterialRow>

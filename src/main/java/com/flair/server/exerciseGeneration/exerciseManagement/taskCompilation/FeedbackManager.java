@@ -176,7 +176,7 @@ public class FeedbackManager {
     	
     	// If we don't get distractors from the feedback generation, we use the ones we generated ourselves
 		if(distractors == null || distractors.size() == 0) {
-			for(Construction construction : settings.getConstructions()) {
+			for(Construction construction : usedConstructions) {
 				ArrayList<Pair<Pair<String, Boolean>, String>> currentDistractors = new ArrayList<>();
 				for(Pair<String, Boolean> distractor : construction.getDistractors()) {
 					currentDistractors.add(new Pair<>(distractor, null));

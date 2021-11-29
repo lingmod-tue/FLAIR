@@ -44,6 +44,7 @@ import gwt.material.design.client.ui.MaterialLabel;
 import gwt.material.design.client.ui.MaterialLink;
 import gwt.material.design.client.ui.MaterialRadioButton;
 import gwt.material.design.client.ui.MaterialRow;
+import gwt.material.design.client.ui.MaterialToast;
 import gwt.material.design.client.ui.html.Option;
 
 public class TaskItem extends LocalizedComposite {
@@ -134,6 +135,8 @@ public class TaskItem extends LocalizedComposite {
     MaterialRow grpDistractors;
     @UiField
     MaterialCheckBox chkBracketsLemma;
+    @UiField
+    MaterialCheckBox chkBracketsDistractorLemma;
     @UiField
     MaterialCheckBox chkBracketsPos;
     @UiField
@@ -308,6 +311,7 @@ public class TaskItem extends LocalizedComposite {
         distractorOptions.add(new Pair<MaterialCheckBox, DistractorProperties>(chkDistractorsWrongSuffix, DistractorProperties.INCORRECT_FORMS));
                 
         bracketsOptions.add(new Pair<MaterialCheckBox, BracketsProperties>(chkBracketsLemma, BracketsProperties.LEMMA));
+        bracketsOptions.add(new Pair<MaterialCheckBox, BracketsProperties>(chkBracketsDistractorLemma, BracketsProperties.DISTRACTOR_LEMMA));
         bracketsOptions.add(new Pair<MaterialCheckBox, BracketsProperties>(chkBracketsPos, BracketsProperties.POS));
         bracketsOptions.add(new Pair<MaterialCheckBox, BracketsProperties>(chkBracketsForm, BracketsProperties.COMPARISON_FORM));
         bracketsOptions.add(new Pair<MaterialCheckBox, BracketsProperties>(chkBracketsConditional, BracketsProperties.CONDITIONAL_TYPE));
@@ -326,7 +330,7 @@ public class TaskItem extends LocalizedComposite {
         formatOptions.add(new Pair<MaterialCheckBox, OutputFormat>(parent.chkFeedbookXml, OutputFormat.FEEDBOOK_XML));
 
         settingsWidgets = new Widget[] {
-        		grpBrackets, chkBracketsLemma, chkBracketsConditional, chkBracketsPos, chkBracketsForm, chkBracketsWill, 
+        		grpBrackets, chkBracketsLemma, chkBracketsDistractorLemma, chkBracketsConditional, chkBracketsPos, chkBracketsForm, chkBracketsWill, 
         		chkBracketsSentenceType, chkBracketsTense, chkBracketsProgressive, chkBracketsActiveSentence, 
         		grpDistractors, chkDistractorsOtherForm, chkDistractorsOtherVariant, chkDistractorsOtherPast, chkDistractorsOtherTense, 
         		chkDistractorsProgressive,
@@ -346,7 +350,7 @@ public class TaskItem extends LocalizedComposite {
     			chkPastSimple, chkFutureSimple, chkPresentProgressive, chkPastProgressive, chkFutureProgressive, chkPresentPerfect, chkPastPerfect, 
     			chkFuturePerfect, chkPresentPerfectProg, chkPastPerfectProg, chkFuturePerfectProg, chkAffirmativeSent, chkNegatedSent, chkQuestions, 
     			chkStatements, chkRegularVerbs, chkIrregularVerbs, chk3Pers, chkNot3Pers, chkWho, chkWhich, chkThat, chkOtherRelPron, rbtPerSentence,
-    			chkBracketsLemma, chkBracketsPos, chkBracketsForm, chkBracketsConditional, chkBracketsWill, chkBracketsSentenceType, chkBracketsTense,
+    			chkBracketsLemma, chkBracketsDistractorLemma, chkBracketsPos, chkBracketsForm, chkBracketsConditional, chkBracketsWill, chkBracketsSentenceType, chkBracketsTense,
     			chkBracketsActiveSentence, chkBracketsProgressive,
     			chkDistractorsOtherForm, chkDistractorsOtherVariant, chkDistractorsOtherPast, chkDistractorsOtherTense, chkDistractorsProgressive,
         		chkDistractorsIncorrectForms, chkDistractorsWrongConditional, chkDistractorsWrongClause, chkDistractorsWrongSuffixUse, chkDistractorsWrongSuffix};
@@ -604,13 +608,23 @@ public class TaskItem extends LocalizedComposite {
     	chkOtherRelPron.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));  	
     	rbtSingleTask.addValueChangeHandler(e -> setExerciseSettingsVisibilities());
     	rbtPerSentence.addValueChangeHandler(e -> setExerciseSettingsVisibilities());
+    	chkBracketsLemma.addClickHandler(e -> onLemmaClickedEventHandler());
     	
     	for(Pair<MaterialCheckBox, DistractorProperties> option : distractorOptions) {
     		option.first.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
     	}
     }
     
-    private void removeSelectionEventHanlder() {
+    private void onLemmaClickedEventHandler() {
+    	if(!chkBracketsLemma.getValue()) {
+    		chkBracketsDistractorLemma.setValue(false);
+    		chkBracketsDistractorLemma.setEnabled(false);
+    	} else {
+    		chkBracketsDistractorLemma.setEnabled(true);
+    	}
+	}
+
+	private void removeSelectionEventHanlder() {
     	int selectedPartStartIndex = lblDocumentForSelection.getCursorPos();
     	int selectedPartEndIndex = selectedPartStartIndex + lblDocumentForSelection.getSelectionLength();
     	

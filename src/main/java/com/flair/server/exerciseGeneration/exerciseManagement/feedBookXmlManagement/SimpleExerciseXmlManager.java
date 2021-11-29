@@ -122,7 +122,7 @@ public abstract class SimpleExerciseXmlManager implements XmlManager {
 	    ArrayList<HtmlTag> tagsToRemove = identifyStrandedTags(xmlParts);
 	    Collections.sort(tagsToRemove,
                 (t1, t2) -> t1.getStartIndex() > t2.getStartIndex() ? -1 : 1);
-		ArrayList<Pair<Integer, Integer>> tempIndices = constructionIndices;
+		ArrayList<Pair<Integer, Integer>> tempIndices = constructionIndices == null ? null : new ArrayList<>(constructionIndices);
 	    for(HtmlTag tag : tagsToRemove) {
 	    	prompt = prompt.substring(0, tag.getStartIndex()) + prompt.substring(tag.getEndIndex());
 	    	
@@ -226,6 +226,7 @@ public abstract class SimpleExerciseXmlManager implements XmlManager {
     			if(escapeHtml) {
     				htmlString = htmlString.replace("**", "*");
     			}
+    			    			
     			String htmlText = htmlString.substring(startIndex)
     					.replace("ltRep;", "<").replace("quotRep;", "\"").replace("gtRep;", ">")
     					.replace("#039Rep;", "'").replace("ampRep;", "&");
@@ -338,6 +339,9 @@ public abstract class SimpleExerciseXmlManager implements XmlManager {
 				if(constructionText.contains(":feedback")) {
 					constructionText = constructionText.split(":feedback")[0];
     			}
+				if(removeVoidElements) {
+					constructionText = constructionText.replace(" ", "%%");
+				}
 				
 				parts.add(new Pair<>(constructionText, true));
 				constructionIndices.add(new Pair<>(constructionStart, constructionStart + constructionText.length()));

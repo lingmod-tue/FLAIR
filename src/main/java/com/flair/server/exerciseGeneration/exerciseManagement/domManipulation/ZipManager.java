@@ -26,14 +26,12 @@ public class ZipManager {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream);
         try {
-            for (int i = 0; i < files.size(); i++) {
-            	for(Entry<String, byte[]> entry : files.entrySet()) {
-	                ZipEntry zipEntry = new ZipEntry(entry.getKey());
-	                zipOutputStream.putNextEntry(zipEntry);
-	                zipOutputStream.write(entry.getValue());
-	                zipOutputStream.closeEntry();
-            	}
-            }
+        	for(Entry<String, byte[]> entry : files.entrySet()) {
+                ZipEntry zipEntry = new ZipEntry(entry.getKey());
+                zipOutputStream.putNextEntry(zipEntry);
+                zipOutputStream.write(entry.getValue());
+                zipOutputStream.closeEntry();
+        	}
         } catch (IOException e) {
 			ServerLogger.get().error(e, "File could not be zipped. Exception: " + e.toString());
         } finally {

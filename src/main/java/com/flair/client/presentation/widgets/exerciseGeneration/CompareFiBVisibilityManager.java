@@ -16,6 +16,7 @@ public class CompareFiBVisibilityManager extends VisibilityManager {
 		
 		visibleSettings.add(taskItem.grpBrackets);
 		visibleSettings.add(taskItem.chkBracketsLemma);
+		visibleSettings.add(taskItem.chkBracketsDistractorLemma);
 		visibleSettings.add(taskItem.chkBracketsPos);
 		visibleSettings.add(taskItem.chkBracketsForm);
 		visibleSettings.add(taskItem.grpPos);

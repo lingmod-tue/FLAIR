@@ -15,7 +15,8 @@ public class PresentFiBVisibilityManager extends VisibilityManager {
 		ArrayList<Widget> visibleSettings = new ArrayList<Widget>();
 		
 		visibleSettings.add(taskItem.grpBrackets);
-		visibleSettings.add(taskItem.chkBracketsLemma);   
+		visibleSettings.add(taskItem.chkBracketsLemma);  
+		visibleSettings.add(taskItem.chkBracketsDistractorLemma);
 		visibleSettings.add(taskItem.grpVerbPerson);  
 		addConstructionIfOccurs("3", "Present", 4, visibleSettings, taskItem.chk3Pers, numberExercises);   			
 		addConstructionIfOccurs("not3", "Present", 4, visibleSettings, taskItem.chkNot3Pers, numberExercises);   			

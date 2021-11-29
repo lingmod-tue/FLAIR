@@ -16,6 +16,7 @@ public class PastFiBVisibilityManager extends VisibilityManager {
 		
 		visibleSettings.add(taskItem.grpBrackets);
 		visibleSettings.add(taskItem.chkBracketsLemma);
+		visibleSettings.add(taskItem.chkBracketsDistractorLemma);
 		visibleSettings.add(taskItem.chkBracketsTense);
 		visibleSettings.add(taskItem.chkBracketsProgressive);
 		visibleSettings.add(taskItem.grpSentenceTypes);

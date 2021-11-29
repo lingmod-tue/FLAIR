@@ -16,6 +16,7 @@ public class ConditionalFiBVisibilityManager extends VisibilityManager {
 		
 		visibleSettings.add(taskItem.grpBrackets);
 		visibleSettings.add(taskItem.chkBracketsLemma);
+		visibleSettings.add(taskItem.chkBracketsDistractorLemma);
 		visibleSettings.add(taskItem.chkBracketsConditional);
 		visibleSettings.add(taskItem.chkBracketsWill);
 		visibleSettings.add(taskItem.grpCondTypes);

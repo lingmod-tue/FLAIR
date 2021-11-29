@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jsoup.Jsoup;
 
@@ -54,22 +55,25 @@ public class FindXmlManager extends SimpleExerciseXmlManager {
 	    	indices.add(constructionIndex.first + "-" + constructionIndex.second);
 	    }
 	    String target = StringUtils.join(indices, ",");
-		
+	    
         return generateTaskFieldDefinition(prompt, target, 1, null);        
 	}
-	
+
 	@Override
 	protected Pair<String, ArrayList<String>> preprocess(ArrayList<String> htmlElements, String plainText) {
 		StringBuilder sb = new StringBuilder();
 		ArrayList<String> dummyHtmlElements = new ArrayList<>();
+        dummyHtmlElements.add("");
+
     	for(String htmlString : htmlElements) {
     		if(htmlString.startsWith("sentenceHtml ")) {
     			int startIndex = htmlString.indexOf(" ", 13) + 1;
     			String htmlText = htmlString.substring(startIndex).trim().replace("*", "**")
-    					.replace("ltRep;", "<").replace("quotRep;", "\"").replace("gtRep;", ">")
+    					.replace("ltRep;", " <").replace("quotRep;", "\"").replace("gtRep;", "> ")
     					.replace("#039Rep;", "'").replace("ampRep;", "&");
-    			sb.append(" " + htmlText + " ");
-    		} else {   			
+
+    			sb.append(htmlText);
+    		} else {   	
     			String question = "";
     			int firstQuestionIndex = plainText.indexOf("<span data-internal");
     	        if (firstQuestionIndex != -1) {
@@ -82,12 +86,11 @@ public class FindXmlManager extends SimpleExerciseXmlManager {
     	                plainText = "";
     	            }
     	        }
-    	        sb.append(Jsoup.parse(question).text().trim());	    
-    	        dummyHtmlElements.add("");
+    	        sb.append(Jsoup.parse(question).text().trim());	
     		}
     	}
     	
-		String prompt = Jsoup.parse(sb.toString()).select("section.bodyreplacement").toString().replace("  ", " ");
+    	String prompt = Jsoup.parse(sb.toString()).select("section.bodyreplacement").toString().replace("  ", " ");
     	return super.preprocess(dummyHtmlElements, "<span data-internal=\"1\">" + prompt + "</span>");
 	}
 }
