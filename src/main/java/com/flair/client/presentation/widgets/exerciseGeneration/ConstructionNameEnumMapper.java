@@ -194,6 +194,8 @@ public class ConstructionNameEnumMapper {
 			return DetailedConstruction.THAT;
 		case "otherRelPron":
 			return DetailedConstruction.OTHERPRN;
+		case "sentPart":
+			return DetailedConstruction.SENTENCE_PART;
 		default:
 			throw new IllegalArgumentException();
 		}

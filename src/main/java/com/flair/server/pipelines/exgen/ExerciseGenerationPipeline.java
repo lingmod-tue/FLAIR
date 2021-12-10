@@ -11,6 +11,7 @@ import com.flair.server.pipelines.common.PipelineOp;
 import com.flair.server.scheduler.AsyncExecutorService;
 import com.flair.server.scheduler.ThreadPool;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
+import com.flair.shared.exerciseGeneration.IExerciseSettings;
 import com.flair.shared.grammar.Language;
 
 import edu.stanford.nlp.util.Lazy;
@@ -83,16 +84,17 @@ public final class ExerciseGenerationPipeline {
 	}
 
 	public final class ExerciseGenerationOpBuilder implements PipelineOp.PipelineOpBuilder<ExerciseGenerationOp.Input, ExerciseGenerationOp.Output> {
-		ArrayList<ExerciseSettings> settings;
+		ArrayList<IExerciseSettings> settings;
 		ExerciseGenerationOp.ExGenComplete exGenComplete;
 		ExerciseGenerationOp.JobComplete jobComplete;
 		ResourceDownloader resourceDownloader;
 
 		private ExerciseGenerationOpBuilder() {}
 
-		public ExerciseGenerationOpBuilder settings(ArrayList<ExerciseSettings> settings) {
+		public ExerciseGenerationOpBuilder settings(ArrayList<IExerciseSettings> settings) {
 			this.settings = settings;
-			this.resourceDownloader = new ResourceDownloader(settings.get(0).isDownloadResources());
+			this.resourceDownloader = new ResourceDownloader(
+					settings.stream().anyMatch(s -> s instanceof ExerciseSettings && ((ExerciseSettings)s).isDownloadResources()));
 			return this;
 		}
 		

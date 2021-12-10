@@ -186,11 +186,13 @@ public class ClientSessionManager {
 				continue;
 
 			int extIdx = orgName.lastIndexOf(".");
+			String extension = "";
 			if (extIdx != -1)
+				extension = orgName.substring(extIdx);
 				orgName = orgName.substring(0, extIdx); // strip extension
 
 			try(InputStream is = part.getInputStream()) {
-				files.add(new CustomCorpusFile(is, orgName));
+				files.add(new CustomCorpusFile(is, orgName, extension));
 			}
 		}
 

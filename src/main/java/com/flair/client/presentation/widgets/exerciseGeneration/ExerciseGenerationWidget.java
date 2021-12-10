@@ -14,7 +14,7 @@ import com.flair.client.presentation.ToastNotification;
 import com.flair.client.presentation.interfaces.ExerciseGenerationService;
 import com.flair.client.presentation.widgets.DocumentPreviewPane;
 import com.flair.client.utilities.JSUtility;
-import com.flair.shared.exerciseGeneration.ExerciseSettings;
+import com.flair.shared.exerciseGeneration.IExerciseSettings;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -31,7 +31,6 @@ import gwt.material.design.client.ui.MaterialCollapsible;
 import gwt.material.design.client.ui.MaterialIcon;
 import gwt.material.design.client.ui.MaterialPreLoader;
 import gwt.material.design.client.ui.MaterialTitle;
-import gwt.material.design.client.ui.MaterialToast;
 import gwt.material.design.client.ui.html.Option;
 
 public class ExerciseGenerationWidget extends LocalizedComposite implements ExerciseGenerationService {
@@ -49,7 +48,7 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
 
     
     @UiField
-    MaterialCollapsible wdgtTasks;
+	public MaterialCollapsible wdgtTasks;
     @UiField
     @LocalizedField(type = LocalizedFieldType.TOOLTIP_MATERIAL)
     MaterialIcon btnAddTask;
@@ -277,7 +276,7 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
 	    		((TaskItem)existingTask).btnPreviewExercise.setVisible(false);
 	    	}
 	    	
-	        ArrayList<ExerciseSettings> exerciseSettings = new ArrayList<>();
+	        ArrayList<IExerciseSettings> exerciseSettings = new ArrayList<>();
 	    	for(Widget existingTask : wdgtTasks.getChildrenList()) {
 	    		if (((TaskItem)existingTask).icoValidity.isVisible() && !((TaskItem)existingTask).icoValidity.getTextColor().equals(Color.RED)) {
 	    			exerciseSettings.add(((TaskItem)existingTask).generateExerciseSettings());

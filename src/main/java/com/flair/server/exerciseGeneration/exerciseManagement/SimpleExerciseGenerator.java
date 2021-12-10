@@ -29,6 +29,7 @@ import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.OpenNlpParser;
 import com.flair.server.parser.SimpleNlgParser;
 import com.flair.shared.exerciseGeneration.Construction;
+import com.flair.shared.exerciseGeneration.ExerciseSettings;
 import com.flair.shared.exerciseGeneration.ExerciseType;
 import com.flair.shared.exerciseGeneration.Pair;
 
@@ -37,7 +38,7 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	private boolean isCancelled = false;
 	
     @Override
-	public OutputComponents generateExercise(ContentTypeSettings settings,
+	public ArrayList<OutputComponents> generateExercise(ContentTypeSettings settings,
 			CoreNlpParser parser, SimpleNlgParser generator, OpenNlpParser lemmatizer, ResourceDownloader resourceDownloader) {
         JsonComponents jsonComponents = prepareExercise(settings, parser, generator, lemmatizer, resourceDownloader);
 
@@ -46,12 +47,14 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        helper.add(jsonComponents);
 	        
 	        ArrayList<Pair<String, byte[]>> relevantResources = getRelevantResources(settings.getResources());
+    		ArrayList<OutputComponents> exercises = new ArrayList<>();
 	        OutputComponents output = createH5pPackage(settings, helper, relevantResources);
 	        if(output != null) {
 	        	output.setXmlFile(writeXmlToFile(output.getFeedBookXml()));
 	        }
-	        
-	        return output;
+        	exercises.add(output);
+
+	        return exercises;
     	} else {
     		return null;
     	}
@@ -77,6 +80,7 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
      */
     public JsonComponents prepareExercise(ContentTypeSettings settings, CoreNlpParser parser, SimpleNlgParser generator, 
     		OpenNlpParser lemmatizer, ResourceDownloader resourceDownloader) {
+    	ExerciseSettings exerciseSettings = (ExerciseSettings)settings.getExerciseSettings();
     	if(settings.getDoc() != null) {
 	        // We cannot operate on the same document for all exercises (in-place modifications), so we create a copy
 	        Element doc = Jsoup.parse(settings.getDoc().toString());
@@ -86,29 +90,32 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        	return null;
 	        }
 	        
-	        NlpManager nlpManager = new NlpManager(parser, generator, settings.getExerciseSettings().getPlainText(), lemmatizer);
-	        new ConstructionPreparer().prepareConstructions(settings.getExerciseSettings(), nlpManager);	
+	        //TODO: disable for generation with FeedBook config
+	        NlpManager nlpManager = new NlpManager(parser, generator, exerciseSettings.getPlainText(), lemmatizer);
+	        new ConstructionPreparer().prepareConstructions(exerciseSettings, nlpManager);	
 
 	        if (isCancelled) {
 	        	return null;
 	        }
 
 	        Pair<ArrayList<Fragment>,Pair<Integer,Integer>> res = 
-	        		new Indexer().matchHtmlToPlainText(settings.getExerciseSettings(), doc.wholeText(), nlpManager);
+	        		new Indexer().matchHtmlToPlainText(exerciseSettings, doc.wholeText(), nlpManager);
 
 	        if (isCancelled) {
 	        	return null;
 	        }
 
-	        new ClozeManager().prepareBlanks(settings.getExerciseSettings(), nlpManager, res.first);
+	        //TODO: create alternative ClozeManager which adds brackets generated from FeedBook config
+	        new ClozeManager().prepareBlanks(exerciseSettings, nlpManager, res.first);
 
 	        if (isCancelled) {
 	        	return null;
 	        }
 
+	        //TODO: create alternative DistractorManager which adds distractors generated from FeedBook config
 	        DistractorManager distractorManager = new DistractorManager();
 	        ArrayList<Construction> usedConstructions 
-	        		= distractorManager.generateDistractors(settings.getExerciseSettings(), nlpManager, res.first);
+	        		= distractorManager.generateDistractors(exerciseSettings, nlpManager, res.first);
 
 	        if(usedConstructions == null || usedConstructions.size() == 0) {
 	        	return null;
@@ -121,7 +128,7 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        MatchResult matchResult = new Matcher(res.first, res.second).prepareDomForSplitting(doc);
 	        HtmlManager.removeNonText(matchResult.getTextBoundaries());
 	        HtmlManager.removeNotDisplayedElements(doc);
-	        if(settings.getExerciseSettings().getContentType().equals(ExerciseType.MARK)) {
+	        if(exerciseSettings.getContentType().equals(ExerciseType.MARK)) {
 	        	HtmlManager.removeLinks(doc);
 	        }
 
@@ -160,19 +167,20 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        	return null;
 	        }
 
-	        String taskDescription = InstructionsManager.componseTaskDescription(settings.getExerciseSettings(), nlpManager, res.first);	       
+	        //TODO: create alternative InstructionsManager which adds instructionLemmas and returns instructions generated from FeedBook config
+	        edu.stanford.nlp.util.Pair<String, ArrayList<String>> taskDescription = InstructionsManager.composeTaskDescription((ExerciseSettings)settings.getExerciseSettings(), nlpManager, res.first);	       
 
 	        if (isCancelled) {
 	        	return null;
 	        }
 	        
-	        ArrayList<String> constructionTexts = new ArrayList<>();
+	        ArrayList<Pair<String, Integer>> constructionTexts = new ArrayList<>();
 	        for(Construction usedConstruction : usedConstructions) {
-	        	constructionTexts.add(usedConstruction.getConstructionText());
+	        	constructionTexts.add(new Pair<>(usedConstruction.getConstructionText(), usedConstruction.getSentenceIndex()));
 	        }
 
 	        ArrayList<ArrayList<Pair<com.flair.shared.exerciseGeneration.Pair<String,Boolean>,String>>> distractors = 
-	        		new FeedbackManager().generateFeedback(usedConstructions, settings.getExerciseSettings(), nlpManager);
+	        		new FeedbackManager().generateFeedback(usedConstructions, exerciseSettings, nlpManager);
 
 	        if (isCancelled) {
 	        	return null;
@@ -180,11 +188,11 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 
 	        ArrayList<ArrayList<Pair<String,String>>> usedDistractors = 
 	        		distractorManager.chooseDistractors(
-	        				distractors, settings.getExerciseSettings().getnDistractors(), settings.getExerciseSettings().getContentType().equals(ExerciseType.SINGLE_CHOICE));
+	        				distractors, exerciseSettings.getnDistractors(), exerciseSettings.getContentType().equals(ExerciseType.SINGLE_CHOICE));
 
 	        return new JsonComponents(orderedPlainTextElements, pureHtmlElements, constructionTexts,
 	                settings.getJsonManager(), settings.getContentTypeLibrary(), settings.getResourceFolder(), 
-	                usedDistractors, taskDescription);
+	                usedDistractors, taskDescription.first, taskDescription.second);
     	} else {
     		return null;
     	}

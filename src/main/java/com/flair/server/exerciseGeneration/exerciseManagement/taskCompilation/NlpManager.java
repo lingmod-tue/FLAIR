@@ -9,6 +9,7 @@ import java.util.List;
 import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.OpenNlpParser;
 import com.flair.server.parser.SimpleNlgParser;
+import com.flair.shared.exerciseGeneration.Construction;
 import com.flair.shared.exerciseGeneration.DetailedConstruction;
 import com.flair.shared.exerciseGeneration.Pair;
 
@@ -83,7 +84,7 @@ public class NlpManager {
      * @param constructionIndices   The start and end indices of the construction
      * @return                      The sentence which contains the construction
      */
-    private SentenceAnnotations getRelevantSentence(Pair<Integer, Integer> constructionIndices) {
+    public SentenceAnnotations getRelevantSentence(Pair<Integer, Integer> constructionIndices) {
         // We always operate on the entire sentence to facilitate NLP processing.
         for (SentenceAnnotations sent : sentences) {
             if (sent.getTokens().get(0).beginPosition() <= constructionIndices.first && 
@@ -1245,6 +1246,47 @@ public class NlpManager {
     	}
     	
     	return descendants;
+    }
+    
+    /**
+     * Splits a sentence into the root and its dependent elements.
+     * @param sent	The sentence to split
+     * @return	The sentence parts as constructions
+     */
+    public ArrayList<Construction> getSentencesParts(SentenceAnnotations sent) {
+    	Collection<TypedDependency> dependencyGraph = sent.getDependencyGraph();
+        
+        IndexedWord root = getRoot(dependencyGraph);
+        if(root == null) {
+        	return null;
+        }
+        
+        ArrayList<Construction> constructions = new ArrayList<>();
+        constructions.add(new Construction(DetailedConstruction.SENTENCE_PART,new Pair<>(root.beginPosition(), root.endPosition())));
+        ArrayList<IndexedWord> rootChildren = getDescendants(dependencyGraph, root);
+        for(IndexedWord rootChild : rootChildren) {
+            Pair<Pair<Integer,Integer>,IndexedWord> span = getDependencySpan(dependencyGraph,rootChild);
+            if(span.first != null) {
+            	constructions.add(new Construction(DetailedConstruction.SENTENCE_PART, span.first));
+            }
+        }
+
+        return constructions;
+    }
+    
+    /**
+     * Determines the root element of a sentence based on the dependency graph.
+     * @param dependencies	The dependency graph
+     * @return	The root element
+     */
+    private IndexedWord getRoot(Collection<TypedDependency> dependencies) {
+    	for(TypedDependency dependency : dependencies) {
+            if(dependency.reln().getLongName().equals("root")) {
+                return dependency.dep();
+            }
+        }
+    	
+    	return null;
     }
     
 }

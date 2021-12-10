@@ -1,9 +1,11 @@
 package com.flair.server.pipelines.exgen;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeoutException;
 
+import com.flair.server.exerciseGeneration.OutputComponents;
 import com.flair.server.exerciseGeneration.downloadManagement.ResourceDownloader;
 import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseManager;
 import com.flair.server.exerciseGeneration.exerciseManagement.ResultComponents;
@@ -39,14 +41,14 @@ public class ExGenTask implements AsyncTask<ExGenTask.Result> {
 
 	@Override
 	public Result run() {		
-		ResultComponents file = null;
+		ArrayList<ResultComponents> exercises = null;
 		long startTime = 0;
 		boolean error = false;
 
 		ExerciseManager exerciseManager = new ExerciseManager(settings);
 		try {
 			startTime = System.currentTimeMillis();
-			file = ThreadPool.get().invokeAndWait(new FutureTask<>(() -> {
+			exercises = ThreadPool.get().invokeAndWait(new FutureTask<>(() -> {
 		        return exerciseManager.generateExercises(settings, parser, generator, lemmatizer, resourceDownloader);
 			}), Constants.EXERCISE_GENERATION_TASK_TIMEOUT, Constants.TIMEOUT_UNIT);
 		} catch (TimeoutException ex) {
@@ -60,26 +62,26 @@ public class ExGenTask implements AsyncTask<ExGenTask.Result> {
 		}
 
 		long endTime = System.currentTimeMillis();
-		if (!error && file != null)
-			ServerLogger.get().info("Exercise " + file.getFileName() + " generated in " + (endTime - startTime) + " ms");
-
-		if(file == null) {
-			return new Result (null, null, null, null);
+		
+		if(error || exercises == null || exercises.size() == 0) {
+			return null;
 		}
-		return new Result(file.getFileContent(), file.getFileName(), file.getPreviews(), file.getXmlFile());
+		
+		if(exercises.size() > 1) {
+			ServerLogger.get().info(exercises.size() + " exercises generated in " + (endTime - startTime) + " ms");
+		} else {
+			ServerLogger.get().info("Exercise " + exercises.get(0).getFileName() + " generated in " + (endTime - startTime) + " ms");
+		}
+		
+		return new Result(exercises);
 	}
 
 	static final class Result {
-		final byte[] file;
-		final String fileName;
-		final HashMap<String, String> previews;
-		final HashMap<String, byte[]> xmls;
-
-		Result(byte[] file, String fileName, HashMap<String, String> previews, HashMap<String, byte[]> xmls) {
-			this.file = file;
-			this.fileName = fileName;
-			this.previews = previews;
-			this.xmls = xmls;
+		final ArrayList<ResultComponents> exercises;
+		
+		Result(ArrayList<ResultComponents> exercises) {
+			this.exercises = exercises;
 		}
+
 	}
 }

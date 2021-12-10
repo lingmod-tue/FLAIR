@@ -2,11 +2,9 @@ package com.flair.shared.exerciseGeneration;
 
 import java.util.ArrayList;
 
-import org.jsoup.nodes.Element;
-
 import com.google.gwt.user.client.rpc.IsSerializable;
 
-public class ExerciseSettings implements IsSerializable{
+public class ExerciseSettings implements IsSerializable, IExerciseSettings {
 
     private ArrayList<Construction> constructions;
     private String url;
@@ -26,6 +24,7 @@ public class ExerciseSettings implements IsSerializable{
     private String fileName;
     private String fileContent;
     private ArrayList<OutputFormat> outputFormats;
+    private ArrayList<String> instructionLemmas;
 
 	public ExerciseSettings() {}
     
@@ -56,10 +55,12 @@ public class ExerciseSettings implements IsSerializable{
     }
 
     public ArrayList<Construction> getConstructions() { return constructions; }
+    @Override
     public String getUrl() { return url; }
     public String getPlainText() { return plainText; }
     public ArrayList<Pair<Integer, Integer>> getRemovedParts() { return removedParts; }
     public ExerciseType getContentType() { return contentType; }
+    @Override
     public String getQuiz() { return quiz; }
     public ArrayList<DistractorProperties> getDistractors() { return distractors; }
     public ArrayList<BracketsProperties> getBrackets() { return brackets; }
@@ -69,11 +70,18 @@ public class ExerciseSettings implements IsSerializable{
 	public boolean isDownloadResources() { return downloadResources; }
 	public boolean isOnlyText() { return onlyText; }
 	public boolean isGenerateFeedback() { return generateFeedback; }
+	@Override
     public int getId() { return id; }
+    @Override
 	public String getFileName() { return fileName; }
+    @Override
 	public String getFileContent() { return fileContent; }
+	@Override
 	public ArrayList<OutputFormat> getOutputFormats() { return outputFormats; }
+	public ArrayList<String> getInstructionLemmas() { return instructionLemmas; }
 
+	@Override
 	public void setFileContent(String fileContent) { this.fileContent = fileContent; }
+	public void setInstructionLemmas(ArrayList<String> instructionLemmas) { this.instructionLemmas = instructionLemmas; }
 
 }

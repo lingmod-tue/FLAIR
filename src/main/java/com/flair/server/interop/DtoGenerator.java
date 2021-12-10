@@ -45,6 +45,7 @@ class DtoGenerator {
 
 			out.setLinkingId(localSource.getId());        // use the id generated earlier
 			out.setRank(localSource.getId());            // in the same order the files were uploaded to the server
+			out.setFileExtension(localSource.getExtension());
 		}
 
 		out.setText(source.getText());

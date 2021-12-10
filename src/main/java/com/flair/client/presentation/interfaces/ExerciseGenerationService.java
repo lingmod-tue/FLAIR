@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
+import com.flair.shared.exerciseGeneration.IExerciseSettings;
 
 /*
  * Generates exercises for the selected document
@@ -11,7 +12,7 @@ import com.flair.shared.exerciseGeneration.ExerciseSettings;
 public interface ExerciseGenerationService {
 	
 	interface GenerateHandler {
-		boolean handle(ArrayList<ExerciseSettings> settings);
+		boolean handle(ArrayList<IExerciseSettings> settings);
 	}
 	
 	interface InterruptHandler {

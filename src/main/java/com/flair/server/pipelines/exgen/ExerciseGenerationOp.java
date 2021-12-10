@@ -10,9 +10,12 @@ import org.jsoup.nodes.Element;
 
 import com.flair.server.exerciseGeneration.downloadManagement.ResourceDownloader;
 import com.flair.server.exerciseGeneration.exerciseManagement.ResultComponents;
+import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ConfigBasedSettings;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.FillInTheBlanksSettings;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.FindSettings;
+import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.JumbledSentencesSettings;
+import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.MemorySettings;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.MultiDragDropSettings;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.QuizSettings;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.SingleChoiceSettings;
@@ -25,11 +28,12 @@ import com.flair.server.scheduler.AsyncExecutorService;
 import com.flair.server.scheduler.AsyncJob;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
 import com.flair.shared.exerciseGeneration.ExerciseType;
+import com.flair.shared.exerciseGeneration.IExerciseSettings;
 
 import edu.stanford.nlp.util.Pair;
 
 public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input, ExerciseGenerationOp.Output> {
-	public interface ExGenComplete extends EventHandler<ResultComponents> {}
+	public interface ExGenComplete extends EventHandler<ArrayList<ResultComponents>> {}
 	public interface JobComplete extends EventHandler<ResultComponents> {}
 	
 	private final ReentrantLock lock = new ReentrantLock();
@@ -37,7 +41,7 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
 	private final ArrayList<String> downloadedUrls = new ArrayList<>();
 	
 	static final class Input {
-		final ArrayList<ExerciseSettings> settings;
+		final ArrayList<IExerciseSettings> settings;
 		final AsyncExecutorService downloadExecutor;
 		final AsyncExecutorService exGenExecutor;
 		final ExGenComplete exGenComplete;
@@ -47,7 +51,7 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
 		final OpenNlpParser lemmatizer;
 		final ResourceDownloader resourceDownloader;
 		
-		Input(ArrayList<ExerciseSettings> settings,
+		Input(ArrayList<IExerciseSettings> settings,
 				AsyncExecutorService downloadExecutor,
 		      AsyncExecutorService exGenExecutor,
 		      ExGenComplete exGenComplete,
@@ -95,14 +99,16 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
 					if(contentTypeSettings instanceof QuizSettings) {
 						boolean allDocumentsDownloaded = true;
 						for(ContentTypeSettings settings : ((QuizSettings)contentTypeSettings).getExercises()) {
-							if(settings.getExerciseSettings().getUrl().equals(r.url)) {
-					            settings.setDoc(r.document);
-					            settings.setResources(r.resources);
-					            settings.setIndex(++index);
-							}
-							if(!downloadedUrls.contains(settings.getExerciseSettings().getUrl())) {
-								allDocumentsDownloaded = false;
-								break;
+							if(settings.getExerciseSettings() instanceof ExerciseSettings) {
+								if(settings.getExerciseSettings().getUrl().equals(r.url)) {
+						            settings.setDoc(r.document);
+						            settings.setResources(r.resources);
+						            settings.setIndex(++index);
+								}
+								if(!downloadedUrls.contains(settings.getExerciseSettings().getUrl())) {
+									allDocumentsDownloaded = false;
+									break;
+								}
 							}
 						}
 						
@@ -135,7 +141,7 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
 				scheduler.fire();
 		});
 		taskLinker.addHandler(ExGenTask.Result.class, (j, r) -> {
-			safeInvoke(() -> input.exGenComplete.handle(new ResultComponents(r.fileName, r.file, r.previews, r.xmls)),
+			safeInvoke(() -> input.exGenComplete.handle(r.exercises),
 						"Exception in generation complete handler");
 		});
 	}
@@ -144,28 +150,39 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
 		super("ExerciseGenerationOp", input, new Output());
 				
 		HashMap<String, ArrayList<ContentTypeSettings>> configs = new HashMap<>();
-        for(ExerciseSettings settings : input.settings) {
-            ContentTypeSettings contentTypeSettings;
-            if(settings.getContentType().equals(ExerciseType.FIB)) {
-                contentTypeSettings = new FillInTheBlanksSettings(settings.getTaskName());
-            } else if(settings.getContentType().equals(ExerciseType.SINGLE_CHOICE)) {
-                contentTypeSettings = new SingleChoiceSettings(settings.getTaskName());
-            } else if(settings.getContentType().equals(ExerciseType.DRAG_SINGLE)) {
-                contentTypeSettings = new SingleDragDropSettings(settings.getTaskName());
-            } else if(settings.getContentType().equals(ExerciseType.DRAG_MULTI)) {
-                contentTypeSettings = new MultiDragDropSettings(settings.getTaskName());
-            } else if(settings.getContentType().equals(ExerciseType.MARK)) {
-                contentTypeSettings = new FindSettings(settings.getTaskName());
-            } else {
-                throw new IllegalArgumentException();
-            }
+        for(IExerciseSettings s : input.settings) {
+    		ContentTypeSettings contentTypeSettings;
 
-            contentTypeSettings.setExerciseSettings(settings);
+        	if(s instanceof ExerciseSettings) {
+        		ExerciseSettings settings = (ExerciseSettings)s;
+        		
+                if(settings.getContentType().equals(ExerciseType.FIB)) {
+                    contentTypeSettings = new FillInTheBlanksSettings(settings.getTaskName());
+                } else if(settings.getContentType().equals(ExerciseType.SINGLE_CHOICE)) {
+                    contentTypeSettings = new SingleChoiceSettings(settings.getTaskName());
+                } else if(settings.getContentType().equals(ExerciseType.DRAG_SINGLE)) {
+                    contentTypeSettings = new SingleDragDropSettings(settings.getTaskName());
+                } else if(settings.getContentType().equals(ExerciseType.DRAG_MULTI)) {
+                    contentTypeSettings = new MultiDragDropSettings(settings.getTaskName());
+                } else if(settings.getContentType().equals(ExerciseType.MARK)) {
+                    contentTypeSettings = new FindSettings(settings.getTaskName());
+                } else if(settings.getContentType().equals(ExerciseType.MEMORY)) {
+                    contentTypeSettings = new MemorySettings(settings.getTaskName());
+                } else if(settings.getContentType().equals(ExerciseType.JUMBLED_SENTENCES)) {
+                    contentTypeSettings = new JumbledSentencesSettings(settings.getTaskName());
+                } else {
+                    throw new IllegalArgumentException();
+                }
+        	} else {
+        		contentTypeSettings = new ConfigBasedSettings();
+        	}
+        	
+        	contentTypeSettings.setExerciseSettings(s);
 
-            if (!configs.containsKey(settings.getQuiz())) {
-                configs.put(settings.getQuiz(), new ArrayList<>());
+            if (!configs.containsKey(s.getQuiz())) {
+                configs.put(s.getQuiz(), new ArrayList<>());
             }
-            configs.get(settings.getQuiz()).add(contentTypeSettings);
+            configs.get(s.getQuiz()).add(contentTypeSettings);
         }
         
         for (HashMap.Entry<String, ArrayList<ContentTypeSettings>> entry : configs.entrySet()) {
@@ -188,24 +205,30 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
 		super.launch();
 
         HashMap<String, Element> documents = new HashMap<>();
-        for(ExerciseSettings settings : input.settings) {
-        	if(settings.getUrl().length() == 0) {
-        		if (!documents.containsKey(settings.getFileName())) {
-	        		try {
-	        			if(settings.getFileContent().contains("<html") && settings.getFileContent().contains("</html>")) {
-	        				Document doc = Jsoup.parse(settings.getFileContent());
-			                documents.put(settings.getFileName(), doc);
-	        			} else {
-			                documents.put(settings.getFileName(), Jsoup.parse("<span>" + settings.getPlainText().trim().replace("\n", " <br> ") + "</span>"));
-	        			}
-	        		} catch(Exception e) {
-		                documents.put(settings.getFileName(), Jsoup.parse("<span>" + settings.getPlainText().trim().replace("\n", " <br> ") + "</span>"));
-	        		}
-        		}
+        for(IExerciseSettings s : input.settings) {
+        	if(s instanceof ExerciseSettings) {
+        		ExerciseSettings settings = (ExerciseSettings)s;
+        		
+        		if(settings.getUrl().length() == 0) {
+            		if (!documents.containsKey(settings.getFileName())) {
+    	        		try {
+    	        			if(settings.getFileContent().contains("<html") && settings.getFileContent().contains("</html>")) {
+    	        				Document doc = Jsoup.parse(settings.getFileContent());
+    			                documents.put(settings.getFileName(), doc);
+    	        			} else {
+    			                documents.put(settings.getFileName(), Jsoup.parse("<span>" + settings.getPlainText().trim().replace("\n", " <br> ") + "</span>"));
+    	        			}
+    	        		} catch(Exception e) {
+    		                documents.put(settings.getFileName(), Jsoup.parse("<span>" + settings.getPlainText().trim().replace("\n", " <br> ") + "</span>"));
+    	        		}
+            		}
+            	} else {
+    	            if (!documents.containsKey(settings.getUrl())) {
+    	                documents.put(settings.getUrl(), null);
+    	            }
+            	}
         	} else {
-	            if (!documents.containsKey(settings.getUrl())) {
-	                documents.put(settings.getUrl(), null);
-	            }
+                documents.put(s.getFileName(), Jsoup.parse(""));
         	}
         }
         

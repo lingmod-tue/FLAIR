@@ -16,7 +16,7 @@ import edu.stanford.nlp.util.Pair;
 
 public class InstructionsManager {
 
-	public static String componseTaskDescription(ExerciseSettings settings, NlpManager nlpManager, ArrayList<Fragment> fragments) {
+	public static Pair<String, ArrayList<String>> composeTaskDescription(ExerciseSettings settings, NlpManager nlpManager, ArrayList<Fragment> fragments) {
         HashSet<DetailedConstruction> constructions = new HashSet<>();
         ArrayList<Construction> usedConstructions = new ArrayList<>();
         for(Fragment fragment : fragments) {
@@ -32,7 +32,9 @@ public class InstructionsManager {
         boolean addLemmas = false;
         boolean hasLemmasInBrackets = false;
         boolean isVerbLemma = true;
-        if(constructions.stream().anyMatch((construction) -> construction.toString().startsWith("COND"))) {
+        if(settings.getContentType() == ExerciseType.JUMBLED_SENTENCES) {
+        	instructions = "Put the words in the correct order.";
+        } else if(constructions.stream().anyMatch((construction) -> construction.toString().startsWith("COND"))) {
             // Conditionals
 
             boolean hasUnrealConditionals = constructions.stream().anyMatch((construction) -> construction == DetailedConstruction.CONDUNREAL);
@@ -89,6 +91,8 @@ public class InstructionsManager {
                 }
             } else if(settings.getContentType().equals(ExerciseType.DRAG_MULTI) || settings.getContentType().equals(ExerciseType.DRAG_SINGLE)) {
                 instructions = "Drag the " + formType + " forms into the empty slots to form correct sentences.";
+            } else if(settings.getContentType().equals(ExerciseType.MEMORY)) {
+                instructions = "Find the matching " + formType + " and base forms.";
             }
         } else if(constructions.stream().anyMatch((construction) -> construction.toString().startsWith("PASSIVE") ||
                 construction.toString().startsWith("ACTIVE"))) {
@@ -157,6 +161,8 @@ public class InstructionsManager {
                 if(settings.getInstructions().contains(InstructionsProperties.N_TARGETS)) {
                 	instructions += " The text contains " + usedConstructions.size() + " " + tense + " forms.";
                 }
+            } else if(settings.getContentType().equals(ExerciseType.MEMORY)) {
+                instructions = "Find the matching " + tense + " and base forms.";
             }
         } else if(constructions.stream().anyMatch((construction) ->
                 construction.toString().startsWith("PAST") || construction.toString().startsWith("PRES"))) {
@@ -208,6 +214,8 @@ public class InstructionsManager {
                 }
             } else if(settings.getContentType().equals(ExerciseType.DRAG_MULTI) || settings.getContentType().equals(ExerciseType.DRAG_SINGLE)) {
                 instructions = "Drag the " + tense.replace(" or ", " and ") + " forms into the empty slots to form correct sentences.";
+            } else if(settings.getContentType().equals(ExerciseType.MEMORY)) {
+                instructions = "Find the matching " + tense + " and base forms.";
             }
         } else if(constructions.stream().anyMatch((construction) ->
                 construction == DetailedConstruction.WHO || construction == DetailedConstruction.WHICH ||
@@ -250,8 +258,8 @@ public class InstructionsManager {
             }
         }
         
+    	ArrayList<String> lemmas = new ArrayList<>();
         if(addLemmas) {
-        	ArrayList<String> lemmas = new ArrayList<>();
         	for(Construction construction : usedConstructions) {
             	String lemma = null;
                 if(isVerbLemma) {
@@ -280,13 +288,9 @@ public class InstructionsManager {
             	} else {
             		lemmas.add(lemma);
             	}
-            }
-        	
-        	if(lemmas.size() > 0) {
-            	instructions += "</br><em>" + String.join("</em>, <em>", lemmas) + "</em>";
-        	}
+            }        	
         }
                 
-        return instructions;
+        return new Pair<>(instructions, lemmas);
     }
 }

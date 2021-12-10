@@ -3,6 +3,7 @@ package com.flair.server.exerciseGeneration.exerciseManagement.taskCompilation;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
 
@@ -26,6 +27,7 @@ public class DistractorManager {
     public ArrayList<Construction> generateDistractors(ExerciseSettings exerciseSettings, NlpManager nlpManager, ArrayList<Fragment> fragments) {
     	ArrayList<Construction> usedConstructions = new ArrayList<>();
 		ArrayList<Integer> constructionsToRemove = new ArrayList<>();
+		ArrayList<String> usedTargets = new ArrayList<>();
 
         if(exerciseSettings.getContentType().equals(ExerciseType.SINGLE_CHOICE)) {
         	for(Fragment fragment : fragments) {
@@ -225,11 +227,11 @@ public class DistractorManager {
 	    	                        	// We don't know if we have a 3rd pers. sing. form or not, so we calculate both forms also for the correct parameter settings
     	                        		options.add(nlpManager.generateCorrectForm(new TenseSettings(lemma.first, isInterrogative,
 	    	                                    isNegated, j == 0, lemma.second, parameterConstellation.second,
-	    	                                    !parameterConstellation.first.second, parameterConstellation.first.first)) + otherComponents);
+	    	                                    parameterConstellation.first.second, parameterConstellation.first.first)) + otherComponents);
 	    	                            if (exerciseSettings.getDistractors().contains(DistractorProperties.INCORRECT_FORMS)) {
 	    	                            	HashSet<String> incorrectForms = nlpManager.generateIncorrectForms(new TenseSettings(lemma.first, isInterrogative,
 	    	                                        isNegated, j == 0, lemma.second, parameterConstellation.second,
-	    	                                        !parameterConstellation.first.second, parameterConstellation.first.first));
+	    	                                        parameterConstellation.first.second, parameterConstellation.first.first));
 	    	                            	for(String incorrectForm : incorrectForms) {
 	    	                            		incorrectFormOptions.add(incorrectForm + otherComponents);
 	    	                            	}
@@ -257,11 +259,11 @@ public class DistractorManager {
 	                    	ArrayList<Pair<String, Boolean>> distractors = new ArrayList<>();
 	                    	ArrayList<String> incorrectDistractors = capitalize(new ArrayList<>(incorrectFormOptions), constructionText);
 	                        for(String incorrectDistractor : incorrectDistractors) {
-	                        	distractors.add(new Pair<>(incorrectDistractor, true));
+	                        	distractors.add(new Pair<>(incorrectDistractor.replaceAll("[\\s\\h\\v]+", " ").trim(), true));
 	                        }
 	                        ArrayList<String> correctDistractors = capitalize(new ArrayList<>(options), constructionText);
 	                        for(String correctDistractor : correctDistractors) {
-	                        	distractors.add(new Pair<>(correctDistractor, false));
+	                        	distractors.add(new Pair<>(correctDistractor.replaceAll("[\\s\\h\\v]+", " ").trim(), false));
 	                        }
 	                    	
 	                        // Add the distractors to the settings
@@ -336,7 +338,41 @@ public class DistractorManager {
                 	}
                 }
         	}
-        } 
+        } else if(exerciseSettings.getContentType().equals(ExerciseType.MEMORY)) {
+        	for(Fragment fragment : fragments) {
+                for(Blank blank : fragment.getBlanksBoundaries()) {
+                	Construction construction = blank.getConstruction();
+                	if(construction != null) {
+                		String name = construction.getConstruction().toString();
+                		String lemma = null;
+	                    if(name.startsWith("ADJ") || name.startsWith("ADV")) {
+	                        lemma = nlpManager.getLemmaOfComparison(construction.getConstructionIndices());
+						} else if(name.startsWith("QUEST") || name.startsWith("STMT") ||
+								name.startsWith("PAST") || name.startsWith("PRES")){
+							Pair<String, String> lemmaSubject =
+	                                nlpManager.getVerbLemma(construction.getConstructionIndices(), false);	
+							if(lemmaSubject != null) {
+								lemma = lemmaSubject.first;
+							}
+						}
+	                    
+	                    // We cannot use ambiguous lemmas
+	                	String constructionText = exerciseSettings.getPlainText().substring(construction.getConstructionIndices().first, construction.getConstructionIndices().second);
+	                    if(usedTargets.contains(lemma) || usedTargets.contains(constructionText)) {
+	                    	lemma = null;
+	                    }
+	                    
+	                    if(lemma == null || lemma.isEmpty()) {
+	                    	constructionsToRemove.add(blank.getConstructionIndex());
+	                    } else {
+	                    	construction.getDistractors().add(new Pair<>(lemma, false));
+	                    	usedTargets.add(lemma);
+	                    	usedTargets.add(constructionText);
+	                    }
+                	}
+                }
+        	}
+        }
         
         if(!exerciseSettings.getContentType().equals(ExerciseType.DRAG_SINGLE)) {
 	    	for(Fragment fragment : fragments) {
@@ -378,23 +414,26 @@ public class DistractorManager {
     	
     	for(ArrayList<Pair<Pair<String, Boolean>, String>> construction : distractors) {
     		if(isSelect) {
-    			HashSet<Pair<String, String>> options = new HashSet<>();
-	        	ArrayList<Pair<String, String>> incorrectOptions = new ArrayList<>();
-	        	ArrayList<Pair<String, String>> optionsWithoutFeedback = new ArrayList<>();
-	        	ArrayList<Pair<String, String>> incorrectOptionsWithoutFeedback = new ArrayList<>();
+    			HashMap<String, String> feedbackMapping = new HashMap<>();
+    			HashSet<String> options = new HashSet<>();
+	        	ArrayList<String> incorrectOptions = new ArrayList<>();
+	        	ArrayList<String> optionsWithoutFeedback = new ArrayList<>();
+	        	ArrayList<String> incorrectOptionsWithoutFeedback = new ArrayList<>();
 	        	
 	        	for(Pair<Pair<String, Boolean>, String> distractor : construction) {
+	        		feedbackMapping.put(distractor.first.first, distractor.second);
+	        		
 	        		if(distractor.first.second) {
 	        			if(distractor.second == null || distractor.second.equals("")) {
-	            			incorrectOptionsWithoutFeedback.add(new Pair<>(distractor.first.first, distractor.second));
+	            			incorrectOptionsWithoutFeedback.add(distractor.first.first);
 	        			} else {
-	            			incorrectOptions.add(new Pair<>(distractor.first.first, distractor.second));
+	            			incorrectOptions.add(distractor.first.first);
 	        			}
 	        		} else {
 	        			if(distractor.second == null || distractor.second.equals("")) {
-	        				optionsWithoutFeedback.add(new Pair<>(distractor.first.first, distractor.second));
+	        				optionsWithoutFeedback.add(distractor.first.first);
 	        			} else {
-	        				options.add(new Pair<>(distractor.first.first, distractor.second));
+	        				options.add(distractor.first.first);
 	        			}
 	        		}
 	        	}
@@ -408,7 +447,7 @@ public class DistractorManager {
 	                int incorrectFormsToAdd = options.size() / 2;
 	                for(int i = 0; i < incorrectFormsToAdd && incorrectOptions.size() > 0; i++) {
 	                    int randomIndex = new Random().nextInt(incorrectOptions.size());
-	                    Pair<String,String> randomForm = incorrectOptions.get(randomIndex);
+	                    String randomForm = incorrectOptions.get(randomIndex);
 	                    int previousSize = options.size();
 	                    options.add(randomForm);
 	                    if(previousSize == options.size()) {    // the option had already been in the set
@@ -421,7 +460,7 @@ public class DistractorManager {
 	            // Add correct forms without feedback until we have the necessary distractor number or no more options to add
 	            while(options.size() < nDistractors && optionsWithoutFeedback.size() > 0) {
 	                int randomIndex = new Random().nextInt(optionsWithoutFeedback.size());
-	                Pair<String,String> randomForm = optionsWithoutFeedback.get(randomIndex);
+	                String randomForm = optionsWithoutFeedback.get(randomIndex);
 	                options.add(randomForm);
 	                optionsWithoutFeedback.remove(randomForm);
 	            }
@@ -429,7 +468,7 @@ public class DistractorManager {
 	            // Add incorrect forms until we have the necessary distractor number or no more options to add
 	            while(options.size() < nDistractors && incorrectOptions.size() > 0) {
 	                int randomIndex = new Random().nextInt(incorrectOptions.size());
-	                Pair<String,String> randomForm = incorrectOptions.get(randomIndex);
+	                String randomForm = incorrectOptions.get(randomIndex);
 	                options.add(randomForm);
 	                incorrectOptions.remove(randomForm);
 	            }
@@ -437,12 +476,12 @@ public class DistractorManager {
 	            // Add incorrect forms without feedback until we have the necessary distractor number or no more options to add
 	            while(options.size() < nDistractors && incorrectOptionsWithoutFeedback.size() > 0) {
 	                int randomIndex = new Random().nextInt(incorrectOptionsWithoutFeedback.size());
-	                Pair<String,String> randomForm = incorrectOptionsWithoutFeedback.get(randomIndex);
+	                String randomForm = incorrectOptionsWithoutFeedback.get(randomIndex);
 	                options.add(randomForm);
 	                incorrectOptionsWithoutFeedback.remove(randomForm);
 	            }
 	            
-	            ArrayList<Pair<String, String>> usedDistractors = new ArrayList<>(options);
+	            ArrayList<String> usedDistractors = new ArrayList<>(options);
 	            while(usedDistractors.size() > nDistractors) {
 	            	int index = new Random().nextInt(usedDistractors.size());
 	            	usedDistractors.remove(index);
@@ -450,7 +489,11 @@ public class DistractorManager {
 	            
 	            // Add the distractors to the settings
 	            Collections.shuffle(usedDistractors);
-	            returnList.add(usedDistractors);
+	            ArrayList<Pair<String, String>> distractorsWithFeedback = new ArrayList<>();
+	            for(String usedDistractor : usedDistractors) {
+	            	distractorsWithFeedback.add(new Pair<>(usedDistractor, feedbackMapping.get(usedDistractor)));
+	            }
+	            returnList.add(distractorsWithFeedback);
     		} else {
     			ArrayList<Pair<String, String>> usedDistractors = new ArrayList<>();
     			for(Pair<Pair<String, Boolean>, String> distractor : construction) {

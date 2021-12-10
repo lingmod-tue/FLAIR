@@ -25,8 +25,26 @@ public class ConstructionPreparer {
     public void prepareConstructions(ExerciseSettings exerciseSettings, NlpManager nlpManager) {
     	ArrayList<Construction> constructionsToAdd = new ArrayList<>();
         ArrayList<Construction> constructionsToRemove = new ArrayList<>();
+        int sentenceIndex = 0;
+        ArrayList<SentenceAnnotations> coveredSentences = new ArrayList<>();
         for(Construction construction : exerciseSettings.getConstructions()) {
-            if(construction.getConstruction().toString().startsWith("COND")) {
+            if(exerciseSettings.getContentType() == ExerciseType.JUMBLED_SENTENCES) {
+            	SentenceAnnotations sent = nlpManager.getRelevantSentence(construction.getConstructionIndices());
+                if(sent != null && !coveredSentences.contains(sent)) {
+                	coveredSentences.add(sent);
+                	
+                	ArrayList<Construction> sentenceParts = nlpManager.getSentencesParts(sent);
+                	if(sentenceParts.size() > 1) {
+	                	sentenceIndex++;
+	                	for(Construction sentencePart : sentenceParts) {
+	                		sentencePart.setSentenceIndex(sentenceIndex);
+	                	}
+	                	constructionsToAdd.addAll(sentenceParts);
+                	}
+                } 
+                
+                constructionsToRemove.add(construction);
+            } else if(construction.getConstruction().toString().startsWith("COND")) {
                 Pair<Pair<Integer, Integer>, Pair<Integer, Integer>> clauses = nlpManager.getConditionalClauses(construction.getConstructionIndices());
                 if(clauses != null) {                	
                     int r = 0;

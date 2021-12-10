@@ -5,10 +5,12 @@ import java.io.InputStream;
 public final class CustomCorpusFile {
 	private InputStream stream;
 	private final String fileName;
+	private final String extension;
 
-	CustomCorpusFile(InputStream input, String fileName) {
+	CustomCorpusFile(InputStream input, String fileName, String extension) {
 		this.stream = input;
 		this.fileName = fileName;
+		this.extension = extension;
 	}
 
 	public InputStream getStream() {
@@ -22,4 +24,9 @@ public final class CustomCorpusFile {
 	public void setStream(InputStream input)  {
 		this.stream = input;
 	}
+
+	public String getExtension() {
+		return extension;
+	}
+	
 }

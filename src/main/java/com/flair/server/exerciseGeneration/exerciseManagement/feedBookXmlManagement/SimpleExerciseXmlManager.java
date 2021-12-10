@@ -1,7 +1,6 @@
 package com.flair.server.exerciseGeneration.exerciseManagement.feedBookXmlManagement;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -48,7 +47,7 @@ public abstract class SimpleExerciseXmlManager implements XmlManager {
 	@Override
     public HashMap<String,String> generateFeedBookInputXml(boolean escapeHtml, ArrayList<ArrayList<Pair<String,String>>> distractors, 
     		int index, String plainText, ArrayList<String> htmlElements, String taskDescription, String title,
-    		ArrayList<OutputComponents> simpleExercises) {
+    		ArrayList<OutputComponents> simpleExercises, ArrayList<String> givenWords, ArrayList<Pair<String, Integer>> targets) {
     	StringBuilder xml = new StringBuilder();
     	Pair<String,ArrayList<String>> preprocessResult = preprocess(htmlElements, plainText);
     	htmlElements = preprocessResult.second;
@@ -58,14 +57,14 @@ public abstract class SimpleExerciseXmlManager implements XmlManager {
     	
     	xml.append("<SubTask"); 	
     	
-    	addAttributes(ret.first, index, taskDescription);
+    	addAttributes(ret.first, index, taskDescription, givenWords);
     	    	
     	for(Entry<String, String> attribute : attributes.entrySet()) {
     		xml.append(" ").append(attribute.getKey()).append("=\"").append(attribute.getValue()).append("\"");
     	}
     	xml.append("><Prompts>");
-    	xml.append(generateTaskFields(ret.first, ret.second, distractors));
-    	xml.append("</Prompts>\n</SubTask>");
+    	xml.append(generateTaskFields(ret.first, ret.second, distractors, targets));
+    	xml.append("</Prompts></SubTask>");
     	
     	HashMap<String, String> feedBookXml = new HashMap<>();
         feedBookXml.put(title, xml.toString().replace("\n", ""));
@@ -74,7 +73,8 @@ public abstract class SimpleExerciseXmlManager implements XmlManager {
     }
 	
 	protected String generateTaskFields(ArrayList<Pair<String, Boolean>> parts,
-			ArrayList<Pair<Integer, Integer>> constructionIndices, ArrayList<ArrayList<Pair<String,String>>> distractors) {
+			ArrayList<Pair<Integer, Integer>> constructionIndices, 
+			ArrayList<ArrayList<Pair<String,String>>> distractors, ArrayList<Pair<String, Integer>> targets) {
 		StringBuilder xml = new StringBuilder();
 		StringBuilder currentPrompt = new StringBuilder();
     	String currentTarget = "";
@@ -156,9 +156,10 @@ public abstract class SimpleExerciseXmlManager implements XmlManager {
 	    return StringEscapeUtils.escapeXml(prompt);
 	}
 	
-	protected void addAttributes(ArrayList<Pair<String, Boolean>> parts, int index, String taskDescription) { 
+	protected void addAttributes(ArrayList<Pair<String, Boolean>> parts, int index, String taskDescription,
+			ArrayList<String> givenWords) { 
 		attributes.put("index", index + "");
-    	attributes.put("instruction", taskDescription);
+    	attributes.put("instruction", StringEscapeUtils.escapeXml(taskDescription));
     	attributes.put("non_en_input", "false");
     	attributes.put("grammar_topics", "");
     	attributes.put("task_topics", "");
@@ -363,9 +364,12 @@ public abstract class SimpleExerciseXmlManager implements XmlManager {
 
 	protected Pair<String, ArrayList<String>> preprocess(ArrayList<String> htmlElements, String plainText) {
 		ArrayList<String> normalizedHtmlElements = new ArrayList<>();
-    	for(String htmlElement : htmlElements) {
-    		normalizedHtmlElements.add(htmlElement.replace("\n", ""));
-    	}
+		if(htmlElements != null) {
+	    	for(String htmlElement : htmlElements) {
+	    		normalizedHtmlElements.add(htmlElement.replace("\n", ""));
+	    	}
+		}
+		
     	plainText = plainText.replace("\n", "");
     	
 		return new Pair<>(plainText, normalizedHtmlElements);

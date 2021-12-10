@@ -143,6 +143,15 @@ final class CompareProcessData extends ProcessData {
 		public double getReadablilityScore() {
 			return doc.getReadablilityScore();
 		}
+		@Override
+		public String getFileExtension() {
+			return doc.getFileExtension();
+		}
+		
+		@Override
+		public void setFileExtension(String fileExtension) {
+			doc.setFileExtension(fileExtension);
+		}
 	}
 
 	CompareProcessData(Language l, List<RankableDocument> sel) {

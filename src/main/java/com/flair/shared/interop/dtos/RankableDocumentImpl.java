@@ -111,6 +111,7 @@ public final class RankableDocumentImpl implements RankableDocument {
 	String displayUrl;
 	String snippet;
 	String text;
+	String fileExtension = "";
 
 	HashSet<GrammaticalConstruction> constructions;
 	EnumMap<GrammaticalConstruction, Double> relFrequencies;
@@ -210,6 +211,11 @@ public final class RankableDocumentImpl implements RankableDocument {
 
 	public void setText(String text) {
 		this.text = text;
+	}
+	
+	@Override
+	public void setFileExtension(String fileExtension) {
+		this.fileExtension = fileExtension;
 	}
 
 	@Override
@@ -393,6 +399,11 @@ public final class RankableDocumentImpl implements RankableDocument {
 	@Override
 	public String toString() {
 		return "RankableDocument {" + title + " | " + operationId + ":" + linkingId + "}";
+	}
+
+	@Override
+	public String getFileExtension() {
+		return fileExtension;
 	}
 
 }

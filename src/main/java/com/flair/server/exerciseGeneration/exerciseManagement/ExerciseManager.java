@@ -1,6 +1,8 @@
 package com.flair.server.exerciseGeneration.exerciseManagement;
 
 
+import java.util.ArrayList;
+
 import com.flair.server.exerciseGeneration.OutputComponents;
 import com.flair.server.exerciseGeneration.downloadManagement.ResourceDownloader;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
@@ -29,15 +31,25 @@ public class ExerciseManager {
 	 * @param settings	The exercise settings
 	 * @return			The byte array of the generated H5P package
 	 */
-    public ResultComponents generateExercises(ContentTypeSettings settings, CoreNlpParser parser, SimpleNlgParser generator, 
+    public ArrayList<ResultComponents> generateExercises(ContentTypeSettings settings, CoreNlpParser parser, SimpleNlgParser generator, 
     		OpenNlpParser lemmatizer, ResourceDownloader resourceDownloader) {
     	try {
-	        OutputComponents generatedExercise = 
-	        settings.getExerciseGenerator().generateExercise(settings, parser, generator, lemmatizer, resourceDownloader);    
-	        if(generatedExercise == null) {
-	        	return new ResultComponents(settings.getName(), null, null, null);
+    		ArrayList<ResultComponents> result = new ArrayList<>();
+	        ArrayList<OutputComponents> generatedExercises = 
+	        settings.getExerciseGenerator().generateExercise(settings, parser, generator, lemmatizer, resourceDownloader);  
+	        if(generatedExercises == null || generatedExercises.size() == 0) {
+	        	return null;
 	        }
-    		return new ResultComponents(settings.getName(), generatedExercise.getH5pFile(), generatedExercise.getPreviews(), generatedExercise.getXmlFile());
+	        
+	        for(OutputComponents generatedExercise : generatedExercises) {
+		        if(generatedExercise == null) {
+		        	result.add(new ResultComponents(settings.getName(), null, null, null));
+		        } else {
+		        	result.add(new ResultComponents(generatedExercise.getName(), generatedExercise.getH5pFile(), generatedExercise.getPreviews(), generatedExercise.getXmlFile()));
+		        }
+	        }
+	        
+    		return result;
     	} catch(Exception e) {
 			ServerLogger.get().error(e, "Exercise could not be generated. Exception: " + e.toString());
     		return null;

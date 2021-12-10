@@ -1,12 +1,7 @@
 package com.flair.server.exerciseGeneration.exerciseManagement.feedBookXmlManagement;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jsoup.Jsoup;
 
@@ -19,8 +14,9 @@ public class FindXmlManager extends SimpleExerciseXmlManager {
 	}
 	
 	@Override
-	protected void addAttributes(ArrayList<Pair<String, Boolean>> parts, int index, String taskDescription) {	
-		super.addAttributes(parts, index, taskDescription);
+	protected void addAttributes(ArrayList<Pair<String, Boolean>> parts, int index, String taskDescription,
+			ArrayList<String> givenWords) {	
+		super.addAttributes(parts, index, taskDescription, givenWords);
 		attributes.put("task_type", "UNDERLINE");
 		attributes.put("task_orient", "Offen");
 		attributes.put("task_focus", "Form");
@@ -41,7 +37,8 @@ public class FindXmlManager extends SimpleExerciseXmlManager {
 	
 	@Override
 	protected String generateTaskFields(ArrayList<Pair<String, Boolean>> parts,
-			ArrayList<Pair<Integer, Integer>> constructionIndices, ArrayList<ArrayList<Pair<String,String>>> distractors) {
+			ArrayList<Pair<Integer, Integer>> constructionIndices, 
+			ArrayList<ArrayList<Pair<String,String>>> distractors, ArrayList<Pair<String, Integer>> targets) {
 		ArrayList<String> text = new ArrayList<>();
     	for(Pair<String, Boolean> part : parts) {
     		text.add(part.first);

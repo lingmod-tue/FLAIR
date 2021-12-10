@@ -59,7 +59,7 @@ public class QuizJsonManager extends JsonManager {
             i++;
         }
 
-        OutputComponents output = new OutputComponents(jsonObject, previewTexts, null, null, null, null);
+        OutputComponents output = new OutputComponents(jsonObject, previewTexts, null, null, null, null, null, settings.getName());
         output.setSimpleExercises(containedExercises);
         return output;
     }

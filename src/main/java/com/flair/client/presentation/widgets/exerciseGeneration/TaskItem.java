@@ -1,7 +1,12 @@
 package com.flair.client.presentation.widgets.exerciseGeneration;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map.Entry;
+
+import org.apache.poi.hslf.blip.JPEG.ColorSpace;
 
 import com.flair.client.localization.LocalizedComposite;
 import com.flair.client.localization.LocalizedFieldType;
@@ -10,10 +15,13 @@ import com.flair.client.localization.interfaces.LocalizationBinder;
 import com.flair.client.presentation.widgets.DocumentPreviewPane;
 import com.flair.client.presentation.widgets.NumberSpinner;
 import com.flair.shared.exerciseGeneration.BracketsProperties;
+import com.flair.shared.exerciseGeneration.ConfigExerciseSettings;
 import com.flair.shared.exerciseGeneration.Construction;
+import com.flair.shared.exerciseGeneration.DetailedConstruction;
 import com.flair.shared.exerciseGeneration.DistractorProperties;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
 import com.flair.shared.exerciseGeneration.ExerciseType;
+import com.flair.shared.exerciseGeneration.IExerciseSettings;
 import com.flair.shared.exerciseGeneration.InstructionsProperties;
 import com.flair.shared.exerciseGeneration.OutputFormat;
 import com.flair.shared.exerciseGeneration.Pair;
@@ -21,10 +29,15 @@ import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.interop.dtos.RankableDocument;
 import com.flair.shared.interop.dtos.RankableDocument.ConstructionRange;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.event.dom.client.ChangeEvent;
+import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.FileUpload;
 import com.google.gwt.user.client.ui.HTMLPanel;
+import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
@@ -77,7 +90,11 @@ public class TaskItem extends LocalizedComposite {
     @UiField
     MaterialButton btnApplyDocumentSelection;
     @UiField
+    MaterialButton btnApplyTargetSelection;
+    @UiField
     MaterialButton btnReset;
+    @UiField
+    MaterialButton btnResetTargetSelection;
     @UiField
 	@LocalizedField(type = LocalizedFieldType.TOOLTIP_MATERIAL)
     MaterialButton btnUpdateDocument;
@@ -289,11 +306,29 @@ public class TaskItem extends LocalizedComposite {
     MaterialRow grpInstructions;
     @UiField
     HTMLPanel htmlContent;
+    @UiField 
+    RichTextArea txtDocumentForSelection;
+    @UiField
+    MaterialDialog dlgTargetExclusion;
+    @UiField
+    MaterialButton btnSelectTargets;
+    @UiField
+    MaterialCheckBox chkUseConfig;
+    @UiField
+    MaterialRow pnlConfig1;
+    @UiField
+    MaterialRow pnlConfig2;
+    /*@UiField
+    MaterialRow pnlFileUplaod;
+    @UiField
+    FileUpload btnFileUpload;*/
     
     private ConstructionComponentsCollection constructionComponents;
     private ExerciseGenerationWidget parent;
+    private TaskItem instance;
     
-    public TaskItem(ExerciseGenerationWidget parent, String name) {   
+    public TaskItem(ExerciseGenerationWidget parent, String name) {  
+    	instance = this;
     	this.parent = parent;
     	
         initWidget(ourUiBinder.createAndBindUi(this));
@@ -399,14 +434,9 @@ public class TaskItem extends LocalizedComposite {
     final Widget[] controlsToReset;
 
     /**
-     * The occurrences of constructions relevant to exercise generation in the currently selected document part.
-     */
-    private HashMap<String, ArrayList<Pair<Integer, Integer>>> relevantConstructionsInSelectedDocumentPart = null;
-    
-    /**
      * The occurrences of constructions relevant to exercise generation in the current document.
      */
-    public HashMap<String, ArrayList<Pair<Integer, Integer>>> relevantConstructionsInEntireDocument = null;
+    public HashMap<String, ArrayList<TargetConstruction>> relevantConstructionsInEntireDocument = null;
 
     /**
      * The possible topics for the dropdown.
@@ -414,6 +444,32 @@ public class TaskItem extends LocalizedComposite {
     private ArrayList<Pair<String, String>> possibleTopics;
     
     private final VisibilityManagerCollection visibilityManagers;
+    
+    private class TargetConstruction {
+    	private int startIndex;
+    	private int endIndex;
+    	private boolean toBeUsed = true;
+    	private DetailedConstruction constructionType;
+    	
+		public TargetConstruction(int startIndex, int endIndex, DetailedConstruction constructionType) {
+			this.startIndex = startIndex;
+			this.endIndex = endIndex;
+			this.constructionType = constructionType;
+		}
+		
+		public TargetConstruction(int startIndex, int endIndex) {
+			this.startIndex = startIndex;
+			this.endIndex = endIndex;
+		}
+		
+		public int getStartIndex() { return startIndex; }
+		public int getEndIndex() { return endIndex; }
+		public boolean isToBeUsed() { return toBeUsed; }
+		public DetailedConstruction getConstructionType() { return constructionType; }
+		
+		public void setToBeUsed(boolean toBeUsed) { this.toBeUsed = toBeUsed; }
+		
+    }
     
     
     /**
@@ -502,6 +558,8 @@ public class TaskItem extends LocalizedComposite {
     private void initHandlers() {
     	dlgDocumentSelection.removeFromParent();
         RootPanel.get().add(dlgDocumentSelection);
+        dlgTargetExclusion.removeFromParent();
+        RootPanel.get().add(dlgTargetExclusion);
         dlgExercisePreview.removeFromParent();
         RootPanel.get().add(dlgExercisePreview);
 
@@ -510,12 +568,18 @@ public class TaskItem extends LocalizedComposite {
         	        	
         	removedParts = getNotOverlappingRemovedParts();
         	newlyRemovedParts.clear();
-        	
-        	relevantConstructionsInSelectedDocumentPart = new HashMap<String, ArrayList<Pair<Integer, Integer>>>();
-        	calculateConstructionsOccurrences(relevantConstructionsInSelectedDocumentPart);
-        	
+        	        	
         	btnApplyDocumentSelection.setEnabled(false);
     		btnReset.setEnabled(removedParts.size() > 0);    		
+        });
+        
+        btnApplyTargetSelection.addClickHandler(event -> {
+        	String html = txtDocumentForSelection.getHTML();
+        	updateUsedConstructions(html);
+	        
+        	setNumberExercisesText(calculateNumberOfExercises());
+
+        	dlgTargetExclusion.close();
         });
         
         btnCloseExercisePreview.addClickHandler(event -> {
@@ -525,8 +589,19 @@ public class TaskItem extends LocalizedComposite {
         	lblDocumentForSelection.setText(doc.getText());
         	removedParts.clear();
         	newlyRemovedParts.clear();
+        	setNumberExercisesText(calculateNumberOfExercises());
         	
         	btnApplyDocumentSelection.setEnabled(true);
+        });
+        
+        btnResetTargetSelection.addClickHandler(event -> {
+        	for(TargetConstruction usedConstruction : usedTargetConstructions) {
+        		usedConstruction.setToBeUsed(true);
+        	}
+        	btnResetTargetSelection.setEnabled(false);
+        	
+        	setTargetExclusionText();
+        	setNumberExercisesText(calculateNumberOfExercises());        	
         });
         
         lblDocumentForSelection.addKeyDownHandler(event -> {
@@ -535,6 +610,8 @@ public class TaskItem extends LocalizedComposite {
         	}
         });
         
+        txtDocumentForSelection.addKeyDownHandler(event -> {event.preventDefault();});
+        
     	btnDelete.addClickHandler(event -> {
     		parent.deleteTask(this);
     	});
@@ -542,6 +619,14 @@ public class TaskItem extends LocalizedComposite {
     	btnSelectDocumentPart.addClickHandler(event -> {
     		dlgDocumentSelection.open();
     		lblDocumentForSelection.setFocus(true);
+    	});
+    	
+    	btnSelectTargets.addClickHandler(event -> {
+        	setTargetExclusionText();
+        	
+            btnResetTargetSelection.setEnabled(usedTargetConstructions.stream().anyMatch(c -> !c.isToBeUsed()));
+    		dlgTargetExclusion.open();
+    		txtDocumentForSelection.setFocus(true);
     	});
     	
     	btnPreviewExercise.addClickHandler(event -> {
@@ -613,8 +698,57 @@ public class TaskItem extends LocalizedComposite {
     	for(Pair<MaterialCheckBox, DistractorProperties> option : distractorOptions) {
     		option.first.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
     	}
+    	
+    	chkUseConfig.addClickHandler(e -> {
+			pnlConfig1.setVisible(!chkUseConfig.getValue());
+			pnlConfig2.setVisible(!chkUseConfig.getValue());
+			
+			if(chkUseConfig.getValue()) {
+				icoValidity.setVisible(true);
+				
+				if(doc.getFileExtension().equals(".xlsx")) {
+					icoValidity.setIconType(IconType.CHECK_CIRCLE);
+					icoValidity.setTextColor(Color.GREEN);
+				} else {
+					icoValidity.setIconType(IconType.ERROR);
+					icoValidity.setTextColor(Color.RED);
+				}
+				parent.setGenerateExercisesEnabled();
+	    	}
+			
+			//pnlFileUpload.setVisible(chkUseConfig.getValue());
+    	});
+    	/*
+    	btnFileUpload.addChangeHandler(new ChangeHandler() {
+			@Override
+			public void onChange(ChangeEvent event) {
+				boolean isValidFile = !btnFileUpload.getFilename().isEmpty() && btnFileUpload.getFilename().endsWith(".xlsx");
+				icoValidity.setVisible(isValidFile);
+    			icoValidity.setIconType(IconType.CHECK_CIRCLE);
+				icoValidity.setTextColor(Color.GREEN);
+				if(isValidFile) {
+					JavaScriptObject files = btnFileUpload.getElement().getPropertyJSO("files");
+		    		readTextFile(files, instance);
+				parent.setGenerateExercisesEnabled();
+				}
+			}
+    	});*/
     }
     
+    private void updateUsedConstructions(String htmlText) {
+    	String[] parts = htmlText.split("<button");
+    	ArrayList<Boolean> constructionEnabled = new ArrayList<>();
+    	if(parts.length > 1) {
+        	for(int i = 1; i < parts.length; i++) {
+        		constructionEnabled.add(parts[i].contains("class=\"selected\"") ? true : false);
+        	}
+    	}             
+
+    	for(int i = 0; i < usedTargetConstructions.size(); i++) {
+        	usedTargetConstructions.get(i).setToBeUsed(constructionEnabled.get(i));
+        }
+    }
+        
     private void onLemmaClickedEventHandler() {
     	if(!chkBracketsLemma.getValue()) {
     		chkBracketsDistractorLemma.setValue(false);
@@ -728,7 +862,7 @@ public class TaskItem extends LocalizedComposite {
     	possibleTopics.add(new Pair<String, String>("Passive", "Passive"));
     	possibleTopics.add(new Pair<String, String>("Conditionals", "'if'"));
     	possibleTopics.add(new Pair<String, String>("Relative Pronouns", "Relatives"));
-    	
+
         constructionComponents = new ConstructionComponentsCollection(this);
         
     	setExerciseSettingsVisibilities();    	
@@ -806,7 +940,7 @@ public class TaskItem extends LocalizedComposite {
     	VisibilityManager visibilityManager = visibilityManagers.getVisibilityManger(topic, exerciseType);
     	ArrayList<Widget> visibleSettings;
     	if(visibilityManager != null) {
-    		numberOfExercises = calculatePossibleNumberOfExercises();
+    		numberOfExercises = calculateGlobalNExercises();
     		visibleSettings = visibilityManager.getVisibleWidgets(numberOfExercises);
     	} else {
         	visibleSettings = new ArrayList<Widget>();
@@ -823,7 +957,7 @@ public class TaskItem extends LocalizedComposite {
      * Sets the text for document part selection to the previewed text and the selected range to the entire document.
      * Sets the possible topics options in the dropdown.
      */
-    public void initializeRelevantConstructions() {
+    public void initializeRelevantConstructions() {    	
     	// We only use the document if it's in the selected language
     	if(!DocumentPreviewPane.getInstance().getCurrentlyPreviewedDocument().getDocument().getLanguage().equals(DocumentPreviewPane.getInstance().getCurrentLocale())) {
     		return;
@@ -831,39 +965,84 @@ public class TaskItem extends LocalizedComposite {
     	
     	doc = DocumentPreviewPane.getInstance().getCurrentlyPreviewedDocument().getDocument();
     	lblDocTitle.setText(doc.getTitle());
-        lblDocumentForSelection.setText(doc.getText());
-        
-        removedParts.clear();
-        newlyRemovedParts.clear();
 
-		relevantConstructionsInEntireDocument = new HashMap<String, ArrayList<Pair<Integer, Integer>>>();
-    	calculateConstructionsOccurrences(relevantConstructionsInEntireDocument);
-    	relevantConstructionsInSelectedDocumentPart = new HashMap<String, ArrayList<Pair<Integer, Integer>>>(relevantConstructionsInEntireDocument);  
-    	
-    	String selecteTopic = getTopic();
-    	drpTopic.clear();
-    	
-    	// Add the no topic option
-    	addOptionToTopic("---", "Topic", selecteTopic, 0);    			
+    	if(doc.getFileExtension().equals(".xlsx")) {
+			icoValidity.setVisible(true);
+			icoValidity.setIconType(IconType.CHECK_CIRCLE);
+			icoValidity.setTextColor(Color.GREEN);
 
-		// Add the newly determined options    	
-    	int i = 1;
-    	for(Pair<String, String> possibleTopic : possibleTopics) {
-    		if(possibleTopic.second.equals("Passive")) {
-    			if(getNumberOfConstructionOccurrences("passive", "Passive", 1) > 0) {
-    				addOptionToTopic(possibleTopic.first, possibleTopic.second, selecteTopic, i);  
-        			i++;
-    			}
-    		} else {
-	    		if(checkConstructionOccurs(null, possibleTopic.second, 0)) {
-	    			addOptionToTopic(possibleTopic.first, possibleTopic.second, selecteTopic, i);  
-	    			i++;
-	        	}
-    		}
+			parent.setGenerateExercisesEnabled();
+    	} else {
+	        lblDocumentForSelection.setText(doc.getText());
+	        
+	        removedParts.clear();
+	        newlyRemovedParts.clear();
+	
+			relevantConstructionsInEntireDocument = new HashMap<>();
+	    	calculateConstructionsOccurrences(relevantConstructionsInEntireDocument);
+	    	
+	    	String selecteTopic = getTopic();
+	    	drpTopic.clear();
+	    	
+	    	// Add the no topic option
+	    	addOptionToTopic("---", "Topic", selecteTopic, 0);    			
+	
+			// Add the newly determined options    	
+	    	int i = 1;
+	    	for(Pair<String, String> possibleTopic : possibleTopics) {
+	    		if(possibleTopic.second.equals("Passive")) {
+	    			if(getNumberOfConstructionOccurrences("passive", "Passive", 1) > 0) {
+	    				addOptionToTopic(possibleTopic.first, possibleTopic.second, selecteTopic, i);  
+	        			i++;
+	    			}
+	    		} else {
+		    		if(checkConstructionOccurs(null, possibleTopic.second, 0)) {
+		    			addOptionToTopic(possibleTopic.first, possibleTopic.second, selecteTopic, i);  
+		    			i++;
+		        	}
+	    		}
+	    	}
+	    	
+	    	setExerciseSettingsVisibilities();
     	}
     	
-    	setExerciseSettingsVisibilities();
-    	parent.setResourceDownloadVisiblity();
+    	parent.setResourceDownloadVisiblity();   
+    }
+    
+    private void setTargetExclusionText() {
+    	if(doc != null && usedTargetConstructions != null) {	        			        
+	    	StringBuilder sb = new StringBuilder();
+	    	ArrayList<TargetConstruction> usedConstructions = new ArrayList<>(usedTargetConstructions);
+
+	    	sb.append("<div width='100%'><style>.selected { background-color: GoldenRod; border-radius: 6px;}</style>");
+	    	ArrayList<Pair<Integer, Integer>> removedRanges = new ArrayList<>(removedParts);
+	    	for(int n = 0; n < doc.getText().length(); n++) {
+	    		if(usedConstructions.size() > 0 && usedConstructions.get(0).getEndIndex() == n) {
+	    			usedConstructions.remove(0);
+	    		}
+	    		if(usedConstructions.size() > 0 && usedConstructions.get(0).getStartIndex() == n) {
+	    			// it's the start of a construction
+	    			if(usedConstructions.get(0).isToBeUsed()) {
+	    				sb.append("<button style='cursor:pointer;' class='selected' onclick='this.classList.toggle(\"selected\");'>");
+	    			} else {
+	    				sb.append("<button style='cursor:pointer;' class='' onclick='this.classList.toggle(\"selected\");'>");
+	    			}
+	    		}  
+	    		
+	    		if(removedRanges.size() > 0 && removedRanges.get(0).second == n) {
+	    			removedRanges.remove(0);
+	    		}
+	    		if(!(removedRanges.size() > 0 && removedRanges.get(0).first >= n && removedRanges.get(0).second < n)) {
+	    			sb.append(doc.getText().charAt(n));
+	    		} 
+	    		if(usedConstructions.size() > 0 && usedConstructions.get(0).getEndIndex() == n + 1) {
+	    			sb.append("</button>");
+	    		}
+	    	}
+	    	sb.append("</div>");
+	
+	        txtDocumentForSelection.setHTML(sb.toString());
+    	}
     }
     
     /**
@@ -893,17 +1072,17 @@ public class TaskItem extends LocalizedComposite {
     private ArrayList<String> determineConfiguredConstructions(boolean checkForValue) {
     	String topic = getTopic();
     	String exerciseType = getExerciseType();
-    	
+    	    	
     	ArrayList<String> constructionsToConsider = new ArrayList<String>();
 
     	if(topic.equals("Passive")) {
     		if(exerciseType.equals("FiB")) {    			    			    			
     			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPassiveFiBComponents(), checkForValue);    			
-    		} else if(exerciseType.equals("Drag")) {
+    		} else if(exerciseType.equals("Drag") || exerciseType.equals("Jumble")) {
     			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPassiveDragComponents(), checkForValue);    	
     		}
     	} else if(topic.equals("Relatives")) {
-    		if(exerciseType.equals("FiB") || exerciseType.equals("Mark") || exerciseType.equals("Drag") && rbtPerSentence.getValue()) {
+    		if(exerciseType.equals("FiB") || exerciseType.equals("Mark") || exerciseType.equals("Jumble") || exerciseType.equals("Drag") && rbtPerSentence.getValue()) {
     			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getRelativesFiBMarkComponents(), checkForValue);  
     		} else if (exerciseType.equals("Select")) {
     			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getRelativesSelectComponents(), checkForValue);  
@@ -911,68 +1090,123 @@ public class TaskItem extends LocalizedComposite {
     			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getRelativesDragComponents(), checkForValue);      			
     		}
     	} else if(topic.equals("Present")) {
-    		if(exerciseType.equals("FiB") || exerciseType.equals("Select")) {       			
+    		if(exerciseType.equals("FiB") || exerciseType.equals("Select") || exerciseType.equals("Memory") || exerciseType.equals("Jumble")) {       			
     			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPresentFiBSelectComponents(), checkForValue);
     		} else if(exerciseType.equals("Mark")) {     			
     			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPresentMarkComponents(), checkForValue);   			
     		}
     	} else if(topic.equals("Past")) {
-    		if(exerciseType.equals("FiB") || exerciseType.equals("Select")) {    			
+    		if(exerciseType.equals("FiB") || exerciseType.equals("Select") || exerciseType.equals("Memory") || exerciseType.equals("Jumble")) {    			
     			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPastFiBSelectComponents(), checkForValue);    			
     		} else if(exerciseType.equals("Mark") || exerciseType.equals("Drag")) {    			
     			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getPastMarkDragComponents(), checkForValue);    			
     		} 
     	} else if(topic.equals("'if'")) {
-    		if(exerciseType.equals("FiB") || exerciseType.equals("Select") || exerciseType.equals("Drag")) {
+    		if(exerciseType.equals("FiB") || exerciseType.equals("Select") || exerciseType.equals("Drag") || exerciseType.equals("Jumble")) {
     			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getConditionalComponents(), checkForValue);    	
     		} 
     	} else if(topic.equals("Compare")) {
-			if(exerciseType.equals("FiB") || exerciseType.equals("Select") || exerciseType.equals("Mark") || exerciseType.equals("Drag")) {
+			if(exerciseType.equals("FiB") || exerciseType.equals("Select") || exerciseType.equals("Mark") || exerciseType.equals("Drag") || 
+					exerciseType.equals("Memory") || exerciseType.equals("Jumble")) {
     			constructionsToConsider = getConstructionNamesFromSettings(constructionComponents.getComparativeComponents(), checkForValue);  
     		}
     	}
     	
     	return constructionsToConsider;
     }
+    
+    /**
+     * Calculates the maximum number of exercises that can be generated for the current document regardless of other settings configurations.
+     * @return The maximum number of exercises for the current document
+     */
+    private int calculateGlobalNExercises() {
+    	ArrayList<String> constructionsToConsider = determineConfiguredConstructions(false);
+    	int nExercises = 0;
+    	for(String constructionToConsider : constructionsToConsider) {
+    		nExercises += relevantConstructionsInEntireDocument.get(constructionToConsider).size();
+    	}
+    	
+    	// If we use both clauses of the conditional sentence as targets, we have double the amount of blanks
+    	String topic = getTopic();
+    	if(topic.equals("'if'") && rbtBothClauses.getValue()) {
+    		nExercises = nExercises * 2;	
+    	}
+    	
+    	return nExercises;
+    }
+    	
+    private ArrayList<TargetConstruction> usedTargetConstructions = new ArrayList<>();
 
     /**
-     * Calculates the number of exercises that can be generated for the current document.
+     * Calculates the number of exercises that can be generated for the current document and settings and selections.
      * @return The number of exercises that can be generated.
      */
-    private int calculateRelevantNumberOfExercises(HashMap<String, ArrayList<Pair<Integer, Integer>>> constructions, boolean checkForValue) {
+    private int calculateNumberOfExercises() {
     	String topic = getTopic();
-    	ArrayList<String> constructionsToConsider = determineConfiguredConstructions(checkForValue);
+    	ArrayList<String> constructionsToConsider = determineConfiguredConstructions(true);    	
+    			
+		ArrayList<TargetConstruction> containedConstructions = new ArrayList<>();
+		
+		for(String constructionToConsider : constructionsToConsider) {
+			ArrayList<TargetConstruction> possibleConstructions = relevantConstructionsInEntireDocument.get(constructionToConsider);
+			for(TargetConstruction possibleConstruction : possibleConstructions) {
+				boolean canBeUsed = true;
+	    		for(Pair<Integer, Integer> removedPart : removedParts) {
+	    			if(Math.max(possibleConstruction.getStartIndex(), removedPart.first) < Math.min(possibleConstruction.getEndIndex(), removedPart.second)) {
+	    				// The construction overlaps with a removed part, so we cannot use it
+	    				canBeUsed = false;
+	    			}
+	    		}
+	    		if(canBeUsed) {
+	    			// Copy the user's exclusion settings if possible
+	    			for(TargetConstruction previouslyUsedConstruction : usedTargetConstructions) {
+	    				if(previouslyUsedConstruction.getStartIndex() == possibleConstruction.getStartIndex() &&
+	    						previouslyUsedConstruction.getEndIndex() == possibleConstruction.getEndIndex()) {
+	    					possibleConstruction.setToBeUsed(previouslyUsedConstruction.isToBeUsed());
+	    					break;
+	    				}
+	    			}
+	    			
+		    		containedConstructions.add(possibleConstruction);
+	    		}
+			}
+    	}
 
-    	int nExercises = 0;
+		usedTargetConstructions.clear();
+		
+		// remove overlapping constructions
+		Collections.sort(containedConstructions, (c1, c2) -> c1.getStartIndex() < c2.getStartIndex() ? -1 : 1);
+		HashSet<TargetConstruction> constructionsToRemove = new HashSet<>();
+        for(TargetConstruction construction : containedConstructions) {
+        	for(TargetConstruction otherConstruction : containedConstructions) {
+        		if(construction != otherConstruction && (Math.max(construction.getStartIndex(), otherConstruction.getStartIndex()) < 
+						Math.min(construction.getEndIndex(), otherConstruction.getEndIndex()))) {
+					if(construction.getEndIndex() - construction.getStartIndex() > otherConstruction.getEndIndex() - otherConstruction.getStartIndex()) {
+						constructionsToRemove.add(otherConstruction);
+					} else {
+						constructionsToRemove.add(construction);
+					}
+        		}
+        	}
+        }        
     	
-    	for(String constructionToConsider : constructionsToConsider) {
-    		nExercises += constructions.get(constructionToConsider).size();
+        int nExercises = 0;
+    	for(TargetConstruction construction : containedConstructions) {
+    		if(!constructionsToRemove.contains(construction)) {
+    			usedTargetConstructions.add(construction);
+    			if(construction.isToBeUsed()) {
+    				nExercises++;
+    			}
+    		}
     	}
     	
     	// If we use both clauses of the conditional sentence as targets, we have double the amount of blanks
     	if(topic.equals("'if'") && rbtBothClauses.getValue()) {
-    		nExercises = nExercises * 2;	
+    		nExercises *= 2;	
     	}
-    	    	
     	return nExercises;
     }
-    
-    /**
-     * Calculates the number of exercises that can be generated for the current document regardless of the current parameter settings.
-     * @return The number of exercises that can be generated.
-     */
-    private int calculatePossibleNumberOfExercises() {
-    	return calculateRelevantNumberOfExercises(relevantConstructionsInEntireDocument, false);
-    }
-    
-    /**
-     * Calculates the number of exercises that can be generated for the current document with the current parameter settings.
-     * @return The number of exercises that can be generated.
-     */
-    private int calculateNumberOfExercises() {
-    	return calculateRelevantNumberOfExercises(relevantConstructionsInSelectedDocumentPart, true);
-    }
-    
+        
     /**
      * Creates all combinations of constructions for the checked settings.
      * @param 	constructionComponent A list of the individual constructions making up a more complex (more detailed) construction. 
@@ -1042,10 +1276,12 @@ public class TaskItem extends LocalizedComposite {
 			lblSelectTypeTopic.setVisible(true);
     		lblNumberExercises.setVisible(false);
         	icoValidity.setVisible(false);
-		} else if(topic.equals("Passive") && exerciseType.equals("Select") || 
-				topic.equals("'if'") && exerciseType.equals("Mark") || topic.equals("Present") && exerciseType.equals("Drag") || 
-				exerciseType.equals("Select") && !topic.equals("Relatives") && !hasCheckedDistractors()) {
-    		lblNumberExercises.setText("No exercises can be generated for the current settings.");
+		} else if(exerciseType.equals("Memory") && !(topic.equals("Present") || topic.equals("Past") || topic.equals("Compare")) || 
+				exerciseType.equals("Mark") && topic.equals("'if'") || 
+				exerciseType.equals("Drag") && topic.equals("Present") || 
+				exerciseType.equals("Select") && (topic.equals("Passive") || !topic.equals("Relatives") && !hasCheckedDistractors())) {
+
+			lblNumberExercises.setText("No exercises can be generated for the current settings.");
     		lblNumberExercises.setTextColor(Color.RED);
 		} else {
     		if(numberOfExercises == 0) {
@@ -1064,6 +1300,10 @@ public class TaskItem extends LocalizedComposite {
             		lblNumberExercises.setText("A maximum of " + numberOfExercises + " blanks can be generated for the current settings.");
     			} else if(exerciseType.equals("Mark")) {
             		lblNumberExercises.setText("A maximum of " + numberOfExercises + " target words can be generated for the current settings.");
+    			} else if(exerciseType.equals("Memory")) {
+            		lblNumberExercises.setText("A maximum of " + numberOfExercises + " pairs can be generated for the current settings.");
+    			} else if(exerciseType.equals("Jumble")) {
+            		lblNumberExercises.setText("A maximum of " + numberOfExercises + " jumbled sentences can be generated for the current settings.");
     			} else if(exerciseType.equals("Drag")) {
     				if((topic.equals("Relatives") || topic.equals("'if'")) && rbtPerSentence.getValue() || topic.equals("Passive")) {
     					// 1 exercise per sentence
@@ -1082,7 +1322,7 @@ public class TaskItem extends LocalizedComposite {
     			}
     		}
     	}
-		
+				
 		parent.setGenerateExercisesEnabled();
 		parent.setFeedbackGenerationVisiblity();
 		btnPreviewExercise.setVisible(false);
@@ -1097,7 +1337,7 @@ public class TaskItem extends LocalizedComposite {
     	String type = getExerciseType();
 
     	// If the type doesn't support feedback or the settings always result in multi-word constructions, we don't need to check the constructions
-    	if(type.equals("Mark") || type.equals("Drag")) {
+    	if(type.equals("Mark") || type.equals("Drag") || type.equals("Memory") || type.equals("Jumble")) {
     		return false;
     	}
     	
@@ -1118,8 +1358,9 @@ public class TaskItem extends LocalizedComposite {
      * @param doc			The document containing the text and constructions
      * @return				The occurrences of the construction within the selected range
      */
-    private ArrayList<ConstructionRange> getConstructionsWithinSelectedPart(GrammaticalConstruction construction, RankableDocument doc) {
-    	ArrayList<ConstructionRange> containedConstructions = new ArrayList<ConstructionRange>();
+    private ArrayList<TargetConstruction> getConstructionsWithinSelectedPart(GrammaticalConstruction construction, 
+    		RankableDocument doc, String constructionName) {
+    	ArrayList<TargetConstruction> containedConstructions = new ArrayList<>();
 		
     	for(ConstructionRange range : doc.getConstructionOccurrences(construction)) {
     		boolean canBeUsed = true;
@@ -1130,25 +1371,49 @@ public class TaskItem extends LocalizedComposite {
     			}
     		}
     		if(canBeUsed) {
-    			containedConstructions.add(range);
+    			if(constructionName == null) {
+    				containedConstructions.add(new TargetConstruction(range.getStart(), range.getEnd()));
+    			} else {
+	    			containedConstructions.add(new TargetConstruction(range.getStart(), range.getEnd(), 
+	    					ConstructionNameEnumMapper.getEnum(constructionName)));
+    			}
     		}
     	}
     	
     	return containedConstructions;
     }
     
+    private ArrayList<TargetConstruction> getConstructionsWithinSelectedPart(GrammaticalConstruction construction, 
+    		RankableDocument doc) {
+    	return getConstructionsWithinSelectedPart(construction, doc, null);
+    }
+    
     /**
      * Calculates the occurrences of constructions in the combinations relevant to exercise generation.
      */
-    public void calculateConstructionsOccurrences(HashMap<String, ArrayList<Pair<Integer, Integer>>> relevantConstructions) {   
+    public void calculateConstructionsOccurrences(HashMap<String, ArrayList<TargetConstruction>> relevantConstructions) {   
     	relevantConstructions.clear();
-    	HashMap<String, ArrayList<Pair<Integer, Integer>>> constructionOccurrences = getConstructionsOccurrences();
-    	for (HashMap.Entry<String, ArrayList<Pair<Integer, Integer>>> entry : constructionOccurrences.entrySet()) {
-        	relevantConstructions.put(entry.getKey(), entry.getValue());
+    	HashMap<String, ArrayList<TargetConstruction>> constructionOccurrences = getConstructionsOccurrences();
+    	ArrayList<TargetConstruction> excludedConstructions = new ArrayList<>();
+    	for(Entry<String, ArrayList<TargetConstruction>> constructions : relevantConstructions.entrySet()) {
+    		for(TargetConstruction construction : constructions.getValue()) {
+    			if(!construction.isToBeUsed()) {
+    				excludedConstructions.add(construction);
+    			}
+    		}
+    	}
+    	
+    	for (Entry<String, ArrayList<TargetConstruction>> entry : constructionOccurrences.entrySet()) {
+    		ArrayList<TargetConstruction> usedConstructions = new ArrayList<>();
+    		for(TargetConstruction tc : entry.getValue()) {
+        		if(!excludedConstructions.stream().anyMatch(c -> c.getEndIndex() == tc.getEndIndex() && c.getStartIndex() == tc.getStartIndex()) ) {
+        			usedConstructions.add(tc);
+        		}
+    		}
+        	relevantConstructions.put(entry.getKey(), usedConstructions);
         }
 
-		int numberOfExercises = calculateNumberOfExercises();
-    	setNumberExercisesText(numberOfExercises);
+    	setNumberExercisesText(calculateNumberOfExercises());
     }
     
     /**
@@ -1286,66 +1551,88 @@ public class TaskItem extends LocalizedComposite {
 		return getConstructionNamesFromSettings(constructionLevels, true);    	
     }
     
+//    public static native void readTextFile(JavaScriptObject files, TaskItem classInstance)
+//	/*-{
+//	    var reader = new FileReader();
+//
+//	    reader.onload = function(e) {
+//	        classInstance.@com.flair.client.presentation.widgets.exerciseGeneration.TaskItem::fileLoaded(*)(String(new Uint8Array(reader.result)));
+//	    }
+//
+//	    return reader.readAsArrayBuffer(files[0]);
+//	}-*/;
+    /*
+    private String configFile;
+    private String configFileName;
+    
+    public void fileLoaded(String fileContents) {
+		configFile = fileContents;
+		configFileName = btnFileUpload.getFilename();
+	}*/
+    
     /**
      * Generates settings for the server from the selected options
      */
-    public ExerciseSettings generateExerciseSettings() {
-    	ArrayList<Construction> constructions = new ArrayList<>();
-
-    	HashMap<String, ArrayList<Pair<Integer, Integer>>> constructionOccurrences = 
-    			getConstructionsOccurrences();
-    	ArrayList<String> configuredConstructions = determineConfiguredConstructions(true);
-    	ArrayList<DistractorProperties> distractorProperties = getSelectedDistractors();
-		ArrayList<BracketsProperties> brackets = getSelectedBracketContents();
-		ArrayList<InstructionsProperties> instructions = getSelectedInstructionsContents();
-		ArrayList<OutputFormat> outputFormats = getSelectedOutputFormats();
-
-    	for(String constructionToConsider : configuredConstructions) {
-    		for(Pair<Integer, Integer> constructionIndices : constructionOccurrences.get(constructionToConsider)) {
-    			Construction construction = new Construction(ConstructionNameEnumMapper.getEnum(constructionToConsider), 
-    					constructionIndices);
-        		constructions.add(construction);
-    		}
+    public IExerciseSettings generateExerciseSettings() {
+    	if(chkUseConfig.getValue()) {
+    		//return new ConfigExerciseSettings(configFile, "", configFileName, "", getSelectedOutputFormats());
+    		return new ConfigExerciseSettings(doc.getTitle(), doc.getLinkingId(), getSelectedOutputFormats());
+    	} else {
+	    	ArrayList<Construction> constructions = new ArrayList<>();
+	    	    	
+	    	ArrayList<DistractorProperties> distractorProperties = getSelectedDistractors();
+			ArrayList<BracketsProperties> brackets = getSelectedBracketContents();
+			ArrayList<InstructionsProperties> instructions = getSelectedInstructionsContents();
+			ArrayList<OutputFormat> outputFormats = getSelectedOutputFormats();
+	
+	    	String topic = getTopic();
+	    	String type = getExerciseType();
+	    	
+			for(TargetConstruction c : usedTargetConstructions) {
+				if(c.isToBeUsed()) {
+	    			DetailedConstruction dc = type.equals("Jumble") ? DetailedConstruction.SENTENCE_PART : c.getConstructionType();
+	    			Construction construction = new Construction(dc, new Pair<>(c.getStartIndex(), c.getEndIndex()));
+	        		constructions.add(construction);
+				}
+			}
+	
+	    	if(type.equals("Drag")) {
+	    		if(topic.equals("Passive")) {
+	    			type = "MultiDrag";
+	    			if(rbt2Verbs.getValue()) {
+	    				brackets.add(BracketsProperties.VERB_SPLITTING);
+	    			}
+	    		} else if(topic.equals("Past") || topic.equals("Compare")) {
+					type = "SingleDrag";
+	    		} else {
+	    			if(rbtPerSentence.getValue()) {
+	    				type = "MultiDrag";
+	    			} else {
+	    				type = "SingleDrag";
+	    			}
+	    		}
+	    	}
+	    	
+	    	if(topic.equals("'if'")) {
+	    		if(rbtMainClause.getValue() ) {
+	    			brackets.add(BracketsProperties.MAIN_CLAUSE);
+	    		} else if(rbtBothClauses.getValue()) {
+	    			brackets.add(BracketsProperties.IF_CLAUSE);
+	    			brackets.add(BracketsProperties.MAIN_CLAUSE);
+	    		} else if(rbtIfClause.getValue()) {
+	    			brackets.add(BracketsProperties.IF_CLAUSE);
+	    		} else {
+	    			brackets.add(BracketsProperties.EITHER_CLAUSE);
+	    		}
+	    	} else if(topic.equals("Passive") && type.equals("FiB")) {
+	    		brackets.add(BracketsProperties.LEMMA);
+	    	}
+	
+	    	return new ExerciseSettings(constructions, doc.getUrl(), doc.getText(), removedParts, 
+	    			ExerciseType.getEnum(type), getQuiz(), distractorProperties, brackets, instructions, spnNDistractors.getValue() - 1, lblName.getValue(), 
+	    			parent.chkDownloadResources.getValue(), chkOnlyText.getValue(), parent.chkGenerateFeedback.getValue(), doc.getLinkingId(), doc.getTitle(), "",
+	    			outputFormats);
     	}
-
-    	String topic = getTopic();
-    	String type = getExerciseType();
-    	if(type.equals("Drag")) {
-    		if(topic.equals("Passive")) {
-    			type = "MultiDrag";
-    			if(rbt2Verbs.getValue()) {
-    				brackets.add(BracketsProperties.VERB_SPLITTING);
-    			}
-    		} else if(topic.equals("Past") || topic.equals("Compare")) {
-				type = "SingleDrag";
-    		} else {
-    			if(rbtPerSentence.getValue()) {
-    				type = "MultiDrag";
-    			} else {
-    				type = "SingleDrag";
-    			}
-    		}
-    	}
-    	
-    	if(topic.equals("'if'")) {
-    		if(rbtMainClause.getValue() ) {
-    			brackets.add(BracketsProperties.MAIN_CLAUSE);
-    		} else if(rbtBothClauses.getValue()) {
-    			brackets.add(BracketsProperties.IF_CLAUSE);
-    			brackets.add(BracketsProperties.MAIN_CLAUSE);
-    		} else if(rbtIfClause.getValue()) {
-    			brackets.add(BracketsProperties.IF_CLAUSE);
-    		} else {
-    			brackets.add(BracketsProperties.EITHER_CLAUSE);
-    		}
-    	} else if(topic.equals("Passive") && type.equals("FiB")) {
-    		brackets.add(BracketsProperties.LEMMA);
-    	}
-    	
-    	return new ExerciseSettings(constructions, doc.getUrl(), doc.getText(), removedParts, 
-    			ExerciseType.getEnum(type), getQuiz(), distractorProperties, brackets, instructions, spnNDistractors.getValue() - 1, lblName.getValue(), 
-    			parent.chkDownloadResources.getValue(), chkOnlyText.getValue(), parent.chkGenerateFeedback.getValue(), doc.getLinkingId(), doc.getTitle(), "",
-    			outputFormats);
     }
     
     /**
@@ -1428,23 +1715,19 @@ public class TaskItem extends LocalizedComposite {
      * @param gram					The grammatical construction
      * @param key					The name of the construction used as key in the has map
      */
-    private void addSingleWordConstructions(HashMap<String, ArrayList<Pair<Integer, Integer>>> relevantConstructions, 
+    private void addSingleWordConstructions(HashMap<String, ArrayList<TargetConstruction>> relevantConstructions, 
     		GrammaticalConstruction gram, String key) {
-    	ArrayList<ConstructionRange> findings = getConstructionsWithinSelectedPart(gram, doc);
-		ArrayList<Pair<Integer, Integer>> indices = new ArrayList<>();
-		for(ConstructionRange finding : findings) {			
-			indices.add(new Pair<>(finding.getStart(), finding.getEnd()));
-		}
-		relevantConstructions.put(key, indices);
+    	ArrayList<TargetConstruction> findings = getConstructionsWithinSelectedPart(gram, doc, key);
+
+		relevantConstructions.put(key, findings);
     }
     
 	/**
 	 * Determines the indices of occurrences of constructions in the combinations relevant to exercise generation.
 	 * @return				The indices of occurrences of constructions relevant to exercise generation
 	 */
-    public HashMap<String, ArrayList<Pair<Integer, Integer>>> getConstructionsOccurrences() {    
-    	HashMap<String, ArrayList<Pair<Integer, Integer>>> relevantConstructions = 
-    			new HashMap<String, ArrayList<Pair<Integer, Integer>>>();
+    public HashMap<String, ArrayList<TargetConstruction>> getConstructionsOccurrences() {    
+    	HashMap<String, ArrayList<TargetConstruction>> relevantConstructions = new HashMap<>();
 
     	// comparison
     	// comparatives and superlatives exclude elements like 'the', 'than'
@@ -1480,18 +1763,18 @@ public class TaskItem extends LocalizedComposite {
         		GrammaticalConstruction.TENSE_PAST_PERFECT,
         };
 
-        ArrayList<ConstructionRange> passiveOccurrences = 
+        ArrayList<TargetConstruction> passiveOccurrences = 
         		getConstructionsWithinSelectedPart(GrammaticalConstruction.PASSIVE_VOICE, doc);
         for(GrammaticalConstruction tenseConstruction : tenseConstructions) {
-        	ArrayList<ConstructionRange> tenseOccurrences = 
+        	ArrayList<TargetConstruction> tenseOccurrences = 
             		getConstructionsWithinSelectedPart(tenseConstruction, doc);
-    		ArrayList<Pair<Integer, Integer>> passiveIndices = new ArrayList<>();
-    		ArrayList<Pair<Integer, Integer>> activeIndices = new ArrayList<>();
-            for(ConstructionRange tenseOccurrence : tenseOccurrences) {
-            	ConstructionRange correspondingPassiveOccurrence = null;
-            	for(ConstructionRange passiveOccurrence : passiveOccurrences) {
-            		if(passiveOccurrence.getStart() >= tenseOccurrence.getStart() && passiveOccurrence.getStart() < tenseOccurrence.getEnd() || 
-            				tenseOccurrence.getStart() >= passiveOccurrence.getStart() && tenseOccurrence.getStart() < passiveOccurrence.getEnd()) {
+    		ArrayList<TargetConstruction> passiveIndices = new ArrayList<>();
+    		ArrayList<TargetConstruction> activeIndices = new ArrayList<>();
+            for(TargetConstruction tenseOccurrence : tenseOccurrences) {
+            	TargetConstruction correspondingPassiveOccurrence = null;
+            	for(TargetConstruction passiveOccurrence : passiveOccurrences) {
+            		if(passiveOccurrence.getStartIndex() >= tenseOccurrence.getStartIndex() && passiveOccurrence.getStartIndex() < tenseOccurrence.getEndIndex() || 
+            				tenseOccurrence.getStartIndex() >= passiveOccurrence.getStartIndex() && tenseOccurrence.getStartIndex() < passiveOccurrence.getEndIndex()) {
             			// There is some overlap between the passive construction and the tense construction
             			correspondingPassiveOccurrence = passiveOccurrence;
             			break;
@@ -1500,11 +1783,13 @@ public class TaskItem extends LocalizedComposite {
             	if(correspondingPassiveOccurrence != null) {
             		// The passive construction doesn't always contain all verbs of a verb cluster and the tense construction doesn't usually include the participle
             		// We therefore take the combined construction
-            		passiveIndices.add(new Pair<>(Integer.min(correspondingPassiveOccurrence.getStart(), tenseOccurrence.getStart()), 
-            				Integer.max(correspondingPassiveOccurrence.getEnd(), tenseOccurrence.getEnd())));
+            		passiveIndices.add(new TargetConstruction(Integer.min(correspondingPassiveOccurrence.getStartIndex(), tenseOccurrence.getStartIndex()), 
+            				Integer.max(correspondingPassiveOccurrence.getEndIndex(), tenseOccurrence.getEndIndex()), 
+            				ConstructionNameEnumMapper.getEnum("passive-" + tenseConstruction.name())));
             	} else {
             		// We just take the verb of the tense construction for active constructions
-            		activeIndices.add(new Pair<>(tenseOccurrence.getStart(), tenseOccurrence.getEnd()));
+            		activeIndices.add(new TargetConstruction(tenseOccurrence.getStartIndex(), 
+            				tenseOccurrence.getEndIndex(), ConstructionNameEnumMapper.getEnum("active-" + tenseConstruction.name())));
             	}
             }
 
@@ -1521,32 +1806,32 @@ public class TaskItem extends LocalizedComposite {
         		GrammaticalConstruction.TENSE_PRESENT_PERFECT_PROGRESSIVE
         };
         
-        ArrayList<ConstructionRange> negationOccurrences = 
+        ArrayList<TargetConstruction> negationOccurrences = 
         		getConstructionsWithinSelectedPart(GrammaticalConstruction.NEGATION_NOT, doc);
         negationOccurrences.addAll(getConstructionsWithinSelectedPart(GrammaticalConstruction.NEGATION_NT, doc));
-        ArrayList<ConstructionRange> questionOccurrences = 
+        ArrayList<TargetConstruction> questionOccurrences = 
         		getConstructionsWithinSelectedPart(GrammaticalConstruction.QUESTIONS_DIRECT, doc);
-        ArrayList<ConstructionRange> irregularOccurrences = 
+        ArrayList<TargetConstruction> irregularOccurrences = 
         		getConstructionsWithinSelectedPart(GrammaticalConstruction.VERBS_IRREGULAR, doc);
 
         // past tense combinations
         for(GrammaticalConstruction tenseConstruction : tenseConstructions) {
-        	ArrayList<ConstructionRange> tenseOccurrences = 
+        	ArrayList<TargetConstruction> tenseOccurrences = 
             		getConstructionsWithinSelectedPart(tenseConstruction, doc);
-    		ArrayList<Pair<Integer, Integer>> indicesQuestionAffirmativeRegular = new ArrayList<>();
-    		ArrayList<Pair<Integer, Integer>> indicesQuestionAffirmativeIrregular = new ArrayList<>();
-    		ArrayList<Pair<Integer, Integer>> indicesQuestionNegativeRegular = new ArrayList<>();
-    		ArrayList<Pair<Integer, Integer>> indicesQuestionNegativeIrregular = new ArrayList<>();
-    		ArrayList<Pair<Integer, Integer>> indicesStatementAffirmativeRegular = new ArrayList<>();
-    		ArrayList<Pair<Integer, Integer>> indicesStatementAffirmativeIrregular = new ArrayList<>();
-    		ArrayList<Pair<Integer, Integer>> indicesStatementNegativeRegular = new ArrayList<>();
-    		ArrayList<Pair<Integer, Integer>> indicesStatementNegativeIrregular = new ArrayList<>();
+    		ArrayList<TargetConstruction> indicesQuestionAffirmativeRegular = new ArrayList<>();
+    		ArrayList<TargetConstruction> indicesQuestionAffirmativeIrregular = new ArrayList<>();
+    		ArrayList<TargetConstruction> indicesQuestionNegativeRegular = new ArrayList<>();
+    		ArrayList<TargetConstruction> indicesQuestionNegativeIrregular = new ArrayList<>();
+    		ArrayList<TargetConstruction> indicesStatementAffirmativeRegular = new ArrayList<>();
+    		ArrayList<TargetConstruction> indicesStatementAffirmativeIrregular = new ArrayList<>();
+    		ArrayList<TargetConstruction> indicesStatementNegativeRegular = new ArrayList<>();
+    		ArrayList<TargetConstruction> indicesStatementNegativeIrregular = new ArrayList<>();
         	
-            for(ConstructionRange tenseOccurrence : tenseOccurrences) {
+            for(TargetConstruction tenseOccurrence : tenseOccurrences) {
             	boolean foundNegationOverlap = false;
-            	ConstructionRange negation = null;
-            	for(ConstructionRange negationOccurrence : negationOccurrences) {
-            		if(negationOccurrence.getEnd() >= tenseOccurrence.getStart() - 1 && negationOccurrence.getStart() <= tenseOccurrence.getEnd() + 1) {
+            	TargetConstruction negation = null;
+            	for(TargetConstruction negationOccurrence : negationOccurrences) {
+            		if(negationOccurrence.getEndIndex() >= tenseOccurrence.getStartIndex() - 1 && negationOccurrence.getStartIndex() <= tenseOccurrence.getEndIndex() + 1) {
             			// The negation is at most the previous or succeeding token (only a single character in-between for a whitespace)
             			foundNegationOverlap = true;
             			negation = negationOccurrence;
@@ -1555,8 +1840,8 @@ public class TaskItem extends LocalizedComposite {
             	}
             	
             	boolean foundQuestionOverlap = false;
-            	for(ConstructionRange questionOccurrence : questionOccurrences) {
-            		if(tenseOccurrence.getStart() >= questionOccurrence.getStart() && tenseOccurrence.getEnd() <= questionOccurrence.getEnd()) {
+            	for(TargetConstruction questionOccurrence : questionOccurrences) {
+            		if(tenseOccurrence.getStartIndex() >= questionOccurrence.getStartIndex() && tenseOccurrence.getEndIndex() <= questionOccurrence.getEndIndex()) {
             			// The verb is within a question
             			foundQuestionOverlap = true;
             			break;
@@ -1564,8 +1849,8 @@ public class TaskItem extends LocalizedComposite {
             	}
             	
             	boolean foundIrregularOverlap = false;
-            	for(ConstructionRange irregularOccurrence : irregularOccurrences) {
-            		if(irregularOccurrence.getStart() >= tenseOccurrence.getStart() && irregularOccurrence.getEnd() <= tenseOccurrence.getEnd()) {
+            	for(TargetConstruction irregularOccurrence : irregularOccurrences) {
+            		if(irregularOccurrence.getStartIndex() >= tenseOccurrence.getStartIndex() && irregularOccurrence.getEndIndex() <= tenseOccurrence.getEndIndex()) {
             			// The irregular verb is part of the verb (irregular forms consist of a single token)
             			foundIrregularOverlap = true;
             			break;
@@ -1575,29 +1860,41 @@ public class TaskItem extends LocalizedComposite {
             	if(foundNegationOverlap) {
             		if(foundQuestionOverlap) {
             			if(foundIrregularOverlap) {
-            				indicesQuestionNegativeIrregular.add(new Pair<Integer, Integer>(Math.min(tenseOccurrence.getStart(), negation.getStart()), Math.max(tenseOccurrence.getEnd(), negation.getEnd())));
+            				indicesQuestionNegativeIrregular.add(new TargetConstruction(Math.min(tenseOccurrence.getStartIndex(), negation.getStartIndex()), 
+            						Math.max(tenseOccurrence.getEndIndex(), negation.getEndIndex()), 
+            						ConstructionNameEnumMapper.getEnum(tenseConstruction.name() + "-question-neg-irreg")));
             			} else {
-            				indicesQuestionNegativeRegular.add(new Pair<Integer, Integer>(Math.min(tenseOccurrence.getStart(), negation.getStart()), Math.max(tenseOccurrence.getEnd(), negation.getEnd())));
+            				indicesQuestionNegativeRegular.add(new TargetConstruction(Math.min(tenseOccurrence.getStartIndex(), negation.getStartIndex()), 
+            						Math.max(tenseOccurrence.getEndIndex(), negation.getEndIndex()),
+            						ConstructionNameEnumMapper.getEnum(tenseConstruction.name() + "-question-neg-reg")));
             			}
             		} else {
             			if(foundIrregularOverlap) {
-            				indicesStatementNegativeIrregular.add(new Pair<Integer, Integer>(Math.min(tenseOccurrence.getStart(), negation.getStart()), Math.max(tenseOccurrence.getEnd(), negation.getEnd())));
+            				indicesStatementNegativeIrregular.add(new TargetConstruction(Math.min(tenseOccurrence.getStartIndex(), negation.getStartIndex()), 
+            						Math.max(tenseOccurrence.getEndIndex(), negation.getEndIndex()),
+            						ConstructionNameEnumMapper.getEnum(tenseConstruction.name() + "-stmt-neg-irreg")));
             			} else {
-            				indicesStatementNegativeRegular.add(new Pair<Integer, Integer>(Math.min(tenseOccurrence.getStart(), negation.getStart()), Math.max(tenseOccurrence.getEnd(), negation.getEnd())));
+            				indicesStatementNegativeRegular.add(new TargetConstruction(Math.min(tenseOccurrence.getStartIndex(), negation.getStartIndex()), 
+            						Math.max(tenseOccurrence.getEndIndex(), negation.getEndIndex()),
+            						ConstructionNameEnumMapper.getEnum(tenseConstruction.name() + "-stmt-neg-reg")));
             			}
             		}
             	} else {
             		if(foundQuestionOverlap) {
             			if(foundIrregularOverlap) {
-            				indicesQuestionAffirmativeIrregular.add(new Pair<Integer, Integer>(tenseOccurrence.getStart(), tenseOccurrence.getEnd()));
+            				indicesQuestionAffirmativeIrregular.add(new TargetConstruction(tenseOccurrence.getStartIndex(), tenseOccurrence.getEndIndex(),
+            						ConstructionNameEnumMapper.getEnum(tenseConstruction.name() + "-question-affirm-irreg")));
             			} else {
-            				indicesQuestionAffirmativeRegular.add(new Pair<Integer, Integer>(tenseOccurrence.getStart(), tenseOccurrence.getEnd()));
+            				indicesQuestionAffirmativeRegular.add(new TargetConstruction(tenseOccurrence.getStartIndex(), tenseOccurrence.getEndIndex(),
+            						ConstructionNameEnumMapper.getEnum(tenseConstruction.name() + "-question-affirm-reg")));
             			}
             		} else {
             			if(foundIrregularOverlap) {
-            				indicesStatementAffirmativeIrregular.add(new Pair<Integer, Integer>(tenseOccurrence.getStart(), tenseOccurrence.getEnd()));
+            				indicesStatementAffirmativeIrregular.add(new TargetConstruction(tenseOccurrence.getStartIndex(), tenseOccurrence.getEndIndex(),
+            						ConstructionNameEnumMapper.getEnum(tenseConstruction.name() + "-stmt-affirm-irreg")));
             			} else {
-            				indicesStatementAffirmativeRegular.add(new Pair<Integer, Integer>(tenseOccurrence.getStart(), tenseOccurrence.getEnd()));
+            				indicesStatementAffirmativeRegular.add(new TargetConstruction(tenseOccurrence.getStartIndex(), tenseOccurrence.getEndIndex(),
+            						ConstructionNameEnumMapper.getEnum(tenseConstruction.name() + "-stmt-affirm-reg")));
             			}
             		}
             	}
@@ -1615,26 +1912,26 @@ public class TaskItem extends LocalizedComposite {
         }
 
         // present tense combinations
-        ArrayList<ConstructionRange> presentOccurrences = 
+        ArrayList<TargetConstruction> presentOccurrences = 
         		getConstructionsWithinSelectedPart(GrammaticalConstruction.TENSE_PRESENT_SIMPLE, doc);
-        ArrayList<Pair<Integer, Integer>> indicesQuestionAffirmative3 = new ArrayList<Pair<Integer, Integer>>();
-        ArrayList<Pair<Integer, Integer>> indicesQuestionAffirmativeNot3 = new ArrayList<Pair<Integer, Integer>>();
-    	ArrayList<Pair<Integer, Integer>> indicesQuestionNegative3 = new ArrayList<Pair<Integer, Integer>>();
-    	ArrayList<Pair<Integer, Integer>> indicesQuestionNegativeNot3 = new ArrayList<Pair<Integer, Integer>>();
-    	ArrayList<Pair<Integer, Integer>> indicesStatementAffirmative3 = new ArrayList<Pair<Integer, Integer>>();
-    	ArrayList<Pair<Integer, Integer>> indicesStatementAffirmativeNot3 = new ArrayList<Pair<Integer, Integer>>();
-    	ArrayList<Pair<Integer, Integer>> indicesStatementNegative3 = new ArrayList<Pair<Integer, Integer>>();
-    	ArrayList<Pair<Integer, Integer>> indicesStatementNegativeNot3 = new ArrayList<Pair<Integer, Integer>>();
+        ArrayList<TargetConstruction> indicesQuestionAffirmative3 = new ArrayList<TargetConstruction>();
+        ArrayList<TargetConstruction> indicesQuestionAffirmativeNot3 = new ArrayList<TargetConstruction>();
+    	ArrayList<TargetConstruction> indicesQuestionNegative3 = new ArrayList<TargetConstruction>();
+    	ArrayList<TargetConstruction> indicesQuestionNegativeNot3 = new ArrayList<TargetConstruction>();
+    	ArrayList<TargetConstruction> indicesStatementAffirmative3 = new ArrayList<TargetConstruction>();
+    	ArrayList<TargetConstruction> indicesStatementAffirmativeNot3 = new ArrayList<TargetConstruction>();
+    	ArrayList<TargetConstruction> indicesStatementNegative3 = new ArrayList<TargetConstruction>();
+    	ArrayList<TargetConstruction> indicesStatementNegativeNot3 = new ArrayList<TargetConstruction>();
         
-    	for(ConstructionRange tenseOccurrence : presentOccurrences) {
+    	for(TargetConstruction tenseOccurrence : presentOccurrences) {
         	// we take the first token since the inflected present verb is usually at the beginning of the sequence.
         	// It's just an approximation, but the best we can get without proper NLP processing.
-        	String occurrenceText = doc.getText().substring(tenseOccurrence.getStart(), tenseOccurrence.getEnd()).split(" ")[0];
+        	String occurrenceText = doc.getText().substring(tenseOccurrence.getStartIndex(), tenseOccurrence.getEndIndex()).split(" ")[0];
         	
         	boolean foundNegationOverlap = false;        	
-        	ConstructionRange negation = null;
-        	for(ConstructionRange negationOccurrence : negationOccurrences) {
-        		if(negationOccurrence.getEnd() >= tenseOccurrence.getStart() - 1 && negationOccurrence.getStart() <= tenseOccurrence.getEnd() + 1) {
+        	TargetConstruction negation = null;
+        	for(TargetConstruction negationOccurrence : negationOccurrences) {
+        		if(negationOccurrence.getEndIndex() >= tenseOccurrence.getStartIndex() - 1 && negationOccurrence.getStartIndex() <= tenseOccurrence.getEndIndex() + 1) {
         			// The negation is at most the previous or succeeding token (only a single character in-between for a whitespace)
         			foundNegationOverlap = true;
         			negation = negationOccurrence;
@@ -1643,8 +1940,8 @@ public class TaskItem extends LocalizedComposite {
         	}
 
         	boolean foundQuestionOverlap = false;
-        	for(ConstructionRange questionOccurrence : questionOccurrences) {
-        		if(tenseOccurrence.getStart() >= questionOccurrence.getStart() && tenseOccurrence.getEnd() <= questionOccurrence.getEnd()) {
+        	for(TargetConstruction questionOccurrence : questionOccurrences) {
+        		if(tenseOccurrence.getStartIndex() >= questionOccurrence.getStartIndex() && tenseOccurrence.getEndIndex() <= questionOccurrence.getEndIndex()) {
         			// The verb is within a question
         			foundQuestionOverlap = true;
         			break;
@@ -1657,29 +1954,41 @@ public class TaskItem extends LocalizedComposite {
         	if(foundNegationOverlap) {
         		if(foundQuestionOverlap) {
         			if(isThirdPersonSingular) {
-        				indicesQuestionNegative3.add(new Pair<Integer, Integer>(Math.min(tenseOccurrence.getStart(), negation.getStart()), Math.max(tenseOccurrence.getEnd(), negation.getEnd())));
+        				indicesQuestionNegative3.add(new TargetConstruction(Math.min(tenseOccurrence.getStartIndex(), negation.getStartIndex()), 
+        						Math.max(tenseOccurrence.getEndIndex(), negation.getEndIndex()),
+        						ConstructionNameEnumMapper.getEnum("present-question-neg-3")));
         			} else {
-        				indicesQuestionNegativeNot3.add(new Pair<Integer, Integer>(Math.min(tenseOccurrence.getStart(), negation.getStart()), Math.max(tenseOccurrence.getEnd(), negation.getEnd())));
+        				indicesQuestionNegativeNot3.add(new TargetConstruction(Math.min(tenseOccurrence.getStartIndex(), negation.getStartIndex()), 
+        						Math.max(tenseOccurrence.getEndIndex(), negation.getEndIndex()),
+        						ConstructionNameEnumMapper.getEnum("present-question-neg-not3")));
         			}
         		} else {
         			if(isThirdPersonSingular) {
-        				indicesStatementNegative3.add(new Pair<Integer, Integer>(Math.min(tenseOccurrence.getStart(), negation.getStart()), Math.max(tenseOccurrence.getEnd(), negation.getEnd())));
+        				indicesStatementNegative3.add(new TargetConstruction(Math.min(tenseOccurrence.getStartIndex(), negation.getStartIndex()), 
+        						Math.max(tenseOccurrence.getEndIndex(), negation.getEndIndex()),
+        						ConstructionNameEnumMapper.getEnum("present-stmt-neg-3")));
         			} else {
-        				indicesStatementNegativeNot3.add(new Pair<Integer, Integer>(Math.min(tenseOccurrence.getStart(), negation.getStart()), Math.max(tenseOccurrence.getEnd(), negation.getEnd())));
+        				indicesStatementNegativeNot3.add(new TargetConstruction(Math.min(tenseOccurrence.getStartIndex(), negation.getStartIndex()), 
+        						Math.max(tenseOccurrence.getEndIndex(), negation.getEndIndex()),
+        						ConstructionNameEnumMapper.getEnum("present-stmt-neg-not3")));
         			}
         		}
         	} else {
         		if(foundQuestionOverlap) {
         			if(isThirdPersonSingular) {
-        				indicesQuestionAffirmative3.add(new Pair<Integer, Integer>(tenseOccurrence.getStart(), tenseOccurrence.getEnd()));
+        				indicesQuestionAffirmative3.add(new TargetConstruction(tenseOccurrence.getStartIndex(), tenseOccurrence.getEndIndex(),
+        						ConstructionNameEnumMapper.getEnum("present-question-affirm-3")));
         			} else {
-        				indicesQuestionAffirmativeNot3.add(new Pair<Integer, Integer>(tenseOccurrence.getStart(), tenseOccurrence.getEnd()));
+        				indicesQuestionAffirmativeNot3.add(new TargetConstruction(tenseOccurrence.getStartIndex(), tenseOccurrence.getEndIndex(),
+        						ConstructionNameEnumMapper.getEnum("present-question-affirm-not3")));
         			}
         		} else {
         			if(isThirdPersonSingular) {
-        				indicesStatementAffirmative3.add(new Pair<Integer, Integer>(tenseOccurrence.getStart(), tenseOccurrence.getEnd()));
+        				indicesStatementAffirmative3.add(new TargetConstruction(tenseOccurrence.getStartIndex(), tenseOccurrence.getEndIndex(),
+        						ConstructionNameEnumMapper.getEnum("present-stmt-affirm-3")));
         			} else {
-        				indicesStatementAffirmativeNot3.add(new Pair<Integer, Integer>(tenseOccurrence.getStart(), tenseOccurrence.getEnd()));
+        				indicesStatementAffirmativeNot3.add(new TargetConstruction(tenseOccurrence.getStartIndex(), tenseOccurrence.getEndIndex(),
+        						ConstructionNameEnumMapper.getEnum("present-stmt-affirm-not3")));
         			}
         		}
         	}
@@ -1695,22 +2004,26 @@ public class TaskItem extends LocalizedComposite {
 		relevantConstructions.put("present-stmt-affirm-not3", indicesStatementAffirmativeNot3);                              	
 
 		// relative pronouns
-		ArrayList<ConstructionRange> relativeOccurrences = 
+		ArrayList<TargetConstruction> relativeOccurrences = 
         		getConstructionsWithinSelectedPart(GrammaticalConstruction.PRONOUNS_RELATIVE, doc);
-        ArrayList<Pair<Integer, Integer>> indicesWhoOccurrences = new ArrayList<Pair<Integer, Integer>>();
-        ArrayList<Pair<Integer, Integer>> indicesWhichOccurrences = new ArrayList<Pair<Integer, Integer>>();
-        ArrayList<Pair<Integer, Integer>> indicesThatOccurrences = new ArrayList<Pair<Integer, Integer>>();
-        ArrayList<Pair<Integer, Integer>> indicesOtherOccurrences = new ArrayList<Pair<Integer, Integer>>();
-        for(ConstructionRange relativeOccurrence : relativeOccurrences) {
-        	String occurrenceText = doc.getText().substring(relativeOccurrence.getStart(), relativeOccurrence.getEnd());
+        ArrayList<TargetConstruction> indicesWhoOccurrences = new ArrayList<>();
+        ArrayList<TargetConstruction> indicesWhichOccurrences = new ArrayList<>();
+        ArrayList<TargetConstruction> indicesThatOccurrences = new ArrayList<>();
+        ArrayList<TargetConstruction> indicesOtherOccurrences = new ArrayList<>();
+        for(TargetConstruction relativeOccurrence : relativeOccurrences) {
+        	String occurrenceText = doc.getText().substring(relativeOccurrence.getStartIndex(), relativeOccurrence.getEndIndex());
         	if(occurrenceText.equalsIgnoreCase("who")) {
-        		indicesWhoOccurrences.add(new Pair<Integer, Integer>(relativeOccurrence.getStart(), relativeOccurrence.getEnd()));
+        		indicesWhoOccurrences.add(new TargetConstruction(relativeOccurrence.getStartIndex(), relativeOccurrence.getEndIndex(),
+        				ConstructionNameEnumMapper.getEnum("who")));
         	} else if(occurrenceText.equalsIgnoreCase("which")) {
-        		indicesWhichOccurrences.add(new Pair<Integer, Integer>(relativeOccurrence.getStart(), relativeOccurrence.getEnd()));
+        		indicesWhichOccurrences.add(new TargetConstruction(relativeOccurrence.getStartIndex(), relativeOccurrence.getEndIndex(),
+        				ConstructionNameEnumMapper.getEnum("which")));
         	} else if(occurrenceText.equalsIgnoreCase("that")) {
-        		indicesThatOccurrences.add(new Pair<Integer, Integer>(relativeOccurrence.getStart(), relativeOccurrence.getEnd()));
+        		indicesThatOccurrences.add(new TargetConstruction(relativeOccurrence.getStartIndex(), relativeOccurrence.getEndIndex(),
+        				ConstructionNameEnumMapper.getEnum("that")));
         	} else {
-        		indicesOtherOccurrences.add(new Pair<Integer, Integer>(relativeOccurrence.getStart(), relativeOccurrence.getEnd()));
+        		indicesOtherOccurrences.add(new TargetConstruction(relativeOccurrence.getStartIndex(), relativeOccurrence.getEndIndex(),
+        				ConstructionNameEnumMapper.getEnum("otherRelPron")));
         	}
         	
         }
@@ -1718,7 +2031,7 @@ public class TaskItem extends LocalizedComposite {
 		relevantConstructions.put("which", indicesWhichOccurrences);
 		relevantConstructions.put("that", indicesThatOccurrences);
 		relevantConstructions.put("otherRelPron", indicesOtherOccurrences);
-		
+        
 		return relevantConstructions;
     }
     

@@ -19,7 +19,7 @@ public class QuizGenerator extends ExerciseGenerator {
 	private SimpleExerciseGenerator currentGenerator = null;
 
     @Override
-    public OutputComponents generateExercise(ContentTypeSettings settings,
+    public ArrayList<OutputComponents> generateExercise(ContentTypeSettings settings,
     		CoreNlpParser parser, SimpleNlgParser g, OpenNlpParser lemmatizer, ResourceDownloader resourceDownloader) {
         ArrayList<JsonComponents> exerciseComponents = new ArrayList<>();
         for(ContentTypeSettings taskSettings : ((QuizSettings)settings).getExercises()) {
@@ -51,7 +51,11 @@ public class QuizGenerator extends ExerciseGenerator {
     		return null;
     	}
         
-        return createH5pPackage(settings, exerciseComponents, relevantResources);
+        ArrayList<OutputComponents> exercises = new ArrayList<>();
+        
+        exercises.add(createH5pPackage(settings, exerciseComponents, relevantResources));
+        
+        return exercises;
     }
 
 	@Override

@@ -10,7 +10,7 @@ import com.flair.shared.exerciseGeneration.Pair;
 public class OutputComponents {
 		
 	public OutputComponents(JSONObject h5pJson, HashMap<String, String> previews, ArrayList<ArrayList<Pair<String,String>>> distractors, 
-			String plainText, ArrayList<String> htmlElements, String taskDescription) {
+			String plainText, ArrayList<String> htmlElements, String taskDescription, ArrayList<Pair<String, Integer>> targets, String name) {
 		super();
 		this.h5pJson = h5pJson;
 		this.previews = previews;
@@ -18,6 +18,8 @@ public class OutputComponents {
 		this.plainText = plainText;
 		this.htmlElements = htmlElements;
 		this.taskDescription = taskDescription;
+		this.targets = targets;
+		this.name = name;
 	}
 	
 	private JSONObject h5pJson;
@@ -30,6 +32,8 @@ public class OutputComponents {
 	private ArrayList<String> htmlElements;
 	private String taskDescription;
 	private ArrayList<OutputComponents> simpleExercises;
+	private ArrayList<Pair<String, Integer>> targets;
+	private String name;
 	
 	public HashMap<String, byte[]> getXmlFile() {
 		return xmlFile;
@@ -51,6 +55,9 @@ public class OutputComponents {
 	}
 	public String getTaskDescription() {
 		return taskDescription;
+	}
+	public ArrayList<Pair<String, Integer>> getTargets() {
+		return targets;
 	}
 	public void setH5pFile(byte[] h5pFile) {
 		this.h5pFile = h5pFile;
@@ -76,6 +83,8 @@ public class OutputComponents {
 	public void setSimpleExercises(ArrayList<OutputComponents> simpleExercises) {
 		this.simpleExercises = simpleExercises;
 	}
-	
+	public String getName() {
+		return name;
+	}
 	
 }

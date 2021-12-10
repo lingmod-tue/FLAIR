@@ -9,8 +9,9 @@ import com.flair.shared.exerciseGeneration.Pair;
 public class SingleDragDropXmlManager extends SimpleExerciseXmlManager {
 	
 	@Override
-	protected void addAttributes(ArrayList<Pair<String, Boolean>> parts, int index, String taskDescription) {	
-		super.addAttributes(parts, index, taskDescription);
+	protected void addAttributes(ArrayList<Pair<String, Boolean>> parts, int index, String taskDescription,
+			ArrayList<String> givenWords) {	
+		super.addAttributes(parts, index, taskDescription, givenWords);
 
 		attributes.put("task_type", "FILL_IN_THE_BLANKS");
 		attributes.put("task_orient", "Offen");

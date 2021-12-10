@@ -10,7 +10,8 @@ public class SmCustomCorpusEvent implements Message.Payload {
 	public enum EventType {
 		UPLOAD_COMPLETE,
 		PARSE_COMPLETE,
-		JOB_COMPLETE
+		JOB_COMPLETE,
+		CONFIG_UPLOAD_COMPLETE
 	}
 
 	private EventType event = EventType.JOB_COMPLETE;

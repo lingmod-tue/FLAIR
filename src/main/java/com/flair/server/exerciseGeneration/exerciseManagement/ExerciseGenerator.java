@@ -1,7 +1,9 @@
 package com.flair.server.exerciseGeneration.exerciseManagement;
 
 
-import org.json.simple.JSONObject;
+import java.io.IOException;
+import java.util.ArrayList;
+
 import org.json.simple.parser.ParseException;
 
 import com.flair.server.exerciseGeneration.OutputComponents;
@@ -15,10 +17,6 @@ import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.exerciseGeneration.OutputFormat;
 import com.flair.shared.exerciseGeneration.Pair;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-
 public abstract class ExerciseGenerator {
 
 	/**
@@ -27,7 +25,7 @@ public abstract class ExerciseGenerator {
 	 * @param resources	The downloaded resources of the web page for which the exercise is generated
 	 * @return			The byte array of the generated H5P file
 	 */
-    public abstract OutputComponents generateExercise(ContentTypeSettings settings,
+    public abstract ArrayList<OutputComponents> generateExercise(ContentTypeSettings settings,
     		CoreNlpParser parser, SimpleNlgParser generator, OpenNlpParser lemmatizer, ResourceDownloader resourceDownloader);
     
     public abstract void cancelGeneration();
@@ -48,10 +46,13 @@ public abstract class ExerciseGenerator {
 	            		settings.getExerciseSettings().getOutputFormats().contains(OutputFormat.FEEDBOOK_XML)) {
 		            output.setFeedBookXml(settings.getXmlManager()
 		            		.generateFeedBookInputXml(settings.isEscapeAsterisksInHtml(), output.getDistractors(), settings.getIndex(), 
-		            				output.getPlainText(), output.getHtmlElements(), output.getTaskDescription(), settings.getName(), output.getSimpleExercises()));
+		            				output.getPlainText(), output.getHtmlElements(), output.getTaskDescription(), settings.getName(), output.getSimpleExercises(),
+		            				exerciseComponents.get(0).getInstructionLemmas(), output.getTargets()));
 	            }
-	            byte[] h5pFile = ZipManager.generateModifiedZipFile(settings.getResourceFolder(), output.getH5pJson().toString(), resources);
-	            output.setH5pFile(h5pFile);
+	            if(settings.getExerciseSettings().getOutputFormats().contains(OutputFormat.H5P)) {
+	            	byte[] h5pFile = ZipManager.generateModifiedZipFile(settings.getResourceFolder(), output.getH5pJson().toString(), resources);
+		            output.setH5pFile(h5pFile);
+	            }
 	            return output;
 	        } catch (ParseException | IOException e) {
 				ServerLogger.get().error(e, "Files could not be zipped. Exception: " + e.toString());

@@ -94,5 +94,6 @@ public enum DetailedConstruction {
     WHO,
     WHICH,
     THAT,
-    OTHERPRN
+    OTHERPRN,
+    SENTENCE_PART
 }

@@ -18,6 +18,7 @@ import com.google.gwt.user.client.ui.Widget;
 import gwt.material.design.addins.client.fileuploader.MaterialFileUploader;
 import gwt.material.design.addins.client.fileuploader.MaterialUploadLabel;
 import gwt.material.design.addins.client.fileuploader.base.UploadFile;
+import gwt.material.design.addins.client.fileuploader.events.AddedFileEvent;
 import gwt.material.design.addins.client.stepper.MaterialStep;
 import gwt.material.design.addins.client.stepper.MaterialStepper;
 import gwt.material.design.client.ui.MaterialButton;
@@ -128,7 +129,7 @@ public class CorpusFileUploader extends LocalizedComposite implements CorpusUplo
 		uploadInProgress = false;
 		numUploaded = 0;
 		corpusLang = Language.ENGLISH;
-
+		
 		hide();
 		resetUI();
 	}

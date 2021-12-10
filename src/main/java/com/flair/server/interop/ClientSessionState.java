@@ -1,7 +1,6 @@
 package com.flair.server.interop;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,9 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-
-import org.apache.commons.io.IOUtils;
 
 import com.flair.server.crawler.SearchResult;
 import com.flair.server.document.AbstractDocument;
@@ -30,7 +26,9 @@ import com.flair.server.pipelines.questgen.GeneratedQuestion;
 import com.flair.server.pipelines.questgen.QuestionGenerationPipeline;
 import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.exceptions.ServerRuntimeException;
+import com.flair.shared.exerciseGeneration.ConfigExerciseSettings;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
+import com.flair.shared.exerciseGeneration.IExerciseSettings;
 import com.flair.shared.interop.ClientIdToken;
 import com.flair.shared.interop.dtos.DocumentDTO;
 import com.flair.shared.interop.dtos.QuestionDTO;
@@ -47,6 +45,7 @@ import com.flair.shared.interop.messaging.server.SmCustomCorpusEvent;
 import com.flair.shared.interop.messaging.server.SmExGenEvent;
 import com.flair.shared.interop.messaging.server.SmQuestionGenEvent;
 import com.flair.shared.interop.messaging.server.SmWebSearchParseEvent;
+import com.google.common.io.ByteStreams;
 
 class ClientSessionState {
 	private final ClientIdToken clientId;
@@ -121,7 +120,7 @@ class ClientSessionState {
 
 	private synchronized void onCmCustomCorpusParseStart(CmCustomCorpusParseStart msg) {
 		List<CustomCorpusFile> uploadCache = temporaryClientData.customCorpusData.uploaded;
-
+				
 		int numUploadedFiles = msg.getNumUploadedFiles();
 
 		if (numUploadedFiles > temporaryClientData.customCorpusData.uploaded.size()) {
@@ -158,7 +157,8 @@ class ClientSessionState {
 					sources.add(new UploadedFileDocumentSource(uploadCache.get(i).getStream(),
 							uploadCache.get(i).getFilename(),
 							msg.getLanguage(),
-							i + 1));
+							i + 1,
+							uploadCache.get(i).getExtension()));
 					i++;
 				}
 			}
@@ -167,7 +167,7 @@ class ClientSessionState {
 		}
 		
 		uploadCache.clear();
-
+		
 		GramParsingPipeline.ParseOpBuilder builder = GramParsingPipeline.get().documentParse();
 		builder.lang(msg.getLanguage())
 				.docSource(sources)
@@ -261,7 +261,7 @@ class ClientSessionState {
 	}
 	
 	private synchronized void onCmExGenStart(CmExGenStart msg) {
-		ArrayList<ExerciseSettings> settings = msg.getSettings();
+		ArrayList<IExerciseSettings> settings = msg.getSettings();
 		
 		ServerLogger.get().info("Begin exercise generation");
 
@@ -269,13 +269,22 @@ class ClientSessionState {
 			throw new ServerRuntimeException("Another operation is still running");
 
 		// Get the uploaded file content if the document comes from custom file upload
-		for(ExerciseSettings exerciseSettings : settings) {
+		for(IExerciseSettings exerciseSettings : settings) {
 			if(exerciseSettings.getFileName().length() > 0 && exerciseSettings.getId() != 0) {
-				List<String> uploadCache = temporaryClientData.customCorpusData.contents;
-
-				if(uploadCache != null && uploadCache.size() >= exerciseSettings.getId()) {
-					String fileStream = uploadCache.get(exerciseSettings.getId() - 1);
-					exerciseSettings.setFileContent(fileStream);
+				if(exerciseSettings instanceof ExerciseSettings) {
+					List<String> uploadCache = temporaryClientData.customCorpusData.contents;
+	
+					if(uploadCache != null && uploadCache.size() >= exerciseSettings.getId()) {
+						String fileStream = uploadCache.get(exerciseSettings.getId() - 1);
+						exerciseSettings.setFileContent(fileStream);
+					}
+				} else if(exerciseSettings instanceof ConfigExerciseSettings) {
+					List<byte[]> uploadCache = temporaryClientData.customCorpusData.byteContents;
+					
+					if(uploadCache != null && uploadCache.size() >= exerciseSettings.getId()) {
+						byte[] fileStream = uploadCache.get(exerciseSettings.getId() - 1);
+						((ConfigExerciseSettings)exerciseSettings).setFileStream(fileStream);
+					}
 				}
 			}
 		}
@@ -422,12 +431,12 @@ class ClientSessionState {
 	}
 	
 	
-	private synchronized void onExerciseGenerationOpGenerationComplete(ResultComponents file) {
+	private synchronized void onExerciseGenerationOpGenerationComplete(ArrayList<ResultComponents> exercises) {
 		if (!pipelineOpCache.hasActiveOp())
 			throw new ServerRuntimeException("Invalid exercise generation generation complete event!");
 
-		if(file != null) {
-            generatedPackages.add(file);
+		if(exercises != null) {
+            generatedPackages.addAll(exercises);
         }
 	}
 	
@@ -464,7 +473,6 @@ class ClientSessionState {
 		HashMap<String, byte[]> outputFiles = new HashMap<>();
 
 		if(h5pFiles.size() > 1) {
-			//TODO modify zipper
 			outputFiles.put("h5pExercises.zip", ZipManager.zipFiles(h5pFiles));
 		} else if(h5pFiles.size() > 0) {
 			String fileName = getRandomHashMapEntry(h5pFiles);
@@ -472,7 +480,6 @@ class ClientSessionState {
         }
 		
 		if(xmlFiles.size() > 1) {
-			//TODO
 			outputFiles.put("xmlExercises.zip", ZipManager.zipFiles(xmlFiles));
 		} else if(xmlFiles.size() > 0) {
 			String fileName = getRandomHashMapEntry(xmlFiles);
@@ -513,6 +520,14 @@ class ClientSessionState {
 		ServerLogger.get().info("Received custom corpus from client " + clientId);
 
 		// save the uploaded file for later
+		for(CustomCorpusFile file : corpus) {
+			try {
+				byte[] bytes = ByteStreams.toByteArray(file.getStream());
+				temporaryClientData.customCorpusData.byteContents.add(bytes);
+				file.setStream(new ByteArrayInputStream(bytes));
+			} catch (IOException e) { }
+		}
+		
 		temporaryClientData.customCorpusData.uploaded.addAll(corpus);
 	}
 

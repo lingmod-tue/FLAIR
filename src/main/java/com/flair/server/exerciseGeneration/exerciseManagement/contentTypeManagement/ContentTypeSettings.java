@@ -9,6 +9,7 @@ import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseGenerator;
 import com.flair.server.exerciseGeneration.exerciseManagement.feedBookXmlManagement.XmlManager;
 import com.flair.server.exerciseGeneration.exerciseManagement.jsonManagement.JsonManager;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
+import com.flair.shared.exerciseGeneration.IExerciseSettings;
 
 public abstract class ContentTypeSettings {
 
@@ -30,7 +31,7 @@ public abstract class ContentTypeSettings {
     private boolean escapeAsterisksInHtml;
     private ExerciseGenerator exerciseGenerator;
     private String contentTypeLibrary;
-    private ExerciseSettings exerciseSettings;
+    private IExerciseSettings exerciseSettings;
     private Element doc;
     private ArrayList<DownloadedResource> resources;
     private String name;
@@ -42,13 +43,13 @@ public abstract class ContentTypeSettings {
     public boolean isEscapeAsterisksInHtml() {return escapeAsterisksInHtml; }
     public ExerciseGenerator getExerciseGenerator() { return exerciseGenerator; }
     public String getContentTypeLibrary() { return contentTypeLibrary; }
-    public ExerciseSettings getExerciseSettings() { return exerciseSettings; }
+    public IExerciseSettings getExerciseSettings() { return exerciseSettings; }
     public Element getDoc() { return doc; }
     public ArrayList<DownloadedResource> getResources() { return resources; }
     public String getName() { return name; }
     public int getIndex() { return index; }
 
-    public void setExerciseSettings(ExerciseSettings exerciseSettings) { this.exerciseSettings = exerciseSettings; }
+    public void setExerciseSettings(IExerciseSettings exerciseSettings) { this.exerciseSettings = exerciseSettings; }
     public void setDoc(Element doc) { this.doc = doc; }
 	public void setResources(ArrayList<DownloadedResource> resources) { this.resources = resources; }
 	public void setIndex(int index) { this.index = index; }
