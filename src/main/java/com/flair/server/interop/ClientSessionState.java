@@ -449,12 +449,20 @@ class ClientSessionState {
 		HashMap<String, String> previews = new HashMap<>();
 		HashMap<String, byte[]> xmlFiles = new HashMap<>();
 		HashMap<String, byte[]> h5pFiles = new HashMap<>();
-		
+		HashMap<String, byte[]> zipFiles = new HashMap<>();
+
 		for (ResultComponents result : generatedPackages) {
 			if(result.getXmlFile() != null) {
 	        	for(Entry<String, byte[]> entry : result.getXmlFile().entrySet()) {
 	        		if(entry.getValue() != null && entry.getValue().length > 0) {
 	            		xmlFiles.put(entry.getKey() + ".xml", entry.getValue());
+	        		}
+	        	}
+			}
+			if(result.getZipFiles() != null) {
+	        	for(Entry<String, byte[]> entry : result.getZipFiles().entrySet()) {
+	        		if(entry.getValue() != null && entry.getValue().length > 0) {
+	            		zipFiles.put(entry.getKey() + ".zip", entry.getValue());
 	        		}
 	        	}
 			}
@@ -484,6 +492,13 @@ class ClientSessionState {
 		} else if(xmlFiles.size() > 0) {
 			String fileName = getRandomHashMapEntry(xmlFiles);
 			outputFiles.put(fileName, xmlFiles.get(fileName));
+        }
+		
+		if(zipFiles.size() > 1) {
+			outputFiles.put("zipExercises.zip", ZipManager.zipFiles(zipFiles));
+		} else if(zipFiles.size() > 0) {
+			String fileName = getRandomHashMapEntry(zipFiles);
+			outputFiles.put(fileName, zipFiles.get(fileName));
         }
 		
 		byte[] outputFile = new byte[] {};

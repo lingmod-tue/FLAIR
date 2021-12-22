@@ -47,7 +47,7 @@ public abstract class ExerciseGenerator {
 		            output.setFeedBookXml(settings.getXmlManager()
 		            		.generateFeedBookInputXml(settings.isEscapeAsterisksInHtml(), output.getDistractors(), settings.getIndex(), 
 		            				output.getPlainText(), output.getHtmlElements(), output.getTaskDescription(), settings.getName(), output.getSimpleExercises(),
-		            				exerciseComponents.get(0).getInstructionLemmas(), output.getTargets()));
+		            				exerciseComponents.get(0).getInstructionLemmas(), output.getTargets(), output.getConditionalTypes()));
 	            }
 	            if(settings.getExerciseSettings().getOutputFormats().contains(OutputFormat.H5P)) {
 	            	byte[] h5pFile = ZipManager.generateModifiedZipFile(settings.getResourceFolder(), output.getH5pJson().toString(), resources);

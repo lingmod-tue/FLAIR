@@ -2,12 +2,15 @@ package com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManage
 
 import java.util.ArrayList;
 
+import com.flair.server.exerciseGeneration.exerciseManagement.ConfigBasedConditionalExerciseGenerator;
 import com.flair.server.exerciseGeneration.exerciseManagement.ConfigBasedExerciseGenerator;
 
 public class ConfigBasedSettings extends ContentTypeSettings {
 
-    public ConfigBasedSettings() {
-        super(null, null, true, new ConfigBasedExerciseGenerator(), null, null, null);
+    public ConfigBasedSettings(String topic) {
+        super(null, null, true, 
+        		topic.equals("'if'") ? new ConfigBasedConditionalExerciseGenerator() : new ConfigBasedExerciseGenerator(),
+        	null, null, null);
     }
 
     private ArrayList<ContentTypeSettings> exercises;

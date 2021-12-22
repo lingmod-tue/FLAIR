@@ -63,7 +63,8 @@ public abstract class SimpleExerciseJsonManager extends JsonManager {
         previews.put(settings.getName(), generatePreviewHtml(jsonObject, settings.isEscapeAsterisksInHtml()));
                 
         return new OutputComponents(jsonObject, previews, orderedElements.second, plainText, htmlElements, 
-        		jsonComponents.get(0).getTaskDescription(), orderedElements.first, settings.getName());
+        		jsonComponents.get(0).getTaskDescription(), orderedElements.first, settings.getName(), 
+        		jsonComponents.get(0).getConditionalType());
     }
     
     /**

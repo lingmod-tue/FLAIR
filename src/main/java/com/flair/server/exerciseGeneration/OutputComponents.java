@@ -10,7 +10,8 @@ import com.flair.shared.exerciseGeneration.Pair;
 public class OutputComponents {
 		
 	public OutputComponents(JSONObject h5pJson, HashMap<String, String> previews, ArrayList<ArrayList<Pair<String,String>>> distractors, 
-			String plainText, ArrayList<String> htmlElements, String taskDescription, ArrayList<Pair<String, Integer>> targets, String name) {
+			String plainText, ArrayList<String> htmlElements, String taskDescription, ArrayList<Pair<String, Integer>> targets, 
+			String name, ArrayList<Integer> conditionalTypes) {
 		super();
 		this.h5pJson = h5pJson;
 		this.previews = previews;
@@ -20,6 +21,7 @@ public class OutputComponents {
 		this.taskDescription = taskDescription;
 		this.targets = targets;
 		this.name = name;
+		this.conditionalTypes = conditionalTypes;
 	}
 	
 	private JSONObject h5pJson;
@@ -27,6 +29,7 @@ public class OutputComponents {
 	private HashMap<String, String> feedBookXml;
 	private byte[] h5pFile;
 	private HashMap<String, byte[]> xmlFile;
+	private HashMap<String, byte[]> zipFiles;
 	private ArrayList<ArrayList<Pair<String,String>>> distractors;
 	private String plainText;
 	private ArrayList<String> htmlElements;
@@ -34,7 +37,8 @@ public class OutputComponents {
 	private ArrayList<OutputComponents> simpleExercises;
 	private ArrayList<Pair<String, Integer>> targets;
 	private String name;
-	
+    private ArrayList<Integer> conditionalTypes = new ArrayList<Integer>();
+
 	public HashMap<String, byte[]> getXmlFile() {
 		return xmlFile;
 	}
@@ -59,6 +63,8 @@ public class OutputComponents {
 	public ArrayList<Pair<String, Integer>> getTargets() {
 		return targets;
 	}
+	public ArrayList<Integer> getConditionalTypes() { return conditionalTypes; }
+
 	public void setH5pFile(byte[] h5pFile) {
 		this.h5pFile = h5pFile;
 	}
@@ -85,6 +91,12 @@ public class OutputComponents {
 	}
 	public String getName() {
 		return name;
+	}
+	public HashMap<String, byte[]> getZipFiles() {
+		return zipFiles;
+	}
+	public void setZipFiles(HashMap<String, byte[]> zipFiles) {
+		this.zipFiles = zipFiles;
 	}
 	
 }

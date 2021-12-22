@@ -53,7 +53,7 @@ public class MemoryJsonManager extends JsonManager {
         previews.put(settings.getName(), generatePreviewHtml(jsonObject));
                 
         return new OutputComponents(jsonObject, previews, orderedElements.second, "", null, 
-        		jsonComponents.get(0).getTaskDescription(), orderedElements.first, settings.getName());
+        		jsonComponents.get(0).getTaskDescription(), orderedElements.first, settings.getName(), null);
 	}
 
 	private String generatePreviewHtml(JSONObject jsonObject) {

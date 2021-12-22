@@ -32,18 +32,19 @@ import com.flair.shared.exerciseGeneration.BracketsProperties;
 import com.flair.shared.exerciseGeneration.Construction;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
 import com.flair.shared.exerciseGeneration.ExerciseType;
+import com.flair.shared.exerciseGeneration.OutputFormat;
 import com.flair.shared.exerciseGeneration.Pair;
 
 public class FeedbackManager {
 	
-	private enum ExecutionMode {
+	protected enum ExecutionMode {
 		PARALLEL,
 		SEQUENTIAL
 	}
 
-	private static final Properties PROPERTIES = new Properties();
-	private static final int BATCH_SIZE = 5;
-	private static final ExecutionMode mode = ExecutionMode.SEQUENTIAL;
+	protected static final Properties PROPERTIES = new Properties();
+	protected static final int BATCH_SIZE = 5;
+	protected static final ExecutionMode mode = ExecutionMode.SEQUENTIAL;
 
 	static {
 		try {
@@ -70,8 +71,8 @@ public class FeedbackManager {
 	
 	private ArrayList<Pair<Construction, Boolean>> feedbackSupport = new ArrayList<>();
 	private HashMap<String, String> feedbackLinks = new HashMap<String, String>();
-	private ReentrantLock lock = new ReentrantLock();
-	private boolean isCancelled = false;
+	protected ReentrantLock lock = new ReentrantLock();
+	protected boolean isCancelled = false;
 	
 	public void cancelGeneration() {
 		isCancelled = true;
@@ -82,7 +83,7 @@ public class FeedbackManager {
 	 * @param settings The exercise settings.
 	 * @return The topic
 	 */
-	private String getTopic(ExerciseSettings settings) {
+	protected String getTopic(ExerciseSettings settings) {
 		String topic = "";
 		if(settings.getConstructions().size() > 0) {
 			if(settings.getConstructions().get(0).getConstruction().toString().startsWith("COND")) {
@@ -120,7 +121,7 @@ public class FeedbackManager {
     	JSONArray responseObject = new JSONArray();
     	ArrayList<Pair<List<Construction>, JSONArray>> feedbackBatches = new ArrayList<>();
 
-    	if(settings.isGenerateFeedback() && 
+    	if(settings.isGenerateFeedback() && settings.getOutputFormats().contains(OutputFormat.H5P) &&
     			(settings.getContentType().equals(ExerciseType.FIB) && !settings.getBrackets().contains(BracketsProperties.ACTIVE_SENTENCE)
     					|| settings.getContentType().equals(ExerciseType.SINGLE_CHOICE)
     			)) {

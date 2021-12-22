@@ -43,9 +43,10 @@ public class ExerciseManager {
 	        
 	        for(OutputComponents generatedExercise : generatedExercises) {
 		        if(generatedExercise == null) {
-		        	result.add(new ResultComponents(settings.getName(), null, null, null));
+		        	result.add(new ResultComponents(settings.getName(), null, null, null, null));
 		        } else {
-		        	result.add(new ResultComponents(generatedExercise.getName(), generatedExercise.getH5pFile(), generatedExercise.getPreviews(), generatedExercise.getXmlFile()));
+		        	result.add(new ResultComponents(generatedExercise.getName(), generatedExercise.getH5pFile(), 
+		        			generatedExercise.getPreviews(), generatedExercise.getXmlFile(), generatedExercise.getZipFiles()));
 		        }
 	        }
 	        

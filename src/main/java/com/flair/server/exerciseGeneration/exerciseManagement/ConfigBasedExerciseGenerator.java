@@ -14,7 +14,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.flair.server.exerciseGeneration.OutputComponents;
 import com.flair.server.exerciseGeneration.downloadManagement.ResourceDownloader;
+import com.flair.server.exerciseGeneration.exerciseManagement.configBasedGeneration.CategorizeJsonComponentGenerator;
+import com.flair.server.exerciseGeneration.exerciseManagement.configBasedGeneration.ConditionalJsonComponentPreparer;
 import com.flair.server.exerciseGeneration.exerciseManagement.configBasedGeneration.FillInTheBlanksJsonComponentGenerator;
+import com.flair.server.exerciseGeneration.exerciseManagement.configBasedGeneration.FindJsonComponentGenerator;
 import com.flair.server.exerciseGeneration.exerciseManagement.configBasedGeneration.JsonComponentPreparer;
 import com.flair.server.exerciseGeneration.exerciseManagement.configBasedGeneration.JumbledSentencesJsonComponentGenerator;
 import com.flair.server.exerciseGeneration.exerciseManagement.configBasedGeneration.SingleChoiceJsonComponentGenerator;
@@ -40,11 +43,12 @@ public class ConfigBasedExerciseGenerator extends ExerciseGenerator {
     			ArrayList<JsonComponents> c = new ArrayList<>();
     			c.add(jc);
     			
-    			OutputComponents output = createH5pPackage(jc.getSettings(), c, new ArrayList<>());
+    			//TODO: also support H5P exercises
+    			/*OutputComponents output = createH5pPackage(jc.getSettings(), c, new ArrayList<>());
     	        if(output != null) {
     	        	output.setXmlFile(writeXmlToFile(output.getFeedBookXml()));
     	        }
-	            exercises.add(output);
+	            exercises.add(output);*/
     		}
 	        
             return exercises;
@@ -89,13 +93,15 @@ public class ConfigBasedExerciseGenerator extends ExerciseGenerator {
     	for(Entry<Integer, ArrayList<ExerciseConfigData>> entry : configs.entrySet()) {    		
     		JsonComponentPreparer preparer = new JsonComponentPreparer(entry.getValue());
     		
-    		jsonConfigs.add((new FillInTheBlanksJsonComponentGenerator(true, false)).generateJsonComponents(entry.getValue(), preparer, (ConfigExerciseSettings)settings.getExerciseSettings()));
-    		jsonConfigs.add((new FillInTheBlanksJsonComponentGenerator(true, true)).generateJsonComponents(entry.getValue(), preparer, (ConfigExerciseSettings)settings.getExerciseSettings()));
-    		jsonConfigs.add((new FillInTheBlanksJsonComponentGenerator(false, true)).generateJsonComponents(entry.getValue(), preparer, (ConfigExerciseSettings)settings.getExerciseSettings()));
-    		jsonConfigs.add((new SingleChoiceJsonComponentGenerator(1)).generateJsonComponents(entry.getValue(), preparer, (ConfigExerciseSettings)settings.getExerciseSettings()));
-    		jsonConfigs.add((new SingleChoiceJsonComponentGenerator(3)).generateJsonComponents(entry.getValue(), preparer, (ConfigExerciseSettings)settings.getExerciseSettings()));
-    		jsonConfigs.add((new JumbledSentencesJsonComponentGenerator()).generateJsonComponents(entry.getValue(), preparer, (ConfigExerciseSettings)settings.getExerciseSettings()));
-
+    		if(((ConfigExerciseSettings)settings.getExerciseSettings()).getTopic().equals("Past")) {
+    			jsonConfigs.add((new FillInTheBlanksJsonComponentGenerator(true, false)).generateJsonComponents(entry.getValue(), preparer, (ConfigExerciseSettings)settings.getExerciseSettings()));
+        		jsonConfigs.add((new FillInTheBlanksJsonComponentGenerator(true, true)).generateJsonComponents(entry.getValue(), preparer, (ConfigExerciseSettings)settings.getExerciseSettings()));
+        		jsonConfigs.add((new FillInTheBlanksJsonComponentGenerator(false, true)).generateJsonComponents(entry.getValue(), preparer, (ConfigExerciseSettings)settings.getExerciseSettings()));
+        		jsonConfigs.add((new SingleChoiceJsonComponentGenerator(1)).generateJsonComponents(entry.getValue(), preparer, (ConfigExerciseSettings)settings.getExerciseSettings()));
+        		jsonConfigs.add((new SingleChoiceJsonComponentGenerator(3)).generateJsonComponents(entry.getValue(), preparer, (ConfigExerciseSettings)settings.getExerciseSettings()));
+        		jsonConfigs.add((new JumbledSentencesJsonComponentGenerator()).generateJsonComponents(entry.getValue(), preparer, (ConfigExerciseSettings)settings.getExerciseSettings()));
+        		jsonConfigs.add((new FindJsonComponentGenerator()).generateJsonComponents(entry.getValue(), preparer, (ConfigExerciseSettings)settings.getExerciseSettings()));
+    		} 
     		// for underline exercises evtl. separate exercise per line
     		// add support field in xml
     		//TODO: distractor for only 2 take 1st or random?
@@ -103,6 +109,7 @@ public class ConfigBasedExerciseGenerator extends ExerciseGenerator {
     		//TODO: instructions per stamp-activity type combination?
     		//TODO: all support texts?
     		//TODO: generate feedback if requested
+    		//TODO: if and main clause positions given in config or automatically determined (safest way for now would probably be to go for if or comma)
     		
     		
     	}
@@ -232,7 +239,34 @@ public class ConfigBasedExerciseGenerator extends ExerciseGenerator {
 		private ArrayList<String> distractors = new ArrayList<>();
 		private String lemma;
 		private String distractorLemma;
+		private int conditionalType;
+		private String ifClause;
+		private String mainClause;
+		private String translationIfClause;
+		private String translationMainClause;
+		private ArrayList<Pair<Integer, String>> distractorsIfClause = new ArrayList<>();
+		private ArrayList<Pair<Integer, String>> distractorsMainClause = new ArrayList<>();
+		private String lemmaIfClause;
+		private String lemmaMainClause;
+		private String distractorLemmaIfClause;
+		private String distractorLemmaMainClause;
+		private ArrayList<String> bracketsIfClause = new ArrayList<>();
+		private ArrayList<String> bracketsMainClause = new ArrayList<>();
+		private ArrayList<Pair<Integer, Integer>> gapIfClause = new ArrayList<>();
+		private ArrayList<Pair<Integer, Integer>> gapMainClause = new ArrayList<>();
+		private ArrayList<Pair<Integer, Integer>> underlineIfClause = new ArrayList<>();
+		private ArrayList<Pair<Integer, Integer>> underlineMainClause = new ArrayList<>();
+		private ArrayList<Pair<Integer, String>> positionsIfClause = new ArrayList<>();
+		private ArrayList<Pair<Integer, String>> positionsMainClause = new ArrayList<>();
+		private boolean isType1VsType2;
+
 		
+		public boolean isType1VsType2() {
+			return isType1VsType2;
+		}
+		public void setType1VsType2(boolean isType1VsType2) {
+			this.isType1VsType2 = isType1VsType2;
+		}
 		public String getStamp() { return stamp; }
 		public int getItem() { return item; }
 		public int getActivity() { return activity; }
@@ -264,6 +298,120 @@ public class ConfigBasedExerciseGenerator extends ExerciseGenerator {
 		}
 		public void setDistractorLemma(String distractorLemma) {
 			this.distractorLemma = distractorLemma;
+		}
+		public int getConditionalType() {
+			return conditionalType;
+		}
+		public void setConditionalType(int conditionalType) {
+			this.conditionalType = conditionalType;
+		}
+		public String getIfClause() {
+			return ifClause;
+		}
+		public void setIfClause(String ifClause) {
+			this.ifClause = ifClause;
+		}
+		public String getMainClause() {
+			return mainClause;
+		}
+		public void setMainClause(String mainClause) {
+			this.mainClause = mainClause;
+		}
+		public String getTranslationIfClause() {
+			return translationIfClause;
+		}
+		public void setTranslationIfClause(String translationIfClause) {
+			this.translationIfClause = translationIfClause;
+		}
+		public String getTranslationMainClause() {
+			return translationMainClause;
+		}
+		public void setTranslationMainClause(String translationMainClause) {
+			this.translationMainClause = translationMainClause;
+		}
+		public ArrayList<Pair<Integer, String>> getDistractorsIfClause() {
+			return distractorsIfClause;
+		}
+		public void setDistractorsIfClause(ArrayList<Pair<Integer, String>> distractorsIfClause) {
+			this.distractorsIfClause = distractorsIfClause;
+		}
+		public ArrayList<Pair<Integer, String>> getDistractorsMainClause() {
+			return distractorsMainClause;
+		}
+		public void setDistractorsMainClause(ArrayList<Pair<Integer, String>> distractorsMainClause) {
+			this.distractorsMainClause = distractorsMainClause;
+		}
+		public String getLemmaIfClause() {
+			return lemmaIfClause;
+		}
+		public void setLemmaIfClause(String lemmaIfClause) {
+			this.lemmaIfClause = lemmaIfClause;
+		}
+		public String getLemmaMainClause() {
+			return lemmaMainClause;
+		}
+		public void setLemmaMainClause(String lemmaMainClause) {
+			this.lemmaMainClause = lemmaMainClause;
+		}
+		public String getDistractorLemmaIfClause() {
+			return distractorLemmaIfClause;
+		}
+		public void setDistractorLemmaIfClause(String distractorLemmaIfClause) {
+			this.distractorLemmaIfClause = distractorLemmaIfClause;
+		}
+		public String getDistractorLemmaMainClause() {
+			return distractorLemmaMainClause;
+		}
+		public void setDistractorLemmaMainClause(String distractorLemmaMainClause) {
+			this.distractorLemmaMainClause = distractorLemmaMainClause;
+		}
+		public ArrayList<String> getBracketsIfClause() {
+			return bracketsIfClause;
+		}
+		public void setBracketsIfClause(ArrayList<String> bracketsIfClause) {
+			this.bracketsIfClause = bracketsIfClause;
+		}
+		public ArrayList<String> getBracketsMainClause() {
+			return bracketsMainClause;
+		}
+		public void setBracketsMainClause(ArrayList<String> bracketsMainClause) {
+			this.bracketsMainClause = bracketsMainClause;
+		}
+		public ArrayList<Pair<Integer, Integer>> getGapIfClause() {
+			return gapIfClause;
+		}
+		public void setGapIfClause(ArrayList<Pair<Integer, Integer>> gapIfClause) {
+			this.gapIfClause = gapIfClause;
+		}
+		public ArrayList<Pair<Integer, Integer>> getGapMainClause() {
+			return gapMainClause;
+		}
+		public void setGapMainClause(ArrayList<Pair<Integer, Integer>> gapMainClause) {
+			this.gapMainClause = gapMainClause;
+		}
+		public ArrayList<Pair<Integer, Integer>> getUnderlineIfClause() {
+			return underlineIfClause;
+		}
+		public void setUnderlineIfClause(ArrayList<Pair<Integer, Integer>> underlineIfClause) {
+			this.underlineIfClause = underlineIfClause;
+		}
+		public ArrayList<Pair<Integer, Integer>> getUnderlineMainClause() {
+			return underlineMainClause;
+		}
+		public void setUnderlineMainClause(ArrayList<Pair<Integer, Integer>> underlineMainClause) {
+			this.underlineMainClause = underlineMainClause;
+		}
+		public ArrayList<Pair<Integer, String>> getPositionsIfClause() {
+			return positionsIfClause;
+		}
+		public void setPositionsIfClause(ArrayList<Pair<Integer, String>> positionsIfClause) {
+			this.positionsIfClause = positionsIfClause;
+		}
+		public ArrayList<Pair<Integer, String>> getPositionsMainClause() {
+			return positionsMainClause;
+		}
+		public void setPositionsMainClause(ArrayList<Pair<Integer, String>> positionsMainClause) {
+			this.positionsMainClause = positionsMainClause;
 		}
 								
 	}

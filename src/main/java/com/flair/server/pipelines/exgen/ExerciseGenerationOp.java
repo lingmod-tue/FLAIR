@@ -26,6 +26,7 @@ import com.flair.server.parser.SimpleNlgParser;
 import com.flair.server.pipelines.common.PipelineOp;
 import com.flair.server.scheduler.AsyncExecutorService;
 import com.flair.server.scheduler.AsyncJob;
+import com.flair.shared.exerciseGeneration.ConfigExerciseSettings;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
 import com.flair.shared.exerciseGeneration.ExerciseType;
 import com.flair.shared.exerciseGeneration.IExerciseSettings;
@@ -76,7 +77,8 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
 		public final ResultComponents file;
 
 		Output() {
-			this.file = new ResultComponents("", new byte[] {}, new HashMap<String, String>(), new HashMap<String, byte[]>());
+			this.file = new ResultComponents("", new byte[] {}, new HashMap<String, String>(), 
+					new HashMap<String, byte[]>(), new HashMap<String, byte[]>());
 		}
 	}
 
@@ -174,11 +176,12 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
                     throw new IllegalArgumentException();
                 }
         	} else {
-        		contentTypeSettings = new ConfigBasedSettings();
+        		contentTypeSettings = new ConfigBasedSettings(((ConfigExerciseSettings)s).getTopic());
         	}
         	
         	contentTypeSettings.setExerciseSettings(s);
 
+        	//TODO: deal with quizzes for config based exercises
             if (!configs.containsKey(s.getQuiz())) {
                 configs.put(s.getQuiz(), new ArrayList<>());
             }

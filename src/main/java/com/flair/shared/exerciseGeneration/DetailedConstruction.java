@@ -11,6 +11,8 @@ public enum DetailedConstruction {
     ADV_SUP_ANA,
     CONDREAL,
     CONDUNREAL,
+    CONDREAL_MAIN,
+    CONDREAL_If,
     PASSIVE_PRESSMP,
     PASSIVE_FUTSMP,
     PASSIVE_PRESPRG,

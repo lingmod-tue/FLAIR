@@ -51,6 +51,7 @@ import gwt.material.design.client.constants.RadioButtonType;
 import gwt.material.design.client.ui.MaterialButton;
 import gwt.material.design.client.ui.MaterialCheckBox;
 import gwt.material.design.client.ui.MaterialCollapsibleItem;
+import gwt.material.design.client.ui.MaterialColumn;
 import gwt.material.design.client.ui.MaterialDialog;
 import gwt.material.design.client.ui.MaterialIcon;
 import gwt.material.design.client.ui.MaterialLabel;
@@ -315,20 +316,18 @@ public class TaskItem extends LocalizedComposite {
     @UiField
     MaterialCheckBox chkUseConfig;
     @UiField
-    MaterialRow pnlConfig1;
-    @UiField
-    MaterialRow pnlConfig2;
+    MaterialRow pnlConfig;
     /*@UiField
     MaterialRow pnlFileUplaod;
     @UiField
     FileUpload btnFileUpload;*/
+    @UiField
+    MaterialColumn colType;
     
     private ConstructionComponentsCollection constructionComponents;
     private ExerciseGenerationWidget parent;
-    private TaskItem instance;
     
     public TaskItem(ExerciseGenerationWidget parent, String name) {  
-    	instance = this;
     	this.parent = parent;
     	
         initWidget(ourUiBinder.createAndBindUi(this));
@@ -700,13 +699,25 @@ public class TaskItem extends LocalizedComposite {
     	}
     	
     	chkUseConfig.addClickHandler(e -> {
-			pnlConfig1.setVisible(!chkUseConfig.getValue());
-			pnlConfig2.setVisible(!chkUseConfig.getValue());
-			
+			pnlConfig.setVisible(!chkUseConfig.getValue());
+			colType.setVisible(!chkUseConfig.getValue());
+					
 			if(chkUseConfig.getValue()) {
+				String selecteTopic = getTopic();
+		    	drpTopic.clear();
+		    	
+		    	addOptionToTopic("---", "Topic", selecteTopic, 0);    			
+		
+		    	int i = 1;
+		    	for(Pair<String, String> possibleTopic : possibleTopics) {
+	    			addOptionToTopic(possibleTopic.first, possibleTopic.second, selecteTopic, i);  
+	    			i++;
+		    	}
+		    			    	
+		    	
 				icoValidity.setVisible(true);
 				
-				if(doc.getFileExtension().equals(".xlsx")) {
+				if(doc.getFileExtension().equals(".xlsx") && !getTopic().equals("Topic")) {
 					icoValidity.setIconType(IconType.CHECK_CIRCLE);
 					icoValidity.setTextColor(Color.GREEN);
 				} else {
@@ -714,6 +725,8 @@ public class TaskItem extends LocalizedComposite {
 					icoValidity.setTextColor(Color.RED);
 				}
 				parent.setGenerateExercisesEnabled();
+	    	} else {
+	    		initializeRelevantConstructions();
 	    	}
 			
 			//pnlFileUpload.setVisible(chkUseConfig.getValue());
@@ -966,11 +979,15 @@ public class TaskItem extends LocalizedComposite {
     	doc = DocumentPreviewPane.getInstance().getCurrentlyPreviewedDocument().getDocument();
     	lblDocTitle.setText(doc.getTitle());
 
-    	if(doc.getFileExtension().equals(".xlsx")) {
-			icoValidity.setVisible(true);
-			icoValidity.setIconType(IconType.CHECK_CIRCLE);
-			icoValidity.setTextColor(Color.GREEN);
-
+    	if(chkUseConfig.getValue()) {
+	    	if(doc.getFileExtension().equals(".xlsx")) {
+				icoValidity.setIconType(IconType.CHECK_CIRCLE);
+				icoValidity.setTextColor(Color.GREEN);	
+	    	} else {
+				icoValidity.setIconType(IconType.ERROR);
+				icoValidity.setTextColor(Color.RED);
+	    	}
+    		icoValidity.setVisible(true);
 			parent.setGenerateExercisesEnabled();
     	} else {
 	        lblDocumentForSelection.setText(doc.getText());
@@ -1264,65 +1281,74 @@ public class TaskItem extends LocalizedComposite {
      */
     private void setNumberExercisesText(int numberOfExercises) {
     	String topic = getTopic();
-    	String exerciseType = getExerciseType();
-
+    	
     	icoValidity.setVisible(true);
     	icoValidity.setIconType(IconType.ERROR);
 		icoValidity.setTextColor(Color.RED);
-		lblNumberExercises.setVisible(true);
-		lblSelectTypeTopic.setVisible(false);
-		
-		if(exerciseType.equals("Exercise Type") || topic.equals("Topic")) {
-			lblSelectTypeTopic.setVisible(true);
-    		lblNumberExercises.setVisible(false);
-        	icoValidity.setVisible(false);
-		} else if(exerciseType.equals("Memory") && !(topic.equals("Present") || topic.equals("Past") || topic.equals("Compare")) || 
-				exerciseType.equals("Mark") && topic.equals("'if'") || 
-				exerciseType.equals("Drag") && topic.equals("Present") || 
-				exerciseType.equals("Select") && (topic.equals("Passive") || !topic.equals("Relatives") && !hasCheckedDistractors())) {
 
-			lblNumberExercises.setText("No exercises can be generated for the current settings.");
-    		lblNumberExercises.setTextColor(Color.RED);
-		} else {
-    		if(numberOfExercises == 0) {
-    			lblNumberExercises.setText("No exercises can be generated for the current settings.");
-        		lblNumberExercises.setTextColor(Color.RED);
-    		} else {
-        		lblNumberExercises.setTextColor(numberOfExercises >= 5 ? Color.BLACK : Color.ORANGE);
-        		if(numberOfExercises >= 5) {
-        			icoValidity.setIconType(IconType.CHECK_CIRCLE);
-        			icoValidity.setTextColor(Color.GREEN);
-        		} else {
-        			icoValidity.setIconType(IconType.WARNING);
-        			icoValidity.setTextColor(Color.ORANGE);
-        		}
-    			if(exerciseType.equals("FiB") || exerciseType.equals("Select")) {
-            		lblNumberExercises.setText("A maximum of " + numberOfExercises + " blanks can be generated for the current settings.");
-    			} else if(exerciseType.equals("Mark")) {
-            		lblNumberExercises.setText("A maximum of " + numberOfExercises + " target words can be generated for the current settings.");
-    			} else if(exerciseType.equals("Memory")) {
-            		lblNumberExercises.setText("A maximum of " + numberOfExercises + " pairs can be generated for the current settings.");
-    			} else if(exerciseType.equals("Jumble")) {
-            		lblNumberExercises.setText("A maximum of " + numberOfExercises + " jumbled sentences can be generated for the current settings.");
-    			} else if(exerciseType.equals("Drag")) {
-    				if((topic.equals("Relatives") || topic.equals("'if'")) && rbtPerSentence.getValue() || topic.equals("Passive")) {
-    					// 1 exercise per sentence
-                		lblNumberExercises.setText("A maximum of " + numberOfExercises + " exercises can be generated for the current settings.");
-    				} else {
-    					if(numberOfExercises < 2) {
-    						// We need at least 2 target words for drag & drop to make sense
-    						lblNumberExercises.setText("No exercises can be generated for the current settings.");
-    		        		lblNumberExercises.setTextColor(Color.RED);
-    		        		icoValidity.setIconType(IconType.ERROR);
-    	        			icoValidity.setTextColor(Color.RED);
-    					} else {
-    						lblNumberExercises.setText("A maximum of " + numberOfExercises + " target words can be generated for the current settings.");
-    					}
-    				}
-    			}
+    	if(chkUseConfig.getValue()) {
+    		if(!topic.equals("Topic") && doc.getFileExtension().equals(".xlsx")) {
+    			icoValidity.setIconType(IconType.CHECK_CIRCLE);
+    			icoValidity.setTextColor(Color.GREEN);
     		}
+    	} else {
+	    	String exerciseType = getExerciseType();
+	
+			lblNumberExercises.setVisible(true);
+			lblSelectTypeTopic.setVisible(false);
+			
+			if(exerciseType.equals("Exercise Type") || topic.equals("Topic")) {
+				lblSelectTypeTopic.setVisible(true);
+	    		lblNumberExercises.setVisible(false);
+	        	icoValidity.setVisible(false);
+			} else if(exerciseType.equals("Memory") && !(topic.equals("Present") || topic.equals("Past") || topic.equals("Compare")) || 
+					exerciseType.equals("Mark") && topic.equals("'if'") || 
+					exerciseType.equals("Drag") && topic.equals("Present") || 
+					exerciseType.equals("Select") && (topic.equals("Passive") || !topic.equals("Relatives") && !hasCheckedDistractors())) {
+	
+				lblNumberExercises.setText("No exercises can be generated for the current settings.");
+	    		lblNumberExercises.setTextColor(Color.RED);
+			} else {
+	    		if(numberOfExercises == 0) {
+	    			lblNumberExercises.setText("No exercises can be generated for the current settings.");
+	        		lblNumberExercises.setTextColor(Color.RED);
+	    		} else {
+	        		lblNumberExercises.setTextColor(numberOfExercises >= 5 ? Color.BLACK : Color.ORANGE);
+	        		if(numberOfExercises >= 5) {
+	        			icoValidity.setIconType(IconType.CHECK_CIRCLE);
+	        			icoValidity.setTextColor(Color.GREEN);
+	        		} else {
+	        			icoValidity.setIconType(IconType.WARNING);
+	        			icoValidity.setTextColor(Color.ORANGE);
+	        		}
+	    			if(exerciseType.equals("FiB") || exerciseType.equals("Select")) {
+	            		lblNumberExercises.setText("A maximum of " + numberOfExercises + " blanks can be generated for the current settings.");
+	    			} else if(exerciseType.equals("Mark")) {
+	            		lblNumberExercises.setText("A maximum of " + numberOfExercises + " target words can be generated for the current settings.");
+	    			} else if(exerciseType.equals("Memory")) {
+	            		lblNumberExercises.setText("A maximum of " + numberOfExercises + " pairs can be generated for the current settings.");
+	    			} else if(exerciseType.equals("Jumble")) {
+	            		lblNumberExercises.setText("A maximum of " + numberOfExercises + " jumbled sentences can be generated for the current settings.");
+	    			} else if(exerciseType.equals("Drag")) {
+	    				if((topic.equals("Relatives") || topic.equals("'if'")) && rbtPerSentence.getValue() || topic.equals("Passive")) {
+	    					// 1 exercise per sentence
+	                		lblNumberExercises.setText("A maximum of " + numberOfExercises + " exercises can be generated for the current settings.");
+	    				} else {
+	    					if(numberOfExercises < 2) {
+	    						// We need at least 2 target words for drag & drop to make sense
+	    						lblNumberExercises.setText("No exercises can be generated for the current settings.");
+	    		        		lblNumberExercises.setTextColor(Color.RED);
+	    		        		icoValidity.setIconType(IconType.ERROR);
+	    	        			icoValidity.setTextColor(Color.RED);
+	    					} else {
+	    						lblNumberExercises.setText("A maximum of " + numberOfExercises + " target words can be generated for the current settings.");
+	    					}
+	    				}
+	    			}
+	    		}
+	    	}
     	}
-				
+    	
 		parent.setGenerateExercisesEnabled();
 		parent.setFeedbackGenerationVisiblity();
 		btnPreviewExercise.setVisible(false);
@@ -1574,9 +1600,13 @@ public class TaskItem extends LocalizedComposite {
      * Generates settings for the server from the selected options
      */
     public IExerciseSettings generateExerciseSettings() {
+    	String topic = getTopic();
+    	String quiz = getQuiz();
+
     	if(chkUseConfig.getValue()) {
     		//return new ConfigExerciseSettings(configFile, "", configFileName, "", getSelectedOutputFormats());
-    		return new ConfigExerciseSettings(doc.getTitle(), doc.getLinkingId(), getSelectedOutputFormats());
+    		return new ConfigExerciseSettings(doc.getTitle(), doc.getLinkingId(), getSelectedOutputFormats(),
+    				topic, quiz);
     	} else {
 	    	ArrayList<Construction> constructions = new ArrayList<>();
 	    	    	
@@ -1585,7 +1615,6 @@ public class TaskItem extends LocalizedComposite {
 			ArrayList<InstructionsProperties> instructions = getSelectedInstructionsContents();
 			ArrayList<OutputFormat> outputFormats = getSelectedOutputFormats();
 	
-	    	String topic = getTopic();
 	    	String type = getExerciseType();
 	    	
 			for(TargetConstruction c : usedTargetConstructions) {
@@ -1629,7 +1658,7 @@ public class TaskItem extends LocalizedComposite {
 	    	}
 	
 	    	return new ExerciseSettings(constructions, doc.getUrl(), doc.getText(), removedParts, 
-	    			ExerciseType.getEnum(type), getQuiz(), distractorProperties, brackets, instructions, spnNDistractors.getValue() - 1, lblName.getValue(), 
+	    			ExerciseType.getEnum(type), quiz, distractorProperties, brackets, instructions, spnNDistractors.getValue() - 1, lblName.getValue(), 
 	    			parent.chkDownloadResources.getValue(), chkOnlyText.getValue(), parent.chkGenerateFeedback.getValue(), doc.getLinkingId(), doc.getTitle(), "",
 	    			outputFormats);
     	}

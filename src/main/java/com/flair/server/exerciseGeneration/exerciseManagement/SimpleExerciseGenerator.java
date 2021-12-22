@@ -25,6 +25,11 @@ import com.flair.server.exerciseGeneration.exerciseManagement.taskCompilation.Di
 import com.flair.server.exerciseGeneration.exerciseManagement.taskCompilation.FeedbackManager;
 import com.flair.server.exerciseGeneration.exerciseManagement.taskCompilation.InstructionsManager;
 import com.flair.server.exerciseGeneration.exerciseManagement.taskCompilation.NlpManager;
+import com.flair.server.exerciseGeneration.exerciseManagement.taskCompilation.ConstructionPreparation.BracketsGenerator;
+import com.flair.server.exerciseGeneration.exerciseManagement.taskCompilation.ConstructionPreparation.BracketsGeneratorFactory;
+import com.flair.server.exerciseGeneration.exerciseManagement.taskCompilation.ConstructionPreparation.ConstructionsExtractor;
+import com.flair.server.exerciseGeneration.exerciseManagement.taskCompilation.ConstructionPreparation.ConstructionsExtractorFactory;
+import com.flair.server.exerciseGeneration.exerciseManagement.taskCompilation.DataStructures.ExerciseComponents;
 import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.OpenNlpParser;
 import com.flair.server.parser.SimpleNlgParser;
@@ -72,6 +77,27 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
     	}
     	return files;
     }
+    
+    
+    
+    /**
+     * new
+     */
+    public ExerciseComponents compileExercise(ExerciseSettings exerciseSettings, NlpManager nlpManager) {
+    	// this step might lose targets, so matching only afterwards
+    	ConstructionsExtractor constructionsExtractor = ConstructionsExtractorFactory.getConstructionsExtractor(exerciseSettings, nlpManager);
+    	ExerciseComponents exerciseComponents = constructionsExtractor.prepareConstructions(exerciseSettings);
+    	BracketsGenerator bracketsGenerator = BracketsGeneratorFactory.getBracketsGenerator(exerciseSettings, nlpManager);
+    	bracketsGenerator.generateBrackets(exerciseSettings, exerciseComponents);
+    	
+    	//TODO: prepare constructions (from config or text) (also include distractors, brackets, task description) (this step might lose targets, so matching only afterwards)
+    	//TODO: if HTML: mathc plain text to html, preapare DOM for slitting (separeatePalinTextFromHTML), removeNonText (cliptoFLAIRText), removeNotDisplayedElements (removeCutElements), if Mark: remove links, extract reoszurces, extract sentences
+    	//TODO: generate feedback (only now that we have the final constuctions list), choose distractors
+    	//TODO: generate JSON, XML elements
+    	
+    	return exerciseComponents;
+    }
+    
 
     /**
      * Extracts all exercise components relevant for the JSON configuration from the HTML based on the plain text.
@@ -90,7 +116,6 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        	return null;
 	        }
 	        
-	        //TODO: disable for generation with FeedBook config
 	        NlpManager nlpManager = new NlpManager(parser, generator, exerciseSettings.getPlainText(), lemmatizer);
 	        new ConstructionPreparer().prepareConstructions(exerciseSettings, nlpManager);	
 
@@ -105,14 +130,12 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        	return null;
 	        }
 
-	        //TODO: create alternative ClozeManager which adds brackets generated from FeedBook config
 	        new ClozeManager().prepareBlanks(exerciseSettings, nlpManager, res.first);
 
 	        if (isCancelled) {
 	        	return null;
 	        }
 
-	        //TODO: create alternative DistractorManager which adds distractors generated from FeedBook config
 	        DistractorManager distractorManager = new DistractorManager();
 	        ArrayList<Construction> usedConstructions 
 	        		= distractorManager.generateDistractors(exerciseSettings, nlpManager, res.first);
@@ -167,7 +190,6 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        	return null;
 	        }
 
-	        //TODO: create alternative InstructionsManager which adds instructionLemmas and returns instructions generated from FeedBook config
 	        edu.stanford.nlp.util.Pair<String, ArrayList<String>> taskDescription = InstructionsManager.composeTaskDescription((ExerciseSettings)settings.getExerciseSettings(), nlpManager, res.first);	       
 
 	        if (isCancelled) {
