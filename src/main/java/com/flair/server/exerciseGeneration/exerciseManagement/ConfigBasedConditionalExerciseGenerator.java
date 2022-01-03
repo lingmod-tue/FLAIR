@@ -547,7 +547,7 @@ public class ConfigBasedConditionalExerciseGenerator extends ConfigBasedExercise
 				allDistractorLemmas.remove(0);
 			}
 			Collections.shuffle(allLemmas);
-			v.instructionWords = StringUtils.join(allLemmas, " | ");
+			v.givenWords = StringUtils.join(allLemmas, " | ");
 		}
 				
 		return new SimpleExerciseXmlGenerator().generateFeedBookInputXml(v);

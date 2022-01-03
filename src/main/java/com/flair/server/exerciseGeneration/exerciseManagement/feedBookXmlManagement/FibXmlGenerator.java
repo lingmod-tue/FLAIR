@@ -43,9 +43,13 @@ public class FibXmlGenerator extends SimpleExerciseXmlGenerator {
 				
 				previousGap = new Item();
 				previousGap.target = element.getValue();
-				previousGap.inputType = previousGap.target.matches(".*?[\\s\\h\\v].*?") ? "PHRASE" : "WORD";		
+				previousGap.inputType = previousGap.target.matches(".*?[\\s\\h\\v].*?") ? "PHRASE" : "WORD";	
+				
 				sb = new StringBuilder();
-				sb.append("(").append(StringUtils.join(((ConstructionTextPart)element).getBrackets(), ", ")).append(")");
+
+				if(((ConstructionTextPart)element).getBrackets().size() > 0) {
+					sb.append("(").append(StringUtils.join(((ConstructionTextPart)element).getBrackets(), ", ")).append(") ");
+				}
 			}
 		}
 		
@@ -54,7 +58,7 @@ public class FibXmlGenerator extends SimpleExerciseXmlGenerator {
 		
 		if(exerciseDefinition.getInstructionLemmas().size() > 0) {
 			Collections.shuffle(exerciseDefinition.getInstructionLemmas());
-			v.instructionWords = StringUtils.join(exerciseDefinition.getInstructionLemmas(), " | ");
+			v.givenWords = StringUtils.join(exerciseDefinition.getInstructionLemmas(), " | ");
 		}
 
 		return generateFeedBookInputXml(v).getBytes(StandardCharsets.UTF_8);

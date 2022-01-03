@@ -6,7 +6,6 @@ public class XmlValues {
 	public int index = 1;
 	public String instructions;
 	public ArrayList<Item> items = new ArrayList<>();
-	public String instructionWords = "null";
 	
 	public String taskType;
 	public String taskOrient = "Offen";

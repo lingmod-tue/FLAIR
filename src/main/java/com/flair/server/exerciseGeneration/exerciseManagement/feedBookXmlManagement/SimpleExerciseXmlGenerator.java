@@ -50,13 +50,12 @@ public class SimpleExerciseXmlGenerator {
 		subTask.addAttribute("task_topics", "");
 		subTask.addAttribute("instruction", values.instructions);
 		subTask.addAttribute("sort_index", values.index + "");
-		subTask.addAttribute("given_words", values.instructionWords);
+		subTask.addAttribute("given_words", values.givenWords);
 		subTask.addAttribute("task_type", values.taskType);
 		subTask.addAttribute("task_orient", values.taskOrient);
 		subTask.addAttribute("given_words_draggable", String.valueOf(values.givenWordsDraggable));
 		subTask.addAttribute("feedback_disabled", String.valueOf(values.feedbackDisabled));
 		subTask.addAttribute("support", values.support);
-		subTask.addAttribute("given_words", values.givenWords);
 	}
 	    
     /**

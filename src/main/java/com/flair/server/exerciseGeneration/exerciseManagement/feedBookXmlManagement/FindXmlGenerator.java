@@ -24,9 +24,11 @@ public class FindXmlGenerator extends SimpleExerciseXmlGenerator {
 		StringBuilder sb = new StringBuilder();
 		for(TextPart element : exerciseDefinition.getParts()) {
 			if(element instanceof ConstructionTextPart) {
+				sb.append(" ");
 				int startIndex = sb.length();
 				sb.append(element.getValue().replace(" ", "%"));				
 				int endIndex = sb.length();
+				sb.append(" ");
 				indices.add(new Pair<>(startIndex, endIndex));
 			} else {
 				sb.append(element.getValue());

@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import com.flair.server.exerciseGeneration.ConstructionTextPart;
 import com.flair.server.exerciseGeneration.ExerciseData;
 import com.flair.server.exerciseGeneration.TextPart;
+import com.flair.shared.exerciseGeneration.Pair;
 
 public class CategorizeXmlGenerator extends SimpleExerciseXmlGenerator {
 	
@@ -35,23 +36,30 @@ public class CategorizeXmlGenerator extends SimpleExerciseXmlGenerator {
 			}
 		}
 		
+		ArrayList<Pair<String, ArrayList<String>>> sortedPool = new ArrayList<>();
+		for(Entry<String, ArrayList<String>> el : pool.entrySet()) {
+			sortedPool.add(new Pair<>(el.getKey(), el.getValue()));
+		}
+		Collections.sort(sortedPool, (i1, i2) -> 
+		i1.first.charAt(i1.first.length() - 1) < i2.first.charAt(i2.first.length() - 1) ? 
+			-1 : 1);
+				
 		int i = 1;
 		ArrayList<String> elements = new ArrayList<>();
-		for(Entry<String, ArrayList<String>> el : pool.entrySet()) {
-
-			for(String sentence : el.getValue()) {
+		for(Pair<String, ArrayList<String>> el : sortedPool) {
+			for(String sentence : el.second) {
 				elements.add(sentence + " (" + i + ")");
 			}
 			
 			Item item = new Item();
-			item.text = el.getKey();
-			item.target = StringUtils.join(el.getValue(), "|");
+			item.text = el.first;
+			item.target = StringUtils.join(el.second, "|");
 			item.inputType = "PHRASE";
 			v.items.add(item);
 			
 			i++;
 		}
-				
+						
 		Collections.shuffle(elements);
 		v.givenWords = StringUtils.join(elements, "|");
 
