@@ -102,7 +102,10 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     	btnGenerateExercises.addClickHandler(event -> generateExercises());
     	icoDownload.addClickHandler(event -> provideFileForDownload(generatedExercises, fileName));
     	
-    	chkH5p.addClickHandler(e -> setGenerateExercisesEnabled());
+    	chkH5p.addClickHandler(e -> {
+    		setGenerateExercisesEnabled();
+			setFeedbackGenerationVisiblity();
+    	});
     	chkFeedbookXml.addClickHandler(e -> setGenerateExercisesEnabled());
     }
     

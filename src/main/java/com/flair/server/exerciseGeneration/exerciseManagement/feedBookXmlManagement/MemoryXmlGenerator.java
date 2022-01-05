@@ -27,7 +27,7 @@ public class MemoryXmlGenerator extends SimpleExerciseXmlGenerator {
 		for(TextPart element : exerciseDefinition.getParts()) {
 			if(element instanceof ConstructionTextPart) {
 				ConstructionTextPart el = (ConstructionTextPart)element;
-				textElements.add(el.getValue() + " - " + el.getTranslation());
+				textElements.add(el.getValue() + " - " + el.getDistractors().get(0).getValue());
 			}
 		}
 		item.text = StringUtils.join(textElements, "|");

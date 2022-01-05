@@ -104,12 +104,8 @@ public class ConfigBasedExerciseGenerator extends ExerciseGenerator {
     		} 
     		// for underline exercises evtl. separate exercise per line
     		// add support field in xml
-    		//TODO: distractor for only 2 take 1st or random?
-    		//TODO: no memory exercises?
     		//TODO: instructions per stamp-activity type combination?
     		//TODO: all support texts?
-    		//TODO: generate feedback if requested
-    		//TODO: if and main clause positions given in config or automatically determined (safest way for now would probably be to go for if or comma)
     		
     		
     	}

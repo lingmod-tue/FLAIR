@@ -8,7 +8,8 @@ public enum ExerciseType {
 	DRAG_SINGLE("SingleDrag"),
 	DRAG_MULTI("MultiDrag"),
 	MEMORY("Memory"),
-	JUMBLED_SENTENCES("JumbledSentences");
+	JUMBLED_SENTENCES("JumbledSentences"),
+	CATEGORIZE("Categorize");
 	
 	private final String name;       
 
@@ -36,6 +37,8 @@ public enum ExerciseType {
 			return ExerciseType.MEMORY;
 		case "Jumble":
 			return ExerciseType.JUMBLED_SENTENCES;
+		case "Categorize":
+			return ExerciseType.CATEGORIZE;
 			default:
 				throw new IllegalArgumentException();
 		}

@@ -14,11 +14,9 @@ import com.flair.shared.exerciseGeneration.IExerciseSettings;
 public abstract class ContentTypeSettings {
 
     public ContentTypeSettings(String resourceFolder, JsonManager jsonManager, boolean escapeAsterisksInHtml,
-                               ExerciseGenerator exerciseGenerator, String contentTypeLibrary, String name, 
-                               XmlManager xmlManager) {
+                               ExerciseGenerator exerciseGenerator, String contentTypeLibrary, String name) {
         this.resourceFolder = resourceFolder;
         this.jsonManager = jsonManager;
-        this.xmlManager = xmlManager;
         this.escapeAsterisksInHtml = escapeAsterisksInHtml;
         this.exerciseGenerator = exerciseGenerator;
         this.contentTypeLibrary = contentTypeLibrary;
@@ -27,7 +25,6 @@ public abstract class ContentTypeSettings {
 
     private String resourceFolder;
     private JsonManager jsonManager;
-    private XmlManager xmlManager;
     private boolean escapeAsterisksInHtml;
     private ExerciseGenerator exerciseGenerator;
     private String contentTypeLibrary;
@@ -39,7 +36,6 @@ public abstract class ContentTypeSettings {
 
 	public String getResourceFolder() { return resourceFolder; }
     public JsonManager getJsonManager() { return jsonManager; }
-	public XmlManager getXmlManager() { return xmlManager; }
     public boolean isEscapeAsterisksInHtml() {return escapeAsterisksInHtml; }
     public ExerciseGenerator getExerciseGenerator() { return exerciseGenerator; }
     public String getContentTypeLibrary() { return contentTypeLibrary; }

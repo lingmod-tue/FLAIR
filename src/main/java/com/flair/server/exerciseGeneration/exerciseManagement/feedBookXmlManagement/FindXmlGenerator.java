@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 
 import com.flair.server.exerciseGeneration.ConstructionTextPart;
 import com.flair.server.exerciseGeneration.ExerciseData;
+import com.flair.server.exerciseGeneration.HtmlTextPart;
 import com.flair.server.exerciseGeneration.TextPart;
 import com.flair.shared.exerciseGeneration.Pair;
 
@@ -30,6 +31,8 @@ public class FindXmlGenerator extends SimpleExerciseXmlGenerator {
 				int endIndex = sb.length();
 				sb.append(" ");
 				indices.add(new Pair<>(startIndex, endIndex));
+			} else if(element instanceof HtmlTextPart) {
+				sb.append(element.getValue().replace(" ", "%"));
 			} else {
 				sb.append(element.getValue());
 			}

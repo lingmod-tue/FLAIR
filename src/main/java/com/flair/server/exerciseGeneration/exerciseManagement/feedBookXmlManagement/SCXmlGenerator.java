@@ -44,6 +44,7 @@ public class SCXmlGenerator extends SimpleExerciseXmlGenerator {
 				for(Distractor d : ((ConstructionTextPart)element).getDistractors()) {
 					distractors.add(d.getValue());
 				}
+				distractors.add(((ConstructionTextPart)element).getValue());
 				Collections.shuffle(distractors);
 
 				previousGap.example = StringUtils.join(distractors, "|");

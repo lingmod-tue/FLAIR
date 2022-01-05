@@ -54,51 +54,14 @@ public class SimpleExerciseGenerator extends ExerciseGenerator {
 	        ArrayList<Pair<String, byte[]>> relevantResources = getRelevantResources(settings.getResources());
     		ArrayList<OutputComponents> exercises = new ArrayList<>();
 	        OutputComponents output = createH5pPackage(settings, helper, relevantResources);
-	        if(output != null) {
-	        	output.setXmlFile(writeXmlToFile(output.getFeedBookXml()));
-	        }
         	exercises.add(output);
 
 	        return exercises;
     	} else {
     		return null;
     	}
-	}
+	}  
     
-    private HashMap<String, byte[]> writeXmlToFile(HashMap<String, String> xml) {
-    	if(xml == null) {
-    		return null;
-    	}
-    	
-    	HashMap<String, byte[]> files = new HashMap<>();
-    	
-    	for(Entry<String, String> entry : xml.entrySet()) {
-    		files.put(entry.getKey(), entry.getValue().getBytes(StandardCharsets.UTF_8));
-    	}
-    	return files;
-    }
-    
-    
-    
-    /**
-     * new
-     */
-    public ExerciseComponents compileExercise(ExerciseSettings exerciseSettings, NlpManager nlpManager) {
-    	// this step might lose targets, so matching only afterwards
-    	ConstructionsExtractor constructionsExtractor = ConstructionsExtractorFactory.getConstructionsExtractor(exerciseSettings, nlpManager);
-    	ExerciseComponents exerciseComponents = constructionsExtractor.prepareConstructions(exerciseSettings);
-    	BracketsGenerator bracketsGenerator = BracketsGeneratorFactory.getBracketsGenerator(exerciseSettings, nlpManager);
-    	bracketsGenerator.generateBrackets(exerciseSettings, exerciseComponents);
-    	
-    	//TODO: prepare constructions (from config or text) (also include distractors, brackets, task description) (this step might lose targets, so matching only afterwards)
-    	//TODO: if HTML: mathc plain text to html, preapare DOM for slitting (separeatePalinTextFromHTML), removeNonText (cliptoFLAIRText), removeNotDisplayedElements (removeCutElements), if Mark: remove links, extract reoszurces, extract sentences
-    	//TODO: generate feedback (only now that we have the final constuctions list), choose distractors
-    	//TODO: generate JSON, XML elements
-    	
-    	return exerciseComponents;
-    }
-    
-
     /**
      * Extracts all exercise components relevant for the JSON configuration from the HTML based on the plain text.
      * @param settings  The content type settings

@@ -702,7 +702,7 @@ public class TaskItem extends LocalizedComposite {
 			pnlConfig.setVisible(!chkUseConfig.getValue());
 			colType.setVisible(!chkUseConfig.getValue());
 					
-			if(chkUseConfig.getValue()) {
+			if(chkUseConfig.getValue()) {				
 				String selecteTopic = getTopic();
 		    	drpTopic.clear();
 		    	
@@ -1367,6 +1367,10 @@ public class TaskItem extends LocalizedComposite {
     		return false;
     	}
     	
+    	if(!getSelectedOutputFormats().contains(OutputFormat.H5P)) {
+			return false;
+		}
+    	
     	return true;
     }
     
@@ -1606,7 +1610,7 @@ public class TaskItem extends LocalizedComposite {
     	if(chkUseConfig.getValue()) {
     		//return new ConfigExerciseSettings(configFile, "", configFileName, "", getSelectedOutputFormats());
     		return new ConfigExerciseSettings(doc.getTitle(), doc.getLinkingId(), getSelectedOutputFormats(),
-    				topic, quiz);
+    				topic, quiz, parent.chkGenerateFeedback.isVisible() && parent.chkGenerateFeedback.getValue());
     	} else {
 	    	ArrayList<Construction> constructions = new ArrayList<>();
 	    	    	
@@ -1658,9 +1662,10 @@ public class TaskItem extends LocalizedComposite {
 	    	}
 	
 	    	return new ExerciseSettings(constructions, doc.getUrl(), doc.getText(), removedParts, 
-	    			ExerciseType.getEnum(type), quiz, distractorProperties, brackets, instructions, spnNDistractors.getValue() - 1, lblName.getValue(), 
-	    			parent.chkDownloadResources.getValue(), chkOnlyText.getValue(), parent.chkGenerateFeedback.getValue(), doc.getLinkingId(), doc.getTitle(), "",
-	    			outputFormats);
+	    			ExerciseType.getEnum(type), quiz, distractorProperties, brackets, instructions, spnNDistractors.getValue() - 1, 
+	    			lblName.getValue(), parent.chkDownloadResources.getValue(), chkOnlyText.getValue(), 
+	    			parent.chkGenerateFeedback.isVisible() && parent.chkGenerateFeedback.getValue(), doc.getLinkingId(), doc.getTitle(), "",
+	    			outputFormats, topic);
     	}
     }
     

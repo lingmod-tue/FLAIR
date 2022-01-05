@@ -10,7 +10,9 @@ public interface IExerciseSettings {
 	public ArrayList<OutputFormat> getOutputFormats();
 	public int getId();
 	public String getFileContent();
-	
+	public boolean isGenerateFeedback();
+	public String getTopic();
+
 	public void setFileContent(String fileContent);
 	
 }

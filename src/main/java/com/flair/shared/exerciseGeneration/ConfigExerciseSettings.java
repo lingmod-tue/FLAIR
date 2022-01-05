@@ -12,16 +12,18 @@ public class ConfigExerciseSettings implements IsSerializable, IExerciseSettings
     private byte[] fileStream;
     private String topic;
     String quiz;
+    private boolean generateFeedback;
 	
 	public ConfigExerciseSettings() {}
 
 	public ConfigExerciseSettings(String fileName, int id, ArrayList<OutputFormat> outputFormats, String topic,
-			String quiz) {
+			String quiz, boolean generateFeedback) {
 		this.fileName = fileName;
 		this.id = id;
 		this.outputFormats = outputFormats;
 		this.topic = topic;
 		this.quiz = quiz;
+		this.generateFeedback = generateFeedback;
 	}
 
 	@Override
@@ -37,7 +39,10 @@ public class ConfigExerciseSettings implements IsSerializable, IExerciseSettings
 	@Override
 	public ArrayList<OutputFormat> getOutputFormats() { return outputFormats; }
 	public byte[] getFileStream() { return fileStream; }
+	@Override
 	public String getTopic() { return topic; }
+	@Override
+	public boolean isGenerateFeedback() { return generateFeedback; }
 	
 	public void setFileStream(byte[] fileStream) { this.fileStream = fileStream; }
 	@Override

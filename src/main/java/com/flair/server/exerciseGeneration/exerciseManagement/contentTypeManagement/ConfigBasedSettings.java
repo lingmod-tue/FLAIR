@@ -10,7 +10,7 @@ public class ConfigBasedSettings extends ContentTypeSettings {
     public ConfigBasedSettings(String topic) {
         super(null, null, true, 
         		topic.equals("'if'") ? new ConfigBasedConditionalExerciseGenerator() : new ConfigBasedExerciseGenerator(),
-        	null, null, null);
+        	null, null);
     }
 
     private ArrayList<ContentTypeSettings> exercises;

@@ -57,7 +57,10 @@ public class ConditionalConfigParser {
 			}
 		}
 
-		return new ExerciseData(parts);
+		ExerciseData data = new ExerciseData(parts);
+		addPlainText(data);
+
+		return data;
 	}
 
 	/**
@@ -80,11 +83,14 @@ public class ConditionalConfigParser {
 					: itemData.getTranslationMainClause();
 
 			ConstructionTextPart c = new ConstructionTextPart(targetClause, sentenceId++);
-			c.setTranslation(translationTargetClause);
+			c.getDistractors().add(new Distractor(translationTargetClause));
 			parts.add(c);
 		}
 
-		return new ExerciseData(parts);
+		ExerciseData data = new ExerciseData(parts);
+		addPlainText(data);
+
+		return data;
 	}
 
 	/**
@@ -188,6 +194,8 @@ public class ConditionalConfigParser {
 			Collections.shuffle(lemmas);
 			data.setInstructionLemmas(lemmas);
 		}
+		
+		addPlainText(data);
 
 		return data;
 	}
@@ -229,7 +237,6 @@ public class ConditionalConfigParser {
 						.get(distractors.size()).second));
 			}
 			targetAndClauseItems.getTargetDistractors().remove(0);
-			distractors.add(new Distractor(constructionText));
 
 			c.setDistractors(distractors);
 		}
@@ -302,7 +309,10 @@ public class ConditionalConfigParser {
 			sentenceId++;
 		}
 
-		return new ExerciseData(parts);
+		ExerciseData data = new ExerciseData(parts);
+		addPlainText(data);
+
+		return data;
 	}
 
 	/**
@@ -875,12 +885,32 @@ public class ConditionalConfigParser {
 				blocks.add(exercises);
 			}
 
-			// TODO: generate feedback if requested
-
 			activities.put(entry.getKey(), blocks);
 		}
 		
 		return activities;
+	}
+	
+	/**
+	 * Determines the overall plain text from the parts and adds the construction indices respective to this plain text to the constructions
+	 * @param data	The exercise data
+	 */
+	private void addPlainText(ExerciseData data) {
+		StringBuilder sb = new StringBuilder();
+		for(TextPart part : data.getParts()) {
+			if(sb.length() > 0 && !sb.toString().endsWith(" ") && ! part.getValue().startsWith(" ")) {
+				sb.append(" ");
+			}
+			
+			if(part instanceof ConstructionTextPart) {
+				int startIndex = sb.length();
+				int endIndex = sb.length() + part.getValue().length();
+				((ConstructionTextPart)part).setIndicesInPlainText(new Pair<>(startIndex, endIndex));
+			}
+			sb.append(part.getValue());
+		}
+		
+		data.setPlainText(sb.toString());
 	}
 
 }

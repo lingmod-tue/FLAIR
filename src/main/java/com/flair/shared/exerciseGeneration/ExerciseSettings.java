@@ -25,6 +25,8 @@ public class ExerciseSettings implements IsSerializable, IExerciseSettings {
     private String fileContent;
     private ArrayList<OutputFormat> outputFormats;
     private ArrayList<String> instructionLemmas;
+    private boolean isWebPage = true;
+    private String topic;
 
 	public ExerciseSettings() {}
     
@@ -33,7 +35,7 @@ public class ExerciseSettings implements IsSerializable, IExerciseSettings {
                             ExerciseType contentType, String quiz, ArrayList<DistractorProperties> distractors, 
                             ArrayList<BracketsProperties> brackets, ArrayList<InstructionsProperties> instructions, int nDistractors, String taskName, boolean downloadResources, 
                             boolean onlyText, boolean generateFeedback, int id, String fileName, String fileContent,
-                            ArrayList<OutputFormat> outputFormats) {
+                            ArrayList<OutputFormat> outputFormats, String topic) {
         this.constructions = constructions;
         this.url = url;
         this.plainText = plainText;
@@ -52,6 +54,7 @@ public class ExerciseSettings implements IsSerializable, IExerciseSettings {
         this.fileContent = fileContent;
         this.instructions = instructions;
         this.outputFormats = outputFormats;
+        this.topic = topic;
     }
 
     public ArrayList<Construction> getConstructions() { return constructions; }
@@ -69,6 +72,7 @@ public class ExerciseSettings implements IsSerializable, IExerciseSettings {
 	public String getTaskName() { return taskName; }
 	public boolean isDownloadResources() { return downloadResources; }
 	public boolean isOnlyText() { return onlyText; }
+	@Override
 	public boolean isGenerateFeedback() { return generateFeedback; }
 	@Override
     public int getId() { return id; }
@@ -79,9 +83,13 @@ public class ExerciseSettings implements IsSerializable, IExerciseSettings {
 	@Override
 	public ArrayList<OutputFormat> getOutputFormats() { return outputFormats; }
 	public ArrayList<String> getInstructionLemmas() { return instructionLemmas; }
+	public boolean isWebPage() { return isWebPage; }
+	@Override
+	public String getTopic() { return topic; }
 
 	@Override
 	public void setFileContent(String fileContent) { this.fileContent = fileContent; }
 	public void setInstructionLemmas(ArrayList<String> instructionLemmas) { this.instructionLemmas = instructionLemmas; }
+	public void setWebPage(boolean isWebPage) { this.isWebPage = isWebPage; }
 
 }

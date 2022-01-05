@@ -2,7 +2,7 @@ package com.flair.server.exerciseGeneration;
 
 import java.util.ArrayList;
 
-import com.flair.shared.exerciseGeneration.BracketsProperties;
+import com.flair.shared.exerciseGeneration.DetailedConstruction;
 import com.flair.shared.exerciseGeneration.Pair;
 
 public class ConstructionTextPart extends TextPart {
@@ -10,7 +10,34 @@ public class ConstructionTextPart extends TextPart {
 	private ArrayList<String> brackets = new ArrayList<>();
 	private ArrayList<Distractor> distractors = new ArrayList<>();
 	private String category = "";
-	private String translation = "";
+	private Pair<Integer, Integer> indicesInPlainText;
+	private ArrayList<ConstructionProperties> constructionProperties = new ArrayList<>();
+	private DetailedConstruction constructionType;
+	private Pair<Integer, Integer> indicesRelatedConstruction = null;
+
+	public Pair<Integer, Integer> getIndicesRelatedConstruction() {
+		return indicesRelatedConstruction;
+	}
+
+	public void setIndicesRelatedConstruction(Pair<Integer, Integer> indicesRelatedConstruction) {
+		this.indicesRelatedConstruction = indicesRelatedConstruction;
+	}
+
+	public DetailedConstruction getConstructionType() {
+		return constructionType;
+	}
+
+	public void setConstructionType(DetailedConstruction constructionType) {
+		this.constructionType = constructionType;
+	}
+
+	public ArrayList<ConstructionProperties> getConstructionProperties() {
+		return constructionProperties;
+	}
+
+	public void setConstructionProperties(ArrayList<ConstructionProperties> constructionProperties) {
+		this.constructionProperties = constructionProperties;
+	}
 
 	public ConstructionTextPart(String value, int sentenceId) {
 		super(value, sentenceId);
@@ -39,13 +66,13 @@ public class ConstructionTextPart extends TextPart {
 	public void setCategory(String category) {
 		this.category = category;
 	}
-
-	public String getTranslation() {
-		return translation;
+	
+	public Pair<Integer, Integer> getIndicesInPlainText() {
+		return indicesInPlainText;
 	}
 
-	public void setTranslation(String translation) {
-		this.translation = translation;
+	public void setIndicesInPlainText(Pair<Integer, Integer> indicesInPlainText) {
+		this.indicesInPlainText = indicesInPlainText;
 	}
 
 }
