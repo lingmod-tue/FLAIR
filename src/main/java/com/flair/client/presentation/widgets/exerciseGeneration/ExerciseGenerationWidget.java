@@ -346,7 +346,7 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
 	    			((TaskItem)existingTask).btnPreviewExercise.setVisible(true);
 	    			((TaskItem)existingTask).htmlContent.clear();
 	    			HTML contents = new HTML();
-	    			contents.setHTML("<iframe style='position:absolute; width: 95%; height:100%;padding-bottom:80px;border:none;' srcdoc='" + entry.getValue().replace("'", "\"") + "'> IFrames are not supported by your browser.</iframe>");
+	    			contents.setHTML(entry.getValue());
 	    			((TaskItem)existingTask).htmlContent.add(contents);
 	    			break;
 	    		}

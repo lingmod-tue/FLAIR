@@ -13,8 +13,8 @@ import com.flair.server.crawler.SearchResult;
 import com.flair.server.document.AbstractDocument;
 import com.flair.server.document.AbstractDocumentSource;
 import com.flair.server.document.DocumentCollection;
+import com.flair.server.exerciseGeneration.ZipManager;
 import com.flair.server.exerciseGeneration.exerciseManagement.ResultComponents;
-import com.flair.server.exerciseGeneration.exerciseManagement.domManipulation.ZipManager;
 import com.flair.server.grammar.DefaultVocabularyList;
 import com.flair.server.interop.messaging.ServerMessageChannel;
 import com.flair.server.interop.messaging.ServerMessagingSwitchboard;
@@ -431,12 +431,12 @@ class ClientSessionState {
 	}
 	
 	
-	private synchronized void onExerciseGenerationOpGenerationComplete(ArrayList<ResultComponents> exercises) {
+	private synchronized void onExerciseGenerationOpGenerationComplete(ResultComponents exercises) {
 		if (!pipelineOpCache.hasActiveOp())
 			throw new ServerRuntimeException("Invalid exercise generation generation complete event!");
 
 		if(exercises != null) {
-            generatedPackages.addAll(exercises);
+            generatedPackages.add(exercises);
         }
 	}
 	
@@ -452,17 +452,17 @@ class ClientSessionState {
 		HashMap<String, byte[]> zipFiles = new HashMap<>();
 
 		for (ResultComponents result : generatedPackages) {
-			if(result.getXmlFile() != null) {
-	        	for(Entry<String, byte[]> entry : result.getXmlFile().entrySet()) {
+			if(result.getXmlFiles() != null) {
+	        	for(Entry<String, byte[]> entry : result.getXmlFiles().entrySet()) {
 	        		if(entry.getValue() != null && entry.getValue().length > 0) {
 	            		xmlFiles.put(entry.getKey() + ".xml", entry.getValue());
 	        		}
 	        	}
 			}
-			if(result.getZipFiles() != null) {
-	        	for(Entry<String, byte[]> entry : result.getZipFiles().entrySet()) {
+			if(result.getH5pFiles() != null) {
+	        	for(Entry<String, byte[]> entry : result.getH5pFiles().entrySet()) {
 	        		if(entry.getValue() != null && entry.getValue().length > 0) {
-	            		zipFiles.put(entry.getKey() + ".zip", entry.getValue());
+	        			h5pFiles.put(entry.getKey() + ".h5p", entry.getValue());
 	        		}
 	        	}
 			}
@@ -473,9 +473,6 @@ class ClientSessionState {
 	        		}
 	        	}
 			}
-        	if(result.getFileContent() != null && result.getFileContent().length > 0) {
-        		h5pFiles.put(result.getFileName() + ".h5p", result.getFileContent());
-        	}
         }
 		
 		HashMap<String, byte[]> outputFiles = new HashMap<>();

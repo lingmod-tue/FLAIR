@@ -12,14 +12,7 @@ import com.flair.server.exerciseGeneration.downloadManagement.ResourceDownloader
 import com.flair.server.exerciseGeneration.exerciseManagement.ResultComponents;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ConfigBasedSettings;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
-import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.FillInTheBlanksSettings;
-import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.FindSettings;
-import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.JumbledSentencesSettings;
-import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.MemorySettings;
-import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.MultiDragDropSettings;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.QuizSettings;
-import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.SingleChoiceSettings;
-import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.SingleDragDropSettings;
 import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.OpenNlpParser;
 import com.flair.server.parser.SimpleNlgParser;
@@ -28,13 +21,12 @@ import com.flair.server.scheduler.AsyncExecutorService;
 import com.flair.server.scheduler.AsyncJob;
 import com.flair.shared.exerciseGeneration.ConfigExerciseSettings;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
-import com.flair.shared.exerciseGeneration.ExerciseType;
 import com.flair.shared.exerciseGeneration.IExerciseSettings;
 
 import edu.stanford.nlp.util.Pair;
 
 public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input, ExerciseGenerationOp.Output> {
-	public interface ExGenComplete extends EventHandler<ArrayList<ResultComponents>> {}
+	public interface ExGenComplete extends EventHandler<ResultComponents> {}
 	public interface JobComplete extends EventHandler<ResultComponents> {}
 	
 	private final ReentrantLock lock = new ReentrantLock();
@@ -77,8 +69,8 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
 		public final ResultComponents file;
 
 		Output() {
-			this.file = new ResultComponents("", new byte[] {}, new HashMap<String, String>(), 
-					new HashMap<String, byte[]>(), new HashMap<String, byte[]>());
+			this.file = new ResultComponents(new HashMap<String, byte[]>(), new HashMap<String, String>(), 
+					new HashMap<String, byte[]>());
 		}
 	}
 
@@ -143,7 +135,7 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
 				scheduler.fire();
 		});
 		taskLinker.addHandler(ExGenTask.Result.class, (j, r) -> {
-			safeInvoke(() -> input.exGenComplete.handle(r.exercises),
+			safeInvoke(() -> input.exGenComplete.handle(r.output),
 						"Exception in generation complete handler");
 		});
 	}
@@ -157,31 +149,13 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
 
         	if(s instanceof ExerciseSettings) {
         		ExerciseSettings settings = (ExerciseSettings)s;
-        		
-                if(settings.getContentType().equals(ExerciseType.FIB)) {
-                    contentTypeSettings = new FillInTheBlanksSettings(settings.getTaskName());
-                } else if(settings.getContentType().equals(ExerciseType.SINGLE_CHOICE)) {
-                    contentTypeSettings = new SingleChoiceSettings(settings.getTaskName());
-                } else if(settings.getContentType().equals(ExerciseType.DRAG_SINGLE)) {
-                    contentTypeSettings = new SingleDragDropSettings(settings.getTaskName());
-                } else if(settings.getContentType().equals(ExerciseType.DRAG_MULTI)) {
-                    contentTypeSettings = new MultiDragDropSettings(settings.getTaskName());
-                } else if(settings.getContentType().equals(ExerciseType.MARK)) {
-                    contentTypeSettings = new FindSettings(settings.getTaskName());
-                } else if(settings.getContentType().equals(ExerciseType.MEMORY)) {
-                    contentTypeSettings = new MemorySettings(settings.getTaskName());
-                } else if(settings.getContentType().equals(ExerciseType.JUMBLED_SENTENCES)) {
-                    contentTypeSettings = new JumbledSentencesSettings(settings.getTaskName());
-                } else {
-                    throw new IllegalArgumentException();
-                }
+                contentTypeSettings = new ContentTypeSettings(settings.getContentType());
         	} else {
         		contentTypeSettings = new ConfigBasedSettings(((ConfigExerciseSettings)s).getTopic());
         	}
         	
         	contentTypeSettings.setExerciseSettings(s);
 
-        	//TODO: deal with quizzes for config based exercises
             if (!configs.containsKey(s.getQuiz())) {
                 configs.put(s.getQuiz(), new ArrayList<>());
             }
@@ -194,7 +168,8 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
                 	settingsStates.add(new Pair<>(settings, false));            	
             	}
             } else {
-                ContentTypeSettings settings = new QuizSettings(entry.getValue(), "Quiz " + entry.getKey());
+            	QuizSettings settings = new QuizSettings("Quiz " + entry.getKey());
+            	settings.setExercises(entry.getValue());
                 settingsStates.add(new Pair<>(settings, false));  
             }
         }

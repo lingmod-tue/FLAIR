@@ -12,7 +12,8 @@ public interface IExerciseSettings {
 	public String getFileContent();
 	public boolean isGenerateFeedback();
 	public String getTopic();
+	public String getTaskName();
 
 	public void setFileContent(String fileContent);
-	
+	public void setTaskName(String taskName);
 }

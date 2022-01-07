@@ -1,6 +1,10 @@
 package com.flair.server.exerciseGeneration.downloadManagement;
 
-import org.apache.bcel.generic.NEW;
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.ArrayList;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Attribute;
 import org.jsoup.nodes.Document;
@@ -8,16 +12,9 @@ import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
-import com.flair.server.exerciseGeneration.exerciseManagement.DownloadedResource;
 import com.flair.server.utilities.ServerLogger;
-import com.gargoylesoftware.htmlunit.javascript.host.dom.Text;
 
 import edu.stanford.nlp.util.Pair;
-
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
 
 public class HtmlManager {
 

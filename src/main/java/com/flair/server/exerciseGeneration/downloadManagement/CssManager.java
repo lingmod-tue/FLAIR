@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.flair.server.exerciseGeneration.exerciseManagement.DownloadedResource;
-
 import edu.stanford.nlp.util.Pair;
 
 

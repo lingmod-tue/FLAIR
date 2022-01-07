@@ -1,11 +1,8 @@
 package com.flair.server.pipelines.exgen;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeoutException;
 
-import com.flair.server.exerciseGeneration.OutputComponents;
 import com.flair.server.exerciseGeneration.downloadManagement.ResourceDownloader;
 import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseManager;
 import com.flair.server.exerciseGeneration.exerciseManagement.ResultComponents;
@@ -41,7 +38,7 @@ public class ExGenTask implements AsyncTask<ExGenTask.Result> {
 
 	@Override
 	public Result run() {		
-		ArrayList<ResultComponents> exercises = null;
+		ResultComponents exercises = null;
 		long startTime = 0;
 		boolean error = false;
 
@@ -63,25 +60,21 @@ public class ExGenTask implements AsyncTask<ExGenTask.Result> {
 
 		long endTime = System.currentTimeMillis();
 		
-		if(error || exercises == null || exercises.size() == 0) {
+		if(error || exercises == null || exercises.getH5pFiles().size() == 0 && exercises.getXmlFiles().size() == 0) {
 			return null;
 		}
 		
-		if(exercises.size() > 1) {
-			ServerLogger.get().info(exercises.size() + " exercises generated in " + (endTime - startTime) + " ms");
-		} else {
-			ServerLogger.get().info("Exercise " + exercises.get(0).getFileName() + " generated in " + (endTime - startTime) + " ms");
-		}
+		ServerLogger.get().info(Math.max(exercises.getH5pFiles().size(),  exercises.getXmlFiles().size()) + " exercises generated in " + (endTime - startTime) + " ms");
 		
 		return new Result(exercises);
 	}
-
+	
 	static final class Result {
-		final ArrayList<ResultComponents> exercises;
-		
-		Result(ArrayList<ResultComponents> exercises) {
-			this.exercises = exercises;
-		}
+		final ResultComponents output;
 
+		Result(ResultComponents output) {
+			this.output = output;
+		}
 	}
+
 }

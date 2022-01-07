@@ -2,18 +2,18 @@ package com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManage
 
 import java.util.ArrayList;
 
-import com.flair.server.exerciseGeneration.exerciseManagement.QuizGenerator;
-import com.flair.server.exerciseGeneration.exerciseManagement.jsonManagement.QuizJsonManager;
+import com.flair.shared.exerciseGeneration.ExerciseType;
 
 public class QuizSettings extends ContentTypeSettings {
 
-    public QuizSettings(ArrayList<ContentTypeSettings> exercises, String name) {
-        super("quiz.h5p", new QuizJsonManager(), true, new QuizGenerator(), "H5P.XQuestionSet 0.1", name);
-        this.exercises = exercises;
+    public QuizSettings(String name) {
+        super(ExerciseType.QUIZ);
     }
 
     private ArrayList<ContentTypeSettings> exercises;
 
     public ArrayList<ContentTypeSettings> getExercises() { return exercises; }
+
+	public void setExercises(ArrayList<ContentTypeSettings> exercises) { this.exercises = exercises; }
 
 }

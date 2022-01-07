@@ -1,20 +1,15 @@
 package com.flair.server.exerciseGeneration.exerciseManagement;
 
 
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
-import org.json.simple.parser.ParseException;
-
-import com.flair.server.exerciseGeneration.OutputComponents;
+import com.flair.server.exerciseGeneration.downloadManagement.DownloadedResource;
 import com.flair.server.exerciseGeneration.downloadManagement.ResourceDownloader;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
-import com.flair.server.exerciseGeneration.exerciseManagement.domManipulation.ZipManager;
 import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.OpenNlpParser;
 import com.flair.server.parser.SimpleNlgParser;
-import com.flair.server.utilities.ServerLogger;
-import com.flair.shared.exerciseGeneration.OutputFormat;
 import com.flair.shared.exerciseGeneration.Pair;
 
 public abstract class ExerciseGenerator {
@@ -25,37 +20,19 @@ public abstract class ExerciseGenerator {
 	 * @param resources	The downloaded resources of the web page for which the exercise is generated
 	 * @return			The byte array of the generated H5P file
 	 */
-    public abstract ArrayList<OutputComponents> generateExercise(ContentTypeSettings settings,
+    public abstract ResultComponents generateExercise(ContentTypeSettings settings,
     		CoreNlpParser parser, SimpleNlgParser generator, OpenNlpParser lemmatizer, ResourceDownloader resourceDownloader);
     
     public abstract void cancelGeneration();
+    
+    protected abstract ArrayList<ExerciseData> generateExerciseData(CoreNlpParser parser, SimpleNlgParser generator, OpenNlpParser lemmatizer, 
+			ResourceDownloader resourceDownloader, ContentTypeSettings settings);
 
-    /**
-     * Writes the extracted components to the JSON configuration file and zips everything into a H5P package.
-     * @param settings 				The settings of the content type
-     * @param exerciseComponents	The extracted exercise components which need to be specified in the JSON configuration
-     * @param resources				The downloaded resources
-     * @return						The byte array of the generated H5P file, the preview and the FeedBook input XML string
-     */
-    protected OutputComponents createH5pPackage(ContentTypeSettings settings, ArrayList<JsonComponents> exerciseComponents,
-                                      ArrayList<Pair<String, byte[]>> resources) {
-    	if(exerciseComponents.size() > 0) {
-	        try {
-	            OutputComponents output = settings.getJsonManager().modifyJsonContent(settings, exerciseComponents, settings.getResourceFolder());
-	            
-	            if(settings.getExerciseSettings().getOutputFormats().contains(OutputFormat.H5P)) {
-	            	byte[] h5pFile = ZipManager.generateModifiedZipFile(settings.getResourceFolder(), output.getH5pJson().toString(), resources);
-		            output.setH5pFile(h5pFile);
-	            }
-	            return output;
-	        } catch (ParseException | IOException e) {
-				ServerLogger.get().error(e, "Files could not be zipped. Exception: " + e.toString());
-	            return null;
-	        }
-    	} else {
-    		return null;
-    	}
-    }
+    protected abstract HashMap<String, byte[]> generateFeedbookXml(ArrayList<ExerciseData> data);
+	
+	protected abstract HashMap<String, byte[]> generateH5P(ArrayList<ExerciseData> data, ContentTypeSettings settings);
+	
+	protected abstract HashMap<String, String> generatePreview(ArrayList<ExerciseData> data);
         
     /**
      * Retrieves the downloaded resources.
@@ -72,5 +49,5 @@ public abstract class ExerciseGenerator {
 
         return relevantResources;
     }
-
+    
 }

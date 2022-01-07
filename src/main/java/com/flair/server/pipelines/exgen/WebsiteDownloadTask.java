@@ -4,12 +4,11 @@ import java.util.ArrayList;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeoutException;
 
-import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import com.flair.server.exerciseGeneration.downloadManagement.DownloadedResource;
 import com.flair.server.exerciseGeneration.downloadManagement.HtmlManager;
 import com.flair.server.exerciseGeneration.downloadManagement.ResourceDownloader;
-import com.flair.server.exerciseGeneration.exerciseManagement.DownloadedResource;
 import com.flair.server.scheduler.AsyncTask;
 import com.flair.server.scheduler.ThreadPool;
 import com.flair.server.utilities.ServerLogger;

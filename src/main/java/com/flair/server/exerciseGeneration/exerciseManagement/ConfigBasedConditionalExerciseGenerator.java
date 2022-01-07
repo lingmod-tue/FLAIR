@@ -1,119 +1,172 @@
 package com.flair.server.exerciseGeneration.exerciseManagement;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
-import com.flair.server.exerciseGeneration.ExerciseData;
-import com.flair.server.exerciseGeneration.OutputComponents;
-import com.flair.server.exerciseGeneration.InputEnrichment.FeedbackGenerator;
-import com.flair.server.exerciseGeneration.InputParsing.ConfigParsing.ConditionalConfigParser;
+import org.json.simple.JSONObject;
+
+import com.flair.server.exerciseGeneration.ZipManager;
 import com.flair.server.exerciseGeneration.downloadManagement.ResourceDownloader;
+import com.flair.server.exerciseGeneration.exerciseManagement.InputEnrichment.FeedbackGenerator;
+import com.flair.server.exerciseGeneration.exerciseManagement.InputEnrichment.InstructionGenerator;
+import com.flair.server.exerciseGeneration.exerciseManagement.InputParsing.ConfigParsing.ConditionalConfigParser;
+import com.flair.server.exerciseGeneration.exerciseManagement.OutputGeneration.H5PGeneration.H5PGeneratorFactory;
+import com.flair.server.exerciseGeneration.exerciseManagement.OutputGeneration.feedbookXmlGeneration.SimpleExerciseXmlGenerator;
+import com.flair.server.exerciseGeneration.exerciseManagement.OutputGeneration.feedbookXmlGeneration.XmlGeneratorFactory;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
-import com.flair.server.exerciseGeneration.exerciseManagement.feedBookXmlManagement.SimpleExerciseXmlGenerator;
-import com.flair.server.exerciseGeneration.exerciseManagement.feedBookXmlManagement.XmlGeneratorFactory;
-import com.flair.server.exerciseGeneration.exerciseManagement.taskCompilation.NlpManager;
+import com.flair.server.exerciseGeneration.exerciseManagement.nlpManagement.NlpManager;
 import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.OpenNlpParser;
 import com.flair.server.parser.SimpleNlgParser;
-import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.exerciseGeneration.ConfigExerciseSettings;
-import com.flair.shared.exerciseGeneration.ExerciseSettings;
+import com.flair.shared.exerciseGeneration.ExerciseType;
+import com.flair.shared.exerciseGeneration.OutputFormat;
+import com.flair.shared.exerciseGeneration.Pair;
 
-public class ConfigBasedConditionalExerciseGenerator extends ConfigBasedExerciseGenerator {
+public class ConfigBasedConditionalExerciseGenerator extends ExerciseGenerator {
 
-	public static byte[] zipFiles(HashMap<String, ArrayList<HashMap<String, byte[]>>> activities) {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        ZipOutputStream zipOutputStream = new ZipOutputStream(byteArrayOutputStream);
-        try {
-        	for(Entry<String, ArrayList<HashMap<String, byte[]>>> blocks : activities.entrySet()) {
-	        	int i = 0;
-	        	for(HashMap<String, byte[]> block : blocks.getValue()) {
-	        		for(Entry<String, byte[]> entry : block.entrySet()) {
-	                    ZipEntry zipEntry = new ZipEntry(blocks.getKey() + "/" + i + "/" + entry.getKey() + ".xml");
-	                    zipOutputStream.putNextEntry(zipEntry);
-	                    zipOutputStream.write(entry.getValue());
-	                    zipOutputStream.closeEntry();
-	            	}
-	        		i++;
-	        	}
-        	}
-        } catch (IOException e) {
-			ServerLogger.get().error(e, "File could not be zipped. Exception: " + e.toString());
-        } finally {
-            try {
-                zipOutputStream.close();
-            } catch (IOException e) {
-    			ServerLogger.get().error(e, "Non-fatal error. Exception: " + e.toString());
-            }
+	private boolean isCancelled = false;
+	
+	@Override
+	public ResultComponents generateExercise(ContentTypeSettings settings,
+		CoreNlpParser parser, SimpleNlgParser generator, OpenNlpParser lemmatizer, ResourceDownloader resourceDownloader) {
+		ArrayList<ExerciseData> exerciseData = generateExerciseData(parser, generator, lemmatizer, resourceDownloader, settings);
+		
+		if (isCancelled) {
+        	return null;
+        }
+		
+        FeedbackGenerator feedbackGenerator = new FeedbackGenerator();
+        InstructionGenerator instructionGenerator = new InstructionGenerator();
+
+    	for(ExerciseData exercise : exerciseData) { 
+			exercise.setExerciseType(determineExerciseType(exercise.getExerciseTitle().charAt(exercise.getExerciseTitle().length() - 1) + ""));
+			exercise.setContentTypeSettings(new ContentTypeSettings(exercise.getExerciseType()));
+			exercise.setTopic(ExerciseTopic.CONDITIONALS);
+			
+	        NlpManager nlpManager = new NlpManager(parser, generator, exercise.getPlainText(), lemmatizer);
+
+			feedbackGenerator.generateFeedback(settings.getExerciseSettings(), nlpManager, exercise, 
+					exercise.getContentTypeSettings().getExerciseType(), exercise.getTopic());
+			
+			if (isCancelled) {
+	        	return null;
+	        }
+			
+			instructionGenerator.generateInstructions(exercise, exercise.getContentTypeSettings().getExerciseType());
+			
+			if (isCancelled) {
+	        	return null;
+	        }
+
+    		// for underline exercises evtl. separate exercise per line
+    		//TODO: all support texts?
+		}
+    	
+    	HashMap<String, byte[]> xmlFiles = new HashMap<>();
+    	HashMap<String, byte[]> h5PFiles = new HashMap<>();
+    	HashMap<String, String> previews = new HashMap<>();
+
+		if(settings.getExerciseSettings().getOutputFormats().contains(OutputFormat.FEEDBOOK_XML)) {
+			xmlFiles = generateFeedbookXml(exerciseData);
+        }
+		
+        if (isCancelled) {
+        	return null;
         }
         
-        byte[] outputArray = byteArrayOutputStream.toByteArray();
-        try {
-			byteArrayOutputStream.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+        if(settings.getExerciseSettings().getOutputFormats().contains(OutputFormat.H5P)) {
+        	h5PFiles = generateH5P(exerciseData, null);
+        }
         
-        return outputArray;
+        if (isCancelled) {
+        	return null;
+        }    
+        
+        return new ResultComponents(h5PFiles, previews, xmlFiles);
     }
 	
 	@Override
-	public ArrayList<OutputComponents> generateExercise(ContentTypeSettings settings,
-		CoreNlpParser parser, SimpleNlgParser generator, OpenNlpParser lemmatizer, ResourceDownloader resourceDownloader) {
-		
+	public ArrayList<ExerciseData> generateExerciseData(CoreNlpParser parser, SimpleNlgParser generator, OpenNlpParser lemmatizer, 
+			ResourceDownloader resourceDownloader, ContentTypeSettings settings) {
 		ConfigExerciseSettings exerciseSettings = (ConfigExerciseSettings)settings.getExerciseSettings();
 		
 		ConditionalConfigParser p = new ConditionalConfigParser();
 		HashMap<String,ArrayList<HashMap<String,ExerciseData>>> exerciseData = p.parseConfigFile(new ByteArrayInputStream(exerciseSettings.getFileStream()));
-				
-		HashMap<String, ArrayList<HashMap<String, byte[]>>> activities = new HashMap<>();
-        ArrayList<OutputComponents> res = new ArrayList<>();
-        
-        FeedbackGenerator feedbackGenerator = new FeedbackGenerator();
-
-    	for(Entry<String, ArrayList<HashMap<String, ExerciseData>>> entry : exerciseData.entrySet()) { 
-            ArrayList<HashMap<String, byte[]>> blocks = new ArrayList<>();
-    		
-    		for(HashMap<String, ExerciseData> block : entry.getValue()) {
-        		HashMap<String, byte[]> files = new HashMap<>();
-
-    			for(Entry<String, ExerciseData> exercise : block.entrySet()) {
-    		        NlpManager nlpManager = new NlpManager(parser, generator, exercise.getValue().getPlainText(), lemmatizer);
-
-    				feedbackGenerator.generateFeedback(settings.getExerciseSettings(), nlpManager, exercise.getValue(), 
-    						((ExerciseSettings)settings.getExerciseSettings()).getContentType(), exercise.getValue().getTopic());
-    				
-        			SimpleExerciseXmlGenerator g = XmlGeneratorFactory.getXmlGenerator(exercise.getKey());
-        			byte[] file = g.generateXMLFile(exercise.getValue(), exercise.getKey());
-        			files.put(exercise.getKey(), file);
-    			}
-    			
-    			blocks.add(files);
-    		}
-    		
-    		activities.put(entry.getKey(), blocks);
+	
+		ArrayList<ExerciseData> exercises = new ArrayList<>();
+		for(Entry<String, ArrayList<HashMap<String, ExerciseData>>> blocks : exerciseData.entrySet()) {
+        	int i = 0;
+        	for(HashMap<String, ExerciseData> block : blocks.getValue()) {
+        		for(Entry<String, ExerciseData> entry : block.entrySet()) {
+        			entry.getValue().setExerciseTitle(blocks.getKey() + "/" + i + "/" + entry.getKey());
+        			exercises.add(entry.getValue());
+            	}
+        		i++;
+        	}
     	}
 		
-    		// for underline exercises evtl. separate exercise per line
-    		//TODO: all support texts?
-
-    	HashMap<String, byte[]> hm = new HashMap<>();
-    	hm.put("Generated_exercises", zipFiles(activities));
-    	OutputComponents output = new OutputComponents(null, null, null, null, null, null, null, "feedbookExercises", null);
-    	output.setZipFiles(hm);
-        res.add(output);
-        
-        return res;
-    }
+		return exercises;
+	}
 	
 	@Override
-	public void cancelGeneration() {}
-	
+	protected HashMap<String, byte[]> generateFeedbookXml(ArrayList<ExerciseData> data) {
+		HashMap<String, byte[]> xmlFiles = new HashMap<>();
 
+		for(ExerciseData exerciseData : data) {
+			SimpleExerciseXmlGenerator g = XmlGeneratorFactory.getXmlGenerator(exerciseData.getExerciseType());
+	        byte[] file = g.generateXMLFile(exerciseData);	
+	        xmlFiles.put(exerciseData.getExerciseTitle(), file);   
+		}
+        
+        return xmlFiles;
+	}
+	
+	@Override
+	protected HashMap<String, String> generatePreview(ArrayList<ExerciseData> data) {
+		return new HashMap<>();        
+	}
+	
+	@Override
+	protected HashMap<String, byte[]> generateH5P(ArrayList<ExerciseData> data, ContentTypeSettings settings) {
+		HashMap<String, byte[]> h5PFiles = new HashMap<>();
+
+		for(ExerciseData exerciseData : data) {
+			ArrayList<Pair<String, byte[]>> relevantResources = new ArrayList<>();
+	        ArrayList<ExerciseData> datas = new ArrayList<>();
+	        datas.add(exerciseData);
+	        ArrayList<JSONObject> jsonObject = H5PGeneratorFactory.getContentJsonGenerator(exerciseData.getExerciseType())
+	        		.modifyJsonContent(exerciseData.getContentTypeSettings(), datas);
+	    	byte[] h5pFile = ZipManager.generateModifiedZipFile(exerciseData.getContentTypeSettings().getResourceFolder(), jsonObject.toString(), relevantResources);
+	    	h5PFiles.put(exerciseData.getExerciseTitle(), h5pFile);
+		}
+    	
+    	return h5PFiles;
+	}
+	
+	private ExerciseType determineExerciseType(String exerciseType) {
+		if(exerciseType.equals("0")) {
+			return ExerciseType.MEMORY;
+		} else if(exerciseType.equals("1") || exerciseType.equals("2")) {
+			return ExerciseType.SINGLE_CHOICE;
+		} else if(exerciseType.equals("3") || exerciseType.equals("4") || exerciseType.equals("5") || exerciseType.equals("9")) {
+			return ExerciseType.FIB;
+		} else if(exerciseType.equals("6")) {
+			return ExerciseType.JUMBLED_SENTENCES;
+		} else if(exerciseType.equals("7")) {
+			return ExerciseType.CATEGORIZE;
+		} else if(exerciseType.equals("8")) {
+			return ExerciseType.MARK;
+		} else {
+			throw new IllegalArgumentException();
+		}
+	}
+	
+	@Override
+	public void cancelGeneration() {
+		isCancelled = true;
+	}
+	
 }

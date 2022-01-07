@@ -1,9 +1,6 @@
 package com.flair.server.exerciseGeneration.exerciseManagement;
 
 
-import java.util.ArrayList;
-
-import com.flair.server.exerciseGeneration.OutputComponents;
 import com.flair.server.exerciseGeneration.downloadManagement.ResourceDownloader;
 import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
 import com.flair.server.parser.CoreNlpParser;
@@ -31,26 +28,15 @@ public class ExerciseManager {
 	 * @param settings	The exercise settings
 	 * @return			The byte array of the generated H5P package
 	 */
-    public ArrayList<ResultComponents> generateExercises(ContentTypeSettings settings, CoreNlpParser parser, SimpleNlgParser generator, 
+    public ResultComponents generateExercises(ContentTypeSettings settings, CoreNlpParser parser, SimpleNlgParser generator, 
     		OpenNlpParser lemmatizer, ResourceDownloader resourceDownloader) {
     	try {
-    		ArrayList<ResultComponents> result = new ArrayList<>();
-	        ArrayList<OutputComponents> generatedExercises = 
-	        settings.getExerciseGenerator().generateExercise(settings, parser, generator, lemmatizer, resourceDownloader);  
-	        if(generatedExercises == null || generatedExercises.size() == 0) {
+	        ResultComponents generatedExercises = settings.getExerciseGenerator().generateExercise(settings, parser, generator, lemmatizer, resourceDownloader);  
+	        if(generatedExercises == null) {
 	        	return null;
 	        }
 	        
-	        for(OutputComponents generatedExercise : generatedExercises) {
-		        if(generatedExercise == null) {
-		        	result.add(new ResultComponents(settings.getName(), null, null, null, null));
-		        } else {
-		        	result.add(new ResultComponents(generatedExercise.getName(), generatedExercise.getH5pFile(), 
-		        			generatedExercise.getPreviews(), generatedExercise.getXmlFile(), generatedExercise.getZipFiles()));
-		        }
-	        }
-	        
-    		return result;
+	        return generatedExercises;
     	} catch(Exception e) {
 			ServerLogger.get().error(e, "Exercise could not be generated. Exception: " + e.toString());
     		return null;

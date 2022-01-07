@@ -5,40 +5,27 @@ import java.util.HashMap;
 
 public class ResultComponents {
 
-    public ResultComponents(String fileName, byte[] fileContent, HashMap<String, String> previews, 
-    		HashMap<String, byte[]> xmlFile, HashMap<String, byte[]> zipFiles) {
-    	this.fileName = fileName;
-    	this.fileContent = fileContent;
+    public ResultComponents(HashMap<String, byte[]> h5pFiles, HashMap<String, String> previews, 
+    		HashMap<String, byte[]> xmlFiles) {
+    	this.h5pFiles = h5pFiles;
     	this.previews = previews;
-    	this.xmlFile = xmlFile;
-    	this.zipFiles = zipFiles;
+    	this.xmlFiles = xmlFiles;
     }
-
-    public String getFileName() {
-		return fileName;
-	}
-
-	public byte[] getFileContent() {
-		return fileContent;
-	}
 
 	public HashMap<String, String> getPreviews() {
 		return previews;
 	}
 
-	public HashMap<String, byte[]> getXmlFile() {
-		return xmlFile;
+	public HashMap<String, byte[]> getXmlFiles() {
+		return xmlFiles;
+	}
+	
+	public HashMap<String, byte[]> getH5pFiles() {
+		return h5pFiles;
 	}
 
-	public HashMap<String, byte[]> getZipFiles() {
-		return zipFiles;
-	}
-
-	private String fileName;
-    private byte[] fileContent;
     private HashMap<String, String> previews;
-    private HashMap<String, byte[]> xmlFile;
-    private HashMap<String, byte[]> zipFiles;
-
+    private HashMap<String, byte[]> xmlFiles;
+    private HashMap<String, byte[]> h5pFiles;
 
 }

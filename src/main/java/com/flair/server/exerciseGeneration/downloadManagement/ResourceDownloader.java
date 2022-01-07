@@ -16,7 +16,6 @@ import java.util.zip.GZIPInputStream;
 
 import org.apache.commons.io.IOUtils;
 
-import com.flair.server.exerciseGeneration.exerciseManagement.DownloadedResource;
 import com.flair.server.utilities.ServerLogger;
 
 public class ResourceDownloader {

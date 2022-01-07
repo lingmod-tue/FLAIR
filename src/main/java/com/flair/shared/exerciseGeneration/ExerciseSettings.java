@@ -69,6 +69,7 @@ public class ExerciseSettings implements IsSerializable, IExerciseSettings {
     public ArrayList<BracketsProperties> getBrackets() { return brackets; }
     public ArrayList<InstructionsProperties> getInstructions() { return instructions; }
     public int getnDistractors() { return nDistractors; }
+    @Override
 	public String getTaskName() { return taskName; }
 	public boolean isDownloadResources() { return downloadResources; }
 	public boolean isOnlyText() { return onlyText; }
@@ -91,5 +92,7 @@ public class ExerciseSettings implements IsSerializable, IExerciseSettings {
 	public void setFileContent(String fileContent) { this.fileContent = fileContent; }
 	public void setInstructionLemmas(ArrayList<String> instructionLemmas) { this.instructionLemmas = instructionLemmas; }
 	public void setWebPage(boolean isWebPage) { this.isWebPage = isWebPage; }
+	@Override
+	public void setTaskName(String taskName) { this.taskName = taskName; }
 
 }

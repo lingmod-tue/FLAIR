@@ -13,6 +13,7 @@ public class ConfigExerciseSettings implements IsSerializable, IExerciseSettings
     private String topic;
     String quiz;
     private boolean generateFeedback;
+    private String taskName;
 	
 	public ConfigExerciseSettings() {}
 
@@ -43,9 +44,13 @@ public class ConfigExerciseSettings implements IsSerializable, IExerciseSettings
 	public String getTopic() { return topic; }
 	@Override
 	public boolean isGenerateFeedback() { return generateFeedback; }
+    @Override
+	public String getTaskName() { return taskName; }
 	
 	public void setFileStream(byte[] fileStream) { this.fileStream = fileStream; }
 	@Override
 	public void setFileContent(String fileContent) { this.fileContent = fileContent; }
-
+	@Override
+	public void setTaskName(String taskName) { this.taskName = taskName; }
+	
 }
