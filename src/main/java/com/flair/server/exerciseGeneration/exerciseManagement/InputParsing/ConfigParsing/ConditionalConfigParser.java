@@ -1,10 +1,14 @@
 package com.flair.server.exerciseGeneration.exerciseManagement.InputParsing.ConfigParsing;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
@@ -12,12 +16,19 @@ import org.apache.commons.lang.StringUtils;
 import com.flair.server.exerciseGeneration.exerciseManagement.ConstructionTextPart;
 import com.flair.server.exerciseGeneration.exerciseManagement.Distractor;
 import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseData;
+import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseTopic;
 import com.flair.server.exerciseGeneration.exerciseManagement.HtmlTextPart;
 import com.flair.server.exerciseGeneration.exerciseManagement.PlainTextPart;
 import com.flair.server.exerciseGeneration.exerciseManagement.TextPart;
+import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
+import com.flair.server.exerciseGeneration.exerciseManagement.resourceManagement.ResourceLoader;
+import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.exerciseGeneration.BracketsProperties;
+import com.flair.shared.exerciseGeneration.ExerciseType;
 import com.flair.shared.exerciseGeneration.InstructionsProperties;
 import com.flair.shared.exerciseGeneration.Pair;
+import com.univocity.parsers.tsv.TsvParser;
+import com.univocity.parsers.tsv.TsvParserSettings;
 
 public class ConditionalConfigParser {
 
@@ -25,10 +36,11 @@ public class ConditionalConfigParser {
 	 * Compiles the exercise information for Categorization exercises.
 	 * 
 	 * @param configData           The data from the config file
-	 * @param ifClauseFirst        <code>true</code> if the if-clause is to be put before
-	 *                             the main clause
-	 * @param randomizeClauseOrder <code>true</code> if the order of if- and main clauses
-	 *                             is to be determined randomly for each sentence.
+	 * @param ifClauseFirst        <code>true</code> if the if-clause is to be put
+	 *                             before the main clause
+	 * @param randomizeClauseOrder <code>true</code> if the order of if- and main
+	 *                             clauses is to be determined randomly for each
+	 *                             sentence.
 	 * @return The exercise information
 	 */
 	private ExerciseData generateCategorizationTask(ArrayList<ExerciseConfigData> configData, boolean ifClauseFirst,
@@ -68,8 +80,7 @@ public class ConditionalConfigParser {
 	 * Compiles the exercise information for Memory exercises.
 	 * 
 	 * @param configData    The data from the config file
-	 * @param ifClauseFirst <code>true</code> if the if-clause is to be put before the
-	 *                      main clause
+	 * @param useIfClause 	<code>true</code> if the constructions in the if clause are to be targeted
 	 * @return The exercise information
 	 */
 	private ExerciseData generateMemoryTask(ArrayList<ExerciseConfigData> configData, boolean useIfClause) {
@@ -99,26 +110,27 @@ public class ConditionalConfigParser {
 	 * flow.
 	 * 
 	 * @param configData               The data from the config file
-	 * @param ifClauseFirst            <code>true</code> if the if-clause is to be put
-	 *                                 before the main clause
-	 * @param targetIfClause           <code>true</code> if the constructions in the if
-	 *                                 clause are to be targeted
-	 * @param targetMainClause         <code>true</code> if the constructions in the main
-	 *                                 clause are to be targeted
+	 * @param ifClauseFirst            <code>true</code> if the if-clause is to be
+	 *                                 put before the main clause
+	 * @param targetIfClause           <code>true</code> if the constructions in the
+	 *                                 if clause are to be targeted
+	 * @param targetMainClause         <code>true</code> if the constructions in the
+	 *                                 main clause are to be targeted
 	 * @param nDistractors             The number of distractors to use for the
 	 *                                 exercise
-	 * @param randomizeClauseOrder     <code>true</code> if the order of if- and main
-	 *                                 clauses is to be determined randomly for each
-	 *                                 sentence.
-	 * @param lemmasInBrackets         <code>true</code> if the lemma of the target is to
-	 *                                 be given in brackets
-	 * @param useDistractorLemma       <code>true</code> if a semantic distractor is to be
-	 *                                 given in brackets
-	 * @param targetEntireClause       <code>true</code> if the entire target clause is to
-	 *                                 be converted into constructions
-	 * @param giveLemmasInInstructions <code>true</code> if the lemmas of all targets and
-	 *                                 2 semantic distractors are to be given in the
-	 *                                 instructions
+	 * @param randomizeClauseOrder     <code>true</code> if the order of if- and
+	 *                                 main clauses is to be determined randomly for
+	 *                                 each sentence.
+	 * @param lemmasInBrackets         <code>true</code> if the lemma of the target
+	 *                                 is to be given in brackets
+	 * @param useDistractorLemma       <code>true</code> if a semantic distractor is
+	 *                                 to be given in brackets
+	 * @param targetEntireClause       <code>true</code> if the entire target clause
+	 *                                 is to be converted into constructions
+	 * @param giveLemmasInInstructions <code>true</code> if the lemmas of all
+	 *                                 targets and 2 semantic distractors are to be
+	 *                                 given in the instructions
+	 * @param isUnderline			   <code>true</code> if it is an underline task                                
 	 * @return The exercise information
 	 */
 	private ExerciseData generateGapTask(ArrayList<ExerciseConfigData> configData, boolean ifClauseFirst,
@@ -139,7 +151,7 @@ public class ConditionalConfigParser {
 			}
 
 			TargetAndClauseItems targetAndClauseItems = getTargetAndClauseItems(itemData, randomizeClauseOrder,
-					ifClauseFirst, targetIfClause, targetMainClause, 
+					ifClauseFirst, targetIfClause, targetMainClause,
 					isUnderline ? itemData.getUnderlineIfClause() : itemData.getGapIfClause(),
 					isUnderline ? itemData.getUnderlineMainClause() : itemData.getGapMainClause(), targetEntireClause);
 
@@ -149,10 +161,10 @@ public class ConditionalConfigParser {
 				if (targetAndClauseItems.getTargetPositions().size() == 0
 						|| position.first < targetAndClauseItems.getTargetPositions().get(0).first) {
 					if (inConstruction) {
-						addConstructionPart(positionParts, sentenceId, nDistractors, targetAndClauseItems, targetEntireClause, 
-								lemmasInBrackets, allLemmas, useDistractorLemma, giveLemmasInInstructions,
-								allDistractorLemmas, parts);
-					} 
+						addConstructionPart(positionParts, sentenceId, nDistractors, targetAndClauseItems,
+								targetEntireClause, lemmasInBrackets, allLemmas, useDistractorLemma,
+								giveLemmasInInstructions, allDistractorLemmas, parts);
+					}
 					positionParts.add(position);
 					inConstruction = false;
 				} else {
@@ -160,9 +172,8 @@ public class ConditionalConfigParser {
 						parts.add(new PlainTextPart(generateSentencesFromPositions(positionParts), sentenceId));
 						positionParts.clear();
 					}
-					
-					positionParts.add(position);
 
+					positionParts.add(position);
 
 					if (position.first == targetAndClauseItems.getTargetPositions().get(0).second) {
 						targetAndClauseItems.getTargetPositions().remove(0);
@@ -172,9 +183,9 @@ public class ConditionalConfigParser {
 			}
 
 			if (inConstruction) {
-				addConstructionPart(positionParts, sentenceId, nDistractors, targetAndClauseItems, targetEntireClause, 
-						lemmasInBrackets, allLemmas, useDistractorLemma, giveLemmasInInstructions,
-						allDistractorLemmas, parts);
+				addConstructionPart(positionParts, sentenceId, nDistractors, targetAndClauseItems, targetEntireClause,
+						lemmasInBrackets, allLemmas, useDistractorLemma, giveLemmasInInstructions, allDistractorLemmas,
+						parts);
 			}
 			positionParts.add(new Pair<>(positionParts.size() + 2, "."));
 			parts.add(new PlainTextPart(generateSentencesFromPositions(positionParts), sentenceId));
@@ -195,34 +206,37 @@ public class ConditionalConfigParser {
 			Collections.shuffle(lemmas);
 			data.setInstructionLemmas(lemmas);
 		}
-		
+
 		addPlainText(data);
 
 		return data;
 	}
-	
+
 	/**
 	 * Generates a construction element and adds it to the list of TextParts
-	 * @param positionParts				The text items separated into position groups
-	 * @param sentenceId				The index of the sentence
-	 * @param nDistractors				The number of distractors to use for the
-	 *                                 	exercise
-	 * @param targetAndClauseItems		The positions in correct order and constructions targeted by the
-	 *         							exercise 
-	 * @param targetEntireClause		<code>true</code> if the entire target clause is to
-	 *                                 	be converted into constructions
-	 * @param lemmasInBrackets			<code>true</code> if the lemma of the target is to
-	 *                                 	be given in brackets
-	 * @param allLemmas					The lemmas of all targets constructions
-	 * @param useDistractorLemma		<code>true</code> if a semantic distractor is to be
-	 *                                 	given in brackets
-	 * @param giveLemmasInInstructions	<code>true</code> if the lemmas of all targets and
-	 *                                 	2 semantic distractors are to be given in the
-	 * @param allDistractorLemmas		The distractor lemmas for all target constructions
-	 * @param parts						The TextPart items
+	 * 
+	 * @param positionParts            The text items separated into position groups
+	 * @param sentenceId               The index of the sentence
+	 * @param nDistractors             The number of distractors to use for the
+	 *                                 exercise
+	 * @param targetAndClauseItems     The positions in correct order and
+	 *                                 constructions targeted by the exercise
+	 * @param targetEntireClause       <code>true</code> if the entire target clause
+	 *                                 is to be converted into constructions
+	 * @param lemmasInBrackets         <code>true</code> if the lemma of the target
+	 *                                 is to be given in brackets
+	 * @param allLemmas                The lemmas of all targets constructions
+	 * @param useDistractorLemma       <code>true</code> if a semantic distractor is
+	 *                                 to be given in brackets
+	 * @param giveLemmasInInstructions <code>true</code> if the lemmas of all
+	 *                                 targets and 2 semantic distractors are to be
+	 *                                 given in the
+	 * @param allDistractorLemmas      The distractor lemmas for all target
+	 *                                 constructions
+	 * @param parts                    The TextPart items
 	 */
 	private void addConstructionPart(ArrayList<Pair<Integer, String>> positionParts, int sentenceId, int nDistractors,
-			TargetAndClauseItems targetAndClauseItems, boolean targetEntireClause, boolean lemmasInBrackets, 
+			TargetAndClauseItems targetAndClauseItems, boolean targetEntireClause, boolean lemmasInBrackets,
 			HashSet<String> allLemmas, boolean useDistractorLemma, boolean giveLemmasInInstructions,
 			HashSet<String> allDistractorLemmas, ArrayList<TextPart> parts) {
 		String constructionText = generateSentencesFromPositions(positionParts);
@@ -230,31 +244,30 @@ public class ConditionalConfigParser {
 
 		if (nDistractors > 0) {
 			ArrayList<Distractor> distractors = new ArrayList<>();
-			for(ArrayList<Pair<Integer, String>> distractorList : targetAndClauseItems.getTargetDistractors()) {
+			for (ArrayList<Pair<Integer, String>> distractorList : targetAndClauseItems.getTargetDistractors()) {
 				Collections.shuffle(distractorList);
 			}
 			while (distractors.size() < nDistractors) {
-				distractors.add(new Distractor(targetAndClauseItems.getTargetDistractors().get(0)
-						.get(distractors.size()).second));
+				distractors.add(new Distractor(
+						targetAndClauseItems.getTargetDistractors().get(0).get(distractors.size()).second));
 			}
 			targetAndClauseItems.getTargetDistractors().remove(0);
 
 			c.setDistractors(distractors);
 		}
 
-		if(giveLemmasInInstructions) {
+		if (giveLemmasInInstructions) {
 			allLemmas.add(targetAndClauseItems.getLemmas().get(0));
 			allDistractorLemmas.add(targetAndClauseItems.getDistractorLemmas().get(0));
 		}
-		
+
 		if (targetEntireClause) {
-			c.getBrackets()
-					.add(StringUtils.join(targetAndClauseItems.getGivenLemmas().get(0), ","));
+			c.getBrackets().add(StringUtils.join(targetAndClauseItems.getGivenLemmas().get(0), ","));
 			targetAndClauseItems.getGivenLemmas().remove(0);
 		} else if (lemmasInBrackets) {
 			ArrayList<String> lemmaComponents = new ArrayList<>();
 			lemmaComponents.add(targetAndClauseItems.getLemmas().get(0));
-			
+
 			if (useDistractorLemma) {
 				lemmaComponents.add(targetAndClauseItems.getDistractorLemmas().get(0));
 				Collections.shuffle(lemmaComponents);
@@ -263,11 +276,11 @@ public class ConditionalConfigParser {
 				c.getBrackets().add(lemmaComponents.get(0));
 			}
 		}
-		
-		if(targetAndClauseItems.getLemmas().size() > 0) {
+
+		if (targetAndClauseItems.getLemmas().size() > 0) {
 			targetAndClauseItems.getLemmas().remove(0);
 		}
-		if(targetAndClauseItems.getDistractorLemmas().size() > 0) {
+		if (targetAndClauseItems.getDistractorLemmas().size() > 0) {
 			targetAndClauseItems.getDistractorLemmas().remove(0);
 		}
 
@@ -279,14 +292,15 @@ public class ConditionalConfigParser {
 	 * Compiles the exercise information for Jumbled Sentences exercises.
 	 * 
 	 * @param configData           The data from the config file
-	 * @param ifClauseFirst        <code>true</code> if the if-clause is to be put before
-	 *                             the main clause
-	 * @param targetIfClause       <code>true</code> if the constructions in the if clause
-	 *                             are to be targeted
-	 * @param targetMainClause     <code>true</code> if the constructions in the main
+	 * @param ifClauseFirst        <code>true</code> if the if-clause is to be put
+	 *                             before the main clause
+	 * @param targetIfClause       <code>true</code> if the constructions in the if
 	 *                             clause are to be targeted
-	 * @param randomizeClauseOrder <code>true</code> if the order of if- and main clauses
-	 *                             is to be determined randomly for each sentence.
+	 * @param targetMainClause     <code>true</code> if the constructions in the
+	 *                             main clause are to be targeted
+	 * @param randomizeClauseOrder <code>true</code> if the order of if- and main
+	 *                             clauses is to be determined randomly for each
+	 *                             sentence.
 	 * @return The exercise information
 	 */
 	private ExerciseData generateJSTask(ArrayList<ExerciseConfigData> configData, boolean ifClauseFirst,
@@ -324,20 +338,20 @@ public class ConditionalConfigParser {
 	 * @param randomizeClauseOrder    <code>true</code> if the order of if- and main
 	 *                                clauses is to be determined randomly for each
 	 *                                sentence.
-	 * @param ifClauseFirst           <code>true</code> if the if-clause is to be put
-	 *                                before the main clause
-	 * @param targetIfClause          <code>true</code> if the constructions in the if
-	 *                                clause are to be targeted
-	 * @param targetMainClause        <code>true</code> if the constructions in the main
-	 *                                clause are to be targeted
+	 * @param ifClauseFirst           <code>true</code> if the if-clause is to be
+	 *                                put before the main clause
+	 * @param targetIfClause          <code>true</code> if the constructions in the
+	 *                                if clause are to be targeted
+	 * @param targetMainClause        <code>true</code> if the constructions in the
+	 *                                main clause are to be targeted
 	 * @param constructionsIfClause   The constructions in the if clause. Gaps for
 	 *                                FiB and SC exercises, Underline for Underline
 	 *                                exercises.
 	 * @param constructionsMainClause The constructions in the main clause. Gaps for
 	 *                                FiB and SC exercises, Underline for Underline
 	 *                                exercises.
-	 * @param targetEntireClause      <code>true</code> if the entire target clause is to
-	 *                                be converted into constructions
+	 * @param targetEntireClause      <code>true</code> if the entire target clause
+	 *                                is to be converted into constructions
 	 * @return The positions in correct order and constructions targeted by the
 	 *         exercise
 	 */
@@ -417,8 +431,8 @@ public class ConditionalConfigParser {
 							.add(new Pair<>(mainPositions.size() + 2, mainPositions.size() + ifPositions.size() + 1));
 				} else {
 					for (Pair<Integer, Integer> tp : constructionsIfClause) {
-						targetPositions.add(
-								new Pair<>(mainPositions.size() + tp.first, mainPositions.size() + tp.second));
+						targetPositions
+								.add(new Pair<>(mainPositions.size() + tp.first, mainPositions.size() + tp.second));
 					}
 					targetDistractors.add(itemData.getDistractorsIfClause());
 				}
@@ -460,11 +474,14 @@ public class ConditionalConfigParser {
 	}
 
 	/**
-	 * Parses the input stream and generates a set of exercise data of varying complexities.
-	 * @param inputStream	The input stream of the config file
-	 * @return	The exercise data structured into exercise types and blocks of max. 10 items
+	 * Parses the input stream and generates a set of exercise data of varying
+	 * complexities.
+	 * 
+	 * @param inputStream The input stream of the config file
+	 * @return The exercise data structured into exercise types and blocks of max.
+	 *         10 items
 	 */
-	public HashMap<String, ArrayList<HashMap<String, ExerciseData>>> parseConfigFile(InputStream inputStream) {
+	public ArrayList<ExerciseData> parseConfigFile(InputStream inputStream) {
 		ArrayList<ExerciseConfigData> configData = new ConditionalExcelFileReader().readExcelFile(inputStream);
 
 		HashMap<String, ArrayList<ExerciseConfigData>> configs = new HashMap<>();
@@ -477,483 +494,151 @@ public class ConditionalConfigParser {
 			configs.get(key).add(cd);
 		}
 
-        HashMap<String, ArrayList<HashMap<String, ExerciseData>>> activities = new HashMap<>();
-		for (Entry<String, ArrayList<ExerciseConfigData>> entry : configs.entrySet()) {
-			ArrayList<HashMap<String, ExerciseData>> blocks = new ArrayList<>();
-			HashMap<String, ExerciseData> exercises = new HashMap<>();
+		List<String[]> exerciseConstellations = null;
+		try (InputStream content = ResourceLoader.loadFile("feedbook_exercise_configurations.tsv");
+				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(content))) {
+			TsvParserSettings settings = new TsvParserSettings();
+			settings.getFormat().setLineSeparator("\n");
+			TsvParser parser = new TsvParser(settings);
 
-			if (entry.getKey().endsWith("condTypes")) {
-				exercises = new HashMap<>();
-				// categorization if first
-				exercises.put("" + 7, generateCategorizationTask(entry.getValue(), true, false));
-				// if-clause, if first
-				// sc 1d
-				exercises.put("" + 1,
-						generateGapTask(entry.getValue(), true, true, false, 1, false, false, false, false, false, false));
-				// sc 3d
-				exercises.put("" + 2,
-						generateGapTask(entry.getValue(), true, true, false, 3, false, false, false, false, false, false));
-				// fib lemma blank
-				exercises.put("" + 3,
-						generateGapTask(entry.getValue(), true, true, false, 0, false, true, false, false, false, false));
-				// fib lemma/distractor blank
-				ExerciseData data = generateGapTask(entry.getValue(), true, true, false, 0, false, true, true, false, false, false);
-				data.getBracketsProperties().add(BracketsProperties.DISTRACTOR_LEMMA);
-				exercises.put("" + 4, data);
-				// fib entire clause brackets
-				data = generateGapTask(entry.getValue(), true, true, false, 0, false, true, false, true, false, false);
-				data.getBracketsProperties().add(BracketsProperties.ACTIVE_SENTENCE);
-				exercises.put("" + 9, data);
-				blocks.add(exercises);
-
-				exercises = new HashMap<>();
-				// categorization main first
-				exercises.put("" + 7, generateCategorizationTask(entry.getValue(), false, false));
-				// if-clause, main first
-				// sc 1d
-				exercises.put("" + 1,
-						generateGapTask(entry.getValue(), false, true, false, 1, false, false, false, false, false, false));
-				// sc 3d
-				exercises.put("" + 2,
-						generateGapTask(entry.getValue(), false, true, false, 3, false, false, false, false, false, false));
-				// fib lemma blank
-				exercises.put("" + 3,
-						generateGapTask(entry.getValue(), false, true, false, 0, false, true, false, false, false, false));
-				// fib lemma/distractor blank
-				data = generateGapTask(entry.getValue(), false, true, false, 0, false, true, true, false, false, false);
-				data.getBracketsProperties().add(BracketsProperties.DISTRACTOR_LEMMA);
-				exercises.put("" + 4, data);
-				// fib entire clause brackets
-				data = generateGapTask(entry.getValue(), false, true, false, 0, false, true, false, true, false, false);
-				data.getBracketsProperties().add(BracketsProperties.ACTIVE_SENTENCE);
-				exercises.put("" + 9, data);
-				blocks.add(exercises);
-
-				exercises = new HashMap<>();
-				// categorization random first
-				exercises.put("" + 7, generateCategorizationTask(entry.getValue(), false, true));
-				// if-clause, random first
-				// sc 1d
-				exercises.put("" + 1,
-						generateGapTask(entry.getValue(), false, true, false, 1, true, false, false, false, false, false));
-				// sc 3d
-				exercises.put("" + 2,
-						generateGapTask(entry.getValue(), false, true, false, 3, true, false, false, false, false, false));
-				// fib lemma blank
-				exercises.put("" + 3,
-						generateGapTask(entry.getValue(), false, true, false, 0, true, true, false, false, false, false));
-				// fib lemma/distractor blank
-				data = generateGapTask(entry.getValue(), false, true, false, 0, true, true, true, false, false, false);
-				data.getBracketsProperties().add(BracketsProperties.DISTRACTOR_LEMMA);
-				exercises.put("" + 4, data);
-				// fib entire clause brackets
-				data = generateGapTask(entry.getValue(), false, true, false, 0, true, true, false, true, false, false);
-				data.getBracketsProperties().add(BracketsProperties.ACTIVE_SENTENCE);
-				exercises.put("" + 9, data);
-				blocks.add(exercises);
-
-				exercises = new HashMap<>();
-				// main clause, if first
-				// sc 1d
-				exercises.put("" + 1,
-						generateGapTask(entry.getValue(), true, false, true, 1, false, false, false, false, false, false));
-				// sc 3d
-				exercises.put("" + 2,
-						generateGapTask(entry.getValue(), true, false, true, 3, false, false, false, false, false, false));
-				// fib lemma blank
-				exercises.put("" + 3,
-						generateGapTask(entry.getValue(), true, false, true, 0, false, true, false, false, false, false));
-				// fib lemma/distractor blank
-				data = generateGapTask(entry.getValue(), true, false, true, 0, false, true, true, false, false, false);
-				data.getBracketsProperties().add(BracketsProperties.DISTRACTOR_LEMMA);
-				exercises.put("" + 4, data);
-				// fib entire clause brackets
-				data = generateGapTask(entry.getValue(), true, false, true, 0, false, true, false, true, false, false);
-				data.getBracketsProperties().add(BracketsProperties.ACTIVE_SENTENCE);
-				exercises.put("" + 9, data);
-				blocks.add(exercises);
-
-				exercises = new HashMap<>();
-				// main clause, main first
-				// sc 1d
-				exercises.put("" + 1,
-						generateGapTask(entry.getValue(), false, false, true, 1, false, false, false, false, false, false));
-				// sc 3d
-				exercises.put("" + 2,
-						generateGapTask(entry.getValue(), false, false, true, 3, false, false, false, false, false, false));
-				// fib lemma blank
-				exercises.put("" + 3,
-						generateGapTask(entry.getValue(), false, false, true, 0, false, true, false, false, false, false));
-				// fib lemma/distractor blank
-				data = generateGapTask(entry.getValue(), false, false, true, 0, false, true, true, false, false, false);
-				data.getBracketsProperties().add(BracketsProperties.DISTRACTOR_LEMMA);
-				exercises.put("" + 4, data);
-				// fib entire clause brackets
-				data = generateGapTask(entry.getValue(), false, false, true, 0, false, true, false, true, false, false);
-				data.getBracketsProperties().add(BracketsProperties.ACTIVE_SENTENCE);
-				exercises.put("" + 9, data);
-				blocks.add(exercises);
-
-				exercises = new HashMap<>();
-				// main clause, random first
-				// sc 1d
-				exercises.put("" + 1,
-						generateGapTask(entry.getValue(), false, false, true, 1, true, false, false, false, false, false));
-				// sc 3d
-				exercises.put("" + 2,
-						generateGapTask(entry.getValue(), false, false, true, 3, true, false, false, false, false, false));
-				// fib lemma blank
-				exercises.put("" + 3,
-						generateGapTask(entry.getValue(), false, false, true, 0, true, true, false, false, false, false));
-				// fib lemma/distractor blank
-				data = generateGapTask(entry.getValue(), false, false, true, 0, true, true, true, false, false, false);
-				data.getBracketsProperties().add(BracketsProperties.DISTRACTOR_LEMMA);
-				exercises.put("" + 4, data);
-				// fib entire clause brackets
-				data = generateGapTask(entry.getValue(), false, false, true, 0, true, true, false, true, false, false);
-				data.getBracketsProperties().add(BracketsProperties.ACTIVE_SENTENCE);
-				exercises.put("" + 9, data);
-				blocks.add(exercises);
-
-				exercises = new HashMap<>();
-				// both clauses, if first
-				// sc 1d
-				exercises.put("" + 1,
-						generateGapTask(entry.getValue(), true, true, true, 1, false, false, false, false, false, false));
-				// sc 3d
-				exercises.put("" + 2,
-						generateGapTask(entry.getValue(), true, true, true, 3, false, false, false, false, false, false));
-				// fib lemma blank
-				exercises.put("" + 3,
-						generateGapTask(entry.getValue(), true, true, true, 0, false, true, false, false, false, false));
-				// fib lemma/distractor blank
-				data = generateGapTask(entry.getValue(), true, true, true, 0, false, true, true, false, false, false);
-				data.getBracketsProperties().add(BracketsProperties.DISTRACTOR_LEMMA);
-				exercises.put("" + 4, data);
-				// fib entire clause brackets
-				data = generateGapTask(entry.getValue(), true, true, true, 0, false, true, false, true, false, false);
-				data.getBracketsProperties().add(BracketsProperties.ACTIVE_SENTENCE);
-				exercises.put("" + 9, data);
-				blocks.add(exercises);
-
-				exercises = new HashMap<>();
-				// both clauses, main first
-				// sc 1d
-				exercises.put("" + 1,
-						generateGapTask(entry.getValue(), false, true, true, 1, false, false, false, false, false, false));
-				// sc 3d
-				exercises.put("" + 2,
-						generateGapTask(entry.getValue(), false, true, true, 3, false, false, false, false, false, false));
-				// fib lemma blank
-				exercises.put("" + 3,
-						generateGapTask(entry.getValue(), false, true, true, 0, false, true, false, false, false, false));
-				// fib lemma/distractor blank
-				data = generateGapTask(entry.getValue(), false, true, true, 0, false, true, true, false, false, false);
-				data.getBracketsProperties().add(BracketsProperties.DISTRACTOR_LEMMA);
-				exercises.put("" + 4, data);
-				// fib entire clause brackets
-				data = generateGapTask(entry.getValue(), false, true, true, 0, false, true, false, true, false, false);
-				data.getBracketsProperties().add(BracketsProperties.ACTIVE_SENTENCE);
-				exercises.put("" + 9, data);
-				blocks.add(exercises);
-
-				exercises = new HashMap<>();
-				// both clauses, random first
-				// sc 1d
-				exercises.put("" + 1,
-						generateGapTask(entry.getValue(), false, true, true, 1, true, false, false, false, false, false));
-				// sc 3d
-				exercises.put("" + 2,
-						generateGapTask(entry.getValue(), false, true, true, 3, true, false, false, false, false, false));
-				// fib lemma blank
-				exercises.put("" + 3,
-						generateGapTask(entry.getValue(), false, true, true, 0, true, true, false, false, false, false));
-				// fib lemma/distractor blank
-				data = generateGapTask(entry.getValue(), false, true, true, 0, true, true, true, false, false, false);
-				data.getBracketsProperties().add(BracketsProperties.DISTRACTOR_LEMMA);
-				exercises.put("" + 4, data);
-				// fib entire clause brackets
-				data = generateGapTask(entry.getValue(), false, true, true, 0, true, true, false, true, false, false);
-				data.getBracketsProperties().add(BracketsProperties.ACTIVE_SENTENCE);
-				exercises.put("" + 9, data);
-				blocks.add(exercises);
-			} else {
-				exercises = new HashMap<>();
-				// memory if-clause
-				exercises.put("" + 0, generateMemoryTask(entry.getValue(), true));
-				// if-clause, if first
-				// sc 1d
-				exercises.put("" + 1,
-						generateGapTask(entry.getValue(), true, true, false, 1, false, false, false, false, false, false));
-				// sc 3d
-				exercises.put("" + 2,
-						generateGapTask(entry.getValue(), true, true, false, 3, false, false, false, false, false, false));
-				// fib lemma blank
-				exercises.put("" + 3,
-						generateGapTask(entry.getValue(), true, true, false, 0, false, true, false, false, false, false));
-				// fib lemma/distractor blank
-				ExerciseData data = generateGapTask(entry.getValue(), true, true, false, 0, false, true, true, false, false, false);
-				data.getBracketsProperties().add(BracketsProperties.DISTRACTOR_LEMMA);
-				exercises.put("" + 4, data);
-				// fib lemma instuctions
-				data = generateGapTask(entry.getValue(), true, true, false, 0, false, false, false, false, true, false);
-				data.getInstructionProperties().add(InstructionsProperties.LEMMA);
-				exercises.put("" + 5, data);
-				// jumbled sentences
-				exercises.put("" + 6, generateJSTask(entry.getValue(), true, true, false, false));
-				// underline
-				exercises.put("" + 8,
-						generateGapTask(entry.getValue(), true, true, false, 0, false, false, false, false, false, true));
-				// fib entire clause brackets
-				data = generateGapTask(entry.getValue(), true, true, false, 0, false, true, false, true, false, false);
-				data.getBracketsProperties().add(BracketsProperties.ACTIVE_SENTENCE);
-				exercises.put("" + 9, data);
-				blocks.add(exercises);
-
-				exercises = new HashMap<>();
-				// if-clause, main first
-				// sc 1d
-				exercises.put("" + 1,
-						generateGapTask(entry.getValue(), false, true, false, 1, false, false, false, false, false, false));
-				// sc 3d
-				exercises.put("" + 2,
-						generateGapTask(entry.getValue(), false, true, false, 3, false, false, false, false, false, false));
-				// fib lemma blank
-				exercises.put("" + 3,
-						generateGapTask(entry.getValue(), false, true, false, 0, false, true, false, false, false, false));
-				// fib lemma/distractor blank
-				data = generateGapTask(entry.getValue(), false, true, false, 0, false, true, true, false, false, false);
-				data.getBracketsProperties().add(BracketsProperties.DISTRACTOR_LEMMA);
-				exercises.put("" + 4, data);
-				// fib lemma instuctions
-				data = generateGapTask(entry.getValue(), false, true, false, 0, false, false, false, false, true, false);
-				data.getInstructionProperties().add(InstructionsProperties.LEMMA);
-				exercises.put("" + 5, data);
-				// jumbled sentences
-				exercises.put("" + 6, generateJSTask(entry.getValue(), false, true, false, false));
-				// underline
-				exercises.put("" + 8,
-						generateGapTask(entry.getValue(), false, true, false, 0, false, false, false, false, false, true));
-				// fib entire clause brackets
-				data = generateGapTask(entry.getValue(), false, true, false, 0, false, true, false, true, false, false);
-				data.getBracketsProperties().add(BracketsProperties.ACTIVE_SENTENCE);
-				exercises.put("" + 9, data);
-				blocks.add(exercises);
-
-				exercises = new HashMap<>();
-				// if-clause, random first
-				// sc 1d
-				exercises.put("" + 1,
-						generateGapTask(entry.getValue(), false, true, false, 1, true, false, false, false, false, false));
-				// sc 3d
-				exercises.put("" + 2,
-						generateGapTask(entry.getValue(), false, true, false, 3, true, false, false, false, false, false));
-				// fib lemma blank
-				exercises.put("" + 3,
-						generateGapTask(entry.getValue(), false, true, false, 0, true, true, false, false, false, false));
-				// fib lemma/distractor blank
-				data = generateGapTask(entry.getValue(), false, true, false, 0, true, true, true, false, false, false);
-				data.getBracketsProperties().add(BracketsProperties.DISTRACTOR_LEMMA);
-				exercises.put("" + 4, data);
-				// fib lemma instructions
-				data = generateGapTask(entry.getValue(), false, true, false, 0, true, false, false, false, true, false);
-				data.getInstructionProperties().add(InstructionsProperties.LEMMA);
-				exercises.put("" + 5, data);
-				// jumbled sentences
-				exercises.put("" + 6, generateJSTask(entry.getValue(), false, true, false, true));
-				// underline
-				exercises.put("" + 8,
-						generateGapTask(entry.getValue(), false, true, false, 0, true, false, false, false, false, true));
-				// fib entire clause brackets
-				data = generateGapTask(entry.getValue(), false, true, false, 0, true, true, false, true, false, false);
-				data.getBracketsProperties().add(BracketsProperties.ACTIVE_SENTENCE);
-				exercises.put("" + 9, data);
-				blocks.add(exercises);
-
-				exercises = new HashMap<>();
-				// memory main clause
-				exercises.put("" + 0, generateMemoryTask(entry.getValue(), false));
-				// main clause, if first
-				// sc 1d
-				exercises.put("" + 1,
-						generateGapTask(entry.getValue(), true, false, true, 1, false, false, false, false, false, false));
-				// sc 3d
-				exercises.put("" + 2,
-						generateGapTask(entry.getValue(), true, false, true, 3, false, false, false, false, false, false));
-				// fib lemma blank
-				exercises.put("" + 3,
-						generateGapTask(entry.getValue(), true, false, true, 0, false, true, false, false, false, false));
-				// fib lemma/distractor blank
-				data = generateGapTask(entry.getValue(), true, false, true, 0, false, true, true, false, false, false);
-				data.getBracketsProperties().add(BracketsProperties.DISTRACTOR_LEMMA);
-				exercises.put("" + 4, data);
-				// fib lemma instuctions
-				data = generateGapTask(entry.getValue(), true, false, true, 0, false, false, false, false, true, false);
-				data.getInstructionProperties().add(InstructionsProperties.LEMMA);
-				exercises.put("" + 5, data);
-				// jumbled sentences
-				exercises.put("" + 6, generateJSTask(entry.getValue(), true, false, true, false));
-				// underline
-				exercises.put("" + 8,
-						generateGapTask(entry.getValue(), true, false, true, 0, false, false, false, false, false, true));
-				// fib entire clause brackets
-				data = generateGapTask(entry.getValue(), true, false, true, 0, false, true, false, true, false, false);
-				data.getBracketsProperties().add(BracketsProperties.ACTIVE_SENTENCE);
-				exercises.put("" + 9, data);
-				blocks.add(exercises);
-
-				exercises = new HashMap<>();
-				// main clause, main first
-				// sc 1d
-				exercises.put("" + 1,
-						generateGapTask(entry.getValue(), false, false, true, 1, false, false, false, false, false, false));
-				// sc 3d
-				exercises.put("" + 2,
-						generateGapTask(entry.getValue(), false, false, true, 3, false, false, false, false, false, false));
-				// fib lemma blank
-				exercises.put("" + 3,
-						generateGapTask(entry.getValue(), false, false, true, 0, false, true, false, false, false, false));
-				// fib lemma/distractor blank
-				data = generateGapTask(entry.getValue(), false, false, true, 0, false, true, true, false, false, false);
-				data.getBracketsProperties().add(BracketsProperties.DISTRACTOR_LEMMA);
-				exercises.put("" + 4, data);
-				// fib lemma instructions
-				data = generateGapTask(entry.getValue(), false, false, true, 0, false, false, false, false, true, false);
-				data.getInstructionProperties().add(InstructionsProperties.LEMMA);
-				exercises.put("" + 5, data);
-				// jumbled sentences
-				exercises.put("" + 6, generateJSTask(entry.getValue(), false, false, true, false));
-				// underline
-				exercises.put("" + 8,
-						generateGapTask(entry.getValue(), false, false, true, 0, false, false, false, false, false, true));
-				// fib entire clause brackets
-				data = generateGapTask(entry.getValue(), false, false, true, 0, false, true, false, true, false, false);
-				data.getBracketsProperties().add(BracketsProperties.ACTIVE_SENTENCE);
-				exercises.put("" + 9, data);
-				blocks.add(exercises);
-
-				exercises = new HashMap<>();
-				// main clause, random first
-				// sc 1d
-				exercises.put("" + 1,
-						generateGapTask(entry.getValue(), false, false, true, 1, true, false, false, false, false, false));
-				// sc 3d
-				exercises.put("" + 2,
-						generateGapTask(entry.getValue(), false, false, true, 3, true, false, false, false, false, false));
-				// fib lemma blank
-				exercises.put("" + 3,
-						generateGapTask(entry.getValue(), false, false, true, 0, true, true, false, false, false, false));
-				// fib lemma/distractor blank
-				data = generateGapTask(entry.getValue(), false, false, true, 0, true, true, true, false, false, false);
-				data.getBracketsProperties().add(BracketsProperties.DISTRACTOR_LEMMA);
-				exercises.put("" + 4, data);
-				// fib lemma instructions
-				data = generateGapTask(entry.getValue(), false, false, true, 0, true, false, false, false, true, false);
-				data.getInstructionProperties().add(InstructionsProperties.LEMMA);
-				exercises.put("" + 5, data);
-				// jumbled sentences
-				exercises.put("" + 6, generateJSTask(entry.getValue(), false, false, true, true));
-				// underline
-				exercises.put("" + 8,
-						generateGapTask(entry.getValue(), false, false, true, 0, true, false, false, false, false, true));
-				// fib entire clause brackets
-				data = generateGapTask(entry.getValue(), false, false, true, 0, true, true, false, true, false, false);
-				data.getBracketsProperties().add(BracketsProperties.ACTIVE_SENTENCE);
-				exercises.put("" + 9, data);
-				blocks.add(exercises);
-
-				exercises = new HashMap<>();
-				// both clauses, if first
-				// sc 1d
-				exercises.put("" + 1,
-						generateGapTask(entry.getValue(), true, true, true, 1, false, false, false, false, false, false));
-				// sc 3d
-				exercises.put("" + 2,
-						generateGapTask(entry.getValue(), true, true, true, 3, false, false, false, false, false, false));
-				// fib lemma blank
-				exercises.put("" + 3,
-						generateGapTask(entry.getValue(), true, true, true, 0, false, true, false, false, false, false));
-				// fib lemma/distractor blank
-				data = generateGapTask(entry.getValue(), true, true, true, 0, false, true, true, false, false, false);
-				data.getBracketsProperties().add(BracketsProperties.DISTRACTOR_LEMMA);
-				exercises.put("" + 4, data);
-				// jumbled sentences
-				exercises.put("" + 6, generateJSTask(entry.getValue(), true, true, true, false));
-				// fib entire clause brackets
-				data = generateGapTask(entry.getValue(), true, true, true, 0, false, true, false, true, false, false);
-				data.getBracketsProperties().add(BracketsProperties.ACTIVE_SENTENCE);
-				exercises.put("" + 9, data);
-				blocks.add(exercises);
-
-				exercises = new HashMap<>();
-				// both clauses, main first
-				// sc 1d
-				exercises.put("" + 1,
-						generateGapTask(entry.getValue(), false, true, true, 1, false, false, false, false, false, false));
-				// sc 3d
-				exercises.put("" + 2,
-						generateGapTask(entry.getValue(), false, true, true, 3, false, false, false, false, false, false));
-				// fib lemma blank
-				exercises.put("" + 3,
-						generateGapTask(entry.getValue(), false, true, true, 0, false, true, false, false, false, false));
-				// fib lemma/distractor blank
-				data = generateGapTask(entry.getValue(), false, true, true, 0, false, true, true, false, false, false);
-				data.getBracketsProperties().add(BracketsProperties.DISTRACTOR_LEMMA);
-				exercises.put("" + 4, data);
-				// fib entire clause brackets
-				data = generateGapTask(entry.getValue(), false, true, true, 0, false, true, false, true, false, false);
-				data.getBracketsProperties().add(BracketsProperties.ACTIVE_SENTENCE);
-				exercises.put("" + 9, data);
-				blocks.add(exercises);
-
-				exercises = new HashMap<>();
-				// both clauses, random first
-				// sc 1d
-				exercises.put("" + 1,
-						generateGapTask(entry.getValue(), false, true, true, 1, true, false, false, false, false, false));
-				// sc 3d
-				exercises.put("" + 2,
-						generateGapTask(entry.getValue(), false, true, true, 3, true, false, false, false, false, false));
-				// fib lemma blank
-				exercises.put("" + 3,
-						generateGapTask(entry.getValue(), false, true, true, 0, true, true, false, false, false, false));
-				// fib lemma/distractor blank
-				data = generateGapTask(entry.getValue(), false, true, true, 0, true, true, true, false, false, false);
-				data.getBracketsProperties().add(BracketsProperties.DISTRACTOR_LEMMA);
-				exercises.put("" + 4, data);
-				// fib entire clause brackets
-				data = generateGapTask(entry.getValue(), false, true, true, 0, true, true, false, true, false, false);
-				data.getBracketsProperties().add(BracketsProperties.ACTIVE_SENTENCE);
-				exercises.put("" + 9, data);
-				blocks.add(exercises);
-			}
-
-			activities.put(entry.getKey(), blocks);
+			exerciseConstellations = parser.parseAll(bufferedReader);
+		} catch (IOException e) {
+			return null;
 		}
-		
-		return activities;
+
+		ArrayList<ExerciseData> exercises = new ArrayList<>();
+		for (Entry<String, ArrayList<ExerciseConfigData>> entry : configs.entrySet()) {
+			ArrayList<ExerciseData> generatedExercises = generateExerciseForConfig(exerciseConstellations,
+					entry.getKey().endsWith("condTypes"), entry.getValue());
+			
+			if(generatedExercises != null) {
+				exercises.addAll(generatedExercises);
+			}
+		}
+
+		return exercises;
 	}
-	
+
 	/**
-	 * Determines the overall plain text from the parts and adds the construction indices respective to this plain text to the constructions
-	 * @param data	The exercise data
+	 * Determines the overall plain text from the parts and adds the construction
+	 * indices respective to this plain text to the constructions
+	 * 
+	 * @param data The exercise data
 	 */
 	private void addPlainText(ExerciseData data) {
 		StringBuilder sb = new StringBuilder();
-		for(TextPart part : data.getParts()) {
-			if(sb.length() > 0 && !sb.toString().endsWith(" ") && ! part.getValue().startsWith(" ")) {
+		for (TextPart part : data.getParts()) {
+			if (sb.length() > 0 && !sb.toString().endsWith(" ") && !part.getValue().startsWith(" ")) {
 				sb.append(" ");
 			}
-			
-			if(part instanceof ConstructionTextPart) {
+
+			if (part instanceof ConstructionTextPart) {
 				int startIndex = sb.length();
 				int endIndex = sb.length() + part.getValue().length();
-				((ConstructionTextPart)part).setIndicesInPlainText(new Pair<>(startIndex, endIndex));
+				((ConstructionTextPart) part).setIndicesInPlainText(new Pair<>(startIndex, endIndex));
 			}
 			sb.append(part.getValue());
 		}
-		
+
 		data.setPlainText(sb.toString());
+	}
+
+	/**
+	 * Generates all exercises defined in the resource file for conditional exercises,
+	 * for a single exercise defined in the uploaded file.
+	 * @param exerciseConstellations	The exercise definitions defined in the resource file
+	 * @param generateTypeExercises		<code>true</code> if the defined exercise targets distinction between conditional type 1 and type 2;
+	 * 									<code>false</code> if it targets correct formation of a conditional type
+	 * @param data						The exercise as defined in the uploaded file
+	 * @return	The generated exercises in abstracted format
+	 */
+	private ArrayList<ExerciseData> generateExerciseForConfig(List<String[]> exerciseConstellations,
+			boolean generateTypeExercises, ArrayList<ExerciseConfigData> data) {
+		if(exerciseConstellations == null) {
+			return null;
+		}
+		
+		String lastBlockId = "";
+		ArrayList<ExerciseData> exercises = new ArrayList<>();
+
+		for (String[] configValues : exerciseConstellations) {
+			try {
+				if (generateTypeExercises && configValues[0].equals("conditional_types")
+						|| !generateTypeExercises && configValues[0].equals("conditional_form")) {
+					if (!lastBlockId.equals(configValues[2])) {
+						lastBlockId = configValues[2];
+					}
+	
+					ExerciseData d = null;
+					if (configValues[3].equals("0")) {
+						d = generateMemoryTask(data, configValues[6].equals("true"));
+						d.setExerciseType(ExerciseType.MEMORY);
+					} else if (configValues[3].equals("1")) {
+						d = generateGapTask(data, configValues[4].equals("true"), configValues[6].equals("true"),
+								configValues[7].equals("true"), 1, configValues[5].equals("true"), false, false, false,
+								false, false);
+						d.setExerciseType(ExerciseType.SINGLE_CHOICE);
+					} else if (configValues[3].equals("2")) {
+						d = generateGapTask(data, configValues[4].equals("true"), configValues[6].equals("true"),
+								configValues[7].equals("true"), 3, configValues[5].equals("true"), false, false, false,
+								false, false);
+						d.setExerciseType(ExerciseType.SINGLE_CHOICE);
+					} else if (configValues[3].equals("3")) {
+						d = generateGapTask(data, configValues[4].equals("true"), configValues[6].equals("true"),
+								configValues[7].equals("true"), 0, configValues[5].equals("true"), true, false, false,
+								false, false);
+						d.setExerciseType(ExerciseType.FIB);
+					} else if (configValues[3].equals("4")) {
+						d = generateGapTask(data, configValues[4].equals("true"), configValues[6].equals("true"),
+								configValues[7].equals("true"), 0, configValues[5].equals("true"), true, true, false, false,
+								false);
+						d.setExerciseType(ExerciseType.FIB);
+						d.getBracketsProperties().add(BracketsProperties.DISTRACTOR_LEMMA);
+					} else if (configValues[3].equals("5")) {
+						d = generateGapTask(data, configValues[4].equals("true"), configValues[6].equals("true"),
+								configValues[7].equals("true"), 0, configValues[5].equals("true"), false, false, false,
+								true, false);
+						d.setExerciseType(ExerciseType.FIB);
+						d.getInstructionProperties().add(InstructionsProperties.LEMMA);
+					} else if (configValues[3].equals("6")) {
+						d = generateJSTask(data, configValues[4].equals("true"), configValues[6].equals("true"),
+								configValues[7].equals("true"), configValues[5].equals("true"));
+						d.setExerciseType(ExerciseType.JUMBLED_SENTENCES);
+					} else if (configValues[3].equals("7")) {
+						d = generateCategorizationTask(data, configValues[4].equals("true"),
+								configValues[5].equals("true"));
+						d.setExerciseType(ExerciseType.CATEGORIZE);
+					} else if (configValues[3].equals("8")) {
+						d = generateGapTask(data, configValues[4].equals("true"), configValues[6].equals("true"),
+								configValues[7].equals("true"), 0, configValues[5].equals("true"), false, false, false,
+								false, true);
+						d.setExerciseType(ExerciseType.MARK);
+					} else if (configValues[3].equals("9")) {
+						d = generateGapTask(data, configValues[4].equals("true"), configValues[6].equals("true"),
+								configValues[7].equals("true"), 0, configValues[5].equals("true"), true, false, true, false,
+								false);
+						d.setExerciseType(ExerciseType.FIB);
+						d.getBracketsProperties().add(BracketsProperties.ACTIVE_SENTENCE);
+					}
+	
+					if (d != null) {
+	        			d.setExerciseTitle(configValues[2] + "/" + configValues[3]);
+	        			d.setContentTypeSettings(new ContentTypeSettings(d.getExerciseType()));
+	        			d.setTopic(ExerciseTopic.CONDITIONALS);
+						exercises.add(d);
+					}
+	
+				}
+			} catch(Exception e) {
+				if(configValues != null && configValues.length > 3) {
+					ServerLogger.get().error(e, "Exercise " + configValues[2] + "/" + configValues[3] + " could not be generated.\n" + e.toString());
+				} else {
+					ServerLogger.get().error(e, "An exercise could not be generated.\n" + e.toString());
+				}
+			}
+		}
+
+		return exercises;
 	}
 
 }

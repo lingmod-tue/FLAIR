@@ -537,7 +537,7 @@ public class TaskItem extends LocalizedComposite {
 			for(Pair<Integer, Integer> newlyRemovedPart : newlyRemovedParts) {
     			// A previously removed part may be entirely contained in a newly removed part.
     			// We then do not add it to the removed parts list
-    			if(!(removedPart.first >= newlyRemovedPart.first && removedPart.second <= newlyRemovedPart.second)) {
+    			if(removedPart.first >= newlyRemovedPart.first && removedPart.second <= newlyRemovedPart.second) {
     				canUse = false;
     				break;
     			}
@@ -569,7 +569,7 @@ public class TaskItem extends LocalizedComposite {
         	newlyRemovedParts.clear();
         	        	
         	btnApplyDocumentSelection.setEnabled(false);
-    		btnReset.setEnabled(removedParts.size() > 0);    		
+    		btnReset.setEnabled(removedParts.size() > 0);  
         });
         
         btnApplyTargetSelection.addClickHandler(event -> {
@@ -780,14 +780,24 @@ public class TaskItem extends LocalizedComposite {
     		if(removedPart.first <= selectedPartStartIndex) {
     			selectedPartStartIndex += removedPart.second - removedPart.first;
     			selectedPartEndIndex += removedPart.second - removedPart.first;
-    		} else if(removedPart.first < selectedPartEndIndex) {
+    		} else if(removedPart.first <= selectedPartEndIndex) {
+    			// it's contained in a previously removed part
     			selectedPartEndIndex += removedPart.second - removedPart.first;
     		} else {
     			break;
     		}
     	}
+    	    	
+    	ArrayList<Pair<Integer, Integer>> newRemovedParts = new ArrayList<>(newlyRemovedParts);       	        	        	
+		for(Pair<Integer, Integer> removedPart : allRemovedParts) {
+			if(!(removedPart.first >= selectedPartStartIndex && removedPart.second <= selectedPartEndIndex)) {
+				allRemovedParts.add(removedPart);
+			}
+    	}     
+		newRemovedParts.add(new Pair<>(selectedPartStartIndex, selectedPartEndIndex));
+		newRemovedParts.sort((c1, c2) -> c1.first < c2.first ? -1 : 1);
     	
-    	newlyRemovedParts.add(new Pair<>(selectedPartStartIndex, selectedPartStartIndex + lblDocumentForSelection.getSelectionLength()));
+    	newlyRemovedParts = newRemovedParts;
     	lblDocumentForSelection.setText(lblDocumentForSelection.getText().substring(0, lblDocumentForSelection.getCursorPos()) + lblDocumentForSelection.getText().substring(lblDocumentForSelection.getCursorPos() + lblDocumentForSelection.getSelectionLength()));
     
 		btnApplyDocumentSelection.setEnabled(true);

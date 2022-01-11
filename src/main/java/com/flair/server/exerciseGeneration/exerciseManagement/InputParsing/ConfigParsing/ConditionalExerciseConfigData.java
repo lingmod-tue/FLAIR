@@ -9,39 +9,7 @@ public class ConditionalExerciseConfigData extends ExerciseConfigData {
 	public ConditionalExerciseConfigData() {
 		super();
 	}
-	
-	/**
-	 * Copy constructor performing deep copy
-	 * @param configData
-	 */
-	public ConditionalExerciseConfigData(ExerciseConfigData configData) {
-		super(configData);
-
-		if(!(configData instanceof ConditionalExerciseConfigData)) {
-			throw new IllegalArgumentException("The argument of the copy constructor must be of type ConditionalExerciseConfigData!");
-		}
 		
-		ConditionalExerciseConfigData cd = (ConditionalExerciseConfigData)configData;
-		this.conditionalType = cd.conditionalType;
-		this.translationIfClause = cd.translationIfClause;
-		this.translationMainClause = cd.translationMainClause;
-		this.bracketsIfClause = new ArrayList<>(cd.bracketsIfClause);
-		this.bracketsMainClause = new ArrayList<>(cd.bracketsMainClause);
-		this.distractorsMainClause = new ArrayList<>(cd.distractorsMainClause);
-		this.distractorsIfClause = new ArrayList<>(cd.distractorsIfClause);
-		this.lemmaIfClause = cd.lemmaIfClause;
-		this.lemmaMainClause = cd.lemmaMainClause;
-		this.distractorLemmaIfClause = cd.distractorLemmaIfClause;
-		this.distractorLemmaMainClause = cd.distractorLemmaMainClause;
-		this.gapIfClause = new ArrayList<>(cd.gapIfClause);
-		this.gapMainClause = new ArrayList<>(cd.gapMainClause);
-		this.underlineIfClause = new ArrayList<>(cd.underlineIfClause);
-		this.underlineMainClause = new ArrayList<>(cd.underlineMainClause);
-		this.positionsIfClause = new ArrayList<>(cd.positionsIfClause);
-		this.positionsMainClause = new ArrayList<>(cd.positionsMainClause);
-		this.isType1VsType2 = cd.isType1VsType2;
-	}
-	
 	private int conditionalType;
 	private String translationIfClause;
 	private String translationMainClause;

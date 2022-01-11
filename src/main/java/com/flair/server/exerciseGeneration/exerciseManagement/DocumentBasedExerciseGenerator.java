@@ -32,6 +32,7 @@ import com.flair.shared.exerciseGeneration.Pair;
 public class DocumentBasedExerciseGenerator extends ExerciseGenerator {
 	
 	private boolean isCancelled = false;
+	private FeedbackGenerator feedbackGenerator = new FeedbackGenerator();
 
 	@Override
 	public ResultComponents generateExercise(ContentTypeSettings settings, CoreNlpParser parser, SimpleNlgParser generator, 
@@ -93,7 +94,7 @@ public class DocumentBasedExerciseGenerator extends ExerciseGenerator {
         	return null;
         }
 		
-		new FeedbackGenerator().generateFeedback(settings.getExerciseSettings(), nlpManager, exerciseData, 
+		feedbackGenerator.generateFeedback(settings.getExerciseSettings(), nlpManager, exerciseData, 
 				((ExerciseSettings)settings.getExerciseSettings()).getContentType(), exerciseData.getTopic());
 		
 		if (isCancelled) {
@@ -146,7 +147,7 @@ public class DocumentBasedExerciseGenerator extends ExerciseGenerator {
 	        datas.add(exerciseData);
 	        ArrayList<JSONObject> jsonObject = H5PGeneratorFactory.getContentJsonGenerator(exerciseData.getExerciseType())
 	        		.modifyJsonContent(exerciseData.getContentTypeSettings(), datas);
-	    	byte[] h5pFile = ZipManager.generateModifiedZipFile(exerciseData.getContentTypeSettings().getResourceFolder(), jsonObject.toString(), relevantResources);
+	    	byte[] h5pFile = ZipManager.generateModifiedZipFile(exerciseData.getContentTypeSettings().getResourceFolder(), jsonObject.get(0).toString(), relevantResources);
 	    	h5PFiles.put(exerciseData.getExerciseTitle(), h5pFile);
 		}
 		
@@ -169,6 +170,7 @@ public class DocumentBasedExerciseGenerator extends ExerciseGenerator {
 	@Override
 	public void cancelGeneration() {
 		isCancelled = true;
+		feedbackGenerator.cancelGeneration();
 	}
 
 }

@@ -3,17 +3,7 @@ package com.flair.server.exerciseGeneration.exerciseManagement.InputParsing.Conf
 public abstract class ExerciseConfigData {
 	
 	public ExerciseConfigData() { }
-	
-	/**
-	 * Copy constructor for deep copy
-	 * @param configData
-	 */
-	public ExerciseConfigData(ExerciseConfigData configData) {
-		this.stamp = configData.stamp;
-		this.item = configData.item;
-		this.activity = configData.activity;
-	}	
-	
+		
 	private String stamp;
 	private int item;
 	private int activity;

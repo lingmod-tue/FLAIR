@@ -1393,14 +1393,14 @@ public class WebRankerCore implements AbstractWebRankerCore {
     private void onInterruptExGen() {
         if (exGenPoller.isRunning())
         	exGenPoller.stop();
-
-        exGen.enableButton();
         
         CmActiveOperationCancel msg = new CmActiveOperationCancel();
         msg.setActiveOperationExpected(false);
         serverMessageChannel.send(msg, () -> {
         }, (e, m) -> {
         });
+        
+        exGen.enableButton();
     }
 
     private void onCancelOp() {

@@ -23,7 +23,7 @@ import com.flair.shared.exerciseGeneration.ConfigExerciseSettings;
 import com.flair.shared.exerciseGeneration.OutputFormat;
 import com.flair.shared.exerciseGeneration.Pair;
 
-public class ConfigBasedConditionalExerciseGenerator extends ExerciseGenerator {
+public class ConfigBasedRelativeExerciseGenerator extends ExerciseGenerator {
 	
 	private FeedbackGenerator feedbackGenerator = new FeedbackGenerator();
 	
