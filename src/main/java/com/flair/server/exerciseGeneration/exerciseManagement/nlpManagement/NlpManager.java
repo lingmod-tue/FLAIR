@@ -563,8 +563,7 @@ public class NlpManager {
      * @param construction          The type of grammatical construction
      * @return                      The active sentence corresponding to the passive construction at the specified indices
      */
-    public String getActiveSentence(Pair<Integer, Integer> constructionIndices,
-                                                                   String plainText, DetailedConstruction construction) {
+    public String getActiveSentence(Pair<Integer, Integer> constructionIndices, String plainText, String construction) {
         ArrayList<Pair<Integer, Integer>> components = getPassiveSentenceComponents(constructionIndices);
         if(components == null) {
             return  null;
@@ -590,21 +589,21 @@ public class NlpManager {
         String agent = components.get(3) == null ? "Someone or something" : plainText.substring(components.get(3).first + 2, components.get(3).second).trim();
 
         Tense tense;
-        if(construction.toString().contains("_PRES")) {
+        if(construction.contains("_PRES")) {
             tense = Tense.PRESENT;
-        } else if(construction.toString().contains("_FUT")) {
+        } else if(construction.contains("_FUT")) {
             tense = Tense.FUTURE;
         } else {
             tense = Tense.PAST;
         }
 
         boolean perfect = false;
-        if(construction.toString().contains("PERF")) {
+        if(construction.contains("PERF")) {
             perfect = true;
         }
 
         boolean progressive = false;
-        if(construction.toString().endsWith("PRG")) {
+        if(construction.endsWith("PRG")) {
             progressive = true;
         }
 

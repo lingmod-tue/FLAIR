@@ -14,4 +14,9 @@ public class MtWContentJsonGenerator extends SimpleExerciseContentJsonGenerator 
         return " *" + construction.replaceAll("\\s", "\u00A0") + "* ";
     }
 
+	@Override
+	protected String escapeAsterisksInHtml(String htmlString) {
+		return htmlString;
+	}
+	
 }

@@ -27,5 +27,10 @@ public class MemoryContentJsonGenerator extends SimpleExerciseContentJsonGenerat
         
     	jsonObject.put("cards", cardsArray);
 	}
+	
+	@Override
+	protected String escapeAsterisksInHtml(String htmlString) {
+		return htmlString;
+	}
 
 }

@@ -13,7 +13,7 @@ import org.apache.commons.text.diff.StringsComparator;
 import com.flair.server.exerciseGeneration.exerciseManagement.nlpManagement.NlpManager;
 import com.flair.server.exerciseGeneration.exerciseManagement.nlpManagement.SentenceAnnotations;
 import com.flair.shared.exerciseGeneration.Construction;
-import com.flair.shared.exerciseGeneration.ExerciseSettings;
+import com.flair.shared.exerciseGeneration.DocumentExerciseSettings;
 import com.flair.shared.exerciseGeneration.Pair;
 
 public class Indexer {
@@ -24,7 +24,7 @@ public class Indexer {
      * @param htmlText The HTML text of the DOM
      * @return Fragment, sentence and blanks indices
      */
-    public void matchHtmlToPlainText(ExerciseSettings exerciseSettings, WebpageData data, NlpManager nlpManager){
+    public void matchHtmlToPlainText(DocumentExerciseSettings exerciseSettings, WebpageData data, NlpManager nlpManager){
     	Collections.sort(exerciseSettings.getConstructions(),
                 (c1, c2) -> c1.getConstructionIndices().first < c2.getConstructionIndices().first ? -1 : 1);
     	

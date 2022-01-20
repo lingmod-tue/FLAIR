@@ -36,25 +36,26 @@ public abstract class SimpleExerciseXmlGenerator {
 	
 	protected void generateTaskFields(XmlValues values, Element prompts) {
     	int id = 0;
-    	for(Item item : values.items) {
+    	for(Item item : values.getItems()) {
     	    prompts.add(generateTaskFieldDefinition(++id, item));   
     	}
 	}
 		
 	protected void addAttributes(XmlValues values, Element subTask) { 
-		subTask.addAttribute("index", values.index + "");
-		subTask.addAttribute("instruction", StringEscapeUtils.escapeXml(values.instructions));
+		subTask.addAttribute("index", values.getIndex() + "");
+		subTask.addAttribute("instruction", StringEscapeUtils.escapeXml(values.getInstructions()));
 		subTask.addAttribute("non_en_input", "false");
 		subTask.addAttribute("grammar_topics", "");
 		subTask.addAttribute("task_topics", "");
-		subTask.addAttribute("instruction", values.instructions);
-		subTask.addAttribute("sort_index", values.index + "");
-		subTask.addAttribute("given_words", values.givenWords);
-		subTask.addAttribute("task_type", values.taskType);
-		subTask.addAttribute("task_orient", values.taskOrient);
-		subTask.addAttribute("given_words_draggable", String.valueOf(values.givenWordsDraggable));
-		subTask.addAttribute("feedback_disabled", String.valueOf(values.feedbackDisabled));
-		subTask.addAttribute("support", values.support);
+		subTask.addAttribute("instruction", values.getInstructions());
+		subTask.addAttribute("sort_index", values.getIndex() + "");
+		subTask.addAttribute("given_words", values.getGivenWords());
+		subTask.addAttribute("task_type", values.getTaskType());
+		subTask.addAttribute("task_orient", values.getTaskOrient());
+		subTask.addAttribute("given_words_draggable", String.valueOf(values.isGivenWordsDraggable()));
+		subTask.addAttribute("feedback_disabled", String.valueOf(values.isFeedbackDisabled()));
+		subTask.addAttribute("support", values.getSupport());
+		subTask.addAttribute("evaluate_at_completion", String.valueOf(values.isEvaluateAtComplete()));
 	}
 	    
     /**

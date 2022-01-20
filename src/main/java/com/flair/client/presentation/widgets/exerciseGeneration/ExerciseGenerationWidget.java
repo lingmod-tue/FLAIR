@@ -14,7 +14,7 @@ import com.flair.client.presentation.ToastNotification;
 import com.flair.client.presentation.interfaces.ExerciseGenerationService;
 import com.flair.client.presentation.widgets.DocumentPreviewPane;
 import com.flair.client.utilities.JSUtility;
-import com.flair.shared.exerciseGeneration.IExerciseSettings;
+import com.flair.shared.exerciseGeneration.ExerciseSettings;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -279,7 +279,7 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
 	    		((TaskItem)existingTask).btnPreviewExercise.setVisible(false);
 	    	}
 	    	
-	        ArrayList<IExerciseSettings> exerciseSettings = new ArrayList<>();
+	        ArrayList<ExerciseSettings> exerciseSettings = new ArrayList<>();
 	    	for(Widget existingTask : wdgtTasks.getChildrenList()) {
 	    		if (((TaskItem)existingTask).icoValidity.isVisible() && !((TaskItem)existingTask).icoValidity.getTextColor().equals(Color.RED)) {
 	    			exerciseSettings.add(((TaskItem)existingTask).generateExerciseSettings());

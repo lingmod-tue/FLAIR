@@ -6,30 +6,30 @@ import java.util.Collections;
 import com.flair.server.exerciseGeneration.downloadManagement.ResourceDownloader;
 import com.flair.server.exerciseGeneration.exerciseManagement.ConstructionTextPart;
 import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseData;
-import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseTopic;
+import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseGenerationMetadata;
 import com.flair.server.exerciseGeneration.exerciseManagement.PlainTextPart;
 import com.flair.server.exerciseGeneration.exerciseManagement.TextPart;
 import com.flair.server.exerciseGeneration.exerciseManagement.InputParsing.DocumentParsing.WebpageParsing.WebpageParser;
-import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
 import com.flair.server.exerciseGeneration.exerciseManagement.nlpManagement.ConditionalConstruction;
 import com.flair.server.exerciseGeneration.exerciseManagement.nlpManagement.NlpManager;
 import com.flair.server.exerciseGeneration.exerciseManagement.nlpManagement.SentenceAnnotations;
 import com.flair.shared.exerciseGeneration.Construction;
 import com.flair.shared.exerciseGeneration.DetailedConstruction;
-import com.flair.shared.exerciseGeneration.ExerciseSettings;
+import com.flair.shared.exerciseGeneration.DocumentExerciseSettings;
 import com.flair.shared.exerciseGeneration.Pair;
 
 public class DocumentParser {
 
-	public ExerciseData parseDocument(ContentTypeSettings settings, NlpManager nlpManager, boolean isWebpage, ResourceDownloader resourceDownloader) {
-		ConstructionPreparer.prepareConstructions((ExerciseSettings)settings.getExerciseSettings(), nlpManager);	
+	public ExerciseData parseDocument(ExerciseGenerationMetadata settings, NlpManager nlpManager, boolean isWebpage, 
+			ResourceDownloader resourceDownloader, String topic) {
+		ConstructionPreparer.prepareConstructions((DocumentExerciseSettings)settings.getExerciseSettings(), nlpManager);	
 
 		ExerciseData exerciseData;
 		if(isWebpage) {
 			exerciseData = new WebpageParser().parseWebpage(settings, nlpManager, resourceDownloader);
 		} else {
 			// split sentences
-			String plainText = ((ExerciseSettings)settings.getExerciseSettings()).getPlainText();
+			String plainText = ((DocumentExerciseSettings)settings.getExerciseSettings()).getPlainText();
 			ArrayList<String> sentences = new ArrayList<>();
 			ArrayList<Pair<Integer, Integer>> sentenceIndices = new ArrayList<>();
 			int lastStartIndex = 0;
@@ -37,7 +37,7 @@ public class DocumentParser {
 				if(sent.getTokens().size() > 0) {
 					int sentenceStartIndex = sent.getTokens().get(0).beginPosition();
 					if(sentenceStartIndex > lastStartIndex) {
-						sentences.add(((ExerciseSettings)settings.getExerciseSettings()).getPlainText().substring(lastStartIndex, sentenceStartIndex));
+						sentences.add(((DocumentExerciseSettings)settings.getExerciseSettings()).getPlainText().substring(lastStartIndex, sentenceStartIndex));
 						sentenceIndices.add(new Pair<>(lastStartIndex, sentenceStartIndex));
 						lastStartIndex = sentenceStartIndex;
 					}
@@ -47,13 +47,15 @@ public class DocumentParser {
 				sentenceIndices.add(new Pair<>(lastStartIndex, plainText.length()));
 			}
 			
-			ArrayList<Pair<Integer, Integer>> removedParts = new ArrayList<>(((ExerciseSettings)settings.getExerciseSettings()).getRemovedParts());
+			ArrayList<Pair<Integer, Integer>> removedParts = new ArrayList<>(((DocumentExerciseSettings)settings.getExerciseSettings()).getRemovedParts());
 			Collections.sort(removedParts, (i1, i2) -> i1.first < i2.first ? -1 : 1);			
 			
 			ArrayList<TextPart> parts = new ArrayList<>();
 			int sentenceId = 1;
 			int plainTextIndex = 0;
-			ArrayList<Construction> constructions = ((ExerciseSettings)settings.getExerciseSettings()).getConstructions();
+			ArrayList<Construction> constructions = ((DocumentExerciseSettings)settings.getExerciseSettings()).getConstructions();
+			Collections.sort(constructions, (i1, i2) -> i1.getConstructionIndices().first < i2.getConstructionIndices().first ? -1 : 1);			
+
 			for(Pair<Integer, Integer> sentence : sentenceIndices) {	    
 				while(constructions.size() > 0 && constructions.get(0).getConstructionIndices().first < sentence.second) {
 					Construction construction = constructions.get(0);
@@ -87,13 +89,13 @@ public class DocumentParser {
 	    	            	c.setIndicesRelatedConstruction(((ConditionalConstruction)construction).getOtherClauseIndices());
 	    	            	
 	    	            	if(((ConditionalConstruction)construction).isMainClause()) {
-	    	            		if(c.getConstructionType() == DetailedConstruction.CONDREAL) {
+	    	            		if(c.getConstructionType().equals(DetailedConstruction.CONDREAL)) {
 	    		            		c.setConstructionType(DetailedConstruction.CONDREAL_MAIN);
 	    	            		} else {
 	    		            		c.setConstructionType(DetailedConstruction.CONDUNREAL_MAIN);
 	    	            		}
 	    	            	} else {
-	    	            		if(c.getConstructionType() == DetailedConstruction.CONDREAL) {
+	    	            		if(c.getConstructionType().equals(DetailedConstruction.CONDREAL)) {
 	    		            		c.setConstructionType(DetailedConstruction.CONDREAL_IF);
 	    	            		} else {
 	    		            		c.setConstructionType(DetailedConstruction.CONDUNREAL_IF);
@@ -154,40 +156,18 @@ public class DocumentParser {
 			exerciseData = new ExerciseData(parts);
 		}
 		
-		ExerciseTopic topic = getExerciseTopic(((ExerciseSettings)settings.getExerciseSettings()).getTopic());
 		if(topic == null) {
 			return null;
 		} 
 		exerciseData.setTopic(topic);
-		exerciseData.setBracketsProperties(((ExerciseSettings)settings.getExerciseSettings()).getBrackets());
-		exerciseData.setDistractorProperties(((ExerciseSettings)settings.getExerciseSettings()).getDistractors());
-		exerciseData.setInstructionProperties(((ExerciseSettings)settings.getExerciseSettings()).getInstructions());
-
-		exerciseData.setPlainText(((ExerciseSettings)settings.getExerciseSettings()).getPlainText());
+		exerciseData.setBracketsProperties(((DocumentExerciseSettings)settings.getExerciseSettings()).getBrackets());
+		exerciseData.setDistractorProperties(((DocumentExerciseSettings)settings.getExerciseSettings()).getDistractors());
+		exerciseData.setInstructionProperties(((DocumentExerciseSettings)settings.getExerciseSettings()).getInstructions());
+		exerciseData.setPlainText(((DocumentExerciseSettings)settings.getExerciseSettings()).getPlainText());
+		exerciseData.setExerciseTitle(((DocumentExerciseSettings)settings.getExerciseSettings()).getTaskName());
+		exerciseData.setExerciseType(((DocumentExerciseSettings)settings.getExerciseSettings()).getContentType());
 		
 		return exerciseData;
 	}
-	
-	/**
-	 * Determines the exercise topic from the DetailedConstructions
-	 * @param data	The exercise data
-	 * @return		The exercise topic
-	 */
-	private ExerciseTopic getExerciseTopic(String topic) {		
-		if(topic.equals("'if'")) {
-			return ExerciseTopic.CONDITIONALS;
-		} else if(topic.equals("Compare")) {
-			return ExerciseTopic.COMPARISON;
-		} else if(topic.equals("Passive")) {
-			return ExerciseTopic.PASSIVE;
-		} else if(topic.equals("Present")) {
-        	return ExerciseTopic.PRESENT;
-		} else if(topic.equals("Past")) {
-			return ExerciseTopic.PAST;
-		} else if(topic.equals("Relatives")) {
-			return ExerciseTopic.RELATIVES;
-		} else {
-			throw new IllegalArgumentException();
-		}
-	}
+
 }

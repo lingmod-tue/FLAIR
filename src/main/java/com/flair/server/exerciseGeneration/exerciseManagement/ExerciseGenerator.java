@@ -6,7 +6,6 @@ import java.util.HashMap;
 
 import com.flair.server.exerciseGeneration.downloadManagement.DownloadedResource;
 import com.flair.server.exerciseGeneration.downloadManagement.ResourceDownloader;
-import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
 import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.OpenNlpParser;
 import com.flair.server.parser.SimpleNlgParser;
@@ -18,7 +17,13 @@ import com.flair.shared.exerciseGeneration.Pair;
  *
  */
 public abstract class ExerciseGenerator {
-
+	
+	public ExerciseGenerator(String topic) {
+		exerciseTopic = topic;
+	}
+	
+	protected final String exerciseTopic;
+	
 	/**
 	 * Indicates whether the exercise generation has been cancelled by the user.
 	 */
@@ -33,7 +38,7 @@ public abstract class ExerciseGenerator {
 	 * @param resourceDownloader	The resource downloader. Needs to be shared across all threads to make sure that resource names are unique.
 	 * @return	The generated exercise(s) in the requested output format(s)
 	 */
-    public abstract ResultComponents generateExercise(ContentTypeSettings settings,
+    public abstract ResultComponents generateExercise(ExerciseGenerationMetadata settings,
     		CoreNlpParser parser, SimpleNlgParser generator, OpenNlpParser lemmatizer, ResourceDownloader resourceDownloader);
     
     /**
@@ -51,7 +56,7 @@ public abstract class ExerciseGenerator {
      * @return	The generated exercise(s) in abstracted format
      */
     protected abstract ArrayList<ExerciseData> generateExerciseData(CoreNlpParser parser, SimpleNlgParser generator, OpenNlpParser lemmatizer, 
-			ResourceDownloader resourceDownloader, ContentTypeSettings settings);
+			ResourceDownloader resourceDownloader, ExerciseGenerationMetadata settings);
 
     /**
      * Generates a XML file for upload to the FeedBook from the abstracted exercise format.
@@ -66,7 +71,7 @@ public abstract class ExerciseGenerator {
 	 * @param settings	The configuration settings
      * @return	The generated H5P package(s) in byte format, mapped to the file name
      */
-	protected abstract HashMap<String, byte[]> generateH5P(ArrayList<ExerciseData> data, ContentTypeSettings settings);
+	protected abstract HashMap<String, byte[]> generateH5P(ArrayList<ExerciseData> data, ExerciseGenerationMetadata settings);
 	
 	/**
      * Generates a HTML preview from the abstracted exercise format.

@@ -7,13 +7,13 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseData;
-import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
+import com.flair.shared.exerciseGeneration.ExerciseType;
 
 public class QuizContentJsonGenerator extends ContentJsonGenerator {
 
     @Override
-    public ArrayList<JSONObject> modifyJsonContent(ContentTypeSettings settings, ArrayList<ExerciseData> exerciseDefinitions) {
-    	JSONObject jsonObject = getContentJson(settings);
+    public ArrayList<JSONObject> modifyJsonContent(ArrayList<ExerciseData> exerciseDefinitions) {
+    	JSONObject jsonObject = getContentJson(ExerciseType.QUIZ);
         if(jsonObject == null) {
         	return null;
         }
@@ -25,12 +25,12 @@ public class QuizContentJsonGenerator extends ContentJsonGenerator {
             ArrayList<ExerciseData> helper = new ArrayList<>();
             helper.add(data);
             ArrayList<JSONObject> exerciseObject = H5PGeneratorFactory.getContentJsonGenerator(data.getExerciseType())
-	        		.modifyJsonContent(data.getContentTypeSettings(), helper);
+	        		.modifyJsonContent(helper);
             containedExercises.addAll(exerciseObject);
                         
             JSONObject questionObject = new JSONObject();
             questionObject.put("params", exerciseObject);
-            questionObject.put("library", data.getContentTypeSettings().getContentTypeLibrary());
+            questionObject.put("library", H5PConstantsManager.getContentTypeLibrary(data.getExerciseType()));
             questionObject.put("subContentId", UUID.randomUUID().toString());
             questionsArray.add(questionObject);
         }

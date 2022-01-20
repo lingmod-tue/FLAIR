@@ -3,6 +3,11 @@ package com.flair.server.exerciseGeneration.exerciseManagement;
 import java.util.HashMap;
 
 
+/**
+ * Exercises in the requested format(s)
+ * @author taheck
+ *
+ */
 public class ResultComponents {
 
     public ResultComponents(HashMap<String, byte[]> h5pFiles, HashMap<String, String> previews, 

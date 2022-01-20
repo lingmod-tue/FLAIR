@@ -3,8 +3,8 @@ package com.flair.client.presentation.interfaces;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.flair.shared.exerciseGeneration.DocumentExerciseSettings;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
-import com.flair.shared.exerciseGeneration.IExerciseSettings;
 
 /*
  * Generates exercises for the selected document
@@ -12,7 +12,7 @@ import com.flair.shared.exerciseGeneration.IExerciseSettings;
 public interface ExerciseGenerationService {
 	
 	interface GenerateHandler {
-		boolean handle(ArrayList<IExerciseSettings> settings);
+		boolean handle(ArrayList<ExerciseSettings> settings);
 	}
 	
 	interface InterruptHandler {

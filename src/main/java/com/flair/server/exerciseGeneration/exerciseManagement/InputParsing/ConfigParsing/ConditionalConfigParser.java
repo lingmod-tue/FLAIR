@@ -10,32 +10,180 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Random;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.flair.server.exerciseGeneration.exerciseManagement.ConstructionTextPart;
 import com.flair.server.exerciseGeneration.exerciseManagement.Distractor;
 import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseData;
-import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseTopic;
 import com.flair.server.exerciseGeneration.exerciseManagement.HtmlTextPart;
 import com.flair.server.exerciseGeneration.exerciseManagement.PlainTextPart;
 import com.flair.server.exerciseGeneration.exerciseManagement.TextPart;
-import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
 import com.flair.server.exerciseGeneration.exerciseManagement.resourceManagement.ResourceLoader;
 import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.exerciseGeneration.BracketsProperties;
+import com.flair.shared.exerciseGeneration.ExerciseTopic;
 import com.flair.shared.exerciseGeneration.ExerciseType;
 import com.flair.shared.exerciseGeneration.InstructionsProperties;
 import com.flair.shared.exerciseGeneration.Pair;
 import com.univocity.parsers.tsv.TsvParser;
 import com.univocity.parsers.tsv.TsvParserSettings;
 
-public class ConditionalConfigParser {
+public class ConditionalConfigParser extends ConfigParser {
+
+	@Override
+	public ArrayList<ExerciseData> parseConfigFile(InputStream inputStream) {
+		ArrayList<ExerciseConfigData> configData = new ConditionalExcelFileReader().readExcelFile(inputStream);
+
+		HashMap<String, ArrayList<ExerciseConfigData>> configs = new HashMap<>();
+		for (ExerciseConfigData ecd : configData) {
+			ConditionalExerciseConfigData cd = (ConditionalExerciseConfigData) ecd;
+			String key = cd.getActivity() + "_" + (cd.isType1VsType2() ? "condTypes" : "condForm");
+			if (!configs.containsKey(key)) {
+				configs.put(key, new ArrayList<>());
+			}
+			configs.get(key).add(cd);
+		}
+
+		List<String[]> exerciseConstellations = null;
+		try (InputStream content = ResourceLoader.loadFile("feedbook_exercise_configurations.tsv");
+				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(content))) {
+			TsvParserSettings settings = new TsvParserSettings();
+			settings.getFormat().setLineSeparator("\n");
+			TsvParser parser = new TsvParser(settings);
+
+			exerciseConstellations = parser.parseAll(bufferedReader);
+		} catch (IOException e) {
+			return null;
+		}
+
+		ArrayList<ExerciseData> exercises = new ArrayList<>();
+		for (Entry<String, ArrayList<ExerciseConfigData>> entry : configs.entrySet()) {
+			ArrayList<ExerciseData> generatedExercises = generateExerciseForConfig(exerciseConstellations,
+					entry.getKey().endsWith("condTypes"), entry.getValue());
+			
+			if(generatedExercises != null) {
+				exercises.addAll(generatedExercises);
+			}
+		}
+
+		return exercises;
+	}
+
+	/**
+	 * Generates all exercises defined in the resource file for conditional exercises,
+	 * for a single exercise defined in the uploaded file.
+	 * @param exerciseConstellations	The exercise definitions defined in the resource file
+	 * @param generateTypeExercises		<code>true</code> if the defined exercise targets distinction between conditional type 1 and type 2;
+	 * 									<code>false</code> if it targets correct formation of a conditional type
+	 * @param data						The exercise as defined in the uploaded file
+	 * @return	The generated exercises in abstracted format
+	 */
+	private ArrayList<ExerciseData> generateExerciseForConfig(List<String[]> exerciseConstellations,
+			boolean generateTypeExercises, ArrayList<ExerciseConfigData> data) {
+		if(exerciseConstellations == null) {
+			return null;
+		}
+		
+		String lastBlockId = "";
+		ArrayList<ExerciseData> exercises = new ArrayList<>();
+
+		for (String[] configValues : exerciseConstellations) {
+			try {
+				if (generateTypeExercises && configValues[0].equals("conditional_types")
+						|| !generateTypeExercises && configValues[0].equals("conditional_form")) {
+					if (!lastBlockId.equals(configValues[2])) {
+						lastBlockId = configValues[2];
+					}
+	
+					ExerciseData d = null;
+					if (configValues[3].equals("0")) {
+						d = generateMemoryTask(data, configValues[6].equals("true"));
+						d.setExerciseType(ExerciseType.MEMORY);
+					} else if (configValues[3].equals("1")) {
+						d = generateGapTask(data, configValues[4].equals("true"), configValues[6].equals("true"),
+								configValues[7].equals("true"), 1, configValues[5].equals("true"), false, false, false,
+								false, false);
+						d.setExerciseType(ExerciseType.SINGLE_CHOICE);
+					} else if (configValues[3].equals("2")) {
+						d = generateGapTask(data, configValues[4].equals("true"), configValues[6].equals("true"),
+								configValues[7].equals("true"), 3, configValues[5].equals("true"), false, false, false,
+								false, false);
+						d.setExerciseType(ExerciseType.SINGLE_CHOICE);
+					} else if (configValues[3].equals("3")) {
+						d = generateGapTask(data, configValues[4].equals("true"), configValues[6].equals("true"),
+								configValues[7].equals("true"), 0, configValues[5].equals("true"), true, false, false,
+								false, false);
+						d.setExerciseType(ExerciseType.FILL_IN_THE_BLANKS);
+					} else if (configValues[3].equals("4")) {
+						d = generateGapTask(data, configValues[4].equals("true"), configValues[6].equals("true"),
+								configValues[7].equals("true"), 0, configValues[5].equals("true"), true, true, false, false,
+								false);
+						d.setExerciseType(ExerciseType.FILL_IN_THE_BLANKS);
+						d.getBracketsProperties().add(BracketsProperties.DISTRACTOR_LEMMA);
+					} else if (configValues[3].equals("5")) {
+						d = generateGapTask(data, configValues[4].equals("true"), configValues[6].equals("true"),
+								configValues[7].equals("true"), 0, configValues[5].equals("true"), false, false, false,
+								true, false);
+						d.setExerciseType(ExerciseType.FILL_IN_THE_BLANKS);
+						d.getInstructionProperties().add(InstructionsProperties.LEMMA);
+					} else if (configValues[3].equals("6")) {
+						d = generateJSTask(data, configValues[4].equals("true"), configValues[6].equals("true"),
+								configValues[7].equals("true"), configValues[5].equals("true"));
+						d.setExerciseType(ExerciseType.JUMBLED_SENTENCES);
+					} else if (configValues[3].equals("7")) {
+						d = generateCategorizationTask(data, configValues[4].equals("true"),
+								configValues[5].equals("true"));
+						d.setExerciseType(ExerciseType.CATEGORIZE);
+					} else if (configValues[3].equals("8")) {
+						// The didi score mechanism can only correctly process a single item per underline, so we need to make a separate exercise for each sentence
+						int k = 0;
+						for(ExerciseConfigData line : data) {
+							ArrayList<ExerciseConfigData> dummyData = new ArrayList<>();
+							dummyData.add(line);
+							d = generateGapTask(dummyData, configValues[4].equals("true"), configValues[6].equals("true"),
+									configValues[7].equals("true"), 0, configValues[5].equals("true"), false, false, false,
+									false, true);
+							d.setExerciseType(ExerciseType.MARK_THE_WORDS);
+							
+							if (d != null) {
+			        			d.setExerciseTitle(configValues[2] + "/" + configValues[3] + "_" + ++k);
+			        			d.setTopic(ExerciseTopic.CONDITIONALS);
+								exercises.add(d);
+							}
+						}
+					} else if (configValues[3].equals("9")) {
+						d = generateGapTask(data, configValues[4].equals("true"), configValues[6].equals("true"),
+								configValues[7].equals("true"), 0, configValues[5].equals("true"), true, false, true, false,
+								false);
+						d.setExerciseType(ExerciseType.FILL_IN_THE_BLANKS);
+						d.getBracketsProperties().add(BracketsProperties.ACTIVE_SENTENCE);
+					}
+	
+					if (d != null && !configValues[3].equals("8")) {
+	        			d.setExerciseTitle(configValues[2] + "/" + configValues[3]);
+	        			d.setTopic(ExerciseTopic.CONDITIONALS);
+						exercises.add(d);
+					}
+	
+				}
+			} catch(Exception e) {
+				if(configValues != null && configValues.length > 3) {
+					ServerLogger.get().error(e, "Exercise " + configValues[2] + "/" + configValues[3] + " could not be generated.\n" + e.toString());
+				} else {
+					ServerLogger.get().error(e, "An exercise could not be generated.\n" + e.toString());
+				}
+			}
+		}
+
+		return exercises;
+	}
 
 	/**
 	 * Compiles the exercise information for Categorization exercises.
 	 * 
-	 * @param configData           The data from the config file
+	 * @param configData           The data of an exercise from the config file
 	 * @param ifClauseFirst        <code>true</code> if the if-clause is to be put
 	 *                             before the main clause
 	 * @param randomizeClauseOrder <code>true</code> if the order of if- and main
@@ -61,7 +209,10 @@ public class ConditionalConfigParser {
 				String firstClause = StringUtils.capitalize(ifClauseFirst ? ifClause : mainClause);
 				String secondClause = ifClauseFirst ? mainClause : ifClause;
 				String delimiter = ifClauseFirst ? ", " : " ";
-				String sentence = firstClause + delimiter + secondClause + ".";
+				String sentence = firstClause + delimiter + secondClause;
+				if(!sentence.endsWith(".")) {
+					sentence += ".";
+				}
 				String category = itemData.getConditionalType() == 1 ? "Type 1" : "Type 2";
 
 				ConstructionTextPart c = new ConstructionTextPart(sentence, sentenceId++);
@@ -79,7 +230,7 @@ public class ConditionalConfigParser {
 	/**
 	 * Compiles the exercise information for Memory exercises.
 	 * 
-	 * @param configData    The data from the config file
+	 * @param configData    The data of an exercise from the config file
 	 * @param useIfClause 	<code>true</code> if the constructions in the if clause are to be targeted
 	 * @return The exercise information
 	 */
@@ -107,9 +258,9 @@ public class ConditionalConfigParser {
 
 	/**
 	 * Compiles the exercise information for exercises with a target within the text
-	 * flow.
+	 * flow: FiB, MC, MtW.
 	 * 
-	 * @param configData               The data from the config file
+	 * @param configData               The data of an exercise from the config file
 	 * @param ifClauseFirst            <code>true</code> if the if-clause is to be
 	 *                                 put before the main clause
 	 * @param targetIfClause           <code>true</code> if the constructions in the
@@ -150,7 +301,7 @@ public class ConditionalConfigParser {
 				parts.add(new HtmlTextPart(" <br>", sentenceId));
 			}
 
-			TargetAndClauseItems targetAndClauseItems = getTargetAndClauseItems(itemData, randomizeClauseOrder,
+			ConditionalTargetAndClauseItems targetAndClauseItems = getTargetAndClauseItems(itemData, randomizeClauseOrder,
 					ifClauseFirst, targetIfClause, targetMainClause,
 					isUnderline ? itemData.getUnderlineIfClause() : itemData.getGapIfClause(),
 					isUnderline ? itemData.getUnderlineMainClause() : itemData.getGapMainClause(), targetEntireClause);
@@ -187,7 +338,9 @@ public class ConditionalConfigParser {
 						lemmasInBrackets, allLemmas, useDistractorLemma, giveLemmasInInstructions, allDistractorLemmas,
 						parts);
 			}
-			positionParts.add(new Pair<>(positionParts.size() + 2, "."));
+			if(!positionParts.get(positionParts.size() - 1).second.endsWith(".")) {
+				positionParts.add(new Pair<>(positionParts.size() + 2, "."));
+			}
 			parts.add(new PlainTextPart(generateSentencesFromPositions(positionParts), sentenceId));
 			positionParts.clear();
 			sentenceId++;
@@ -207,6 +360,50 @@ public class ConditionalConfigParser {
 			data.setInstructionLemmas(lemmas);
 		}
 
+		addPlainText(data);
+
+		return data;
+	}
+
+	/**
+	 * Compiles the exercise information for Jumbled Sentences exercises.
+	 * 
+	 * @param configData           The data of an exercise from the config file
+	 * @param ifClauseFirst        <code>true</code> if the if-clause is to be put
+	 *                             before the main clause
+	 * @param targetIfClause       <code>true</code> if the constructions in the if
+	 *                             clause are to be targeted
+	 * @param targetMainClause     <code>true</code> if the constructions in the
+	 *                             main clause are to be targeted
+	 * @param randomizeClauseOrder <code>true</code> if the order of if- and main
+	 *                             clauses is to be determined randomly for each
+	 *                             sentence.
+	 * @return The exercise information
+	 */
+	private ExerciseData generateJSTask(ArrayList<ExerciseConfigData> configData, boolean ifClauseFirst,
+			boolean targetIfClause, boolean targetMainClause, boolean randomizeClauseOrder) {
+
+		ArrayList<TextPart> parts = new ArrayList<>();
+		int sentenceId = 1;
+
+		for (ExerciseConfigData id : configData) {
+			ConditionalExerciseConfigData itemData = (ConditionalExerciseConfigData) id;
+
+			ConditionalTargetAndClauseItems targetAndClauseItems = getTargetAndClauseItems(itemData, randomizeClauseOrder,
+					ifClauseFirst, targetIfClause, targetMainClause, itemData.getGapIfClause(),
+					itemData.getGapMainClause(), false);
+
+			for (Pair<Integer, String> position : targetAndClauseItems.getPositions()) {
+				parts.add(new ConstructionTextPart(position.second, sentenceId));
+			}
+			if(!parts.get(parts.size() - 1).getValue().endsWith(".")) {
+				parts.add(new ConstructionTextPart(".", sentenceId));
+			}
+
+			sentenceId++;
+		}
+
+		ExerciseData data = new ExerciseData(parts);
 		addPlainText(data);
 
 		return data;
@@ -236,7 +433,7 @@ public class ConditionalConfigParser {
 	 * @param parts                    The TextPart items
 	 */
 	private void addConstructionPart(ArrayList<Pair<Integer, String>> positionParts, int sentenceId, int nDistractors,
-			TargetAndClauseItems targetAndClauseItems, boolean targetEntireClause, boolean lemmasInBrackets,
+			ConditionalTargetAndClauseItems targetAndClauseItems, boolean targetEntireClause, boolean lemmasInBrackets,
 			HashSet<String> allLemmas, boolean useDistractorLemma, boolean giveLemmasInInstructions,
 			HashSet<String> allDistractorLemmas, ArrayList<TextPart> parts) {
 		String constructionText = generateSentencesFromPositions(positionParts);
@@ -253,7 +450,9 @@ public class ConditionalConfigParser {
 			}
 			targetAndClauseItems.getTargetDistractors().remove(0);
 
+			Collections.shuffle(distractors);
 			c.setDistractors(distractors);
+			c.setTargetIndex(new Random().nextInt(distractors.size() + 1));
 		}
 
 		if (giveLemmasInInstructions) {
@@ -289,48 +488,6 @@ public class ConditionalConfigParser {
 	}
 
 	/**
-	 * Compiles the exercise information for Jumbled Sentences exercises.
-	 * 
-	 * @param configData           The data from the config file
-	 * @param ifClauseFirst        <code>true</code> if the if-clause is to be put
-	 *                             before the main clause
-	 * @param targetIfClause       <code>true</code> if the constructions in the if
-	 *                             clause are to be targeted
-	 * @param targetMainClause     <code>true</code> if the constructions in the
-	 *                             main clause are to be targeted
-	 * @param randomizeClauseOrder <code>true</code> if the order of if- and main
-	 *                             clauses is to be determined randomly for each
-	 *                             sentence.
-	 * @return The exercise information
-	 */
-	private ExerciseData generateJSTask(ArrayList<ExerciseConfigData> configData, boolean ifClauseFirst,
-			boolean targetIfClause, boolean targetMainClause, boolean randomizeClauseOrder) {
-
-		ArrayList<TextPart> parts = new ArrayList<>();
-		int sentenceId = 1;
-
-		for (ExerciseConfigData id : configData) {
-			ConditionalExerciseConfigData itemData = (ConditionalExerciseConfigData) id;
-
-			TargetAndClauseItems targetAndClauseItems = getTargetAndClauseItems(itemData, randomizeClauseOrder,
-					ifClauseFirst, targetIfClause, targetMainClause, itemData.getGapIfClause(),
-					itemData.getGapMainClause(), false);
-
-			for (Pair<Integer, String> position : targetAndClauseItems.getPositions()) {
-				parts.add(new ConstructionTextPart(position.second, sentenceId));
-			}
-			parts.add(new ConstructionTextPart(".", sentenceId));
-
-			sentenceId++;
-		}
-
-		ExerciseData data = new ExerciseData(parts);
-		addPlainText(data);
-
-		return data;
-	}
-
-	/**
 	 * Extracts the clauses in the correct order and the constructions which are
 	 * located in the clause to target.
 	 * 
@@ -355,7 +512,7 @@ public class ConditionalConfigParser {
 	 * @return The positions in correct order and constructions targeted by the
 	 *         exercise
 	 */
-	private TargetAndClauseItems getTargetAndClauseItems(ConditionalExerciseConfigData itemData,
+	private ConditionalTargetAndClauseItems getTargetAndClauseItems(ConditionalExerciseConfigData itemData,
 			boolean randomizeClauseOrder, boolean ifClauseFirst, boolean targetIfClause, boolean targetMainClause,
 			ArrayList<Pair<Integer, Integer>> constructionsIfClause,
 			ArrayList<Pair<Integer, Integer>> constructionsMainClause, boolean targetEntireClause) {
@@ -444,201 +601,8 @@ public class ConditionalConfigParser {
 
 		positions.set(0, new Pair<>(positions.get(0).first, StringUtils.capitalize(positions.get(0).second)));
 
-		return new TargetAndClauseItems(positions, targetPositions, targetDistractors, lemmas, distractorLemmas,
+		return new ConditionalTargetAndClauseItems(positions, targetPositions, targetDistractors, lemmas, distractorLemmas,
 				givenLemmas);
-	}
-
-	/**
-	 * Punctuation marks before which no space is to be inserted
-	 */
-	private static final String punctuations = ".,:;!?";
-
-	/**
-	 * Compiles a sentence from a list of positions with correct spacing.
-	 * 
-	 * @param positions The list of positions
-	 * @return The sentences string with correct spacing
-	 */
-	private String generateSentencesFromPositions(ArrayList<Pair<Integer, String>> positions) {
-		StringBuilder sb = new StringBuilder();
-		for (Pair<Integer, String> position : positions) {
-			if (!position.second.isEmpty()) {
-				if (!(position.first == 1) && !punctuations.contains(position.second.charAt(0) + "")) {
-					sb.append(" ");
-				}
-				sb.append(position.second);
-			}
-		}
-
-		return sb.toString().trim();
-	}
-
-	/**
-	 * Parses the input stream and generates a set of exercise data of varying
-	 * complexities.
-	 * 
-	 * @param inputStream The input stream of the config file
-	 * @return The exercise data structured into exercise types and blocks of max.
-	 *         10 items
-	 */
-	public ArrayList<ExerciseData> parseConfigFile(InputStream inputStream) {
-		ArrayList<ExerciseConfigData> configData = new ConditionalExcelFileReader().readExcelFile(inputStream);
-
-		HashMap<String, ArrayList<ExerciseConfigData>> configs = new HashMap<>();
-		for (ExerciseConfigData ecd : configData) {
-			ConditionalExerciseConfigData cd = (ConditionalExerciseConfigData) ecd;
-			String key = cd.getActivity() + "_" + (cd.isType1VsType2() ? "condTypes" : "condForm");
-			if (!configs.containsKey(key)) {
-				configs.put(key, new ArrayList<>());
-			}
-			configs.get(key).add(cd);
-		}
-
-		List<String[]> exerciseConstellations = null;
-		try (InputStream content = ResourceLoader.loadFile("feedbook_exercise_configurations.tsv");
-				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(content))) {
-			TsvParserSettings settings = new TsvParserSettings();
-			settings.getFormat().setLineSeparator("\n");
-			TsvParser parser = new TsvParser(settings);
-
-			exerciseConstellations = parser.parseAll(bufferedReader);
-		} catch (IOException e) {
-			return null;
-		}
-
-		ArrayList<ExerciseData> exercises = new ArrayList<>();
-		for (Entry<String, ArrayList<ExerciseConfigData>> entry : configs.entrySet()) {
-			ArrayList<ExerciseData> generatedExercises = generateExerciseForConfig(exerciseConstellations,
-					entry.getKey().endsWith("condTypes"), entry.getValue());
-			
-			if(generatedExercises != null) {
-				exercises.addAll(generatedExercises);
-			}
-		}
-
-		return exercises;
-	}
-
-	/**
-	 * Determines the overall plain text from the parts and adds the construction
-	 * indices respective to this plain text to the constructions
-	 * 
-	 * @param data The exercise data
-	 */
-	private void addPlainText(ExerciseData data) {
-		StringBuilder sb = new StringBuilder();
-		for (TextPart part : data.getParts()) {
-			if (sb.length() > 0 && !sb.toString().endsWith(" ") && !part.getValue().startsWith(" ")) {
-				sb.append(" ");
-			}
-
-			if (part instanceof ConstructionTextPart) {
-				int startIndex = sb.length();
-				int endIndex = sb.length() + part.getValue().length();
-				((ConstructionTextPart) part).setIndicesInPlainText(new Pair<>(startIndex, endIndex));
-			}
-			sb.append(part.getValue());
-		}
-
-		data.setPlainText(sb.toString());
-	}
-
-	/**
-	 * Generates all exercises defined in the resource file for conditional exercises,
-	 * for a single exercise defined in the uploaded file.
-	 * @param exerciseConstellations	The exercise definitions defined in the resource file
-	 * @param generateTypeExercises		<code>true</code> if the defined exercise targets distinction between conditional type 1 and type 2;
-	 * 									<code>false</code> if it targets correct formation of a conditional type
-	 * @param data						The exercise as defined in the uploaded file
-	 * @return	The generated exercises in abstracted format
-	 */
-	private ArrayList<ExerciseData> generateExerciseForConfig(List<String[]> exerciseConstellations,
-			boolean generateTypeExercises, ArrayList<ExerciseConfigData> data) {
-		if(exerciseConstellations == null) {
-			return null;
-		}
-		
-		String lastBlockId = "";
-		ArrayList<ExerciseData> exercises = new ArrayList<>();
-
-		for (String[] configValues : exerciseConstellations) {
-			try {
-				if (generateTypeExercises && configValues[0].equals("conditional_types")
-						|| !generateTypeExercises && configValues[0].equals("conditional_form")) {
-					if (!lastBlockId.equals(configValues[2])) {
-						lastBlockId = configValues[2];
-					}
-	
-					ExerciseData d = null;
-					if (configValues[3].equals("0")) {
-						d = generateMemoryTask(data, configValues[6].equals("true"));
-						d.setExerciseType(ExerciseType.MEMORY);
-					} else if (configValues[3].equals("1")) {
-						d = generateGapTask(data, configValues[4].equals("true"), configValues[6].equals("true"),
-								configValues[7].equals("true"), 1, configValues[5].equals("true"), false, false, false,
-								false, false);
-						d.setExerciseType(ExerciseType.SINGLE_CHOICE);
-					} else if (configValues[3].equals("2")) {
-						d = generateGapTask(data, configValues[4].equals("true"), configValues[6].equals("true"),
-								configValues[7].equals("true"), 3, configValues[5].equals("true"), false, false, false,
-								false, false);
-						d.setExerciseType(ExerciseType.SINGLE_CHOICE);
-					} else if (configValues[3].equals("3")) {
-						d = generateGapTask(data, configValues[4].equals("true"), configValues[6].equals("true"),
-								configValues[7].equals("true"), 0, configValues[5].equals("true"), true, false, false,
-								false, false);
-						d.setExerciseType(ExerciseType.FIB);
-					} else if (configValues[3].equals("4")) {
-						d = generateGapTask(data, configValues[4].equals("true"), configValues[6].equals("true"),
-								configValues[7].equals("true"), 0, configValues[5].equals("true"), true, true, false, false,
-								false);
-						d.setExerciseType(ExerciseType.FIB);
-						d.getBracketsProperties().add(BracketsProperties.DISTRACTOR_LEMMA);
-					} else if (configValues[3].equals("5")) {
-						d = generateGapTask(data, configValues[4].equals("true"), configValues[6].equals("true"),
-								configValues[7].equals("true"), 0, configValues[5].equals("true"), false, false, false,
-								true, false);
-						d.setExerciseType(ExerciseType.FIB);
-						d.getInstructionProperties().add(InstructionsProperties.LEMMA);
-					} else if (configValues[3].equals("6")) {
-						d = generateJSTask(data, configValues[4].equals("true"), configValues[6].equals("true"),
-								configValues[7].equals("true"), configValues[5].equals("true"));
-						d.setExerciseType(ExerciseType.JUMBLED_SENTENCES);
-					} else if (configValues[3].equals("7")) {
-						d = generateCategorizationTask(data, configValues[4].equals("true"),
-								configValues[5].equals("true"));
-						d.setExerciseType(ExerciseType.CATEGORIZE);
-					} else if (configValues[3].equals("8")) {
-						d = generateGapTask(data, configValues[4].equals("true"), configValues[6].equals("true"),
-								configValues[7].equals("true"), 0, configValues[5].equals("true"), false, false, false,
-								false, true);
-						d.setExerciseType(ExerciseType.MARK);
-					} else if (configValues[3].equals("9")) {
-						d = generateGapTask(data, configValues[4].equals("true"), configValues[6].equals("true"),
-								configValues[7].equals("true"), 0, configValues[5].equals("true"), true, false, true, false,
-								false);
-						d.setExerciseType(ExerciseType.FIB);
-						d.getBracketsProperties().add(BracketsProperties.ACTIVE_SENTENCE);
-					}
-	
-					if (d != null) {
-	        			d.setExerciseTitle(configValues[2] + "/" + configValues[3]);
-	        			d.setContentTypeSettings(new ContentTypeSettings(d.getExerciseType()));
-	        			d.setTopic(ExerciseTopic.CONDITIONALS);
-						exercises.add(d);
-					}
-	
-				}
-			} catch(Exception e) {
-				if(configValues != null && configValues.length > 3) {
-					ServerLogger.get().error(e, "Exercise " + configValues[2] + "/" + configValues[3] + " could not be generated.\n" + e.toString());
-				} else {
-					ServerLogger.get().error(e, "An exercise could not be generated.\n" + e.toString());
-				}
-			}
-		}
-
-		return exercises;
 	}
 
 }

@@ -27,8 +27,8 @@ import com.flair.server.pipelines.questgen.QuestionGenerationPipeline;
 import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.exceptions.ServerRuntimeException;
 import com.flair.shared.exerciseGeneration.ConfigExerciseSettings;
+import com.flair.shared.exerciseGeneration.DocumentExerciseSettings;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
-import com.flair.shared.exerciseGeneration.IExerciseSettings;
 import com.flair.shared.interop.ClientIdToken;
 import com.flair.shared.interop.dtos.DocumentDTO;
 import com.flair.shared.interop.dtos.QuestionDTO;
@@ -261,7 +261,7 @@ class ClientSessionState {
 	}
 	
 	private synchronized void onCmExGenStart(CmExGenStart msg) {
-		ArrayList<IExerciseSettings> settings = msg.getSettings();
+		ArrayList<ExerciseSettings> settings = msg.getSettings();
 		
 		ServerLogger.get().info("Begin exercise generation");
 
@@ -269,14 +269,14 @@ class ClientSessionState {
 			throw new ServerRuntimeException("Another operation is still running");
 
 		// Get the uploaded file content if the document comes from custom file upload
-		for(IExerciseSettings exerciseSettings : settings) {
+		for(ExerciseSettings exerciseSettings : settings) {
 			if(exerciseSettings.getFileName().length() > 0 && exerciseSettings.getId() != 0) {
-				if(exerciseSettings instanceof ExerciseSettings) {
+				if(exerciseSettings instanceof DocumentExerciseSettings) {
 					List<String> uploadCache = temporaryClientData.customCorpusData.contents;
 	
 					if(uploadCache != null && uploadCache.size() >= exerciseSettings.getId()) {
 						String fileStream = uploadCache.get(exerciseSettings.getId() - 1);
-						exerciseSettings.setFileContent(fileStream);
+						((DocumentExerciseSettings)exerciseSettings).setFileContent(fileStream);
 					}
 				} else if(exerciseSettings instanceof ConfigExerciseSettings) {
 					List<byte[]> uploadCache = temporaryClientData.customCorpusData.byteContents;
@@ -444,12 +444,11 @@ class ClientSessionState {
 		if (!pipelineOpCache.hasActiveOp())
 			throw new ServerRuntimeException("Invalid exercise generation job complete event!");
 
-		ServerLogger.get().info("Generated " + generatedPackages.size() + " exercises");
+		ServerLogger.get().info("Generated exercises for " + generatedPackages.size() + " configurations");
 		
 		HashMap<String, String> previews = new HashMap<>();
 		HashMap<String, byte[]> xmlFiles = new HashMap<>();
 		HashMap<String, byte[]> h5pFiles = new HashMap<>();
-		HashMap<String, byte[]> zipFiles = new HashMap<>();
 
 		for (ResultComponents result : generatedPackages) {
 			if(result.getXmlFiles() != null) {
@@ -489,13 +488,6 @@ class ClientSessionState {
 		} else if(xmlFiles.size() > 0) {
 			String fileName = getRandomHashMapEntry(xmlFiles);
 			outputFiles.put(fileName, xmlFiles.get(fileName));
-        }
-		
-		if(zipFiles.size() > 1) {
-			outputFiles.put("zipExercises.zip", ZipManager.zipFiles(zipFiles));
-		} else if(zipFiles.size() > 0) {
-			String fileName = getRandomHashMapEntry(zipFiles);
-			outputFiles.put(fileName, zipFiles.get(fileName));
         }
 		
 		byte[] outputFile = new byte[] {};

@@ -2,7 +2,6 @@ package com.flair.server.exerciseGeneration.exerciseManagement.OutputGeneration.
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -15,11 +14,8 @@ public class SCXmlGenerator extends SimpleExerciseXmlGenerator {
 	
 	@Override
 	public byte[] generateXMLFile(ExerciseData exerciseDefinition) {
-		XmlValues v = new XmlValues();
-		v.instructions = exerciseDefinition.getInstructions();
-		v.taskOrient = "Geschlossen";
-		v.taskType = "FILL_IN_THE_BLANKS";
-		
+		XmlValues v = new XmlValues(exerciseDefinition.getInstructions(), "FILL_IN_THE_BLANKS");
+		v.setTaskOrient("Geschlossen");
 		
 		StringBuilder sb = new StringBuilder();
 		Item previousGap = null;
@@ -33,7 +29,7 @@ public class SCXmlGenerator extends SimpleExerciseXmlGenerator {
 				
 				if(previousGap != null) {
 					previousGap.text = sb.toString();
-					v.items.add(previousGap);
+					v.getItems().add(previousGap);
 				}
 				
 				previousGap = new Item();
@@ -44,8 +40,7 @@ public class SCXmlGenerator extends SimpleExerciseXmlGenerator {
 				for(Distractor d : ((ConstructionTextPart)element).getDistractors()) {
 					distractors.add(d.getValue());
 				}
-				distractors.add(((ConstructionTextPart)element).getValue());
-				Collections.shuffle(distractors);
+				distractors.add(((ConstructionTextPart)element).getTargetIndex(), ((ConstructionTextPart)element).getValue());
 
 				previousGap.example = StringUtils.join(distractors, "|");
 				previousGap.target = (distractors.indexOf(element.getValue()) + 1) + "";				
@@ -55,7 +50,7 @@ public class SCXmlGenerator extends SimpleExerciseXmlGenerator {
 		}
 
 		previousGap.text = sb.toString();
-		v.items.add(previousGap);
+		v.getItems().add(previousGap);
 
 		return generateFeedBookInputXml(v).getBytes(StandardCharsets.UTF_8);
 	}

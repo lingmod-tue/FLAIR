@@ -3,11 +3,6 @@ package com.flair.server.exerciseGeneration.exerciseManagement;
 import java.util.ArrayList;
 
 import com.flair.server.exerciseGeneration.downloadManagement.DownloadedResource;
-import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
-import com.flair.shared.exerciseGeneration.BracketsProperties;
-import com.flair.shared.exerciseGeneration.DistractorProperties;
-import com.flair.shared.exerciseGeneration.ExerciseType;
-import com.flair.shared.exerciseGeneration.InstructionsProperties;
 
 
 public class ExerciseData {
@@ -19,14 +14,13 @@ public class ExerciseData {
 	private ArrayList<TextPart> parts;		
 	private ArrayList<String> instructionLemmas = new ArrayList<>();
 	private String plainText;
-	private ExerciseTopic topic;
-	private ArrayList<BracketsProperties> bracketsProperties = new ArrayList<>();
-	private ArrayList<DistractorProperties> distractorProperties = new ArrayList<>();
-	private ArrayList<InstructionsProperties> instructionProperties = new ArrayList<>();
-	private ContentTypeSettings contentTypeSettings;
+	private String topic;
+	private ArrayList<String> bracketsProperties = new ArrayList<>();
+	private ArrayList<String> distractorProperties = new ArrayList<>();
+	private ArrayList<String> instructionProperties = new ArrayList<>();
     private ArrayList<DownloadedResource> resources = new ArrayList<>();
     private String exerciseTitle;
-    private ExerciseType exerciseType = null;
+    private String exerciseType = null;
 
 	private String instructions = "";
 	
@@ -45,22 +39,22 @@ public class ExerciseData {
 	public void setPlainText(String plainText) {
 		this.plainText = plainText;
 	}
-	public ExerciseTopic getTopic() {
+	public String getTopic() {
 		return topic;
 	}
-	public void setTopic(ExerciseTopic topic) {
+	public void setTopic(String topic) {
 		this.topic = topic;
 	}
-	public ArrayList<BracketsProperties> getBracketsProperties() {
+	public ArrayList<String> getBracketsProperties() {
 		return bracketsProperties;
 	}
-	public void setBracketsProperties(ArrayList<BracketsProperties> bracketsProperties) {
+	public void setBracketsProperties(ArrayList<String> bracketsProperties) {
 		this.bracketsProperties = bracketsProperties;
 	}
-	public ArrayList<DistractorProperties> getDistractorProperties() {
+	public ArrayList<String> getDistractorProperties() {
 		return distractorProperties;
 	}
-	public void setDistractorProperties(ArrayList<DistractorProperties> distractorProperties) {
+	public void setDistractorProperties(ArrayList<String> distractorProperties) {
 		this.distractorProperties = distractorProperties;
 	}
 	public String getInstructions() {
@@ -69,17 +63,11 @@ public class ExerciseData {
 	public void setInstructions(String instructions) {
 		this.instructions = instructions;
 	}
-	public ArrayList<InstructionsProperties> getInstructionProperties() {
+	public ArrayList<String> getInstructionProperties() {
 		return instructionProperties;
 	}
-	public void setInstructionProperties(ArrayList<InstructionsProperties> instructionProperties) {
+	public void setInstructionProperties(ArrayList<String> instructionProperties) {
 		this.instructionProperties = instructionProperties;
-	}
-	public ContentTypeSettings getContentTypeSettings() {
-		return contentTypeSettings;
-	}
-	public void setContentTypeSettings(ContentTypeSettings contentTypeSettings) {
-		this.contentTypeSettings = contentTypeSettings;
 	}
 	public ArrayList<DownloadedResource> getResources() {
 		return resources;
@@ -93,10 +81,10 @@ public class ExerciseData {
 	public void setExerciseTitle(String exerciseTitle) {
 		this.exerciseTitle = exerciseTitle;
 	}
-	public ExerciseType getExerciseType() {
+	public String getExerciseType() {
 		return exerciseType;
 	}
-	public void setExerciseType(ExerciseType exerciseType) {
+	public void setExerciseType(String exerciseType) {
 		this.exerciseType = exerciseType;
 	}
 

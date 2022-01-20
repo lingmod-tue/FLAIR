@@ -4,21 +4,23 @@ import com.flair.shared.exerciseGeneration.ExerciseType;
 
 public class XmlGeneratorFactory {
 	
-	public static SimpleExerciseXmlGenerator getXmlGenerator(ExerciseType exerciseType) {
-		if(exerciseType == ExerciseType.MEMORY) {
+	public static SimpleExerciseXmlGenerator getXmlGenerator(String exerciseType) {
+		if(exerciseType.equals(ExerciseType.MEMORY)) {
 			return new MemoryXmlGenerator();
-		} else if(exerciseType == ExerciseType.SINGLE_CHOICE) {
+		} else if(exerciseType.equals(ExerciseType.SINGLE_CHOICE)) {
 			return new SCXmlGenerator();
-		} else if(exerciseType == ExerciseType.FIB) {
-			return new FibXmlGenerator();
-		} else if(exerciseType == ExerciseType.JUMBLED_SENTENCES) {
-			return new JumbledSentencesXmlGenerator();
-		} else if(exerciseType == ExerciseType.CATEGORIZE) {
+		} else if(exerciseType.equals(ExerciseType.FILL_IN_THE_BLANKS)) {
+			return new FiBXmlGenerator();
+		} else if(exerciseType.equals(ExerciseType.JUMBLED_SENTENCES)) {
+			return new JSXmlGenerator();
+		} else if(exerciseType.equals(ExerciseType.CATEGORIZE)) {
 			return new CategorizeXmlGenerator();
-		} else if(exerciseType == ExerciseType.MARK) {
-			return new FindXmlGenerator();
-		} else if(exerciseType == ExerciseType.DRAG_SINGLE) {
+		} else if(exerciseType.equals(ExerciseType.MARK_THE_WORDS)) {
+			return new MtWXmlGenerator();
+		} else if(exerciseType.equals(ExerciseType.DRAG_AND_DROP_SINGLE)) {
 			return new DDSingleXmlGenerator();
+		} else if(exerciseType.equals(ExerciseType.SHORT_ANSWER)) {
+			return new SAXmlGenerator();
 		} else {
 			throw new IllegalArgumentException();
 		}

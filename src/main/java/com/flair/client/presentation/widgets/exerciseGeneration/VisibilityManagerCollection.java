@@ -1,76 +1,79 @@
 package com.flair.client.presentation.widgets.exerciseGeneration;
 
+import com.flair.shared.exerciseGeneration.ExerciseTopic;
+import com.flair.shared.exerciseGeneration.ExerciseType;
+
 public class VisibilityManagerCollection {
 
 	public VisibilityManager getVisibilityManger(String topic, String exerciseType) {
-		if(topic.equals("Passive")) {
-    		if(exerciseType.equals("FiB")) {
+		if(topic.equals(ExerciseTopic.PASSIVE)) {
+    		if(exerciseType.equals(ExerciseType.FILL_IN_THE_BLANKS)) {
     			return passiveFiBVisibilityManger;
-    		} else if(exerciseType.equals("Drag")) {
+    		} else if(exerciseType.equals(ExerciseType.DRAG_AND_DROP)) {
     			 return passiveDragVisibilityManger;
-    		} else if(exerciseType.equals("Jumble")) {
+    		} else if(exerciseType.equals(ExerciseType.JUMBLED_SENTENCES)) {
 	   			 return passiveJumbleVisibilityManger;
 	   		} 
-    	} else if(topic.equals("Relatives")) {
-    		if(exerciseType.equals("FiB")) {
+    	} else if(topic.equals(ExerciseTopic.RELATIVES)) {
+    		if(exerciseType.equals(ExerciseType.FILL_IN_THE_BLANKS)) {
     			return relativesFiBVisibilityManger;
-    		} else if(exerciseType.equals("Select")) {
+    		} else if(exerciseType.equals(ExerciseType.SINGLE_CHOICE)) {
     			return relativesSelectVisibilityManger;
-    		} else if(exerciseType.equals("Mark")) {
+    		} else if(exerciseType.equals(ExerciseType.MARK_THE_WORDS)) {
     			return realtivesMarkVisibilityManger;
-    		} else if(exerciseType.equals("Drag")) {
+    		} else if(exerciseType.equals(ExerciseType.DRAG_AND_DROP)) {
     			return relativesDragVisibilityManger;
-    		} else if(exerciseType.equals("Jumble")) {
+    		} else if(exerciseType.equals(ExerciseType.JUMBLED_SENTENCES)) {
 	   			 return relativesJumbleVisibilityManger;
 	   		} 
-    	} else if(topic.equals("Present")) {
-    		if(exerciseType.equals("FiB")) {
+    	} else if(topic.equals(ExerciseTopic.PRESENT)) {
+    		if(exerciseType.equals(ExerciseType.FILL_IN_THE_BLANKS)) {
     			return presentFiBVisibilityManger;
-    		} else if(exerciseType.equals("Select")) {
+    		} else if(exerciseType.equals(ExerciseType.SINGLE_CHOICE)) {
     			return presentSelectVisibilityManger;
-    		} else if(exerciseType.equals("Mark")) {
+    		} else if(exerciseType.equals(ExerciseType.MARK_THE_WORDS)) {
     			return presentMarkVisibilityManger;  	
-    		} else if(exerciseType.equals("Memory")) {
+    		} else if(exerciseType.equals(ExerciseType.MEMORY)) {
     			return presentMemoryVisibilityManger;  	
-    		}  else if(exerciseType.equals("Jumble")) {
+    		}  else if(exerciseType.equals(ExerciseType.JUMBLED_SENTENCES)) {
 	   			 return presentJumbleVisibilityManger;
 	   		} 
-    	} else if(topic.equals("Past")) {
-    		if(exerciseType.equals("FiB")) {
+    	} else if(topic.equals(ExerciseTopic.PAST)) {
+    		if(exerciseType.equals(ExerciseType.FILL_IN_THE_BLANKS)) {
     			return pastFiBVisibilityManger;
-    		} else if(exerciseType.equals("Select")) {
+    		} else if(exerciseType.equals(ExerciseType.SINGLE_CHOICE)) {
     			return pastSelectVisibilityManger;
-    		} else if(exerciseType.equals("Mark")) {
+    		} else if(exerciseType.equals(ExerciseType.MARK_THE_WORDS)) {
     			return pastMarkVisibilityManger;
-    		} else if(exerciseType.equals("Drag")) {
+    		} else if(exerciseType.equals(ExerciseType.DRAG_AND_DROP)) {
     			return pastDragVisibilityManger;
-    		} else if(exerciseType.equals("Memory")) {
+    		} else if(exerciseType.equals(ExerciseType.MEMORY)) {
     			return pastMemoryVisibilityManger;
-    		} else if(exerciseType.equals("Jumble")) {
+    		} else if(exerciseType.equals(ExerciseType.JUMBLED_SENTENCES)) {
 	   			 return pastJumbleVisibilityManger;
 	   		} 
-    	} else if(topic.equals("'if'")) {
-    		if(exerciseType.equals("FiB")) {
+    	} else if(topic.equals(ExerciseTopic.CONDITIONALS)) {
+    		if(exerciseType.equals(ExerciseType.FILL_IN_THE_BLANKS)) {
     			return conditionalFiBVisibilityManger;
-    		} else if(exerciseType.equals("Select")) {
+    		} else if(exerciseType.equals(ExerciseType.SINGLE_CHOICE)) {
     			return conditionalSelectVisibilityManger;
-    		} else if(exerciseType.equals("Drag")) {
+    		} else if(exerciseType.equals(ExerciseType.DRAG_AND_DROP)) {
     			return conditionalDragVisibilityManger;
-    		} else if(exerciseType.equals("Jumble")) {
+    		} else if(exerciseType.equals(ExerciseType.JUMBLED_SENTENCES)) {
 	   			 return conditionalJumbleVisibilityManger;
 	   		} 
-    	}else if(topic.equals("Compare")) {
-			if(exerciseType.equals("FiB")) {
+    	}else if(topic.equals(ExerciseTopic.COMPARISON)) {
+			if(exerciseType.equals(ExerciseType.FILL_IN_THE_BLANKS)) {
 				return compareFiBVisibilityManger;
-    		} else if(exerciseType.equals("Select")) {
+    		} else if(exerciseType.equals(ExerciseType.SINGLE_CHOICE)) {
     			return compareSelectVisibilityManger;
-    		} else if(exerciseType.equals("Mark")) {
+    		} else if(exerciseType.equals(ExerciseType.MARK_THE_WORDS)) {
     			return compareMarkVisibilityManger;
-    		} else if(exerciseType.equals("Drag")) {
+    		} else if(exerciseType.equals(ExerciseType.DRAG_AND_DROP)) {
     			return compareDragVisibilityManger;
-    		} else if(exerciseType.equals("Memory")) {
+    		} else if(exerciseType.equals(ExerciseType.MEMORY)) {
     			return compareMemoryVisibilityManger;
-    		} else if(exerciseType.equals("Jumble")) {
+    		} else if(exerciseType.equals(ExerciseType.JUMBLED_SENTENCES)) {
 	   			 return compareJumbleVisibilityManger;
 	   		} 
     	}

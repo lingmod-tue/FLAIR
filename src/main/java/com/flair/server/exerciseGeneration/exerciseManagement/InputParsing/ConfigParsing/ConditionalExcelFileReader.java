@@ -44,45 +44,48 @@ public class ConditionalExcelFileReader extends ExcelFileReader {
 		    if(row != null) {    
 		        for(int c = 0; c < nCols; c++) {
 		            cell = row.getCell((short)c);
-
-		            if(cell != null && !cell.toString().isEmpty()) {
-		            	String cellValue = cell.toString();
-	            		
-	            		if(cellValue.trim().equals("If-clause") || cellValue.trim().startsWith("IV conditional type 1 vs conditional type 2")) {
-	            			activityType = cellValue.trim().equals("If-clause") ? "if" : "1vs2";
-	            			activityCounter = 1;
-	            		}
-	            		
-		            	if(activityCounter == 1) {
-		            		if(!columnValues.containsKey("Activity type")) {
-		            			columnValues.put("Activity type", new ArrayList<String>());
-				        		columnHeaders.put(-1, "Activity type");
+		            
+		            if(cell != null) {
+		            	String cellValue = xTrim(cell.toString());
+	
+			            if(!cellValue.isEmpty()) {
+		            		
+		            		if(cellValue.equals("If-clause") || cellValue.startsWith("IV conditional type 1 vs conditional type 2")) {
+		            			activityType = cellValue.equals("If-clause") ? "if" : "1vs2";
+		            			activityCounter = 1;
 		            		}
-		            	} else if(activityCounter == 2) {
-		            		if(c >= ifClausePositionsStart && c < mainClausePositionsStart) {
-		            			cellValue = "if-clause position " + cellValue;
-		            		} else if(c >= mainClausePositionsStart) {
-		            			cellValue = "main-clause position " + cellValue;
-		            		}
-			        		// initialize the hash map with the column headers
-		            		if(!columnValues.containsKey(cellValue)) {
-				        		columnValues.put(cellValue, new ArrayList<String>());
-				        		columnHeaders.put(c, cellValue);
-		            		}
-			        	} else {
-			        		if(c == 0) {
-			        			ArrayList<String> column = columnValues.get("Activity type");
-				        		column.add(activityType);
-			        		}
-			        		ArrayList<String> column = columnValues.get(columnHeaders.get(c));
-			        		column.add(cell.toString());
-			        	}
-		            } else {
-		            	if(activityCounter != 1 && sheet.getRow(1).getCell((short)c) != null && !sheet.getRow(1).getCell((short)c).toString().isEmpty() && row.getCell(0) != null) {
-		            		ArrayList<String> column = columnValues.get(columnHeaders.get(c));
-			        		column.add("");
-		            	}
-		            }
+		            		
+			            	if(activityCounter == 1) {
+			            		if(!columnValues.containsKey("Activity type")) {
+			            			columnValues.put("Activity type", new ArrayList<String>());
+					        		columnHeaders.put(-1, "Activity type");
+			            		}
+			            	} else if(activityCounter == 2) {
+			            		if(c >= ifClausePositionsStart && c < mainClausePositionsStart) {
+			            			cellValue = "if-clause position " + cellValue;
+			            		} else if(c >= mainClausePositionsStart) {
+			            			cellValue = "main-clause position " + cellValue;
+			            		}
+				        		// initialize the hash map with the column headers
+			            		if(!columnValues.containsKey(cellValue)) {
+					        		columnValues.put(cellValue, new ArrayList<String>());
+					        		columnHeaders.put(c, cellValue);
+			            		}
+				        	} else {
+				        		if(c == 0) {
+				        			ArrayList<String> column = columnValues.get("Activity type");
+					        		column.add(activityType);
+				        		}
+				        		ArrayList<String> column = columnValues.get(columnHeaders.get(c));
+				        		column.add(cellValue);
+				        	}
+			            } else {
+			            	if(activityCounter != 1 && sheet.getRow(1).getCell((short)c) != null && !sheet.getRow(1).getCell((short)c).toString().isEmpty() && row.getCell(0) != null) {
+			            		ArrayList<String> column = columnValues.get(columnHeaders.get(c));
+				        		column.add("");
+			            	}
+			            }
+		            } 
 		        }
 		        
 		        counter++;
@@ -110,51 +113,51 @@ public class ConditionalExcelFileReader extends ExcelFileReader {
 					configData.add(cd);
 				}
 				ConditionalExerciseConfigData cd = (ConditionalExerciseConfigData)configData.get(i);
-				if(entry.getValue().trim().equals("Aufgabennr.")) {
-					cd.setActivity((int)Float.parseFloat(columnValues.get(entry.getValue()).get(i).trim()));
-		    	} else if(entry.getValue().trim().equals("stamp")) {
+				if(entry.getValue().equals("Aufgabennr.")) {
+					cd.setActivity((int)Float.parseFloat(columnValues.get(entry.getValue()).get(i)));
+		    	} else if(entry.getValue().equals("stamp")) {
 		    		cd.setStamp(columnValues.get(entry.getValue()).get(i));
-		    	} else if(entry.getValue().trim().equals("item")) {
+		    	} else if(entry.getValue().equals("item")) {
 					cd.setItem((int)Float.parseFloat(columnValues.get(entry.getValue()).get(i)));
-		    	} else if(entry.getValue().trim().equals("type 1 or type 2")) {
+		    	} else if(entry.getValue().equals("type 1 or type 2")) {
 		    		cd.setConditionalType((int)Float.parseFloat(columnValues.get(entry.getValue()).get(i)));
-		    	} else if(entry.getValue().trim().equals("Übersetzung if-clause")) {
+		    	} else if(entry.getValue().equals("Übersetzung if-clause")) {
 		    		cd.setTranslationIfClause(columnValues.get(entry.getValue()).get(i));
-		    	} else if(entry.getValue().trim().equals("übersetzung main clause")) {
+		    	} else if(entry.getValue().equals("übersetzung main clause")) {
 		    		cd.setTranslationMainClause(columnValues.get(entry.getValue()).get(i));
-		    	} else if(entry.getValue().trim().equals("if-clause distractor 1")) {
+		    	} else if(entry.getValue().equals("if-clause distractor 1")) {
 		    		cd.getDistractorsIfClause().add(new Pair<>(1, columnValues.get(entry.getValue()).get(i)));
-		    	} else if(entry.getValue().trim().equals("if-clause distractor 2")) {
+		    	} else if(entry.getValue().equals("if-clause distractor 2")) {
 		    		cd.getDistractorsIfClause().add(new Pair<>(2, columnValues.get(entry.getValue()).get(i)));
-		    	} else if(entry.getValue().trim().equals("if-clause distractor 3")) {
+		    	} else if(entry.getValue().equals("if-clause distractor 3")) {
 		    		cd.getDistractorsIfClause().add(new Pair<>(3, columnValues.get(entry.getValue()).get(i)));
-		    	} else if(entry.getValue().trim().equals("main clause distractor 1")) {
+		    	} else if(entry.getValue().equals("main clause distractor 1")) {
 		    		cd.getDistractorsMainClause().add(new Pair<>(1, columnValues.get(entry.getValue()).get(i)));
-		    	} else if(entry.getValue().trim().equals("main clause distractor 2")) {
+		    	} else if(entry.getValue().equals("main clause distractor 2")) {
 		    		cd.getDistractorsMainClause().add(new Pair<>(2, columnValues.get(entry.getValue()).get(i)));
-		    	} else if(entry.getValue().trim().equals("main clause distractor 3")) {
+		    	} else if(entry.getValue().equals("main clause distractor 3")) {
 		    		cd.getDistractorsMainClause().add(new Pair<>(3, columnValues.get(entry.getValue()).get(i)));
-		    	} else if(entry.getValue().trim().equals("given in brackets if-clause")) {
+		    	} else if(entry.getValue().equals("given in brackets if-clause")) {
 		    		cd.setLemmaIfClause(columnValues.get(entry.getValue()).get(i));
-		    	} else if(entry.getValue().trim().equals("given in brackets main clause")) {
+		    	} else if(entry.getValue().equals("given in brackets main clause")) {
 		    		cd.setLemmaMainClause(columnValues.get(entry.getValue()).get(i));
-		    	} else if(entry.getValue().trim().equals("semantic distractor if clause")) {
+		    	} else if(entry.getValue().equals("semantic distractor if clause")) {
 		    		cd.setDistractorLemmaIfClause(columnValues.get(entry.getValue()).get(i));
-		    	} else if(entry.getValue().trim().equals("semantic distractor main clause")) {
+		    	} else if(entry.getValue().equals("semantic distractor main clause")) {
 		    		cd.setDistractorLemmaMainClause(columnValues.get(entry.getValue()).get(i));
-		    	} else if(entry.getValue().trim().equals("given words für halb-offene Aufgaben if-clause")) {
-		    		String brackets = StringUtils.strip(columnValues.get(entry.getValue()).get(i).trim(), "()");
+		    	} else if(entry.getValue().equals("given words für halb-offene Aufgaben if-clause")) {
+		    		String brackets = StringUtils.strip(columnValues.get(entry.getValue()).get(i), "()");
 		    		String[] elements = brackets.split(",");
 		    		for(String element : elements) {
-		    			cd.getBracketsIfClause().add(element.trim());
+		    			cd.getBracketsIfClause().add(xTrim(element));
 		    		}
-		    	} else if(entry.getValue().trim().equals("given words  für halb-offene Aufgaben main clause")) {
-		    		String brackets = StringUtils.strip(columnValues.get(entry.getValue()).get(i).trim(), "()");
+		    	} else if(entry.getValue().equals("given words  für halb-offene Aufgaben main clause")) {
+		    		String brackets = StringUtils.strip(columnValues.get(entry.getValue()).get(i), "()");
 		    		String[] elements = brackets.split(",");
 		    		for(String element : elements) {
-		    			cd.getBracketsMainClause().add(element.trim());
+		    			cd.getBracketsMainClause().add(xTrim(element));
 		    		}
-		    	} else if(entry.getValue().trim().equals("gap if-clause")) {
+		    	} else if(entry.getValue().equals("gap if-clause")) {
 		    		String value = columnValues.get(entry.getValue()).get(i);
 		    		String[] gapParts = value.split(",");
 		    		for(String gapPart : gapParts) {
@@ -164,10 +167,10 @@ public class ConditionalExcelFileReader extends ExcelFileReader {
 			    		try {
 			    			String[] parts = gapPart.split("-");
 			    			if(parts.length == 2) {
-			    				startIndex = (int)Float.parseFloat(parts[0].trim());
-			    				endIndex = (int)Float.parseFloat(parts[1].trim());
+			    				startIndex = (int)Float.parseFloat(xTrim(parts[0]));
+			    				endIndex = (int)Float.parseFloat(xTrim(parts[1]));
 			    			} else if (parts.length == 1) {
-				    			startIndex = (int)Float.parseFloat(gapPart.trim());
+				    			startIndex = (int)Float.parseFloat(xTrim(gapPart));
 				    			endIndex = startIndex;
 				    		}
 			    		} catch(Exception e) { }
@@ -176,7 +179,7 @@ public class ConditionalExcelFileReader extends ExcelFileReader {
 			    			cd.getGapIfClause().add(new Pair<>(startIndex, endIndex));
 			    		}
 		    		}
-		    	} else if(entry.getValue().trim().equals("if-clause underline")) {
+		    	} else if(entry.getValue().equals("if-clause underline")) {
 		    		String value = columnValues.get(entry.getValue()).get(i);
 		    		String[] gapParts = value.split(",");
 		    		for(String gapPart : gapParts) {
@@ -186,10 +189,10 @@ public class ConditionalExcelFileReader extends ExcelFileReader {
 			    		try {
 			    			String[] parts = gapPart.split("-");
 			    			if(parts.length == 2) {
-			    				startIndex = (int)Float.parseFloat(parts[0].trim());
-			    				endIndex = (int)Float.parseFloat(parts[1].trim());
+			    				startIndex = (int)Float.parseFloat(xTrim(parts[0]));
+			    				endIndex = (int)Float.parseFloat(xTrim(parts[1]));
 			    			} else if (parts.length == 1) {
-				    			startIndex = (int)Float.parseFloat(gapPart.trim());
+				    			startIndex = (int)Float.parseFloat(xTrim(gapPart));
 				    			endIndex = startIndex;
 				    		}
 			    		} catch(Exception e) { }
@@ -198,7 +201,7 @@ public class ConditionalExcelFileReader extends ExcelFileReader {
 			    			cd.getUnderlineIfClause().add(new Pair<>(startIndex, endIndex));
 			    		}
 		    		}
-		    	} else if(entry.getValue().trim().equals("gap main clause")) {
+		    	} else if(entry.getValue().equals("gap main clause")) {
 		    		String value = columnValues.get(entry.getValue()).get(i);
 		    		String[] gapParts = value.split(",");
 		    		for(String gapPart : gapParts) {
@@ -208,10 +211,10 @@ public class ConditionalExcelFileReader extends ExcelFileReader {
 			    		try {
 			    			String[] parts = gapPart.split("-");
 			    			if(parts.length == 2) {
-			    				startIndex = (int)Float.parseFloat(parts[0].trim());
-			    				endIndex = (int)Float.parseFloat(parts[1].trim());
+			    				startIndex = (int)Float.parseFloat(xTrim(parts[0]));
+			    				endIndex = (int)Float.parseFloat(xTrim(parts[1]));
 			    			} else if (parts.length == 1) {
-				    			startIndex = (int)Float.parseFloat(gapPart.trim());
+				    			startIndex = (int)Float.parseFloat(xTrim(gapPart));
 				    			endIndex = startIndex;
 				    		}
 			    		} catch(Exception e) { }
@@ -220,7 +223,7 @@ public class ConditionalExcelFileReader extends ExcelFileReader {
 			    			cd.getGapMainClause().add(new Pair<>(startIndex, endIndex));
 			    		}
 		    		}
-		    	} else if(entry.getValue().trim().equals("main clause underline")) {
+		    	} else if(entry.getValue().equals("main clause underline")) {
 		    		String value = columnValues.get(entry.getValue()).get(i);
 		    		String[] gapParts = value.split(",");
 		    		for(String gapPart : gapParts) {
@@ -230,10 +233,10 @@ public class ConditionalExcelFileReader extends ExcelFileReader {
 			    		try {
 			    			String[] parts = gapPart.split("-");
 			    			if(parts.length == 2) {
-			    				startIndex = (int)Float.parseFloat(parts[0].trim());
-			    				endIndex = (int)Float.parseFloat(parts[1].trim());
+			    				startIndex = (int)Float.parseFloat(xTrim(parts[0]));
+			    				endIndex = (int)Float.parseFloat(xTrim(parts[1]));
 			    			} else if (parts.length == 1) {
-				    			startIndex = (int)Float.parseFloat(gapPart.trim());
+				    			startIndex = (int)Float.parseFloat(xTrim(gapPart));
 				    			endIndex = startIndex;
 				    		}
 			    		} catch(Exception e) { }
@@ -242,10 +245,10 @@ public class ConditionalExcelFileReader extends ExcelFileReader {
 				    		cd.getUnderlineMainClause().add(new Pair<>(startIndex, endIndex));
 			    		}
 		    		}
-		    	} else if(entry.getValue().trim().startsWith("if-clause position ") && !columnValues.get(entry.getValue()).get(i).isEmpty()) {
-		    		cd.getPositionsIfClause().add(new Pair<>((int)Float.parseFloat(entry.getValue().trim().substring(19).trim()), columnValues.get(entry.getValue()).get(i)));
-		    	} else if(entry.getValue().trim().startsWith("main-clause position ") && !columnValues.get(entry.getValue()).get(i).isEmpty()) {
-		    		cd.getPositionsMainClause().add(new Pair<>((int)Float.parseFloat(entry.getValue().trim().substring(21).trim()), columnValues.get(entry.getValue()).get(i)));
+		    	} else if(entry.getValue().startsWith("if-clause position ") && !columnValues.get(entry.getValue()).get(i).isEmpty()) {
+		    		cd.getPositionsIfClause().add(new Pair<>((int)Float.parseFloat(xTrim(entry.getValue().substring(19))), columnValues.get(entry.getValue()).get(i)));
+		    	} else if(entry.getValue().startsWith("main-clause position ") && !columnValues.get(entry.getValue()).get(i).isEmpty()) {
+		    		cd.getPositionsMainClause().add(new Pair<>((int)Float.parseFloat(xTrim(entry.getValue().substring(21))), columnValues.get(entry.getValue()).get(i)));
 		    	}
 			}	
 			isFirstCol = false;

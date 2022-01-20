@@ -9,10 +9,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import com.flair.server.exerciseGeneration.downloadManagement.ResourceDownloader;
+import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseGenerationMetadata;
+import com.flair.server.exerciseGeneration.exerciseManagement.QuizGenerationMetadata;
 import com.flair.server.exerciseGeneration.exerciseManagement.ResultComponents;
-import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ConfigBasedSettings;
-import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
-import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.QuizSettings;
 import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.OpenNlpParser;
 import com.flair.server.parser.SimpleNlgParser;
@@ -20,8 +19,8 @@ import com.flair.server.pipelines.common.PipelineOp;
 import com.flair.server.scheduler.AsyncExecutorService;
 import com.flair.server.scheduler.AsyncJob;
 import com.flair.shared.exerciseGeneration.ConfigExerciseSettings;
+import com.flair.shared.exerciseGeneration.DocumentExerciseSettings;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
-import com.flair.shared.exerciseGeneration.IExerciseSettings;
 
 import edu.stanford.nlp.util.Pair;
 
@@ -30,11 +29,11 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
 	public interface JobComplete extends EventHandler<ResultComponents> {}
 	
 	private final ReentrantLock lock = new ReentrantLock();
-	private final ArrayList<Pair<ContentTypeSettings, Boolean>> settingsStates = new ArrayList<>();
+	private final ArrayList<Pair<ExerciseGenerationMetadata, Boolean>> settingsStates = new ArrayList<>();
 	private final ArrayList<String> downloadedUrls = new ArrayList<>();
 	
 	static final class Input {
-		final ArrayList<IExerciseSettings> settings;
+		final ArrayList<ExerciseSettings> settings;
 		final AsyncExecutorService downloadExecutor;
 		final AsyncExecutorService exGenExecutor;
 		final ExGenComplete exGenComplete;
@@ -44,7 +43,7 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
 		final OpenNlpParser lemmatizer;
 		final ResourceDownloader resourceDownloader;
 		
-		Input(ArrayList<IExerciseSettings> settings,
+		Input(ArrayList<ExerciseSettings> settings,
 				AsyncExecutorService downloadExecutor,
 		      AsyncExecutorService exGenExecutor,
 		      ExGenComplete exGenComplete,
@@ -85,19 +84,17 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
 
 			lock.lock();
 			downloadedUrls.add(r.url);
-			int index = 0;
 			for(int i = 0; i < settingsStates.size(); i++) {
-				Pair<ContentTypeSettings, Boolean> entry = settingsStates.get(i);
+				Pair<ExerciseGenerationMetadata, Boolean> entry = settingsStates.get(i);
 				if(!entry.second) {
-					ContentTypeSettings contentTypeSettings = entry.first;
-					if(contentTypeSettings instanceof QuizSettings) {
+					ExerciseGenerationMetadata contentTypeSettings = entry.first;
+					if(contentTypeSettings instanceof QuizGenerationMetadata) {
 						boolean allDocumentsDownloaded = true;
-						for(ContentTypeSettings settings : ((QuizSettings)contentTypeSettings).getExercises()) {
-							if(settings.getExerciseSettings() instanceof ExerciseSettings) {
+						for(ExerciseGenerationMetadata settings : ((QuizGenerationMetadata)contentTypeSettings).getExercises()) {
+							if(settings.getExerciseSettings() instanceof DocumentExerciseSettings) {
 								if(settings.getExerciseSettings().getUrl().equals(r.url)) {
 						            settings.setDoc(r.document);
 						            settings.setResources(r.resources);
-						            settings.setIndex(++index);
 								}
 								if(!downloadedUrls.contains(settings.getExerciseSettings().getUrl())) {
 									allDocumentsDownloaded = false;
@@ -119,7 +116,6 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
 							
 							contentTypeSettings.setDoc(r.document);
 				            contentTypeSettings.setResources(r.resources);
-				            contentTypeSettings.setIndex(++index);
 
 							scheduler.newTask(ExGenTask.factory(contentTypeSettings, input.parser, input.generator, input.lemmatizer, input.resourceDownloader))
 							.with(input.exGenExecutor)
@@ -143,15 +139,15 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
 	ExerciseGenerationOp(Input input) {
 		super("ExerciseGenerationOp", input, new Output());
 				
-		HashMap<String, ArrayList<ContentTypeSettings>> configs = new HashMap<>();
-        for(IExerciseSettings s : input.settings) {
-    		ContentTypeSettings contentTypeSettings;
+		HashMap<String, ArrayList<ExerciseGenerationMetadata>> configs = new HashMap<>();
+        for(ExerciseSettings s : input.settings) {
+    		ExerciseGenerationMetadata contentTypeSettings;
 
-        	if(s instanceof ExerciseSettings) {
-        		ExerciseSettings settings = (ExerciseSettings)s;
-                contentTypeSettings = new ContentTypeSettings(settings.getContentType());
+        	if(s instanceof DocumentExerciseSettings) {
+        		DocumentExerciseSettings settings = (DocumentExerciseSettings)s;
+                contentTypeSettings = new ExerciseGenerationMetadata(settings.getContentType(), settings.getTopic());
         	} else {
-        		contentTypeSettings = new ConfigBasedSettings(((ConfigExerciseSettings)s).getTopic());
+        		contentTypeSettings = new ExerciseGenerationMetadata(null, ((ConfigExerciseSettings)s).getTopic());
         	}
         	
         	contentTypeSettings.setExerciseSettings(s);
@@ -162,13 +158,13 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
             configs.get(s.getQuiz()).add(contentTypeSettings);
         }
         
-        for (HashMap.Entry<String, ArrayList<ContentTypeSettings>> entry : configs.entrySet()) {
+        for (HashMap.Entry<String, ArrayList<ExerciseGenerationMetadata>> entry : configs.entrySet()) {
             if(entry.getKey().equals("")) { // it's not a quiz
-            	for(ContentTypeSettings settings : entry.getValue()) {
+            	for(ExerciseGenerationMetadata settings : entry.getValue()) {
                 	settingsStates.add(new Pair<>(settings, false));            	
             	}
             } else {
-            	QuizSettings settings = new QuizSettings("Quiz " + entry.getKey());
+            	QuizGenerationMetadata settings = new QuizGenerationMetadata("Quiz " + entry.getKey());
             	settings.setExercises(entry.getValue());
                 settingsStates.add(new Pair<>(settings, false));  
             }
@@ -183,9 +179,9 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
 		super.launch();
 
         HashMap<String, Element> documents = new HashMap<>();
-        for(IExerciseSettings s : input.settings) {
-        	if(s instanceof ExerciseSettings) {
-        		ExerciseSettings settings = (ExerciseSettings)s;
+        for(ExerciseSettings s : input.settings) {
+        	if(s instanceof DocumentExerciseSettings) {
+        		DocumentExerciseSettings settings = (DocumentExerciseSettings)s;
         		
         		if(settings.getUrl().length() == 0) {
             		if (!documents.containsKey(settings.getFileName())) {

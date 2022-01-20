@@ -107,6 +107,7 @@ public class DistractorSelector {
 		        	distractorsWithFeedback.add(d);
 		        }
 		        construction.setDistractors(distractorsWithFeedback);
+		        construction.setTargetIndex(new Random().nextInt(distractorsWithFeedback.size() - 1));	// correct answer is to be inserted at random position in distractor list
         	}
     	}    	
     }

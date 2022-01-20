@@ -2,20 +2,20 @@ package com.flair.shared.interop.messaging.client;
 
 import java.util.ArrayList;
 
+import com.flair.shared.exerciseGeneration.DocumentExerciseSettings;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
-import com.flair.shared.exerciseGeneration.IExerciseSettings;
 import com.flair.shared.interop.messaging.Message;
 
 public class CmExGenStart implements Message.Payload {
-	private ArrayList<IExerciseSettings> settings;
+	private ArrayList<ExerciseSettings> settings;
 
 	public CmExGenStart() {}
 
-	public ArrayList<IExerciseSettings> getSettings() {
+	public ArrayList<ExerciseSettings> getSettings() {
 		return settings;
 	}
 	
-	public void setSettings(ArrayList<IExerciseSettings> settings) {
+	public void setSettings(ArrayList<ExerciseSettings> settings) {
 		this.settings = settings;
 	}
 	

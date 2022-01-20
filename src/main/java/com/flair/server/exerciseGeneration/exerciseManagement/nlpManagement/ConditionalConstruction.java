@@ -1,14 +1,13 @@
 package com.flair.server.exerciseGeneration.exerciseManagement.nlpManagement;
 
 import com.flair.shared.exerciseGeneration.Construction;
-import com.flair.shared.exerciseGeneration.DetailedConstruction;
 import com.flair.shared.exerciseGeneration.Pair;
 
 public class ConditionalConstruction extends Construction {
 
     public ConditionalConstruction() {}
     
-    public ConditionalConstruction(DetailedConstruction construction, Pair<Integer, Integer> constructionIndices, 
+    public ConditionalConstruction(String construction, Pair<Integer, Integer> constructionIndices, 
     		boolean isMainClause, Pair<Integer, Integer> otherClauseIndices) {
     	super(construction, constructionIndices);
     	

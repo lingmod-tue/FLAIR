@@ -15,13 +15,10 @@ public class DDSingleXmlGenerator extends SimpleExerciseXmlGenerator {
 	
 	@Override
 	public byte[] generateXMLFile(ExerciseData exerciseDefinition) {
-		XmlValues v = new XmlValues();
-		v.instructions = exerciseDefinition.getInstructions();
-		v.taskType = "FILL_IN_THE_BLANKS";
-		v.givenWordsDraggable = true;
-		v.feedbackDisabled = true;
-		
-		
+		XmlValues v = new XmlValues(exerciseDefinition.getInstructions(), "FILL_IN_THE_BLANKS");
+		v.setGivenWordsDraggable(true);
+		v.setFeedbackDisabled(true);
+				
 		StringBuilder sb = new StringBuilder();
 		Item previousGap = null;
 		ArrayList<String> draggables = new ArrayList<>();
@@ -35,7 +32,7 @@ public class DDSingleXmlGenerator extends SimpleExerciseXmlGenerator {
 				
 				if(previousGap != null) {
 					previousGap.text = sb.toString();
-					v.items.add(previousGap);
+					v.getItems().add(previousGap);
 				}
 				
 				previousGap = new Item();
@@ -52,10 +49,10 @@ public class DDSingleXmlGenerator extends SimpleExerciseXmlGenerator {
 		}
 		
 		previousGap.text = sb.toString();
-		v.items.add(previousGap);
+		v.getItems().add(previousGap);
 		
 		Collections.shuffle(draggables);
-		v.givenWords = StringUtils.join(draggables, " | ");
+		v.setGivenWords(StringUtils.join(draggables, " | "));
 
 		return generateFeedBookInputXml(v).getBytes(StandardCharsets.UTF_8);
 	}

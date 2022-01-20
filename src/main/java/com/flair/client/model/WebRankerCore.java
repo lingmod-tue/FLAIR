@@ -54,8 +54,8 @@ import com.flair.client.presentation.widgets.LanguageSpecificConstructionSliderB
 import com.flair.client.utilities.ClientLogger;
 import com.flair.client.utilities.GwtUtil;
 import com.flair.shared.exceptions.InvalidClientIdentificationTokenException;
+import com.flair.shared.exerciseGeneration.DocumentExerciseSettings;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
-import com.flair.shared.exerciseGeneration.IExerciseSettings;
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.grammar.Language;
 import com.flair.shared.interop.dtos.DocumentDTO;
@@ -1367,7 +1367,7 @@ public class WebRankerCore implements AbstractWebRankerCore {
         });
     }
     
-    private boolean onGenerateExercises(ArrayList<IExerciseSettings> settings) {
+    private boolean onGenerateExercises(ArrayList<ExerciseSettings> settings) {
         if (exGenPoller.isRunning()) {
             ToastNotification.fire(getLocalizedString(DefaultLocalizationProviders.COMMON.toString(), CommonLocalizationTags.WAIT_TILL_COMPLETION.toString()));
             return false;

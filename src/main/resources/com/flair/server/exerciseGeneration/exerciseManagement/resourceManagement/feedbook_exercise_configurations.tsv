@@ -1,4 +1,4 @@
-exercise_topic	exercise_type	block_id	feedbookTypeId	if_clause_first	randomize_clause_order	target_if_clause	target_main_clause
+exercise_topic	exercise_type	block_id	feedbookTypeId	if_clause_first	randomize_clause_order	target_if_clause	target_main_clause	clause1_into_clause2
 conditional_types	Cat	1	7	true	false		
 conditional_types	SC	1	1	true	false	true	false
 conditional_types	SC	1	2	true	false	true	false
@@ -113,3 +113,16 @@ conditional_form	SC	18	2	false	true	true	true
 conditional_form	FiB	18	3	false	true	true	true
 conditional_form	FiB	18	4	false	true	true	true
 conditional_form	FiB	18	9	false	true	true	true
+relatives	Memory	1	0					true
+relatives	Underline	1	1					true
+relatives	SC	1	2					true
+relatives	FiB	1	3					true
+relatives	FiB	1	4					true
+relatives	FiB	1	5					
+relatives	JS	1	6					true
+relatives	Memory	2	0					false
+relatives	Underline	2	1					false
+relatives	SC	2	2					false
+relatives	FiB	2	3					false
+relatives	FiB	2	4					false
+relatives	JS	2	6					false

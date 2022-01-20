@@ -1,50 +1,20 @@
 
 package com.flair.shared.exerciseGeneration;
 
-public enum ExerciseType {
-	FIB("FiB"),
-	SINGLE_CHOICE("Select"),
-	MARK("Mark"),
-	DRAG_SINGLE("SingleDrag"),
-	DRAG_MULTI("MultiDrag"),
-	MEMORY("Memory"),
-	JUMBLED_SENTENCES("JumbledSentences"),
-	CATEGORIZE("Categorize"),
-	QUIZ("Quiz");
+public class ExerciseType {
+
+	public static final String FILL_IN_THE_BLANKS = "FiB";
+	public static final String SINGLE_CHOICE = "Select";
+	public static final String MARK_THE_WORDS = "Mark";
+	public static final String DRAG_AND_DROP_SINGLE = "SingleDrag";
+	public static final String DRAG_AND_DROP_MULTI = "MultiDrag";
+	public static final String JUMBLED_SENTENCES = "Jumble";  
+	public static final String CATEGORIZE = "Categorize"; 
+	public static final String QUIZ = "Quiz"; 
+	public static final String SHORT_ANSWER = "ShortAnswer"; 
+	public static final String MEMORY = "Memory"; 
 	
-	private final String name;       
-
-    private ExerciseType(String name) {
-        this.name = name;
-    }
-
-    public String toString() {
-       return this.name;
-    }
-    
-	public static ExerciseType getEnum(String name) {
-		switch(name) {
-		case "FiB":
-			return ExerciseType.FIB;
-		case "Select":
-			return ExerciseType.SINGLE_CHOICE;
-		case "Mark":
-			return ExerciseType.MARK;
-		case "SingleDrag":
-			return ExerciseType.DRAG_SINGLE;
-		case "MultiDrag":
-			return ExerciseType.DRAG_MULTI;
-		case "Memory":
-			return ExerciseType.MEMORY;
-		case "Jumble":
-			return ExerciseType.JUMBLED_SENTENCES;
-		case "Categorize":
-			return ExerciseType.CATEGORIZE;
-		case "Quiz":
-			return ExerciseType.QUIZ;
-			default:
-				throw new IllegalArgumentException();
-		}
-	}
+	// use only for client side!!!
+	public static final String DRAG_AND_DROP = "Drag"; 
+	public static final String UNDEFINED = "Exercise Type";
 }
-

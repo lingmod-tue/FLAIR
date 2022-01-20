@@ -16,7 +16,6 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseData;
-import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
 import com.flair.server.exerciseGeneration.exerciseManagement.resourceManagement.ResourceLoader;
 import com.flair.server.utilities.ServerLogger;
 
@@ -32,7 +31,7 @@ public abstract class ContentJsonGenerator {
      * @throws IOException    	File exception if the writer cannot write to the output file
      * @throws ParseException 	JSON exception if the file cannot be parsed
      */
-    public abstract ArrayList<JSONObject> modifyJsonContent(ContentTypeSettings settings, ArrayList<ExerciseData> exerciseDefinition);
+    public abstract ArrayList<JSONObject> modifyJsonContent(ArrayList<ExerciseData> exerciseDefinition);
 
     /**
      * Retrieves the content of the content.json file of the resource file
@@ -72,8 +71,8 @@ public abstract class ContentJsonGenerator {
         return null;
     }
     
-    protected JSONObject getContentJson(ContentTypeSettings settings) {
-    	InputStream inputStream = getContentFileContent(settings.getResourceFolder());
+    protected JSONObject getContentJson(String type) {
+    	InputStream inputStream = getContentFileContent(H5PConstantsManager.getResourceFolder(type));
         JSONParser jsonParser = new JSONParser();
         JSONObject jsonObject;
 		try {

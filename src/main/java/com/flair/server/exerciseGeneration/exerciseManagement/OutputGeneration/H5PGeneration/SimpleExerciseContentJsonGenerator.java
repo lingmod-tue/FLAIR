@@ -1,7 +1,6 @@
 package com.flair.server.exerciseGeneration.exerciseManagement.OutputGeneration.H5PGeneration;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -12,7 +11,6 @@ import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseData;
 import com.flair.server.exerciseGeneration.exerciseManagement.HtmlTextPart;
 import com.flair.server.exerciseGeneration.exerciseManagement.PlainTextPart;
 import com.flair.server.exerciseGeneration.exerciseManagement.TextPart;
-import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
 
 public abstract class SimpleExerciseContentJsonGenerator extends ContentJsonGenerator {
 
@@ -23,10 +21,10 @@ public abstract class SimpleExerciseContentJsonGenerator extends ContentJsonGene
     protected static int internalId = 0;
     
     @Override
-    public ArrayList<JSONObject> modifyJsonContent(ContentTypeSettings settings, ArrayList<ExerciseData> exerciseDefinition) {
+    public ArrayList<JSONObject> modifyJsonContent(ArrayList<ExerciseData> exerciseDefinition) {
         internalId++;
 
-        JSONObject jsonObject = getContentJson(settings);
+        JSONObject jsonObject = getContentJson(exerciseDefinition.get(0).getExerciseType());
         if(jsonObject == null) {
         	return null;
         }
@@ -40,10 +38,6 @@ public abstract class SimpleExerciseContentJsonGenerator extends ContentJsonGene
         addTextPartsToJson(jsonObject, exerciseDefinition.get(0));
         
         setExerciseSpecificAttributes(jsonObject);
-                
-        HashMap<String, String> previews = new HashMap<>();
-        //TODO: generate preview
-        //previews.put(settings.getName(), generatePreviewHtml(jsonObject, settings.isEscapeAsterisksInHtml()));
                 
         ArrayList<JSONObject> ret = new ArrayList<>();
         ret.add(jsonObject);
@@ -114,11 +108,11 @@ public abstract class SimpleExerciseContentJsonGenerator extends ContentJsonGene
 		htmlString = htmlString.replace("<", "ltRep;").replace("\"", "quotRep;").replace(">", "gtRep;").replace("'", "#039Rep;")
 				.replace("&", "ampRep;");
 		
-		if (data.getContentTypeSettings().isEscapeAsterisksInHtml()) {
-            htmlString = htmlString.replace("*", "**");
-        }
-		
-		return htmlString;
+        return escapeAsterisksInHtml(htmlString);
+	}
+	
+	protected String escapeAsterisksInHtml(String htmlString) {
+		return htmlString.replace("*", "**");
 	}
 
     /**

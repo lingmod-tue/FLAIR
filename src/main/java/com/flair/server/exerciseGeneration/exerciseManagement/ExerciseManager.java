@@ -2,7 +2,6 @@ package com.flair.server.exerciseGeneration.exerciseManagement;
 
 
 import com.flair.server.exerciseGeneration.downloadManagement.ResourceDownloader;
-import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
 import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.OpenNlpParser;
 import com.flair.server.parser.SimpleNlgParser;
@@ -12,7 +11,7 @@ public class ExerciseManager {
 
 	private ExerciseGenerator exerciseGenerator;
 	
-	public ExerciseManager(ContentTypeSettings settings) {
+	public ExerciseManager(ExerciseGenerationMetadata settings) {
 		this.exerciseGenerator = settings.getExerciseGenerator();
 	}
 	
@@ -28,15 +27,21 @@ public class ExerciseManager {
 	 * @param settings	The exercise settings
 	 * @return			The byte array of the generated H5P package
 	 */
-    public ResultComponents generateExercises(ContentTypeSettings settings, CoreNlpParser parser, SimpleNlgParser generator, 
+	
+	
+	/**
+	 * Generates exercise(s) for the provided settings.
+	 * @param settings				Settings from which to generate exercise(s)
+	 * @param parser				The CoreNlp parser
+	 * @param generator				The SimpleNlg parser for language generation
+	 * @param lemmatizer			The OpenNlp parser for lemmatization
+	 * @param resourceDownloader	The resource downloader; needs to be shared across all threads to ensure unique resource names
+	 * @return	The generated exercise(s) in the requested output formats
+	 */
+    public ResultComponents generateExercises(ExerciseGenerationMetadata settings, CoreNlpParser parser, SimpleNlgParser generator, 
     		OpenNlpParser lemmatizer, ResourceDownloader resourceDownloader) {
     	try {
-	        ResultComponents generatedExercises = settings.getExerciseGenerator().generateExercise(settings, parser, generator, lemmatizer, resourceDownloader);  
-	        if(generatedExercises == null) {
-	        	return null;
-	        }
-	        
-	        return generatedExercises;
+	        return exerciseGenerator.generateExercise(settings, parser, generator, lemmatizer, resourceDownloader);  
     	} catch(Exception e) {
 			ServerLogger.get().error(e, "Exercise could not be generated. Exception: " + e.toString());
     		return null;

@@ -6,10 +6,6 @@ import com.flair.shared.exerciseGeneration.Pair;
 
 public class ConditionalExerciseConfigData extends ExerciseConfigData {
 	
-	public ConditionalExerciseConfigData() {
-		super();
-	}
-		
 	private int conditionalType;
 	private String translationIfClause;
 	private String translationMainClause;

@@ -4,9 +4,9 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeoutException;
 
 import com.flair.server.exerciseGeneration.downloadManagement.ResourceDownloader;
+import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseGenerationMetadata;
 import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseManager;
 import com.flair.server.exerciseGeneration.exerciseManagement.ResultComponents;
-import com.flair.server.exerciseGeneration.exerciseManagement.contentTypeManagement.ContentTypeSettings;
 import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.OpenNlpParser;
 import com.flair.server.parser.SimpleNlgParser;
@@ -15,18 +15,18 @@ import com.flair.server.scheduler.ThreadPool;
 import com.flair.server.utilities.ServerLogger;
 
 public class ExGenTask implements AsyncTask<ExGenTask.Result> {
-	public static ExGenTask factory(ContentTypeSettings settings, CoreNlpParser parser, SimpleNlgParser generator, 
+	public static ExGenTask factory(ExerciseGenerationMetadata settings, CoreNlpParser parser, SimpleNlgParser generator, 
 			OpenNlpParser lemmatizer, ResourceDownloader resourceDownloader) {
 		return new ExGenTask(settings, parser, generator, lemmatizer, resourceDownloader);
 	}
 
-	private final ContentTypeSettings settings;
+	private final ExerciseGenerationMetadata settings;
 	private final CoreNlpParser parser;
 	private final SimpleNlgParser generator;
 	private final OpenNlpParser lemmatizer;
 	private final ResourceDownloader resourceDownloader;
 
-	private ExGenTask(ContentTypeSettings settings, CoreNlpParser parser, SimpleNlgParser generator, 
+	private ExGenTask(ExerciseGenerationMetadata settings, CoreNlpParser parser, SimpleNlgParser generator, 
 			OpenNlpParser lemmatizer, ResourceDownloader resourceDownloader) {
 		this.settings = settings;
 		this.parser = parser;

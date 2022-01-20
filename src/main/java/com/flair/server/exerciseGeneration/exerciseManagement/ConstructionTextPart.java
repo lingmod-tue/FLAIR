@@ -2,17 +2,23 @@ package com.flair.server.exerciseGeneration.exerciseManagement;
 
 import java.util.ArrayList;
 
-import com.flair.shared.exerciseGeneration.DetailedConstruction;
 import com.flair.shared.exerciseGeneration.Pair;
 
+/**
+ * A part of the HTML string of the web page which represents a target construction
+ * @author taheck
+ *
+ */
 public class ConstructionTextPart extends TextPart {
 	
 	private ArrayList<String> brackets = new ArrayList<>();
 	private ArrayList<Distractor> distractors = new ArrayList<>();
 	private String category = "";
 	private Pair<Integer, Integer> indicesInPlainText;
-	private DetailedConstruction constructionType;
+	private String constructionType;
 	private Pair<Integer, Integer> indicesRelatedConstruction = null;
+	private int targetIndex = 0;
+	private ArrayList<String> targetAlternatives = new ArrayList<>();
 
 	public Pair<Integer, Integer> getIndicesRelatedConstruction() {
 		return indicesRelatedConstruction;
@@ -22,11 +28,11 @@ public class ConstructionTextPart extends TextPart {
 		this.indicesRelatedConstruction = indicesRelatedConstruction;
 	}
 
-	public DetailedConstruction getConstructionType() {
+	public String getConstructionType() {
 		return constructionType;
 	}
 
-	public void setConstructionType(DetailedConstruction constructionType) {
+	public void setConstructionType(String constructionType) {
 		this.constructionType = constructionType;
 	}
 
@@ -64,6 +70,18 @@ public class ConstructionTextPart extends TextPart {
 
 	public void setIndicesInPlainText(Pair<Integer, Integer> indicesInPlainText) {
 		this.indicesInPlainText = indicesInPlainText;
+	}
+
+	public int getTargetIndex() {
+		return targetIndex;
+	}
+
+	public void setTargetIndex(int targetIndex) {
+		this.targetIndex = targetIndex;
+	}
+
+	public ArrayList<String> getTargetAlternatives() {
+		return targetAlternatives;
 	}
 
 }

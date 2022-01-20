@@ -6,7 +6,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 
 public class Construction implements IsSerializable {
 
-    private DetailedConstruction construction;
+    private String construction;
     private Pair<Integer, Integer> constructionIndices;
     private String bracketsText = "";
     /**
@@ -19,12 +19,12 @@ public class Construction implements IsSerializable {
 
     public Construction() {}
     
-    public Construction(DetailedConstruction construction, Pair<Integer, Integer> constructionIndices) {
+    public Construction(String construction, Pair<Integer, Integer> constructionIndices) {
         this.construction = construction;
         this.constructionIndices = constructionIndices;
     }
 
-    public DetailedConstruction getConstruction() { return construction; }
+    public String getConstruction() { return construction; }
     public Pair<Integer, Integer> getConstructionIndices() { return constructionIndices; }
     public String getBracketsText() { return bracketsText; }
     public ArrayList<Pair<String, Boolean>> getDistractors() { return distractors; }
@@ -36,7 +36,7 @@ public class Construction implements IsSerializable {
         this.constructionIndices = constructionIndices;
     }
     public void setDistractors(ArrayList<Pair<String, Boolean>> distractors) { this.distractors = distractors; }
-	public void setConstruction(DetailedConstruction construction) { this.construction = construction; }
+	public void setConstruction(String construction) { this.construction = construction; }
 	public void setConstructionText(String constructionText) { this.constructionText = constructionText; }
 	public void setSentenceIndex(int sentenceIndex) { this.sentenceIndex = sentenceIndex; }
 

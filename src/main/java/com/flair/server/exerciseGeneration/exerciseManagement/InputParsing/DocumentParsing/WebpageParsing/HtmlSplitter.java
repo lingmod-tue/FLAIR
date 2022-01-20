@@ -11,7 +11,7 @@ import com.flair.server.exerciseGeneration.exerciseManagement.TextPart;
 import com.flair.server.exerciseGeneration.exerciseManagement.nlpManagement.ConditionalConstruction;
 import com.flair.shared.exerciseGeneration.Construction;
 import com.flair.shared.exerciseGeneration.DetailedConstruction;
-import com.flair.shared.exerciseGeneration.ExerciseSettings;
+import com.flair.shared.exerciseGeneration.DocumentExerciseSettings;
 
 public class HtmlSplitter {
 
@@ -20,7 +20,7 @@ public class HtmlSplitter {
      * (including placeholder elements for questions) with the syntax needed by the H5P exercises
      * @return The list of pure HTML elements as required by the H5P exercises
      */
-    public static ExerciseData preparePureHtmlElements(WebpageData data, ExerciseSettings settings) {    
+    public static ExerciseData preparePureHtmlElements(WebpageData data, DocumentExerciseSettings settings) {    
 		ArrayList<TextPart> parts = new ArrayList<>();
         int sentenceCounter = 0;
         String htmlString = data.getDocument().toString();
@@ -64,7 +64,7 @@ public class HtmlSplitter {
      * @param sentenceId                The index of the current sentence
      */
     private static void extractPlaintextElementsForSentence(String sentence,
-                                                     int sentenceId, ArrayList<TextPart> parts, WebpageData data, ExerciseSettings settings) {
+                                                     int sentenceId, ArrayList<TextPart> parts, WebpageData data, DocumentExerciseSettings settings) {
     	HashMap<Integer, String> plainTextElements = data.getPlainTextElements();
     	int startIndex = sentence.indexOf("<span data-plaintextplaceholder>");
         while(startIndex > -1) {
@@ -98,7 +98,7 @@ public class HtmlSplitter {
      * @param settings			The exercise settings
      */
     private static void splitAtBlanks(String plainTextElement, ArrayList<TextPart> parts, int sentenceId, WebpageData data, 
-    		ExerciseSettings settings) {
+    		DocumentExerciseSettings settings) {
     	ArrayList<Blank> constructions = new ArrayList<>();
     	for(Fragment fragment : data.getFragments()) {
     		for(Blank c : fragment.getBlanksBoundaries()) {
@@ -133,13 +133,13 @@ public class HtmlSplitter {
 	            c.setConstructionType(construction.getConstruction());
 	            if(construction instanceof ConditionalConstruction) {
 	            	if(((ConditionalConstruction)construction).isMainClause()) {
-	            		if(c.getConstructionType() == DetailedConstruction.CONDREAL) {
+	            		if(c.getConstructionType().equals(DetailedConstruction.CONDREAL)) {
 		            		c.setConstructionType(DetailedConstruction.CONDREAL_MAIN);
 	            		} else {
 		            		c.setConstructionType(DetailedConstruction.CONDUNREAL_MAIN);
 	            		}
 	            	} else {
-	            		if(c.getConstructionType() == DetailedConstruction.CONDREAL) {
+	            		if(c.getConstructionType().equals(DetailedConstruction.CONDREAL)) {
 		            		c.setConstructionType(DetailedConstruction.CONDREAL_IF);
 	            		} else {
 		            		c.setConstructionType(DetailedConstruction.CONDUNREAL_IF);

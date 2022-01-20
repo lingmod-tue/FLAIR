@@ -17,10 +17,8 @@ public class CategorizeXmlGenerator extends SimpleExerciseXmlGenerator {
 	
 	@Override
 	public byte[] generateXMLFile(ExerciseData exerciseDefinition) {
-		XmlValues v = new XmlValues();
-		v.instructions = exerciseDefinition.getInstructions();
-		v.taskType = "CATEGORIZE";
-		v.givenWordsDraggable = true;
+		XmlValues v = new XmlValues(exerciseDefinition.getInstructions(), "CATEGORIZE");
+		v.setGivenWordsDraggable(true);
 		
 		HashMap<String, ArrayList<String>> pool = new HashMap<>();
 
@@ -55,15 +53,14 @@ public class CategorizeXmlGenerator extends SimpleExerciseXmlGenerator {
 			item.text = el.first;
 			item.target = StringUtils.join(el.second, "|");
 			item.inputType = "PHRASE";
-			v.items.add(item);
+			v.getItems().add(item);
 			
 			i++;
 		}
 						
 		Collections.shuffle(elements);
-		v.givenWords = StringUtils.join(elements, "|");
+		v.setGivenWords(StringUtils.join(elements, "|"));
 
-		
 		return generateFeedBookInputXml(v).getBytes(StandardCharsets.UTF_8);
 	}
 	
