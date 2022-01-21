@@ -32,10 +32,11 @@ public class ConfigBasedExerciseGenerator extends SimpleExerciseGenerator {
         }
 		
     	for(ExerciseData exercise : exerciseData) { 
-			NlpManager nlpManager = new NlpManager(parser, generator, exercise.getPlainText(), lemmatizer);
-
-			feedbackGenerator.generateFeedback(settings.getExerciseSettings(), nlpManager, exercise, 
-					exercise.getExerciseType(), exercise.getTopic());
+			if(settings.getExerciseSettings().isGenerateFeedback()) {
+				NlpManager nlpManager = new NlpManager(parser, generator, exercise.getPlainText(), lemmatizer);
+				feedbackGenerator.generateFeedback(settings.getExerciseSettings(), nlpManager, exercise, 
+						exercise.getExerciseType(), exercise.getTopic());
+			}
 			
 			if (isCancelled) {
 	        	return null;

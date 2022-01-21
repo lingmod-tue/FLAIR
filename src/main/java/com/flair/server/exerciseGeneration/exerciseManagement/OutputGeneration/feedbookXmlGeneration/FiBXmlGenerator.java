@@ -1,6 +1,7 @@
 package com.flair.server.exerciseGeneration.exerciseManagement.OutputGeneration.feedbookXmlGeneration;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collections;
 
 import org.apache.commons.lang.StringUtils;
@@ -32,7 +33,10 @@ public class FiBXmlGenerator extends SimpleExerciseXmlGenerator {
 				}
 				
 				previousGap = new Item();
-				previousGap.target = element.getValue();
+				ArrayList<String> targets = new ArrayList<>();
+				targets.add(element.getValue());
+				targets.addAll(((ConstructionTextPart)element).getTargetAlternatives());
+				previousGap.target = StringUtils.join(targets, "|");
 				previousGap.inputType = previousGap.target.matches(".*?[\\s\\h\\v].*?") ? "PHRASE" : "WORD";	
 				
 				sb = new StringBuilder();
