@@ -17,7 +17,7 @@ public class MtWXmlGenerator extends SimpleExerciseXmlGenerator {
 	public byte[] generateXMLFile(ExerciseData exerciseDefinition) {
 		XmlValues v = new XmlValues(exerciseDefinition.getInstructions(), "UNDERLINE");
 		Item item = new Item();
-		item.inputType = "UNDERLINE";
+		item.setInputType("UNDERLINE");
 		
 		ArrayList<Pair<Integer, Integer>> indices = new ArrayList<>();
 		StringBuilder sb = new StringBuilder();
@@ -50,9 +50,10 @@ public class MtWXmlGenerator extends SimpleExerciseXmlGenerator {
 			indexRanges.add(index.first + "-" + index.second);
 		}
 		
-		item.target = StringUtils.join(indexRanges, ",");
-		item.text = sb.toString();
+		item.setTarget(StringUtils.join(indexRanges, ","));
+		item.setText(sb.toString());
 		
+		//TODO check if we have no cases where Underline could have feedback
 		v.getItems().add(item);
 
 

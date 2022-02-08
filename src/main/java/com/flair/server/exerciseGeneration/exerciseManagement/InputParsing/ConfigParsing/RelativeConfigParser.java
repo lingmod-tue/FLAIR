@@ -1,9 +1,5 @@
 package com.flair.server.exerciseGeneration.exerciseManagement.InputParsing.ConfigParsing;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -17,83 +13,50 @@ import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseData;
 import com.flair.server.exerciseGeneration.exerciseManagement.HtmlTextPart;
 import com.flair.server.exerciseGeneration.exerciseManagement.PlainTextPart;
 import com.flair.server.exerciseGeneration.exerciseManagement.TextPart;
-import com.flair.server.exerciseGeneration.exerciseManagement.resourceManagement.ResourceLoader;
 import com.flair.server.utilities.ServerLogger;
 import com.flair.shared.exerciseGeneration.DetailedConstruction;
 import com.flair.shared.exerciseGeneration.ExerciseTopic;
 import com.flair.shared.exerciseGeneration.ExerciseType;
 import com.flair.shared.exerciseGeneration.Pair;
-import com.univocity.parsers.tsv.TsvParser;
-import com.univocity.parsers.tsv.TsvParserSettings;
 
 public class RelativeConfigParser extends ConfigParser {
 
 	@Override
-	public ArrayList<ExerciseData> parseConfigFile(InputStream inputStream) {
-		ArrayList<ExerciseConfigData> configData = new RelativeExcelFileReader().readExcelFile(inputStream);
-
-		List<String[]> exerciseConstellations = null;
-		try (InputStream content = ResourceLoader.loadFile("feedbook_exercise_configurations.tsv");
-				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(content))) {
-			TsvParserSettings settings = new TsvParserSettings();
-			settings.getFormat().setLineSeparator("\n");
-			TsvParser parser = new TsvParser(settings);
-
-			exerciseConstellations = parser.parseAll(bufferedReader);
-		} catch (IOException e) {
-			return null;
-		}
-		
-		ArrayList<ExerciseData> result = new ArrayList<>();
-		ArrayList<ExerciseConfigData> batch = new ArrayList<>();
-		for(ExerciseConfigData data : configData) {
-			if(batch.size() > 0 && batch.get(batch.size() - 1).getActivity() != data.getActivity()) {
-				ArrayList<ExerciseData> generatedExercises = generateExerciseForConfig(exerciseConstellations, batch);
-				if(generatedExercises != null) {
-					result.addAll(generatedExercises);
-				}
-				batch.clear();
-			}
-			
-			batch.add(data);
-		}
-		
-		if(batch.size() > 0) {
-			ArrayList<ExerciseData> generatedExercises = generateExerciseForConfig(exerciseConstellations, batch);
-			if(generatedExercises != null) {
-				result.addAll(generatedExercises);
-			}
-		}
-
-		return result;
+	protected boolean checkNewBatch(ArrayList<ExerciseConfigData> currentBatch, ExerciseConfigData newExerciseData) {
+		return currentBatch.size() > 0 && currentBatch.get(currentBatch.size() - 1).getActivity() != newExerciseData.getActivity();
 	}
 
-	/**
-	 * Generates all exercises defined in the resource file for conditional exercises,
-	 * for a single exercise defined in the uploaded file.
-	 * @param exerciseConstellations	The exercise definitions defined in the resource file
-	 * @param data						The exercise as defined in the uploaded file
-	 * @return	The generated exercises in abstracted format
-	 */
-	private ArrayList<ExerciseData> generateExerciseForConfig(List<String[]> exerciseConstellations,
+	@Override
+	protected ArrayList<ExerciseData> generateExerciseForConfig(List<String[]> exerciseConstellations,
 			ArrayList<ExerciseConfigData> data) {
 		//TODO: only for debug output:
-		for(ExerciseConfigData configData : data) {
-			RelativeTargetAndClauseItems clauseItems = determineClauseItems((RelativeExerciseConfigData)configData, true);
-			System.out.println(clauseItems.getSentenceClause1() + "\t" + clauseItems.getSentenceClause2());
-
-			HashSet<String> output = new HashSet<>();
-			if(!((RelativeExerciseConfigData)configData).getPronoun().equals("whose")) {
-				addIfNotNull(output, getRelativeSentence((RelativeExerciseConfigData)configData, true, false));
-				addIfNotNull(output, getRelativeSentence((RelativeExerciseConfigData)configData, true, true));
+		if(!data.get(0).getStamp().equals("contact clauses")) {
+			for(ExerciseConfigData configData : data) {
+				RelativeTargetAndClauseItems clauseItems = determineClauseItems((RelativeExerciseConfigData)configData, true);
+				StringBuilder sb = new StringBuilder();
+				sb.append(clauseItems.getSentenceClause1() + " " + clauseItems.getSentenceClause2());
+	
+				if(!((RelativeExerciseConfigData)configData).getPronoun().equals("whose")) {
+					String res = getRelativeSentence((RelativeExerciseConfigData)configData, true, false);
+					if(res != null) {
+						sb.append(";").append(res);
+					}
+					res = getRelativeSentence((RelativeExerciseConfigData)configData, true, true);
+					if(res != null) {
+						sb.append(";").append(res);
+					}
+				}
+				String res = getRelativeSentence((RelativeExerciseConfigData)configData, false, false);
+				if(res != null) {
+					sb.append(";").append(res);
+				}
+				res = getRelativeSentence((RelativeExerciseConfigData)configData, false, true);
+				if(res != null) {
+					sb.append(";").append(res);
+				}
+	
+				System.out.println(sb.toString());
 			}
-			addIfNotNull(output, getRelativeSentence((RelativeExerciseConfigData)configData, false, false));
-			addIfNotNull(output, getRelativeSentence((RelativeExerciseConfigData)configData, false, true));
-
-			for(String s : output) {
-				System.out.println(s);
-			}
-			System.out.println("\n");
 		}
 		// end TODO
 		
@@ -101,52 +64,72 @@ public class RelativeConfigParser extends ConfigParser {
 			return null;
 		}
 		
-		String lastBlockId = "";
 		ArrayList<ExerciseData> exercises = new ArrayList<>();
 
 		for (String[] configValues : exerciseConstellations) {
 			try {
-				if (configValues[0].equals("relatives")) {
-					if (!lastBlockId.equals(configValues[2])) {
-						lastBlockId = configValues[2];
-					}
-	
+				if (configValues[0].equals("relatives") && !data.get(0).getStamp().equals("contact clauses")) {	
 					ExerciseData d = null;
+					
 					if (configValues[3].equals("0")) {
-						d = generateMemoryTask(data, configValues[8].equals("true"));
+						d = generateMemoryTask(data, configValues[8] != null && configValues[8].equals("true"), configValues[8] == null || configValues[8].isEmpty());
 						d.setExerciseType(ExerciseType.MEMORY);
 					} else if (configValues[3].equals("1")) {
-						d = generateGapTask(data, configValues[8].equals("true"), false);
-						d.setExerciseType(ExerciseType.MARK_THE_WORDS);
+						d = generateGapTask(data, configValues[8] != null && configValues[8].equals("true"), false, configValues[8] == null ||configValues[8].isEmpty());
+						if(d != null) {
+							d.setExerciseType(ExerciseType.MARK_THE_WORDS);
+						}
 					} else if (configValues[3].equals("2")) {
-						d = generateGapTask(data, configValues[8].equals("true"), true);
-						d.setExerciseType(ExerciseType.SINGLE_CHOICE);
+						d = generateGapTask(data, configValues[8] != null && configValues[8].equals("true"), true, configValues[8] == null ||configValues[8].isEmpty());
+						if(d != null) {
+							d.setExerciseType(ExerciseType.SINGLE_CHOICE);
+						}
 					} else if (configValues[3].equals("3")) {
-						d = generateGapTask(data, configValues[8].equals("true"), false);
-						d.setExerciseType(ExerciseType.FILL_IN_THE_BLANKS);
+						d = generateGapTask(data, configValues[8] != null && configValues[8].equals("true"), false, configValues[8] == null ||configValues[8].isEmpty());
+						if(d != null) {
+							d.setExerciseType(ExerciseType.FILL_IN_THE_BLANKS);
+						}
 					} else if (configValues[3].equals("4")) {
-						d = generatePromptedTask(data, configValues[8].equals("true"));
+						d = generatePromptedTask(data, configValues[8] != null && configValues[8].equals("true"), configValues[8] == null ||configValues[8].isEmpty());
 						d.setExerciseType(ExerciseType.FILL_IN_THE_BLANKS);
 					} else if (configValues[3].equals("5")) {
 						d = generateOpenTask(data);
 						d.setExerciseType(ExerciseType.SHORT_ANSWER);
 					} else if (configValues[3].equals("6")) {
-						d = generateJSTask(data, configValues[8].equals("true"));
+						d = generateJSTask(data, configValues[8] != null && configValues[8].equals("true"), configValues[8] == null ||configValues[8].isEmpty());
 						if(d != null) {
 							d.setExerciseType(ExerciseType.JUMBLED_SENTENCES);
 						}
 					} 
 	
 					if (d != null) {
-	        			d.setExerciseTitle(configValues[2] + "/" + configValues[3] + "/" + data.get(0).getActivity());
+	        			d.setExerciseTitle(data.get(0).getStamp().replace("/", "_") + "/" + data.get(0).getActivity() + "/" + configValues[2] + "/" + configValues[3]);
 	        			d.setTopic(ExerciseTopic.RELATIVES);
 						exercises.add(d);
 					}
-	
+				} else if(configValues[0].equals("relatives_contact") && data.get(0).getStamp().equals("contact clauses")) {
+					ExerciseData d = null;
+					
+					if (configValues[3].equals("4")) {
+						d = generatePromptedTaskContact(data);
+						d.setExerciseType(ExerciseType.FILL_IN_THE_BLANKS);
+					} else if (configValues[3].equals("5")) {
+						d = generateOpenTaskContact(data);
+						d.setExerciseType(ExerciseType.SHORT_ANSWER);
+					} else if(configValues[3].equals("7")) {
+						d = generateCategorizeTask(data);
+						d.setExerciseType(ExerciseType.CATEGORIZE);
+					}
+					
+					if (d != null) {
+	        			d.setExerciseTitle(data.get(0).getStamp().replace("/", "_") + "/" + data.get(0).getActivity() + "/" + configValues[2] + "/" + configValues[3]);
+	        			d.setTopic(ExerciseTopic.RELATIVES);
+						exercises.add(d);
+					}
 				}
 			} catch(Exception e) {
 				if(configValues != null && configValues.length > 3) {
-					ServerLogger.get().error(e, "Exercise " + configValues[2] + "/" + configValues[3] + " could not be generated.\n" + e.toString());
+					ServerLogger.get().error(e, "Exercise " + data.get(0).getStamp().replace("/", "_") + "/" + data.get(0).getActivity() + "/" + configValues[2] + "/" + configValues[3] + " could not be generated.\n" + e.toString());
 				} else {
 					ServerLogger.get().error(e, "An exercise could not be generated.\n" + e.toString());
 				}
@@ -168,11 +151,15 @@ public class RelativeConfigParser extends ConfigParser {
 	 * @param clause1IntoClause2	<code>true</code> if clause 1 is to be inserted into clause 2
 	 * @return The exercise information
 	 */
-	private ExerciseData generateMemoryTask(ArrayList<ExerciseConfigData> configData, boolean clause1IntoClause2) {
+	private ExerciseData generateMemoryTask(ArrayList<ExerciseConfigData> configData, boolean clause1IntoClause2,
+			boolean randomizeClauseOrder) {
 		ArrayList<TextPart> parts = new ArrayList<>();
 		int sentenceId = 1;
 
 		for (ExerciseConfigData id : configData) {
+			if(randomizeClauseOrder) {
+				clause1IntoClause2 = Math.random() < 0.5;
+			}
 			RelativeExerciseConfigData itemData = (RelativeExerciseConfigData) id;
 			RelativeTargetAndClauseItems clauseItems = determineClauseItems(itemData, clause1IntoClause2);
 			
@@ -206,11 +193,15 @@ public class RelativeConfigParser extends ConfigParser {
 	 * @param addDistractors		<code>true</code> for MC exercises
 	 * @return The exercise information
 	 */
-	private ExerciseData generateGapTask(ArrayList<ExerciseConfigData> configData, boolean clause1IntoClause2, boolean addDistractors) {
+	private ExerciseData generateGapTask(ArrayList<ExerciseConfigData> configData, boolean clause1IntoClause2, 
+			boolean addDistractors, boolean randomizeClauseOrder) {
 		ArrayList<TextPart> parts = new ArrayList<>();
 		int sentenceId = 1;
 
 		for (ExerciseConfigData id : configData) {
+			if(randomizeClauseOrder) {
+				clause1IntoClause2 = Math.random() < 0.5;
+			}
 			RelativeExerciseConfigData itemData = (RelativeExerciseConfigData) id;
 
 			if(!(itemData.getPronoun().equals("whose") && clause1IntoClause2)) {				
@@ -259,6 +250,10 @@ public class RelativeConfigParser extends ConfigParser {
 			}
 		}
 
+		if(parts.size() == 0) {
+			return null;
+		}
+		
 		ExerciseData data = new ExerciseData(parts);
 		addPlainText(data);
 
@@ -272,11 +267,15 @@ public class RelativeConfigParser extends ConfigParser {
 	 * @param clause1IntoClause2	<code>true</code> if clause 1 is to be inserted into clause 2
 	 * @return The exercise information
 	 */
-	private ExerciseData generatePromptedTask(ArrayList<ExerciseConfigData> configData, boolean clause1IntoClause2) {
+	private ExerciseData generatePromptedTask(ArrayList<ExerciseConfigData> configData, boolean clause1IntoClause2,
+			boolean randomizeClauseOrder) {
 		ArrayList<TextPart> parts = new ArrayList<>();
 		int sentenceId = 1;
 
 		for (ExerciseConfigData id : configData) {
+			if(randomizeClauseOrder) {
+				clause1IntoClause2 = Math.random() < 0.5;
+			}
 			RelativeExerciseConfigData itemData = (RelativeExerciseConfigData) id;
 
 			ArrayList<RelativeClausePosition> positions = determineOrder(itemData, clause1IntoClause2, false);
@@ -413,21 +412,26 @@ public class RelativeConfigParser extends ConfigParser {
 	 * @param clause1IntoClause2	<code>true</code> if clause 1 is to be inserted into clause 2
 	 * @return The exercise information
 	 */
-	private ExerciseData generateJSTask(ArrayList<ExerciseConfigData> configData, boolean clause1IntoClause2) {
+	private ExerciseData generateJSTask(ArrayList<ExerciseConfigData> configData, boolean clause1IntoClause2,
+			boolean randomizeClauseOrder) {
 		ArrayList<TextPart> parts = new ArrayList<>();
 		int sentenceId = 1;
 
 		for (ExerciseConfigData id : configData) {	
+			if(randomizeClauseOrder) {
+				clause1IntoClause2 = Math.random() < 0.5;
+			}
 			RelativeExerciseConfigData itemData = (RelativeExerciseConfigData) id;
 		
-			ArrayList<ArrayList<String>> orders = new ArrayList<>();
-			addOrder(clause1IntoClause2, false, itemData, orders, null);
-			addOrder(clause1IntoClause2, true, itemData, orders, null);
-			if(orders.size() == 0) {
+			ArrayList<ArrayList<String>> orders = getOrders(itemData);
+			
+			if(orders == null) {
+				//TODO: we cannot use these exercises until we have the JS type with multiple correct answers in FeedBook
+				// we could also perform the check in the XML generator, but since we had to modify the chunk assembly as well,
+				// we need to change this class anyways when we can support multiple correct answers
+				System.out.println("No unambiguous JS generation possible.");
 				return null;
 			}
-			addOrder(!clause1IntoClause2, false, itemData, orders, orders.get(0));
-			addOrder(!clause1IntoClause2, true, itemData, orders, orders.get(0));
 			
 			for(int i = 0; i < orders.get(0).size(); i++) {
 				ConstructionTextPart c = new ConstructionTextPart(orders.get(0).get(i), sentenceId);
@@ -446,9 +450,156 @@ public class RelativeConfigParser extends ConfigParser {
 		return data;
 	}
 	
+	/**
+	 * Compiles the exercise information for Categorize exercises.
+	 * For contact clauses.
+	 * @param configData			The data of an exercise from the config file
+	 * @return The exercise information
+	 */
+	private ExerciseData generateCategorizeTask(ArrayList<ExerciseConfigData> configData) {
+		ArrayList<TextPart> parts = new ArrayList<>();
+		int sentenceId = 1;
+
+		for (ExerciseConfigData id : configData) {
+			RelativeExerciseConfigData itemData = (RelativeExerciseConfigData)id;
+			String category = itemData.isContact() ? "You can leave out the relative pronoun" : "You cannot leave out the pronoun";
+
+			ConstructionTextPart c = new ConstructionTextPart(itemData.getRelativeSentence(), sentenceId++);
+			c.setCategory(category);
+			c.setConstructionType(DetailedConstruction.REL_CLAUSE);
+			Distractor d = new Distractor("");
+			d.setFeedback(itemData.getFeedback());
+			c.getDistractors().add(d);
+			
+			parts.add(c);
+		}
+
+		ExerciseData data = new ExerciseData(parts);
+		addPlainText(data);
+
+		return data;
+	}
+	
+	/**
+	 * Compiles the exercise information for FiB exercises where the 2 clauses and 
+	 * the beginning of the sentence are given.
+	 * For contact clauses.
+	 * @return The exercise information
+	 */
+	private ExerciseData generatePromptedTaskContact(ArrayList<ExerciseConfigData> configData) {
+		ArrayList<TextPart> parts = new ArrayList<>();
+		int sentenceId = 1;
+
+		for (ExerciseConfigData id : configData) {
+			if (parts.size() > 0) {
+				parts.add(new HtmlTextPart(" <br><br>", sentenceId));
+			}
+			
+			RelativeExerciseConfigData itemData = (RelativeExerciseConfigData)id;
+			
+			parts.add(new PlainTextPart(itemData.getPositionsClause1().get(0).second + " " + itemData.getPositionsClause2().get(0).second, sentenceId));
+			parts.add(new HtmlTextPart(" <br>", sentenceId));
+						
+			String[] words = itemData.getContactRelativeSentence().split(" ");
+			String prompt = words[0] + " " + words[1];
+			parts.add(new PlainTextPart(prompt, sentenceId));
+			
+			ConstructionTextPart c = new ConstructionTextPart(itemData.getContactRelativeSentence().substring(prompt.length()).trim(), sentenceId);
+			c.setConstructionType(DetailedConstruction.REL_CLAUSE);
+			Distractor d = new Distractor("");
+			d.setFeedback(itemData.getFeedback());
+			c.getDistractors().add(d);
+			if(itemData.getAlternativeRelativeSentence().startsWith(prompt)) {
+				c.getTargetAlternatives().add(itemData.getAlternativeRelativeSentence().substring(prompt.length()).trim());
+			}
+						
+			parts.add(c);				
+									
+			sentenceId++;
+		}
+
+		ExerciseData data = new ExerciseData(parts);
+		addPlainText(data);
+
+		return data;
+	}
+	
+	/**
+	 * Compiles the exercise information for open exercises where only the 2 clauses are given.
+	 * For contact clauses.
+	 * @param configData	The data of an exercise from the config file
+	 * @return The exercise information
+	 */
+	private ExerciseData generateOpenTaskContact(ArrayList<ExerciseConfigData> configData) {
+		ArrayList<TextPart> parts = new ArrayList<>();
+		int sentenceId = 1;
+
+		for (ExerciseConfigData id : configData) {
+			RelativeExerciseConfigData itemData = (RelativeExerciseConfigData) id;
+			
+			if (parts.size() > 0) {
+				parts.add(new HtmlTextPart(" <br><br>", sentenceId));
+			}
+			
+			parts.add(new PlainTextPart(itemData.getPositionsClause1().get(0).second + " " + itemData.getPositionsClause2().get(0).second, sentenceId));
+			parts.add(new HtmlTextPart(" <br>", sentenceId));
+			
+			ConstructionTextPart c = new ConstructionTextPart(itemData.getContactRelativeSentence(), sentenceId);
+			c.getTargetAlternatives().add(itemData.getAlternativeRelativeSentence());
+			c.setConstructionType(DetailedConstruction.REL_CLAUSE);
+			Distractor d = new Distractor("");
+			d.setFeedback(itemData.getFeedback());
+			c.getDistractors().add(d);
+			
+			parts.add(c);
+
+			sentenceId++;
+		}
+
+		ExerciseData data = new ExerciseData(parts);
+		addPlainText(data);
+
+		return data;
+	}
+	
+	ArrayList<ArrayList<String>> getOrders(RelativeExerciseConfigData itemData) {
+		for(int i = 1; i <=4; i++) {
+			ArrayList<ArrayList<String>> orders = new ArrayList<>();
+			addOrder1(true, false, itemData, orders, null, i);
+			addOrder1(true, true, itemData, orders, orders.get(0), i);
+			addOrder1(false, false, itemData, orders, orders.get(0), i);
+			addOrder1(false, true, itemData, orders, orders.get(0), i);
+			
+			if(orders.size() == 1) {
+				//System.out.println("Order " + i);
+				return orders;
+			}
+		}
+		
+		return null;
+	}
+	
+	private void addOrder1(boolean clause1IntoClause2, boolean extrapose, RelativeExerciseConfigData itemData,
+			ArrayList<ArrayList<String>> orders, ArrayList<String> chunks, int i) {
+		ArrayList<String> order;
+		if(i == 1) {
+			order = getJSOrder1(itemData, clause1IntoClause2, extrapose);
+		} else if( i == 2) {
+			order = getJSOrder3(itemData, clause1IntoClause2, extrapose);
+		} else if( i == 3) {
+			order = getJSOrder4(itemData, clause1IntoClause2, extrapose);
+		} else {
+			order = getJSOrder2(itemData, clause1IntoClause2, extrapose);
+		}
+		if(order != null && (chunks == null || checkAlternativeCoveredByChunking(chunks, order)) && 
+				!checkOrderAlreadyCovered(orders, order)) {
+			orders.add(order);
+		}
+	}
+	
 	private void addOrder(boolean clause1IntoClause2, boolean extrapose, RelativeExerciseConfigData itemData,
 			ArrayList<ArrayList<String>> orders, ArrayList<String> chunks) {
-		ArrayList<String> order = getJSOrder(itemData, !clause1IntoClause2, extrapose);
+		ArrayList<String> order = getJSOrder(itemData, clause1IntoClause2, extrapose);
 		if(order != null && (chunks == null || checkAlternativeCoveredByChunking(chunks, order)) && 
 				!checkOrderAlreadyCovered(orders, order)) {
 			orders.add(order);
@@ -475,7 +626,12 @@ public class RelativeConfigParser extends ConfigParser {
 		Pair<Integer, Integer> commonReferenceClause2 = null;
 		for(Pair<Integer, String> position : itemData.getPositionsClause1()) {
 			for(Pair<Integer, String> position2 : itemData.getPositionsClause2()) {
-				if(position.first != 2 && position2.first != 2 && position.second.equals(position2.second)) {
+				if(position.first != 2 && position2.first != 2 && (position.second.equals(position2.second) ||
+						itemData.getPronoun().equals("whose") && 
+						(((position2.second.endsWith("'") || position2.second.endsWith("’")) && position.second.equals(position2.second.substring(0, position2.second.length() - 1)) || 
+								(position2.second.endsWith("'s")  || position2.second.endsWith("’s")) && position.second.equals(position2.second.substring(0, position2.second.length() - 2))) || 
+								((position.second.endsWith("'") || position.second.endsWith("’")) && position2.second.equals(position.second.substring(0, position.second.length() - 1)) || 
+										(position.second.endsWith("'s") || position.second.endsWith("’s")) && position2.second.equals(position.second.substring(0, position.second.length() - 2)))))) {
 					commonReferenceClause1 = new Pair<>(position.first, position.first);
 					commonReferenceClause2 = new Pair<>(position2.first, position2.first);
 					break;
@@ -506,7 +662,7 @@ public class RelativeConfigParser extends ConfigParser {
 			boolean clause1IntoClause2, boolean extrapose) {
 		RelativeTargetAndClauseItems clauseItems = determineClauseItems(itemData, clause1IntoClause2);
 		if(clauseItems.getCommonReferentMainClause() == null || clauseItems.getCommonReferentRelativeClause() == null) {
-			System.out.println("Line does not have common referent: " + itemData.getActivity() + "." + itemData.getItem());
+			System.out.println("Line does not have common referent: " + itemData.getStamp() + ", " + itemData.getActivity() + "." + itemData.getItem());
 			return null;
 		}
 		
@@ -670,9 +826,114 @@ public class RelativeConfigParser extends ConfigParser {
 		ArrayList<String> pos = new ArrayList<>();
 		for(int i = 1; i <= positions.size(); i++) {
 			if(i > 1 && positions.get(i - 2).isPronoun()) {
+				// concatenate the pronoun with the preceding and the succeeding position
+				pos.add(positions.get(i - 3).getValue() + " " + positions.get(i - 2).getValue() + " " + positions.get(i - 1).getValue());
+			} else if(!positions.get(i - 1).isPronoun() && i != positions.size() && !positions.get(i).isPronoun()) {
+				pos.add(positions.get(i - 1).getValue());
+			} 
+		}
+		
+		// Add the sentence final punctuation to the word chunk.
+		pos.set(pos.size() - 1, pos.get(pos.size() - 1) + positions.get(positions.size() - 1).getValue());
+		
+		return pos;
+	}
+	
+	/**
+	 * pronoun with succeeding item
+	 * punctuation as separate item
+	 */
+	private ArrayList<String> getJSOrder1(RelativeExerciseConfigData itemData, 
+			boolean clause1IntoClause2, boolean extrapose) {
+		ArrayList<RelativeClausePosition> positions = determineOrder(itemData, clause1IntoClause2, extrapose);
+		if(positions == null) {
+			return null;
+		}
+		
+		ArrayList<String> pos = new ArrayList<>();
+		for(int i = 1; i <= positions.size(); i++) {
+			if(i > 1 && positions.get(i - 2).isPronoun()) {
 				// concatenate the pronoun with the succeeding position
 				pos.add(positions.get(i - 2).getValue() + " " + positions.get(i - 1).getValue());
 			} else if(!positions.get(i - 1).isPronoun()) {
+				pos.add(positions.get(i - 1).getValue());
+			} 
+		}
+		
+		return pos;
+	}
+	
+	/**
+	 * pronoun with preceding and succeeding item
+	 * punctuation with last item
+	 */
+	private ArrayList<String> getJSOrder2(RelativeExerciseConfigData itemData, 
+			boolean clause1IntoClause2, boolean extrapose) {
+		ArrayList<RelativeClausePosition> positions = determineOrder(itemData, clause1IntoClause2, extrapose);
+		if(positions == null) {
+			return null;
+		}
+		
+		ArrayList<String> pos = new ArrayList<>();
+		for(int i = 1; i <= positions.size(); i++) {
+			if(i > 1 && positions.get(i - 2).isPronoun()) {
+				// concatenate the pronoun with the preceding and the succeeding position
+				pos.add(positions.get(i - 3).getValue() + " " + positions.get(i - 2).getValue() + " " + positions.get(i - 1).getValue());
+			} else if(!positions.get(i - 1).isPronoun() && i != positions.size() && !positions.get(i).isPronoun()) {
+				pos.add(positions.get(i - 1).getValue());
+			} 
+		}
+		
+		// Add the sentence final punctuation to the word chunk.
+		pos.set(pos.size() - 1, pos.get(pos.size() - 1) + positions.get(positions.size() - 1).getValue());
+		
+		return pos;
+	}
+	
+	/**
+	 * pronoun with succeeding item
+	 * punctuation with last item
+	 */
+	private ArrayList<String> getJSOrder3(RelativeExerciseConfigData itemData, 
+			boolean clause1IntoClause2, boolean extrapose) {
+		ArrayList<RelativeClausePosition> positions = determineOrder(itemData, clause1IntoClause2, extrapose);
+		if(positions == null) {
+			return null;
+		}
+		
+		ArrayList<String> pos = new ArrayList<>();
+		for(int i = 1; i <= positions.size(); i++) {
+			if(i > 1 && positions.get(i - 2).isPronoun()) {
+				// concatenate the pronoun with the succeeding position
+				pos.add(positions.get(i - 2).getValue() + " " + positions.get(i - 1).getValue());
+			} else if(!positions.get(i - 1).isPronoun() && i != positions.size()) {
+				pos.add(positions.get(i - 1).getValue());
+			} 
+		}
+		
+		// Add the sentence final punctuation to the word chunk.
+		pos.set(pos.size() - 1, pos.get(pos.size() - 1) + positions.get(positions.size() - 1).getValue());
+		
+		return pos;
+	}
+	
+	/**
+	 * pronoun with preceding and succeeding item
+	 * punctuation as separate item
+	 */
+	private ArrayList<String> getJSOrder4(RelativeExerciseConfigData itemData, 
+			boolean clause1IntoClause2, boolean extrapose) {
+		ArrayList<RelativeClausePosition> positions = determineOrder(itemData, clause1IntoClause2, extrapose);
+		if(positions == null) {
+			return null;
+		}
+		
+		ArrayList<String> pos = new ArrayList<>();
+		for(int i = 1; i <= positions.size(); i++) {
+			if(i > 1 && positions.get(i - 2).isPronoun()) {
+				// concatenate the pronoun with the preceding and the succeeding position
+				pos.add(positions.get(i - 3).getValue() + " " + positions.get(i - 2).getValue() + " " + positions.get(i - 1).getValue());
+			} else if(!positions.get(i - 1).isPronoun() && (i == positions.size() || !positions.get(i).isPronoun())) {
 				pos.add(positions.get(i - 1).getValue());
 			} 
 		}

@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -57,6 +58,7 @@ public class RelativeExcelFileReader extends ExcelFileReader {
 		        for(int c = 0; c < nCols; c++) {
 		            cell = row.getCell((short)c);
 		            if(cell != null) {
+		            	cell.setCellType(Cell.CELL_TYPE_STRING);
 		            	String cellValue = xTrim(cell.toString());
 	
 			            if(!cellValue.isEmpty()) {
@@ -75,18 +77,24 @@ public class RelativeExcelFileReader extends ExcelFileReader {
 			            		}
 				        	} else {
 				        		ArrayList<String> column = columnValues.get(columnHeaders.get(c));
-				        		column.add(cellValue);
+				        		if(column != null) {
+				        			column.add(cellValue);
+				        		}
 				        	}
 			            } else {
 			            	if(r != 1 && sheet.getRow(1).getCell((short)c) != null && !sheet.getRow(1).getCell((short)c).toString().isEmpty() && row.getCell(3) != null) {
 			            		ArrayList<String> column = columnValues.get(columnHeaders.get(c));
-				        		column.add("");
+			            		if(column != null) {
+					        		column.add("");
+				        		}
 			            	}
 			            }
 		            } else {
 		            	if(r != 1 && sheet.getRow(1).getCell((short)c) != null && !sheet.getRow(1).getCell((short)c).toString().isEmpty() && row.getCell(3) != null) {
 		            		ArrayList<String> column = columnValues.get(columnHeaders.get(c));
-			        		column.add("");
+		            		if(column != null) {
+				        		column.add("");
+			        		}
 		            	}
 		            }
 		        }
@@ -109,7 +117,7 @@ public class RelativeExcelFileReader extends ExcelFileReader {
 		for(Entry<Integer, String> entry : columnHeaders.entrySet()) {	// columns
 			for(int i = 0; i < columnValues.get(entry.getValue()).size(); i++) {	// rows
 				if(isFirstCol) {
-					// it's a new activity
+					// it's a new line
 					RelativeExerciseConfigData cd = new RelativeExerciseConfigData();
 					configData.add(cd);
 				}
@@ -120,9 +128,7 @@ public class RelativeExcelFileReader extends ExcelFileReader {
 		    		cd.setStamp(columnValues.get(entry.getValue()).get(i));
 		    	} else if(entry.getValue().equals("item")) {
 					cd.setItem((int)Float.parseFloat(columnValues.get(entry.getValue()).get(i)));
-		    	} /*else if(entry.getValue().equals("defining (1) / non-defining (2)")) {
-		    		cd.setDefining(columnValues.get(entry.getValue()).get(i).equals("1"));
-		    	} else if(entry.getValue().equals("Common reference in clause 1")) {
+		    	} /*else if(entry.getValue().equals("Common reference in clause 1")) {
 		    		String[] elements = columnValues.get(entry.getValue()).get(i).split("-");
 		    		if(elements.length == 1) {
 		    			cd.setCommonReferenceClause1(new Pair<>((int)Float.parseFloat(xTrim(elements[0])), (int)Float.parseFloat(elements[0])));
@@ -136,10 +142,6 @@ public class RelativeExcelFileReader extends ExcelFileReader {
 		    		} else if(elements.length == 2) {
 		    			cd.setCommonReferenceClause2(new Pair<>((int)Float.parseFloat(xTrim(elements[0])), (int)Float.parseFloat(xTrim(elements[1]))));
 		    		} 
-		    	} else if(entry.getValue().equals("Function  reference in clause 1")) {
-		    		cd.setFunctionReferenceClause1(columnValues.get(entry.getValue()).get(i));
-		    	} else if(entry.getValue().equals("Function  reference in clause 2")) {
-		    		cd.setFunctionReferenceClause2(columnValues.get(entry.getValue()).get(i));
 		    	} */else if(entry.getValue().equals("Relative pronoun")) {
 		    		cd.setPronoun(columnValues.get(entry.getValue()).get(i));
 		    	} else if(entry.getValue().startsWith("clause 1 position ") && !columnValues.get(entry.getValue()).get(i).isEmpty()) {

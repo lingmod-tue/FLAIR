@@ -50,9 +50,12 @@ public class CategorizeXmlGenerator extends SimpleExerciseXmlGenerator {
 			}
 			
 			Item item = new Item();
-			item.text = el.first;
-			item.target = StringUtils.join(el.second, "|");
-			item.inputType = "PHRASE";
+			item.setText(el.first);
+			item.setTarget(StringUtils.join(el.second, "|"));
+			item.setInputType("PHRASE");
+			
+			//TODO check if we have no cases where categorize could have feedback
+
 			v.getItems().add(item);
 			
 			i++;

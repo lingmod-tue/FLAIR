@@ -15,6 +15,11 @@ public class RelativeExerciseConfigData extends ExerciseConfigData {
 	private ArrayList<Pair<Integer, String>> positionsClause2 = new ArrayList<>();
 	private boolean isDefining;
 	private ArrayList<String> distractors = new ArrayList<>();
+	private boolean contact;
+	private String relativeSentence;
+	private String contactRelativeSentence;
+	private String alternativeRelativeSentence;
+	private String feedback;
 	
 	public String getPronoun() {
 		return pronoun;
@@ -66,6 +71,36 @@ public class RelativeExerciseConfigData extends ExerciseConfigData {
 	}
 	public ArrayList<String> getDistractors() {
 		return distractors;
+	}
+	public boolean isContact() {
+		return contact;
+	}
+	public void setContact(boolean contact) {
+		this.contact = contact;
+	}
+	public String getRelativeSentence() {
+		return relativeSentence;
+	}
+	public void setRelativeSentence(String relativeSentence) {
+		this.relativeSentence = relativeSentence;
+	}
+	public String getContactRelativeSentence() {
+		return contactRelativeSentence;
+	}
+	public void setContactRelativeSentence(String contactRelativeSentence) {
+		this.contactRelativeSentence = contactRelativeSentence;
+	}
+	public String getAlternativeRelativeSentence() {
+		return alternativeRelativeSentence;
+	}
+	public void setAlternativeRelativeSentence(String alternativeRelativeSentence) {
+		this.alternativeRelativeSentence = alternativeRelativeSentence;
+	}
+	public String getFeedback() {
+		return feedback;
+	}
+	public void setFeedback(String feedback) {
+		this.feedback = feedback;
 	}
 									
 }

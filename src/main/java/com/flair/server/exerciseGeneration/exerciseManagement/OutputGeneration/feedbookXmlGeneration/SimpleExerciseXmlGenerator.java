@@ -55,7 +55,7 @@ public abstract class SimpleExerciseXmlGenerator {
 		subTask.addAttribute("given_words_draggable", String.valueOf(values.isGivenWordsDraggable()));
 		subTask.addAttribute("feedback_disabled", String.valueOf(values.isFeedbackDisabled()));
 		subTask.addAttribute("support", values.getSupport());
-		subTask.addAttribute("evaluate_at_completion", String.valueOf(values.isEvaluateAtComplete()));
+		//subTask.addAttribute("evaluate_at_completion", String.valueOf(values.isEvaluateAtComplete()));
 	}
 	    
     /**
@@ -69,6 +69,7 @@ public abstract class SimpleExerciseXmlGenerator {
     	Element taskField = DocumentFactory.getInstance().createElement("TaskField");
     	
     	addTaskFieldAttributes(taskField, id, item);
+    	addFeedback(taskField, item);
     	    	
     	return taskField;
     }
@@ -79,13 +80,23 @@ public abstract class SimpleExerciseXmlGenerator {
      * @param distractors	The list of distractors for the current target
      */
     protected void addTaskFieldAttributes(Element taskField, int id, Item item) { 
-		taskField.addAttribute("text", item.text);
+		taskField.addAttribute("text", item.getText());
 		taskField.addAttribute("sort_index", id + "");
-		taskField.addAttribute("target", item.target);
-		taskField.addAttribute("example", item.example);
-		taskField.addAttribute("input_type", item.inputType);
+		taskField.addAttribute("target", item.getTarget());
+		taskField.addAttribute("example", item.getExample());
+		taskField.addAttribute("input_type", item.getInputType());
     }
     
+    protected void addFeedback(Element taskField, Item item) {
+    	if(item.getFeedback() != null) {
+    		Element feedback = DocumentFactory.getInstance().createElement("ManuallySpecifiedFeedback");
+    		feedback.addAttribute("feedback_message", item.getFeedback());
+        	feedback.addAttribute("target_construct", item.getLanguageConstruct());
+        	feedback.addAttribute("override_automatically_generated_feedback", "" + true);
+
+    		taskField.add(feedback);
+    	}
+    }
     
 
 }

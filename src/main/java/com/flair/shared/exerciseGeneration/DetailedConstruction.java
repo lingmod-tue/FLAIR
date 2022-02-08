@@ -100,5 +100,6 @@ public class DetailedConstruction {
 	public static final String WHICH = "which";
 	public static final String THAT = "that";
 	public static final String OTHERPRN = "otherRelPron";
+	public static final String REL_CLAUSE = "relativeClause";
 	public static final String SENTENCE_PART = "sentPart";
 }

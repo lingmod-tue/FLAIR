@@ -14,12 +14,6 @@ public class MemoryXmlGenerator extends SimpleExerciseXmlGenerator {
 	@Override
 	public byte[] generateXMLFile(ExerciseData exerciseDefinition) {
 		XmlValues v = new XmlValues(exerciseDefinition.getInstructions(), "MEMORY");
-		v.setSupport("[12/3 1:49 PM] Florian Nuxoll\n"
-				+ "<hr>Reminder:<ul><li>Simple past: often goes with <em>yesterday, ago, last</em>...</li><li>Present\n"
-				+ " perfect: often goes with with <em>since, for, ever, yet</em>…</li></ul>\n"
-				+ "\n"
-				+ "");
-		
 		Item item = new Item();
 		ArrayList<String> textElements = new ArrayList<>();
 		for(TextPart element : exerciseDefinition.getParts()) {
@@ -28,8 +22,10 @@ public class MemoryXmlGenerator extends SimpleExerciseXmlGenerator {
 				textElements.add(el.getValue() + " - " + el.getDistractors().get(0).getValue());
 			}
 		}
-		item.text = StringUtils.join(textElements, "|");
-		item.inputType = "MAPPING";
+		item.setText(StringUtils.join(textElements, "|"));
+		item.setInputType("MAPPING");
+
+		//TODO check if we have no cases where Memory tasks could have feedback
 		v.getItems().add(item);
 
 		return generateFeedBookInputXml(v).getBytes(StandardCharsets.UTF_8);

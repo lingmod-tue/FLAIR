@@ -1,12 +1,19 @@
 package com.flair.server.exerciseGeneration.exerciseManagement.InputParsing.ConfigParsing;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.flair.server.exerciseGeneration.exerciseManagement.ConstructionTextPart;
 import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseData;
 import com.flair.server.exerciseGeneration.exerciseManagement.TextPart;
+import com.flair.server.exerciseGeneration.exerciseManagement.resourceManagement.ResourceLoader;
 import com.flair.shared.exerciseGeneration.Pair;
+import com.univocity.parsers.tsv.TsvParser;
+import com.univocity.parsers.tsv.TsvParserSettings;
 
 public abstract class ConfigParser {
 	
@@ -64,6 +71,71 @@ public abstract class ConfigParser {
 	 * @return The exercise data structured into exercise types and blocks of max.
 	 *         10 items
 	 */
-	public abstract ArrayList<ExerciseData> parseConfigFile(InputStream inputStream);
+	public ArrayList<ExerciseData> parseConfigFile(InputStream inputStream, String topic) {
+		ArrayList<ExerciseConfigData> configData = new ExcelFileManager().readExcelFile(inputStream, topic);
 
+		List<String[]> exerciseConstellations = readExerciseConstellations();
+		if(exerciseConstellations == null) {
+			return null;
+		}
+				
+		ArrayList<ExerciseData> result = new ArrayList<>();
+		ArrayList<ExerciseConfigData> batch = new ArrayList<>();
+		for(ExerciseConfigData data : configData) {
+			if(checkNewBatch(batch, data)) {
+				ArrayList<ExerciseData> generatedExercises = generateExerciseForConfig(exerciseConstellations, batch);
+				
+				if(generatedExercises != null) {
+					result.addAll(generatedExercises);
+				}
+				batch.clear();
+			}
+			
+			batch.add(data);
+		}
+		
+		if(batch.size() > 0) {
+			ArrayList<ExerciseData> generatedExercises = generateExerciseForConfig(exerciseConstellations, batch);
+			if(generatedExercises != null) {
+				result.addAll(generatedExercises);
+			}
+		}
+		
+		return result;
+	}
+
+	/**
+	 * Reads the file of exercise constellations (exercise type with parameter settings) which we want to generate.
+	 * @return	The exercise constellations which we want to generate
+	 */
+	protected List<String[]> readExerciseConstellations() {
+		try (InputStream content = ResourceLoader.loadFile("feedbook_exercise_configurations.tsv");
+				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(content))) {
+			TsvParserSettings settings = new TsvParserSettings();
+			settings.getFormat().setLineSeparator("\n");
+			TsvParser parser = new TsvParser(settings);
+
+			return parser.parseAll(bufferedReader);
+		} catch (IOException e) {
+			return null;
+		}
+	}
+	
+	/**
+	 * Determines whether a new batch needs to be started.
+	 * @param currentBatch		The old batch
+	 * @param newExerciseData	The new exercise data
+	 * @return	<code>true</code> if a new batch needs to be started
+	 */
+	protected abstract boolean checkNewBatch(ArrayList<ExerciseConfigData> currentBatch, ExerciseConfigData newExerciseData);
+		
+	/**
+	 * Generates all exercises defined in the resource file for conditional exercises,
+	 * for a single exercise defined in the uploaded file.
+	 * @param exerciseConstellations	The exercise definitions defined in the resource file
+	 * @param data						The exercise as defined in the uploaded file
+	 * @return	The generated exercises in abstracted format
+	 */
+	protected abstract ArrayList<ExerciseData> generateExerciseForConfig(List<String[]> exerciseConstellations, ArrayList<ExerciseConfigData> data);
+	
 }

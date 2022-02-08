@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import com.flair.server.exerciseGeneration.exerciseManagement.ConstructionTextPart;
 import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseData;
 import com.flair.server.exerciseGeneration.exerciseManagement.TextPart;
+import com.flair.shared.exerciseGeneration.DetailedConstruction;
 import com.flair.shared.exerciseGeneration.ExerciseTopic;
 
 public class JSXmlGenerator extends SimpleExerciseXmlGenerator {
@@ -22,6 +23,7 @@ public class JSXmlGenerator extends SimpleExerciseXmlGenerator {
 		}
 		
 		int lastSentenceId = 0;
+		ConstructionTextPart previousElement = null;
 		ArrayList<ArrayList<String>> sentenceParts = new ArrayList<>();
 		for(TextPart element : exerciseDefinition.getParts()) {
 			if(element instanceof ConstructionTextPart) {
@@ -32,12 +34,19 @@ public class JSXmlGenerator extends SimpleExerciseXmlGenerator {
 						for(ArrayList<String> sentencePart : sentenceParts) {
 							alternatives.add(StringUtils.join(sentencePart, "|"));
 						}
-						item.target = StringUtils.join(alternatives, "#");
+						item.setTarget(StringUtils.join(alternatives, "#"));
 						Collections.shuffle(sentenceParts.get(0));
-						item.text = StringUtils.join(sentenceParts.get(0), "|");
-						item.inputType = "JUMBLED_SENTENCE_PARTS";
+						item.setText(StringUtils.join(sentenceParts.get(0), "|"));
+						item.setInputType("JUMBLED_SENTENCE_PARTS");
+						if(previousElement.getDistractors().size() > 0 && previousElement.getDistractors().get(0).getFeedback() != null) {
+							item.setFeedback(previousElement.getDistractors().get(0).getFeedback());
+							if(previousElement.getConstructionType().equals(DetailedConstruction.REL_CLAUSE)) {
+								item.setLanguageConstruct("RELATIVE_CLAUSE");
+							}
+						}
 						v.getItems().add(item);
 					}
+					previousElement = (ConstructionTextPart)element;
 					lastSentenceId = element.getSentenceId();
 					sentenceParts.clear();
 				}
@@ -61,10 +70,16 @@ public class JSXmlGenerator extends SimpleExerciseXmlGenerator {
 			for(ArrayList<String> sentencePart : sentenceParts) {
 				alternatives.add(StringUtils.join(sentencePart, "|"));
 			}
-			item.target = StringUtils.join(alternatives, "#");
+			item.setTarget(StringUtils.join(alternatives, "#"));
 			Collections.shuffle(sentenceParts.get(0));
-			item.text = StringUtils.join(sentenceParts.get(0), "|");
-			item.inputType = "JUMBLED_SENTENCE_PARTS";
+			item.setText(StringUtils.join(sentenceParts.get(0), "|"));
+			item.setInputType("JUMBLED_SENTENCE_PARTS");
+			if(previousElement.getDistractors().size() > 0 && previousElement.getDistractors().get(0).getFeedback() != null) {
+				item.setFeedback(previousElement.getDistractors().get(0).getFeedback());
+				if(previousElement.getConstructionType().equals(DetailedConstruction.REL_CLAUSE)) {
+					item.setLanguageConstruct("RELATIVE_CLAUSE");
+				}
+			}
 			v.getItems().add(item);
 		}
 

@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import com.flair.server.exerciseGeneration.exerciseManagement.ConstructionTextPart;
 import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseData;
 import com.flair.server.exerciseGeneration.exerciseManagement.TextPart;
+import com.flair.shared.exerciseGeneration.DetailedConstruction;
 
 
 public class DDSingleXmlGenerator extends SimpleExerciseXmlGenerator {
@@ -31,14 +32,20 @@ public class DDSingleXmlGenerator extends SimpleExerciseXmlGenerator {
 				} 
 				
 				if(previousGap != null) {
-					previousGap.text = sb.toString();
+					previousGap.setText(sb.toString());
 					v.getItems().add(previousGap);
 				}
 				
 				previousGap = new Item();
-				previousGap.target = element.getValue();
+				previousGap.setTarget(element.getValue());
 				draggables.add(element.getValue());
-				previousGap.inputType = previousGap.target.matches(".*?[\\s\\h\\v].*?") ? "PHRASE" : "WORD";	
+				previousGap.setInputType(previousGap.getTarget().matches(".*?[\\s\\h\\v].*?") ? "PHRASE" : "WORD");	
+				if(((ConstructionTextPart)element).getDistractors().size() > 0 && ((ConstructionTextPart)element).getDistractors().get(0).getFeedback() != null) {
+					previousGap.setFeedback(((ConstructionTextPart)element).getDistractors().get(0).getFeedback());
+					if(((ConstructionTextPart)element).getConstructionType().equals(DetailedConstruction.REL_CLAUSE)) {
+						previousGap.setLanguageConstruct("RELATIVE_CLAUSE");
+					}
+				}
 				
 				sb = new StringBuilder();
 
@@ -48,7 +55,7 @@ public class DDSingleXmlGenerator extends SimpleExerciseXmlGenerator {
 			}
 		}
 		
-		previousGap.text = sb.toString();
+		previousGap.setText(sb.toString());
 		v.getItems().add(previousGap);
 		
 		Collections.shuffle(draggables);

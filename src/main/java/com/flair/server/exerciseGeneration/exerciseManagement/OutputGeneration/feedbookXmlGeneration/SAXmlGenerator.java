@@ -7,6 +7,7 @@ import com.flair.server.exerciseGeneration.exerciseManagement.ConstructionTextPa
 import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseData;
 import com.flair.server.exerciseGeneration.exerciseManagement.PlainTextPart;
 import com.flair.server.exerciseGeneration.exerciseManagement.TextPart;
+import com.flair.shared.exerciseGeneration.DetailedConstruction;
 
 import edu.stanford.nlp.util.StringUtils;
 
@@ -22,13 +23,19 @@ public class SAXmlGenerator extends SimpleExerciseXmlGenerator {
 				sb.append(element.getValue());
 			} else if(element instanceof ConstructionTextPart) {
 				Item item = new Item();
-				item.text = sb.toString();	
+				item.setText(sb.toString());	
 				
 				ArrayList<String> targets = new ArrayList<>();
 				targets.add(element.getValue());
 				targets.addAll(((ConstructionTextPart)element).getTargetAlternatives());
-				item.target = StringUtils.join(targets, "|");
-				item.inputType = "SENTENCE";	
+				item.setTarget(StringUtils.join(targets, "|"));
+				item.setInputType("SENTENCE");	
+				if(((ConstructionTextPart)element).getDistractors().size() > 0 && ((ConstructionTextPart)element).getDistractors().get(0).getFeedback() != null) {
+					item.setFeedback(((ConstructionTextPart)element).getDistractors().get(0).getFeedback());
+					if(((ConstructionTextPart)element).getConstructionType().equals(DetailedConstruction.REL_CLAUSE)) {
+						item.setLanguageConstruct("RELATIVE_CLAUSE");
+					}
+				}
 				v.getItems().add(item);
 
 				sb = new StringBuilder();

@@ -9,6 +9,7 @@ import com.flair.server.exerciseGeneration.exerciseManagement.ConstructionTextPa
 import com.flair.server.exerciseGeneration.exerciseManagement.Distractor;
 import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseData;
 import com.flair.server.exerciseGeneration.exerciseManagement.TextPart;
+import com.flair.shared.exerciseGeneration.DetailedConstruction;
 
 public class SCXmlGenerator extends SimpleExerciseXmlGenerator {
 	
@@ -28,13 +29,19 @@ public class SCXmlGenerator extends SimpleExerciseXmlGenerator {
 				} 
 				
 				if(previousGap != null) {
-					previousGap.text = sb.toString();
+					previousGap.setText(sb.toString());
 					v.getItems().add(previousGap);
 				}
 				
 				previousGap = new Item();
-				previousGap.target = element.getValue();
-				previousGap.inputType = "MUL_CHOICE_BLANK";
+				previousGap.setTarget(element.getValue());
+				previousGap.setInputType("MUL_CHOICE_BLANK");
+				if(((ConstructionTextPart)element).getDistractors().size() > 0 && ((ConstructionTextPart)element).getDistractors().get(0).getFeedback() != null) {
+					previousGap.setFeedback(((ConstructionTextPart)element).getDistractors().get(0).getFeedback());
+					if(((ConstructionTextPart)element).getConstructionType().equals(DetailedConstruction.REL_CLAUSE)) {
+						previousGap.setLanguageConstruct("RELATIVE_CLAUSE");
+					}
+				}
 				
 				ArrayList<String> distractors = new ArrayList<>();
 				for(Distractor d : ((ConstructionTextPart)element).getDistractors()) {
@@ -42,14 +49,14 @@ public class SCXmlGenerator extends SimpleExerciseXmlGenerator {
 				}
 				distractors.add(((ConstructionTextPart)element).getTargetIndex(), ((ConstructionTextPart)element).getValue());
 
-				previousGap.example = StringUtils.join(distractors, "|");
-				previousGap.target = (distractors.indexOf(element.getValue()) + 1) + "";				
+				previousGap.setExample(StringUtils.join(distractors, "|"));
+				previousGap.setTarget((distractors.indexOf(element.getValue()) + 1) + "");				
 				
 				sb = new StringBuilder();
 			}
 		}
 
-		previousGap.text = sb.toString();
+		previousGap.setText(sb.toString());
 		v.getItems().add(previousGap);
 
 		return generateFeedBookInputXml(v).getBytes(StandardCharsets.UTF_8);

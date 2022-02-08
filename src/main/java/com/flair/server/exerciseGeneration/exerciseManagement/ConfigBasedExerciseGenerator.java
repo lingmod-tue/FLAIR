@@ -25,7 +25,7 @@ public class ConfigBasedExerciseGenerator extends SimpleExerciseGenerator {
 			ResourceDownloader resourceDownloader, ExerciseGenerationMetadata settings) {
 		ConfigExerciseSettings exerciseSettings = (ConfigExerciseSettings)settings.getExerciseSettings();
 		
-		ArrayList<ExerciseData> exerciseData = ConfigParserFactory.getParser(exerciseTopic).parseConfigFile(new ByteArrayInputStream(exerciseSettings.getFileStream()));
+		ArrayList<ExerciseData> exerciseData = ConfigParserFactory.getParser(exerciseTopic).parseConfigFile(new ByteArrayInputStream(exerciseSettings.getFileStream()), exerciseTopic);
 		
 		if (isCancelled) {
         	return null;

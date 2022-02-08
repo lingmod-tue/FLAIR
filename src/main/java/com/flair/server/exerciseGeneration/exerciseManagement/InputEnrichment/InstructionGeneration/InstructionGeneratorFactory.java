@@ -8,8 +8,10 @@ public class InstructionGeneratorFactory {
     public static InstructionGenerator getGenerator(String topic, String type) {
     	if(type.equals(ExerciseType.CATEGORIZE)) {
 			if(topic.equals(ExerciseTopic.CONDITIONALS)) {
-				return new CategorizeInstructionGenerator();
-			} 
+				return new CategorizeConditionalInstructionGenerator();
+			} else if(topic.equals(ExerciseTopic.RELATIVES)) {
+				return new CategorizeRelativeInstructionGenerator();
+			}
 		} else if(type.equals(ExerciseType.FILL_IN_THE_BLANKS) || type.equals(ExerciseType.SHORT_ANSWER)) {
 			if(topic.equals(ExerciseTopic.COMPARISON)) {
 				return new FiBComparisonInstructionGenerator();

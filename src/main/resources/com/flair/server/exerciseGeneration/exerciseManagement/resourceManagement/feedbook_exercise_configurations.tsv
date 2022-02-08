@@ -126,3 +126,12 @@ relatives	SC	2	2					false
 relatives	FiB	2	3					false
 relatives	FiB	2	4					false
 relatives	JS	2	6					false
+relatives	Memory	3	0					
+relatives	Underline	3	1					
+relatives	SC	3	2					
+relatives	FiB	3	3					
+relatives	FiB	3	4					
+relatives	JS	3	6									
+relatives_contact	FiB	1	4											
+relatives_contact	FiB	1	5											
+relatives_contact	Cat	1	7											

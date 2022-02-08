@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 import com.flair.server.exerciseGeneration.exerciseManagement.ConstructionTextPart;
 import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseData;
 import com.flair.server.exerciseGeneration.exerciseManagement.TextPart;
+import com.flair.shared.exerciseGeneration.DetailedConstruction;
 
 public class FiBXmlGenerator extends SimpleExerciseXmlGenerator {
 	
@@ -28,7 +29,7 @@ public class FiBXmlGenerator extends SimpleExerciseXmlGenerator {
 				} 
 				
 				if(previousGap != null) {
-					previousGap.text = sb.toString();
+					previousGap.setText(sb.toString());
 					v.getItems().add(previousGap);
 				}
 				
@@ -36,8 +37,14 @@ public class FiBXmlGenerator extends SimpleExerciseXmlGenerator {
 				ArrayList<String> targets = new ArrayList<>();
 				targets.add(element.getValue());
 				targets.addAll(((ConstructionTextPart)element).getTargetAlternatives());
-				previousGap.target = StringUtils.join(targets, "|");
-				previousGap.inputType = previousGap.target.matches(".*?[\\s\\h\\v].*?") ? "PHRASE" : "WORD";	
+				previousGap.setTarget(StringUtils.join(targets, "|"));
+				previousGap.setInputType(previousGap.getTarget().matches(".*?[\\s\\h\\v].*?") ? "PHRASE" : "WORD");	
+				if(((ConstructionTextPart)element).getDistractors().size() > 0 && ((ConstructionTextPart)element).getDistractors().get(0).getFeedback() != null) {
+					previousGap.setFeedback(((ConstructionTextPart)element).getDistractors().get(0).getFeedback());
+					if(((ConstructionTextPart)element).getConstructionType().equals(DetailedConstruction.REL_CLAUSE)) {
+						previousGap.setLanguageConstruct("RELATIVE_CLAUSE");
+					}
+				}
 				
 				sb = new StringBuilder();
 
@@ -47,7 +54,7 @@ public class FiBXmlGenerator extends SimpleExerciseXmlGenerator {
 			}
 		}
 		
-		previousGap.text = sb.toString();
+		previousGap.setText(sb.toString());
 		v.getItems().add(previousGap);
 		
 		if(exerciseDefinition.getInstructionLemmas().size() > 0) {
