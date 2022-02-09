@@ -228,3 +228,18 @@ ConstructionSliderBundleGerman	pnlPraepositionenUI	Präpositionen
 ConstructionSliderBundleGerman	pnlNomenUI	Nomen
 ConstructionSliderBundleGerman	pnlNominalisierungenUI	Nominalisierungen
 ConstructionSliderBundleGerman	pnlAttributeUI	Attribute
+
+AboutPage	lblDescIntro	FLAIR ist ein Online-Tool für Lerner und Lehrer von Sprachen. FLAIR:
+AboutPage	lblSearchBullet	durchsucht das Web nach einem gewünschten Thema
+AboutPage	lblAnaylzeBullet	analysiert die Suchergebnisse auf Grammatikkonstruktionen und Schwierigkeitsgrade
+AboutPage	lblRerankBullet	bewertet die Ergebnisse nach Ihren (pädagogischen oder lern-spezifischen) Bedürfnissen, die Sie in den Einstellungen festlegt haben
+AboutPage	lblPapers	VERÖFFENTLICHUNGEN
+AboutPage	lblThesis	MA-Arbeit
+AboutPage	lblBEA	BEA-Artikel
+AboutPage	lblSystem	Systembeschreibung
+AboutPage	lblAdditional	dummy 
+AboutPage	lblAWL	 dummy
+AboutPage	lblThirdParty	DRITT-WERKZEUGE
+AboutPage	lblLicense	LIZENZ
+AboutPage	lblLicenseStmt	FLAIR tool is licensed under the
+AboutPage	btnAboutCloseUI	Schließen

@@ -1,14 +1,18 @@
 package com.flair.client.presentation.widgets;
 
-import com.flair.client.localization.LocalizationEngine;
 import com.flair.client.localization.LocalizedComposite;
+import com.flair.client.localization.LocalizedFieldType;
+import com.flair.client.localization.annotations.LocalizedField;
 import com.flair.client.localization.interfaces.LocalizationBinder;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
+
 import gwt.material.design.client.ui.MaterialButton;
 import gwt.material.design.client.ui.MaterialDialog;
+import gwt.material.design.client.ui.MaterialLabel;
+import gwt.material.design.client.ui.MaterialLink;
 
 public class AboutPage extends LocalizedComposite {
 
@@ -22,22 +26,55 @@ public class AboutPage extends LocalizedComposite {
 	interface AboutPageLocalizationBinder extends LocalizationBinder<AboutPage> {}
 
 	@UiField
-	MaterialDialog mdlAboutEnUI;
+	MaterialDialog mdlAboutUI;
 	@UiField
-	MaterialButton btnAboutEnCloseUI;
+	@LocalizedField(type = LocalizedFieldType.TEXT_BASIC)
+	MaterialLabel lblDescIntro;
 	@UiField
-	MaterialDialog mdlAboutDeUI;
+	@LocalizedField(type = LocalizedFieldType.TEXT_BASIC)
+	MaterialLabel lblSearchBullet;
 	@UiField
-	MaterialButton btnAboutDeCloseUI;
+	@LocalizedField(type = LocalizedFieldType.TEXT_BASIC)
+	MaterialLabel lblAnaylzeBullet;
+	@UiField
+	@LocalizedField(type = LocalizedFieldType.TEXT_BASIC)
+	MaterialLabel lblRerankBullet;
+	@UiField
+	@LocalizedField(type = LocalizedFieldType.TEXT_BASIC)
+	MaterialLabel lblPapers;
+	@UiField
+	@LocalizedField(type = LocalizedFieldType.TEXT_BUTTON)
+	MaterialLink lblThesis;
+	@UiField
+	@LocalizedField(type = LocalizedFieldType.TEXT_BUTTON)
+	MaterialLink lblBEA;
+	@UiField
+	@LocalizedField(type = LocalizedFieldType.TEXT_BUTTON)
+	MaterialLink lblSystem;
+	@UiField
+	@LocalizedField(type = LocalizedFieldType.TEXT_BASIC)
+	MaterialLabel lblAdditional;
+	@UiField
+	@LocalizedField(type = LocalizedFieldType.TEXT_BUTTON)
+	MaterialLink lblAWL;
+	@UiField
+	@LocalizedField(type = LocalizedFieldType.TEXT_BASIC)
+	MaterialLabel lblThirdParty;
+	@UiField
+	@LocalizedField(type = LocalizedFieldType.TEXT_BASIC)
+	MaterialLabel lblLicense;
+	@UiField
+	@LocalizedField(type = LocalizedFieldType.TEXT_BASIC)
+	MaterialLabel lblLicenseStmt;
+	@UiField
+	@LocalizedField(type = LocalizedFieldType.TEXT_BUTTON)
+	MaterialButton btnAboutCloseUI;
 
 	private void initHandlers() {
-		btnAboutEnCloseUI.addClickHandler(e -> {
-			mdlAboutEnUI.close();
+		btnAboutCloseUI.addClickHandler(e -> {
+			mdlAboutUI.close();
 		});
 
-		btnAboutDeCloseUI.addClickHandler(e -> {
-			mdlAboutDeUI.close();
-		});
 	}
 
 	public AboutPage() {
@@ -48,18 +85,7 @@ public class AboutPage extends LocalizedComposite {
 	}
 
 	public void show() {
-		switch (LocalizationEngine.get().getLanguage()) {
-		case ENGLISH:
-			mdlAboutEnUI.open();
-			break;
-		case GERMAN:
-			mdlAboutDeUI.open();
-			break;
-		}
+		mdlAboutUI.open();
 	}
 
-	public void hide() {
-		mdlAboutEnUI.close();
-		mdlAboutDeUI.close();
-	}
 }

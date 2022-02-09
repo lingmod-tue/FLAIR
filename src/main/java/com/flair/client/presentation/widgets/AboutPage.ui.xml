@@ -1,301 +1,247 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-             xmlns:g="urn:import:com.google.gwt.user.client.ui"
-             xmlns:m="urn:import:gwt.material.design.client.ui">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:m="urn:import:gwt.material.design.client.ui">
 	<ui:style>
 	.brand-logo {
 		padding: 1px 1px 1px 1px;
-		height: 200px;
+		text-align: center;
+	}
+	
+	.text-orange {
+		color: darkorange;
+		font-weight: bold;
+	}
+	
+	.width-adjusted {
+		display: inline-block;
+	}
+	
+	.centered {
+		text-align: center;
+	}
+	
+	.indent-reversed {
+		margin-left: -10px;
+	}
+	
+	.spaced-text {
+		padding: 0px;
+		margin-right: 5px;
+	}
+	
+	.indent {
+		margin-left: 20px;
 	}
 	</ui:style>
 
 	<m:MaterialContainer>
-        <m:MaterialDialog ui:field="mdlAboutEnUI" dismissible="true">
-            <m:MaterialDialogContent>
-				<g:HTML>
-					<center>
-						<h3 class="modal-title">
-							<img class="{style.brand-logo} modal-title" src="img/logo_2.png"
-								alt="About FLAIR" />
-						</h3>
-						<p>
-							<span style="color:darkorange">
+		<m:MaterialDialog ui:field="mdlAboutUI"
+			dismissible="true">
+			<m:MaterialDialogHeader>
+				<m:MaterialRow addStyleNames="{style.brand-logo}">
+					<m:MaterialImage url="img/logo_2.png"
+						caption="About FLAIR" height="200px" />
+				</m:MaterialRow>
+				<g:FlowPanel addStyleNames="{style.centered}">
+					<m:MaterialLabel text="by"
+						addStyleNames="{style.text-orange},{style.width-adjusted},{style.spaced-text}" />
+					<m:MaterialLink
+						href="https://scholar.google.de/citations?user=L_voVf4AAAAJ&amp;hl=en"
+						target="_blank" text="Maria Chinkina"
+						addStyleNames="{style.width-adjusted}" />
+					<m:MaterialLink iconType="MAIL_OUTLINE"
+						textColor="BLUE_LIGHTEN_1" iconSize="TINY"
+						href="mailto:mchnkina@sfs.uni-tuebingen.de?Subject=FLAIR%20tool"
+						target="_top" addStyleNames="{style.width-adjusted}"
+						title="write to Maria Chinkina" />
+					<m:MaterialLabel text="&amp;"
+						addStyleNames="{style.width-adjusted},{style.indent-reversed},{style.spaced-text}" />
+					<m:MaterialLink
+						href="http://sfs.uni-tuebingen.de/~mkannan/" target="_blank"
+						text="Madeeswaran Kannan" addStyleNames="{style.width-adjusted}" />
+					<m:MaterialLink iconType="MAIL_OUTLINE"
+						textColor="BLUE_LIGHTEN_1" iconSize="TINY"
+						href="mailto:mkannan@sfs.uni-tuebingen.de?Subject=FLAIR%20tool"
+						target="_top" addStyleNames="{style.width-adjusted}"
+						title="write to Madeeswaran Kannan" />
+					<m:MaterialLabel text=", supervised by"
+						addStyleNames="{style.width-adjusted},{style.indent-reversed},{style.spaced-text}" />
+					<m:MaterialLink
+						href="http://sfs.uni-tuebingen.de/~dm/" target="_blank"
+						text="Prof. Dr. Detmar Meurers"
+						addStyleNames="{style.width-adjusted}" />
+				</g:FlowPanel>
+				<g:FlowPanel addStyleNames="{style.centered}">
+					<m:MaterialLabel text="@"
+						addStyleNames="{style.text-orange},{style.width-adjusted},{style.spaced-text}" />
+					<m:MaterialLabel
+						text="University of Tübingen, Germany"
+						addStyleNames="{style.width-adjusted}" />
+					<m:MaterialLabel text="|"
+						addStyleNames="{style.text-orange},{style.width-adjusted}" />
+					<m:MaterialLabel text="2015-2020"
+						addStyleNames="{style.width-adjusted}" />
+				</g:FlowPanel>
+				<g:FlowPanel addStyleNames="{style.centered}">
+					<m:MaterialLabel text="Version 2.1"
+						addStyleNames="{style.width-adjusted}" />
+				</g:FlowPanel>
+			</m:MaterialDialogHeader>
+			<m:MaterialDialogContent>
+				<m:MaterialRow marginBottom="5">
+					<m:MaterialLabel ui:field="lblDescIntro"
+						addStyleNames="{style.width-adjusted},{style.spaced-text}" />
+					<m:MaterialLabel text=":"
+						addStyleNames="{style.width-adjusted}" />
+				</m:MaterialRow>
+				<m:MaterialRow margin="0" padding="0">
+					<m:MaterialLabel text="●"
+						addStyleNames="{style.indent},{style.width-adjusted},{style.spaced-text}" />
+					<m:MaterialLabel ui:field="lblSearchBullet"
+						addStyleNames="{style.width-adjusted}" />
+				</m:MaterialRow>
+				<m:MaterialRow margin="0" padding="0">
+					<m:MaterialLabel text="●"
+						addStyleNames="{style.indent},{style.width-adjusted},{style.spaced-text}" />
+					<m:MaterialLabel ui:field="lblAnaylzeBullet"
+						addStyleNames="{style.width-adjusted}" />
+				</m:MaterialRow>
+				<m:MaterialRow margin="0" padding="0">
+					<m:MaterialLabel text="●"
+						addStyleNames="{style.indent},{style.width-adjusted},{style.spaced-text}" />
+					<m:MaterialLabel ui:field="lblRerankBullet"
+						addStyleNames="{style.width-adjusted}" />
+				</m:MaterialRow>
+				<!-- <m:MaterialRow margin="0" padding="0"> <m:MaterialLabel text="● 
+					generates factual questions based on the text in the results" addStyleNames="{style.indent}"/> 
+					</m:MaterialRow> -->
 
-								<b>by</b>
-							</span>
-							<a href="http://sfs.uni-tuebingen.de/~mchnkina/" target="_blank">Maria
-								Chinkina</a>
-							<a href="mailto:maria.chinkina@uni-tuebingen.de?Subject=FLAIR%20tool"
-								target="_top" title="write to Maria Chinkina">
-								<span class="glyphicon glyphicon-envelope"></span>
-							</a>
-							&amp;
-							<a href="http://sfs.uni-tuebingen.de/~mkannan/" target="_blank">Madeeswaran
-								Kannan</a>
-							<a href="mailto:mkannan@sfs.uni-tuebingen.de?Subject=FLAIR%20tool"
-								target="_top" title="write to Madeeswaran Kannan">
-								<span class="glyphicon glyphicon-envelope"></span>
-							</a>, supervised by
-							<a href="http://sfs.uni-tuebingen.de/~dm/" target="_blank">Prof. Dr.
-								Detmar Meurers</a>
-							<br />
-							<span style="color:darkorange">@</span>
-							University of Tübingen, Germany
-							<span style="color:darkorange">|</span>
-							2015-2020
-							<br />
-                            Version 2.1
-						</p>
-					</center>
+				<m:MaterialRow margin="0" padding="0" marginTop="40"
+					marginBottom="10">
+					<m:MaterialLabel ui:field="lblPapers"
+						fontWeight="BOLD" addStyleNames="{style.width-adjusted}" />
+					<m:MaterialLabel text=":" fontWeight="BOLD"
+						addStyleNames="{style.width-adjusted}" />
+				</m:MaterialRow>
+				<m:MaterialRow margin="0" padding="0">
+					<m:MaterialLink ui:field="lblThesis"
+						href="http://sfs.uni-tuebingen.de/~mchnkina/downloads/Chinkina_Maria_thesis_2015.pdf"
+						target="_blank"
+						addStyleNames="{style.width-adjusted},{style.spaced-text}" />
+					<m:MaterialLabel text="(Maria Chinkina)"
+						addStyleNames="{style.width-adjusted}" />
+				</m:MaterialRow>
+				<m:MaterialRow margin="0" padding="0">
+					<m:MaterialLink ui:field="lblBEA"
+						href="https://aclanthology.org/W16-0521.pdf" target="_blank"
+						addStyleNames="{style.width-adjusted},{style.spaced-text}" />
+					<m:MaterialLabel
+						text="(Maria Chinkina, Detmar Meurers)"
+						addStyleNames="{style.width-adjusted}" />
+				</m:MaterialRow>
+				<m:MaterialRow margin="0" padding="0">
+					<m:MaterialLink ui:field="lblSystem"
+						href="https://aclanthology.org/P16-4002/" target="_blank"
+						addStyleNames="{style.width-adjusted},{style.spaced-text}" />
+					<m:MaterialLabel
+						text="(Maria Chinkina, Madeeswaran Kannan, Detmar Meurers)"
+						addStyleNames="{style.width-adjusted}" />
+				</m:MaterialRow>
+				<m:MaterialRow margin="0" padding="0" marginTop="40"
+					marginBottom="10">
+					<m:MaterialLabel ui:field="lblAdditional"
+						fontWeight="BOLD" addStyleNames="{style.width-adjusted}" />
+					<m:MaterialLabel text=":" fontWeight="BOLD"
+						addStyleNames="{style.width-adjusted}" />
+				</m:MaterialRow>
+				<m:MaterialRow margin="0" padding="0">
+					<m:MaterialLink ui:field="lblAWL"
+						href="https://www.wgtn.ac.nz/lals/resources/academicwordlist/publications/AWLmostfreqsublists.pdf"
+						target="_blank"
+						addStyleNames="{style.width-adjusted},{style.spaced-text}" />
+					<m:MaterialLabel text="("
+						addStyleNames="{style.width-adjusted}" />
+					<m:MaterialLink
+						href="https://www.victoria.ac.nz/__data/assets/pdf_file/0020/1626131/Coxhead-2000.pdf"
+						target="_blank" text="Coxhead, 2000"
+						addStyleNames="{style.width-adjusted}" />
+					<m:MaterialLabel text=")"
+						addStyleNames="{style.width-adjusted}" />
+				</m:MaterialRow>
+				<m:MaterialRow margin="0" padding="0" marginTop="40"
+					marginBottom="10">
+					<m:MaterialLabel ui:field="lblThirdParty"
+						fontWeight="BOLD" addStyleNames="{style.width-adjusted}" />
+					<m:MaterialLabel text=":" fontWeight="BOLD"
+						addStyleNames="{style.width-adjusted}" />
+				</m:MaterialRow>
+				<m:MaterialRow margin="0" padding="0">
+					<m:MaterialLabel text="Back-end:"
+						addStyleNames="{style.width-adjusted},{style.spaced-text}" />
+					<m:MaterialLink
+						href="https://www.microsoft.com/en-us/bing/apis/bing-web-search-api"
+						target="_blank" text="Microsoft Bing API"
+						addStyleNames="{style.width-adjusted}" />
+					<m:MaterialLabel text=","
+						addStyleNames="{style.width-adjusted},{style.spaced-text}" />
+					<m:MaterialLink href="https://tika.apache.org/"
+						target="_blank" text="Apache Tika"
+						addStyleNames="{style.width-adjusted}" />
+					<m:MaterialLabel text=","
+						addStyleNames="{style.width-adjusted},{style.spaced-text}" />
+					<m:MaterialLink
+						href="http://stanfordnlp.github.io/CoreNLP/" target="_blank"
+						text="Stanford CoreNLP" addStyleNames="{style.width-adjusted}" />
+				</m:MaterialRow>
+				<m:MaterialRow margin="0" padding="0">
+					<m:MaterialLabel text="Front-end"
+						addStyleNames="{style.width-adjusted},{style.spaced-text}" />
+					<m:MaterialLink href="http://www.gwtproject.org/"
+						target="_blank" text="Google Web Toolkit"
+						addStyleNames="{style.width-adjusted}" />
+					<m:MaterialLabel text=","
+						addStyleNames="{style.width-adjusted},{style.spaced-text}" />
+					<m:MaterialLink
+						href="https://gwtmaterialdesign.github.io/gwt-material-demo/"
+						target="_blank" text="GWT Material"
+						addStyleNames="{style.width-adjusted}" />
+					<m:MaterialLabel text=","
+						addStyleNames="{style.width-adjusted},{style.spaced-text}" />
+					<m:MaterialLink href="https://d3js.org"
+						target="_blank" text="d3" addStyleNames="{style.width-adjusted}" />
+				</m:MaterialRow>
+				<m:MaterialRow margin="0" padding="0" marginTop="40"
+					marginBottom="10">
+					<m:MaterialLabel ui:field="lblLicense"
+						fontWeight="BOLD" addStyleNames="{style.width-adjusted}" />
+					<m:MaterialLabel text=":" fontWeight="BOLD"
+						addStyleNames="{style.width-adjusted}" />
+				</m:MaterialRow>
+				<m:MaterialRow margin="0" padding="0">
+					<m:MaterialLink
+						href="https://www.gnu.org/licenses/gpl-3.0.en.html"
+						target="_blank">
+						<m:MaterialImage
+							url="https://www.gnu.org/graphics/gplv3-127x51.png"
+							caption="GPLv3"></m:MaterialImage>
+					</m:MaterialLink>
+				</m:MaterialRow>
+				<m:MaterialRow margin="0" padding="0">
+					<m:MaterialLabel ui:field="lblLicenseStmt"
+						addStyleNames="{style.width-adjusted},{style.spaced-text}" />
+					<m:MaterialLink
+						href="https://www.gnu.org/licenses/gpl-3.0.en.html"
+						text="GNU General Public License 3.0" target="_blank" />
+					<m:MaterialLabel text="."
+						addStyleNames="{style.width-adjusted}" />
+				</m:MaterialRow>
+			</m:MaterialDialogContent>
 
-					<div style="text-align: left">
-						<p>FLAIR is an online tool for language teachers and learners
-							that:
-						</p>
-						<!-- No idea why the bullets don't show up (probably due to some CSS 
-							bollocks) - We'll fake it instead -->
-						<ul>
-							<li>● searches the web for a topic of interest </li>
-							<li>● analyzes the results for grammatical constructions and
-								readability levels
-							</li>
-							<li>● re-ranks the results according to your (pedagogical or
-								learning) needs specified in the settings</li>
-                            <!--<li>● generates factual questions based on the text in the results</li>-->
-						</ul>
-					</div>
-					<br />
-					<p>
-						<b>PAPERS:</b>
-					</p>
-					<ul>
-						<li>
-							<a
-								href="http://sfs.uni-tuebingen.de/~mchnkina/downloads/Chinkina_Maria_thesis_2015.pdf"
-								target="_blank">MA thesis by Maria Chinkina</a>
-						</li>
-						<li>
-							<a
-								href="http://sfs.uni-tuebingen.de/~mchnkina/downloads/Chinkina_Meurers_BEA_2016.pdf"
-								target="_blank">BEA paper</a>
-							(Maria Chinkina, Detmar Meurers)
-						</li>
-						<li>
-							<a
-								href="http://sfs.uni-tuebingen.de/~mchnkina/downloads/Chinkina_Kannan_Meurers_ACL_2016.pdf"
-								target="_blank">System description paper</a>
-							(Maria Chinkina, Madeeswaran Kannan, Detmar Meurers)
-						</li>
-					</ul>
-					<br />
-					<p>
-						<b>ADDITIONAL MATERIAL:</b>
-					</p>
-					<ul>
-						<li>
-							<a
-								href="http://sfs.uni-tuebingen.de/~mchnkina/downloads/FLAIR_Evaluation.pdf"
-								target="_blank">Evaluation of the FLAIR algorithm</a>
-							(81 grammatical constructions: Precision, Recall, F1)
-						</li>
-						<li>
-							<a href="http://sfs.uni-tuebingen.de/~mchnkina/downloads/AWL.pdf"
-								target="_blank">AWL: Academic Word List</a>
-							(
-							<a href="http://onlinelibrary.wiley.com/doi/10.2307/3587951/abstract"
-								target="_blank">Coxhead, 2000</a>
-							)
-						</li>
-						<li>
-							<a
-								href="http://sfs.uni-tuebingen.de/~mchnkina/img/heatmap_vert_color.png"
-								target="_blank">Distribution of grammatical constructions in the Web</a>
-							(top 55 hits for a query)
-						</li>
-					</ul>
-					<br />
-					<p>
-						<b>THIRD-PARTY TOOLS:</b>
-					</p>
-					<ul>
-						<li>
-							Back-end:
-							<a href="http://datamarket.azure.com/dataset/bing/search"
-								target="_blank">Microsoft Bing API</a>
-							,
-							<a href="https://tika.apache.org/" target="_blank">Apache Tika</a>
-							,
-							<a href="http://stanfordnlp.github.io/CoreNLP/" target="_blank">Stanford
-								CoreNLP</a>
-						</li>
-						<li>
-							Front-end:
-							<a href="http://www.gwtproject.org/" target="_blank">Google Web Toolkit</a>
-							,
-							<a href="https://gwtmaterialdesign.github.io/gwt-material-demo/"
-								target="_blank">GWT Material</a>
-							,
-							<a href="https://d3js.org" target="_blank">d3</a>
-						</li>
-					</ul>
-					<br />
-					<p>
-						<b>LICENSE:</b>
-					</p>
-                    <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html">
-                        <img alt="GPLv3" style="border-width:0"
-                             src="https://www.gnu.org/graphics/gplv3-127x51.png"/>
-					</a>
-					<br />
-                    FLAIR tool is licensed under the
-                    <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html">GNU General Public License
-                        3.0
-                    </a>
-					.
-				</g:HTML>
-            </m:MaterialDialogContent>
+			<m:MaterialDialogFooter>
+				<m:MaterialButton ui:field="btnAboutCloseUI" type="FLAT" />
+			</m:MaterialDialogFooter>
+		</m:MaterialDialog>
 
-            <m:MaterialDialogFooter>
-				<m:MaterialButton ui:field="btnAboutEnCloseUI"
-					text="Close" type="FLAT" />
-            </m:MaterialDialogFooter>
-        </m:MaterialDialog>
-
-        <m:MaterialDialog ui:field="mdlAboutDeUI" dismissible="true">
-            <m:MaterialDialogContent>
-				<g:HTML>
-					<center>
-						<h3 class="modal-title">
-							<img class="{style.brand-logo} modal-title" src="img/logo_2.png"
-								alt="Über FLAIR" />
-						</h3>
-						<p>
-							<span style="color:darkorange">
-								<b>von</b>
-							</span>
-							<a href="http://sfs.uni-tuebingen.de/~mchnkina/" target="_blank">Maria
-								Chinkina</a>
-							<a href="mailto:maria.chinkina@uni-tuebingen.de?Subject=FLAIR%20tool"
-								target="_top" title="Maria Chinkina kontaktieren">
-								<span class="glyphicon glyphicon-envelope"></span>
-							</a>
-							&amp;
-							<a href="http://sfs.uni-tuebingen.de/~mkannan/" target="_blank">Madeeswaran
-								Kannan</a>
-							<a href="mailto:mkannan@sfs.uni-tuebingen.de?Subject=FLAIR%20tool"
-								target="_top" title="Madeeswaran Kannan kontaktieren">
-								<span class="glyphicon glyphicon-envelope"></span>
-							</a>
-							, betreut von
-							<a href="http://sfs.uni-tuebingen.de/~dm/" target="_blank">Prof. Dr.
-								Detmar
-								Meurers</a>
-							<br />
-							<span style="color:darkorange">@</span>
-							Universität Tübingen, Deutschland
-							<span style="color:darkorange">|</span>
-							2015-2020
-							<br />
-							Version 2.1
-						</p>
-					</center>
-
-					<div style="text-align: left">
-						<p>FLAIR ist ein Online-Tool für Lerner und Lehrer von Sprachen.
-							FLAIR:
-						</p>
-						<ul>
-							<li>● durchsucht das Web nach einem gewünschten Thema</li>
-							<li>● analysiert die Suchergebnisse auf Grammatikkonstruktionen
-								und
-								Schwierigkeitsgrade</li>
-							<li>● bewertet die Ergebnisse nach Ihren (pädagogischen oder
-								lern-spezifischen) Bedürfnissen, die Sie in den Einstellungen
-								festlegt haben</li>
-						</ul>
-					</div>
-					<br />
-					<p>
-						<b>VERÖFFENTLICHUNGEN:</b>
-					</p>
-					<ul>
-						<li>
-							<a
-								href="http://sfs.uni-tuebingen.de/~mchnkina/downloads/Chinkina_Maria_thesis_2015.pdf"
-								target="_blank">MA-Arbeit von Maria Chinkina</a>
-						</li>
-						<li>
-							<a
-								href="http://sfs.uni-tuebingen.de/~mchnkina/downloads/Chinkina_Meurers_BEA_2016.pdf"
-								target="_blank">BEA-Artikel</a>
-							(Maria Chinkina, Detmar Meurers)
-						</li>
-						<li>
-							<a
-								href="http://sfs.uni-tuebingen.de/~mchnkina/downloads/Chinkina_Kannan_Meurers_ACL_2016.pdf"
-								target="_blank">Systembeschreibung</a>
-							(Maria Chinkina, Madeeswaran Kannan, Detmar Meurers)
-						</li>
-					</ul>
-					<br />
-					<p>
-						<b>ZUSÄTZLICHES MATERIAL:</b>
-					</p>
-					<ul>
-						<li>
-							<a
-								href="http://sfs.uni-tuebingen.de/~mchnkina/downloads/FLAIR_Evaluation.pdf"
-								target="_blank">Evaluation des FLAIR-Algorithmus</a>
-							(81 grammatische Konstruktionen für Englisch: Precision, Recall,
-							F1)
-						</li>
-					</ul>
-					<br />
-					<p>
-						<b>DRITT-WERKZEUGE:</b>
-					</p>
-					<ul>
-						<li>
-							Back-end:
-							<a href="http://datamarket.azure.com/dataset/bing/search"
-								target="_blank">Microsoft Bing API</a>
-							,
-							<a href="https://tika.apache.org/" target="_blank">Apache Tika</a>
-							,
-							<a href="http://stanfordnlp.github.io/CoreNLP/" target="_blank">Stanford
-								CoreNLP</a>
-						</li>
-						<li>
-							Front-end:
-							<a href="http://www.gwtproject.org/" target="_blank">Google Web Toolkit</a>
-							,
-							<a href="https://gwtmaterialdesign.github.io/gwt-material-demo/"
-								target="_blank">GWT Material</a>
-							,
-							<a href="https://d3js.org" target="_blank">d3</a>
-						</li>
-					</ul>
-					<br />
-					<p>
-						<b>LIZENZ</b>
-					</p>
-                    <a rel="license" href="https://www.gnu.org/licenses/gpl-3.0.en.html">
-                        <img alt="GPLv3" style="border-width:0"
-                             src="https://www.gnu.org/graphics/gplv3-127x51.png"/>
-					</a>
-					<br />
-                    FLAIR ist lizensiert unter der
-					<a rel="license"
-                       href="https://www.gnu.org/licenses/gpl-3.0.en.html">GNU General Public License 3.0
-                    </a>
-					.
-				</g:HTML>
-            </m:MaterialDialogContent>
-
-            <m:MaterialDialogFooter>
-				<m:MaterialButton ui:field="btnAboutDeCloseUI"
-					text="Schliessen" type="FLAT" />
-            </m:MaterialDialogFooter>
-        </m:MaterialDialog>
 	</m:MaterialContainer>
 </ui:UiBinder> 
