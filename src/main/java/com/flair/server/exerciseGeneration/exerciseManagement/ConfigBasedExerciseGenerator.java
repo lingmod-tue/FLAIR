@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.flair.server.exerciseGeneration.downloadManagement.ResourceDownloader;
+import com.flair.server.exerciseGeneration.exerciseManagement.InputEnrichment.InstructionGeneration.HintGenerator;
+import com.flair.server.exerciseGeneration.exerciseManagement.InputEnrichment.InstructionGeneration.HintGeneratorFactory;
 import com.flair.server.exerciseGeneration.exerciseManagement.InputEnrichment.InstructionGeneration.InstructionGenerator;
 import com.flair.server.exerciseGeneration.exerciseManagement.InputEnrichment.InstructionGeneration.InstructionGeneratorFactory;
 import com.flair.server.exerciseGeneration.exerciseManagement.InputParsing.ConfigParsing.ConfigParserFactory;
@@ -44,6 +46,11 @@ public class ConfigBasedExerciseGenerator extends SimpleExerciseGenerator {
 			
 	        InstructionGenerator instructionGenerator = InstructionGeneratorFactory.getGenerator(exercise.getTopic(), exercise.getExerciseType());
 			instructionGenerator.generateInstructions(exercise);
+			
+			HintGenerator hintGenerator = HintGeneratorFactory.getGenerator(exercise.getTopic());
+			if(hintGenerator != null) {
+				hintGenerator.generateHints(exercise);
+			}
 			
 			if (isCancelled) {
 	        	return null;

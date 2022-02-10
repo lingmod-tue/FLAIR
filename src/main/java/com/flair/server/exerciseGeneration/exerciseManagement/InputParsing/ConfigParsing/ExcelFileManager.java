@@ -36,7 +36,10 @@ public class ExcelFileManager {
 				    }
 				}
 				
-				configData.addAll(ExcelFileReaderFactory.getReader(topic, n).parseFile(sheet, rows, cols));
+				ExcelFileReader reader = ExcelFileReaderFactory.getReader(topic, n);
+				if(reader != null) {
+					configData.addAll(reader.parseFile(sheet, rows, cols));
+				}
 			}
 			return configData;
 		} catch (IOException e) {

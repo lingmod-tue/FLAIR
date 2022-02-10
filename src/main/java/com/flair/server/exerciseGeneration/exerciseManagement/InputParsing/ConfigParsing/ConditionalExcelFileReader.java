@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -46,6 +47,7 @@ public class ConditionalExcelFileReader extends ExcelFileReader {
 		            cell = row.getCell((short)c);
 		            
 		            if(cell != null) {
+		            	cell.setCellType(Cell.CELL_TYPE_STRING);
 		            	String cellValue = xTrim(cell.toString());
 	
 			            if(!cellValue.isEmpty()) {

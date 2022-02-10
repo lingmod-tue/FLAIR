@@ -1,6 +1,5 @@
 package com.flair.server.exerciseGeneration.exerciseManagement.OutputGeneration.feedbookXmlGeneration;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -15,7 +14,7 @@ import com.flair.shared.exerciseGeneration.DetailedConstruction;
 public class DDSingleXmlGenerator extends SimpleExerciseXmlGenerator {
 	
 	@Override
-	public byte[] generateXMLFile(ExerciseData exerciseDefinition) {
+	protected XmlValues generateXMLValues(ExerciseData exerciseDefinition) {
 		XmlValues v = new XmlValues(exerciseDefinition.getInstructions(), "FILL_IN_THE_BLANKS");
 		v.setGivenWordsDraggable(true);
 		v.setFeedbackDisabled(true);
@@ -61,7 +60,7 @@ public class DDSingleXmlGenerator extends SimpleExerciseXmlGenerator {
 		Collections.shuffle(draggables);
 		v.setGivenWords(StringUtils.join(draggables, " | "));
 
-		return generateFeedBookInputXml(v).getBytes(StandardCharsets.UTF_8);
+		return v;
 	}
 	
 }

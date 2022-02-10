@@ -12,6 +12,7 @@ public class MtWRelativeInstructionGenerator extends InstructionGenerator {
         	instructions += " The text contains " + determineNConstructions(data) + " relative pronouns.";
         }
 		
+        instructions = "Please find and click on all the occurrences of the words “who”, “which”, “whose” or “where” to form a relative clause.";
 		data.setInstructions(instructions);
 	}
 		

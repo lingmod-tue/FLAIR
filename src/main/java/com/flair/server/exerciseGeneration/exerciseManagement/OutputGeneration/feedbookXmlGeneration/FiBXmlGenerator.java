@@ -1,6 +1,5 @@
 package com.flair.server.exerciseGeneration.exerciseManagement.OutputGeneration.feedbookXmlGeneration;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -14,7 +13,7 @@ import com.flair.shared.exerciseGeneration.DetailedConstruction;
 public class FiBXmlGenerator extends SimpleExerciseXmlGenerator {
 	
 	@Override
-	public byte[] generateXMLFile(ExerciseData exerciseDefinition) {
+	protected XmlValues generateXMLValues(ExerciseData exerciseDefinition) {
 		XmlValues v = new XmlValues(exerciseDefinition.getInstructions(), "FILL_IN_THE_BLANKS");
 		
 		StringBuilder sb = new StringBuilder();
@@ -62,7 +61,7 @@ public class FiBXmlGenerator extends SimpleExerciseXmlGenerator {
 			v.setGivenWords(StringUtils.join(exerciseDefinition.getInstructionLemmas(), " | "));
 		}
 
-		return generateFeedBookInputXml(v).getBytes(StandardCharsets.UTF_8);
+		return v;
 	}
 	
 }

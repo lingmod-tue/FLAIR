@@ -1,6 +1,5 @@
 package com.flair.server.exerciseGeneration.exerciseManagement.OutputGeneration.feedbookXmlGeneration;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -15,7 +14,7 @@ import com.flair.shared.exerciseGeneration.ExerciseTopic;
 public class JSXmlGenerator extends SimpleExerciseXmlGenerator {
 	
 	@Override
-	public byte[] generateXMLFile(ExerciseData exerciseDefinition) {
+	protected XmlValues generateXMLValues(ExerciseData exerciseDefinition) {
 		XmlValues v = new XmlValues(exerciseDefinition.getInstructions(), "JUMBLED_SENTENCES");
 
 		if(exerciseDefinition.getTopic().equals(ExerciseTopic.RELATIVES)) {
@@ -83,7 +82,7 @@ public class JSXmlGenerator extends SimpleExerciseXmlGenerator {
 			v.getItems().add(item);
 		}
 
-		return generateFeedBookInputXml(v).getBytes(StandardCharsets.UTF_8);
+		return v;
 	}
 	
 }

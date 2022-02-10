@@ -1,6 +1,5 @@
 package com.flair.server.exerciseGeneration.exerciseManagement.OutputGeneration.feedbookXmlGeneration;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 import com.flair.server.exerciseGeneration.exerciseManagement.ConstructionTextPart;
@@ -14,7 +13,7 @@ import edu.stanford.nlp.util.StringUtils;
 public class SAXmlGenerator extends SimpleExerciseXmlGenerator {
 	
 	@Override
-	public byte[] generateXMLFile(ExerciseData exerciseDefinition) {
+	protected XmlValues generateXMLValues(ExerciseData exerciseDefinition) {
 		XmlValues v = new XmlValues(exerciseDefinition.getInstructions(), "SHORT_ANSWERS");
 		
 		StringBuilder sb = new StringBuilder();
@@ -42,7 +41,7 @@ public class SAXmlGenerator extends SimpleExerciseXmlGenerator {
 			}
 		}
 
-		return generateFeedBookInputXml(v).getBytes(StandardCharsets.UTF_8);
+		return v;
 	}
 	
 }

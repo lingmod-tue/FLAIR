@@ -1,12 +1,12 @@
 package com.flair.server.exerciseGeneration.exerciseManagement.OutputGeneration.feedbookXmlGeneration;
 
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
+import org.jsoup.internal.StringUtil;
 
 import com.flair.server.exerciseGeneration.exerciseManagement.ConstructionTextPart;
 import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseData;
@@ -16,11 +16,12 @@ import com.flair.shared.exerciseGeneration.Pair;
 public class CategorizeXmlGenerator extends SimpleExerciseXmlGenerator {
 	
 	@Override
-	public byte[] generateXMLFile(ExerciseData exerciseDefinition) {
+	protected XmlValues generateXMLValues(ExerciseData exerciseDefinition) {
 		XmlValues v = new XmlValues(exerciseDefinition.getInstructions(), "CATEGORIZE");
 		v.setGivenWordsDraggable(true);
 		
 		HashMap<String, ArrayList<String>> pool = new HashMap<>();
+		HashMap<String, ArrayList<String>> feedback = new HashMap<>();
 
 		for(TextPart part : exerciseDefinition.getParts()) {
 			if(part instanceof ConstructionTextPart) {
@@ -28,9 +29,15 @@ public class CategorizeXmlGenerator extends SimpleExerciseXmlGenerator {
 				
 				if(!pool.containsKey(construction.getCategory())) {
 					pool.put(construction.getCategory(), new ArrayList<>());
+					feedback.put(construction.getCategory(), new ArrayList<>());
 				}
 				
 				pool.get(construction.getCategory()).add(construction.getValue());
+
+				String fb = construction.getDistractors().get(0).getFeedback();
+				if(fb != null) {
+					feedback.get(construction.getCategory()).add(fb);
+				}
 			}
 		}
 		
@@ -54,7 +61,9 @@ public class CategorizeXmlGenerator extends SimpleExerciseXmlGenerator {
 			item.setTarget(StringUtils.join(el.second, "|"));
 			item.setInputType("PHRASE");
 			
-			//TODO check if we have no cases where categorize could have feedback
+			if(feedback.get(el.first).size() > 0) {
+				item.setFeedback(StringUtil.join(feedback.get(el.first), " "));
+			}
 
 			v.getItems().add(item);
 			
@@ -64,7 +73,7 @@ public class CategorizeXmlGenerator extends SimpleExerciseXmlGenerator {
 		Collections.shuffle(elements);
 		v.setGivenWords(StringUtils.join(elements, "|"));
 
-		return generateFeedBookInputXml(v).getBytes(StandardCharsets.UTF_8);
+		return v;
 	}
 	
 }

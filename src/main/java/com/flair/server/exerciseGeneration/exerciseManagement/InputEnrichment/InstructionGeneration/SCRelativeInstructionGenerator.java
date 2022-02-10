@@ -6,7 +6,7 @@ public class SCRelativeInstructionGenerator extends InstructionGenerator {
 
 	@Override
 	public void generateInstructions(ExerciseData data) {
-		data.setInstructions("Pick the correct relative pronoun for each gap.");
+		data.setInstructions("Please select the correct response to form a relative clause.");
 	}
 	
 }

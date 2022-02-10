@@ -2,6 +2,7 @@ package com.flair.server.exerciseGeneration.exerciseManagement.OutputGeneration.
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.dom4j.DocumentFactory;
@@ -10,12 +11,26 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 
 import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseData;
+import com.flair.shared.exerciseGeneration.ExerciseTopic;
 
 
 public abstract class SimpleExerciseXmlGenerator {
 		    
-	public abstract byte[] generateXMLFile(ExerciseData exerciseDefinition);
+	public byte[] generateXMLFile(ExerciseData exerciseDefinition) {
+		XmlValues v = generateXMLValues(exerciseDefinition);
+		
+		if(exerciseDefinition.getSecondInstructions() != null) {
+    		v.setSecondInstruction(exerciseDefinition.getSecondInstructions());
+		}
+		if(exerciseDefinition.getSupport() != null) {
+			v.setSupport(exerciseDefinition.getSupport());
+		}
+		
+		return generateFeedBookInputXml(v).getBytes(StandardCharsets.UTF_8);
+	}
 	
+	protected abstract XmlValues generateXMLValues(ExerciseData exerciseDefinition);
+
     public String generateFeedBookInputXml(XmlValues values) {
 		Element subTask = DocumentFactory.getInstance().createElement("SubTask");
     	addAttributes(values, subTask);
@@ -55,6 +70,7 @@ public abstract class SimpleExerciseXmlGenerator {
 		subTask.addAttribute("given_words_draggable", String.valueOf(values.isGivenWordsDraggable()));
 		subTask.addAttribute("feedback_disabled", String.valueOf(values.isFeedbackDisabled()));
 		subTask.addAttribute("support", values.getSupport());
+		subTask.addAttribute("second_instruction", values.getSecondInstruction());
 		//subTask.addAttribute("evaluate_at_completion", String.valueOf(values.isEvaluateAtComplete()));
 	}
 	    
@@ -97,6 +113,5 @@ public abstract class SimpleExerciseXmlGenerator {
     		taskField.add(feedback);
     	}
     }
-    
 
 }

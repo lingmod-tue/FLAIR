@@ -21,8 +21,9 @@ public class ExerciseData {
     private ArrayList<DownloadedResource> resources = new ArrayList<>();
     private String exerciseTitle;
     private String exerciseType = null;
-
 	private String instructions = "";
+	private String secondInstructions = null;
+	private String support = null;
 	
 	public ArrayList<String> getInstructionLemmas() {
 		return instructionLemmas;
@@ -86,6 +87,18 @@ public class ExerciseData {
 	}
 	public void setExerciseType(String exerciseType) {
 		this.exerciseType = exerciseType;
+	}
+	public String getSecondInstructions() {
+		return secondInstructions;
+	}
+	public void setSecondInstructions(String secondInstructions) {
+		this.secondInstructions = secondInstructions;
+	}
+	public String getSupport() {
+		return support;
+	}
+	public void setSupport(String support) {
+		this.support = support;
 	}
 
 	

@@ -15,6 +15,7 @@ public class XmlValues {
 	private String support = "null";
 	private String givenWords = "null";
 	private boolean evaluateAtComplete = false;
+	private String secondInstruction = "";
 	
 	public XmlValues(String instructions, String taskType) {
 		this.instructions = instructions;
@@ -81,6 +82,14 @@ public class XmlValues {
 	}
 	public void setEvaluateAtComplete(boolean evaluateAtComplete) {
 		this.evaluateAtComplete = evaluateAtComplete;
+	}
+
+	public String getSecondInstruction() {
+		return secondInstruction;
+	}
+
+	public void setSecondInstruction(String secondInstruction) {
+		this.secondInstruction = secondInstruction;
 	}
 		
 }

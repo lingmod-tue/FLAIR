@@ -7,6 +7,8 @@ import com.flair.server.exerciseGeneration.downloadManagement.ResourceDownloader
 import com.flair.server.exerciseGeneration.exerciseManagement.InputEnrichment.DistractorSelector;
 import com.flair.server.exerciseGeneration.exerciseManagement.InputEnrichment.DistractorGeneration.DistractorGenerator;
 import com.flair.server.exerciseGeneration.exerciseManagement.InputEnrichment.DistractorGeneration.DistractorGeneratorFactory;
+import com.flair.server.exerciseGeneration.exerciseManagement.InputEnrichment.InstructionGeneration.HintGenerator;
+import com.flair.server.exerciseGeneration.exerciseManagement.InputEnrichment.InstructionGeneration.HintGeneratorFactory;
 import com.flair.server.exerciseGeneration.exerciseManagement.InputEnrichment.InstructionGeneration.InstructionGeneratorFactory;
 import com.flair.server.exerciseGeneration.exerciseManagement.InputEnrichment.ParenthesisGeneration.BracketsGenerator;
 import com.flair.server.exerciseGeneration.exerciseManagement.InputEnrichment.ParenthesisGeneration.BracketsGeneratorFactory;
@@ -78,6 +80,10 @@ public class DocumentBasedExerciseGenerator extends SimpleExerciseGenerator {
         }
 		
 		InstructionGeneratorFactory.getGenerator(exerciseData.getTopic(), exerciseData.getExerciseType()).generateInstructions(exerciseData);
+		HintGenerator hintGenerator = HintGeneratorFactory.getGenerator(exerciseData.getTopic());
+		if(hintGenerator != null) {
+			hintGenerator.generateHints(exerciseData);
+		}
 		
 		if (isCancelled) {
         	return null;
