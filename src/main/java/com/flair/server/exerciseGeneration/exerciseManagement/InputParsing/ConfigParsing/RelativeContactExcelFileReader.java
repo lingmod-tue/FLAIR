@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -29,7 +29,7 @@ public class RelativeContactExcelFileReader extends ExcelFileReader {
 		        for(int c = 0; c < nCols; c++) {
 		            cell = row.getCell((short)c);
 		            if(cell != null) {
-		            	cell.setCellType(Cell.CELL_TYPE_STRING);
+		            	cell.setCellType(CellType.STRING);
 		            	String cellValue = xTrim(cell.toString());
 	
 			            if(!cellValue.isEmpty()) {

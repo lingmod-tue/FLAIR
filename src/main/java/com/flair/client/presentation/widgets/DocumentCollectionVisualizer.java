@@ -623,8 +623,6 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 	@UiField
 	MaterialWindow mdlVisualizerUI;
 	@UiField
-	MaterialSplitPanel pnlSplitContainer;
-	@UiField
 	@LocalizedField
 	MaterialLabel lblTitleUI;
 	@UiField
@@ -693,7 +691,6 @@ public class DocumentCollectionVisualizer extends LocalizedComposite implements 
 
 		// hide the maximize button
 		mdlVisualizerUI.getIconMaximize().setVisible(false);
-		MaterialPushpin.apply(pnlSVGContainerUI, 50.d);
 	}
 
 	public DocumentCollectionVisualizer() {

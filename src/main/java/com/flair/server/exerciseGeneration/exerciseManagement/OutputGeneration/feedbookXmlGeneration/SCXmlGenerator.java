@@ -2,7 +2,7 @@ package com.flair.server.exerciseGeneration.exerciseManagement.OutputGeneration.
 
 import java.util.ArrayList;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.flair.server.exerciseGeneration.exerciseManagement.ConstructionTextPart;
 import com.flair.server.exerciseGeneration.exerciseManagement.Distractor;

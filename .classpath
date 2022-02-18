@@ -18,36 +18,18 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-14">
+		<attributes>
+			<attribute name="maven.pomderived" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER">
 		<attributes>
 			<attribute name="maven.pomderived" value="true"/>
 			<attribute name="org.eclipse.jst.component.dependency" value="/WEB-INF/lib"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/home/taheck/gwt-2.9.0/gwt-user.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="file:/home/taheck/gwt-2.9.0/doc/javadoc/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/home/taheck/gwt-2.9.0/gwt-codeserver.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="file:/home/taheck/gwt-2.9.0/doc/javadoc/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/home/taheck/gwt-2.9.0/gwt-dev.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="file:/home/taheck/gwt-2.9.0/doc/javadoc/"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/home/taheck/gwt-2.9.0/validation-api-1.0.0.GA-sources.jar"/>
-	<classpathentry kind="lib" path="/home/taheck/gwt-2.9.0/validation-api-1.0.0.GA.jar" sourcepath="/home/taheck/gwt-2.9.0/validation-api-1.0.0.GA-sources.jar"/>
-	<classpathentry kind="lib" path="de.csenk.gwt.jetty-7.1.6.v20100715.jar"/>
-	<classpathentry kind="lib" path="/home/taheck/projects/FLAIR/de.csenk.gwt.jetty-7.1.6.v20100715.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8">
-		<attributes>
-			<attribute name="maven.pomderived" value="true"/>
-		</attributes>
-	</classpathentry>
+	<classpathentry kind="con" path="com.gwtplugins.gwt.eclipse.core.GWT_CONTAINER/gwt-2.9.0"/>
 	<classpathentry kind="src" output="target/flair-2.1/WEB-INF/classes" path="target/generated-sources/gwt">
 		<attributes>
 			<attribute name="optional" value="true"/>

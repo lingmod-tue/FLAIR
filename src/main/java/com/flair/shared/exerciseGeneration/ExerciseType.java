@@ -12,6 +12,7 @@ public class ExerciseType {
 	public static final String CATEGORIZE = "Categorize"; 
 	public static final String QUIZ = "Quiz"; 
 	public static final String SHORT_ANSWER = "ShortAnswer"; 
+	public static final String HALF_OPEN = "HalfOpen";
 	public static final String MEMORY = "Memory"; 
 	
 	// use only for client side!!!

@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.internal.StringUtil;
 
 import com.flair.server.exerciseGeneration.exerciseManagement.ConstructionTextPart;
@@ -60,6 +60,7 @@ public class CategorizeXmlGenerator extends SimpleExerciseXmlGenerator {
 			item.setText(el.first);
 			item.setTarget(StringUtils.join(el.second, "|"));
 			item.setInputType("PHRASE");
+			item.setLanguageConstruct("RELATIVE_CLAUSE");
 			
 			if(feedback.get(el.first).size() > 0) {
 				item.setFeedback(StringUtil.join(feedback.get(el.first), " "));

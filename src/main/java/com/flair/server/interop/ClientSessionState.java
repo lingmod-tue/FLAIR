@@ -45,7 +45,7 @@ import com.flair.shared.interop.messaging.server.SmCustomCorpusEvent;
 import com.flair.shared.interop.messaging.server.SmExGenEvent;
 import com.flair.shared.interop.messaging.server.SmQuestionGenEvent;
 import com.flair.shared.interop.messaging.server.SmWebSearchParseEvent;
-import com.google.common.io.ByteStreams;
+import com.google.gwt.thirdparty.guava.common.io.ByteStreams;
 
 class ClientSessionState {
 	private final ClientIdToken clientId;

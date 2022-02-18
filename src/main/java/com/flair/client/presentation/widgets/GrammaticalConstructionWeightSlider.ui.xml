@@ -1,10 +1,9 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-			 xmlns:m="urn:import:gwt.material.design.client.ui"
->
+			 xmlns:m="urn:import:gwt.material.design.client.ui" >
 		
 	<m:MaterialPanel marginBottom="5">
-		<m:MaterialRow marginBottom="5">
+		<m:MaterialRow margin="0" padding="0">
 			<m:MaterialColumn grid="l8 m8 s8">
 				<m:MaterialCheckBox ui:field="chkToggleUI" text="Gram Const"/>
 			</m:MaterialColumn>
@@ -14,10 +13,17 @@
 			</m:MaterialColumn>
 			
 			<m:MaterialColumn grid="l2 m2 s2" paddingTop="2">
-				<m:MaterialBadge ui:field="bdgResultCountUI" right="45" text="10/10"/>
+				<m:MaterialBadge ui:field="bdgResultCountUI" right="45" textColor="WHITE" fontSize="10pt"/>
 			</m:MaterialColumn>
 		</m:MaterialRow>
-		
-		<m:MaterialRange ui:field="sldWeightUI" paddingBottom="5"/>
+		<m:MaterialRow>
+		<m:MaterialColumn grid="l10 m10 s10" paddingTop="2">
+		<m:MaterialRange ui:field="sldWeightUI" margin="0" padding="0" paddingBottom="5" 
+		truncate="true" textColor="WHITE" waves="LIGHT"/>
+		</m:MaterialColumn>
+					<m:MaterialColumn grid="l2 m2 s2" paddingTop="2">
+					<m:MaterialLabel ui:field="lblSliderValue" text="0"/>
+		</m:MaterialColumn>
+		</m:MaterialRow>
 	</m:MaterialPanel>
 </ui:UiBinder> 

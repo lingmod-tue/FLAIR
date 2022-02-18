@@ -1,5 +1,7 @@
 package com.flair.client.presentation.widgets;
 
+import java.util.ArrayList;
+
 import com.flair.client.presentation.interfaces.AbstractWeightSlider;
 import gwt.material.design.client.ui.MaterialCheckBox;
 import gwt.material.design.client.ui.MaterialRange;
@@ -36,7 +38,7 @@ public class GenericWeightSlider implements AbstractWeightSlider {
 	protected MaterialCheckBox toggle;
 	protected MaterialRange slider;
 	private ToggleHandler toggleHandler;
-	private WeightChangeHandler weightHandler;
+	private ArrayList<WeightChangeHandler> weightHandler = new ArrayList<>();
 	private boolean animateSliderOnToggle;
 
 	protected void animateSlider() {
@@ -57,8 +59,9 @@ public class GenericWeightSlider implements AbstractWeightSlider {
 	}
 
 	private void onWeightChange() {
-		if (weightHandler != null)
-			weightHandler.handle(parent, getWeight());
+		for(WeightChangeHandler handler : weightHandler) {
+			handler.handle(parent, getWeight());
+		}
 	}
 
 	public GenericWeightSlider(AbstractWeightSlider p, MaterialCheckBox t, MaterialRange r) {
@@ -66,7 +69,6 @@ public class GenericWeightSlider implements AbstractWeightSlider {
 		toggle = t;
 		slider = r;
 		toggleHandler = null;
-		weightHandler = null;
 		animateSliderOnToggle = true;
 
 		// setup components
@@ -90,7 +92,7 @@ public class GenericWeightSlider implements AbstractWeightSlider {
 
 	@Override
 	public void setWeightChangeHandler(WeightChangeHandler handler) {
-		weightHandler = handler;
+		weightHandler.add(handler);
 	}
 
 	@Override

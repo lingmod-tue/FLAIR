@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.flair.server.exerciseGeneration.exerciseManagement.ConstructionTextPart;
 import com.flair.server.exerciseGeneration.exerciseManagement.Distractor;
@@ -91,7 +91,7 @@ public class RelativeConfigParser extends ConfigParser {
 						}
 					} else if (configValues[3].equals("4")) {
 						d = generatePromptedTask(data, configValues[8] != null && configValues[8].equals("true"), configValues[8] == null ||configValues[8].isEmpty());
-						d.setExerciseType(ExerciseType.FILL_IN_THE_BLANKS);
+						d.setExerciseType(ExerciseType.HALF_OPEN);
 					} else if (configValues[3].equals("5")) {
 						d = generateOpenTask(data);
 						d.setExerciseType(ExerciseType.SHORT_ANSWER);
@@ -105,6 +105,7 @@ public class RelativeConfigParser extends ConfigParser {
 					if (d != null) {
 	        			d.setExerciseTitle(data.get(0).getStamp().replace("/", "_") + "/" + data.get(0).getActivity() + "/" + configValues[2] + "/" + configValues[3]);
 	        			d.setTopic(ExerciseTopic.RELATIVES);
+	        			d.setSubtopic(data.get(0).getStamp());
 						exercises.add(d);
 					}
 				} else if(configValues[0].equals("relatives_contact") && data.get(0).getStamp().equals("contact clauses")) {
@@ -124,6 +125,7 @@ public class RelativeConfigParser extends ConfigParser {
 					if (d != null) {
 	        			d.setExerciseTitle(data.get(0).getStamp().replace("/", "_") + "/" + data.get(0).getActivity() + "/" + configValues[2] + "/" + configValues[3]);
 	        			d.setTopic(ExerciseTopic.RELATIVES);
+	        			d.setSubtopic(data.get(0).getStamp());
 						exercises.add(d);
 					}
 				}
@@ -383,20 +385,17 @@ public class RelativeConfigParser extends ConfigParser {
 			parts.add(new HtmlTextPart(" <br>", sentenceId));
 			
 			ArrayList<String> alternatives = new ArrayList<>(possibleSentences);
-			//for(int i = 0; i < possibleSentences.size(); i++) {
-				ConstructionTextPart c = new ConstructionTextPart(alternatives.get(0), sentenceId);
-				for(int i = 1; i < alternatives.size(); i++) {
-					c.getTargetAlternatives().add(alternatives.get(i));
-				}
-				c.setConstructionType(itemData.getPronoun().equals("who") ? DetailedConstruction.WHO : 
-					(itemData.getPronoun().equals("which") ? DetailedConstruction.WHICH : 
-						(itemData.getPronoun().equals("that") ? DetailedConstruction.THAT : DetailedConstruction.OTHERPRN)));
-				
-				parts.add(c);
-			//}
 
-			//TODO: how can we make sure that the students can enter the sentences in arbitrary order 
-			// but not enter the same sentence twice if we elicit all possible sentences?
+			ConstructionTextPart c = new ConstructionTextPart(alternatives.get(0), sentenceId);
+			for(int i = 1; i < alternatives.size(); i++) {
+				c.getTargetAlternatives().add(alternatives.get(i));
+			}
+			c.setConstructionType(itemData.getPronoun().equals("who") ? DetailedConstruction.WHO : 
+				(itemData.getPronoun().equals("which") ? DetailedConstruction.WHICH : 
+					(itemData.getPronoun().equals("that") ? DetailedConstruction.THAT : DetailedConstruction.OTHERPRN)));
+			
+			parts.add(c);
+
 			sentenceId++;
 		}
 
@@ -468,7 +467,6 @@ public class RelativeConfigParser extends ConfigParser {
 			c.setCategory(category);
 			c.setConstructionType(DetailedConstruction.REL_CLAUSE);
 			Distractor d = new Distractor("");
-			d.setFeedback(itemData.getFeedback());
 			c.getDistractors().add(d);
 			
 			parts.add(c);

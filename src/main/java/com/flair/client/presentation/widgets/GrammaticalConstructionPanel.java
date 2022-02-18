@@ -20,7 +20,9 @@ public class GrammaticalConstructionPanel extends Composite
 
 	public GrammaticalConstructionPanel() {
 		panel = new MaterialCollapsible();
-
+		panel.setMargin(0);
+		panel.setPadding(0);
+		
 		initWidget(panel);
 	}
 

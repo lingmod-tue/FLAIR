@@ -4,14 +4,13 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 
 import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseData;
-import com.flair.shared.exerciseGeneration.ExerciseTopic;
 
 
 public abstract class SimpleExerciseXmlGenerator {

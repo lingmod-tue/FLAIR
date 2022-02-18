@@ -1,17 +1,19 @@
 package arkref.sent;
 
-import arkref.parsestuff.AlignedSub;
-import arkref.parsestuff.AnalysisUtilities;
-import arkref.parsestuff.U;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
+
 import com.aliasi.sentences.SentenceModel;
 import com.aliasi.tokenizer.Tokenizer;
 import com.aliasi.tokenizer.TokenizerFactory;
 import com.aliasi.util.Strings;
-import org.apache.commons.lang.StringUtils;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import arkref.parsestuff.AlignedSub;
+import arkref.parsestuff.AnalysisUtilities;
+import arkref.parsestuff.U;
 
 /**
  * Breaks a document into sentences in a very re-traceable manner, using our hacked-up

@@ -9,7 +9,7 @@ public class XmlGeneratorFactory {
 			return new MemoryXmlGenerator();
 		} else if(exerciseType.equals(ExerciseType.SINGLE_CHOICE)) {
 			return new SCXmlGenerator();
-		} else if(exerciseType.equals(ExerciseType.FILL_IN_THE_BLANKS)) {
+		} else if(exerciseType.equals(ExerciseType.FILL_IN_THE_BLANKS) || exerciseType.equals(ExerciseType.HALF_OPEN)) {
 			return new FiBXmlGenerator();
 		} else if(exerciseType.equals(ExerciseType.JUMBLED_SENTENCES)) {
 			return new JSXmlGenerator();

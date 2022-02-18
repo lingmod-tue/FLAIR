@@ -5,7 +5,8 @@ import com.flair.shared.exerciseGeneration.ExerciseType;
 public class H5PGeneratorFactory {
 		
 	public static ContentJsonGenerator getContentJsonGenerator(String type) {
-		if(type.equals(ExerciseType.FILL_IN_THE_BLANKS) || type.equals(ExerciseType.SHORT_ANSWER)) {
+		if(type.equals(ExerciseType.FILL_IN_THE_BLANKS) || type.equals(ExerciseType.SHORT_ANSWER) || 
+				type.equals(ExerciseType.HALF_OPEN) || type.equals(ExerciseType.SHORT_ANSWER)) {
     		return new AdvancedFiBContentJsonGenerator(true);  	
         } else if(type.equals(ExerciseType.SINGLE_CHOICE)) {
         	return new AdvancedFiBContentJsonGenerator(false);

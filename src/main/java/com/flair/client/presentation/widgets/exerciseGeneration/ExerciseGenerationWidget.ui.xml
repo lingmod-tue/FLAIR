@@ -27,12 +27,12 @@
 					waves="DEFAULT" margin="0" padding="0" />
 			</m:MaterialRow>
 			<m:MaterialRow paddingTop="0" paddingBottom="0" marginBottom="0">
-				<m:MaterialCheckBox 
+				<m:MaterialCheckBox  padding="0" margin="0"
 					ui:field="chkDownloadResources" value="false"
 					text="Download resources" />
 			</m:MaterialRow>
 			<m:MaterialRow paddingTop="0" paddingBottom="0" marginTop="0">
-				<m:MaterialCheckBox
+				<m:MaterialCheckBox padding="0" margin="0"
 					ui:field="chkGenerateFeedback" value="true"
 					text="Generate feedback" />
 			</m:MaterialRow>
@@ -41,18 +41,18 @@
 					<m:MaterialLabel text="Output formats:"
 						textColor="BLACK" />
 				</m:MaterialRow>
-				<m:MaterialCheckBox
+				<m:MaterialCheckBox padding="0" margin="0"
 					ui:field="chkH5p" value="true"
 					text="H5P" />
-				<m:MaterialCheckBox
+				<m:MaterialCheckBox padding="0" margin="0"
 					ui:field="chkFeedbookXml" value="true"
 					text="FeedBook XML" />
 			</m:MaterialRow>
 
-			<m:MaterialRow textAlign="CENTER" marginTop="10">
+			<m:MaterialRow textAlign="CENTER" margin="0" marginTop="10" padding="0">
 				<m:MaterialColumn grid="l9 m9 s9"
 					textAlign="CENTER">
-					<m:MaterialButton ui:field="btnGenerateExercises"
+					<m:MaterialButton ui:field="btnGenerateExercises" 
 						backgroundColor="ORANGE" textColor="WHITE" enabled="false" />
 				</m:MaterialColumn>
 				<m:MaterialColumn grid="l3 m3 s3"
@@ -76,12 +76,12 @@
 				<m:MaterialTitle ui:field="titleCopyrightNoticeUI"
 					title="Please respect the copyright of the texts!"
 					description="desc" />
-				<m:MaterialCheckBox
+				<m:MaterialCheckBox padding="0" margin="0"
 					ui:field="chkDontShowCopyrightNoticeUI"
 					text="Do not show this notification again." type="FILLED" />
 			</m:MaterialDialogContent>
 			<m:MaterialDialogFooter>
-				<m:MaterialButton
+				<m:MaterialButton 
 					ui:field="btnCloseCopyrightNoticeUI" text="Ok" type="FLAT" />
 			</m:MaterialDialogFooter>
 		</m:MaterialDialog>

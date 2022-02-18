@@ -6,7 +6,7 @@ public class JSInstructionGenerator extends InstructionGenerator {
 
 	@Override
 	public void generateInstructions(ExerciseData data) {
-		data.setInstructions("Put the parts of a sentence into a correct order.");
+		data.setInstructions("Put the parts of the sentence into a correct order.");
 	}
 	
 }

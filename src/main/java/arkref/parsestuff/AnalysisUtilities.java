@@ -1,22 +1,5 @@
 package arkref.parsestuff;
 
-import arkref.sent.SentenceBreaker;
-import com.flair.server.utilities.ServerLogger;
-import com.flair.server.utilities.dictionary.WordNetDictionary;
-import edu.cmu.ark.TregexPatternFactory;
-import edu.cmu.ark.*;
-import edu.stanford.nlp.ling.HasWord;
-import edu.stanford.nlp.ling.Label;
-import edu.stanford.nlp.process.DocumentPreprocessor;
-import edu.stanford.nlp.simple.Sentence;
-import edu.stanford.nlp.trees.*;
-import edu.stanford.nlp.trees.tregex.TregexMatcher;
-import edu.stanford.nlp.trees.tregex.TregexPattern;
-import edu.stanford.nlp.trees.tregex.tsurgeon.Tsurgeon;
-import edu.stanford.nlp.trees.tregex.tsurgeon.TsurgeonPattern;
-import edu.stanford.nlp.util.Pair;
-import org.apache.commons.lang.StringUtils;
-
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -26,6 +9,32 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+
+import com.flair.server.utilities.ServerLogger;
+import com.flair.server.utilities.dictionary.WordNetDictionary;
+
+import arkref.sent.SentenceBreaker;
+import edu.cmu.ark.GlobalProperties;
+import edu.cmu.ark.ParseResult;
+import edu.cmu.ark.ResourceLoader;
+import edu.cmu.ark.TregexPatternFactory;
+import edu.cmu.ark.VerbConjugator;
+import edu.stanford.nlp.ling.HasWord;
+import edu.stanford.nlp.ling.Label;
+import edu.stanford.nlp.process.DocumentPreprocessor;
+import edu.stanford.nlp.simple.Sentence;
+import edu.stanford.nlp.trees.CollinsHeadFinder;
+import edu.stanford.nlp.trees.LabeledScoredTreeFactory;
+import edu.stanford.nlp.trees.PennTreeReader;
+import edu.stanford.nlp.trees.Tree;
+import edu.stanford.nlp.trees.TreeReader;
+import edu.stanford.nlp.trees.tregex.TregexMatcher;
+import edu.stanford.nlp.trees.tregex.TregexPattern;
+import edu.stanford.nlp.trees.tregex.tsurgeon.Tsurgeon;
+import edu.stanford.nlp.trees.tregex.tsurgeon.TsurgeonPattern;
+import edu.stanford.nlp.util.Pair;
 
 // import net.didion.jwnl.*;
 

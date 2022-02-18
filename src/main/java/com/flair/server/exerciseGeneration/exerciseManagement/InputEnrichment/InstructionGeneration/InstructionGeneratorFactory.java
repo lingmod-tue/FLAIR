@@ -12,7 +12,7 @@ public class InstructionGeneratorFactory {
 			} else if(topic.equals(ExerciseTopic.RELATIVES)) {
 				return new CategorizeRelativeInstructionGenerator();
 			}
-		} else if(type.equals(ExerciseType.FILL_IN_THE_BLANKS) || type.equals(ExerciseType.SHORT_ANSWER)) {
+		} else if(type.equals(ExerciseType.FILL_IN_THE_BLANKS)) {
 			if(topic.equals(ExerciseTopic.COMPARISON)) {
 				return new FiBComparisonInstructionGenerator();
 			} else if(topic.equals(ExerciseTopic.CONDITIONALS)) {
@@ -25,6 +25,26 @@ public class InstructionGeneratorFactory {
 				return new FiBPastInstructionGenerator();
 			} else if(topic.equals(ExerciseTopic.RELATIVES)) {
 				return new FiBRelativeInstructionGenerator();
+			}
+		} else if(type.equals(ExerciseType.HALF_OPEN)) {
+			if(topic.equals(ExerciseTopic.CONDITIONALS)) {
+				return new HalfOpenConditionalInstructionGenerator();
+			} else if(topic.equals(ExerciseTopic.RELATIVES)) {
+				return new HalfOpenRelativeInstructionGenerator();
+			}
+		} else if(type.equals(ExerciseType.SHORT_ANSWER)) {
+			if(topic.equals(ExerciseTopic.COMPARISON)) {
+				return new FiBComparisonInstructionGenerator();
+			} else if(topic.equals(ExerciseTopic.CONDITIONALS)) {
+				return new FiBConditionalInstructionGenerator();
+			} else if(topic.equals(ExerciseTopic.PASSIVE)) {
+				return new FiBPassiveInstructionGenerator();
+			} else if(topic.equals(ExerciseTopic.PRESENT)) {
+				return new FiBPresentInstructionGenerator();
+			} else if(topic.equals(ExerciseTopic.PAST)) {
+				return new FiBPastInstructionGenerator();
+			} else if(topic.equals(ExerciseTopic.RELATIVES)) {
+				return new SARelativeInstructionGenerator();
 			}
 		} else if(type.equals(ExerciseType.SINGLE_CHOICE)) {
 			if(topic.equals(ExerciseTopic.COMPARISON)) {

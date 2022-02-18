@@ -50,11 +50,11 @@
 			<!-- Expandable -->
 			<m:MaterialCollapsible accordion="false" grid="s12 m12 l12" margin="0" padding="0">
 			   <!-- preview -->
-			   <m:MaterialCollapsibleItem ui:field="expDocPreview">
-			     <m:MaterialCollapsibleHeader>
+			   <m:MaterialCollapsibleItem ui:field="expDocPreview" margin="0" padding="0">
+			     <m:MaterialCollapsibleHeader margin="0" padding="0">
 			       <m:MaterialLink text="Preview Document" iconType="ARROW_DROP_DOWN" iconPosition="LEFT" textColor="BLACK"/>
 			     </m:MaterialCollapsibleHeader>
-			     <m:MaterialCollapsibleBody>
+			     <m:MaterialCollapsibleBody margin="0" padding="0">
 				     <m:MaterialRow marginBottom="20">
 						<g:ScrollPanel ui:field="pnlDocTextPreviewUI" addStyleNames="{style.docText-preview}"/>		
 						
@@ -75,11 +75,11 @@
    			</m:MaterialCollapsibleItem>
    
    		    <!-- export functionality -->
-		    <m:MaterialCollapsibleItem>
-		     <m:MaterialCollapsibleHeader>
+		    <m:MaterialCollapsibleItem margin="0" padding="0">
+		     <m:MaterialCollapsibleHeader margin="0" padding="0">
 		       <m:MaterialLink text="Export Document" iconType="ARROW_DROP_DOWN" iconPosition="LEFT" textColor="BLACK"/>
 		     </m:MaterialCollapsibleHeader>
-		     <m:MaterialCollapsibleBody>
+		     <m:MaterialCollapsibleBody margin="0" padding="0">
 		     <m:MaterialRow marginBottom="20">
 				<flair:ExportDocumentWidget ui:field="wdgtExportDocument"/>
 				</m:MaterialRow>
@@ -87,11 +87,11 @@
 		    </m:MaterialCollapsibleItem>
 		    
 		     <!-- exercise generation functionality -->
-		    <m:MaterialCollapsibleItem paddingBottom="20" ui:field="expExerciseGeneration">
-		     <m:MaterialCollapsibleHeader>
+		    <m:MaterialCollapsibleItem paddingBottom="20" ui:field="expExerciseGeneration" margin="0" padding="0">
+		     <m:MaterialCollapsibleHeader margin="0" padding="0">
 		       <m:MaterialLink text="Generate Exercises" iconType="ARROW_DROP_DOWN" iconPosition="LEFT" textColor="BLACK"/>
 		     </m:MaterialCollapsibleHeader>
-		     <m:MaterialCollapsibleBody paddingTop="0">
+		     <m:MaterialCollapsibleBody paddingTop="0" margin="0" padding="0">
 		     <m:MaterialLabel text="Wait for the documents to be ranked before selecting one for exercise generation." ui:field="lblSelectExGenDoc"></m:MaterialLabel>
 		     	<flair:exerciseGeneration.ExerciseGenerationWidget ui:field="wdgtExerciseGeneration"/>
       		 </m:MaterialCollapsibleBody>

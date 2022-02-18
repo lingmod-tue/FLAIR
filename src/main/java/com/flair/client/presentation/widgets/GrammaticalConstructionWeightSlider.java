@@ -18,6 +18,7 @@ import com.google.gwt.user.client.ui.Widget;
 import gwt.material.design.client.ui.MaterialBadge;
 import gwt.material.design.client.ui.MaterialCheckBox;
 import gwt.material.design.client.ui.MaterialIcon;
+import gwt.material.design.client.ui.MaterialLabel;
 import gwt.material.design.client.ui.MaterialRange;
 
 /*
@@ -50,6 +51,8 @@ public class GrammaticalConstructionWeightSlider extends LocalizedComposite impl
 	@UiField
 	@LocalizedCommonField(tag = CommonLocalizationTags.RESULTS, type = LocalizedFieldType.TOOLTIP_BASIC)
 	MaterialBadge bdgResultCountUI;
+	@UiField
+	MaterialLabel lblSliderValue;
 
 	private GenericWeightSlider base;
 	private GrammaticalConstruction gramConstruction;
@@ -64,6 +67,8 @@ public class GrammaticalConstructionWeightSlider extends LocalizedComposite impl
 		resetHandler = null;
 		parentLang = null;
 
+		setWeightChangeHandler((w, v) -> lblSliderValue.setText(v + ""));
+		
 		initLocale(localeBinder.bind(this));
 	}
 

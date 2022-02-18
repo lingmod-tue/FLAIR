@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.flair.server.exerciseGeneration.exerciseManagement.ConstructionTextPart;
 import com.flair.server.exerciseGeneration.exerciseManagement.Distractor;
@@ -106,8 +106,7 @@ public class ConditionalConfigParser extends ConfigParser {
 						d = generateGapTask(data, configValues[4].equals("true"), configValues[6].equals("true"),
 								configValues[7].equals("true"), 0, configValues[5].equals("true"), true, false, true, false,
 								false);
-						d.setExerciseType(ExerciseType.FILL_IN_THE_BLANKS);
-						d.getBracketsProperties().add(BracketsProperties.ACTIVE_SENTENCE);
+						d.setExerciseType(ExerciseType.HALF_OPEN);
 					}
 	
 					if (d != null && !configValues[3].equals("8")) {
@@ -390,7 +389,6 @@ public class ConditionalConfigParser extends ConfigParser {
 		String constructionText = generateSentencesFromPositions(positionParts);
 		ConstructionTextPart c = new ConstructionTextPart(constructionText, sentenceId);
 		c.setConstructionType(type == 1 ? DetailedConstruction.CONDREAL : DetailedConstruction.CONDUNREAL);
-		//TODO: set type (unreal /real)
 
 		if (nDistractors > 0) {
 			ArrayList<Distractor> distractors = new ArrayList<>();

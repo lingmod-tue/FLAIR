@@ -85,8 +85,6 @@ public class MainViewport extends LocalizedComposite implements AbstractWebRanke
 	@UiField
 	CustomKeywordsEditor mdlCustomKeywordsUI;
 	@UiField
-	MaterialPanel pnlResultsContainerUI;
-	@UiField
 	DocumentCollectionVisualizer mdlVisualizerUI;
 	@UiField
 	MaterialRow pnlDefaultPlaceholderUI;

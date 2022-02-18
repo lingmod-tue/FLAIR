@@ -55,9 +55,6 @@ public class ConfigBasedExerciseGenerator extends SimpleExerciseGenerator {
 			if (isCancelled) {
 	        	return null;
 	        }
-
-    		// for underline exercises evtl. separate exercise per line
-    		//TODO: all support texts?
 		}
     	
     	return exerciseData;

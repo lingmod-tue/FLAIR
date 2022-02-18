@@ -1,11 +1,11 @@
 package arkref.parsestuff;
 
-import org.apache.commons.lang.StringUtils;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.StringUtils;
 
 public class RegexUtil {
 	public static class R {

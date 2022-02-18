@@ -1,12 +1,12 @@
 package arkref.parsestuff;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.NotImplementedException;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.NotImplementedException;
 
 /**
  * Do a regex substitution on a string and remember its alignments to the original.
@@ -50,7 +50,7 @@ public class AlignedSub {
 		return as;
 	}
 	public String replace(CharSequence target, CharSequence replacement) {
-		throw new NotImplementedException();
+		throw new NotImplementedException("");
 	}
 	public AlignedSub replaceAll(String regex, String replacement) {
 		Pattern p = Pattern.compile(regex);
@@ -63,7 +63,7 @@ public class AlignedSub {
 		return as;
 	}
 	public AlignedSub replaceFirst(String regex, String replacement) {
-		throw new NotImplementedException();
+		throw new NotImplementedException("");
 	}
 
 	private static AlignedSub replace(String text, Pattern pattern, String replacement, boolean justOne) {

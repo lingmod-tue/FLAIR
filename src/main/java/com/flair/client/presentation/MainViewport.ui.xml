@@ -38,7 +38,7 @@
 			<!-- Main Navbar -->
             <m:MaterialNavBar ui:field="navMainUI" backgroundColor="ORANGE_ACCENT_3">
                 <m:MaterialLink ui:field="tglSettingsPaneUI" waves="LIGHT" paddingLeft="10" paddingRight="5">
-                    <m.morph:MaterialIconMorph ui:field="icoSettingsMorphUI" iconSize="SMALL" marginBottom="50"
+                    <m.morph:MaterialIconMorph ui:field="icoSettingsMorphUI" iconSize="SMALL" marginBottom="10"
                                                marginRight="15">
     					<m:MaterialIcon iconType="ARROW_BACK"/>
     					<m:MaterialIcon iconType="SETTINGS"/>
@@ -84,7 +84,7 @@
 		<flair:RankerSettingsPane ui:field="pnlConstructionsSettingsUI"/>
 		
 		<!-- Results Pane-->
-		<m:MaterialPanel ui:field="pnlResultsContainerUI" backgroundColor="WHITE" layoutPosition="RELATIVE" overflow="HIDDEN"
+		<m:MaterialPanel backgroundColor="WHITE" layoutPosition="RELATIVE"
 			marginBottom="0" grid="l5 m5 s5" padding="20" addStyleNames="{style.global-animation}">
 			
 			<flair:DocumentResultsPane ui:field="pnlDocResultsUI"/>

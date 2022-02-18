@@ -49,6 +49,12 @@ public class GrammaticalConstructionPanelItem extends LocalizedComposite impleme
 		header = new MaterialCollapsibleHeader(text, reset);
 		body = new MaterialCollapsibleBody();
 		item = new MaterialCollapsibleItem(header, body);
+		header.setMargin(0);
+		header.setPadding(0);
+		body.setMargin(0);
+		body.setPadding(0);
+		item.setMargin(0);
+		item.setPadding(0);
 		children = new ArrayList<>();
 
 		// setup components

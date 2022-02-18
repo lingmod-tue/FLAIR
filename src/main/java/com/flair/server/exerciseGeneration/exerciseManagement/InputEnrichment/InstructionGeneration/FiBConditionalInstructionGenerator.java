@@ -25,8 +25,6 @@ public class FiBConditionalInstructionGenerator extends InstructionGenerator {
 		if(data.getBracketsProperties().contains(BracketsProperties.DISTRACTOR_LEMMA) || 
 				data.getInstructionProperties().contains(InstructionsProperties.LEMMA)) {
 			instructions = "Read each sentence. Which verb fits? Fill in the gap with the correct form of the verb.";
-		} else if(data.getBracketsProperties().contains(BracketsProperties.ACTIVE_SENTENCE)) {
-			instructions = "Use the verbs in brackets to form a if-clause.";
 		} else {
 			instructions = "Fill in the gap to form a correct sentence.";
 		}

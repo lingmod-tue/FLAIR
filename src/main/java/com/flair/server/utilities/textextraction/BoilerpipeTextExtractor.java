@@ -1,10 +1,11 @@
 
 package com.flair.server.utilities.textextraction;
 
+import org.xml.sax.InputSource;
+
 import com.flair.server.utilities.ServerLogger;
 import de.l3s.boilerpipe.extractors.ArticleExtractor;
 import de.l3s.boilerpipe.extractors.DefaultExtractor;
-import org.xml.sax.InputSource;
 
 /**
  * Boilerpipe implementation of a text extractor

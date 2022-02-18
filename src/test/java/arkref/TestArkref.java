@@ -1,5 +1,9 @@
 package arkref;
 
+import java.io.IOException;
+
+import org.apache.commons.lang3.ArrayUtils;
+
 import arkref.analysis.ARKref;
 import arkref.analysis.Types;
 import arkref.analysis._SimplePipeline;
@@ -8,9 +12,6 @@ import arkref.data.Mention;
 import arkref.parsestuff.AnalysisUtilities;
 import edu.stanford.nlp.trees.Tree;
 import junit.framework.TestCase;
-import org.apache.commons.lang.ArrayUtils;
-
-import java.io.IOException;
 
 public class TestArkref extends TestCase {
 

@@ -10,7 +10,8 @@ public class H5PConstantsManager {
 	 * @return	The name of the resource folder
 	 */
 	public static String getResourceFolder(String type) {
-    	if(type.equals(ExerciseType.FILL_IN_THE_BLANKS) || type.equals(ExerciseType.SINGLE_CHOICE)) {
+    	if(type.equals(ExerciseType.FILL_IN_THE_BLANKS) || type.equals(ExerciseType.SINGLE_CHOICE) || 
+				type.equals(ExerciseType.HALF_OPEN) || type.equals(ExerciseType.SHORT_ANSWER)) {
         	return "advanced_fib.h5p";
         } else if(type.equals(ExerciseType.DRAG_AND_DROP_SINGLE)) {
         	return "drag_the_words_1task.h5p";
@@ -34,7 +35,8 @@ public class H5PConstantsManager {
 	 * @return	The name of the content type library
 	 */
     public static String getContentTypeLibrary(String type) {
-		if(type.equals(ExerciseType.FILL_IN_THE_BLANKS) || type.equals(ExerciseType.SINGLE_CHOICE)) {
+		if(type.equals(ExerciseType.FILL_IN_THE_BLANKS) || type.equals(ExerciseType.SINGLE_CHOICE) || 
+				type.equals(ExerciseType.HALF_OPEN) || type.equals(ExerciseType.SHORT_ANSWER)) {
     		return "H5P.XAdvancedBlanks 0.1";
         } else if(type.equals(ExerciseType.DRAG_AND_DROP_SINGLE)) {
         	return "H5P.XXDragText 0.1";
