@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import com.flair.shared.exerciseGeneration.Pair;
 
-public class ConditionalExerciseConfigData extends ExerciseConfigData {
+public class ConditionalExerciseItemConfigData extends ExerciseItemConfigData {
 	
 	private int conditionalType;
 	private String translationIfClause;
@@ -23,9 +23,7 @@ public class ConditionalExerciseConfigData extends ExerciseConfigData {
 	private ArrayList<Pair<Integer, Integer>> underlineMainClause = new ArrayList<>();
 	private ArrayList<Pair<Integer, String>> positionsIfClause = new ArrayList<>();
 	private ArrayList<Pair<Integer, String>> positionsMainClause = new ArrayList<>();
-	private boolean isType1VsType2;
 
-	public boolean isType1VsType2() { return isType1VsType2; }
 	public int getConditionalType() { return conditionalType; }
 	public String getTranslationIfClause() { return translationIfClause; }
 	public String getTranslationMainClause() { return translationMainClause; }
@@ -44,7 +42,6 @@ public class ConditionalExerciseConfigData extends ExerciseConfigData {
 	public ArrayList<Pair<Integer, String>> getPositionsIfClause() { return positionsIfClause; }
 	public ArrayList<Pair<Integer, String>> getPositionsMainClause() { return positionsMainClause; }
 
-	public void setType1VsType2(boolean isType1VsType2) { this.isType1VsType2 = isType1VsType2; }
 	public void setConditionalType(int conditionalType) { this.conditionalType = conditionalType; }
 	public void setTranslationIfClause(String translationIfClause) { this.translationIfClause = translationIfClause; }
 	public void setTranslationMainClause(String translationMainClause) { this.translationMainClause = translationMainClause; }

@@ -22,35 +22,30 @@ import com.flair.shared.exerciseGeneration.Pair;
 public class RelativeConfigParser extends ConfigParser {
 
 	@Override
-	protected boolean checkNewBatch(ArrayList<ExerciseConfigData> currentBatch, ExerciseConfigData newExerciseData) {
-		return currentBatch.size() > 0 && currentBatch.get(currentBatch.size() - 1).getActivity() != newExerciseData.getActivity();
-	}
-
-	@Override
 	protected ArrayList<ExerciseData> generateExerciseForConfig(List<String[]> exerciseConstellations,
-			ArrayList<ExerciseConfigData> data) {
+			ExerciseConfigData data) {
 		//TODO: only for debug output:
-		if(!data.get(0).getStamp().equals("contact clauses")) {
-			for(ExerciseConfigData configData : data) {
-				RelativeTargetAndClauseItems clauseItems = determineClauseItems((RelativeExerciseConfigData)configData, true);
+		if(!data.getStamp().equals("contact clauses")) {
+			for(ExerciseItemConfigData configData : data.getItemData()) {
+				RelativeTargetAndClauseItems clauseItems = determineClauseItems((RelativeExerciseItemConfigData)configData, true);
 				StringBuilder sb = new StringBuilder();
 				sb.append(clauseItems.getSentenceClause1() + " " + clauseItems.getSentenceClause2());
 	
-				if(!((RelativeExerciseConfigData)configData).getPronoun().equals("whose")) {
-					String res = getRelativeSentence((RelativeExerciseConfigData)configData, true, false);
+				if(!((RelativeExerciseItemConfigData)configData).getPronoun().equals("whose")) {
+					String res = getRelativeSentence((RelativeExerciseItemConfigData)configData, true, false, data.getStamp(), data.getActivity());
 					if(res != null) {
 						sb.append(";").append(res);
 					}
-					res = getRelativeSentence((RelativeExerciseConfigData)configData, true, true);
+					res = getRelativeSentence((RelativeExerciseItemConfigData)configData, true, true, data.getStamp(), data.getActivity());
 					if(res != null) {
 						sb.append(";").append(res);
 					}
 				}
-				String res = getRelativeSentence((RelativeExerciseConfigData)configData, false, false);
+				String res = getRelativeSentence((RelativeExerciseItemConfigData)configData, false, false, data.getStamp(), data.getActivity());
 				if(res != null) {
 					sb.append(";").append(res);
 				}
-				res = getRelativeSentence((RelativeExerciseConfigData)configData, false, true);
+				res = getRelativeSentence((RelativeExerciseItemConfigData)configData, false, true, data.getStamp(), data.getActivity());
 				if(res != null) {
 					sb.append(";").append(res);
 				}
@@ -68,7 +63,7 @@ public class RelativeConfigParser extends ConfigParser {
 
 		for (String[] configValues : exerciseConstellations) {
 			try {
-				if (configValues[0].equals("relatives") && !data.get(0).getStamp().equals("contact clauses")) {	
+				if (configValues[0].equals("relatives") && !data.getStamp().equals("contact clauses")) {	
 					ExerciseData d = null;
 					
 					if (configValues[3].equals("0")) {
@@ -103,12 +98,12 @@ public class RelativeConfigParser extends ConfigParser {
 					} 
 	
 					if (d != null) {
-	        			d.setExerciseTitle(data.get(0).getStamp().replace("/", "_") + "/" + data.get(0).getActivity() + "/" + configValues[2] + "/" + configValues[3]);
+	        			d.setExerciseTitle(data.getStamp().replace("/", "_") + "/" + data.getActivity() + "/" + configValues[2] + "/" + configValues[3]);
 	        			d.setTopic(ExerciseTopic.RELATIVES);
-	        			d.setSubtopic(data.get(0).getStamp());
+	        			d.setSubtopic(data.getStamp());
 						exercises.add(d);
 					}
-				} else if(configValues[0].equals("relatives_contact") && data.get(0).getStamp().equals("contact clauses")) {
+				} else if(configValues[0].equals("relatives_contact") && data.getStamp().equals("contact clauses")) {
 					ExerciseData d = null;
 					
 					if (configValues[3].equals("4")) {
@@ -123,15 +118,15 @@ public class RelativeConfigParser extends ConfigParser {
 					}
 					
 					if (d != null) {
-	        			d.setExerciseTitle(data.get(0).getStamp().replace("/", "_") + "/" + data.get(0).getActivity() + "/" + configValues[2] + "/" + configValues[3]);
+	        			d.setExerciseTitle(data.getStamp().replace("/", "_") + "/" + data.getActivity() + "/" + configValues[2] + "/" + configValues[3]);
 	        			d.setTopic(ExerciseTopic.RELATIVES);
-	        			d.setSubtopic(data.get(0).getStamp());
+	        			d.setSubtopic(data.getStamp());
 						exercises.add(d);
 					}
 				}
 			} catch(Exception e) {
 				if(configValues != null && configValues.length > 3) {
-					ServerLogger.get().error(e, "Exercise " + data.get(0).getStamp().replace("/", "_") + "/" + data.get(0).getActivity() + "/" + configValues[2] + "/" + configValues[3] + " could not be generated.\n" + e.toString());
+					ServerLogger.get().error(e, "Exercise " + data.getStamp().replace("/", "_") + "/" + data.getActivity() + "/" + configValues[2] + "/" + configValues[3] + " could not be generated.\n" + e.toString());
 				} else {
 					ServerLogger.get().error(e, "An exercise could not be generated.\n" + e.toString());
 				}
@@ -153,19 +148,19 @@ public class RelativeConfigParser extends ConfigParser {
 	 * @param clause1IntoClause2	<code>true</code> if clause 1 is to be inserted into clause 2
 	 * @return The exercise information
 	 */
-	private ExerciseData generateMemoryTask(ArrayList<ExerciseConfigData> configData, boolean clause1IntoClause2,
+	private ExerciseData generateMemoryTask(ExerciseConfigData configData, boolean clause1IntoClause2,
 			boolean randomizeClauseOrder) {
 		ArrayList<TextPart> parts = new ArrayList<>();
 		int sentenceId = 1;
 
-		for (ExerciseConfigData id : configData) {
+		for (ExerciseItemConfigData id : configData.getItemData()) {
 			if(randomizeClauseOrder) {
 				clause1IntoClause2 = Math.random() < 0.5;
 			}
-			RelativeExerciseConfigData itemData = (RelativeExerciseConfigData) id;
+			RelativeExerciseItemConfigData itemData = (RelativeExerciseItemConfigData) id;
 			RelativeTargetAndClauseItems clauseItems = determineClauseItems(itemData, clause1IntoClause2);
 			
-			ArrayList<RelativeClausePosition> positions = determineOrder(itemData, clause1IntoClause2, false);
+			ArrayList<RelativeClausePosition> positions = determineOrder(itemData, clause1IntoClause2, false, configData.getStamp(), configData.getActivity());
 			if(positions == null) {
 				continue;
 			}
@@ -195,19 +190,19 @@ public class RelativeConfigParser extends ConfigParser {
 	 * @param addDistractors		<code>true</code> for MC exercises
 	 * @return The exercise information
 	 */
-	private ExerciseData generateGapTask(ArrayList<ExerciseConfigData> configData, boolean clause1IntoClause2, 
+	private ExerciseData generateGapTask(ExerciseConfigData configData, boolean clause1IntoClause2, 
 			boolean addDistractors, boolean randomizeClauseOrder) {
 		ArrayList<TextPart> parts = new ArrayList<>();
 		int sentenceId = 1;
 
-		for (ExerciseConfigData id : configData) {
+		for (ExerciseItemConfigData id : configData.getItemData()) {
 			if(randomizeClauseOrder) {
 				clause1IntoClause2 = Math.random() < 0.5;
 			}
-			RelativeExerciseConfigData itemData = (RelativeExerciseConfigData) id;
+			RelativeExerciseItemConfigData itemData = (RelativeExerciseItemConfigData) id;
 
 			if(!(itemData.getPronoun().equals("whose") && clause1IntoClause2)) {				
-				ArrayList<RelativeClausePosition> positions = determineOrder(itemData, clause1IntoClause2, false);
+				ArrayList<RelativeClausePosition> positions = determineOrder(itemData, clause1IntoClause2, false, configData.getStamp(), configData.getActivity());
 				if(positions == null) {
 					continue;
 				}
@@ -269,18 +264,18 @@ public class RelativeConfigParser extends ConfigParser {
 	 * @param clause1IntoClause2	<code>true</code> if clause 1 is to be inserted into clause 2
 	 * @return The exercise information
 	 */
-	private ExerciseData generatePromptedTask(ArrayList<ExerciseConfigData> configData, boolean clause1IntoClause2,
+	private ExerciseData generatePromptedTask(ExerciseConfigData configData, boolean clause1IntoClause2,
 			boolean randomizeClauseOrder) {
 		ArrayList<TextPart> parts = new ArrayList<>();
 		int sentenceId = 1;
 
-		for (ExerciseConfigData id : configData) {
+		for (ExerciseItemConfigData id : configData.getItemData()) {
 			if(randomizeClauseOrder) {
 				clause1IntoClause2 = Math.random() < 0.5;
 			}
-			RelativeExerciseConfigData itemData = (RelativeExerciseConfigData) id;
+			RelativeExerciseItemConfigData itemData = (RelativeExerciseItemConfigData) id;
 
-			ArrayList<RelativeClausePosition> positions = determineOrder(itemData, clause1IntoClause2, false);
+			ArrayList<RelativeClausePosition> positions = determineOrder(itemData, clause1IntoClause2, false, configData.getStamp(), configData.getActivity());
 			if(positions == null) {
 				continue;
 			}
@@ -294,7 +289,7 @@ public class RelativeConfigParser extends ConfigParser {
 			parts.add(new PlainTextPart(clauseItems.getSentenceClause1() + " " + clauseItems.getSentenceClause2(), sentenceId));
 			parts.add(new HtmlTextPart(" <br>", sentenceId));
 						
-			Pair<String, String> exerciseItems = generatePromptAndTarget(itemData, clause1IntoClause2);
+			Pair<String, String> exerciseItems = generatePromptAndTarget(itemData, clause1IntoClause2, configData.getStamp(), configData.getActivity());
 			parts.add(new PlainTextPart(exerciseItems.first, sentenceId));
 
 			ConstructionTextPart c = new ConstructionTextPart(exerciseItems.second, sentenceId);
@@ -303,7 +298,7 @@ public class RelativeConfigParser extends ConfigParser {
 					(itemData.getPronoun().equals("that") ? DetailedConstruction.THAT : DetailedConstruction.OTHERPRN)));
 			
 			// check if the prompt for alternative order of clauses would be identical
-			Pair<String, String> alternativeOrdering = generatePromptAndTarget(itemData, !clause1IntoClause2);
+			Pair<String, String> alternativeOrdering = generatePromptAndTarget(itemData, !clause1IntoClause2, configData.getStamp(), configData.getActivity());
 			
 			if(alternativeOrdering.first.equals(exerciseItems.first)) {
 				c.getTargetAlternatives().add(alternativeOrdering.second);
@@ -326,8 +321,8 @@ public class RelativeConfigParser extends ConfigParser {
 	 * @param clause1IntoClause2	<code>true</code> if clause 1 is to be inserted into clause 2
 	 * @return	The prompt and the target
 	 */
-	private Pair<String, String> generatePromptAndTarget(RelativeExerciseConfigData itemData, boolean clause1IntoClause2) {
-		ArrayList<RelativeClausePosition> positions = determineOrder(itemData, clause1IntoClause2, false);
+	private Pair<String, String> generatePromptAndTarget(RelativeExerciseItemConfigData itemData, boolean clause1IntoClause2, String stamp, int activity) {
+		ArrayList<RelativeClausePosition> positions = determineOrder(itemData, clause1IntoClause2, false, stamp, activity);
 
 		ArrayList<Pair<Integer,String>> pos = new ArrayList<>();
 		boolean lastWasPronoun = false;
@@ -357,20 +352,20 @@ public class RelativeConfigParser extends ConfigParser {
 	 * @param configData	The data of an exercise from the config file
 	 * @return The exercise information
 	 */
-	private ExerciseData generateOpenTask(ArrayList<ExerciseConfigData> configData) {
+	private ExerciseData generateOpenTask(ExerciseConfigData configData) {
 		ArrayList<TextPart> parts = new ArrayList<>();
 		int sentenceId = 1;
 
-		for (ExerciseConfigData id : configData) {
-			RelativeExerciseConfigData itemData = (RelativeExerciseConfigData) id;
+		for (ExerciseItemConfigData id : configData.getItemData()) {
+			RelativeExerciseItemConfigData itemData = (RelativeExerciseItemConfigData) id;
 			RelativeTargetAndClauseItems clauseItems = determineClauseItems(itemData, true);
 						
 			HashSet<String> possibleSentences = new HashSet<>();
-			addIfNotNull(possibleSentences, getRelativeSentence(itemData, false, false));
-			addIfNotNull(possibleSentences, getRelativeSentence(itemData, false, true));
-			if(!((RelativeExerciseConfigData)id).getPronoun().equals("whose")) {
-				addIfNotNull(possibleSentences, getRelativeSentence(itemData, true, false));
-				addIfNotNull(possibleSentences, getRelativeSentence(itemData, true, true));
+			addIfNotNull(possibleSentences, getRelativeSentence(itemData, false, false, configData.getStamp(), configData.getActivity()));
+			addIfNotNull(possibleSentences, getRelativeSentence(itemData, false, true, configData.getStamp(), configData.getActivity()));
+			if(!((RelativeExerciseItemConfigData)id).getPronoun().equals("whose")) {
+				addIfNotNull(possibleSentences, getRelativeSentence(itemData, true, false, configData.getStamp(), configData.getActivity()));
+				addIfNotNull(possibleSentences, getRelativeSentence(itemData, true, true, configData.getStamp(), configData.getActivity()));
 			}
 			
 			if(possibleSentences.size() == 0) {
@@ -411,18 +406,18 @@ public class RelativeConfigParser extends ConfigParser {
 	 * @param clause1IntoClause2	<code>true</code> if clause 1 is to be inserted into clause 2
 	 * @return The exercise information
 	 */
-	private ExerciseData generateJSTask(ArrayList<ExerciseConfigData> configData, boolean clause1IntoClause2,
+	private ExerciseData generateJSTask(ExerciseConfigData configData, boolean clause1IntoClause2,
 			boolean randomizeClauseOrder) {
 		ArrayList<TextPart> parts = new ArrayList<>();
 		int sentenceId = 1;
 
-		for (ExerciseConfigData id : configData) {	
+		for (ExerciseItemConfigData id : configData.getItemData()) {	
 			if(randomizeClauseOrder) {
 				clause1IntoClause2 = Math.random() < 0.5;
 			}
-			RelativeExerciseConfigData itemData = (RelativeExerciseConfigData) id;
+			RelativeExerciseItemConfigData itemData = (RelativeExerciseItemConfigData) id;
 		
-			ArrayList<ArrayList<String>> orders = getOrders(itemData);
+			ArrayList<ArrayList<String>> orders = getOrders(itemData, configData.getStamp(), configData.getActivity());
 			
 			if(orders == null) {
 				//TODO: we cannot use these exercises until we have the JS type with multiple correct answers in FeedBook
@@ -455,12 +450,12 @@ public class RelativeConfigParser extends ConfigParser {
 	 * @param configData			The data of an exercise from the config file
 	 * @return The exercise information
 	 */
-	private ExerciseData generateCategorizeTask(ArrayList<ExerciseConfigData> configData) {
+	private ExerciseData generateCategorizeTask(ExerciseConfigData configData) {
 		ArrayList<TextPart> parts = new ArrayList<>();
 		int sentenceId = 1;
 
-		for (ExerciseConfigData id : configData) {
-			RelativeExerciseConfigData itemData = (RelativeExerciseConfigData)id;
+		for (ExerciseItemConfigData id : configData.getItemData()) {
+			RelativeExerciseItemConfigData itemData = (RelativeExerciseItemConfigData)id;
 			String category = itemData.isContact() ? "You can leave out the relative pronoun" : "You cannot leave out the pronoun";
 
 			ConstructionTextPart c = new ConstructionTextPart(itemData.getRelativeSentence(), sentenceId++);
@@ -484,16 +479,16 @@ public class RelativeConfigParser extends ConfigParser {
 	 * For contact clauses.
 	 * @return The exercise information
 	 */
-	private ExerciseData generatePromptedTaskContact(ArrayList<ExerciseConfigData> configData) {
+	private ExerciseData generatePromptedTaskContact(ExerciseConfigData configData) {
 		ArrayList<TextPart> parts = new ArrayList<>();
 		int sentenceId = 1;
 
-		for (ExerciseConfigData id : configData) {
+		for (ExerciseItemConfigData id : configData.getItemData()) {
 			if (parts.size() > 0) {
 				parts.add(new HtmlTextPart(" <br><br>", sentenceId));
 			}
 			
-			RelativeExerciseConfigData itemData = (RelativeExerciseConfigData)id;
+			RelativeExerciseItemConfigData itemData = (RelativeExerciseItemConfigData)id;
 			
 			parts.add(new PlainTextPart(itemData.getPositionsClause1().get(0).second + " " + itemData.getPositionsClause2().get(0).second, sentenceId));
 			parts.add(new HtmlTextPart(" <br>", sentenceId));
@@ -528,12 +523,12 @@ public class RelativeConfigParser extends ConfigParser {
 	 * @param configData	The data of an exercise from the config file
 	 * @return The exercise information
 	 */
-	private ExerciseData generateOpenTaskContact(ArrayList<ExerciseConfigData> configData) {
+	private ExerciseData generateOpenTaskContact(ExerciseConfigData configData) {
 		ArrayList<TextPart> parts = new ArrayList<>();
 		int sentenceId = 1;
 
-		for (ExerciseConfigData id : configData) {
-			RelativeExerciseConfigData itemData = (RelativeExerciseConfigData) id;
+		for (ExerciseItemConfigData id : configData.getItemData()) {
+			RelativeExerciseItemConfigData itemData = (RelativeExerciseItemConfigData) id;
 			
 			if (parts.size() > 0) {
 				parts.add(new HtmlTextPart(" <br><br>", sentenceId));
@@ -560,13 +555,13 @@ public class RelativeConfigParser extends ConfigParser {
 		return data;
 	}
 	
-	ArrayList<ArrayList<String>> getOrders(RelativeExerciseConfigData itemData) {
+	ArrayList<ArrayList<String>> getOrders(RelativeExerciseItemConfigData itemData, String stamp, int activity) {
 		for(int i = 1; i <=4; i++) {
 			ArrayList<ArrayList<String>> orders = new ArrayList<>();
-			addOrder1(true, false, itemData, orders, null, i);
-			addOrder1(true, true, itemData, orders, orders.get(0), i);
-			addOrder1(false, false, itemData, orders, orders.get(0), i);
-			addOrder1(false, true, itemData, orders, orders.get(0), i);
+			addOrder1(true, false, itemData, orders, null, i, stamp, activity);
+			addOrder1(true, true, itemData, orders, orders.get(0), i, stamp, activity);
+			addOrder1(false, false, itemData, orders, orders.get(0), i, stamp, activity);
+			addOrder1(false, true, itemData, orders, orders.get(0), i, stamp, activity);
 			
 			if(orders.size() == 1) {
 				//System.out.println("Order " + i);
@@ -577,17 +572,17 @@ public class RelativeConfigParser extends ConfigParser {
 		return null;
 	}
 	
-	private void addOrder1(boolean clause1IntoClause2, boolean extrapose, RelativeExerciseConfigData itemData,
-			ArrayList<ArrayList<String>> orders, ArrayList<String> chunks, int i) {
+	private void addOrder1(boolean clause1IntoClause2, boolean extrapose, RelativeExerciseItemConfigData itemData,
+			ArrayList<ArrayList<String>> orders, ArrayList<String> chunks, int i, String stamp, int activity) {
 		ArrayList<String> order;
 		if(i == 1) {
-			order = getJSOrder1(itemData, clause1IntoClause2, extrapose);
+			order = getJSOrder1(itemData, clause1IntoClause2, extrapose, stamp, activity);
 		} else if( i == 2) {
-			order = getJSOrder3(itemData, clause1IntoClause2, extrapose);
+			order = getJSOrder3(itemData, clause1IntoClause2, extrapose, stamp, activity);
 		} else if( i == 3) {
-			order = getJSOrder4(itemData, clause1IntoClause2, extrapose);
+			order = getJSOrder4(itemData, clause1IntoClause2, extrapose, stamp, activity);
 		} else {
-			order = getJSOrder2(itemData, clause1IntoClause2, extrapose);
+			order = getJSOrder2(itemData, clause1IntoClause2, extrapose, stamp, activity);
 		}
 		if(order != null && (chunks == null || checkAlternativeCoveredByChunking(chunks, order)) && 
 				!checkOrderAlreadyCovered(orders, order)) {
@@ -595,9 +590,9 @@ public class RelativeConfigParser extends ConfigParser {
 		}
 	}
 	
-	private void addOrder(boolean clause1IntoClause2, boolean extrapose, RelativeExerciseConfigData itemData,
-			ArrayList<ArrayList<String>> orders, ArrayList<String> chunks) {
-		ArrayList<String> order = getJSOrder(itemData, clause1IntoClause2, extrapose);
+	private void addOrder(boolean clause1IntoClause2, boolean extrapose, RelativeExerciseItemConfigData itemData,
+			ArrayList<ArrayList<String>> orders, ArrayList<String> chunks, String stamp, int activity) {
+		ArrayList<String> order = getJSOrder(itemData, clause1IntoClause2, extrapose, stamp, activity);
 		if(order != null && (chunks == null || checkAlternativeCoveredByChunking(chunks, order)) && 
 				!checkOrderAlreadyCovered(orders, order)) {
 			orders.add(order);
@@ -610,7 +605,7 @@ public class RelativeConfigParser extends ConfigParser {
 	 * @param clause1IntoClause2	<code>true</code> if clause 1 is to be inserted into clause 2
 	 * @return	The clause constituents of the main and relative clauses
 	 */
-	private RelativeTargetAndClauseItems determineClauseItems(RelativeExerciseConfigData itemData, boolean clause1IntoClause2) {
+	private RelativeTargetAndClauseItems determineClauseItems(RelativeExerciseItemConfigData itemData, boolean clause1IntoClause2) {
 		String sentenceClause1 = StringUtils.capitalize(generateSentencesFromPositions(itemData.getPositionsClause1()));
 		if(!sentenceClause1.endsWith(".")) {
 			sentenceClause1 += ".";
@@ -656,11 +651,11 @@ public class RelativeConfigParser extends ConfigParser {
 	 * @param extrapose				<code>true</code> if the extraposed order is required
 	 * @return	The positions of the relative sentence
 	 */
-	private ArrayList<RelativeClausePosition> determineOrder(RelativeExerciseConfigData itemData, 
-			boolean clause1IntoClause2, boolean extrapose) {
+	private ArrayList<RelativeClausePosition> determineOrder(RelativeExerciseItemConfigData itemData, 
+			boolean clause1IntoClause2, boolean extrapose, String stamp, int activity) {
 		RelativeTargetAndClauseItems clauseItems = determineClauseItems(itemData, clause1IntoClause2);
 		if(clauseItems.getCommonReferentMainClause() == null || clauseItems.getCommonReferentRelativeClause() == null) {
-			System.out.println("Line does not have common referent: " + itemData.getStamp() + ", " + itemData.getActivity() + "." + itemData.getItem());
+			System.out.println("Line does not have common referent: " + stamp + ", " + activity + "." + itemData.getItem());
 			return null;
 		}
 		
@@ -736,8 +731,8 @@ public class RelativeConfigParser extends ConfigParser {
 	 * @param extrapose				<code>true</code> if the extraposed order is required
 	 * @return	The relative sentence
 	 */
-	private String getRelativeSentence(RelativeExerciseConfigData itemData, boolean clause1IntoClause2, boolean extrapose) {
-		ArrayList<RelativeClausePosition> positions = determineOrder(itemData, clause1IntoClause2, extrapose);
+	private String getRelativeSentence(RelativeExerciseItemConfigData itemData, boolean clause1IntoClause2, boolean extrapose, String stamp, int activity) {
+		ArrayList<RelativeClausePosition> positions = determineOrder(itemData, clause1IntoClause2, extrapose, stamp, activity);
 		if(positions == null) {
 			return null;
 		}
@@ -814,9 +809,9 @@ public class RelativeConfigParser extends ConfigParser {
 	 * @param extrapose				<code>true</code> if the extraposed order is required
 	 * @return	The string values of the positions in the target order
 	 */
-	private ArrayList<String> getJSOrder(RelativeExerciseConfigData itemData, 
-			boolean clause1IntoClause2, boolean extrapose) {
-		ArrayList<RelativeClausePosition> positions = determineOrder(itemData, clause1IntoClause2, extrapose);
+	private ArrayList<String> getJSOrder(RelativeExerciseItemConfigData itemData, 
+			boolean clause1IntoClause2, boolean extrapose, String stamp, int activity) {
+		ArrayList<RelativeClausePosition> positions = determineOrder(itemData, clause1IntoClause2, extrapose, stamp, activity);
 		if(positions == null) {
 			return null;
 		}
@@ -841,9 +836,9 @@ public class RelativeConfigParser extends ConfigParser {
 	 * pronoun with succeeding item
 	 * punctuation as separate item
 	 */
-	private ArrayList<String> getJSOrder1(RelativeExerciseConfigData itemData, 
-			boolean clause1IntoClause2, boolean extrapose) {
-		ArrayList<RelativeClausePosition> positions = determineOrder(itemData, clause1IntoClause2, extrapose);
+	private ArrayList<String> getJSOrder1(RelativeExerciseItemConfigData itemData, 
+			boolean clause1IntoClause2, boolean extrapose, String stamp, int activity) {
+		ArrayList<RelativeClausePosition> positions = determineOrder(itemData, clause1IntoClause2, extrapose, stamp, activity);
 		if(positions == null) {
 			return null;
 		}
@@ -865,9 +860,9 @@ public class RelativeConfigParser extends ConfigParser {
 	 * pronoun with preceding and succeeding item
 	 * punctuation with last item
 	 */
-	private ArrayList<String> getJSOrder2(RelativeExerciseConfigData itemData, 
-			boolean clause1IntoClause2, boolean extrapose) {
-		ArrayList<RelativeClausePosition> positions = determineOrder(itemData, clause1IntoClause2, extrapose);
+	private ArrayList<String> getJSOrder2(RelativeExerciseItemConfigData itemData, 
+			boolean clause1IntoClause2, boolean extrapose, String stamp, int activity) {
+		ArrayList<RelativeClausePosition> positions = determineOrder(itemData, clause1IntoClause2, extrapose, stamp, activity);
 		if(positions == null) {
 			return null;
 		}
@@ -892,9 +887,9 @@ public class RelativeConfigParser extends ConfigParser {
 	 * pronoun with succeeding item
 	 * punctuation with last item
 	 */
-	private ArrayList<String> getJSOrder3(RelativeExerciseConfigData itemData, 
-			boolean clause1IntoClause2, boolean extrapose) {
-		ArrayList<RelativeClausePosition> positions = determineOrder(itemData, clause1IntoClause2, extrapose);
+	private ArrayList<String> getJSOrder3(RelativeExerciseItemConfigData itemData, 
+			boolean clause1IntoClause2, boolean extrapose, String stamp, int activity) {
+		ArrayList<RelativeClausePosition> positions = determineOrder(itemData, clause1IntoClause2, extrapose, stamp, activity);
 		if(positions == null) {
 			return null;
 		}
@@ -919,9 +914,9 @@ public class RelativeConfigParser extends ConfigParser {
 	 * pronoun with preceding and succeeding item
 	 * punctuation as separate item
 	 */
-	private ArrayList<String> getJSOrder4(RelativeExerciseConfigData itemData, 
-			boolean clause1IntoClause2, boolean extrapose) {
-		ArrayList<RelativeClausePosition> positions = determineOrder(itemData, clause1IntoClause2, extrapose);
+	private ArrayList<String> getJSOrder4(RelativeExerciseItemConfigData itemData, 
+			boolean clause1IntoClause2, boolean extrapose, String stamp, int activity) {
+		ArrayList<RelativeClausePosition> positions = determineOrder(itemData, clause1IntoClause2, extrapose, stamp, activity);
 		if(positions == null) {
 			return null;
 		}

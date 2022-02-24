@@ -154,6 +154,7 @@ class ClientSessionState {
 			for (int i = 0; i < uploadCache.size(); i++) {
 				if(i >= start && i < end) {
 					temporaryClientData.customCorpusData.contents.add(uploadCache.get(i).getStream().toString());
+
 					sources.add(new UploadedFileDocumentSource(uploadCache.get(i).getStream(),
 							uploadCache.get(i).getFilename(),
 							msg.getLanguage(),
@@ -271,19 +272,30 @@ class ClientSessionState {
 		// Get the uploaded file content if the document comes from custom file upload
 		for(ExerciseSettings exerciseSettings : settings) {
 			if(exerciseSettings.getFileName().length() > 0 && exerciseSettings.getId() != 0) {
-				if(exerciseSettings instanceof DocumentExerciseSettings) {
-					List<String> uploadCache = temporaryClientData.customCorpusData.contents;
-	
-					if(uploadCache != null && uploadCache.size() >= exerciseSettings.getId()) {
-						String fileStream = uploadCache.get(exerciseSettings.getId() - 1);
-						((DocumentExerciseSettings)exerciseSettings).setFileContent(fileStream);
+				Integer index = null;
+				for(int i = temporaryClientData.customCorpusData.fileNames.size() - 1; i >= 0 ; i--) {
+					String uploadedFile = temporaryClientData.customCorpusData.fileNames.get(i);
+					if(uploadedFile.equals(exerciseSettings.getFileName())) {
+						index = i; 
+						break;
 					}
-				} else if(exerciseSettings instanceof ConfigExerciseSettings) {
-					List<byte[]> uploadCache = temporaryClientData.customCorpusData.byteContents;
-					
-					if(uploadCache != null && uploadCache.size() >= exerciseSettings.getId()) {
-						byte[] fileStream = uploadCache.get(exerciseSettings.getId() - 1);
-						((ConfigExerciseSettings)exerciseSettings).setFileStream(fileStream);
+				}
+				
+				if(index != null) {
+					if(exerciseSettings instanceof DocumentExerciseSettings) {
+						List<String> uploadCache = temporaryClientData.customCorpusData.contents;
+		
+						if(uploadCache != null && uploadCache.size() >= exerciseSettings.getId()) {
+							String fileStream = uploadCache.get(index);
+							((DocumentExerciseSettings)exerciseSettings).setFileContent(fileStream);
+						}
+					} else if(exerciseSettings instanceof ConfigExerciseSettings) {
+						List<byte[]> uploadCache = temporaryClientData.customCorpusData.byteContents;
+						
+						if(uploadCache != null && uploadCache.size() >= exerciseSettings.getId()) {
+							byte[] fileStream = uploadCache.get(index);
+							((ConfigExerciseSettings)exerciseSettings).setFileStream(fileStream);
+						}
 					}
 				}
 			}
@@ -528,6 +540,8 @@ class ClientSessionState {
 			try {
 				byte[] bytes = ByteStreams.toByteArray(file.getStream());
 				temporaryClientData.customCorpusData.byteContents.add(bytes);
+				temporaryClientData.customCorpusData.fileNames.add(file.getFilename());
+
 				file.setStream(new ByteArrayInputStream(bytes));
 			} catch (IOException e) { }
 		}

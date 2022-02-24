@@ -71,8 +71,15 @@ public abstract class ConfigParser {
 	 * @return The exercise data structured into exercise types and blocks of max.
 	 *         10 items
 	 */
-	public ArrayList<ExerciseData> parseConfigFile(InputStream inputStream, String topic) {
-		ArrayList<ExerciseConfigData> configData = new ExcelFileManager().readExcelFile(inputStream, topic);
+	public ArrayList<ExerciseData> parseConfigFile(InputStream inputStream, String topic, String fileExtension) {
+		ArrayList<ExerciseConfigData> configData;
+		if(fileExtension.equals("xlsx") ) {
+			configData = new ExcelFileManager().readExcelFile(inputStream, topic);
+		} else if(fileExtension.equals("json")) {
+			configData = JsonFileReaderFactory.getReader(topic).parse(inputStream);
+		} else {
+			return null;
+		}
 
 		List<String[]> exerciseConstellations = readExerciseConstellations();
 		if(exerciseConstellations == null) {
@@ -80,27 +87,14 @@ public abstract class ConfigParser {
 		}
 				
 		ArrayList<ExerciseData> result = new ArrayList<>();
-		ArrayList<ExerciseConfigData> batch = new ArrayList<>();
 		for(ExerciseConfigData data : configData) {
-			if(checkNewBatch(batch, data)) {
-				ArrayList<ExerciseData> generatedExercises = generateExerciseForConfig(exerciseConstellations, batch);
-				
-				if(generatedExercises != null) {
-					result.addAll(generatedExercises);
-				}
-				batch.clear();
-			}
+			ArrayList<ExerciseData> generatedExercises = generateExerciseForConfig(exerciseConstellations, data);
 			
-			batch.add(data);
-		}
-		
-		if(batch.size() > 0) {
-			ArrayList<ExerciseData> generatedExercises = generateExerciseForConfig(exerciseConstellations, batch);
 			if(generatedExercises != null) {
 				result.addAll(generatedExercises);
 			}
 		}
-		
+
 		return result;
 	}
 
@@ -122,20 +116,12 @@ public abstract class ConfigParser {
 	}
 	
 	/**
-	 * Determines whether a new batch needs to be started.
-	 * @param currentBatch		The old batch
-	 * @param newExerciseData	The new exercise data
-	 * @return	<code>true</code> if a new batch needs to be started
-	 */
-	protected abstract boolean checkNewBatch(ArrayList<ExerciseConfigData> currentBatch, ExerciseConfigData newExerciseData);
-		
-	/**
 	 * Generates all exercises defined in the resource file for conditional exercises,
 	 * for a single exercise defined in the uploaded file.
 	 * @param exerciseConstellations	The exercise definitions defined in the resource file
 	 * @param data						The exercise as defined in the uploaded file
 	 * @return	The generated exercises in abstracted format
 	 */
-	protected abstract ArrayList<ExerciseData> generateExerciseForConfig(List<String[]> exerciseConstellations, ArrayList<ExerciseConfigData> data);
+	protected abstract ArrayList<ExerciseData> generateExerciseForConfig(List<String[]> exerciseConstellations, ExerciseConfigData data);
 	
 }

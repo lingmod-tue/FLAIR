@@ -34,7 +34,7 @@ public class CategorizeXmlGenerator extends SimpleExerciseXmlGenerator {
 				
 				pool.get(construction.getCategory()).add(construction.getValue());
 
-				String fb = construction.getDistractors().get(0).getFeedback();
+				String fb = construction.getDistractors().size() > 0 ? construction.getDistractors().get(0).getFeedback() : null;
 				if(fb != null) {
 					feedback.get(construction.getCategory()).add(fb);
 				}

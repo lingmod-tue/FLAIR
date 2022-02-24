@@ -110,54 +110,54 @@ public class ConditionalExcelFileReader extends ExcelFileReader {
 			for(int i = 0; i < columnValues.get(entry.getValue()).size(); i++) {	// rows
 				if(isFirstCol) {
 					// it's a new activity
-					ConditionalExerciseConfigData cd = new ConditionalExerciseConfigData();
-					cd.setType1VsType2(columnValues.get("Activity type").get(i).equals("1vs2"));
+					ExerciseConfigData cd = new ExerciseConfigData();
+					cd.getItemData().add(new RelativeExerciseItemConfigData());
 					configData.add(cd);
 				}
-				ConditionalExerciseConfigData cd = (ConditionalExerciseConfigData)configData.get(i);
+				ExerciseConfigData cd = configData.get(i);
 				if(entry.getValue().equals("Aufgabennr.")) {
 					cd.setActivity((int)Float.parseFloat(columnValues.get(entry.getValue()).get(i)));
 		    	} else if(entry.getValue().equals("stamp")) {
 		    		cd.setStamp(columnValues.get(entry.getValue()).get(i));
 		    	} else if(entry.getValue().equals("item")) {
-					cd.setItem((int)Float.parseFloat(columnValues.get(entry.getValue()).get(i)));
+					((ConditionalExerciseItemConfigData)cd.getItemData().get(0)).setItem((int)Float.parseFloat(columnValues.get(entry.getValue()).get(i)));
 		    	} else if(entry.getValue().equals("type 1 or type 2")) {
-		    		cd.setConditionalType((int)Float.parseFloat(columnValues.get(entry.getValue()).get(i)));
+		    		((ConditionalExerciseItemConfigData)cd.getItemData().get(0)).setConditionalType((int)Float.parseFloat(columnValues.get(entry.getValue()).get(i)));
 		    	} else if(entry.getValue().equals("Übersetzung if-clause")) {
-		    		cd.setTranslationIfClause(columnValues.get(entry.getValue()).get(i));
+		    		((ConditionalExerciseItemConfigData)cd.getItemData().get(0)).setTranslationIfClause(columnValues.get(entry.getValue()).get(i));
 		    	} else if(entry.getValue().equals("übersetzung main clause")) {
-		    		cd.setTranslationMainClause(columnValues.get(entry.getValue()).get(i));
+		    		((ConditionalExerciseItemConfigData)cd.getItemData().get(0)).setTranslationMainClause(columnValues.get(entry.getValue()).get(i));
 		    	} else if(entry.getValue().equals("if-clause distractor 1")) {
-		    		cd.getDistractorsIfClause().add(new Pair<>(1, columnValues.get(entry.getValue()).get(i)));
+		    		((ConditionalExerciseItemConfigData)cd.getItemData().get(0)).getDistractorsIfClause().add(new Pair<>(1, columnValues.get(entry.getValue()).get(i)));
 		    	} else if(entry.getValue().equals("if-clause distractor 2")) {
-		    		cd.getDistractorsIfClause().add(new Pair<>(2, columnValues.get(entry.getValue()).get(i)));
+		    		((ConditionalExerciseItemConfigData)cd.getItemData().get(0)).getDistractorsIfClause().add(new Pair<>(2, columnValues.get(entry.getValue()).get(i)));
 		    	} else if(entry.getValue().equals("if-clause distractor 3")) {
-		    		cd.getDistractorsIfClause().add(new Pair<>(3, columnValues.get(entry.getValue()).get(i)));
+		    		((ConditionalExerciseItemConfigData)cd.getItemData().get(0)).getDistractorsIfClause().add(new Pair<>(3, columnValues.get(entry.getValue()).get(i)));
 		    	} else if(entry.getValue().equals("main clause distractor 1")) {
-		    		cd.getDistractorsMainClause().add(new Pair<>(1, columnValues.get(entry.getValue()).get(i)));
+		    		((ConditionalExerciseItemConfigData)cd.getItemData().get(0)).getDistractorsMainClause().add(new Pair<>(1, columnValues.get(entry.getValue()).get(i)));
 		    	} else if(entry.getValue().equals("main clause distractor 2")) {
-		    		cd.getDistractorsMainClause().add(new Pair<>(2, columnValues.get(entry.getValue()).get(i)));
+		    		((ConditionalExerciseItemConfigData)cd.getItemData().get(0)).getDistractorsMainClause().add(new Pair<>(2, columnValues.get(entry.getValue()).get(i)));
 		    	} else if(entry.getValue().equals("main clause distractor 3")) {
-		    		cd.getDistractorsMainClause().add(new Pair<>(3, columnValues.get(entry.getValue()).get(i)));
+		    		((ConditionalExerciseItemConfigData)cd.getItemData().get(0)).getDistractorsMainClause().add(new Pair<>(3, columnValues.get(entry.getValue()).get(i)));
 		    	} else if(entry.getValue().equals("given in brackets if-clause")) {
-		    		cd.setLemmaIfClause(columnValues.get(entry.getValue()).get(i));
+		    		((ConditionalExerciseItemConfigData)cd.getItemData().get(0)).setLemmaIfClause(columnValues.get(entry.getValue()).get(i));
 		    	} else if(entry.getValue().equals("given in brackets main clause")) {
-		    		cd.setLemmaMainClause(columnValues.get(entry.getValue()).get(i));
+		    		((ConditionalExerciseItemConfigData)cd.getItemData().get(0)).setLemmaMainClause(columnValues.get(entry.getValue()).get(i));
 		    	} else if(entry.getValue().equals("semantic distractor if clause")) {
-		    		cd.setDistractorLemmaIfClause(columnValues.get(entry.getValue()).get(i));
+		    		((ConditionalExerciseItemConfigData)cd.getItemData().get(0)).setDistractorLemmaIfClause(columnValues.get(entry.getValue()).get(i));
 		    	} else if(entry.getValue().equals("semantic distractor main clause")) {
-		    		cd.setDistractorLemmaMainClause(columnValues.get(entry.getValue()).get(i));
+		    		((ConditionalExerciseItemConfigData)cd.getItemData().get(0)).setDistractorLemmaMainClause(columnValues.get(entry.getValue()).get(i));
 		    	} else if(entry.getValue().equals("given words für halb-offene Aufgaben if-clause")) {
 		    		String brackets = StringUtils.strip(columnValues.get(entry.getValue()).get(i), "()");
 		    		String[] elements = brackets.split(",");
 		    		for(String element : elements) {
-		    			cd.getBracketsIfClause().add(xTrim(element));
+		    			((ConditionalExerciseItemConfigData)cd.getItemData().get(0)).getBracketsIfClause().add(xTrim(element));
 		    		}
 		    	} else if(entry.getValue().equals("given words  für halb-offene Aufgaben main clause")) {
 		    		String brackets = StringUtils.strip(columnValues.get(entry.getValue()).get(i), "()");
 		    		String[] elements = brackets.split(",");
 		    		for(String element : elements) {
-		    			cd.getBracketsMainClause().add(xTrim(element));
+		    			((ConditionalExerciseItemConfigData)cd.getItemData().get(0)).getBracketsMainClause().add(xTrim(element));
 		    		}
 		    	} else if(entry.getValue().equals("gap if-clause")) {
 		    		String value = columnValues.get(entry.getValue()).get(i);
@@ -178,7 +178,7 @@ public class ConditionalExcelFileReader extends ExcelFileReader {
 			    		} catch(Exception e) { }
 			    		
 			    		if(startIndex != 0 && endIndex != 0) {
-			    			cd.getGapIfClause().add(new Pair<>(startIndex, endIndex));
+			    			((ConditionalExerciseItemConfigData)cd.getItemData().get(0)).getGapIfClause().add(new Pair<>(startIndex, endIndex));
 			    		}
 		    		}
 		    	} else if(entry.getValue().equals("if-clause underline")) {
@@ -200,7 +200,7 @@ public class ConditionalExcelFileReader extends ExcelFileReader {
 			    		} catch(Exception e) { }
 			    		
 			    		if(startIndex != 0 && endIndex != 0) {
-			    			cd.getUnderlineIfClause().add(new Pair<>(startIndex, endIndex));
+			    			((ConditionalExerciseItemConfigData)cd.getItemData().get(0)).getUnderlineIfClause().add(new Pair<>(startIndex, endIndex));
 			    		}
 		    		}
 		    	} else if(entry.getValue().equals("gap main clause")) {
@@ -222,7 +222,7 @@ public class ConditionalExcelFileReader extends ExcelFileReader {
 			    		} catch(Exception e) { }
 			    		
 			    		if(startIndex != 0 && endIndex != 0) {
-			    			cd.getGapMainClause().add(new Pair<>(startIndex, endIndex));
+			    			((ConditionalExerciseItemConfigData)cd.getItemData().get(0)).getGapMainClause().add(new Pair<>(startIndex, endIndex));
 			    		}
 		    		}
 		    	} else if(entry.getValue().equals("main clause underline")) {
@@ -244,31 +244,54 @@ public class ConditionalExcelFileReader extends ExcelFileReader {
 			    		} catch(Exception e) { }
 			    		
 			    		if(startIndex != 0 && endIndex != 0) {
-				    		cd.getUnderlineMainClause().add(new Pair<>(startIndex, endIndex));
+			    			((ConditionalExerciseItemConfigData)cd.getItemData().get(0)).getUnderlineMainClause().add(new Pair<>(startIndex, endIndex));
 			    		}
 		    		}
 		    	} else if(entry.getValue().startsWith("if-clause position ") && !columnValues.get(entry.getValue()).get(i).isEmpty()) {
-		    		cd.getPositionsIfClause().add(new Pair<>((int)Float.parseFloat(xTrim(entry.getValue().substring(19))), columnValues.get(entry.getValue()).get(i)));
+		    		((ConditionalExerciseItemConfigData)cd.getItemData().get(0)).getPositionsIfClause().add(new Pair<>((int)Float.parseFloat(xTrim(entry.getValue().substring(19))), columnValues.get(entry.getValue()).get(i)));
 		    	} else if(entry.getValue().startsWith("main-clause position ") && !columnValues.get(entry.getValue()).get(i).isEmpty()) {
-		    		cd.getPositionsMainClause().add(new Pair<>((int)Float.parseFloat(xTrim(entry.getValue().substring(21))), columnValues.get(entry.getValue()).get(i)));
+		    		((ConditionalExerciseItemConfigData)cd.getItemData().get(0)).getPositionsMainClause().add(new Pair<>((int)Float.parseFloat(xTrim(entry.getValue().substring(21))), columnValues.get(entry.getValue()).get(i)));
 		    	}
 			}	
 			isFirstCol = false;
 		}
 		
 		for(ExerciseConfigData ecd : configData) {
-			ConditionalExerciseConfigData cd = (ConditionalExerciseConfigData)ecd;
-			Collections.sort(cd.getDistractorsIfClause(), (i1, i2) -> i1.first < i2.first ? -1 : 1);
-			Collections.sort(cd.getDistractorsMainClause(), (i1, i2) -> i1.first < i2.first ? -1 : 1);
-			Collections.sort(cd.getGapIfClause(), (i1, i2) -> i1.first < i2.first ? -1 : 1);
-			Collections.sort(cd.getGapMainClause(), (i1, i2) -> i1.first < i2.first ? -1 : 1);
-			Collections.sort(cd.getUnderlineIfClause(), (i1, i2) -> i1.first < i2.first ? -1 : 1);
-			Collections.sort(cd.getUnderlineMainClause(), (i1, i2) -> i1.first < i2.first ? -1 : 1);
-			Collections.sort(cd.getPositionsIfClause(), (i1, i2) -> i1.first < i2.first ? -1 : 1);
-			Collections.sort(cd.getPositionsMainClause(), (i1, i2) -> i1.first < i2.first ? -1 : 1);
+			for(ExerciseItemConfigData d : ecd.getItemData()) {
+				ConditionalExerciseItemConfigData cd = (ConditionalExerciseItemConfigData)d;
+				Collections.sort(cd.getDistractorsIfClause(), (i1, i2) -> i1.first < i2.first ? -1 : 1);
+				Collections.sort(cd.getDistractorsMainClause(), (i1, i2) -> i1.first < i2.first ? -1 : 1);
+				Collections.sort(cd.getGapIfClause(), (i1, i2) -> i1.first < i2.first ? -1 : 1);
+				Collections.sort(cd.getGapMainClause(), (i1, i2) -> i1.first < i2.first ? -1 : 1);
+				Collections.sort(cd.getUnderlineIfClause(), (i1, i2) -> i1.first < i2.first ? -1 : 1);
+				Collections.sort(cd.getUnderlineMainClause(), (i1, i2) -> i1.first < i2.first ? -1 : 1);
+				Collections.sort(cd.getPositionsIfClause(), (i1, i2) -> i1.first < i2.first ? -1 : 1);
+				Collections.sort(cd.getPositionsMainClause(), (i1, i2) -> i1.first < i2.first ? -1 : 1);
+			}
 		}
 		
-		return configData;
+		Collections.sort(configData, (i1, i2) -> i1.getActivity() < i2.getActivity() ? -1 : 1);
+		
+		ArrayList<ExerciseConfigData> batchedExercises = new ArrayList<>();
+		int lastActivity = 0;
+		String lastStamp = "";
+		ArrayList<ExerciseItemConfigData> sentences = new ArrayList<>();
+		for(ExerciseConfigData data: configData) {
+			if(lastActivity != 0 && data.getActivity() != lastActivity) {
+				ExerciseConfigData d = new ExerciseConfigData();
+				d.setActivity(lastActivity);
+				d.setStamp(lastStamp);
+				d.setItemData(sentences);
+				sentences = new ArrayList<>();
+				batchedExercises.add(d);
+			}
+			
+			sentences.add(data.getItemData().get(0));
+			lastStamp = data.getStamp();
+			lastActivity = data.getActivity();
+		}
+		
+		return batchedExercises;
 	}
 	
 }

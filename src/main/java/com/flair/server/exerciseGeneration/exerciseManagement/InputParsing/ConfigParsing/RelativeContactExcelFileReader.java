@@ -1,6 +1,7 @@
 package com.flair.server.exerciseGeneration.exerciseManagement.InputParsing.ConfigParsing;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -82,36 +83,58 @@ public class RelativeContactExcelFileReader extends ExcelFileReader {
 			for(int i = 0; i < columnValues.get(entry.getValue()).size(); i++) {	// rows
 				if(isFirstCol) {
 					// it's a new line
-					RelativeExerciseConfigData cd = new RelativeExerciseConfigData();
+					ExerciseConfigData cd = new ExerciseConfigData();
+					cd.getItemData().add(new RelativeExerciseItemConfigData());
 					configData.add(cd);
 				}
-				RelativeExerciseConfigData cd = (RelativeExerciseConfigData)configData.get(i);
+				ExerciseConfigData cd = configData.get(i);
 				if(entry.getValue().equals("Aufgabennr.")) {
 					cd.setActivity((int)Float.parseFloat(columnValues.get(entry.getValue()).get(i)));
 		    	} else if(entry.getValue().equals("stamp")) {
 		    		cd.setStamp(columnValues.get(entry.getValue()).get(i));
 		    	} else if(entry.getValue().equals("item")) {
-					cd.setItem((int)Float.parseFloat(columnValues.get(entry.getValue()).get(i)));
+		    		((RelativeExerciseItemConfigData)cd.getItemData().get(0)).setItem((int)Float.parseFloat(columnValues.get(entry.getValue()).get(i)));
 		    	} else if(entry.getValue().equals("Main clause 1")) {
-		    		cd.getPositionsClause1().add(new Pair<>(1, columnValues.get(entry.getValue()).get(i)));
+		    		((RelativeExerciseItemConfigData)cd.getItemData().get(0)).getPositionsClause1().add(new Pair<>(1, columnValues.get(entry.getValue()).get(i)));
 		    	} else if(entry.getValue().equals("Main clause 2")) {
-		    		cd.getPositionsClause2().add(new Pair<>(1, columnValues.get(entry.getValue()).get(i)));
+		    		((RelativeExerciseItemConfigData)cd.getItemData().get(0)).getPositionsClause2().add(new Pair<>(1, columnValues.get(entry.getValue()).get(i)));
 		    	} else if(entry.getValue().equals("Main clause 1 as relative clause")) {
-		    		cd.setRelativeSentence(columnValues.get(entry.getValue()).get(i));
+		    		((RelativeExerciseItemConfigData)cd.getItemData().get(0)).setRelativeSentence(columnValues.get(entry.getValue()).get(i));
 		    	} else if(entry.getValue().equals("Main clause 1 as contact relative clause")) {
-		    		cd.setContactRelativeSentence(columnValues.get(entry.getValue()).get(i));
+		    		((RelativeExerciseItemConfigData)cd.getItemData().get(0)).setContactRelativeSentence(columnValues.get(entry.getValue()).get(i));
 		    	} else if(entry.getValue().equals("Main clause 2 as contact relative clause")) {
-		    		cd.setAlternativeRelativeSentence(columnValues.get(entry.getValue()).get(i));
+		    		((RelativeExerciseItemConfigData)cd.getItemData().get(0)).setAlternativeRelativeSentence(columnValues.get(entry.getValue()).get(i));
 		    	} else if(entry.getValue().equals("richtig")) {
-		    		cd.setContact(columnValues.get(entry.getValue()).get(i).equals("Yes"));
+		    		((RelativeExerciseItemConfigData)cd.getItemData().get(0)).setContact(columnValues.get(entry.getValue()).get(i).equals("Yes"));
 		    	} else if(entry.getValue().equals("Feedback bei falscher Antwort")) {
-		    		cd.setFeedback(columnValues.get(entry.getValue()).get(i));
+		    		((RelativeExerciseItemConfigData)cd.getItemData().get(0)).setFeedback(columnValues.get(entry.getValue()).get(i));
 		    	} 
 			}	
 			isFirstCol = false;
 		}
-
-		return configData;
+		
+		Collections.sort(configData, (i1, i2) -> i1.getActivity() < i2.getActivity() ? -1 : 1);
+		
+		ArrayList<ExerciseConfigData> batchedExercises = new ArrayList<>();
+		int lastActivity = 0;
+		String lastStamp = "";
+		ArrayList<ExerciseItemConfigData> sentences = new ArrayList<>();
+		for(ExerciseConfigData data: configData) {
+			if(lastActivity != 0 && data.getActivity() != lastActivity) {
+				ExerciseConfigData d = new ExerciseConfigData();
+				d.setActivity(lastActivity);
+				d.setStamp(lastStamp);
+				d.setItemData(sentences);
+				sentences = new ArrayList<>();
+				batchedExercises.add(d);
+			}
+			
+			sentences.add(data.getItemData().get(0));
+			lastStamp = data.getStamp();
+			lastActivity = data.getActivity();
+		}
+		
+		return batchedExercises;
 	}
 
 }

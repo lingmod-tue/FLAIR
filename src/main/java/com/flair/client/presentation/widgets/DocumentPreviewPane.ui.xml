@@ -91,7 +91,7 @@
 		     <m:MaterialCollapsibleHeader margin="0" padding="0">
 		       <m:MaterialLink text="Generate Exercises" iconType="ARROW_DROP_DOWN" iconPosition="LEFT" textColor="BLACK"/>
 		     </m:MaterialCollapsibleHeader>
-		     <m:MaterialCollapsibleBody paddingTop="0" margin="0" padding="0">
+		     <m:MaterialCollapsibleBody paddingTop="0" margin="0" padding="5">
 		     <m:MaterialLabel text="Wait for the documents to be ranked before selecting one for exercise generation." ui:field="lblSelectExGenDoc"></m:MaterialLabel>
 		     	<flair:exerciseGeneration.ExerciseGenerationWidget ui:field="wdgtExerciseGeneration"/>
       		 </m:MaterialCollapsibleBody>

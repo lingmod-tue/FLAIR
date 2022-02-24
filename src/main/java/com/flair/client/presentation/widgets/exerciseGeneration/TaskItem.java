@@ -750,7 +750,7 @@ public class TaskItem extends LocalizedComposite {
 
 				icoValidity.setVisible(true);
 
-				if (doc.getFileExtension().equals(".xlsx") && !getTopic().equals(ExerciseTopic.UNDEFINED)) {
+				if ((doc.getFileExtension().equals(".json") || doc.getFileExtension().equals(".xlsx")) && !getTopic().equals(ExerciseTopic.UNDEFINED)) {
 					icoValidity.setIconType(IconType.CHECK_CIRCLE);
 					icoValidity.setTextColor(Color.GREEN);
 				} else {
@@ -1041,7 +1041,7 @@ public class TaskItem extends LocalizedComposite {
 		lblDocTitle.setText(doc.getTitle());
 
 		if (chkUseConfig.getValue()) {
-			if (doc.getFileExtension().equals(".xlsx")) {
+			if (doc.getFileExtension().equals(".json") || doc.getFileExtension().equals(".xlsx")) {
 				icoValidity.setIconType(IconType.CHECK_CIRCLE);
 				icoValidity.setTextColor(Color.GREEN);
 			} else {
@@ -1392,7 +1392,7 @@ public class TaskItem extends LocalizedComposite {
 		icoValidity.setTextColor(Color.RED);
 
 		if (chkUseConfig.getValue()) {
-			if (!topic.equals(ExerciseTopic.UNDEFINED) && doc.getFileExtension().equals(".xlsx")) {
+			if (!topic.equals(ExerciseTopic.UNDEFINED) && (doc.getFileExtension().equals(".json") || doc.getFileExtension().equals(".xlsx"))) {
 				icoValidity.setIconType(IconType.CHECK_CIRCLE);
 				icoValidity.setTextColor(Color.GREEN);
 			}
@@ -1745,7 +1745,7 @@ public class TaskItem extends LocalizedComposite {
 			// return new ConfigExerciseSettings(configFile, "", configFileName, "",
 			// getSelectedOutputFormats());
 			return new ConfigExerciseSettings(doc.getTitle(), doc.getLinkingId(), getSelectedOutputFormats(), topic,
-					quiz, parent.chkGenerateFeedback.isVisible() && parent.chkGenerateFeedback.getValue());
+					quiz, parent.chkGenerateFeedback.isVisible() && parent.chkGenerateFeedback.getValue(), doc.getFileExtension().substring(1));
 		} else {
 			ArrayList<Construction> constructions = new ArrayList<>();
 

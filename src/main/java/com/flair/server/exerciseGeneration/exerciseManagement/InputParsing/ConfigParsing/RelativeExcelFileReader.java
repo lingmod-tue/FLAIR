@@ -118,50 +118,60 @@ public class RelativeExcelFileReader extends ExcelFileReader {
 			for(int i = 0; i < columnValues.get(entry.getValue()).size(); i++) {	// rows
 				if(isFirstCol) {
 					// it's a new line
-					RelativeExerciseConfigData cd = new RelativeExerciseConfigData();
+					ExerciseConfigData cd = new ExerciseConfigData();
+					cd.getItemData().add(new RelativeExerciseItemConfigData());
 					configData.add(cd);
 				}
-				RelativeExerciseConfigData cd = (RelativeExerciseConfigData)configData.get(i);
+				ExerciseConfigData cd = configData.get(i);
 				if(entry.getValue().equals("Aufgabennr.")) {
 					cd.setActivity((int)Float.parseFloat(columnValues.get(entry.getValue()).get(i)));
 		    	} else if(entry.getValue().equals("stamp")) {
 		    		cd.setStamp(columnValues.get(entry.getValue()).get(i));
 		    	} else if(entry.getValue().equals("item")) {
-					cd.setItem((int)Float.parseFloat(columnValues.get(entry.getValue()).get(i)));
-		    	} /*else if(entry.getValue().equals("Common reference in clause 1")) {
-		    		String[] elements = columnValues.get(entry.getValue()).get(i).split("-");
-		    		if(elements.length == 1) {
-		    			cd.setCommonReferenceClause1(new Pair<>((int)Float.parseFloat(xTrim(elements[0])), (int)Float.parseFloat(elements[0])));
-		    		} else if(elements.length == 2) {
-		    			cd.setCommonReferenceClause1(new Pair<>((int)Float.parseFloat(xTrim(elements[0])), (int)Float.parseFloat(xTrim(elements[1]))));
-		    		} 
-		    	}  else if(entry.getValue().equals("Common reference in clause 2")) {
-		    		String[] elements = columnValues.get(entry.getValue()).get(i).split("-");
-		    		if(elements.length == 1) {
-		    			cd.setCommonReferenceClause2(new Pair<>((int)Float.parseFloat(xTrim(elements[0])), (int)Float.parseFloat(xTrim(elements[0]))));
-		    		} else if(elements.length == 2) {
-		    			cd.setCommonReferenceClause2(new Pair<>((int)Float.parseFloat(xTrim(elements[0])), (int)Float.parseFloat(xTrim(elements[1]))));
-		    		} 
-		    	} */else if(entry.getValue().equals("Relative pronoun")) {
-		    		cd.setPronoun(columnValues.get(entry.getValue()).get(i));
+					cd.getItemData().get(0).setItem((int)Float.parseFloat(columnValues.get(entry.getValue()).get(i)));
+		    	} else if(entry.getValue().equals("Relative pronoun")) {
+		    		((RelativeExerciseItemConfigData)cd.getItemData().get(0)).setPronoun(columnValues.get(entry.getValue()).get(i));
 		    	} else if(entry.getValue().startsWith("clause 1 position ") && !columnValues.get(entry.getValue()).get(i).isEmpty()) {
-		    		cd.getPositionsClause1().add(new Pair<>((int)Float.parseFloat(entry.getValue().substring(18)), columnValues.get(entry.getValue()).get(i)));
+		    		((RelativeExerciseItemConfigData)cd.getItemData().get(0)).getPositionsClause1().add(new Pair<>((int)Float.parseFloat(entry.getValue().substring(18)), columnValues.get(entry.getValue()).get(i)));
 		    	} else if(entry.getValue().startsWith("clause 2 position ") && !columnValues.get(entry.getValue()).get(i).isEmpty()) {
-		    		cd.getPositionsClause2().add(new Pair<>((int)Float.parseFloat(entry.getValue().substring(18)), columnValues.get(entry.getValue()).get(i)));
+		    		((RelativeExerciseItemConfigData)cd.getItemData().get(0)).getPositionsClause2().add(new Pair<>((int)Float.parseFloat(entry.getValue().substring(18)), columnValues.get(entry.getValue()).get(i)));
 		    	} else if(entry.getValue().startsWith("distractor ") && !columnValues.get(entry.getValue()).get(i).isEmpty()) {
-		    		cd.getDistractors().add(columnValues.get(entry.getValue()).get(i));
+		    		((RelativeExerciseItemConfigData)cd.getItemData().get(0)).getDistractors().add(columnValues.get(entry.getValue()).get(i));
 		    	} 
 			}	
 			isFirstCol = false;
 		}
 		
 		for(ExerciseConfigData ecd : configData) {
-			RelativeExerciseConfigData cd = (RelativeExerciseConfigData)ecd;
-			Collections.sort(cd.getPositionsClause1(), (i1, i2) -> i1.first < i2.first ? -1 : 1);
-			Collections.sort(cd.getPositionsClause2(), (i1, i2) -> i1.first < i2.first ? -1 : 1);
+			for(ExerciseItemConfigData d : ecd.getItemData()) {
+				RelativeExerciseItemConfigData cd = (RelativeExerciseItemConfigData)d;
+				Collections.sort(cd.getPositionsClause1(), (i1, i2) -> i1.first < i2.first ? -1 : 1);
+				Collections.sort(cd.getPositionsClause2(), (i1, i2) -> i1.first < i2.first ? -1 : 1);
+			}
 		}
 		
-		return configData;
+		Collections.sort(configData, (i1, i2) -> i1.getActivity() < i2.getActivity() ? -1 : 1);
+		
+		ArrayList<ExerciseConfigData> batchedExercises = new ArrayList<>();
+		int lastActivity = 0;
+		String lastStamp = "";
+		ArrayList<ExerciseItemConfigData> sentences = new ArrayList<>();
+		for(ExerciseConfigData data: configData) {
+			if(lastActivity != 0 && data.getActivity() != lastActivity) {
+				ExerciseConfigData d = new ExerciseConfigData();
+				d.setActivity(lastActivity);
+				d.setStamp(lastStamp);
+				d.setItemData(sentences);
+				sentences = new ArrayList<>();
+				batchedExercises.add(d);
+			}
+			
+			sentences.add(data.getItemData().get(0));
+			lastStamp = data.getStamp();
+			lastActivity = data.getActivity();
+		}
+		
+		return batchedExercises;
 	}
 	
 }

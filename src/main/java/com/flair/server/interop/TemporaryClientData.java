@@ -12,6 +12,7 @@ final class TemporaryClientData {
 		List<CustomCorpusFile> uploaded = new ArrayList<>();
 		List<String> contents = new ArrayList<>();
 		ArrayList<byte[]> byteContents = new ArrayList<>();
+		ArrayList<String> fileNames = new ArrayList<>();
 	}
 
 	static final class QuestionGen {
