@@ -276,12 +276,27 @@ public class ConditionalExcelFileReader extends ExcelFileReader {
 		int lastActivity = 0;
 		String lastStamp = "";
 		ArrayList<ExerciseItemConfigData> sentences = new ArrayList<>();
+		
+		ArrayList<ExerciseTypeSpec> types = new ArrayList<>();
+		for(Object type : exerciseTypes) {
+			ExerciseTypeSpec t = new ExerciseTypeSpec();
+			String exerciseType = (String)type;
+			t.setSubtopic(exerciseType.contains("Type1vsType2") ? "conditional_types" : "conditional_form");
+			t.setIfClauseFirst(exerciseType.contains("If-clausemainclause"));
+			t.setRandomClauseOrder(exerciseType.contains("Randomclauseorder"));
+			t.setTargetIfClause(exerciseType.contains("Targetonlyif-clause") || exerciseType.contains("Targetbothclauses") || exerciseType.contains("Useif-clause"));
+			t.setTargetMainClause(exerciseType.contains("Targetonlymainclause") || exerciseType.contains("Targetbothclauses") || exerciseType.contains("Usemainclause"));
+			t.setFeedbookType(FeedBookExerciseType.getContainedType(exerciseType));
+			types.add(t);
+		}
+		
 		for(ExerciseConfigData data: configData) {
 			if(lastActivity != 0 && data.getActivity() != lastActivity) {
 				ExerciseConfigData d = new ExerciseConfigData();
 				d.setActivity(lastActivity);
 				d.setStamp(lastStamp);
 				d.setItemData(sentences);
+				d.setExerciseType(types);
 				sentences = new ArrayList<>();
 				batchedExercises.add(d);
 			}
@@ -293,5 +308,126 @@ public class ConditionalExcelFileReader extends ExcelFileReader {
 		
 		return batchedExercises;
 	}
+	
+	private static final String[] exerciseTypes = new String[] {
+			"Type1vsType2_If-clausemainclause_SingleChoice2options_Targetonlyif-clause",
+	          		"Type1vsType2_If-clausemainclause_SingleChoice2options_Targetonlymainclause",
+	          		"Type1vsType2_If-clausemainclause_SingleChoice2options_Targetbothclauses",
+	          		"Type1vsType2_If-clausemainclause_SingleChoice4options_Targetonlyif-clause",
+	          		"Type1vsType2_If-clausemainclause_SingleChoice4options_Targetonlymainclause",
+	          		"Type1vsType2_If-clausemainclause_SingleChoice4options_Targetbothclauses",
+	          		"Type1vsType2_If-clausemainclause_Fill-in-the-Blankslemmainparentheses_Targetonlyif-clause",
+	          		"Type1vsType2_If-clausemainclause_Fill-in-the-Blankslemmainparentheses_Targetonlymainclause",
+	          		"Type1vsType2_If-clausemainclause_Fill-in-the-Blankslemmainparentheses_Targetbothclauses",
+	          		"Type1vsType2_If-clausemainclause_Fill-in-the-Blankslemmadistractorinparentheses_Targetonlyif-clause",
+	          		"Type1vsType2_If-clausemainclause_Fill-in-the-Blankslemmadistractorinparentheses_Targetonlymainclause",
+	          		"Type1vsType2_If-clausemainclause_Fill-in-the-Blankslemmadistractorinparentheses_Targetbothclauses",
+	          		"Type1vsType2_If-clausemainclause_Fill-in-the-Blankslemmasininstructions_Targetonlyif-clause",
+	          		"Type1vsType2_If-clausemainclause_Fill-in-the-Blankslemmasininstructions_Targetonlymainclause",
+	          		"Type1vsType2_If-clausemainclause_Fill-in-the-Blankslemmasininstructions_Targetbothclauses",
+	          		"Type1vsType2_If-clausemainclause_Categorize",
+	          		"Type1vsType2_Mainclauseif-clause_SingleChoice2options_Targetonlyif-clause",
+	          		"Type1vsType2_Mainclauseif-clause_SingleChoice2options_Targetonlymainclause",
+	          		"Type1vsType2_Mainclauseif-clause_SingleChoice2options_Targetbothclauses",
+	          		"Type1vsType2_Mainclauseif-clause_SingleChoice4options_Targetonlyif-clause",
+	          		"Type1vsType2_Mainclauseif-clause_SingleChoice4options_Targetonlymainclause",
+	          		"Type1vsType2_Mainclauseif-clause_SingleChoice4options_Targetbothclauses",
+	          		"Type1vsType2_Mainclauseif-clause_Fill-in-the-Blankslemmainparentheses_Targetonlyif-clause",
+	          		"Type1vsType2_Mainclauseif-clause_Fill-in-the-Blankslemmainparentheses_Targetonlymainclause",
+	          		"Type1vsType2_Mainclauseif-clause_Fill-in-the-Blankslemmainparentheses_Targetbothclauses",
+	          		"Type1vsType2_Mainclauseif-clause_Fill-in-the-Blankslemmadistractorinparentheses_Targetonlyif-clause",
+	          		"Type1vsType2_Mainclauseif-clause_Fill-in-the-Blankslemmadistractorinparentheses_Targetonlymainclause",
+	          		"Type1vsType2_Mainclauseif-clause_Fill-in-the-Blankslemmadistractorinparentheses_Targetbothclauses",
+	          		"Type1vsType2_Mainclauseif-clause_Fill-in-the-Blankslemmasininstructions_Targetonlyif-clause",
+	          		"Type1vsType2_Mainclauseif-clause_Fill-in-the-Blankslemmasininstructions_Targetonlymainclause",
+	          		"Type1vsType2_Mainclauseif-clause_Fill-in-the-Blankslemmasininstructions_Targetbothclauses",
+	          		"Type1vsType2_Mainclauseif-clause_Categorize",
+	          		"Type1vsType2_Randomclauseorder_SingleChoice2options_Targetonlyif-clause",
+	          		"Type1vsType2_Randomclauseorder_SingleChoice2options_Targetonlymainclause",
+	          		"Type1vsType2_Randomclauseorder_SingleChoice2options_Targetbothclauses",
+	          		"Type1vsType2_Randomclauseorder_SingleChoice4options_Targetonlyif-clause",
+	          		"Type1vsType2_Randomclauseorder_SingleChoice4options_Targetonlymainclause",
+	          		"Type1vsType2_Randomclauseorder_SingleChoice4options_Targetbothclauses",
+	          		"Type1vsType2_Randomclauseorder_Fill-in-the-Blankslemmainparentheses_Targetonlyif-clause",
+	          		"Type1vsType2_Randomclauseorder_Fill-in-the-Blankslemmainparentheses_Targetonlymainclause",
+	          		"Type1vsType2_Randomclauseorder_Fill-in-the-Blankslemmainparentheses_Targetbothclauses",
+	          		"Type1vsType2_Randomclauseorder_Fill-in-the-Blankslemmadistractorinparentheses_Targetonlyif-clause",
+	          		"Type1vsType2_Randomclauseorder_Fill-in-the-Blankslemmadistractorinparentheses_Targetonlymainclause",
+	          		"Type1vsType2_Randomclauseorder_Fill-in-the-Blankslemmadistractorinparentheses_Targetbothclauses",
+	          		"Type1vsType2_Randomclauseorder_Fill-in-the-Blankslemmasininstructions_Targetonlyif-clause",
+	          		"Type1vsType2_Randomclauseorder_Fill-in-the-Blankslemmasininstructions_Targetonlymainclause",
+	          		"Type1vsType2_Randomclauseorder_Fill-in-the-Blankslemmasininstructions_Targetbothclauses",
+	          		"Type1vsType2_Randomclauseorder_Categorize",
+	          		"Formation_If-clausemainclause_SingleChoice2options_Targetonlyif-clause",
+	          		"Formation_If-clausemainclause_SingleChoice2options_Targetonlymainclause",
+	          		"Formation_If-clausemainclause_SingleChoice2options_Targetbothclauses",
+	          		"Formation_If-clausemainclause_SingleChoice4options_Targetonlyif-clause",
+	          		"Formation_If-clausemainclause_SingleChoice4options_Targetonlymainclause",
+	          		"Formation_If-clausemainclause_SingleChoice4options_Targetbothclauses",
+	          		"Formation_If-clausemainclause_Fill-in-the-Blankslemmainparentheses_Targetonlyif-clause",
+	          		"Formation_If-clausemainclause_Fill-in-the-Blankslemmainparentheses_Targetonlymainclause",
+	          		"Formation_If-clausemainclause_Fill-in-the-Blankslemmainparentheses_Targetbothclauses",
+	          		"Formation_If-clausemainclause_Fill-in-the-Blankslemmadistractorinparentheses_Targetonlyif-clause",
+	          		"Formation_If-clausemainclause_Fill-in-the-Blankslemmadistractorinparentheses_Targetonlymainclause",
+	          		"Formation_If-clausemainclause_Fill-in-the-Blankslemmadistractorinparentheses_Targetbothclauses",
+	          		"Formation_If-clausemainclause_Half-open_Targetonlyif-clause",
+	          		"Formation_If-clausemainclause_Half-open_Targetonlymainclause",
+	          		"Formation_If-clausemainclause_Half-open_Targetbothclauses",
+	          		"Formation_If-clausemainclause_Fill-in-the-Blankslemmasininstructions_Targetonlyif-clause",
+	          		"Formation_If-clausemainclause_Fill-in-the-Blankslemmasininstructions_Targetonlymainclause",
+	          		"Formation_If-clausemainclause_MarktheWords_Targetonlyif-clause",
+	          		"Formation_If-clausemainclause_MarktheWords_Targetonlymainclause",
+	          		"Formation_If-clausemainclause_Memory_Useif-clause",
+	          		"Formation_If-clausemainclause_Memory_Usemainclause",
+	          		"Formation_If-clausemainclause_JumbledSentences_Targetonlyif-clause",
+	          		"Formation_If-clausemainclause_JumbledSentences_Targetonlymainclause",
+	          		"Formation_If-clausemainclause_JumbledSentences_Targetbothclauses",
+	          		"Formation_Mainclauseif-clause_SingleChoice2options_Targetonlyif-clause",
+	          		"Formation_Mainclauseif-clause_SingleChoice2options_Targetonlymainclause",
+	          		"Formation_Mainclauseif-clause_SingleChoice2options_Targetbothclauses",
+	          		"Formation_Mainclauseif-clause_SingleChoice4options_Targetonlyif-clause",
+	          		"Formation_Mainclauseif-clause_SingleChoice4options_Targetonlymainclause",
+	          		"Formation_Mainclauseif-clause_SingleChoice4options_Targetbothclauses",
+	          		"Formation_Mainclauseif-clause_Fill-in-the-Blankslemmainparentheses_Targetonlyif-clause",
+	          		"Formation_Mainclauseif-clause_Fill-in-the-Blankslemmainparentheses_Targetonlymainclause",
+	          		"Formation_Mainclauseif-clause_Fill-in-the-Blankslemmainparentheses_Targetbothclauses",
+	          		"Formation_Mainclauseif-clause_Fill-in-the-Blankslemmadistractorinparentheses_Targetonlyif-clause",
+	          		"Formation_Mainclauseif-clause_Fill-in-the-Blankslemmadistractorinparentheses_Targetonlymainclause",
+	          		"Formation_Mainclauseif-clause_Fill-in-the-Blankslemmadistractorinparentheses_Targetbothclauses",
+	          		"Formation_Mainclauseif-clause_Half-open_Targetonlyif-clause",
+	          		"Formation_Mainclauseif-clause_Half-open_Targetonlymainclause",
+	          		"Formation_Mainclauseif-clause_Half-open_Targetbothclauses",
+	          		"Formation_Mainclauseif-clause_Fill-in-the-Blankslemmasininstructions_Targetonlyif-clause",
+	          		"Formation_Mainclauseif-clause_Fill-in-the-Blankslemmasininstructions_Targetonlymainclause",
+	          		"Formation_Mainclauseif-clause_MarktheWords_Targetonlyif-clause",
+	          		"Formation_Mainclauseif-clause_MarktheWords_Targetonlymainclause",
+	          		"Formation_Mainclauseif-clause_Memory_Useif-clause",
+	          		"Formation_Mainclauseif-clause_Memory_Usemainclause",
+	          		"Formation_Mainclauseif-clause_JumbledSentences_Targetonlyif-clause",
+	          		"Formation_Mainclauseif-clause_JumbledSentences_Targetonlymainclause",
+	          		"Formation_Randomclauseorder_SingleChoice2options_Targetonlyif-clause",
+	          		"Formation_Randomclauseorder_SingleChoice2options_Targetonlymainclause",
+	          		"Formation_Randomclauseorder_SingleChoice2options_Targetbothclauses",
+	          		"Formation_Randomclauseorder_SingleChoice4options_Targetonlyif-clause",
+	          		"Formation_Randomclauseorder_SingleChoice4options_Targetonlymainclause",
+	          		"Formation_Randomclauseorder_SingleChoice4options_Targetbothclauses",
+	          		"Formation_Randomclauseorder_Fill-in-the-Blankslemmainparentheses_Targetonlyif-clause",
+	          		"Formation_Randomclauseorder_Fill-in-the-Blankslemmainparentheses_Targetonlymainclause",
+	          		"Formation_Randomclauseorder_Fill-in-the-Blankslemmainparentheses_Targetbothclauses",
+	          		"Formation_Randomclauseorder_Fill-in-the-Blankslemmadistractorinparentheses_Targetonlyif-clause",
+	          		"Formation_Randomclauseorder_Fill-in-the-Blankslemmadistractorinparentheses_Targetonlymainclause",
+	          		"Formation_Randomclauseorder_Fill-in-the-Blankslemmadistractorinparentheses_Targetbothclauses",
+	          		"Formation_Randomclauseorder_Half-open_Targetonlyif-clause",
+	          		"Formation_Randomclauseorder_Half-open_Targetonlymainclause",
+	          		"Formation_Randomclauseorder_Half-open_Targetbothclauses",
+	          		"Formation_Randomclauseorder_Fill-in-the-Blankslemmasininstructions_Targetonlyif-clause",
+	          		"Formation_Randomclauseorder_Fill-in-the-Blankslemmasininstructions_Targetonlymainclause",
+	          		"Formation_Randomclauseorder_MarktheWords_Targetonlyif-clause",
+	          		"Formation_Randomclauseorder_MarktheWords_Targetonlymainclause",
+	          		"Formation_Randomclauseorder_Memory_Useif-clause",
+	          		"Formation_Randomclauseorder_Memory_Usemainclause",
+	          		"Formation_Randomclauseorder_JumbledSentences_Targetonlyif-clause",
+	          		"Formation_Randomclauseorder_JumbledSentences_Targetonlymainclause"
+	};
 	
 }

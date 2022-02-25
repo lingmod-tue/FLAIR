@@ -21,6 +21,7 @@ import com.flair.server.parser.OpenNlpParser;
 import com.flair.server.parser.SimpleNlgParser;
 import com.flair.shared.exerciseGeneration.DocumentExerciseSettings;
 import com.flair.shared.exerciseGeneration.ExerciseType;
+import com.flair.shared.exerciseGeneration.OutputFormat;
 
 public class DocumentBasedExerciseGenerator extends SimpleExerciseGenerator {
 	
@@ -41,48 +42,11 @@ public class DocumentBasedExerciseGenerator extends SimpleExerciseGenerator {
         	return null;
         }
 		
-        if(((DocumentExerciseSettings)settings.getExerciseSettings()).getContentType().equals(ExerciseType.FILL_IN_THE_BLANKS)){
-        	BracketsGenerator bg = BracketsGeneratorFactory.getGenerator(exerciseData.getTopic());
-        	if(bg != null) {
-    			bg.generateBrackets(nlpManager, exerciseData);
-        	}
-		}
-		
-        if (isCancelled) {
-        	return null;
-        }
-        
-		DistractorGenerator distractorGenerator = DistractorGeneratorFactory.getGenerator(exerciseData.getTopic(), ((DocumentExerciseSettings)settings.getExerciseSettings()).getContentType());
-		if(distractorGenerator != null) {
-			boolean isValidExercise = distractorGenerator.generateDistractors(nlpManager, exerciseData);
-			if(!isValidExercise) {
-				return null;
-			}
-		}
-		
-		if (isCancelled) {
-        	return null;
-        }
-		
-		feedbackGenerator.generateFeedback(settings.getExerciseSettings(), nlpManager, exerciseData, 
-				((DocumentExerciseSettings)settings.getExerciseSettings()).getContentType(), exerciseData.getTopic());
-		
-		if (isCancelled) {
-        	return null;
-        }
-		
-		if(((DocumentExerciseSettings)settings.getExerciseSettings()).getContentType().equals(ExerciseType.SINGLE_CHOICE)) {
-			DistractorSelector.chooseDistractors(exerciseData, ((DocumentExerciseSettings)settings.getExerciseSettings()).getnDistractors());
-		}
-		
-		if (isCancelled) {
-        	return null;
-        }
-		
-		InstructionGeneratorFactory.getGenerator(exerciseData.getTopic(), exerciseData.getExerciseType()).generateInstructions(exerciseData);
-		HintGenerator hintGenerator = HintGeneratorFactory.getGenerator(exerciseData.getTopic());
-		if(hintGenerator != null) {
-			hintGenerator.generateHints(exerciseData);
+		if(settings.getExerciseSettings().getOutputFormats().contains(OutputFormat.H5P) || 
+				settings.getExerciseSettings().getOutputFormats().contains(OutputFormat.FEEDBOOK_XML)) {
+	        if(!enrichWithHints(settings, nlpManager, exerciseData)) {
+	        	return null;
+	        }
 		}
 		
 		if (isCancelled) {
@@ -92,6 +56,54 @@ public class DocumentBasedExerciseGenerator extends SimpleExerciseGenerator {
 		ArrayList<ExerciseData> ret = new ArrayList<>();
 		ret.add(exerciseData);
 		return ret;
+	}
+	
+	private boolean enrichWithHints(ExerciseGenerationMetadata settings, NlpManager nlpManager, ExerciseData exerciseData) {
+		if(((DocumentExerciseSettings)settings.getExerciseSettings()).getContentType().equals(ExerciseType.FILL_IN_THE_BLANKS)){
+        	BracketsGenerator bg = BracketsGeneratorFactory.getGenerator(exerciseData.getTopic());
+        	if(bg != null) {
+    			bg.generateBrackets(nlpManager, exerciseData);
+        	}
+		}
+		
+        if (isCancelled) {
+        	return false;
+        }
+        
+		DistractorGenerator distractorGenerator = DistractorGeneratorFactory.getGenerator(exerciseData.getTopic(), ((DocumentExerciseSettings)settings.getExerciseSettings()).getContentType());
+		if(distractorGenerator != null) {
+			boolean isValidExercise = distractorGenerator.generateDistractors(nlpManager, exerciseData);
+			if(!isValidExercise) {
+				return false;
+			}
+		}
+		
+		if (isCancelled) {
+        	return false;
+        }
+		
+		feedbackGenerator.generateFeedback(settings.getExerciseSettings(), nlpManager, exerciseData, 
+				((DocumentExerciseSettings)settings.getExerciseSettings()).getContentType(), exerciseData.getTopic());
+		
+		if (isCancelled) {
+        	return false;
+        }
+		
+		if(((DocumentExerciseSettings)settings.getExerciseSettings()).getContentType().equals(ExerciseType.SINGLE_CHOICE)) {
+			DistractorSelector.chooseDistractors(exerciseData, ((DocumentExerciseSettings)settings.getExerciseSettings()).getnDistractors());
+		}
+		
+		if (isCancelled) {
+        	return false;
+        }
+		
+		InstructionGeneratorFactory.getGenerator(exerciseData.getTopic(), exerciseData.getExerciseType()).generateInstructions(exerciseData);
+		HintGenerator hintGenerator = HintGeneratorFactory.getGenerator(exerciseData.getTopic());
+		if(hintGenerator != null) {
+			hintGenerator.generateHints(exerciseData);
+		}
+		
+		return true;
 	}
 	
 	@Override

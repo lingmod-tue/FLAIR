@@ -32,60 +32,59 @@ public class ConditionalConfigParser extends ConfigParser {
 				
 		ArrayList<ExerciseData> exercises = new ArrayList<>();
 
-		for (String[] configValues : exerciseConstellations) {
+		for (ExerciseTypeSpec configValues : data.getExerciseType()) {
 			try {
-				if (data.getStamp().equals("Conditional Type") && configValues[0].equals("conditional_types")
-						|| !data.getStamp().equals("Conditional Type") && configValues[0].equals("conditional_form")) {	
+				if (data.getStamp().equals("Conditional Type") && configValues.getSubtopic().equals("conditional_types")
+						|| !data.getStamp().equals("Conditional Type") && configValues.getSubtopic().equals("conditional_form")) {	
 					ArrayList<ExerciseData> ed = new ArrayList<>();
-					if (configValues[3].equals("0")) {
-						ExerciseData d = generateMemoryTask(data, configValues[6].equals("true"));
+					if (configValues.getFeedbookType().equals(FeedBookExerciseType.MEMORY)) {
+						ExerciseData d = generateMemoryTask(data, configValues.isTargetIfClause());
 						d.setExerciseType(ExerciseType.MEMORY);
 						ed.add(d);
-					} else if (configValues[3].equals("1")) {
-						ExerciseData d = generateGapTask(data, configValues[4].equals("true"), configValues[6].equals("true"),
-								configValues[7].equals("true"), 1, configValues[5].equals("true"), false, false, false,
+					} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.SINGLE_CHOICE_2D)) {
+						ExerciseData d = generateGapTask(data, configValues.isIfClauseFirst(), configValues.isTargetIfClause(),
+								configValues.isTargetMainClause(), 1, configValues.isRandomClauseOrder(), false, false, false,
 								false, false);
 						d.setExerciseType(ExerciseType.SINGLE_CHOICE);
 						ed.add(d);
-					} else if (configValues[3].equals("2")) {
-						ExerciseData d = generateGapTask(data, configValues[4].equals("true"), configValues[6].equals("true"),
-								configValues[7].equals("true"), 3, configValues[5].equals("true"), false, false, false,
+					} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.SINGLE_CHOICE_4D)) {
+						ExerciseData d = generateGapTask(data, configValues.isIfClauseFirst(), configValues.isTargetIfClause(),
+								configValues.isTargetMainClause(), 3, configValues.isRandomClauseOrder(), false, false, false,
 								false, false);
 						d.setExerciseType(ExerciseType.SINGLE_CHOICE);
 						ed.add(d);
-					} else if (configValues[3].equals("3")) {
-						ExerciseData d = generateGapTask(data, configValues[4].equals("true"), configValues[6].equals("true"),
-								configValues[7].equals("true"), 0, configValues[5].equals("true"), true, false, false,
+					} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.FIB_LEMMA_PARENTHESES)) {
+						ExerciseData d = generateGapTask(data, configValues.isIfClauseFirst(), configValues.isTargetIfClause(),
+								configValues.isTargetMainClause(), 0, configValues.isRandomClauseOrder(), true, false, false,
 								false, false);
 						d.setExerciseType(ExerciseType.FILL_IN_THE_BLANKS);
 						ed.add(d);
-					} else if (configValues[3].equals("4")) {
-						ExerciseData d = generateGapTask(data, configValues[4].equals("true"), configValues[6].equals("true"),
-								configValues[7].equals("true"), 0, configValues[5].equals("true"), true, true, false, false,
+					} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.FIB_LEMMA_DISTRACTOR_PARENTHESES)) {
+						ExerciseData d = generateGapTask(data, configValues.isIfClauseFirst(), configValues.isTargetIfClause(),
+								configValues.isTargetMainClause(), 0, configValues.isRandomClauseOrder(), true, true, false, false,
 								false);
 						d.setExerciseType(ExerciseType.FILL_IN_THE_BLANKS);
 						d.getBracketsProperties().add(BracketsProperties.DISTRACTOR_LEMMA);
 						ed.add(d);
-					} else if (configValues[3].equals("5")) {
-						ExerciseData d = generateGapTask(data, configValues[4].equals("true"), configValues[6].equals("true"),
-								configValues[7].equals("true"), 0, configValues[5].equals("true"), false, false, false,
+					} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.FIB_LEMMA_INSTRUCTIONS)) {
+						ExerciseData d = generateGapTask(data, configValues.isIfClauseFirst(), configValues.isTargetIfClause(),
+								configValues.isTargetMainClause(), 0, configValues.isRandomClauseOrder(), false, false, false,
 								true, false);
 						d.setExerciseType(ExerciseType.FILL_IN_THE_BLANKS);
 						d.getInstructionProperties().add(InstructionsProperties.LEMMA);
 						ed.add(d);
-					} else if (configValues[3].equals("6")) {
-						ExerciseData d = generateJSTask(data, configValues[4].equals("true"), configValues[6].equals("true"),
-								configValues[7].equals("true"), configValues[5].equals("true"));
+					} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.JUMBLED_SENTENCES)) {
+						ExerciseData d = generateJSTask(data, configValues.isIfClauseFirst(), configValues.isTargetIfClause(),
+								configValues.isTargetMainClause(), configValues.isRandomClauseOrder());
 						d.setExerciseType(ExerciseType.JUMBLED_SENTENCES);
 						ed.add(d);
-					} else if (configValues[3].equals("7")) {
-						ExerciseData d = generateCategorizationTask(data, configValues[4].equals("true"),
-								configValues[5].equals("true"));
+					} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.CATEGORIZATION)) {
+						ExerciseData d = generateCategorizationTask(data, configValues.isIfClauseFirst(),
+								configValues.isRandomClauseOrder());
 						d.setExerciseType(ExerciseType.CATEGORIZE);
 						ed.add(d);
-					} else if (configValues[3].equals("8")) {
+					} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.UNDERLINE)) {
 						// The didi score mechanism can only correctly process a single item per underline, so we need to make a separate exercise for each sentence
-						int k = 0;
 						for(ExerciseItemConfigData line : data.getItemData()) {
 							ExerciseConfigData dummyData = new ExerciseConfigData();
 							dummyData.setActivity(data.getActivity());
@@ -93,8 +92,8 @@ public class ConditionalConfigParser extends ConfigParser {
 							ArrayList<ExerciseItemConfigData> lines = new ArrayList<>();
 							lines.add(line);
 							dummyData.setItemData(lines);
-							ExerciseData d = generateGapTask(dummyData, configValues[4].equals("true"), configValues[6].equals("true"),
-									configValues[7].equals("true"), 0, configValues[5].equals("true"), false, false, false,
+							ExerciseData d = generateGapTask(dummyData, configValues.isIfClauseFirst(), configValues.isTargetIfClause(),
+									configValues.isTargetMainClause(), 0, configValues.isRandomClauseOrder(), false, false, false,
 									false, true);
 							d.setExerciseType(ExerciseType.MARK_THE_WORDS);
 							
@@ -102,9 +101,9 @@ public class ConditionalConfigParser extends ConfigParser {
 								ed.add(d);
 							}
 						}
-					} else if (configValues[3].equals("9")) {
-						ExerciseData d = generateGapTask(data, configValues[4].equals("true"), configValues[6].equals("true"),
-								configValues[7].equals("true"), 0, configValues[5].equals("true"), true, false, true, false,
+					} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.HALF_OPEN)) {
+						ExerciseData d = generateGapTask(data, configValues.isIfClauseFirst(), configValues.isTargetIfClause(),
+								configValues.isTargetMainClause(), 0, configValues.isRandomClauseOrder(), true, false, true, false,
 								false);
 						d.setExerciseType(ExerciseType.HALF_OPEN);
 						ed.add(d);
@@ -112,15 +111,15 @@ public class ConditionalConfigParser extends ConfigParser {
 	
 					int k = 0;
 					for(ExerciseData d : ed) {
-						d.setExerciseTitle(data.getStamp().replace("/", "_") + "/" + configValues[2] + "/" + data.getActivity() + "/" + configValues[3] + (ed.size() > 1 ? "_" + ++k : ""));
+						d.setExerciseTitle(data.getStamp().replace("/", "_") + "/" + determineBlockId(configValues) + "/" + data.getActivity() + "/" + FeedBookExerciseType.getFeedbookId(configValues.getFeedbookType()) + (ed.size() > 1 ? "_" + ++k : ""));
 	        			d.setTopic(ExerciseTopic.CONDITIONALS);
 						exercises.add(d);
 					}
 	
 				}
 			} catch(Exception e) {
-				if(configValues != null && configValues.length > 3) {
-					ServerLogger.get().error(e, "Exercise " + configValues[2] + "/" + configValues[3] + "/" + data.getStamp().replace("/", "_") + "/" + data.getActivity() + " could not be generated.\n" + e.toString());
+				if(configValues != null) {
+					ServerLogger.get().error(e, "Exercise " + data.getStamp().replace("/", "_") + "/" + determineBlockId(configValues) + "/" + data.getActivity() + "/" + FeedBookExerciseType.getFeedbookId(configValues.getFeedbookType()) + " could not be generated.\n" + e.toString());
 				} else {
 					ServerLogger.get().error(e, "An exercise could not be generated.\n" + e.toString());
 				}
@@ -128,6 +127,39 @@ public class ConditionalConfigParser extends ConfigParser {
 		}
 
 		return exercises;
+	}
+	
+	/**
+	 * Determines the block ID for FeedBook xml output.
+	 * @param spec	The exercise specification
+	 * @return	The block id
+	 */
+	private int determineBlockId(ExerciseTypeSpec spec) {
+		if(spec.isRandomClauseOrder()) {
+			if(spec.isTargetIfClause() && spec.isTargetMainClause()) {
+				return 1;
+			} else if(spec.isTargetIfClause()) {
+				return 2;
+			} else {
+				return 3;
+			}
+		} else if(spec.isIfClauseFirst()) {
+			if(spec.isTargetIfClause() && spec.isTargetMainClause()) {
+				return 4;
+			} else if(spec.isTargetIfClause()) {
+				return 5;
+			} else {
+				return 6;
+			}
+		} else {
+			if(spec.isTargetIfClause() && spec.isTargetMainClause()) {
+				return 7;
+			} else if(spec.isTargetIfClause()) {
+				return 8;
+			} else {
+				return 9;
+			}
+		}
 	}
 
 	/**

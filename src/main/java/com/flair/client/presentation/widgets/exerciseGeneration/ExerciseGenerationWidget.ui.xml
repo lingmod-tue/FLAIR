@@ -47,6 +47,9 @@
 				<m:MaterialCheckBox padding="0" margin="0"
 					ui:field="chkFeedbookXml" value="true"
 					text="FeedBook XML" />
+				<m:MaterialCheckBox padding="0" margin="0"
+					ui:field="chkSpecification" value="false"
+					text="Exercise specification" />
 			</m:MaterialRow>
 
 			<m:MaterialRow textAlign="CENTER" margin="0" marginTop="10" padding="0">
@@ -66,7 +69,6 @@
 						waves="DEFAULT" margin="0" padding="0" visible="false"/>
 				</m:MaterialColumn>
 			</m:MaterialRow>
-
 
 		</m:MaterialRow>
 

@@ -27,11 +27,26 @@ public class ConditionalJsonReader extends JsonFileReader {
 		}
 		
 		ArrayList<ExerciseConfigData> configData = new ArrayList<>();
+		
+		JSONArray exerciseTypes = (JSONArray)jsonObject.get("exerciseTypes");
+		ArrayList<ExerciseTypeSpec> types = new ArrayList<>();
+		for(Object type : exerciseTypes) {
+			ExerciseTypeSpec t = new ExerciseTypeSpec();
+			String exerciseType = (String)type;
+			t.setSubtopic(exerciseType.contains("Type1vsType2") ? "conditional_types" : "conditional_form");
+			t.setIfClauseFirst(exerciseType.contains("If-clausemainclause"));
+			t.setRandomClauseOrder(exerciseType.contains("Randomclauseorder"));
+			t.setTargetIfClause(exerciseType.contains("Targetonlyif-clause") || exerciseType.contains("Targetbothclauses") || exerciseType.contains("Useif-clause"));
+			t.setTargetMainClause(exerciseType.contains("Targetonlymainclause") || exerciseType.contains("Targetbothclauses") || exerciseType.contains("Usemainclause"));
+			t.setFeedbookType(FeedBookExerciseType.getContainedType(exerciseType));
+			types.add(t);
+		}
 
 		int k = 1;
 		for(Object exercise : (JSONArray)jsonObject.get("exercises")) {
 			ExerciseConfigData data = new ExerciseConfigData();
 			configData.add(data);
+			data.setExerciseType(types);
 			String subtopic = (String)((JSONObject)exercise).get("subtopic");
 			data.setStamp(subtopic.equals("Formation") ? "Conditional" : "Conditional Type"); 
 			data.setActivity(k);
@@ -70,14 +85,14 @@ public class ConditionalJsonReader extends JsonFileReader {
 				}
 				cd.setBracketsMainClause(brackets);
 				
-				int gap = (int)((long)((JSONObject)mainClause).get("gap"));
+				JSONArray gapIndices = (JSONArray)((JSONObject)mainClause).get("gap");
 				ArrayList<Pair<Integer, Integer>> gaps = new ArrayList<>();
-				gaps.add(new Pair<>(gap, gap));
+				gaps.add(new Pair<>((int)((long)gapIndices.get(0)), (int)((long)gapIndices.get(1))));
 				cd.setGapMainClause(gaps);
 				
-				int targetMtw = (int)((long)((JSONObject)mainClause).get("mtwTarget"));
+				JSONArray targetMtwIndices = (JSONArray)((JSONObject)mainClause).get("mtwTarget");
 				ArrayList<Pair<Integer, Integer>> targetsMtw = new ArrayList<>();
-				targetsMtw.add(new Pair<>(targetMtw, targetMtw));
+				targetsMtw.add(new Pair<>((int)((long)targetMtwIndices.get(0)), (int)((long)targetMtwIndices.get(1))));
 				cd.setUnderlineMainClause(targetsMtw);
 				
 				JSONObject ifClause = (JSONObject)((JSONObject)sentence).get("ifClause");
@@ -106,14 +121,14 @@ public class ConditionalJsonReader extends JsonFileReader {
 				}
 				cd.setBracketsIfClause(brackets);
 				
-				gap = (int)((long)((JSONObject)ifClause).get("gap"));
+				gapIndices = (JSONArray)((JSONObject)ifClause).get("gap");
 				gaps = new ArrayList<>();
-				gaps.add(new Pair<>(gap, gap));
+				gaps.add(new Pair<>((int)((long)gapIndices.get(0)), (int)((long)gapIndices.get(1))));
 				cd.setGapIfClause(gaps);
 				
-				targetMtw = (int)((long)((JSONObject)ifClause).get("mtwTarget"));
+				targetMtwIndices = (JSONArray)((JSONObject)ifClause).get("mtwTarget");
 				targetsMtw = new ArrayList<>();
-				targetsMtw.add(new Pair<>(targetMtw, targetMtw));
+				targetsMtw.add(new Pair<>((int)((long)targetMtwIndices.get(0)), (int)((long)targetMtwIndices.get(1))));
 				cd.setUnderlineIfClause(targetsMtw);
 				
 				cd.setItem(n);

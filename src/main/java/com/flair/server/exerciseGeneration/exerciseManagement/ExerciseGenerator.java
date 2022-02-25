@@ -79,6 +79,18 @@ public abstract class ExerciseGenerator {
      * @return	The generated HTML preview(s) as String, mapped to the file name
 	 */
 	protected abstract HashMap<String, String> generatePreview(ArrayList<ExerciseData> data);
+	
+	/**
+	 * Generates a JSON specification of the exercise.
+	 * @param parser		The CoreNLP parser
+	 * @param generator		The SimpleNLG parser
+	 * @param lemmatizer	The OpenNLP lemmatizer
+	 * @param data			The exercise in abstracted format
+	 * @param settings		The exercise metadata
+	 * @return	The specification of exercises for further processing
+	 */
+	protected abstract HashMap<String, byte[]> generateSpecification(CoreNlpParser parser, SimpleNlgParser generator, OpenNlpParser lemmatizer,
+			ArrayList<ExerciseData> data, ExerciseGenerationMetadata settings);
 
 	/**
      * Retrieves the downloaded resources.

@@ -69,7 +69,7 @@ public class ExerciseGenerationOp extends PipelineOp<ExerciseGenerationOp.Input,
 
 		Output() {
 			this.file = new ResultComponents(new HashMap<String, byte[]>(), new HashMap<String, String>(), 
-					new HashMap<String, byte[]>());
+					new HashMap<String, byte[]>(), new HashMap<String, byte[]>());
 		}
 	}
 

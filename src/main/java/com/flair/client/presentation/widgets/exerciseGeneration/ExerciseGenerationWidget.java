@@ -73,6 +73,8 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     @UiField
     MaterialCheckBox chkFeedbookXml;
     @UiField
+    MaterialCheckBox chkSpecification;
+    @UiField
     MaterialButton btnCloseCopyrightNoticeUI;
     @UiField
     MaterialTitle titleCopyrightNoticeUI;
@@ -107,6 +109,7 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
 			setFeedbackGenerationVisiblity();
     	});
     	chkFeedbookXml.addClickHandler(e -> setGenerateExercisesEnabled());
+    	chkSpecification.addClickHandler(e -> setGenerateExercisesEnabled());
     }
     
     /**
@@ -253,7 +256,7 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
      * Disables it otherwise.
      */
     public void setGenerateExercisesEnabled() {
-    	btnGenerateExercises.setEnabled(hasValidTasks() && (chkH5p.getValue() || chkFeedbookXml.getValue()));
+    	btnGenerateExercises.setEnabled(hasValidTasks() && (chkH5p.getValue() || chkFeedbookXml.getValue() || chkSpecification.getValue()));
     }
     
     @Override

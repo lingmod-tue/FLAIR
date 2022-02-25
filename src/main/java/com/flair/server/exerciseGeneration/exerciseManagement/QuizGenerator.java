@@ -54,6 +54,7 @@ public class QuizGenerator extends ExerciseGenerator {
         
         HashMap<String, byte[]> xmlFiles = new HashMap<>();
     	HashMap<String, byte[]> h5PFiles = new HashMap<>();
+    	HashMap<String, byte[]> specifications = new HashMap<>();
     	HashMap<String, String> previews = new HashMap<>();
     	
         if(settings.getExerciseSettings().getOutputFormats().contains(OutputFormat.FEEDBOOK_XML)) {
@@ -64,11 +65,19 @@ public class QuizGenerator extends ExerciseGenerator {
         	return null;
         }
         
+        if(settings.getExerciseSettings().getOutputFormats().contains(OutputFormat.SPECIFICATION)) {
+    		specifications = generateSpecification(parser, g, lemmatizer, exerciseComponents, settings);
+        }
+        
+        if (isCancelled) {
+        	return null;
+        }  
+        
         if(settings.getExerciseSettings().getOutputFormats().contains(OutputFormat.H5P)) {
             h5PFiles = generateH5P(exerciseComponents, settings);
         }
         
-        return new ResultComponents(h5PFiles, previews, xmlFiles);
+        return new ResultComponents(h5PFiles, previews, xmlFiles, specifications);
     }
     
     @Override
@@ -117,6 +126,16 @@ public class QuizGenerator extends ExerciseGenerator {
 		} else {
 			return null;
 		}		
+	}
+	
+	@Override
+	protected HashMap<String, byte[]> generateSpecification(CoreNlpParser parser, SimpleNlgParser generator, OpenNlpParser lemmatizer,
+			ArrayList<ExerciseData> data, ExerciseGenerationMetadata settings) {
+		if(data.size() > 0) {
+	        return new DocumentBasedExerciseGenerator(data.get(0).getTopic()).generateSpecification(parser, generator, lemmatizer, data, settings);         
+		} else {
+			return null;
+		}
 	}
 
 	@Override

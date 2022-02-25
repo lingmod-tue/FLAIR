@@ -376,6 +376,7 @@ public class TaskItem extends LocalizedComposite {
 
 		formatOptions.add(new Pair<MaterialCheckBox, String>(parent.chkH5p, OutputFormat.H5P));
 		formatOptions.add(new Pair<MaterialCheckBox, String>(parent.chkFeedbookXml, OutputFormat.FEEDBOOK_XML));
+		formatOptions.add(new Pair<MaterialCheckBox, String>(parent.chkSpecification, OutputFormat.SPECIFICATION));
 
 		settingsWidgets = new Widget[] { grpBrackets, chkBracketsLemma, chkBracketsDistractorLemma,
 				chkBracketsConditional, chkBracketsPos, chkBracketsForm, chkBracketsWill, chkBracketsSentenceType,
@@ -1486,7 +1487,7 @@ public class TaskItem extends LocalizedComposite {
 			return false;
 		}
 
-		if (!getSelectedOutputFormats().contains(OutputFormat.H5P)) {
+		if (!getSelectedOutputFormats().contains(OutputFormat.H5P) && !getSelectedOutputFormats().contains(OutputFormat.SPECIFICATION)) {
 			return false;
 		}
 

@@ -461,6 +461,7 @@ class ClientSessionState {
 		HashMap<String, String> previews = new HashMap<>();
 		HashMap<String, byte[]> xmlFiles = new HashMap<>();
 		HashMap<String, byte[]> h5pFiles = new HashMap<>();
+		HashMap<String, byte[]> specifications = new HashMap<>();
 
 		for (ResultComponents result : generatedPackages) {
 			if(result.getXmlFiles() != null) {
@@ -484,6 +485,13 @@ class ClientSessionState {
 	        		}
 	        	}
 			}
+			if(result.getSpecification() != null) {
+	        	for(Entry<String, byte[]> entry : result.getSpecification().entrySet()) {
+	        		if(entry.getValue() != null && entry.getValue().length > 0) {
+	        			specifications.put(entry.getKey() + ".json", entry.getValue());
+	        		}
+	        	}
+			}
         }
 		
 		HashMap<String, byte[]> outputFiles = new HashMap<>();
@@ -500,6 +508,13 @@ class ClientSessionState {
 		} else if(xmlFiles.size() > 0) {
 			String fileName = getRandomHashMapEntry(xmlFiles);
 			outputFiles.put(fileName, xmlFiles.get(fileName));
+        }
+		
+		if(specifications.size() > 1) {
+			outputFiles.put("specifications.zip", ZipManager.zipFiles(specifications));
+		} else if(specifications.size() > 0) {
+			String fileName = getRandomHashMapEntry(specifications);
+			outputFiles.put(fileName, specifications.get(fileName));
         }
 		
 		byte[] outputFile = new byte[] {};

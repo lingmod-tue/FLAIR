@@ -10,6 +10,7 @@ import com.flair.server.exerciseGeneration.downloadManagement.ResourceDownloader
 import com.flair.server.exerciseGeneration.exerciseManagement.InputEnrichment.FeedbackGenerator;
 import com.flair.server.exerciseGeneration.exerciseManagement.OutputGeneration.H5PGeneration.H5PConstantsManager;
 import com.flair.server.exerciseGeneration.exerciseManagement.OutputGeneration.H5PGeneration.H5PGeneratorFactory;
+import com.flair.server.exerciseGeneration.exerciseManagement.OutputGeneration.SpecificationGeneration.SpecificationGeneratorFactory;
 import com.flair.server.exerciseGeneration.exerciseManagement.OutputGeneration.feedbookXmlGeneration.SimpleExerciseXmlGenerator;
 import com.flair.server.exerciseGeneration.exerciseManagement.OutputGeneration.feedbookXmlGeneration.XmlGeneratorFactory;
 import com.flair.server.parser.CoreNlpParser;
@@ -37,6 +38,7 @@ public abstract class SimpleExerciseGenerator extends ExerciseGenerator {
 	        
         HashMap<String, byte[]> xmlFiles = new HashMap<>();
     	HashMap<String, byte[]> h5PFiles = new HashMap<>();
+    	HashMap<String,byte[]> specification = new HashMap<>();
     	
         if(settings.getExerciseSettings().getOutputFormats().contains(OutputFormat.FEEDBOOK_XML)) {
         	xmlFiles = generateFeedbookXml(exerciseData);
@@ -54,9 +56,17 @@ public abstract class SimpleExerciseGenerator extends ExerciseGenerator {
         	return null;
         }  
         
+        if(settings.getExerciseSettings().getOutputFormats().contains(OutputFormat.SPECIFICATION)) {
+    		specification = generateSpecification(parser, generator, lemmatizer, exerciseData, settings);
+        }
+        
+        if (isCancelled) {
+        	return null;
+        }  
+        
         HashMap<String, String> previews = generatePreview(exerciseData);
 
-        return new ResultComponents(h5PFiles, previews, xmlFiles);
+        return new ResultComponents(h5PFiles, previews, xmlFiles, specification);
     }
 	
 	@Override
@@ -89,6 +99,21 @@ public abstract class SimpleExerciseGenerator extends ExerciseGenerator {
 		}
 		
     	return h5PFiles;
+	}
+	
+	@Override
+	protected HashMap<String, byte[]> generateSpecification(CoreNlpParser parser, SimpleNlgParser generator, OpenNlpParser lemmatizer,
+			ArrayList<ExerciseData> data, ExerciseGenerationMetadata settings) {
+		HashMap<String, byte[]> specifications = new HashMap<>();
+
+		for(ExerciseData exerciseData : data) {
+	        ArrayList<ExerciseData> datas = new ArrayList<>();
+	        datas.add(exerciseData);
+	        byte[] specification = SpecificationGeneratorFactory.getGenerator(exerciseData.getTopic()).generateJsonSpecification(parser, generator, lemmatizer, datas);
+	    	specifications.put(exerciseData.getExerciseTitle(), specification);
+		}
+		
+    	return specifications;
 	}
 	
 	@Override

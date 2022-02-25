@@ -36,10 +36,10 @@ public class NlpManager {
     	this.lemmatizer = lemmatizer;
     }
     
-    private SimpleNlgParser generator;
-    private OpenNlpParser lemmatizer;
+    protected SimpleNlgParser generator;
+    protected OpenNlpParser lemmatizer;
 
-    private ArrayList<SentenceAnnotations> sentences = new ArrayList<>();
+    protected ArrayList<SentenceAnnotations> sentences = new ArrayList<>();
     
     public ArrayList<SentenceAnnotations> getSentences() { return sentences; }
 
@@ -118,7 +118,7 @@ public class NlpManager {
      * @param constructionIndices   The start and end indices of the construction
      * @return                      The tokens belonging to the construction
      */
-    private ArrayList<CoreLabel> getRelevantTokens(SentenceAnnotations sentence, Pair<Integer, Integer> constructionIndices) {
+    protected ArrayList<CoreLabel> getRelevantTokens(SentenceAnnotations sentence, Pair<Integer, Integer> constructionIndices) {
         ArrayList<CoreLabel> relevantTokens = new ArrayList<>();
         for (CoreLabel token : sentence.getTokens()) {
             if (token.beginPosition() >= constructionIndices.first && token.endPosition() <= constructionIndices.second) {
@@ -1278,7 +1278,7 @@ public class NlpManager {
      * @param dependencies	The dependency graph
      * @return	The root element
      */
-    private IndexedWord getRoot(Collection<TypedDependency> dependencies) {
+    protected IndexedWord getRoot(Collection<TypedDependency> dependencies) {
     	for(TypedDependency dependency : dependencies) {
             if(dependency.reln().getLongName().equals("root")) {
                 return dependency.dep();
