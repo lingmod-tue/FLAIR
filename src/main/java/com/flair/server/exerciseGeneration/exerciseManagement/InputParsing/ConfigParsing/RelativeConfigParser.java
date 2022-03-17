@@ -67,25 +67,25 @@ public class RelativeConfigParser extends ConfigParser {
 					ExerciseData d = null;
 					
 					if (configValues[3].equals("0")) {
-						d = generateMemoryTask(data, configValues[8] != null && configValues[8].equals("true"), configValues[8] == null || configValues[8].isEmpty());
+						d = generateTask("Memory", data, configValues[8] != null && configValues[8].equals("true"), configValues[8] == null || configValues[8].isEmpty(), false);
 						d.setExerciseType(ExerciseType.MEMORY);
 					} else if (configValues[3].equals("1")) {
-						d = generateGapTask(data, configValues[8] != null && configValues[8].equals("true"), false, configValues[8] == null ||configValues[8].isEmpty());
+						d = generateTask("Gap", data, configValues[8] != null && configValues[8].equals("true"), configValues[8] == null ||configValues[8].isEmpty(), false);
 						if(d != null) {
 							d.setExerciseType(ExerciseType.MARK_THE_WORDS);
 						}
 					} else if (configValues[3].equals("2")) {
-						d = generateGapTask(data, configValues[8] != null && configValues[8].equals("true"), true, configValues[8] == null ||configValues[8].isEmpty());
+						d = generateTask("Gap", data, configValues[8] != null && configValues[8].equals("true"), configValues[8] == null ||configValues[8].isEmpty(), true);
 						if(d != null) {
 							d.setExerciseType(ExerciseType.SINGLE_CHOICE);
 						}
 					} else if (configValues[3].equals("3")) {
-						d = generateGapTask(data, configValues[8] != null && configValues[8].equals("true"), false, configValues[8] == null ||configValues[8].isEmpty());
+						d = generateTask("Gap", data, configValues[8] != null && configValues[8].equals("true"), configValues[8] == null ||configValues[8].isEmpty(), false);
 						if(d != null) {
 							d.setExerciseType(ExerciseType.FILL_IN_THE_BLANKS);
 						}
 					} else if (configValues[3].equals("4")) {
-						d = generatePromptedTask(data, configValues[8] != null && configValues[8].equals("true"), configValues[8] == null ||configValues[8].isEmpty());
+						d = generateTask("Prompted", data, configValues[8] != null && configValues[8].equals("true"), configValues[8] == null ||configValues[8].isEmpty(), false);
 						d.setExerciseType(ExerciseType.HALF_OPEN);
 					} else if (configValues[3].equals("5")) {
 						d = generateOpenTask(data);
@@ -143,44 +143,105 @@ public class RelativeConfigParser extends ConfigParser {
 	}
 	
 	/**
-	 * Compiles the exercise information for Memory exercises.
+	 * Compiles the exercise information for exercises.
+	 * @param taskType				The exercise type
 	 * @param configData			The data of an exercise from the config file
 	 * @param clause1IntoClause2	<code>true</code> if clause 1 is to be inserted into clause 2
+	 * @param randomizeClauseOrder	<code>true</code> if the clause order is to be randomized for each sentence
 	 * @return The exercise information
 	 */
-	private ExerciseData generateMemoryTask(ExerciseConfigData configData, boolean clause1IntoClause2,
-			boolean randomizeClauseOrder) {
+	private ExerciseData generateTask(String taskType, ExerciseConfigData configData, boolean clause1IntoClause2,
+			boolean randomizeClauseOrder, boolean addDistractors) {
 		ArrayList<TextPart> parts = new ArrayList<>();
 		int sentenceId = 1;
 
+		boolean hasClause1First = false;
+		boolean hasClause2First = false;
+		int n = 0;
 		for (ExerciseItemConfigData id : configData.getItemData()) {
+			n++;
 			if(randomizeClauseOrder) {
-				clause1IntoClause2 = Math.random() < 0.5;
+				if(((RelativeExerciseItemConfigData)id).getPronoun().equals("whose")) {
+					clause1IntoClause2 = false;
+				} else {
+					clause1IntoClause2 = Math.random() < 0.5;
+					
+					if(clause1IntoClause2) {
+						hasClause1First = true;
+					} else {
+						hasClause2First = true;
+					}
+					
+					// make sure that we don't have the same order in all exercises so that we don't have a duplicate exercise of non-randomized order
+					if(configData.getItemData().size() == n) {
+						if(!hasClause1First) {
+							clause1IntoClause2 = true;
+						}
+						if(!hasClause2First) {
+							clause1IntoClause2 = false;
+						}
+					}
+				}
 			}
-			RelativeExerciseItemConfigData itemData = (RelativeExerciseItemConfigData) id;
-			RelativeTargetAndClauseItems clauseItems = determineClauseItems(itemData, clause1IntoClause2);
 			
-			ArrayList<RelativeClausePosition> positions = determineOrder(itemData, clause1IntoClause2, false, configData.getStamp(), configData.getActivity());
-			if(positions == null) {
+			if(((RelativeExerciseItemConfigData)id).getPronoun().equals("whose") && clause1IntoClause2) {
 				continue;
 			}
 			
-			ArrayList<Pair<Integer, String>> pos = new ArrayList<>();
-			for(int i = 1; i <= positions.size(); i++) {
-				pos.add(new Pair<>(i, positions.get(i - 1).getValue()));
+			RelativeExerciseItemConfigData itemData = (RelativeExerciseItemConfigData) id;
+			
+			boolean success = false;
+			if(taskType.equals("Memory")) {
+				success = generateMemoryTask(itemData, parts, configData, clause1IntoClause2, sentenceId);
+			} else if(taskType.equals("Gap")) {
+				success = generateGapTask(itemData, parts, configData, clause1IntoClause2, sentenceId, addDistractors);
+			} else if(taskType.equals("Prompted")) {
+				success = generatePromptedTask(itemData, parts, configData, clause1IntoClause2, sentenceId);
 			}
 			
-			String relativeSentence = generateSentencesFromPositions(pos);
-			
-			ConstructionTextPart c = new ConstructionTextPart(clauseItems.getSentenceClause1() + " " + clauseItems.getSentenceClause2(), sentenceId++);
-			c.getDistractors().add(new Distractor(relativeSentence));
-			parts.add(c);
+			if(success) {
+				sentenceId++;
+			}
+		}
+		
+		if(parts.size() == 0) {
+			return null;
 		}
 
 		ExerciseData data = new ExerciseData(parts);
 		addPlainText(data);
 
 		return data;
+	}
+	
+	/**
+	 * Compiles the exercise information for Memory exercises.
+	 * @param configData			The data of an exercise from the config file
+	 * @param clause1IntoClause2	<code>true</code> if clause 1 is to be inserted into clause 2
+	 * @return The exercise information
+	 */
+	private boolean generateMemoryTask(RelativeExerciseItemConfigData itemData, ArrayList<TextPart> parts,
+			ExerciseConfigData configData, boolean clause1IntoClause2, int sentenceId) {
+		
+		RelativeTargetAndClauseItems clauseItems = determineClauseItems(itemData, clause1IntoClause2);
+		
+		ArrayList<RelativeClausePosition> positions = determineOrder(itemData, clause1IntoClause2, false, configData.getStamp(), configData.getActivity());
+		if(positions == null) {
+			return false;
+		}
+		
+		ArrayList<Pair<Integer, String>> pos = new ArrayList<>();
+		for(int i = 1; i <= positions.size(); i++) {
+			pos.add(new Pair<>(i, positions.get(i - 1).getValue()));
+		}
+		
+		String relativeSentence = generateSentencesFromPositions(pos);
+		
+		ConstructionTextPart c = new ConstructionTextPart(clauseItems.getSentenceClause1() + " " + clauseItems.getSentenceClause2(), sentenceId);
+		c.getDistractors().add(new Distractor(relativeSentence));
+		parts.add(c);	
+		
+		return true;
 	}
 	
 	/**
@@ -190,71 +251,50 @@ public class RelativeConfigParser extends ConfigParser {
 	 * @param addDistractors		<code>true</code> for MC exercises
 	 * @return The exercise information
 	 */
-	private ExerciseData generateGapTask(ExerciseConfigData configData, boolean clause1IntoClause2, 
-			boolean addDistractors, boolean randomizeClauseOrder) {
-		ArrayList<TextPart> parts = new ArrayList<>();
-		int sentenceId = 1;
-
-		for (ExerciseItemConfigData id : configData.getItemData()) {
-			if(randomizeClauseOrder) {
-				clause1IntoClause2 = Math.random() < 0.5;
-			}
-			RelativeExerciseItemConfigData itemData = (RelativeExerciseItemConfigData) id;
-
-			if(!(itemData.getPronoun().equals("whose") && clause1IntoClause2)) {				
-				ArrayList<RelativeClausePosition> positions = determineOrder(itemData, clause1IntoClause2, false, configData.getStamp(), configData.getActivity());
-				if(positions == null) {
-					continue;
-				}
-				
-				if (parts.size() > 0) {
-					parts.add(new HtmlTextPart(" <br>", sentenceId));
-				}
-				
-				ArrayList<Pair<Integer,String>> pos = new ArrayList<>();
-				for(int i = 1; i <= positions.size(); i++) {
-					RelativeClausePosition position = positions.get(i - 1);
-					if(position.isPronoun()) {
-						ConstructionTextPart c = new ConstructionTextPart(position.getValue(), sentenceId);
-						c.setConstructionType(position.getValue().equals("who") ? DetailedConstruction.WHO : 
-							(position.getValue().equals("which") ? DetailedConstruction.WHICH : 
-								(position.getValue().equals("that") ? DetailedConstruction.THAT : DetailedConstruction.OTHERPRN)));
-					
-						if(addDistractors) {
-							for(String distractor : itemData.getDistractors()) {
-								c.getDistractors().add(new Distractor(distractor));
-							}
-							c.setTargetIndex(new Random().nextInt(c.getDistractors().size() + 1));
-						}
-						parts.add(c);
-					} else {
-						pos.add(new Pair<>(i, position.getValue()));
-	
-						if(position.isCommonReferent() && pos.size() > 0) {
-							String text = generateSentencesFromPositions(pos);
-							parts.add(new PlainTextPart(text, sentenceId));
-							pos.clear();
-						}
-					}
-				}	
-				
-				if(pos.size() > 0) {
-					String text = generateSentencesFromPositions(pos);
-					parts.add(new PlainTextPart(text, sentenceId));
-				}
-				
-				sentenceId++;
-			}
-		}
-
-		if(parts.size() == 0) {
-			return null;
+	private boolean generateGapTask(RelativeExerciseItemConfigData itemData, ArrayList<TextPart> parts,
+			ExerciseConfigData configData, boolean clause1IntoClause2, int sentenceId, boolean addDistractors) {
+		ArrayList<RelativeClausePosition> positions = determineOrder(itemData, clause1IntoClause2, false, configData.getStamp(), configData.getActivity());
+		if(positions == null) {
+			return false;
 		}
 		
-		ExerciseData data = new ExerciseData(parts);
-		addPlainText(data);
+		if (parts.size() > 0) {
+			parts.add(new HtmlTextPart(" <br>", sentenceId));
+		}
+		
+		ArrayList<Pair<Integer,String>> pos = new ArrayList<>();
+		for(int i = 1; i <= positions.size(); i++) {
+			RelativeClausePosition position = positions.get(i - 1);
+			if(position.isPronoun()) {
+				ConstructionTextPart c = new ConstructionTextPart(position.getValue(), sentenceId);
+				c.setConstructionType(position.getValue().equals("who") ? DetailedConstruction.WHO : 
+					(position.getValue().equals("which") ? DetailedConstruction.WHICH : 
+						(position.getValue().equals("that") ? DetailedConstruction.THAT : DetailedConstruction.OTHERPRN)));
+			
+				if(addDistractors) {
+					for(String distractor : itemData.getDistractors()) {
+						c.getDistractors().add(new Distractor(distractor));
+					}
+					c.setTargetIndex(new Random().nextInt(c.getDistractors().size() + 1));
+				}
+				parts.add(c);
+			} else {
+				pos.add(new Pair<>(i, position.getValue()));
 
-		return data;
+				if(position.isCommonReferent() && pos.size() > 0) {
+					String text = generateSentencesFromPositions(pos);
+					parts.add(new PlainTextPart(text, sentenceId));
+					pos.clear();
+				}
+			}
+		}	
+		
+		if(pos.size() > 0) {
+			String text = generateSentencesFromPositions(pos);
+			parts.add(new PlainTextPart(text, sentenceId));
+		}
+		
+		return true;
 	}
 
 	/**
@@ -264,55 +304,41 @@ public class RelativeConfigParser extends ConfigParser {
 	 * @param clause1IntoClause2	<code>true</code> if clause 1 is to be inserted into clause 2
 	 * @return The exercise information
 	 */
-	private ExerciseData generatePromptedTask(ExerciseConfigData configData, boolean clause1IntoClause2,
-			boolean randomizeClauseOrder) {
-		ArrayList<TextPart> parts = new ArrayList<>();
-		int sentenceId = 1;
+	private boolean generatePromptedTask(RelativeExerciseItemConfigData itemData, ArrayList<TextPart> parts,
+			ExerciseConfigData configData, boolean clause1IntoClause2, int sentenceId) {
 
-		for (ExerciseItemConfigData id : configData.getItemData()) {
-			if(randomizeClauseOrder) {
-				clause1IntoClause2 = Math.random() < 0.5;
-			}
-			RelativeExerciseItemConfigData itemData = (RelativeExerciseItemConfigData) id;
-
-			ArrayList<RelativeClausePosition> positions = determineOrder(itemData, clause1IntoClause2, false, configData.getStamp(), configData.getActivity());
-			if(positions == null) {
-				continue;
-			}
-			
-			if (parts.size() > 0) {
-				parts.add(new HtmlTextPart(" <br><br>", sentenceId));
-			}
-			
-			RelativeTargetAndClauseItems clauseItems = determineClauseItems(itemData, clause1IntoClause2);
-
-			parts.add(new PlainTextPart(clauseItems.getSentenceClause1() + " " + clauseItems.getSentenceClause2(), sentenceId));
-			parts.add(new HtmlTextPart(" <br>", sentenceId));
-						
-			Pair<String, String> exerciseItems = generatePromptAndTarget(itemData, clause1IntoClause2, configData.getStamp(), configData.getActivity());
-			parts.add(new PlainTextPart(exerciseItems.first, sentenceId));
-
-			ConstructionTextPart c = new ConstructionTextPart(exerciseItems.second, sentenceId);
-			c.setConstructionType(itemData.getPronoun().equals("who") ? DetailedConstruction.WHO : 
-				(itemData.getPronoun().equals("which") ? DetailedConstruction.WHICH : 
-					(itemData.getPronoun().equals("that") ? DetailedConstruction.THAT : DetailedConstruction.OTHERPRN)));
-			
-			// check if the prompt for alternative order of clauses would be identical
-			Pair<String, String> alternativeOrdering = generatePromptAndTarget(itemData, !clause1IntoClause2, configData.getStamp(), configData.getActivity());
-			
-			if(alternativeOrdering.first.equals(exerciseItems.first)) {
-				c.getTargetAlternatives().add(alternativeOrdering.second);
-			}
-			
-			parts.add(c);				
-									
-			sentenceId++;
+		ArrayList<RelativeClausePosition> positions = determineOrder(itemData, clause1IntoClause2, false, configData.getStamp(), configData.getActivity());
+		if(positions == null) {
+			return false;
 		}
+		
+		if (parts.size() > 0) {
+			parts.add(new HtmlTextPart(" <br><br>", sentenceId));
+		}
+		
+		RelativeTargetAndClauseItems clauseItems = determineClauseItems(itemData, clause1IntoClause2);
 
-		ExerciseData data = new ExerciseData(parts);
-		addPlainText(data);
+		parts.add(new PlainTextPart(clauseItems.getSentenceClause1() + " " + clauseItems.getSentenceClause2(), sentenceId));
+		parts.add(new HtmlTextPart(" <br>", sentenceId));
+					
+		Pair<String, String> exerciseItems = generatePromptAndTarget(itemData, clause1IntoClause2, configData.getStamp(), configData.getActivity());
+		parts.add(new PlainTextPart(exerciseItems.first, sentenceId));
 
-		return data;
+		ConstructionTextPart c = new ConstructionTextPart(exerciseItems.second, sentenceId);
+		c.setConstructionType(itemData.getPronoun().equals("who") ? DetailedConstruction.WHO : 
+			(itemData.getPronoun().equals("which") ? DetailedConstruction.WHICH : 
+				(itemData.getPronoun().equals("that") ? DetailedConstruction.THAT : DetailedConstruction.OTHERPRN)));
+		
+		// check if the prompt for alternative order of clauses would be identical
+		Pair<String, String> alternativeOrdering = generatePromptAndTarget(itemData, !clause1IntoClause2, configData.getStamp(), configData.getActivity());
+		
+		if(alternativeOrdering.first.equals(exerciseItems.first)) {
+			c.getTargetAlternatives().add(alternativeOrdering.second);
+		}
+		
+		parts.add(c);
+		
+		return true;
 	}
 	
 	/**
@@ -411,10 +437,39 @@ public class RelativeConfigParser extends ConfigParser {
 		ArrayList<TextPart> parts = new ArrayList<>();
 		int sentenceId = 1;
 
+		boolean hasClause1First = true;
+		boolean hasClause2First = true;
+		int n = 0;
 		for (ExerciseItemConfigData id : configData.getItemData()) {	
+			n++;
 			if(randomizeClauseOrder) {
-				clause1IntoClause2 = Math.random() < 0.5;
+				if(((RelativeExerciseItemConfigData)id).getPronoun().equals("whose")) {
+					clause1IntoClause2 = false;
+				} else {
+					clause1IntoClause2 = Math.random() < 0.5;
+					
+					if(clause1IntoClause2) {
+						hasClause1First = true;
+					} else {
+						hasClause2First = true;
+					}
+					
+					// make sure that we don't have the same order in all exercises so that we don't have a duplicate exercise of non-randomized order
+					if(configData.getItemData().size() == n) {
+						if(!hasClause1First) {
+							clause1IntoClause2 = true;
+						}
+						if(!hasClause2First) {
+							clause1IntoClause2 = false;
+						}
+					}
+				}
 			}
+			
+			if(((RelativeExerciseItemConfigData)id).getPronoun().equals("whose") && clause1IntoClause2) {
+				continue;
+			}
+			
 			RelativeExerciseItemConfigData itemData = (RelativeExerciseItemConfigData) id;
 		
 			ArrayList<ArrayList<String>> orders = getOrders(itemData, configData.getStamp(), configData.getActivity());

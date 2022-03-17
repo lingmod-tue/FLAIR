@@ -149,9 +149,7 @@ public class RelativeExcelFileReader extends ExcelFileReader {
 				Collections.sort(cd.getPositionsClause2(), (i1, i2) -> i1.first < i2.first ? -1 : 1);
 			}
 		}
-		
-		Collections.sort(configData, (i1, i2) -> i1.getActivity() < i2.getActivity() ? -1 : 1);
-		
+				
 		ArrayList<ExerciseConfigData> batchedExercises = new ArrayList<>();
 		int lastActivity = 0;
 		String lastStamp = "";

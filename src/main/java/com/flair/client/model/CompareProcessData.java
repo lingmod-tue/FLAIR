@@ -152,6 +152,10 @@ final class CompareProcessData extends ProcessData {
 		public void setFileExtension(String fileExtension) {
 			doc.setFileExtension(fileExtension);
 		}
+		@Override
+		public void setText(String text) {
+			doc.setText(text);
+		}
 	}
 
 	CompareProcessData(Language l, List<RankableDocument> sel) {

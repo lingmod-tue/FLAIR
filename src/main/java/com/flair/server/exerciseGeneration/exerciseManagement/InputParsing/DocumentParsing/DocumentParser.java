@@ -65,6 +65,7 @@ public class DocumentParser {
 						if(removedParts.size() == 0 || removedParts.get(0).first >= construction.getConstructionIndices().first) {
 							// no removed parts
 		    	            parts.add(new PlainTextPart(plainText.substring(currentPlainTextIndex, construction.getConstructionIndices().first), sentenceId));
+							currentPlainTextIndex = construction.getConstructionIndices().first;
 						} else {
 							if(removedParts.get(0).first > currentPlainTextIndex) {
 								// there is a part that we want to keep before the removed part
@@ -135,6 +136,7 @@ public class DocumentParser {
 						if(removedParts.size() == 0 || removedParts.get(0).first >= sentence.second) {
 							// no removed parts
 		    	            parts.add(new PlainTextPart(plainText.substring(currentPlainTextIndex, sentence.second), sentenceId));
+							currentPlainTextIndex = sentence.second;
 						} else {
 							if(removedParts.get(0).first > currentPlainTextIndex) {
 								// there is a part that we want to keep before the removed part

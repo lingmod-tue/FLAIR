@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map.Entry;
 
+import com.flair.client.ResourceManager;
 import com.flair.client.localization.LocalizedComposite;
 import com.flair.client.localization.LocalizedFieldType;
 import com.flair.client.localization.annotations.LocalizedField;
@@ -27,7 +28,10 @@ import com.flair.shared.exerciseGeneration.Pair;
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.interop.dtos.RankableDocument;
 import com.flair.shared.interop.dtos.RankableDocument.ConstructionRange;
+import com.gargoylesoftware.htmlunit.javascript.host.Console;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.IFrameElement;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -48,11 +52,13 @@ import gwt.material.design.client.ui.MaterialCheckBox;
 import gwt.material.design.client.ui.MaterialCollapsibleItem;
 import gwt.material.design.client.ui.MaterialColumn;
 import gwt.material.design.client.ui.MaterialDialog;
+import gwt.material.design.client.ui.MaterialDialogContent;
 import gwt.material.design.client.ui.MaterialIcon;
 import gwt.material.design.client.ui.MaterialLabel;
 import gwt.material.design.client.ui.MaterialLink;
 import gwt.material.design.client.ui.MaterialRadioButton;
 import gwt.material.design.client.ui.MaterialRow;
+import gwt.material.design.client.ui.MaterialToast;
 import gwt.material.design.client.ui.html.Option;
 
 public class TaskItem extends LocalizedComposite {
@@ -91,7 +97,7 @@ public class TaskItem extends LocalizedComposite {
 	MaterialButton btnResetTargetSelection;
 	@UiField
 	@LocalizedField(type = LocalizedFieldType.TOOLTIP_MATERIAL)
-	MaterialButton btnUpdateDocument;
+	MaterialIcon btnUpdateDocument;
 	@UiField
 	MaterialButton btnPreviewExercise;
 	@UiField
@@ -307,7 +313,7 @@ public class TaskItem extends LocalizedComposite {
 	@UiField
 	MaterialButton btnSelectTargets;
 	@UiField
-	MaterialCheckBox chkUseConfig;
+	public MaterialCheckBox chkUseConfig;
 	@UiField
 	MaterialRow pnlConfig;
 	/*
@@ -317,12 +323,22 @@ public class TaskItem extends LocalizedComposite {
 	 */
 	@UiField
 	MaterialColumn colType;
-
+    @UiField
+    MaterialIcon icoEditSpec;
+    @UiField
+    HTMLPanel pnlConfigEditor;
+    @UiField
+    gwt.material.design.client.ui.MaterialDialog mdlSpecEditorUI;
+    @UiField
+    MaterialButton btnCloseSpecEditorUI;
+    
 	private ConstructionComponentsCollection constructionComponents;
 	private ExerciseGenerationWidget parent;
+	public final int taskId;
 
-	public TaskItem(ExerciseGenerationWidget parent, String name) {
+	public TaskItem(ExerciseGenerationWidget parent, String name, int taskId) {
 		this.parent = parent;
+		this.taskId = taskId;
 
 		initWidget(ourUiBinder.createAndBindUi(this));
 		initLocale(localeBinder.bind(this));
@@ -376,7 +392,7 @@ public class TaskItem extends LocalizedComposite {
 
 		formatOptions.add(new Pair<MaterialCheckBox, String>(parent.chkH5p, OutputFormat.H5P));
 		formatOptions.add(new Pair<MaterialCheckBox, String>(parent.chkFeedbookXml, OutputFormat.FEEDBOOK_XML));
-		formatOptions.add(new Pair<MaterialCheckBox, String>(parent.chkSpecification, OutputFormat.SPECIFICATION));
+		//formatOptions.add(new Pair<MaterialCheckBox, String>(parent.chkSpecification, OutputFormat.SPECIFICATION));
 
 		settingsWidgets = new Widget[] { grpBrackets, chkBracketsLemma, chkBracketsDistractorLemma,
 				chkBracketsConditional, chkBracketsPos, chkBracketsForm, chkBracketsWill, chkBracketsSentenceType,
@@ -417,7 +433,7 @@ public class TaskItem extends LocalizedComposite {
 
 	private ArrayList<Pair<Integer, Integer>> removedParts = new ArrayList<>();
 	private ArrayList<Pair<Integer, Integer>> newlyRemovedParts = new ArrayList<>();
-	private RankableDocument doc;
+	public RankableDocument doc;
 
 	/**
 	 * The widgets whose visibility depends on the settings.
@@ -596,6 +612,18 @@ public class TaskItem extends LocalizedComposite {
 		RootPanel.get().add(dlgTargetExclusion);
 		dlgExercisePreview.removeFromParent();
 		RootPanel.get().add(dlgExercisePreview);
+        mdlSpecEditorUI.removeFromParent();
+        RootPanel.get().add(mdlSpecEditorUI);
+
+        btnCloseSpecEditorUI.addClickHandler(event -> {
+        	updateSpecFile();
+        	mdlSpecEditorUI.close();
+        });
+		
+        icoEditSpec.addClickHandler(event -> {
+			populateIFrame(doc.getText().getBytes(), taskId);
+			mdlSpecEditorUI.open();
+        });
 
 		btnApplyDocumentSelection.addClickHandler(event -> {
 			dlgDocumentSelection.close();
@@ -733,38 +761,7 @@ public class TaskItem extends LocalizedComposite {
 			option.first.addClickHandler(e -> setNumberExercisesText(calculateNumberOfExercises()));
 		}
 
-		chkUseConfig.addClickHandler(e -> {
-			pnlConfig.setVisible(!chkUseConfig.getValue());
-			colType.setVisible(!chkUseConfig.getValue());
-
-			if (chkUseConfig.getValue()) {
-				String selecteTopic = getTopic();
-				drpTopic.clear();
-
-				addOptionToTopic("---", "Topic", selecteTopic, 0);
-
-				int i = 1;
-				for (Pair<String, String> possibleTopic : possibleTopics) {
-					addOptionToTopic(possibleTopic.first, possibleTopic.second, selecteTopic, i);
-					i++;
-				}
-
-				icoValidity.setVisible(true);
-
-				if ((doc.getFileExtension().equals(".json") || doc.getFileExtension().equals(".xlsx")) && !getTopic().equals(ExerciseTopic.UNDEFINED)) {
-					icoValidity.setIconType(IconType.CHECK_CIRCLE);
-					icoValidity.setTextColor(Color.GREEN);
-				} else {
-					icoValidity.setIconType(IconType.ERROR);
-					icoValidity.setTextColor(Color.RED);
-				}
-				parent.setGenerateExercisesEnabled();
-			} else {
-				initializeRelevantConstructions();
-			}
-
-			// pnlFileUpload.setVisible(chkUseConfig.getValue());
-		});
+		chkUseConfig.addClickHandler(e -> setupConfigSettings(true));
 		/*
 		 * btnFileUpload.addChangeHandler(new ChangeHandler() {
 		 * 
@@ -778,6 +775,52 @@ public class TaskItem extends LocalizedComposite {
 		 * readTextFile(files, instance); parent.setGenerateExercisesEnabled(); } } });
 		 */
 	}
+	
+	public void setupConfigSettings(boolean reevaluateTopic) {
+		icoEditSpec.setVisible(chkUseConfig.isVisible() && chkUseConfig.getValue());
+		pnlConfig.setVisible(!(chkUseConfig.isVisible() && chkUseConfig.getValue()));
+		colType.setVisible(!(chkUseConfig.isVisible() && chkUseConfig.getValue()));
+
+		if (chkUseConfig.getValue()) {
+			if(reevaluateTopic) {
+				String selecteTopic = getTopic();
+				drpTopic.clear();
+	
+				addOptionToTopic("---", "Topic", selecteTopic, 0);
+	
+				int i = 1;
+				for (Pair<String, String> possibleTopic : possibleTopics) {
+					addOptionToTopic(possibleTopic.first, possibleTopic.second, selecteTopic, i);
+					i++;
+				}
+			}
+
+			icoValidity.setVisible(true);
+
+			if ((doc.getFileExtension().equals(".json") || doc.getFileExtension().equals(".xlsx")) && !getTopic().equals(ExerciseTopic.UNDEFINED)) {
+				icoValidity.setIconType(IconType.CHECK_CIRCLE);
+				icoValidity.setTextColor(Color.GREEN);
+			} else {
+				icoValidity.setIconType(IconType.ERROR);
+				icoValidity.setTextColor(Color.RED);
+			}
+			parent.setGenerateExercisesEnabled();
+		} else {
+			initializeRelevantConstructions();
+		}
+
+		// pnlFileUpload.setVisible(chkUseConfig.getValue());
+	}
+	
+    private void updateSpecFile() {
+    	doc.setText(getDataFromIFrame(taskId));
+    }
+    
+    private native String getDataFromIFrame(int taskId) /*-{
+	    var iframe  = $doc.getElementById("configIframe" + taskId);   
+		var json = iframe.contentWindow.getSpec();
+		return JSON.stringify(json);
+	}-*/;
 
 	private void updateUsedConstructions(String htmlText) {
 		String[] parts = htmlText.split("<button");
@@ -936,8 +979,32 @@ public class TaskItem extends LocalizedComposite {
 		constructionComponents = new ConstructionComponentsCollection(this);
 
 		setExerciseSettingsVisibilities();
-	}
 
+        IFrameElement configIFrame = Document.get().createIFrameElement();
+        pnlConfigEditor.getElement().appendChild(configIFrame);
+
+        fillIframe(configIFrame, ResourceManager.INSTANCE.specificationEditor().getText());
+
+        configIFrame.setAttribute("height", "600px");
+        configIFrame.setAttribute("width", "100%");
+        configIFrame.setId("configIframe" + taskId);
+        configIFrame.setAttribute("sandbox", "allow-scripts");        
+	}
+	
+    private final native void fillIframe(IFrameElement iframe, String content) /*-{
+	  var doc = iframe.document;
+
+	  if(iframe.contentDocument)
+	    doc = iframe.contentDocument; // For NS6
+	  else if(iframe.contentWindow)
+	    doc = iframe.contentWindow.document; // For IE5.5 and IE6
+
+	   // Put the content in the iframe
+	  doc.open();
+	  doc.writeln(content);
+	  doc.close();	  
+	}-*/;
+    
 	/**
 	 * Resets all controls that are initially <code>true</code> to that value.
 	 */
@@ -995,11 +1062,14 @@ public class TaskItem extends LocalizedComposite {
 	 *         the empty string
 	 */
 	private String getExerciseType() {
+		if(!drpType.isVisible()) {
+			return ExerciseType.UNDEFINED;
+		}
 		for (Object o : drpType.getSelectedValue()) {
 			return o.toString();
 		}
 
-		return "";
+		return ExerciseType.UNDEFINED;
 	}
 
 	/**
@@ -1041,7 +1111,7 @@ public class TaskItem extends LocalizedComposite {
 		doc = DocumentPreviewPane.getInstance().getCurrentlyPreviewedDocument().getDocument();
 		lblDocTitle.setText(doc.getTitle());
 
-		if (chkUseConfig.getValue()) {
+		if (chkUseConfig.isVisible() && chkUseConfig.getValue()) {
 			if (doc.getFileExtension().equals(".json") || doc.getFileExtension().equals(".xlsx")) {
 				icoValidity.setIconType(IconType.CHECK_CIRCLE);
 				icoValidity.setTextColor(Color.GREEN);
@@ -1087,6 +1157,16 @@ public class TaskItem extends LocalizedComposite {
 
 		parent.setResourceDownloadVisiblity();
 	}
+		
+	public native void populateIFrame(byte[] filecontent, int taskId) /*-{		
+	    var iframe  = $doc.getElementById("configIframe" + taskId);  
+	    
+	    var blob = new Blob([new Uint8Array(filecontent)], {
+	        type: 'text/plain'
+	    });
+	    	    console.log(iframe.contentWindow);
+		iframe.contentWindow.uploadFromFLAIR(blob);
+	}-*/;
 
 	private void setTargetExclusionText() {
 		if (doc != null && usedTargetConstructions != null) {
@@ -1134,7 +1214,7 @@ public class TaskItem extends LocalizedComposite {
 	 * @param selectedTopic The value of the currently selected option
 	 * @param index         The index at which the element will be inserted
 	 */
-	private void addOptionToTopic(String name, String value, String selectedTopic, int index) {
+	public void addOptionToTopic(String name, String value, String selectedTopic, int index) {
 		Option newSelection = new Option();
 		newSelection.setText(name);
 		newSelection.setValue(value);
@@ -1201,7 +1281,7 @@ public class TaskItem extends LocalizedComposite {
 						constructionComponents.getPastMarkDragComponents(), checkForValue);
 			}
 		} else if (topic.equals(ExerciseTopic.CONDITIONALS)) {
-			if (exerciseType.equals(ExerciseType.FILL_IN_THE_BLANKS) || exerciseType.equals(ExerciseType.SINGLE_CHOICE)
+			if (parent.rbtSpecification.getValue() || exerciseType.equals(ExerciseType.FILL_IN_THE_BLANKS) || exerciseType.equals(ExerciseType.SINGLE_CHOICE)
 					|| exerciseType.equals(ExerciseType.DRAG_AND_DROP) || exerciseType.equals(ExerciseType.JUMBLED_SENTENCES)) {
 				constructionsToConsider = getConstructionNamesFromSettings(
 						constructionComponents.getConditionalComponents(), checkForValue);
@@ -1250,7 +1330,7 @@ public class TaskItem extends LocalizedComposite {
 	 * 
 	 * @return The number of exercises that can be generated.
 	 */
-	private int calculateNumberOfExercises() {
+	public int calculateNumberOfExercises() {
 		String topic = getTopic();
 		ArrayList<String> constructionsToConsider = determineConfiguredConstructions(true);
 
@@ -1259,6 +1339,7 @@ public class TaskItem extends LocalizedComposite {
 		for (String constructionToConsider : constructionsToConsider) {
 			ArrayList<TargetConstruction> possibleConstructions = relevantConstructionsInEntireDocument
 					.get(constructionToConsider);
+
 			for (TargetConstruction possibleConstruction : possibleConstructions) {
 				boolean canBeUsed = true;
 				for (Pair<Integer, Integer> removedPart : removedParts) {
@@ -1282,7 +1363,7 @@ public class TaskItem extends LocalizedComposite {
 				}
 			}
 		}
-
+		
 		usedTargetConstructions.clear();
 
 		// remove overlapping constructions
@@ -1385,18 +1466,30 @@ public class TaskItem extends LocalizedComposite {
 	 * the selected document. Hides the Generate feedback checkbox if the exercise
 	 * text contains no constructions which support feedback.
 	 */
-	private void setNumberExercisesText(int numberOfExercises) {
+	public void setNumberExercisesText(int numberOfExercises) {
 		String topic = getTopic();
 
 		icoValidity.setVisible(true);
 		icoValidity.setIconType(IconType.ERROR);
 		icoValidity.setTextColor(Color.RED);
 
-		if (chkUseConfig.getValue()) {
+		if (chkUseConfig.isVisible() && chkUseConfig.getValue()) {
 			if (!topic.equals(ExerciseTopic.UNDEFINED) && (doc.getFileExtension().equals(".json") || doc.getFileExtension().equals(".xlsx"))) {
 				icoValidity.setIconType(IconType.CHECK_CIRCLE);
 				icoValidity.setTextColor(Color.GREEN);
 			}
+		} else if(parent.rbtSpecification.getValue()) {
+			lblSelectTypeTopic.setVisible(false);
+			lblNumberExercises.setVisible(false);
+			
+			if (topic.equals(ExerciseTopic.UNDEFINED)) {
+				icoValidity.setVisible(false);
+			} else {
+				icoValidity.setVisible(true);
+				icoValidity.setIconType(IconType.CHECK_CIRCLE);
+				icoValidity.setTextColor(Color.GREEN);
+			}
+
 		} else {
 			String exerciseType = getExerciseType();
 
@@ -1469,6 +1562,7 @@ public class TaskItem extends LocalizedComposite {
 		parent.setFeedbackGenerationVisiblity();
 		btnPreviewExercise.setVisible(false);
 		parent.icoDownload.setVisible(false);
+		parent.icoUseSpec.setVisible(false);
 	}
 
 	/**
@@ -1742,7 +1836,7 @@ public class TaskItem extends LocalizedComposite {
 		String topic = getTopic();
 		String quiz = getQuiz();
 
-		if (chkUseConfig.getValue()) {
+		if (chkUseConfig.isVisible() && chkUseConfig.getValue()) {
 			// return new ConfigExerciseSettings(configFile, "", configFileName, "",
 			// getSelectedOutputFormats());
 			return new ConfigExerciseSettings(doc.getTitle(), doc.getLinkingId(), getSelectedOutputFormats(), topic,
@@ -1756,7 +1850,6 @@ public class TaskItem extends LocalizedComposite {
 			ArrayList<String> outputFormats = getSelectedOutputFormats();
 
 			String type = getExerciseType();
-
 			for (TargetConstruction c : usedTargetConstructions) {
 				if (c.isToBeUsed()) {
 					String dc = type.equals(ExerciseType.JUMBLED_SENTENCES)
@@ -1862,10 +1955,14 @@ public class TaskItem extends LocalizedComposite {
 	 */
 	private ArrayList<String> getSelectedOutputFormats() {
 		ArrayList<String> formats = new ArrayList<>();
-		for (Pair<MaterialCheckBox, String> option : formatOptions) {
-			if (option.first.getValue()) {
-				formats.add(option.second);
+		if(parent.rbtExercise.getValue()) {
+			for (Pair<MaterialCheckBox, String> option : formatOptions) {
+				if (option.first.getValue()) {
+					formats.add(option.second);
+				}
 			}
+		} else {
+			formats.add(OutputFormat.SPECIFICATION);
 		}
 
 		return formats;

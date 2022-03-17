@@ -31,7 +31,8 @@ import simplenlg.phrasespec.SPhraseSpec;
 public class NlpManager {
 
     public NlpManager(CoreNlpParser parser, SimpleNlgParser generator, String text, OpenNlpParser lemmatizer) {
-    	initializeAnnotations(parser, text);
+    	this.plainText = text;
+    	initializeAnnotations(parser);
     	this.generator = generator;
     	this.lemmatizer = lemmatizer;
     }
@@ -40,6 +41,7 @@ public class NlpManager {
     protected OpenNlpParser lemmatizer;
 
     protected ArrayList<SentenceAnnotations> sentences = new ArrayList<>();
+    protected final String plainText;
     
     public ArrayList<SentenceAnnotations> getSentences() { return sentences; }
 
@@ -48,8 +50,8 @@ public class NlpManager {
      * @param parser    The NLP parser
      * @param text      The text to annotate
      */
-    private void initializeAnnotations(CoreNlpParser parser, String text) {
-        Annotation docAnnotation = new Annotation(text);
+    private void initializeAnnotations(CoreNlpParser parser) {
+        Annotation docAnnotation = new Annotation(plainText);
         parser.pipeline().annotate(docAnnotation);
 
         for(CoreMap sentence : docAnnotation.get(CoreAnnotations.SentencesAnnotation.class)) {

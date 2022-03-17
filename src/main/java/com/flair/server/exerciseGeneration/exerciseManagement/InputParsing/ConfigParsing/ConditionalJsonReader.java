@@ -143,5 +143,5 @@ public class ConditionalJsonReader extends JsonFileReader {
 		
 		return configData;
 	}
-	
+
 }

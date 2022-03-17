@@ -131,12 +131,18 @@
 						margin="0" paddingRight="10">
 						<m:MaterialLabel ui:field="lblDocTitle" />
 					</m:MaterialColumn>
-					<m:MaterialColumn grid='s4 m4 l4' padding="0"
+					<m:MaterialColumn grid="l2 m2 s2"
+					textAlign="CENTER">
+					<m:MaterialIcon ui:field="icoEditSpec"
+						iconType="EDIT" textColor="BLUE" backgroundColor="WHITE"
+						iconPosition="RIGHT" waves="DEFAULT" margin="0" padding="0"
+						visible="false" />
+				</m:MaterialColumn>
+					<m:MaterialColumn grid='s2 m2 l2' padding="0"
 						margin="0">
-						<m:MaterialButton ui:field="btnUpdateDocument"
-							width="100%" paddingLeft="10" paddingRight="10"
-							textAlign="CENTER" textColor="BLACK" text="Update"
-							addStyleNames="{style.bgGrey} {style.lowercase}" waves="DEFAULT" />
+						<m:MaterialIcon ui:field="btnUpdateDocument"
+						iconType="UPDATE" textColor="BLUE" backgroundColor="WHITE"
+						iconPosition="RIGHT" waves="DEFAULT" margin="0" padding="0"/>
 					</m:MaterialColumn>
 				</m:MaterialRow>
 			</m:MaterialRow>
@@ -643,6 +649,19 @@
 						addStyleNames="{style.bgGrey}" waves="DEFAULT" margin="10" />
 				</m:MaterialDialogFooter>
 			</m:MaterialDialog>
+			
+					<!-- Specification editor -->
+		<m:MaterialDialog ui:field="mdlSpecEditorUI"
+			type="DEFAULT" dismissible="true" height="100vh" width="100%" padding="0" margin="0">
+			<m:MaterialDialogContent width="100%" padding="0" margin="0">
+				<m:MaterialTitle title="Specification editor" />
+				<g:HTMLPanel ui:field="pnlConfigEditor"/>
+			</m:MaterialDialogContent>
+			<m:MaterialDialogFooter padding="0" margin="0">
+				<m:MaterialButton
+					ui:field="btnCloseSpecEditorUI" text="Done" type="FLAT" />
+			</m:MaterialDialogFooter>
+		</m:MaterialDialog>
 		</m:MaterialCollapsibleBody>
 	</m:MaterialCollapsibleItem>
 

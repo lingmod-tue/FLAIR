@@ -13,7 +13,7 @@ import com.flair.server.exerciseGeneration.exerciseManagement.InputParsing.Confi
 import com.flair.server.exerciseGeneration.exerciseManagement.InputParsing.ConfigParsing.ExerciseConfigData;
 import com.flair.server.exerciseGeneration.exerciseManagement.InputParsing.ConfigParsing.ExerciseItemConfigData;
 import com.flair.server.exerciseGeneration.exerciseManagement.nlpManagement.ConditionalNlpManager;
-import com.flair.server.exerciseGeneration.exerciseManagement.nlpManagement.ConditionalNlpManager.ConditionalSentence;
+import com.flair.server.exerciseGeneration.exerciseManagement.nlpManagement.ConditionalSentence;
 import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.OpenNlpParser;
 import com.flair.server.parser.SimpleNlgParser;
@@ -145,7 +145,11 @@ public class ConditionalSpecificationGenerator implements SpecificationGenerator
 	public byte[] generateJsonSpecification(CoreNlpParser parser, SimpleNlgParser generator, OpenNlpParser lemmatizer, ArrayList<ExerciseData> data) {
 		JSONObject spec = new JSONObject();
 		spec.put("topic", "Conditionals");
-		spec.put("exerciseTypes", exerciseTypes);	// TODO generate only those exercises which are listed in the specification
+		JSONArray types = new JSONArray();
+		for(String type : exerciseTypes) {
+			types.add(type);
+		}
+		spec.put("exerciseTypes", types);
 		
 		JSONArray exercises = new JSONArray();
 		spec.put("exercises", exercises);
@@ -156,7 +160,6 @@ public class ConditionalSpecificationGenerator implements SpecificationGenerator
 			JSONObject exercise = new JSONObject();
 			exercises.add(exercise);
 			
-			String stamp = d.getStamp();
 			exercise.put("subtopic", d.getStamp().equals("Conditional") ? "Formation" : "Type 1 vs Type 2");
 			JSONArray sentences = new JSONArray();
 	        exercise.put("sentences", sentences);
@@ -222,11 +225,11 @@ public class ConditionalSpecificationGenerator implements SpecificationGenerator
 		        gaps = new JSONArray();
 		        gaps.add(item.getGapIfClause().get(0).first);
 		        gaps.add(item.getGapIfClause().get(0).second);
-		        mainClause.put("gap", gaps);
+		        ifClause.put("gap", gaps);
 		        gaps = new JSONArray();
 		        gaps.add(item.getUnderlineIfClause().get(0).first);
 		        gaps.add(item.getUnderlineIfClause().get(0).second);
-		        mainClause.put("mtwTarget", gaps);
+		        ifClause.put("mtwTarget", gaps);
 			}
 		}
 		
@@ -238,15 +241,74 @@ public class ConditionalSpecificationGenerator implements SpecificationGenerator
 		
 		ExerciseConfigData configData = new ExerciseConfigData();
 		
-		ArrayList<com.flair.server.exerciseGeneration.exerciseManagement.nlpManagement.ConditionalSentence> conditionalSentences = nlpManager.analyzeConditionalSentence();
+		ArrayList<com.flair.server.exerciseGeneration.exerciseManagement.nlpManagement.ConditionalSentence> conditionalSentences = nlpManager.analyzeConditionalSentence(data);
 		HashSet<String> types = new HashSet<>();
 		for(com.flair.server.exerciseGeneration.exerciseManagement.nlpManagement.ConditionalSentence s : conditionalSentences) {
 			types.add(s.conditionalType);
 		}
 		
 		configData.setStamp(types.size() == 1 ? "Conditional" : "Conditional Type");
-		//TODO iterate over sentences
+				
+		for(ConditionalSentence conditionalSentence : conditionalSentences) {
+			ConditionalExerciseItemConfigData item = new ConditionalExerciseItemConfigData();
+			item.setConditionalType(conditionalSentence.conditionalType.equals("Type 1") ? 1 : 2);
+			item.setContextBefore(conditionalSentence.contextBefore);
+			item.setContextAfter(conditionalSentence.contextAfter);			
+			
+			ArrayList<Pair<Integer, String>> mainChunks = new ArrayList<>();
+			for(int i = 0; i < conditionalSentence.mainClause.chunks.size(); i++) {
+				Pair<Integer, Integer> chunk = conditionalSentence.mainClause.chunks.get(i);
+				String val = data.getPlainText().substring(chunk.first, chunk.second);
+				if(i == 0 && Character.isUpperCase(val.charAt(0)) && !nlpManager.isUppercaseWord(chunk.first)) {
+					val = (val.charAt(0) + "").toLowerCase() + val.substring(1);
+				}
+				mainChunks.add(new Pair<>(i + 1, val));
+			}
+			item.setPositionsMainClause(mainChunks);
+			ArrayList<Pair<Integer, String>> ifChunks = new ArrayList<>();
+			for(int i = 0; i < conditionalSentence.ifClause.chunks.size(); i++) {
+				Pair<Integer, Integer> chunk = conditionalSentence.ifClause.chunks.get(i);
+				String val = data.getPlainText().substring(chunk.first, chunk.second);
+				if(i == 0 && Character.isUpperCase(val.charAt(0)) && !nlpManager.isUppercaseWord(chunk.first)) {
+					val = (val.charAt(0) + "").toLowerCase() + val.substring(1);
+				}
+				ifChunks.add(new Pair<>(i + 1, val));
+			}
+			item.setPositionsIfClause(ifChunks);
+			item.setTranslationMainClause(conditionalSentence.mainClause.translation);
+			item.setTranslationIfClause(conditionalSentence.ifClause.translation);
+			
+			ArrayList<Pair<Integer, String>> mainDistractors = new ArrayList<>();
+			for(int i = 0; i < conditionalSentence.mainClause.distractors.size(); i++) {
+				mainDistractors.add(new Pair<>(i + 1, conditionalSentence.mainClause.distractors.get(i)));
+			}
+			item.setDistractorsMainClause(mainDistractors);
+			ArrayList<Pair<Integer, String>> ifDistractors = new ArrayList<>();
+			for(int i = 0; i < conditionalSentence.ifClause.distractors.size(); i++) {
+				ifDistractors.add(new Pair<>(i + 1, conditionalSentence.ifClause.distractors.get(i)));
+			}
+			item.setDistractorsIfClause(ifDistractors);
+			
+			item.setLemmaMainClause(conditionalSentence.mainClause.mainVerb.lemma());
+			item.setLemmaIfClause(conditionalSentence.ifClause.mainVerb.lemma());
+			item.setDistractorLemmaMainClause(conditionalSentence.mainClause.semanticDistractor.get(0));
+			item.setDistractorLemmaIfClause(conditionalSentence.ifClause.semanticDistractor.get(0));
+
+			item.setBracketsMainClause(conditionalSentence.mainClause.lemmatizedClause);
+			item.setBracketsIfClause(conditionalSentence.ifClause.lemmatizedClause);
+			
+			ArrayList<Pair<Integer, Integer>> gapMain = new ArrayList<>();
+			gapMain.add(conditionalSentence.mainClause.targetPosition);
+			item.setGapMainClause(gapMain);
+			ArrayList<Pair<Integer, Integer>> gapIf = new ArrayList<>();
+			gapIf.add(conditionalSentence.ifClause.targetPosition);
+			item.setGapIfClause(gapIf);
+			item.setUnderlineMainClause(new ArrayList<>(gapMain));
+			item.setUnderlineIfClause(new ArrayList<>(gapIf));
+
+			configData.getItemData().add(item);
+		}
 		
-		return new ExerciseConfigData();
+		return configData;
 	}
 }

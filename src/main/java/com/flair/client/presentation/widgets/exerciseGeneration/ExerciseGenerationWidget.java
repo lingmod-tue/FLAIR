@@ -1,5 +1,6 @@
 package com.flair.client.presentation.widgets.exerciseGeneration;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -15,6 +16,8 @@ import com.flair.client.presentation.interfaces.ExerciseGenerationService;
 import com.flair.client.presentation.widgets.DocumentPreviewPane;
 import com.flair.client.utilities.JSUtility;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
+import com.flair.shared.interop.dtos.RankableDocument;
+import com.flair.shared.interop.dtos.RankableDocumentImpl;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -30,7 +33,9 @@ import gwt.material.design.client.ui.MaterialCheckBox;
 import gwt.material.design.client.ui.MaterialCollapsible;
 import gwt.material.design.client.ui.MaterialIcon;
 import gwt.material.design.client.ui.MaterialPreLoader;
+import gwt.material.design.client.ui.MaterialRadioButton;
 import gwt.material.design.client.ui.MaterialTitle;
+import gwt.material.design.client.ui.MaterialToast;
 import gwt.material.design.client.ui.html.Option;
 
 public class ExerciseGenerationWidget extends LocalizedComposite implements ExerciseGenerationService {
@@ -73,21 +78,27 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     @UiField
     MaterialCheckBox chkFeedbookXml;
     @UiField
-    MaterialCheckBox chkSpecification;
+    MaterialRadioButton rbtSpecification;
+    @UiField
+    MaterialRadioButton rbtExercise;
     @UiField
     MaterialButton btnCloseCopyrightNoticeUI;
     @UiField
     MaterialTitle titleCopyrightNoticeUI;
+    @UiField
+    MaterialIcon icoUseSpec;
     
     private byte[] generatedExercises = null;
     private String fileName = null;
-        
+    
+    private ArrayList<Integer> taskIds = new ArrayList<>();
+    
     public ExerciseGenerationWidget() {
         initWidget(ourUiBinder.createAndBindUi(this));
         initLocale(localeBinder.bind(this));
         this.initHandlers();
     }
-
+    
     /**
      * Initializes all handlers.
      */
@@ -99,17 +110,96 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
         btnCloseCopyrightNoticeUI.addClickHandler(event -> {
             mdlCopyrightNoticeUI.close();
         });
+        
+        icoUseSpec.addClickHandler(event ->  {
+        	rbtExercise.setValue(true);
+        	setupExerciseLayout();
 
+        	for(Widget task : wdgtTasks.getChildrenList()) {
+                if(task instanceof TaskItem) {
+                	deleteTask((TaskItem)task);
+                }
+        	}
+        	addTask();
+        	
+        	for(Widget task : wdgtTasks.getChildrenList()) {
+                if(task instanceof TaskItem) {
+                	RankableDocumentImpl d = new RankableDocumentImpl();
+                	d.setText(new String(generatedExercises, StandardCharsets.UTF_8));
+                	d.setFileExtension(".json");
+                	d.setTitle(fileName);
+                	d.setLinkingId(1);
+                	((TaskItem)task).doc = d;
+                	((TaskItem)task).lblDocTitle.setText(fileName);
+                	((TaskItem)task).chkUseConfig.setValue(true);
+                	((TaskItem)task).drpTopic.clear();
+            		((TaskItem)task).addOptionToTopic("---", "Topic", "Conditionals", 0);
+            		((TaskItem)task).addOptionToTopic("Conditionals", "Conditionals", "Conditionals", 1);
+                	((TaskItem)task).setupConfigSettings(false);    
+                }
+        	}
+        });
+               
     	btnAddTask.addClickHandler(event -> addTask());
     	btnGenerateExercises.addClickHandler(event -> generateExercises());
     	icoDownload.addClickHandler(event -> provideFileForDownload(generatedExercises, fileName));
     	
     	chkH5p.addClickHandler(e -> {
+    		reevaluateTaskValidities();
     		setGenerateExercisesEnabled();
 			setFeedbackGenerationVisiblity();
     	});
     	chkFeedbookXml.addClickHandler(e -> setGenerateExercisesEnabled());
-    	chkSpecification.addClickHandler(e -> setGenerateExercisesEnabled());
+    	rbtSpecification.addClickHandler(e -> setupSpecificationLayout());
+    	rbtExercise.addClickHandler(e -> setupExerciseLayout());
+    }
+    
+    private void setupExerciseLayout() {
+    	setConfigCheckboxVisibility(true);
+		chkFeedbookXml.setEnabled(true);
+		chkH5p.setEnabled(true);
+		chkGenerateFeedback.setVisible(true);
+		
+		for(Widget task : wdgtTasks.getChildrenList()) {
+            if(task instanceof TaskItem) {
+            	((TaskItem)task).colType.setVisible(true);
+            }
+    	}
+		
+		reevaluateTaskValidities();
+		setGenerateExercisesEnabled();
+    }
+    
+    private void setupSpecificationLayout() {
+    	setConfigCheckboxVisibility(false);
+		chkFeedbookXml.setEnabled(false);
+		chkH5p.setEnabled(false);
+		chkGenerateFeedback.setVisible(false);
+		
+		for(Widget task : wdgtTasks.getChildrenList()) {
+            if(task instanceof TaskItem) {
+            	((TaskItem)task).colType.setVisible(false);
+            }
+    	}
+
+		reevaluateTaskValidities();
+		setGenerateExercisesEnabled();
+    }
+    
+    private void reevaluateTaskValidities() {
+    	for(Widget task : wdgtTasks.getChildrenList()) {
+            if(task instanceof TaskItem) {
+            	((TaskItem)task).setNumberExercisesText(((TaskItem)task).calculateNumberOfExercises());
+            }
+    	}
+    }
+    
+    private void setConfigCheckboxVisibility(boolean visible) {
+    	for(Widget task : wdgtTasks.getChildrenList()) {
+            if(task instanceof TaskItem) {
+            	((TaskItem)task).chkUseConfig.setVisible(visible);
+            }
+    	}
     }
     
     /**
@@ -142,7 +232,9 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     		int lastNumber = Integer.parseInt(((TaskItem)existingTasks.get(existingTasks.size() - 1)).lblName.getText().split(" ")[1]);
     		name = "Exercise " + (lastNumber + 1);
     	}
-    	TaskItem newTask = new TaskItem(this, name);
+    	int taskId = taskIds.size();
+    	taskIds.add(taskId);
+    	TaskItem newTask = new TaskItem(this, name, taskId);
     	newTask.drpQuiz.addSelectionHandler(new SelectComboHandler<Option>()
     	{
 			@Override
@@ -256,7 +348,7 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
      * Disables it otherwise.
      */
     public void setGenerateExercisesEnabled() {
-    	btnGenerateExercises.setEnabled(hasValidTasks() && (chkH5p.getValue() || chkFeedbookXml.getValue() || chkSpecification.getValue()));
+    	btnGenerateExercises.setEnabled(hasValidTasks() && (rbtExercise.getValue() && (chkH5p.getValue() || chkFeedbookXml.getValue()) || rbtSpecification.getValue()));
     }
     
     @Override
@@ -278,6 +370,7 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
 	    	btnGenerateExercises.setBackgroundColor(Color.RED);    	
 	    	spnGenerating.setVisible(true);
 	    	icoDownload.setVisible(false);
+	    	icoUseSpec.setVisible(false);
 	    	for(Widget existingTask : wdgtTasks.getChildrenList()) {
 	    		((TaskItem)existingTask).btnPreviewExercise.setVisible(false);
 	    	}
@@ -299,11 +392,13 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
      */
     public void setFeedbackGenerationVisiblity() {
     	boolean setVisible = false;
-    	for(Widget existingTask : wdgtTasks.getChildrenList()) {
-    		if (((TaskItem)existingTask).supportsFeedbackGeneration()) {
-    			setVisible = true;
-    			break;
-    		}
+    	if(rbtExercise.getValue() && chkH5p.getValue() || rbtSpecification.getValue()) {
+	    	for(Widget existingTask : wdgtTasks.getChildrenList()) {
+	    		if (((TaskItem)existingTask).supportsFeedbackGeneration()) {
+	    			setVisible = true;
+	    			break;
+	    		}
+	    	}
     	}
     	
     	chkGenerateFeedback.setVisible(setVisible);
@@ -336,7 +431,11 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     	
 		if(file != null && file.length > 0) {
 			icoDownload.setVisible(true);
-			setPreview(previews);	
+			if(fileName.endsWith("json")) {
+				icoUseSpec.setVisible(true);
+			} else {
+				setPreview(previews);	
+			}
     	} else {
             ToastNotification.fire("We're sorry, no exercises could be generated. Please try with another document.");
     	}

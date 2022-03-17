@@ -56,16 +56,17 @@ public abstract class SimpleExerciseGenerator extends ExerciseGenerator {
         	return null;
         }  
         
+        HashMap<String, String> previews = new HashMap<>();
         if(settings.getExerciseSettings().getOutputFormats().contains(OutputFormat.SPECIFICATION)) {
     		specification = generateSpecification(parser, generator, lemmatizer, exerciseData, settings);
+        } else {
+            previews = generatePreview(exerciseData);
         }
         
         if (isCancelled) {
         	return null;
         }  
         
-        HashMap<String, String> previews = generatePreview(exerciseData);
-
         return new ResultComponents(h5PFiles, previews, xmlFiles, specification);
     }
 	

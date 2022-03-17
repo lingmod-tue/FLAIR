@@ -46,4 +46,5 @@ public interface RankableDocument extends DocumentDTO {
 	double getReadablilityScore();
 	String getFileExtension();
 	void setFileExtension(String fileExtension);
+	void setText(String text);
 }

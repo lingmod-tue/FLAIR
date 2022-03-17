@@ -60,7 +60,7 @@ public class ExGenTask implements AsyncTask<ExGenTask.Result> {
 
 		long endTime = System.currentTimeMillis();
 		
-		if(error || exercises == null || exercises.getH5pFiles().size() == 0 && exercises.getXmlFiles().size() == 0) {
+		if(error || exercises == null || exercises.getH5pFiles().size() == 0 && exercises.getXmlFiles().size() == 0 && exercises.getSpecification().size() == 0) {
 			return null;
 		}
 		

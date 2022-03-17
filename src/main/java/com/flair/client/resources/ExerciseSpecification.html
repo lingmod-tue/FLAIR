@@ -1,0 +1,819 @@
+
+
+<html>
+   <head>
+      <meta charset="utf-8">
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+      <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+      <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-treeview/1.2.0/bootstrap-treeview.min.css">
+      <title>Exercise Specification</title>
+
+      <style>
+         body {
+         padding: 20px;
+         }
+         .dropdown-item:active {
+         background-color: white;
+         color: grey;
+         }
+         .dropdown-item:hover {
+         background-color: grey;
+         color: white;
+         }
+         .dropdown-menu {
+         border: 1px solid lightgrey;
+         }
+         .card-body {
+         background-color: lightgrey;
+         }
+         .container {
+         width: 100%;
+         min-width: 100%;
+         padding: 0px;
+         }
+         h4 { font-size: 12pt;
+         font-weight: bold;
+         }
+         .fa-angle-down {
+         cursor: pointer;
+         } 
+         .list-group-item {
+         cursor: default;
+         padding: 0px;
+         }
+         .list-group {
+         min-height: 30px;
+         width: 200px;
+         }      
+         .invisible {
+         visibility: collapse;
+         display: none;
+         }
+         .floating-button{
+         position:fixed;
+         width:50px;
+         height:50px;
+         bottom:20px;
+         left:20px;
+         background:blue;
+         border-radius:50px;
+         text-align:center;
+         color:white;
+         font-size: 25px;
+         padding-top:10px;
+         border:none;
+         filter: drop-shadow(2px 2px 10px blue) drop-shadow(-2px -2px 10px blue);
+         }
+         .floating-button:hover{
+         text-decoration: none;
+         background-color: white;
+         }
+         .close-button{
+         float:right;
+         color: white;
+         }
+         .bold-border {
+         color: red;
+         filter: drop-shadow(1px 1px 1px red) drop-shadow(-1px -1px 1px red) drop-shadow(-1px 1px 1px red) drop-shadow(1px -1px 1px red);
+         }
+      </style>
+   </head>
+   <body>
+      <div class="container-fluid">
+      <div class="row flex-nowrap">
+      <div id="sidebar" class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark">
+         <a class="close-button" onclick="hideSidebar();" href="#" ><i class="fa fa-angle-left"></i></a>	
+         <div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100" style="height:100vh;">
+            <div href="/" class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+               <i class="fs-4 fa fa-book"></i><span class="ms-1 d-none d-sm-inline" style="margin-left: 10px;">Exercises</span>
+            </div>
+            <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" >
+               <li class="nav-item" id="add-exercise" style="margin-top: 20px;">
+                  <a href="#" class="nav-link align-middle px-0" onclick="addExercise();">
+                  <i class="fs-4 fa fa-plus-square-o"></i><span class="ms-1 d-none d-sm-inline" style="margin-left: 10px;">Add exercise</span>
+                  </a>
+               </li>
+               <li class="nav-item">
+                  <a href="#" class="nav-link align-middle px-0" onclick="displayTypeSettings();">
+                  <i class="fs-4 fa fa-puzzle-piece"></i><span class="ms-1 d-none d-sm-inline" style="margin-left: 10px;">Exercise types</span>
+                  </a>
+               </li>
+               <li class="nav-item">
+                  <a href="#" class="nav-link align-middle px-0" onclick="save();">
+                  <i class="fs-4 fa fa-floppy-o"></i><span class="ms-1 d-none d-sm-inline" style="margin-left: 10px;">Save to file</span>
+                  </a>
+               </li>
+               <li class="nav-item">
+                  <input id="btn-upload" type="file" accept="text/json" text="test text" class="invisible" onchange="upload(this);">
+                  <a href="#" class="nav-link align-middle px-0" onclick="load();">
+                  <i class="fs-4 fa fa-upload"></i><span class="ms-1 d-none d-sm-inline" style="margin-left: 10px;">Load from file</span>
+                  </a>
+               </li>
+            </ul>
+         </div>
+      </div>
+      <div class="col py-3">
+      <div class="card" style="margin-bottom: 100px;">
+      <div class="card-body" id="topicdrp">
+         <span style="font-weight: bold; margin-right: 5px;">Topic:</span><button id="btnTopic" class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Conditionals</button>
+         <div class="dropdown-menu"><a class="dropdown-item" href="#" onclick="updateDropdown(this);">Conditionals</a></div>
+      </div>
+      <div class="card-footer">
+         <div class="content-area">
+            <div id="content-area"/>
+               <div id="type-settings" class="container invisible">
+                  <p style="font-weight: bold;">Select the exercise types to generate for the exercise specifications.</p>
+                  <div class="treeview">
+                     <ul id="types-tree" class="list-group" style="width: 100%;">
+                     </ul>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+      <a id="settings-button" class="fa fa-cog floating-button invisible" onclick="showSidebar();" href="#" />
+      <a id="downloadAnchorElem" style="display:none"></a>
+      <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-treeview/1.2.0/bootstrap-treeview.min.js"></script>
+      <script type="text/javascript" id="mainScript">
+         /** 
+          Marks the clicked list item as active.
+         */
+         function addItem(el) {
+             $(el).toggleClass('active');
+         };
+
+         /** 
+          Changes the text of the dropdown on selection changed.
+         */
+         function updateDropdown(item) {
+             $(item).parent().prev().text($(item).text());
+         }
+
+         /**
+          Adds the item specified in the popup to the associated list.
+         */
+         function addDistractor(item) {
+             $(item).closest(".listItems").find(".list-group").append($("<li class=\"list-group-item\" onclick=\"addItem(this);\">" + $(item).parent().prev().find(">:first-child").val() + "</li>"));
+             $(item).parent().prev().find(">:first-child").val("");
+         }
+
+         /**
+          Removes the selected list item up 1 position.
+         */
+         function removeItem(item) {
+             let selectedItem = $(item).closest(".list-cont").find('.list-group-item.active');
+             selectedItem.remove();
+         }
+
+         /**
+                Moves the selected list item up 1 position.
+               */
+         function moveUp(item) {
+             let selectedItem = $(item).closest(".list-cont").find('.list-group-item.active');
+             if (selectedItem && selectedItem.length == 1) {
+                 selectedItem.prev().before(selectedItem);
+             }
+         }
+
+         /**
+                Moves the selected list item down 1 position.
+               */
+         function moveDown(item) {
+             let selectedItem = $(item).closest(".list-cont").find('.list-group-item.active');
+             if (selectedItem && selectedItem.length == 1) {
+                 selectedItem.next().after(selectedItem);
+             }
+         }
+
+         /**
+          Toggles the view between edit and view mode for the chunks.
+         */
+         function displayEditChunks(item) {
+             if ($(item).prev().hasClass("invisible")) {
+                 $(item).prev().removeClass("invisible");
+                 $(item).prev().prev().addClass("invisible");
+                 $(item).addClass("fa-eye");
+                 $(item).removeClass("fa-pencil");
+             } else {
+                 $(item).prev().addClass("invisible");
+                 $(item).prev().prev().removeClass("invisible");
+                 $(item).removeClass("fa-eye");
+                 $(item).addClass("fa-pencil");
+             }
+         }
+
+         /**
+          Reacts to changes in the chunks edit view.
+         */
+         function changeChunks(item) {
+             updateChunks($(item));
+         }
+
+         /**
+          Updates the spinners and the title line when the chunks have been modified.
+         */
+         function updateChunks(item) {
+             item.parent().prev().empty();
+             let chunks = item.val().split("|");
+             chunks.forEach(chunk => item.parent().prev().append("<span style='border:1px solid grey; margin-right: 2px;'>" + chunk.trim() + "</span>"));
+             setInputValues(item.closest(".spec").find('.idx.gap'), chunks);
+             setInputValues(item.closest(".spec").find('.idx.mtw'), chunks);
+
+             changeTitleLine(item.closest(".sentence"));
+         }
+
+         /**
+          Sets the spinner values and associated texts when the chunks are modified.
+          Sets them to 0 and empty values if the chunks have been removed entirely.
+          Sets them to 1 and the chunk if a chunk has been added and no chunk has been there before.
+         */
+         function setInputValues(item, chunks) {
+             if (item.val() == 0) {
+                 item.val(1);
+             }
+             
+             changeSpinnerText(item);
+         }
+
+         /**
+          Reacts to changes in elements which make up the title line.
+         */
+         function onContextChanged(item) {
+             changeTitleLine($(item).closest(".sentence"));
+         }
+
+         /**
+          Sets title line.
+          Context before + main clause + if-clause + context after.
+         */
+         function changeTitleLine(sentence) {
+             let mainSentence = sentence.find(".chunksViewMain").find(">:first-child").val().replaceAll("|", " ");
+             let conditionalSentence = sentence.find(".chunksView").find(">:first-child").val().replaceAll("|", " ");
+             if (conditionalSentence.length > 0) {
+                 conditionalSentence = " " + conditionalSentence;
+             }
+
+             let sent = "";
+             if (mainSentence.length > 0 || conditionalSentence.length > 0) {
+                 let delimiter = (mainSentence.length > 0 && conditionalSentence.length > 0) ? " " : "";
+                 sent = mainSentence + delimiter + conditionalSentence + ". ";
+             }
+
+             sentence.prev().prev().find(".context").text(sentence.find(".contextBefore").val() + " " + sent + sentence.find(".contextAfter").val());
+         }
+
+         /**
+          Reacts to changes in the spinner value.
+         */
+         function onSpinnerChanged(item) {
+             changeSpinnerText($(item));
+         }
+
+         /**
+          Updates the chunk preview for the associated spinner.
+         */
+         function changeSpinnerText(item) {
+
+             let chunks = item.closest(".spec").find(".editable-chunks").val().split("|");
+             
+             if (chunks.length === 1 && chunks[0] === "") {
+                 item.parent().find(".idx").attr("max", 0);
+                 item.parent().find(".idx").attr("min", 0);
+                 item.parent().find(".idx").val(0);
+			 item.parent().find(".spnLabel").text("");
+             } else {
+             for(const spn of item.parent().find(".idx")) {
+                          if($(spn).val() > chunks.length) {
+             	$(spn).val(chunks.length);
+             }
+             }
+
+             	let lowerValue = item.parent().find(".spn1").val();
+		     let upperValue = item.parent().find(".spn2").val();           
+			
+			             item.parent().find(".idx").attr("max", chunks.length);
+             item.parent().find(".idx").attr("min", 1);
+             
+             
+		     if (!(chunks.length === 1 && chunks[0] === "")) {
+		     		let chunks_in_range = [];
+		     		for(let i = lowerValue - 1; i < upperValue; i++) {
+		     			chunks_in_range.push(chunks[i]);
+		     		}
+		     		
+			 item.parent().find(".spnLabel").text("(" + chunks_in_range.join(" ") + ")");
+		     }
+		    }
+         }
+
+         /**
+          Moves the selected exercise sentence up 1 position.
+         */
+         function moveSentenceUp(item) {
+             if ($(".checkable-sentence:checked").length == 1) {
+                 $(".checkable-sentence:checked").closest(".sentence-unit").prev().before($(".checkable-sentence:checked").closest(".sentence-unit"));
+             }
+         }
+
+         /**
+          Moves the selected exercise sentence down 1 position.
+         */
+         function moveSentenceDown(item) {
+             if ($(".checkable-sentence:checked").length == 1) {
+                 $(".checkable-sentence:checked").closest(".sentence-unit").next().after($(".checkable-sentence:checked").closest(".sentence-unit"));
+             }
+         }
+
+         /**
+          Removes the selected exercise sentence.
+         */
+         function removeSentence(item) {
+             $(".checkable-sentence:checked").closest(".sentence-unit").remove();
+             if ($(".sentence-unit").length === 0) {
+                 $(item).closest(".exercise-spec").find(".move-sent-up").addClass("invisible");
+                 $(item).closest(".exercise-spec").find(".move-sent-down").addClass("invisible");
+                 $(item).closest(".exercise-spec").find(".remove-sent").addClass("invisible");
+             }
+         }
+
+         /**
+          Adds an empty exercise sentence specification.
+         */
+         function addSentence(item) {
+             addSentenceToExercise($(item).closest(".exercise-spec"));
+         }
+
+         function addSentenceToExercise(exercise) {
+             /*Exercise definition for conditionals */
+             let count = exercise.find(".sentence").length + 1;
+             exercise.find(".sentences").append('<div class="sentence-unit"><div class="form-check"><input type="checkbox" class="form-check-input checkable-sentence"><div class="fa fa-angle-down" data-toggle="collapse" data-target="#sentence' + count + '" aria-expanded="true" aria-controls="sentence' + count + '"><span></span><span class="context"/></div></div></br><div id="sentence' + count + '" class="sentence collapse show" style="padding-left: 20px;"><table><tr class="condType"><td>Conditional type:</td><td><button id="condTypeDrp' + count + '" class="btn btn-outline-secondary btn-sm dropdown-toggle btn-cond-type" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">---</button><div class="dropdown-menu" aria-labelledby="condTypeDrp' + count + '"><a class="dropdown-item" href="#" onclick="updateDropdown(this);">Type 1</a><a class="dropdown-item" href="#" onclick="updateDropdown(this);">Type 2</a></div></td></tr><tr><td>Context before: </td><td><input type="text" class="contextBefore" value="" onKeyUp="onContextChanged(this);"></td></tr><tr><td>Context after: </td><td><input type="text" class="contextAfter" value="" onKeyUp="onContextChanged(this);"></td></tr></table><br><div class="container"><div class="row"><div class="col-sm main-clause"><h4>Main clause:</h4><table class="spec"><tr class="chunks"><td>Chunks:</td><td><div><span></span><span class="chunksViewMain invisible"><input class="editable-chunks" type="text" value="" onKeyUp="changeChunks(this);"/></span><a class="fa fa-pencil" onclick="displayEditChunks(this);" href="#"/></div></td></tr><tr class="translation"><td>Translation:</td><td><input type="text"></td></tr><tr class="distractors"><td>Distractors:</td><td><table class="list-cont"><tr class="listItems"><td><ul class="list-group" style="border: 1px solid grey;"/></td><td><div><a class="fa fa-plus-square-o" aria-hidden="true" href="#" data-toggle="modal" data-target="#distractorPopupMain' + count + '"/></div><!-- add item popup --><div class="modal fade" id="distractorPopupMain' + count + '" tabindex="-1" role="dialog" aria-labelledby="distractorPopupMainLabel' + count + '" aria-hidden="true"><div class="modal-dialog" role="document"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="distractorPopupMainLabel' + count + '">Add distractor</h5><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div><div class="modal-body"><input type="text"></div><div class="modal-footer"><button type="button" class="btn btn-primary" onclick="addDistractor(this);" data-dismiss="modal">Add</button></div></div></div></div><div><a class="fa fa-minus-square-o" aria-hidden="true" href="#" onclick="removeItem(this);"/></div></td><td><div><a class="fa fa-arrow-circle-o-up" aria-hidden="true" href="#" onclick="moveUp(this);"/></div><div><a class="fa fa-arrow-circle-o-down" aria-hidden="true" href="#" onclick="moveDown(this);"/></div></td></tr></table></td></tr><tr class="given-word"><td>Given word:</td><td><input type="text"></td></tr><tr class="semantic-distractor"><td>Semantic distractor:</td><td><input type="text"></td></tr><tr class="given-words-ext"><td>Given words extended:</td><td><table class="list-cont"><tr class="listItems"><td><ul class="list-group" style="border: 1px solid grey;"/></td><td><div><a class="fa fa-plus-square-o" aria-hidden="true" href="#" data-toggle="modal" data-target="#givenWordsPopupMain' + count + '"/></div><!-- add item popup --><div class="modal fade" id="givenWordsPopupMain' + count + '" tabindex="-1" role="dialog" aria-labelledby="givenWordsPopupMainLabel' + count + '" aria-hidden="true"><div class="modal-dialog" role="document"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="givenWordsPopupMainLabel' + count + '">Add given word</h5><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div><div class="modal-body"><input type="text"></div><div class="modal-footer"><button type="button" class="btn btn-primary" onclick="addDistractor(this);" data-dismiss="modal">Add</button></div></div></div></div><div><a class="fa fa-minus-square-o" aria-hidden="true" href="#" onclick="removeItem(this);"/></div></td><td><div><a class="fa fa-arrow-circle-o-up" aria-hidden="true" href="#" onclick="moveUp(this);"/></div><div><a class="fa fa-arrow-circle-o-down" aria-hidden="true" href="#" onclick="moveDown(this);"/></div></td></tr></table></td></tr><tr class="gap"><td>Gap:</td><td><input class="idx gap spn1" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"/> - <input class="idx gap spn2" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"/><span class="spnLabel"></span></td></tr><tr class="mtw-target"><td>MtW target:</td><td><input class="idx mtw spn1" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"/> - <input class="idx mtw spn2" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"/><span class="spnLabel"></span></td></tr></table><br></div><div class="col-sm if-clause"><h4>If-clause:</h4><table class="spec"><tr class="chunks"><td>Chunks:</td><td><div><span></span><span class="chunksView invisible"><input class="editable-chunks" type="text" value="" onKeyUp="changeChunks(this);"/></span><a class="fa fa-pencil" onclick="displayEditChunks(this);" href="#"/></div></td></tr><tr class="translation"><td>Translation:</td><td><input type="text"></td></tr><tr class="distractors"><td>Distractors:</td><td><table class="list-cont"><tr class="listItems"><td><ul class="list-group" style="border: 1px solid grey;"/></td><td><div><a class="fa fa-plus-square-o" aria-hidden="true" href="#" data-toggle="modal" data-target="#distractorPopup' + count + '"/></div><!-- add item popup --><div class="modal fade" id="distractorPopup' + count + '" tabindex="-1" role="dialog" aria-labelledby="distractorPopupLabel' + count + '" aria-hidden="true"><div class="modal-dialog" role="document"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="distractorPopupLabel' + count + '">Add distractor</h5><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div><div class="modal-body"><input type="text"></div><div class="modal-footer"><button type="button" class="btn btn-primary" onclick="addDistractor(this);" data-dismiss="modal">Add</button></div></div></div></div><div><a class="fa fa-minus-square-o" aria-hidden="true" href="#" onclick="removeItem(this);"/></div></td><td><div><a class="fa fa-arrow-circle-o-up" aria-hidden="true" href="#" onclick="moveUp(this);"/></div><div><a class="fa fa-arrow-circle-o-down" aria-hidden="true" href="#" onclick="moveDown(this);"/></div></td></tr></table></td></tr><tr class="given-word"><td>Given word:</td><td><input type="text"></td></tr><tr class="semantic-distractor"><td>Semantic distractor:</td><td><input type="text"></td></tr><tr class="given-words-ext"><td>Given words extended:</td><td><table class="list-cont"><tr class="listItems"><td><ul class="list-group" style="border: 1px solid grey;"/></td><td><div><a class="fa fa-plus-square-o" aria-hidden="true" href="#" data-toggle="modal" data-target="#givenWordsPopup' + count + '"/></div><!-- add item popup --><div class="modal fade" id="givenWordsPopup' + count + '" tabindex="-1" role="dialog" aria-labelledby="givenWordsPopupLabel' + count + '" aria-hidden="true"><div class="modal-dialog" role="document"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="givenWordsPopupLabel' + count + '">Add given word</h5><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div><div class="modal-body"><input type="text"></div><div class="modal-footer"><button type="button" class="btn btn-primary" onclick="addDistractor(this);" data-dismiss="modal">Add</button></div></div></div></div><div><a class="fa fa-minus-square-o" aria-hidden="true" href="#" onclick="removeItem(this);"/></div></td><td><div><a class="fa fa-arrow-circle-o-up" aria-hidden="true" href="#" onclick="moveUp(this);"/></div><div><a class="fa fa-arrow-circle-o-down" aria-hidden="true" href="#" onclick="moveDown(this);"/></div></td></tr></table></td></tr><tr class="gap"><td>Gap:</td><td><input class="idx gap spn1" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"/> - <input class="idx gap spn2" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"/><span class="spnLabel"></span></td></tr><tr class="mtw-target"><td>MtW target:</td><td><input class="idx mtw spn1" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"/> - <input class="idx mtw spn2" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"/><span class="spnLabel"></span></td></tr></table></div></div></div><br></div></div>');
+
+             exercise.find(".move-sent-up").removeClass("invisible");
+             exercise.find(".move-sent-down").removeClass("invisible");
+             exercise.find(".remove-sent").removeClass("invisible");
+         }
+
+         /**
+          Adds an empty exercise item.
+          Adds it to the sidebar.
+          Sets the previously displayed exercise item to invisible.
+         */
+         function addExercise() {
+             let count = $(".exercise-spec").length + 1;
+             $(".exercise-spec").addClass("invisible");
+             $("#type-settings").addClass("invisible");
+
+             $("#content-area").append('<div class="exercise-spec" id="exercise-spec' + count + '"><a class="fa fa-times" style="float:right;color:red;" href="#" onclick="deleteExercise(this);"></a><h3>Exercise ' + count + '</h3><div class="card"><div class="card-body subtopic"><span style="font-weight: bold; margin-right: 5px;">Sub topic:</span><button class="btn btn-outline-secondary btn-sm dropdown-toggle btn-subtopic" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">---</button><div class="dropdown-menu"><a class="dropdown-item" href="#" onclick="updateDropdown(this);">Formation</a><a class="dropdown-item" href="#" onclick="updateDropdown(this);">Type 1 vs Type 2</a></div></div></div><table><tr><td style="padding-right:10px;"><div><a class="fa fa-arrow-circle-o-up invisible move-sent-up" aria-hidden="true" href="#" onclick="moveSentenceUp(this);"/></div><div><a id="move-sent-down" class="fa fa-arrow-circle-o-down invisible move-sent-down" aria-hidden="true" href="#" onclick="moveSentenceDown(this);"/></div><div><a class="fa fa-minus-square-o invisible remove-sent" aria-hidden="true" href="#" onclick="removeSentence(this);"/></div></td><td class="sentences"/></tr></table><br><a class="fa fa-plus" href="#" onclick="addSentence(this);"> Add exercise sentence</a></div>');
+
+             $("#add-exercise").before('<li id="nav-ex' + count + '" class="nav-item"><a href="#" class="nav-link align-middle px-0" onclick="displayExercise(\'#exercise-spec' + count + '\');"><span class="ms-1 d-none d-sm-inline">Exercise</span> <span class="fs-4">' + count + '</span></a></li>');
+         }
+
+         /**
+          Sets the clicked exercise to visible in the main panel.
+          Hides all other exercise items.
+         */
+         function displayExercise(exerciseId) {
+             $(".exercise-spec").addClass("invisible");
+             $("#type-settings").addClass("invisible");
+             $(exerciseId).removeClass("invisible");
+         }
+
+         function deleteExercise(item) {
+             deleteExerciseItem($(item).closest(".exercise-spec"));
+         }
+
+         function deleteExerciseItem(exercise) {
+             $("#nav-ex" + exercise.attr("id").substring(13)).remove();
+             exercise.remove();
+         }
+
+         /**
+          Opens the sidebar.
+         */
+         function showSidebar() {
+             $("#sidebar").removeClass("invisible");
+             $("#settings-button").addClass("invisible");
+         }
+
+         /**
+          Closes the sidebar.
+         */
+         function hideSidebar() {
+             $("#sidebar").addClass("invisible");
+             $("#settings-button").removeClass("invisible");
+         }
+
+         /**
+          Displays the selection for exercise types to generate in the main view.
+         */
+         function displayTypeSettings() {
+             $(".exercise-spec").addClass("invisible");
+             $("#type-settings").removeClass("invisible");
+         }
+
+         /**
+          Moves the selected list items to the left container.
+         */
+         function moveLeft(item) {
+             $("#type-generate").append($("#type-pool").find('.list-group-item.active'));
+         }
+
+         /**
+          Moves the selected list items to the right container.
+         */
+         function moveRight(item) {
+             $("#type-pool").append($("#type-generate").find('.list-group-item.active'));
+         }
+
+         /**
+          Creates a deep copy of a string.
+         */
+         function copyString(str) {
+             return (' ' + str).slice(1);
+         }
+
+         /**
+          Adds an element to the tree item string.
+         */
+         function addTreeElement(treeStr, key, val, id, margin) {
+             if (val !== null) {
+                 treeStr += '<li class="list-group-item node-treeview1" style="border:0px;background:none;"><span class="form-check" style="margin-left: ' + margin + 'px;"><input type="checkbox" checked class="form-check-input" onclick="onTypeChecked(this)"><label class="form-check-label" data-toggle="collapse" data-target="#t' + id.toString() + '" aria-expanded="true" aria-controls="t' + id.toString() + '">' + key + '</label></span></li><div id="t' + id.toString() + '" class="collapse show">';
+                 id++;
+                 margin += 10;
+                 for (const [k, v] of Object.entries(val)) {
+                     let ret = addTreeElement(copyString(treeStr), k, v, id, margin);
+                     id = ret[0];
+                     treeStr = ret[1];
+                 }
+
+                 treeStr += "</div>";
+
+             } else {
+                 treeStr += '<li class="list-group-item node-treeview1" style="border:0px;background:none;"><span class="form-check" style="margin-left: ' + margin + 'px;"><input type="checkbox" checked class="form-check-input" onclick="onTypeChecked(this)"><label class="form-check-label">' + key + '</label></span></li>';
+             }
+
+             return [id, treeStr];
+         }
+
+         /**
+         Reacts to checking or unchecking tree items of the exercise types to generate.
+         */
+         function onTypeChecked(item) {
+             // remove styling for "some children checked"
+             $(item).removeClass("bold-border");
+             // check/ uncheck children
+             if ($(item).closest(".list-group-item").next().hasClass("collapse")) {
+                 $(item).closest(".list-group-item").next().find(".form-check-input").prop('checked', $(item).is(':checked'));
+             }
+
+             setExerciseTypeCheckboxes();
+         }
+
+         function setExerciseTypeCheckboxes() {
+             let has_changed = true;
+             while (has_changed) {
+                 has_changed = false;
+                 for (const item of $("#types-tree").find("input")) {
+                     let parent = $(item).closest(".collapse").prev().find(".form-check-input");
+                     if (parent.length > 0) {
+                         let siblings = $(item).closest(".collapse").find(".form-check-input");
+                         let checked_siblings = $(item).closest(".collapse").find(".form-check-input:checked");
+
+
+                         let allChildrenChecked = siblings.length === checked_siblings.length;
+                         let itemChecked = parent.is(':checked');
+                         if (allChildrenChecked !== itemChecked) {
+                             has_changed = true;
+                         }
+                         parent.prop('checked', allChildrenChecked);
+
+                         // add/ remove styling for "some children checked"
+                         if (siblings.length > 0 && siblings.length !== checked_siblings.length) {
+                             parent.addClass("bold-border");
+                         } else {
+                             parent.removeClass("bold-border");
+                         }
+                     } else {}
+                 }
+             }
+         }
+
+         /**
+         Saves the specified exercises to a JSON file.
+         */
+         function save() {
+	         var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(getSpec()));
+             var dlAnchorElem = document.getElementById('downloadAnchorElem');
+             dlAnchorElem.setAttribute("href", dataStr);
+             dlAnchorElem.setAttribute("download", "exercise_specification.json");
+             dlAnchorElem.click();
+         }
+
+		/**
+		Generates a JSON from the specified exercises.
+		*/
+		function getSpec() {
+			var spec = {
+                 "topic": $("#btnTopic").text()
+             };
+             var exercises = [];
+             spec["exercises"] = exercises;
+
+             for (const exercise of $(".exercise-spec")) {
+                 var ex = {
+                     "subtopic": $(exercise).find(".btn-subtopic").text()
+                 };
+                 var sents = [];
+                 ex["sentences"] = sents;
+                 exercises.push(ex);
+                 var sentences = $(exercise).find(".sentence");
+                 for (const sentence of sentences) {
+                     var sent = {
+                         "condType": $(sentence).find(".btn-cond-type").text(),
+                         "contextBefore": $(sentence).find(".contextBefore").val(),
+                         "contextAfter": $(sentence).find(".contextAfter").val()
+                     };
+                     sents.push(sent);
+
+                     var mainClause = getClauseValues("main-clause", $(sentence));
+                     sent["mainClause"] = mainClause;
+
+
+                     var ifClause = getClauseValues("if-clause", $(sentence));
+                     sent["ifClause"] = ifClause;
+                 }
+             }
+
+             let exercise_types = [];
+
+             for (const ti of $("#types-tree").find("input:checked")) {
+                 let attr = $(ti).attr("id");
+
+                 if (typeof attr !== 'undefined' && attr !== false) {
+                     // it's an inner element
+                     exercise_types.push($(ti).attr("id"));
+                 }
+             }
+
+             spec["exerciseTypes"] = exercise_types;
+
+			return spec;
+		}
+
+         function getClauseValues(clauseStr, sentence) {
+             var clauseSpec = {};
+             clauseSpec["chunks"] = sentence.find("." + clauseStr + " .editable-chunks").val().split("|");
+             clauseSpec["translation"] = sentence.find("." + clauseStr + " .translation input").val();
+             var distractors = [];
+             for (const distr of sentence.find("." + clauseStr + " .distractors .list-group .list-group-item")) {
+                 distractors.push($(distr).text());
+             }
+             clauseSpec["distractors"] = distractors;
+             clauseSpec["givenWord"] = sentence.find("." + clauseStr + " .given-word input").val();
+             clauseSpec["semanticDistractor"] = sentence.find("." + clauseStr + " .semantic-distractor input").val();
+             var givenWordsExt = [];
+             for (const gwe of sentence.find("." + clauseStr + " .given-words-ext .list-group .list-group-item")) {
+                 givenWordsExt.push($(gwe).text());
+             }
+             clauseSpec["givenWordsExtended"] = givenWordsExt;
+             clauseSpec["gap"] = [parseInt(sentence.find("." + clauseStr + " .gap .spn1").val()),parseInt(sentence.find("." + clauseStr + " .gap .spn2").val()) ];
+             clauseSpec["mtwTarget"] = [parseInt(sentence.find("." + clauseStr + " .mtw-target .spn1").val()),parseInt(sentence.find("." + clauseStr + " .mtw-target .spn2").val()) ];
+
+             return clauseSpec;
+         }
+
+         /**
+         Opens the file selection dialog.
+         */
+         function load() {
+             $("#btn-upload").click();
+         }
+
+         /**
+         Loads a specification from a JSON file.
+         */
+         function upload(item) {
+             if (item.files.length <= 0) {
+                 return;
+             }
+
+             var fr = new FileReader();
+             fr.onload = function(e) {
+                 var result = JSON.parse(e.target.result);
+                 populateFromJson(result);
+             }
+
+             fr.readAsText(item.files.item(0));
+         }
+
+		function uploadFromFLAIR(fileContent) {
+			var fr = new FileReader();
+             fr.onload = function(e) {
+                 var result = JSON.parse(e.target.result);
+                 populateFromJson(result);
+             }
+
+             fr.readAsText(fileContent);
+		}
+
+         /**
+         Populates the UI with the exercises specified in the JSON file.
+         */
+         function populateFromJson(json) {
+             var is_valid = true;
+
+             // remove all exercises
+             for (const e of $(".exercise-spec")) {
+                 deleteExerciseItem($(e));
+             }
+
+             try {
+                 if ($("#topicdrp").find(".dropdown-item:contains('" + json["topic"] + "')").length > 0) {
+                     $("#btnTopic").text(json["topic"]);
+                 } else {
+                     is_valid = false;
+                 }
+
+                 if (is_valid) {
+                     for (const ex of json["exercises"]) {
+                         if (!is_valid) {
+                             break;
+                         }
+
+                         addExercise();
+                         let newExercises = $(".exercise-spec");
+                         let exercise = $(newExercises[newExercises.length - 1]);
+
+                         if (exercise.find(".subtopic .dropdown-item:contains('" + ex["subtopic"] + "')").length > 0) {
+                             exercise.find(".btn-subtopic").text(ex["subtopic"]);
+                         } else {
+                             is_valid = false;
+                             break;
+                         }
+
+                         for (const sent of ex["sentences"]) {
+                             addSentence(exercise);
+                             let newSentences = exercise.find(".sentence");
+                             let sentence = $(newSentences[newSentences.length - 1]);
+
+                             if (sentence.find(".condType .dropdown-item:contains('" + sent["condType"] + "')").length > 0) {
+                                 sentence.find(".btn-cond-type").text(sent["condType"]);
+                             } else {
+                                 is_valid = false;
+                                 break;
+                             }
+
+                             sentence.find(".contextBefore").val(sent["contextBefore"]);
+                             sentence.find(".contextAfter").val(sent["contextAfter"]);
+                             fillClause(sent["mainClause"], "main-clause", sentence);
+                             fillClause(sent["ifClause"], "if-clause", sentence);
+                         }
+                     }
+
+                     // uncheck all tree items 
+                     for (const ti of $("#types-tree").find("input")) {
+                         $(ti).prop("checked", false);
+                     }
+
+                     for (const ti of json["exerciseTypes"]) {
+                         $("#" + ti).prop("checked", true);
+                     }
+                     setExerciseTypeCheckboxes();
+                 }
+             } catch (e) {
+                 console.log(e);
+                 is_valid = false;
+             }
+
+             if (!is_valid) {
+                 $(".exercise-spec").remove();
+                 alert("The exercise file is invalid.");
+             }
+         }
+
+         function fillClause(clause, clauseStr, sentence) {
+             sentence.find("." + clauseStr + " .editable-chunks").val(clause["chunks"].join('|'));
+             updateChunks(sentence.find("." + clauseStr + " .editable-chunks"));
+             sentence.find("." + clauseStr + " .translation input").val(clause["translation"]);
+             for (const distractor of clause["distractors"]) {
+                 sentence.find("." + clauseStr + " .distractors .list-group").append($("<li class=\"list-group-item\" onclick=\"addItem(this);\">" + distractor + "</li>"));
+             }
+             sentence.find("." + clauseStr + " .given-word input").val(clause["givenWord"]);
+             sentence.find("." + clauseStr + " .semantic-distractor input").val(clause["semanticDistractor"]);
+             for (const givenWordExt of clause["givenWordsExtended"]) {
+                 sentence.find("." + clauseStr + " .given-words-ext .list-group").append($("<li class=\"list-group-item\" onclick=\"addItem(this);\">" + givenWordExt + "</li>"));
+             }
+             sentence.find("." + clauseStr + " .gap .spn1").val(clause["gap"][0]);
+                          sentence.find("." + clauseStr + " .gap .spn2").val(clause["gap"][1]);
+             changeSpinnerText(sentence.find("." + clauseStr + " .gap .spn1"));
+             sentence.find("." + clauseStr + " .mtw-target .spn1").val(clause["mtwTarget"][0]);
+                          sentence.find("." + clauseStr + " .mtw-target .spn2").val(clause["mtwTarget"][1]);
+             changeSpinnerText(sentence.find("." + clauseStr + " .mtw-target .spn1"));
+         }
+
+         var targetClauses = {
+             "Target only if-clause": null,
+             "Target only main clause": null,
+             "Target both clauses": null
+         };
+         var exerciseTypes = ["Single Choice (2 options)", "Single Choice (4 options)", "Fill-in-the-Blanks (lemma in parentheses)",
+             "Fill-in-the-Blanks (lemma + distractor in parentheses)", "Fill-in-the-Blanks (lemmas in instructions)"
+         ];
+         var clauseOrder = ["If-clause + main clause", "Main clause + if-clause", "Random clause order"];
+
+         var exerciseTypeDict = {};
+         for (const el of exerciseTypes) {
+             exerciseTypeDict[el] = targetClauses;
+         }
+         exerciseTypeDict["Categorize"] = null;
+
+         var clauseOrderDict = {};
+         for (const el of clauseOrder) {
+             clauseOrderDict[el] = exerciseTypeDict;
+         }
+
+         var typeExerciseTypesAllClauses = ["Single Choice (2 options)", "Single Choice (4 options)", "Fill-in-the-Blanks (lemma in parentheses)",
+             "Fill-in-the-Blanks (lemma + distractor in parentheses)", "Half-open"
+         ];
+         var typeExerciseTypesWithoutBothClauses = ["Fill-in-the-Blanks (lemmas in instructions)", "Mark the Words"];
+
+         var typeExerciseTypeDict = {};
+         for (const el of typeExerciseTypesAllClauses) {
+             typeExerciseTypeDict[el] = targetClauses;
+         }
+         for (const el of typeExerciseTypesWithoutBothClauses) {
+             typeExerciseTypeDict[el] = {
+                 "Target only if-clause": null,
+                 "Target only main clause": null
+             };
+         }
+
+         typeExerciseTypeDict["Memory"] = {
+             "Use if-clause": null,
+             "Use main clause": null
+         };
+
+         var typeClauseOrderDict = {};
+         for (const el of clauseOrder) {
+             var newTypeExerciseTypeDict;
+             if (el === "If-clause + main clause") {
+                 newTypeExerciseTypeDict = Object.assign({}, typeExerciseTypeDict, {
+                     "Jumbled Sentences": {
+                         "Target only if-clause": null,
+                         "Target only main clause": null,
+                         "Target both clauses": null
+                     }
+                 });
+             } else {
+                 newTypeExerciseTypeDict = Object.assign({}, typeExerciseTypeDict, {
+                     "Jumbled Sentences": {
+                         "Target only if-clause": null,
+                         "Target only main clause": null
+                     }
+                 });
+             }
+             typeClauseOrderDict[el] = newTypeExerciseTypeDict;
+         }
+
+
+         var condExercises = {
+             "Type 1 vs Type 2": clauseOrderDict,
+             "Formation": typeClauseOrderDict
+         };
+
+         let treeStr = "";
+         let id = 1;
+         for (const [key, value] of Object.entries(condExercises)) {
+             let ret = addTreeElement(treeStr, key, value, id, 10);
+             id = ret[0];
+             treeStr = ret[1];
+         }
+
+         $("#types-tree").append(treeStr);
+
+         for (const ti of $("#types-tree").find("input")) {
+             let attr = $(ti).next().attr("data-toggle");
+
+             if (typeof attr === 'undefined' || attr === false) {
+                 // it's an inner element
+                 let id = $(ti).next().text();
+                 let parent = $(ti).closest("div.collapse").prev();
+                 while (parent && parent.prop("tagName") === "LI") {
+                     id = $(parent).text() + "_" + id;
+                     parent = parent.closest("div.collapse").prev();
+                 }
+                 $(ti).attr("id", id.replaceAll(" ", "").replaceAll("+", "").replaceAll("(", "").replaceAll(")", ""));
+
+             }
+         }
+             
+      </script>
+   </body>
+</html>
+
+

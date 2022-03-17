@@ -12,7 +12,7 @@ public class Clause {
     public IndexedWord root = null;
     public ArrayList<IndexedWord> verbs = new ArrayList<>();
     public IndexedWord mainVerb = null;
-    ArrayList<Pair<Integer, Integer>> chunks = null;
+    public ArrayList<Pair<Integer, Integer>> chunks = null;
     public boolean negated = false;
     public boolean subjectAuxiliaryInversion = false;
     public IndexedWord subject = null;
@@ -23,10 +23,10 @@ public class Clause {
     public boolean past = false;
     public String modal = null;
     public boolean future = false;
-    ArrayList<String> distractors = new ArrayList<>();
-    String translation = "";
-    ArrayList<String> lemmatizedClause = new ArrayList<>();
-    Pair<Integer, Integer> targetPosition = null;
-    ArrayList<String> semanticDistractor = new ArrayList<>();
+    public ArrayList<String> distractors = new ArrayList<>();
+    public String translation = "";
+    public ArrayList<String> lemmatizedClause = new ArrayList<>();
+    public Pair<Integer, Integer> targetPosition = null;
+    public ArrayList<String> semanticDistractor = new ArrayList<>();
     
 }

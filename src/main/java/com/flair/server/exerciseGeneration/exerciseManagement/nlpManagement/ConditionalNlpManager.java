@@ -18,6 +18,9 @@ import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import com.flair.server.exerciseGeneration.exerciseManagement.ConstructionTextPart;
+import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseData;
+import com.flair.server.exerciseGeneration.exerciseManagement.TextPart;
 import com.flair.server.exerciseGeneration.exerciseManagement.resourceManagement.ResourceLoader;
 import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.OpenNlpParser;
@@ -36,27 +39,64 @@ public class ConditionalNlpManager extends NlpManager {
     	super(parser, generator, text, lemmatizer);
     }
     
-    public ArrayList<ConditionalSentence> analyzeConditionalSentence() {
+    public ArrayList<ConditionalSentence> analyzeConditionalSentence(ExerciseData data) {
+    	ArrayList<Pair<Integer, Integer>> constructionIndices = new ArrayList<>();
+    	for(TextPart d : data.getParts()) {
+    		if(d instanceof ConstructionTextPart && ((ConstructionTextPart)d).getConstructionType().startsWith("cond")) {
+    			constructionIndices.add(((ConstructionTextPart)d).getIndicesInPlainText());
+    		}
+    	}
+    	
     	ArrayList<ConditionalSentence> condSentences = new ArrayList<>();
-    	for(SentenceAnnotations sentence : sentences) {
-            ConditionalSentence clauses = getConditionalClauses(sentence.getDependencyGraph(), sentence.getTokens());
+    	boolean previousSentenceWasAdded = false;
+    	String contextBuffer = "";
+    	for(int i = 0; i < sentences.size(); i++) {
+    		boolean sentenceUsed = false;
+    		SentenceAnnotations sentence = sentences.get(i);
+    		if(constructionIndices.stream().anyMatch(idx -> idx.first >= sentence.getTokens().get(0).beginPosition() &&
+    				idx.second <= sentence.getTokens().get(sentence.getTokens().size() - 1).endPosition())) {
+    			try {
+    	            ConditionalSentence clauses = getConditionalClauses(sentence);
+    	
+    	            if(clauses == null) {
+    	                continue;
+    	            }
+    	            
+    	            generateDistractors(clauses, sentence);
+    	            getTranslation(clauses.mainClause);
+    	            getTranslation(clauses.ifClause);
+    	            getExtendedGivenWords(sentence, clauses.ifClause);
+    	            getExtendedGivenWords(sentence, clauses.mainClause);
+    	            getTargetPosition(clauses.mainClause);
+    	            getTargetPosition(clauses.ifClause);
+    	            getSemanticDistractors(clauses.mainClause, 1);
+    	            getSemanticDistractors(clauses.ifClause, 1);
+    	            determineConditionalType(clauses);
+    	            
+    	            if(!contextBuffer.isEmpty()) {
+    	            	clauses.contextBefore = contextBuffer;
+    		            contextBuffer = "";
+    	            }
+    	            
+    	            condSentences.add(clauses);
+    	            
+    	            previousSentenceWasAdded = true;
+    	            sentenceUsed = true;
+        		} catch(Exception e) {}
+    		} 
 
-            if(clauses == null) {
-                continue;
-            }
-            
-            generateDistractors(clauses, sentence);
-            getTranslation(clauses.mainClause, sentence.getSentence().toString());
-            getTranslation(clauses.ifClause, sentence.getSentence().toString());
-            getExtendedGivenWords(sentence, clauses.ifClause);
-            getExtendedGivenWords(sentence, clauses.mainClause);
-            getTargetPosition(clauses.mainClause);
-            getTargetPosition(clauses.ifClause);
-            getSemanticDistractors(clauses.mainClause, 2);
-            getSemanticDistractors(clauses.ifClause, 2);
-            determineConditionalType(clauses);
-            
-            condSentences.add(clauses);
+    		if(!sentenceUsed) {
+    			// if we cannot use this sentences as target sentence, we check if we need it as context for the previous or succeeding sentence
+    			// we add it as succeeding context to the previous sentences if the previous sentence was used as a target and there was no linebreak in-between
+    			if(previousSentenceWasAdded && 
+    					!plainText.substring(sentences.get(i - 1).getTokens().get(sentences.get(i - 1).getTokens().size() - 1).endPosition(), sentence.getTokens().get(0).beginPosition()).contains("\n")) {
+    				condSentences.get(condSentences.size() - 1).contextAfter = plainText.substring(sentence.getTokens().get(0).beginPosition(), sentence.getTokens().get(sentence.getTokens().size() - 1).endPosition());
+    			} else {
+    				contextBuffer = plainText.substring(sentence.getTokens().get(0).beginPosition(), sentence.getTokens().get(sentence.getTokens().size() - 1).endPosition());
+    			}
+    			
+    			previousSentenceWasAdded = false;
+    		}
     	}
     	
     	return condSentences;
@@ -69,7 +109,10 @@ public class ConditionalNlpManager extends NlpManager {
      * @param tokens			The tagged tokens
      * @return	The clauses, chunks and verbs of the main and if-clauses
      */
-    private ConditionalSentence getConditionalClauses(Collection<TypedDependency> dependencyGraph, List<CoreLabel> tokens) {
+    private ConditionalSentence getConditionalClauses(SentenceAnnotations sentence) {
+    	Collection<TypedDependency> dependencyGraph = sentence.getDependencyGraph();
+    	List<CoreLabel> tokens = sentence.getTokens();
+    	
         Clause ifClause = new Clause();
         Clause mainClause = new Clause();
 
@@ -156,10 +199,10 @@ public class ConditionalNlpManager extends NlpManager {
      * @param clause	The clause
      */
     private void removeSentenceInitialAndFinalPunctuation(Clause clause) {
-        if (sentences.get(0).getSentence().toString().substring(clause.indices.second - 1, clause.indices.second).matches("[.,:!;?]")) {
+        if (plainText.substring(clause.indices.second - 1, clause.indices.second).matches("[.,:!;?]")) {
             clause.indices = new Pair<>(clause.indices.first, clause.indices.second - 1);
         }
-        if (sentences.get(0).getSentence().toString().substring(clause.indices.first, clause.indices.first + 1).matches("[.,:!;?]")) {
+        if (plainText.substring(clause.indices.first, clause.indices.first + 1).matches("[.,:!;?]")) {
             clause.indices = new Pair<>(clause.indices.first + 1, clause.indices.second);
         }
     }
@@ -332,7 +375,6 @@ public class ConditionalNlpManager extends NlpManager {
         // we cannot only check for VBZ because we might want to generate present from e.g. future where have another tag
         // but still need to know if it's 3sg.
         for(TypedDependency dep : dependencyGraph) {
-            System.out.println(dep.reln().getShortName());
             if(dep.gov().equals(clause.subject) && dep.reln().getShortName().equalsIgnoreCase("conj") && dep.reln().getSpecific().equalsIgnoreCase("and")) {
                 // The subject is a NN with conjunction 'and'
                 clause.thirdSg = false;
@@ -357,8 +399,8 @@ public class ConditionalNlpManager extends NlpManager {
      * Adds the values to the clause properties.
      * @param clause    The properties of the clause under discussion
      */
-    private void determineTenseAndMode(Clause clause) {
-        ArrayList<CoreLabel> tokens = getRelevantTokens(sentences.get(0), new Pair<>(clause.verbs.get(0).beginPosition(), clause.verbs.get(clause.verbs.size() - 1).endPosition()));
+    private void determineTenseAndMode(Clause clause, SentenceAnnotations sentence) {
+        ArrayList<CoreLabel> tokens = getRelevantTokens(sentence, new Pair<>(clause.verbs.get(0).beginPosition(), clause.verbs.get(clause.verbs.size() - 1).endPosition()));
         for(CoreLabel token : tokens) {
             if(token.tag().equalsIgnoreCase("MD")) {
                 if(token.value().equalsIgnoreCase("will") || token.value().equalsIgnoreCase("wo")) {
@@ -390,7 +432,7 @@ public class ConditionalNlpManager extends NlpManager {
         }
 
         isThirdSingular(clause, dependencyGraph, sentence);
-        determineTenseAndMode(clause);
+        determineTenseAndMode(clause, sentence);
         
     	String[] tensesToGenerate = new String[] {"present", "past", "future"};
     	if(clause.modal == null) {
@@ -422,11 +464,12 @@ public class ConditionalNlpManager extends NlpManager {
     
     
     private void getExtendedGivenWords(SentenceAnnotations sentence, Clause clause) {
-        ArrayList<CoreLabel> tokens = getRelevantTokens(sentence, new Pair<>(clause.verbs.get(0).beginPosition(), clause.verbs.get(clause.verbs.size() - 1).endPosition()));
+        ArrayList<CoreLabel> tokens = getRelevantTokens(sentence, clause.indices);
+        CoreLabel ifToken = getIfToken(tokens);
 
         ArrayList<String> givenWords = new ArrayList<>();
     	for(CoreLabel token : getRelevantTokens(sentence, clause.indices)) {
-    		if(token.beginPosition() != getIfToken(tokens).beginPosition()) {
+    		if(ifToken == null || token.beginPosition() != ifToken.beginPosition()) {
     			if(token.beginPosition() >= clause.verbs.get(0).beginPosition() && token.endPosition() <= clause.verbs.get(clause.verbs.size() - 1).endPosition()) {
     				// lemmatize main verb
     				if(token.beginPosition() == clause.mainVerb.beginPosition()) {
@@ -443,7 +486,20 @@ public class ConditionalNlpManager extends NlpManager {
     
     
     private void getTargetPosition(Clause clause) {
-    	clause.targetPosition = new Pair<>(clause.verbs.get(0).index(), clause.verbs.get(clause.verbs.size() - 1).index());
+    	int startIndex = clause.verbs.get(0).beginPosition();
+    	int endIndex = clause.verbs.get(clause.verbs.size() - 1).endPosition();
+    	Integer start = null;
+    	Integer end = null;
+    	for(int i = 0; i < clause.chunks.size(); i++) {
+    		Pair<Integer, Integer> chunk = clause.chunks.get(i);
+    		if(start == null && chunk.first >= startIndex) {
+    			start = i  + 1;
+    		}
+    		if(chunk.second <= endIndex) {
+    			end = i + 1;
+    		}
+    	}
+    	clause.targetPosition = new Pair<>(start, end);
     }
     
     private void getSemanticDistractors(Clause clause, int number) {
@@ -453,8 +509,9 @@ public class ConditionalNlpManager extends NlpManager {
     	try (CSVReader reader = new CSVReader(new InputStreamReader(dictionary))) {
     	      String[] lineInArray;
     	      while ((lineInArray = reader.readNext()) != null) {
-    	    	  if(lineInArray[1].equals("VB") && !Character.isUpperCase(lineInArray[0].charAt(0))) {
-    	    		  verbList.add(lineInArray[0]);
+    	    	  String[] cols = lineInArray[0].split("\t");
+    	    	  if(cols[1].equals("VB") && !Character.isUpperCase(cols[0].charAt(0))) {
+    	    		  verbList.add(cols[0]);
     	    	  }
     	      }
     	  } catch (FileNotFoundException e1) {
@@ -477,7 +534,7 @@ public class ConditionalNlpManager extends NlpManager {
     }
     
     
-    private void getTranslation(Clause clause, String plainText) {
+    private void getTranslation(Clause clause) {
     	String text = plainText.substring(clause.indices.first, clause.indices.second);
     	
         String url = "https://translate.googleapis.com/translate_a/single?"+"client=gtx&"+"sl=en&tl=de&dt=t&q=" + URLEncoder.encode(text, StandardCharsets.UTF_8);
@@ -522,6 +579,22 @@ public class ConditionalNlpManager extends NlpManager {
     	if(condSent.ifClause.past && condSent.mainClause.modal != null) {
     		condSent.conditionalType = "Type 2";
     	} 
+    }
+    
+    public boolean isUppercaseWord(int startIndex) {
+    	for(SentenceAnnotations sentence : sentences) {
+    		for(CoreLabel token : sentence.getTokens()) {
+    			if(token.beginPosition() == startIndex) {
+    				if(token.tag().equalsIgnoreCase("NNP") || token.tag().equalsIgnoreCase("NNPS") || 
+    						token.tag().equalsIgnoreCase("PRP") && token.value().equals("I")) {
+    					return true;
+    				}
+    				return false;
+    			}
+    		}
+    	}
+    	
+    	return false;
     }
     
 }

@@ -18,55 +18,78 @@
 
 	<m:MaterialContainer>
 		<m:MaterialRow marginBottom="20">
-			<m:MaterialCollapsible ui:field="wdgtTasks"
-				accordion="false" grid="s12 m12 l12" margin="0" padding="0"
-				visible="false" marginTop="20" marginBottom="20" />
-			<m:MaterialRow margin="0" padding="0">
-				<m:MaterialIcon ui:field="btnAddTask" iconType="ADD_CIRCLE_OUTLINE"
-					textColor="GREEN" backgroundColor="WHITE" iconPosition="RIGHT"
-					waves="DEFAULT" margin="0" padding="0" />
-			</m:MaterialRow>
-			<m:MaterialRow paddingTop="0" paddingBottom="0" marginBottom="0">
-				<m:MaterialCheckBox  padding="0" margin="0"
+			
+			<m:MaterialRow>
+				<m:MaterialRow paddingTop="0" paddingBottom="0"
+					marginBottom="0">
+					<m:MaterialRow padding="0" margin="0">
+						<m:MaterialLabel text="Output formats:"
+							textColor="BLACK" />
+					</m:MaterialRow>
+					<m:MaterialRow padding="0" margin="0">
+					<m:MaterialColumn padding="0" margin="0" grid="s6 m6 l6">
+					<m:MaterialRadioButton ui:field="rbtExercise" value="true"
+						name="rbtGrpFormats" type="GAP" text="Exercise" />
+						<m:MaterialCheckBox padding="0" margin="0" paddingLeft="20"
+						ui:field="chkH5p" value="true" text="H5P" />
+					<m:MaterialCheckBox padding="0" margin="0" paddingLeft="20"
+						ui:field="chkFeedbookXml" value="true" text="FeedBook XML" />
+					</m:MaterialColumn>
+					<m:MaterialColumn padding="0" margin="0" grid="s6 m6 l6">
+					<m:MaterialRadioButton
+						ui:field="rbtSpecification" name="rbtGrpFormats" type="GAP"
+						text="Exercise Specification" />
+					</m:MaterialColumn>
+					</m:MaterialRow>
+				</m:MaterialRow>
+
+				<m:MaterialRow paddingTop="0" paddingBottom="0"
+					marginTop="0">
+					<m:MaterialCheckBox padding="0" margin="0"
+						ui:field="chkGenerateFeedback" value="true"
+						text="Generate feedback" />
+				</m:MaterialRow>
+				<m:MaterialCheckBox padding="0" margin="0"
 					ui:field="chkDownloadResources" value="false"
 					text="Download resources" />
 			</m:MaterialRow>
-			<m:MaterialRow paddingTop="0" paddingBottom="0" marginTop="0">
-				<m:MaterialCheckBox padding="0" margin="0"
-					ui:field="chkGenerateFeedback" value="true"
-					text="Generate feedback" />
-			</m:MaterialRow>
-			<m:MaterialRow>
-				<m:MaterialRow padding="0" margin="0">
-					<m:MaterialLabel text="Output formats:"
-						textColor="BLACK" />
-				</m:MaterialRow>
-				<m:MaterialCheckBox padding="0" margin="0"
-					ui:field="chkH5p" value="true"
-					text="H5P" />
-				<m:MaterialCheckBox padding="0" margin="0"
-					ui:field="chkFeedbookXml" value="true"
-					text="FeedBook XML" />
-				<m:MaterialCheckBox padding="0" margin="0"
-					ui:field="chkSpecification" value="false"
-					text="Exercise specification" />
+			
+			<m:MaterialCollapsible ui:field="wdgtTasks"
+				accordion="false" grid="s12 m12 l12" margin="0" padding="0"
+				visible="false" marginTop="20" marginBottom="20" />
+			
+
+			<m:MaterialRow margin="0" padding="0">
+				<m:MaterialIcon ui:field="btnAddTask"
+					iconType="ADD_CIRCLE_OUTLINE" textColor="GREEN"
+					backgroundColor="WHITE" iconPosition="RIGHT" waves="DEFAULT"
+					margin="0" padding="0" />
 			</m:MaterialRow>
 
-			<m:MaterialRow textAlign="CENTER" margin="0" marginTop="10" padding="0">
-				<m:MaterialColumn grid="l9 m9 s9"
+			<m:MaterialRow textAlign="CENTER" margin="0"
+				marginTop="10" padding="0">
+				<m:MaterialColumn grid="l8 m8 s8"
 					textAlign="CENTER">
-					<m:MaterialButton ui:field="btnGenerateExercises" 
+					<m:MaterialButton ui:field="btnGenerateExercises"
 						backgroundColor="ORANGE" textColor="WHITE" enabled="false" />
 				</m:MaterialColumn>
-				<m:MaterialColumn grid="l3 m3 s3"
+				<m:MaterialColumn grid="l2 m2 s2"
 					textAlign="CENTER">
 					<m:MaterialPreLoader size="SMALL" margin="0"
 						ui:field="spnGenerating" visible="false">
 						<m:MaterialSpinner color="BLUE_ONLY" />
 					</m:MaterialPreLoader>
-					<m:MaterialIcon ui:field="icoDownload" iconType="FILE_DOWNLOAD"
-						textColor="BLUE" backgroundColor="WHITE" iconPosition="RIGHT"
-						waves="DEFAULT" margin="0" padding="0" visible="false"/>
+					<m:MaterialIcon ui:field="icoDownload"
+						iconType="FILE_DOWNLOAD" textColor="BLUE" backgroundColor="WHITE"
+						iconPosition="RIGHT" waves="DEFAULT" margin="0" padding="0"
+						visible="false" />
+				</m:MaterialColumn>
+				<m:MaterialColumn grid="l2 m2 s2"
+					textAlign="CENTER">
+					<m:MaterialIcon ui:field="icoUseSpec"
+						iconType="NOTE_ADD" textColor="BLUE" backgroundColor="WHITE"
+						iconPosition="RIGHT" waves="DEFAULT" margin="0" padding="0"
+						visible="false" />
 				</m:MaterialColumn>
 			</m:MaterialRow>
 
@@ -84,9 +107,10 @@
 					text="Do not show this notification again." type="FILLED" />
 			</m:MaterialDialogContent>
 			<m:MaterialDialogFooter>
-				<m:MaterialButton 
+				<m:MaterialButton
 					ui:field="btnCloseCopyrightNoticeUI" text="Ok" type="FLAT" />
 			</m:MaterialDialogFooter>
 		</m:MaterialDialog>
+		
 	</m:MaterialContainer>
 </ui:UiBinder>

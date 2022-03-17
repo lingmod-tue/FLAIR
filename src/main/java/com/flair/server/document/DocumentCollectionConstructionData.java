@@ -54,16 +54,3 @@ public class DocumentCollectionConstructionData extends AbstractConstructionData
 			invertedDocFrequency = 0;
 	}
 }
-
-class DocumentCollectionConstructionDataFactory extends AbstractConstructionDataFactory {
-	private final DocumentCollection parent;
-
-	public DocumentCollectionConstructionDataFactory(DocumentCollection parent) {
-		this.parent = parent;
-	}
-
-	@Override
-	public AbstractConstructionData create(GrammaticalConstruction type) {
-		return new DocumentCollectionConstructionData(type, parent);
-	}
-}
