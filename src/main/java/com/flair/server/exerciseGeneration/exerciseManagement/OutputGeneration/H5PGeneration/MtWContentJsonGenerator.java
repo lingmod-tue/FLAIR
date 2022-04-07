@@ -10,7 +10,7 @@ import com.flair.server.exerciseGeneration.exerciseManagement.Distractor;
 public class MtWContentJsonGenerator extends SimpleExerciseContentJsonGenerator {
 
     @Override
-    protected String getPlacehholderReplacement(String construction, ArrayList<Distractor> distractorList, String feedbackId, JSONObject jsonObject) {
+    protected String getPlacehholderReplacement(String construction, ArrayList<Distractor> distractorList, String feedbackId, JSONObject jsonObject, ArrayList<String> brackets) {
         return " *" + construction.replaceAll("\\s", "\u00A0") + "* ";
     }
 

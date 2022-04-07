@@ -1,5 +1,7 @@
 package com.flair.server.exerciseGeneration.exerciseManagement.OutputGeneration.previewGeneration;
 
+import java.util.ArrayList;
+
 import com.flair.server.exerciseGeneration.exerciseManagement.ConstructionTextPart;
 import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseData;
 import com.flair.server.exerciseGeneration.exerciseManagement.TextPart;
@@ -13,8 +15,8 @@ public class MemoryPreviewGenerator extends PreviewGenerator {
 		
 		for(TextPart part : data.getParts()) {
 			if(part instanceof ConstructionTextPart) {
-				sb.append(getTargetDummy(part.getValue()));
-				sb.append(getTargetDummy(((ConstructionTextPart)part).getDistractors().get(0).getValue()));
+				sb.append(getTargetDummy(part.getValue(), ((ConstructionTextPart)part).getBrackets()));
+				sb.append(getTargetDummy(((ConstructionTextPart)part).getDistractors().get(0).getValue(), ((ConstructionTextPart)part).getBrackets()));
 			}
 		}
 
@@ -24,7 +26,7 @@ public class MemoryPreviewGenerator extends PreviewGenerator {
 	}
     
     @Override
-    protected String getTargetDummy(String constructionText) {
+    protected String getTargetDummy(String constructionText, ArrayList<String> brackets) {
 		return "<span style='width: 100px; height: 100px;border: 1px solid black; margin: 10px;'>" + constructionText + "</span>";
     }
     

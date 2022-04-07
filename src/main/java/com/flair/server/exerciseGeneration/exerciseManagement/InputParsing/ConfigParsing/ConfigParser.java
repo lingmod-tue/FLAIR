@@ -1,19 +1,12 @@
 package com.flair.server.exerciseGeneration.exerciseManagement.InputParsing.ConfigParsing;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.List;
 
 import com.flair.server.exerciseGeneration.exerciseManagement.ConstructionTextPart;
 import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseData;
 import com.flair.server.exerciseGeneration.exerciseManagement.TextPart;
-import com.flair.server.exerciseGeneration.exerciseManagement.resourceManagement.ResourceLoader;
 import com.flair.shared.exerciseGeneration.Pair;
-import com.univocity.parsers.tsv.TsvParser;
-import com.univocity.parsers.tsv.TsvParserSettings;
 
 public abstract class ConfigParser {
 	
@@ -80,15 +73,10 @@ public abstract class ConfigParser {
 		} else {
 			return null;
 		}
-
-		List<String[]> exerciseConstellations = readExerciseConstellations();
-		if(exerciseConstellations == null) {
-			return null;
-		}
-				
+	
 		ArrayList<ExerciseData> result = new ArrayList<>();
 		for(ExerciseConfigData data : configData) {
-			ArrayList<ExerciseData> generatedExercises = generateExerciseForConfig(exerciseConstellations, data);
+			ArrayList<ExerciseData> generatedExercises = generateExerciseForConfig(data);
 			
 			if(generatedExercises != null) {
 				result.addAll(generatedExercises);
@@ -96,23 +84,6 @@ public abstract class ConfigParser {
 		}
 
 		return result;
-	}
-
-	/**
-	 * Reads the file of exercise constellations (exercise type with parameter settings) which we want to generate.
-	 * @return	The exercise constellations which we want to generate
-	 */
-	protected List<String[]> readExerciseConstellations() {
-		try (InputStream content = ResourceLoader.loadFile("feedbook_exercise_configurations.tsv");
-				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(content))) {
-			TsvParserSettings settings = new TsvParserSettings();
-			settings.getFormat().setLineSeparator("\n");
-			TsvParser parser = new TsvParser(settings);
-
-			return parser.parseAll(bufferedReader);
-		} catch (IOException e) {
-			return null;
-		}
 	}
 	
 	/**
@@ -122,6 +93,6 @@ public abstract class ConfigParser {
 	 * @param data						The exercise as defined in the uploaded file
 	 * @return	The generated exercises in abstracted format
 	 */
-	protected abstract ArrayList<ExerciseData> generateExerciseForConfig(List<String[]> exerciseConstellations, ExerciseConfigData data);
+	protected abstract ArrayList<ExerciseData> generateExerciseForConfig(ExerciseConfigData data);
 	
 }

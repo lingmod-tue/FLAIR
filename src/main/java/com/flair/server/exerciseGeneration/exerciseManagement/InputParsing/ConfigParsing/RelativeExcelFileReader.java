@@ -127,6 +127,11 @@ public class RelativeExcelFileReader extends ExcelFileReader {
 					cd.setActivity((int)Float.parseFloat(columnValues.get(entry.getValue()).get(i)));
 		    	} else if(entry.getValue().equals("stamp")) {
 		    		cd.setStamp(columnValues.get(entry.getValue()).get(i));
+		    	} else if(entry.getValue().equals("toc nr.")) {
+		    		String value = columnValues.get(entry.getValue()).get(i);
+		    		if(value != null && !value.isEmpty()) {
+		    			cd.setTocId(value);
+		    		}
 		    	} else if(entry.getValue().equals("item")) {
 					cd.getItemData().get(0).setItem((int)Float.parseFloat(columnValues.get(entry.getValue()).get(i)));
 		    	} else if(entry.getValue().equals("Relative pronoun")) {
@@ -149,10 +154,11 @@ public class RelativeExcelFileReader extends ExcelFileReader {
 				Collections.sort(cd.getPositionsClause2(), (i1, i2) -> i1.first < i2.first ? -1 : 1);
 			}
 		}
-				
+		
 		ArrayList<ExerciseConfigData> batchedExercises = new ArrayList<>();
 		int lastActivity = 0;
 		String lastStamp = "";
+		String lastTocId = "";
 		ArrayList<ExerciseItemConfigData> sentences = new ArrayList<>();
 		for(ExerciseConfigData data: configData) {
 			if(lastActivity != 0 && data.getActivity() != lastActivity) {
@@ -160,6 +166,8 @@ public class RelativeExcelFileReader extends ExcelFileReader {
 				d.setActivity(lastActivity);
 				d.setStamp(lastStamp);
 				d.setItemData(sentences);
+				d.setExerciseType(getExerciseTypes(d.getStamp()));
+				d.setTocId(lastTocId);
 				sentences = new ArrayList<>();
 				batchedExercises.add(d);
 			}
@@ -167,9 +175,95 @@ public class RelativeExcelFileReader extends ExcelFileReader {
 			sentences.add(data.getItemData().get(0));
 			lastStamp = data.getStamp();
 			lastActivity = data.getActivity();
+			if(data.getTocId() != null) {
+				lastTocId = data.getTocId();
+			}
+		}
+		
+		if(lastActivity != 0) {
+			ExerciseConfigData d = new ExerciseConfigData();
+			d.setActivity(lastActivity);
+			d.setStamp(lastStamp);
+			d.setItemData(sentences);
+			d.setExerciseType(getExerciseTypes(d.getStamp()));
+			d.setTocId(lastTocId);
+			batchedExercises.add(d);
 		}
 		
 		return batchedExercises;
+	}
+	
+	private static final String[] exerciseTypes = new String[] {
+			"Relativepronoun_Memory",
+			"Relativepronoun_MarktheWords",
+			"Relativepronoun_SingleChoice",
+			"Relativepronoun_Fill-in-the-Blanks",
+			"Relativepronoun_Half-open",
+			"Relativepronoun_Open"
+	};
+	
+	private ArrayList<ExerciseTypeSpec> getExerciseTypes(String stamp) {
+		ArrayList<ExerciseTypeSpec> types = new ArrayList<>();
+		for(String type : exerciseTypes) {
+			ExerciseTypeSpec t = new ExerciseTypeSpec();	
+			
+			if(stamp.equals("subject who/which")) {
+				t.setSubtopic("Subject who/which");
+				if(type.equals("Relativepronoun_SingleChoice")) {
+					t.setFeedbookType(FeedBookExerciseType.SINGLE_CHOICE_2D);
+				} else if(type.equals("Relativepronoun_Fill-in-the-Blanks")) {
+					t.setFeedbookType(FeedBookExerciseType.FIB_LEMMA_PARENTHESES);
+				} else if(type.equals("Relativepronoun_Open")) {
+					t.setFeedbookType(FeedBookExerciseType.HALF_OPEN);
+				} else if(type.equals("Relativepronoun_Half-open")) {
+					t.setFeedbookType(FeedBookExerciseType.FIB_LEMMA_DISTRACTOR_PARENTHESES);
+				} else {
+					t.setFeedbookType(FeedBookExerciseType.getContainedType(type));
+				}
+			} else if(stamp.equals("object which/whom")) {
+				t.setSubtopic("Object which/whom");
+				if(type.equals("Relativepronoun_SingleChoice")) {
+					t.setFeedbookType(FeedBookExerciseType.SINGLE_CHOICE_2D);
+				} else if(type.equals("Relativepronoun_Fill-in-the-Blanks")) {
+					t.setFeedbookType(FeedBookExerciseType.FIB_LEMMA_PARENTHESES);
+				} else if(type.equals("Relativepronoun_Open")) {
+					t.setFeedbookType(FeedBookExerciseType.HALF_OPEN);
+				} else if(type.equals("Relativepronoun_Half-open")) {
+					t.setFeedbookType(FeedBookExerciseType.FIB_LEMMA_DISTRACTOR_PARENTHESES);
+				} else {
+					t.setFeedbookType(FeedBookExerciseType.getContainedType(type));
+				}
+			} else if(stamp.equals("whose (+which, who and whom)")) {
+				t.setSubtopic("Whose (+which, who and whom)");
+				if(type.equals("Relativepronoun_SingleChoice")) {
+					t.setFeedbookType(FeedBookExerciseType.SINGLE_CHOICE_4D);
+				} else if(type.equals("Relativepronoun_Fill-in-the-Blanks")) {
+					t.setFeedbookType(FeedBookExerciseType.FIB_LEMMA_PARENTHESES);
+				} else if(type.equals("Relativepronoun_Open")) {
+					t.setFeedbookType(FeedBookExerciseType.HALF_OPEN);
+				} else if(type.equals("Relativepronoun_Half-open")) {
+					t.setFeedbookType(FeedBookExerciseType.FIB_LEMMA_DISTRACTOR_PARENTHESES);
+				} else {
+					t.setFeedbookType(FeedBookExerciseType.getContainedType(type));
+				}
+			} else if(stamp.equals("where (+ which, whose, who)")) {
+				t.setSubtopic("Where (+ which, whose, who)");
+				if(type.equals("Relativepronoun_SingleChoice")) {
+					t.setFeedbookType(FeedBookExerciseType.SINGLE_CHOICE_4D);
+				} else if(type.equals("Relativepronoun_Fill-in-the-Blanks")) {
+					t.setFeedbookType(FeedBookExerciseType.FIB_LEMMA_PARENTHESES);
+				} else if(type.equals("Relativepronoun_Open")) {
+					t.setFeedbookType(FeedBookExerciseType.HALF_OPEN);
+				} else if(type.equals("Relativepronoun_Half-open")) {
+					t.setFeedbookType(FeedBookExerciseType.FIB_LEMMA_DISTRACTOR_PARENTHESES);
+				} else {
+					t.setFeedbookType(FeedBookExerciseType.getContainedType(type));
+				}
+			}
+			types.add(t);
+		}
+		
+		return types;
 	}
 	
 }

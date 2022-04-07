@@ -169,31 +169,6 @@ public class ConditionalNlpManager extends NlpManager {
     }
 
     /**
-     * Determines the dependents of the root and sorts them.
-     * @param dependencies	The annotated dependencies
-     * @param root			The item for which to determine the dependents
-     * @return	The dependents (including the root) as sorted list
-     */
-    private ArrayList<IndexedWord> getDependents(Collection<TypedDependency> dependencies,
-                                                 IndexedWord root) {
-        ArrayList<IndexedWord> components = new ArrayList<>();
-        ArrayList<IndexedWord> newDescendants = getDescendants(dependencies, root);
-        while(newDescendants.size() > 0) {
-            ArrayList<IndexedWord> currentDescendants = new ArrayList<>();
-            for(IndexedWord descendant : newDescendants) {
-                currentDescendants.addAll(getDescendants(dependencies, descendant));
-            }
-            components.addAll(newDescendants);
-            newDescendants = currentDescendants;
-        }
-
-        components.add(root);
-        components.sort(Comparator.comparingInt(IndexedWord::beginPosition));
-
-        return components;
-    }
-
-    /**
      * Removes punctuation at the beginning and at the end of the clause.
      * Modifies the clause indices in-place.
      * @param clause	The clause

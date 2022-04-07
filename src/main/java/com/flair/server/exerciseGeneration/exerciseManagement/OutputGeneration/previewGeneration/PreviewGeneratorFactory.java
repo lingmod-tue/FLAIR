@@ -19,6 +19,8 @@ public class PreviewGeneratorFactory {
 			return new MtWPreviewGenerator();
 		} else if(exerciseType.equals(ExerciseType.DRAG_AND_DROP_SINGLE)) {
 			return new DDPreviewGenerator();
+		} else if(exerciseType.equals(ExerciseType.DRAG_AND_DROP_MULTI)) {
+			return new DDPreviewGenerator();
 		} else {
 			throw new IllegalArgumentException();
 		}

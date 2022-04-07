@@ -3,7 +3,6 @@ package com.flair.server.exerciseGeneration.exerciseManagement.InputParsing.Conf
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Random;
 
 import org.apache.commons.lang3.StringUtils;
@@ -25,104 +24,83 @@ import com.flair.shared.exerciseGeneration.Pair;
 public class ConditionalConfigParser extends ConfigParser {
 	
 	@Override
-	protected ArrayList<ExerciseData> generateExerciseForConfig(List<String[]> exerciseConstellations, ExerciseConfigData data) {
-		if(exerciseConstellations == null) {
-			return null;
-		}
-				
+	protected ArrayList<ExerciseData> generateExerciseForConfig(ExerciseConfigData data) {	
 		ArrayList<ExerciseData> exercises = new ArrayList<>();
 
 		for (ExerciseTypeSpec configValues : data.getExerciseType()) {
 			try {
-				if (data.getStamp().equals("Conditional Type") && configValues.getSubtopic().equals("conditional_types")
-						|| !data.getStamp().equals("Conditional Type") && configValues.getSubtopic().equals("conditional_form")) {	
-					ArrayList<ExerciseData> ed = new ArrayList<>();
-					if (configValues.getFeedbookType().equals(FeedBookExerciseType.MEMORY)) {
-						ExerciseData d = generateMemoryTask(data, configValues.isTargetIfClause());
-						d.setExerciseType(ExerciseType.MEMORY);
-						ed.add(d);
-					} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.SINGLE_CHOICE_2D)) {
-						ExerciseData d = generateGapTask(data, configValues.isIfClauseFirst(), configValues.isTargetIfClause(),
-								configValues.isTargetMainClause(), 1, configValues.isRandomClauseOrder(), false, false, false,
-								false, false);
-						d.setExerciseType(ExerciseType.SINGLE_CHOICE);
-						ed.add(d);
-					} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.SINGLE_CHOICE_4D)) {
-						ExerciseData d = generateGapTask(data, configValues.isIfClauseFirst(), configValues.isTargetIfClause(),
-								configValues.isTargetMainClause(), 3, configValues.isRandomClauseOrder(), false, false, false,
-								false, false);
-						d.setExerciseType(ExerciseType.SINGLE_CHOICE);
-						ed.add(d);
-					} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.FIB_LEMMA_PARENTHESES)) {
-						ExerciseData d = generateGapTask(data, configValues.isIfClauseFirst(), configValues.isTargetIfClause(),
-								configValues.isTargetMainClause(), 0, configValues.isRandomClauseOrder(), true, false, false,
-								false, false);
-						d.setExerciseType(ExerciseType.FILL_IN_THE_BLANKS);
-						ed.add(d);
-					} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.FIB_LEMMA_DISTRACTOR_PARENTHESES)) {
-						ExerciseData d = generateGapTask(data, configValues.isIfClauseFirst(), configValues.isTargetIfClause(),
-								configValues.isTargetMainClause(), 0, configValues.isRandomClauseOrder(), true, true, false, false,
-								false);
-						d.setExerciseType(ExerciseType.FILL_IN_THE_BLANKS);
-						d.getBracketsProperties().add(BracketsProperties.DISTRACTOR_LEMMA);
-						ed.add(d);
-					} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.FIB_LEMMA_INSTRUCTIONS)) {
-						ExerciseData d = generateGapTask(data, configValues.isIfClauseFirst(), configValues.isTargetIfClause(),
-								configValues.isTargetMainClause(), 0, configValues.isRandomClauseOrder(), false, false, false,
-								true, false);
-						d.setExerciseType(ExerciseType.FILL_IN_THE_BLANKS);
-						d.getInstructionProperties().add(InstructionsProperties.LEMMA);
-						ed.add(d);
-					} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.JUMBLED_SENTENCES)) {
-						ExerciseData d = generateJSTask(data, configValues.isIfClauseFirst(), configValues.isTargetIfClause(),
-								configValues.isTargetMainClause(), configValues.isRandomClauseOrder());
-						d.setExerciseType(ExerciseType.JUMBLED_SENTENCES);
-						ed.add(d);
-					} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.CATEGORIZATION)) {
-						ExerciseData d = generateCategorizationTask(data, configValues.isIfClauseFirst(),
-								configValues.isRandomClauseOrder());
-						d.setExerciseType(ExerciseType.CATEGORIZE);
-						ed.add(d);
-					} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.UNDERLINE)) {
-						// The didi score mechanism can only correctly process a single item per underline, so we need to make a separate exercise for each sentence
-						for(ExerciseItemConfigData line : data.getItemData()) {
-							ExerciseConfigData dummyData = new ExerciseConfigData();
-							dummyData.setActivity(data.getActivity());
-							dummyData.setStamp(data.getStamp());
-							ArrayList<ExerciseItemConfigData> lines = new ArrayList<>();
-							lines.add(line);
-							dummyData.setItemData(lines);
-							ExerciseData d = generateGapTask(dummyData, configValues.isIfClauseFirst(), configValues.isTargetIfClause(),
-									configValues.isTargetMainClause(), 0, configValues.isRandomClauseOrder(), false, false, false,
-									false, true);
-							d.setExerciseType(ExerciseType.MARK_THE_WORDS);
-							
-							if (d != null) {
-								ed.add(d);
-							}
-						}
-					} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.HALF_OPEN)) {
-						ExerciseData d = generateGapTask(data, configValues.isIfClauseFirst(), configValues.isTargetIfClause(),
-								configValues.isTargetMainClause(), 0, configValues.isRandomClauseOrder(), true, false, true, false,
-								false);
-						d.setExerciseType(ExerciseType.HALF_OPEN);
-						ed.add(d);
-					}
-	
-					int k = 0;
-					for(ExerciseData d : ed) {
-						d.setExerciseTitle(data.getStamp().replace("/", "_") + "/" + determineBlockId(configValues) + "/" + data.getActivity() + "/" + FeedBookExerciseType.getFeedbookId(configValues.getFeedbookType()) + (ed.size() > 1 ? "_" + ++k : ""));
-	        			d.setTopic(ExerciseTopic.CONDITIONALS);
-						exercises.add(d);
-					}
-	
+				ArrayList<ExerciseData> ed = new ArrayList<>();
+				if (configValues.getFeedbookType().equals(FeedBookExerciseType.MEMORY)) {
+					ExerciseData d = generateMemoryTask(data, configValues.isTargetIfClause());
+					d.setExerciseType(ExerciseType.MEMORY);
+					ed.add(d);
+				} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.SINGLE_CHOICE_2D)) {
+					ExerciseData d = generateGapTask(data, configValues.isIfClauseFirst(), configValues.isTargetIfClause(),
+							configValues.isTargetMainClause(), 1, configValues.isRandomClauseOrder(), false, false, false,
+							false, false);
+					d.setExerciseType(ExerciseType.SINGLE_CHOICE);
+					ed.add(d);
+				} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.SINGLE_CHOICE_4D)) {
+					ExerciseData d = generateGapTask(data, configValues.isIfClauseFirst(), configValues.isTargetIfClause(),
+							configValues.isTargetMainClause(), 3, configValues.isRandomClauseOrder(), false, false, false,
+							false, false);
+					d.setExerciseType(ExerciseType.SINGLE_CHOICE);
+					ed.add(d);
+				} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.FIB_LEMMA_PARENTHESES)) {
+					ExerciseData d = generateGapTask(data, configValues.isIfClauseFirst(), configValues.isTargetIfClause(),
+							configValues.isTargetMainClause(), 0, configValues.isRandomClauseOrder(), true, false, false,
+							false, false);
+					d.setExerciseType(ExerciseType.FILL_IN_THE_BLANKS);
+					ed.add(d);
+				} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.FIB_LEMMA_DISTRACTOR_PARENTHESES)) {
+					ExerciseData d = generateGapTask(data, configValues.isIfClauseFirst(), configValues.isTargetIfClause(),
+							configValues.isTargetMainClause(), 0, configValues.isRandomClauseOrder(), true, true, false, false,
+							false);
+					d.setExerciseType(ExerciseType.FILL_IN_THE_BLANKS);
+					d.getBracketsProperties().add(BracketsProperties.DISTRACTOR_LEMMA);
+					ed.add(d);
+				} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.FIB_LEMMA_INSTRUCTIONS)) {
+					ExerciseData d = generateGapTask(data, configValues.isIfClauseFirst(), configValues.isTargetIfClause(),
+							configValues.isTargetMainClause(), 0, configValues.isRandomClauseOrder(), false, false, false,
+							true, false);
+					d.setExerciseType(ExerciseType.FILL_IN_THE_BLANKS);
+					d.getInstructionProperties().add(InstructionsProperties.LEMMA);
+					ed.add(d);
+				} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.JUMBLED_SENTENCES)) {
+					ExerciseData d = generateJSTask(data, configValues.isIfClauseFirst(), configValues.isTargetIfClause(),
+							configValues.isTargetMainClause(), configValues.isRandomClauseOrder());
+					d.setExerciseType(ExerciseType.JUMBLED_SENTENCES);
+					ed.add(d);
+				} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.CATEGORIZATION)) {
+					ExerciseData d = generateCategorizationTask(data, configValues.isIfClauseFirst(),
+							configValues.isRandomClauseOrder());
+					d.setExerciseType(ExerciseType.CATEGORIZE);
+					ed.add(d);
+				} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.UNDERLINE)) {
+					// The didi score mechanism can only correctly process a single item per underline, so we need to make a separate exercise for each sentence
+					ExerciseData d = generateGapTask(data, configValues.isIfClauseFirst(), configValues.isTargetIfClause(),
+							configValues.isTargetMainClause(), 0, configValues.isRandomClauseOrder(), false, false, false,
+							false, true);
+					d.setExerciseType(ExerciseType.MARK_THE_WORDS);
+					ed.add(d);
+				} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.HALF_OPEN)) {
+					ExerciseData d = generateGapTask(data, configValues.isIfClauseFirst(), configValues.isTargetIfClause(),
+							configValues.isTargetMainClause(), 0, configValues.isRandomClauseOrder(), true, false, true, false,
+							false);
+					d.setExerciseType(ExerciseType.HALF_OPEN);
+					ed.add(d);
+				}
+
+				int k = 0;
+				for(ExerciseData d : ed) {
+        			d.setExerciseTitle(data.getTocId() + FeedBookExerciseType.getFeedbookId(configValues.getFeedbookType()));
+
+					d.setExerciseTitle(data.getStamp().replace("/", "_") + "/" + determineBlockId(configValues) + "/" + data.getActivity() + "/" + FeedBookExerciseType.getFeedbookId(configValues.getFeedbookType()) + (ed.size() > 1 ? "_" + ++k : ""));
+        			d.setTopic(ExerciseTopic.CONDITIONALS);
+					exercises.add(d);
 				}
 			} catch(Exception e) {
-				if(configValues != null) {
-					ServerLogger.get().error(e, "Exercise " + data.getStamp().replace("/", "_") + "/" + determineBlockId(configValues) + "/" + data.getActivity() + "/" + FeedBookExerciseType.getFeedbookId(configValues.getFeedbookType()) + " could not be generated.\n" + e.toString());
-				} else {
-					ServerLogger.get().error(e, "An exercise could not be generated.\n" + e.toString());
-				}
+				ServerLogger.get().error(e, "Exercise " + data.getStamp().replace("/", "_") + "/" + determineBlockId(configValues) + "/" + data.getActivity() + "/" + FeedBookExerciseType.getFeedbookId(configValues.getFeedbookType()) + " could not be generated.\n" + e.toString());
 			}
 		}
 

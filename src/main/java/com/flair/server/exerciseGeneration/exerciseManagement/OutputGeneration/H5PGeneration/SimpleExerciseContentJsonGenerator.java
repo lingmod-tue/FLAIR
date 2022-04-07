@@ -79,7 +79,7 @@ public abstract class SimpleExerciseContentJsonGenerator extends ContentJsonGene
 			
 			if(part instanceof ConstructionTextPart) {
 				String blankElement = getPlacehholderReplacement(((ConstructionTextPart)part).getValue().replace("*", "**"), 
-						((ConstructionTextPart)part).getDistractors(), "feedback" + feedbackId, jsonObject);
+						((ConstructionTextPart)part).getDistractors(), "feedback" + feedbackId, jsonObject, ((ConstructionTextPart)part).getBrackets());
 				questionBuilder.append(blankElement);
 				feedbackId++;
 				previousWasPlaintext = true;
@@ -126,7 +126,8 @@ public abstract class SimpleExerciseContentJsonGenerator extends ContentJsonGene
      * @param construction  The correct solution
      * @return              The blank definition
      */
-    protected String getPlacehholderReplacement(String construction, ArrayList<Distractor> distractorList, String feedbackId, JSONObject jsonObject) {
+    protected String getPlacehholderReplacement(String construction, ArrayList<Distractor> distractorList, 
+    		String feedbackId, JSONObject jsonObject, ArrayList<String> brackets) {
         return "*" + construction + "*";
     }
     

@@ -28,7 +28,7 @@ public class CategorizePreviewGenerator extends PreviewGenerator {
 					pool.put(construction.getCategory(), new ArrayList<>());
 				}
 				
-				pool.get(construction.getCategory()).add(getTargetDummy(construction.getValue()));
+				pool.get(construction.getCategory()).add(getTargetDummy(construction.getValue(), ((ConstructionTextPart)part).getBrackets()));
 			}
 		}
 		
@@ -53,7 +53,7 @@ public class CategorizePreviewGenerator extends PreviewGenerator {
 	}
     
     @Override
-    protected String getTargetDummy(String constructionText) {
+    protected String getTargetDummy(String constructionText, ArrayList<String> brackets) {
 		return "<span style='border: 1px solid black; margin: 10px;'>" + constructionText + "</span>";
     }
     

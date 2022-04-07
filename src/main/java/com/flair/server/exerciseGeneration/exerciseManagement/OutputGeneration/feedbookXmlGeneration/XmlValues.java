@@ -16,6 +16,7 @@ public class XmlValues {
 	private String givenWords = "null";
 	private boolean evaluateAtComplete = false;
 	private String secondInstruction = "";
+	private String lifLink = "";
 	
 	public XmlValues(String instructions, String taskType) {
 		this.instructions = instructions;
@@ -90,6 +91,14 @@ public class XmlValues {
 
 	public void setSecondInstruction(String secondInstruction) {
 		this.secondInstruction = secondInstruction;
+	}
+
+	public String getLifLink() {
+		return lifLink;
+	}
+
+	public void setLifLink(String lifLink) {
+		this.lifLink = lifLink;
 	}
 		
 }

@@ -25,6 +25,7 @@ public class ExerciseData {
 	private String secondInstructions = null;
 	private String support = null;
 	private String subtopic = "";
+	private String hintLink = null;
 	
 	public ArrayList<String> getInstructionLemmas() {
 		return instructionLemmas;
@@ -106,6 +107,12 @@ public class ExerciseData {
 	}
 	public void setSubtopic(String subtopic) {
 		this.subtopic = subtopic;
+	}
+	public String getHintLink() {
+		return hintLink;
+	}
+	public void setHintLink(String hintLink) {
+		this.hintLink = hintLink;
 	}
 
 	

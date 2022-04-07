@@ -1,5 +1,7 @@
 package com.flair.server.exerciseGeneration.exerciseManagement.OutputGeneration.previewGeneration;
 
+import java.util.ArrayList;
+
 import com.flair.server.exerciseGeneration.exerciseManagement.ConstructionTextPart;
 import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseData;
 import com.flair.server.exerciseGeneration.exerciseManagement.TextPart;
@@ -11,7 +13,7 @@ public abstract class PreviewGenerator {
 		
 		for(TextPart part : data.getParts()) {
 			if(part instanceof ConstructionTextPart) {
-				sb.append(getTargetDummy(part.getValue()));
+				sb.append(getTargetDummy(part.getValue(), ((ConstructionTextPart)part).getBrackets()));
 			} else {
 				sb.append(part.getValue());
 			}
@@ -26,6 +28,6 @@ public abstract class PreviewGenerator {
      * @param constructionText	The target answer
      * @return	A HTML element definition for the given construction text
      */
-    protected abstract String getTargetDummy(String constructionText);
+    protected abstract String getTargetDummy(String constructionText, ArrayList<String> brackets);
     
 }

@@ -19,16 +19,15 @@ import com.flair.shared.exerciseGeneration.Construction;
 import com.flair.shared.exerciseGeneration.DetailedConstruction;
 import com.flair.shared.exerciseGeneration.DistractorProperties;
 import com.flair.shared.exerciseGeneration.DocumentExerciseSettings;
+import com.flair.shared.exerciseGeneration.ExerciseSettings;
 import com.flair.shared.exerciseGeneration.ExerciseTopic;
 import com.flair.shared.exerciseGeneration.ExerciseType;
-import com.flair.shared.exerciseGeneration.ExerciseSettings;
 import com.flair.shared.exerciseGeneration.InstructionsProperties;
 import com.flair.shared.exerciseGeneration.OutputFormat;
 import com.flair.shared.exerciseGeneration.Pair;
 import com.flair.shared.grammar.GrammaticalConstruction;
 import com.flair.shared.interop.dtos.RankableDocument;
 import com.flair.shared.interop.dtos.RankableDocument.ConstructionRange;
-import com.gargoylesoftware.htmlunit.javascript.host.Console;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.IFrameElement;
@@ -52,13 +51,11 @@ import gwt.material.design.client.ui.MaterialCheckBox;
 import gwt.material.design.client.ui.MaterialCollapsibleItem;
 import gwt.material.design.client.ui.MaterialColumn;
 import gwt.material.design.client.ui.MaterialDialog;
-import gwt.material.design.client.ui.MaterialDialogContent;
 import gwt.material.design.client.ui.MaterialIcon;
 import gwt.material.design.client.ui.MaterialLabel;
 import gwt.material.design.client.ui.MaterialLink;
 import gwt.material.design.client.ui.MaterialRadioButton;
 import gwt.material.design.client.ui.MaterialRow;
-import gwt.material.design.client.ui.MaterialToast;
 import gwt.material.design.client.ui.html.Option;
 
 public class TaskItem extends LocalizedComposite {
@@ -323,15 +320,15 @@ public class TaskItem extends LocalizedComposite {
 	 */
 	@UiField
 	MaterialColumn colType;
-    @UiField
-    MaterialIcon icoEditSpec;
-    @UiField
-    HTMLPanel pnlConfigEditor;
-    @UiField
-    gwt.material.design.client.ui.MaterialDialog mdlSpecEditorUI;
-    @UiField
-    MaterialButton btnCloseSpecEditorUI;
-    
+	@UiField
+	MaterialIcon icoEditSpec;
+	@UiField
+	HTMLPanel pnlConfigEditor;
+	@UiField
+	gwt.material.design.client.ui.MaterialDialog mdlSpecEditorUI;
+	@UiField
+	MaterialButton btnCloseSpecEditorUI;
+
 	private ConstructionComponentsCollection constructionComponents;
 	private ExerciseGenerationWidget parent;
 	public final int taskId;
@@ -343,56 +340,49 @@ public class TaskItem extends LocalizedComposite {
 		initWidget(ourUiBinder.createAndBindUi(this));
 		initLocale(localeBinder.bind(this));
 
-		distractorOptions.add(new Pair<MaterialCheckBox, String>(chkDistractorsOtherForm,
-				DistractorProperties.OTHER_FORM));
-		distractorOptions.add(new Pair<MaterialCheckBox, String>(chkDistractorsOtherVariant,
-				DistractorProperties.OTHER_VARIANT));
-		distractorOptions.add(new Pair<MaterialCheckBox, String>(chkDistractorsOtherPast,
-				DistractorProperties.OTHER_PAST));
-		distractorOptions.add(new Pair<MaterialCheckBox, String>(chkDistractorsOtherTense,
-				DistractorProperties.OTHER_TENSE));
-		distractorOptions.add(new Pair<MaterialCheckBox, String>(chkDistractorsProgressive,
-				DistractorProperties.PROGRESSIVE));
-		distractorOptions.add(new Pair<MaterialCheckBox, String>(chkDistractorsIncorrectForms,
-				DistractorProperties.INCORRECT_FORMS));
+		distractorOptions
+				.add(new Pair<MaterialCheckBox, String>(chkDistractorsOtherForm, DistractorProperties.OTHER_FORM));
+		distractorOptions.add(
+				new Pair<MaterialCheckBox, String>(chkDistractorsOtherVariant, DistractorProperties.OTHER_VARIANT));
+		distractorOptions
+				.add(new Pair<MaterialCheckBox, String>(chkDistractorsOtherPast, DistractorProperties.OTHER_PAST));
+		distractorOptions
+				.add(new Pair<MaterialCheckBox, String>(chkDistractorsOtherTense, DistractorProperties.OTHER_TENSE));
+		distractorOptions
+				.add(new Pair<MaterialCheckBox, String>(chkDistractorsProgressive, DistractorProperties.PROGRESSIVE));
+		distractorOptions.add(
+				new Pair<MaterialCheckBox, String>(chkDistractorsIncorrectForms, DistractorProperties.INCORRECT_FORMS));
 		distractorOptions.add(new Pair<MaterialCheckBox, String>(chkDistractorsWrongConditional,
 				DistractorProperties.WRONG_CONDITIONAL));
-		distractorOptions.add(new Pair<MaterialCheckBox, String>(chkDistractorsWrongClause,
-				DistractorProperties.WRONG_CLAUSE));
+		distractorOptions
+				.add(new Pair<MaterialCheckBox, String>(chkDistractorsWrongClause, DistractorProperties.WRONG_CLAUSE));
 		distractorOptions.add(new Pair<MaterialCheckBox, String>(chkDistractorsWrongSuffixUse,
 				DistractorProperties.WRONG_SUFFIX_USE));
-		distractorOptions.add(new Pair<MaterialCheckBox, String>(chkDistractorsWrongSuffix,
-				DistractorProperties.INCORRECT_FORMS));
+		distractorOptions.add(
+				new Pair<MaterialCheckBox, String>(chkDistractorsWrongSuffix, DistractorProperties.INCORRECT_FORMS));
 
 		bracketsOptions.add(new Pair<MaterialCheckBox, String>(chkBracketsLemma, BracketsProperties.LEMMA));
-		bracketsOptions.add(new Pair<MaterialCheckBox, String>(chkBracketsDistractorLemma,
-				BracketsProperties.DISTRACTOR_LEMMA));
+		bracketsOptions.add(
+				new Pair<MaterialCheckBox, String>(chkBracketsDistractorLemma, BracketsProperties.DISTRACTOR_LEMMA));
 		bracketsOptions.add(new Pair<MaterialCheckBox, String>(chkBracketsPos, BracketsProperties.POS));
-		bracketsOptions.add(
-				new Pair<MaterialCheckBox, String>(chkBracketsForm, BracketsProperties.COMPARISON_FORM));
-		bracketsOptions.add(new Pair<MaterialCheckBox, String>(chkBracketsConditional,
-				BracketsProperties.CONDITIONAL_TYPE));
+		bracketsOptions.add(new Pair<MaterialCheckBox, String>(chkBracketsForm, BracketsProperties.COMPARISON_FORM));
+		bracketsOptions
+				.add(new Pair<MaterialCheckBox, String>(chkBracketsConditional, BracketsProperties.CONDITIONAL_TYPE));
 		bracketsOptions.add(new Pair<MaterialCheckBox, String>(chkBracketsWill, BracketsProperties.WILL));
-		bracketsOptions.add(new Pair<MaterialCheckBox, String>(chkBracketsSentenceType,
-				BracketsProperties.SENTENCE_TYPE));
+		bracketsOptions
+				.add(new Pair<MaterialCheckBox, String>(chkBracketsSentenceType, BracketsProperties.SENTENCE_TYPE));
 		bracketsOptions.add(new Pair<MaterialCheckBox, String>(chkBracketsTense, BracketsProperties.TENSE));
-		bracketsOptions.add(
-				new Pair<MaterialCheckBox, String>(chkBracketsProgressive, BracketsProperties.PROGRESSIVE));
-		bracketsOptions.add(new Pair<MaterialCheckBox, String>(chkBracketsActiveSentence,
-				BracketsProperties.ACTIVE_SENTENCE));
+		bracketsOptions.add(new Pair<MaterialCheckBox, String>(chkBracketsProgressive, BracketsProperties.PROGRESSIVE));
+		bracketsOptions
+				.add(new Pair<MaterialCheckBox, String>(chkBracketsActiveSentence, BracketsProperties.ACTIVE_SENTENCE));
 
-		instructionsOptions
-				.add(new Pair<MaterialCheckBox, String>(chkLemmas, InstructionsProperties.LEMMA));
-		instructionsOptions
-				.add(new Pair<MaterialCheckBox, String>(chkTenses, InstructionsProperties.TENSE));
-		instructionsOptions.add(
-				new Pair<MaterialCheckBox, String>(chkProgressive, InstructionsProperties.PROGRESSIVE));
-		instructionsOptions
-				.add(new Pair<MaterialCheckBox, String>(chkNTargets, InstructionsProperties.N_TARGETS));
+		instructionsOptions.add(new Pair<MaterialCheckBox, String>(chkLemmas, InstructionsProperties.LEMMA));
+		instructionsOptions.add(new Pair<MaterialCheckBox, String>(chkTenses, InstructionsProperties.TENSE));
+		instructionsOptions.add(new Pair<MaterialCheckBox, String>(chkProgressive, InstructionsProperties.PROGRESSIVE));
+		instructionsOptions.add(new Pair<MaterialCheckBox, String>(chkNTargets, InstructionsProperties.N_TARGETS));
 
 		formatOptions.add(new Pair<MaterialCheckBox, String>(parent.chkH5p, OutputFormat.H5P));
 		formatOptions.add(new Pair<MaterialCheckBox, String>(parent.chkFeedbookXml, OutputFormat.FEEDBOOK_XML));
-		//formatOptions.add(new Pair<MaterialCheckBox, String>(parent.chkSpecification, OutputFormat.SPECIFICATION));
 
 		settingsWidgets = new Widget[] { grpBrackets, chkBracketsLemma, chkBracketsDistractorLemma,
 				chkBracketsConditional, chkBracketsPos, chkBracketsForm, chkBracketsWill, chkBracketsSentenceType,
@@ -612,18 +602,18 @@ public class TaskItem extends LocalizedComposite {
 		RootPanel.get().add(dlgTargetExclusion);
 		dlgExercisePreview.removeFromParent();
 		RootPanel.get().add(dlgExercisePreview);
-        mdlSpecEditorUI.removeFromParent();
-        RootPanel.get().add(mdlSpecEditorUI);
+		mdlSpecEditorUI.removeFromParent();
+		RootPanel.get().add(mdlSpecEditorUI);
 
-        btnCloseSpecEditorUI.addClickHandler(event -> {
-        	updateSpecFile();
-        	mdlSpecEditorUI.close();
-        });
-		
-        icoEditSpec.addClickHandler(event -> {
+		btnCloseSpecEditorUI.addClickHandler(event -> {
+			updateSpecFile();
+			mdlSpecEditorUI.close();
+		});
+
+		icoEditSpec.addClickHandler(event -> {
 			populateIFrame(doc.getText().getBytes(), taskId);
 			mdlSpecEditorUI.open();
-        });
+		});
 
 		btnApplyDocumentSelection.addClickHandler(event -> {
 			dlgDocumentSelection.close();
@@ -762,32 +752,20 @@ public class TaskItem extends LocalizedComposite {
 		}
 
 		chkUseConfig.addClickHandler(e -> setupConfigSettings(true));
-		/*
-		 * btnFileUpload.addChangeHandler(new ChangeHandler() {
-		 * 
-		 * @Override public void onChange(ChangeEvent event) { boolean isValidFile =
-		 * !btnFileUpload.getFilename().isEmpty() &&
-		 * btnFileUpload.getFilename().endsWith(".xlsx");
-		 * icoValidity.setVisible(isValidFile);
-		 * icoValidity.setIconType(IconType.CHECK_CIRCLE);
-		 * icoValidity.setTextColor(Color.GREEN); if(isValidFile) { JavaScriptObject
-		 * files = btnFileUpload.getElement().getPropertyJSO("files");
-		 * readTextFile(files, instance); parent.setGenerateExercisesEnabled(); } } });
-		 */
 	}
-	
+
 	public void setupConfigSettings(boolean reevaluateTopic) {
 		icoEditSpec.setVisible(chkUseConfig.isVisible() && chkUseConfig.getValue());
 		pnlConfig.setVisible(!(chkUseConfig.isVisible() && chkUseConfig.getValue()));
 		colType.setVisible(!(chkUseConfig.isVisible() && chkUseConfig.getValue()));
 
 		if (chkUseConfig.getValue()) {
-			if(reevaluateTopic) {
+			if (reevaluateTopic) {
 				String selecteTopic = getTopic();
 				drpTopic.clear();
-	
+
 				addOptionToTopic("---", "Topic", selecteTopic, 0);
-	
+
 				int i = 1;
 				for (Pair<String, String> possibleTopic : possibleTopics) {
 					addOptionToTopic(possibleTopic.first, possibleTopic.second, selecteTopic, i);
@@ -797,7 +775,8 @@ public class TaskItem extends LocalizedComposite {
 
 			icoValidity.setVisible(true);
 
-			if ((doc.getFileExtension().equals(".json") || doc.getFileExtension().equals(".xlsx")) && !getTopic().equals(ExerciseTopic.UNDEFINED)) {
+			if ((doc.getFileExtension().equals(".json") || doc.getFileExtension().equals(".xlsx"))
+					&& !getTopic().equals(ExerciseTopic.UNDEFINED)) {
 				icoValidity.setIconType(IconType.CHECK_CIRCLE);
 				icoValidity.setTextColor(Color.GREEN);
 			} else {
@@ -808,16 +787,14 @@ public class TaskItem extends LocalizedComposite {
 		} else {
 			initializeRelevantConstructions();
 		}
-
-		// pnlFileUpload.setVisible(chkUseConfig.getValue());
 	}
-	
-    private void updateSpecFile() {
-    	doc.setText(getDataFromIFrame(taskId));
-    }
-    
-    private native String getDataFromIFrame(int taskId) /*-{
-	    var iframe  = $doc.getElementById("configIframe" + taskId);   
+
+	private void updateSpecFile() {
+		doc.setText(getDataFromIFrame(taskId));
+	}
+
+	private native String getDataFromIFrame(int taskId) /*-{
+		var iframe = $doc.getElementById("configIframe" + taskId);
 		var json = iframe.contentWindow.getSpec();
 		return JSON.stringify(json);
 	}-*/;
@@ -980,31 +957,31 @@ public class TaskItem extends LocalizedComposite {
 
 		setExerciseSettingsVisibilities();
 
-        IFrameElement configIFrame = Document.get().createIFrameElement();
-        pnlConfigEditor.getElement().appendChild(configIFrame);
+		IFrameElement configIFrame = Document.get().createIFrameElement();
+		pnlConfigEditor.getElement().appendChild(configIFrame);
 
-        fillIframe(configIFrame, ResourceManager.INSTANCE.specificationEditor().getText());
+		fillIframe(configIFrame, ResourceManager.INSTANCE.specificationEditor().getText());
 
-        configIFrame.setAttribute("height", "600px");
-        configIFrame.setAttribute("width", "100%");
-        configIFrame.setId("configIframe" + taskId);
-        configIFrame.setAttribute("sandbox", "allow-scripts");        
+		configIFrame.setAttribute("height", "600px");
+		configIFrame.setAttribute("width", "100%");
+		configIFrame.setId("configIframe" + taskId);
+		configIFrame.setAttribute("sandbox", "allow-scripts");
 	}
-	
-    private final native void fillIframe(IFrameElement iframe, String content) /*-{
-	  var doc = iframe.document;
 
-	  if(iframe.contentDocument)
-	    doc = iframe.contentDocument; // For NS6
-	  else if(iframe.contentWindow)
-	    doc = iframe.contentWindow.document; // For IE5.5 and IE6
+	private final native void fillIframe(IFrameElement iframe, String content) /*-{
+		var doc = iframe.document;
 
-	   // Put the content in the iframe
-	  doc.open();
-	  doc.writeln(content);
-	  doc.close();	  
+		if (iframe.contentDocument) {
+			doc = iframe.contentDocument; // For NS6
+		} else if (iframe.contentWindow) {
+			doc = iframe.contentWindow.document; // For IE5.5 and IE6
+		}
+
+		doc.open();
+		doc.writeln(content);
+		doc.close();
 	}-*/;
-    
+
 	/**
 	 * Resets all controls that are initially <code>true</code> to that value.
 	 */
@@ -1062,7 +1039,7 @@ public class TaskItem extends LocalizedComposite {
 	 *         the empty string
 	 */
 	private String getExerciseType() {
-		if(!drpType.isVisible()) {
+		if (!drpType.isVisible()) {
 			return ExerciseType.UNDEFINED;
 		}
 		for (Object o : drpType.getSelectedValue()) {
@@ -1157,14 +1134,14 @@ public class TaskItem extends LocalizedComposite {
 
 		parent.setResourceDownloadVisiblity();
 	}
-		
-	public native void populateIFrame(byte[] filecontent, int taskId) /*-{		
-	    var iframe  = $doc.getElementById("configIframe" + taskId);  
-	    
-	    var blob = new Blob([new Uint8Array(filecontent)], {
-	        type: 'text/plain'
-	    });
-	    	    console.log(iframe.contentWindow);
+
+	public native void populateIFrame(byte[] filecontent, int taskId) /*-{
+		var iframe = $doc.getElementById("configIframe" + taskId);
+
+		var blob = new Blob([ new Uint8Array(filecontent) ], {
+			type : 'text/plain'
+		});
+		console.log(iframe.contentWindow);
 		iframe.contentWindow.uploadFromFLAIR(blob);
 	}-*/;
 
@@ -1243,7 +1220,8 @@ public class TaskItem extends LocalizedComposite {
 			if (exerciseType.equals(ExerciseType.FILL_IN_THE_BLANKS)) {
 				constructionsToConsider = getConstructionNamesFromSettings(
 						constructionComponents.getPassiveFiBComponents(), checkForValue);
-			} else if (exerciseType.equals(ExerciseType.DRAG_AND_DROP) || exerciseType.equals(ExerciseType.JUMBLED_SENTENCES)) {
+			} else if (exerciseType.equals(ExerciseType.DRAG_AND_DROP)
+					|| exerciseType.equals(ExerciseType.JUMBLED_SENTENCES)) {
 				constructionsToConsider = getConstructionNamesFromSettings(
 						constructionComponents.getPassiveDragComponents(), checkForValue);
 			}
@@ -1256,7 +1234,7 @@ public class TaskItem extends LocalizedComposite {
 			} else if (exerciseType.equals(ExerciseType.SINGLE_CHOICE)) {
 				constructionsToConsider = getConstructionNamesFromSettings(
 						constructionComponents.getRelativesSelectComponents(), checkForValue);
-			} else if (exerciseType.equals(ExerciseType.DRAG_AND_DROP) && !rbtPerSentence.getValue()) {
+			} else if (parent.rbtSpecification.getValue() || exerciseType.equals(ExerciseType.DRAG_AND_DROP) && !rbtPerSentence.getValue()) {
 				constructionsToConsider = getConstructionNamesFromSettings(
 						constructionComponents.getRelativesDragComponents(), checkForValue);
 			}
@@ -1276,20 +1254,23 @@ public class TaskItem extends LocalizedComposite {
 					|| exerciseType.equals(ExerciseType.JUMBLED_SENTENCES)) {
 				constructionsToConsider = getConstructionNamesFromSettings(
 						constructionComponents.getPastFiBSelectComponents(), checkForValue);
-			} else if (exerciseType.equals(ExerciseType.MARK_THE_WORDS) || exerciseType.equals(ExerciseType.DRAG_AND_DROP)) {
+			} else if (exerciseType.equals(ExerciseType.MARK_THE_WORDS)
+					|| exerciseType.equals(ExerciseType.DRAG_AND_DROP)) {
 				constructionsToConsider = getConstructionNamesFromSettings(
 						constructionComponents.getPastMarkDragComponents(), checkForValue);
 			}
 		} else if (topic.equals(ExerciseTopic.CONDITIONALS)) {
-			if (parent.rbtSpecification.getValue() || exerciseType.equals(ExerciseType.FILL_IN_THE_BLANKS) || exerciseType.equals(ExerciseType.SINGLE_CHOICE)
-					|| exerciseType.equals(ExerciseType.DRAG_AND_DROP) || exerciseType.equals(ExerciseType.JUMBLED_SENTENCES)) {
+			if (parent.rbtSpecification.getValue() || exerciseType.equals(ExerciseType.FILL_IN_THE_BLANKS)
+					|| exerciseType.equals(ExerciseType.SINGLE_CHOICE)
+					|| exerciseType.equals(ExerciseType.DRAG_AND_DROP)
+					|| exerciseType.equals(ExerciseType.JUMBLED_SENTENCES)) {
 				constructionsToConsider = getConstructionNamesFromSettings(
 						constructionComponents.getConditionalComponents(), checkForValue);
 			}
 		} else if (topic.equals(ExerciseTopic.COMPARISON)) {
 			if (exerciseType.equals(ExerciseType.FILL_IN_THE_BLANKS) || exerciseType.equals(ExerciseType.SINGLE_CHOICE)
-					|| exerciseType.equals(ExerciseType.MARK_THE_WORDS) || exerciseType.equals(ExerciseType.DRAG_AND_DROP)
-					|| exerciseType.equals(ExerciseType.MEMORY)
+					|| exerciseType.equals(ExerciseType.MARK_THE_WORDS)
+					|| exerciseType.equals(ExerciseType.DRAG_AND_DROP) || exerciseType.equals(ExerciseType.MEMORY)
 					|| exerciseType.equals(ExerciseType.JUMBLED_SENTENCES)) {
 				constructionsToConsider = getConstructionNamesFromSettings(
 						constructionComponents.getComparativeComponents(), checkForValue);
@@ -1363,7 +1344,7 @@ public class TaskItem extends LocalizedComposite {
 				}
 			}
 		}
-		
+
 		usedTargetConstructions.clear();
 
 		// remove overlapping constructions
@@ -1474,14 +1455,15 @@ public class TaskItem extends LocalizedComposite {
 		icoValidity.setTextColor(Color.RED);
 
 		if (chkUseConfig.isVisible() && chkUseConfig.getValue()) {
-			if (!topic.equals(ExerciseTopic.UNDEFINED) && (doc.getFileExtension().equals(".json") || doc.getFileExtension().equals(".xlsx"))) {
+			if (!topic.equals(ExerciseTopic.UNDEFINED)
+					&& (doc.getFileExtension().equals(".json") || doc.getFileExtension().equals(".xlsx"))) {
 				icoValidity.setIconType(IconType.CHECK_CIRCLE);
 				icoValidity.setTextColor(Color.GREEN);
 			}
-		} else if(parent.rbtSpecification.getValue()) {
+		} else if (parent.rbtSpecification.getValue()) {
 			lblSelectTypeTopic.setVisible(false);
 			lblNumberExercises.setVisible(false);
-			
+
 			if (topic.equals(ExerciseTopic.UNDEFINED)) {
 				icoValidity.setVisible(false);
 			} else {
@@ -1501,11 +1483,12 @@ public class TaskItem extends LocalizedComposite {
 				lblNumberExercises.setVisible(false);
 				icoValidity.setVisible(false);
 			} else if (exerciseType.equals(ExerciseType.MEMORY)
-					&& !(topic.equals(ExerciseTopic.PRESENT) || topic.equals(ExerciseTopic.PAST) || topic.equals(ExerciseTopic.COMPARISON))
+					&& !(topic.equals(ExerciseTopic.PRESENT) || topic.equals(ExerciseTopic.PAST)
+							|| topic.equals(ExerciseTopic.COMPARISON))
 					|| exerciseType.equals(ExerciseType.MARK_THE_WORDS) && topic.equals(ExerciseTopic.CONDITIONALS)
 					|| exerciseType.equals(ExerciseType.DRAG_AND_DROP) && topic.equals(ExerciseTopic.PRESENT)
-					|| exerciseType.equals(ExerciseType.SINGLE_CHOICE)
-							&& (topic.equals(ExerciseTopic.PASSIVE) || !topic.equals(ExerciseTopic.RELATIVES) && !hasCheckedDistractors())) {
+					|| exerciseType.equals(ExerciseType.SINGLE_CHOICE) && (topic.equals(ExerciseTopic.PASSIVE)
+							|| !topic.equals(ExerciseTopic.RELATIVES) && !hasCheckedDistractors())) {
 
 				lblNumberExercises.setText("No exercises can be generated for the current settings.");
 				lblNumberExercises.setTextColor(Color.RED);
@@ -1536,8 +1519,8 @@ public class TaskItem extends LocalizedComposite {
 						lblNumberExercises.setText("A maximum of " + numberOfExercises
 								+ " jumbled sentences can be generated for the current settings.");
 					} else if (exerciseType.equals(ExerciseType.DRAG_AND_DROP)) {
-						if ((topic.equals(ExerciseTopic.RELATIVES) || topic.equals(ExerciseTopic.CONDITIONALS)) && rbtPerSentence.getValue()
-								|| topic.equals(ExerciseTopic.PASSIVE)) {
+						if ((topic.equals(ExerciseTopic.RELATIVES) || topic.equals(ExerciseTopic.CONDITIONALS))
+								&& rbtPerSentence.getValue() || topic.equals(ExerciseTopic.PASSIVE)) {
 							// 1 exercise per sentence
 							lblNumberExercises.setText("A maximum of " + numberOfExercises
 									+ " exercises can be generated for the current settings.");
@@ -1568,20 +1551,22 @@ public class TaskItem extends LocalizedComposite {
 	/**
 	 * Checks if any contained construction supports feedback generation.
 	 * 
-	 * @return <code>true</code> if the selected text contains at least 1 construction
-	 *         which supports feedback generation; otherwise <code>false</code>.
+	 * @return <code>true</code> if the selected text contains at least 1
+	 *         construction which supports feedback generation; otherwise
+	 *         <code>false</code>.
 	 */
 	public boolean supportsFeedbackGeneration() {
 		String type = getExerciseType();
 
 		// If the type doesn't support feedback or the settings always result in
 		// multi-word constructions, we don't need to check the constructions
-		if (type.equals(ExerciseType.MARK_THE_WORDS) || type.equals(ExerciseType.DRAG_AND_DROP) || type.equals(ExerciseType.MEMORY)
-				|| type.equals(ExerciseType.JUMBLED_SENTENCES)) {
+		if (type.equals(ExerciseType.MARK_THE_WORDS) || type.equals(ExerciseType.DRAG_AND_DROP)
+				|| type.equals(ExerciseType.MEMORY) || type.equals(ExerciseType.JUMBLED_SENTENCES)) {
 			return false;
 		}
 
-		if (!getSelectedOutputFormats().contains(OutputFormat.H5P) && !getSelectedOutputFormats().contains(OutputFormat.SPECIFICATION)) {
+		if (!getSelectedOutputFormats().contains(OutputFormat.H5P)
+				&& !getSelectedOutputFormats().contains(OutputFormat.SPECIFICATION)) {
 			return false;
 		}
 
@@ -1592,7 +1577,8 @@ public class TaskItem extends LocalizedComposite {
 	 * Determines whether the document used for exercise generation is a web
 	 * document.
 	 * 
-	 * @return <code>true</code> if the document is a web document; otherwise <code>false</code>
+	 * @return <code>true</code> if the document is a web document; otherwise
+	 *         <code>false</code>
 	 */
 	public boolean usesWebDocument() {
 		return doc.getUrl().length() != 0;
@@ -1622,8 +1608,8 @@ public class TaskItem extends LocalizedComposite {
 				if (constructionName == null) {
 					containedConstructions.add(new TargetConstruction(range.getStart(), range.getEnd()));
 				} else {
-					containedConstructions.add(new TargetConstruction(range.getStart(), range.getEnd(),
-							constructionName));
+					containedConstructions
+							.add(new TargetConstruction(range.getStart(), range.getEnd(), constructionName));
 				}
 			}
 		}
@@ -1812,23 +1798,6 @@ public class TaskItem extends LocalizedComposite {
 		return getConstructionNamesFromSettings(constructionLevels, true);
 	}
 
-//    public static native void readTextFile(JavaScriptObject files, TaskItem classInstance)
-//	/*-{
-//	    var reader = new FileReader();
-//
-//	    reader.onload = function(e) {
-//	        classInstance.@com.flair.client.presentation.widgets.exerciseGeneration.TaskItem::fileLoaded(*)(String(new Uint8Array(reader.result)));
-//	    }
-//
-//	    return reader.readAsArrayBuffer(files[0]);
-//	}-*/;
-	/*
-	 * private String configFile; private String configFileName;
-	 * 
-	 * public void fileLoaded(String fileContents) { configFile = fileContents;
-	 * configFileName = btnFileUpload.getFilename(); }
-	 */
-
 	/**
 	 * Generates settings for the server from the selected options
 	 */
@@ -1837,10 +1806,9 @@ public class TaskItem extends LocalizedComposite {
 		String quiz = getQuiz();
 
 		if (chkUseConfig.isVisible() && chkUseConfig.getValue()) {
-			// return new ConfigExerciseSettings(configFile, "", configFileName, "",
-			// getSelectedOutputFormats());
 			return new ConfigExerciseSettings(doc.getTitle(), doc.getLinkingId(), getSelectedOutputFormats(), topic,
-					quiz, parent.chkGenerateFeedback.isVisible() && parent.chkGenerateFeedback.getValue(), doc.getFileExtension().substring(1));
+					quiz, parent.chkGenerateFeedback.isVisible() && parent.chkGenerateFeedback.getValue(),
+					doc.getFileExtension().substring(1));
 		} else {
 			ArrayList<Construction> constructions = new ArrayList<>();
 
@@ -1852,8 +1820,7 @@ public class TaskItem extends LocalizedComposite {
 			String type = getExerciseType();
 			for (TargetConstruction c : usedTargetConstructions) {
 				if (c.isToBeUsed()) {
-					String dc = type.equals(ExerciseType.JUMBLED_SENTENCES)
-							? DetailedConstruction.SENTENCE_PART
+					String dc = type.equals(ExerciseType.JUMBLED_SENTENCES) ? DetailedConstruction.SENTENCE_PART
 							: c.getConstructionType();
 					Construction construction = new Construction(dc, new Pair<>(c.getStartIndex(), c.getEndIndex()));
 					constructions.add(construction);
@@ -1955,7 +1922,7 @@ public class TaskItem extends LocalizedComposite {
 	 */
 	private ArrayList<String> getSelectedOutputFormats() {
 		ArrayList<String> formats = new ArrayList<>();
-		if(parent.rbtExercise.getValue()) {
+		if (parent.rbtExercise.getValue()) {
 			for (Pair<MaterialCheckBox, String> option : formatOptions) {
 				if (option.first.getValue()) {
 					formats.add(option.second);
@@ -2078,9 +2045,8 @@ public class TaskItem extends LocalizedComposite {
 							"passive-" + tenseConstruction.name()));
 				} else {
 					// We just take the verb of the tense construction for active constructions
-					activeIndices
-							.add(new TargetConstruction(tenseOccurrence.getStartIndex(), tenseOccurrence.getEndIndex(),
-									"active-" + tenseConstruction.name()));
+					activeIndices.add(new TargetConstruction(tenseOccurrence.getStartIndex(),
+							tenseOccurrence.getEndIndex(), "active-" + tenseConstruction.name()));
 				}
 			}
 
@@ -2177,19 +2143,19 @@ public class TaskItem extends LocalizedComposite {
 				} else {
 					if (foundQuestionOverlap) {
 						if (foundIrregularOverlap) {
-							indicesQuestionAffirmativeIrregular
-									.add(new TargetConstruction(tenseOccurrence.getStartIndex(),
-											tenseOccurrence.getEndIndex(), tenseConstruction.name() + "-question-affirm-irreg"));
+							indicesQuestionAffirmativeIrregular.add(new TargetConstruction(
+									tenseOccurrence.getStartIndex(), tenseOccurrence.getEndIndex(),
+									tenseConstruction.name() + "-question-affirm-irreg"));
 						} else {
-							indicesQuestionAffirmativeRegular
-									.add(new TargetConstruction(tenseOccurrence.getStartIndex(),
-											tenseOccurrence.getEndIndex(), tenseConstruction.name() + "-question-affirm-reg"));
+							indicesQuestionAffirmativeRegular.add(new TargetConstruction(
+									tenseOccurrence.getStartIndex(), tenseOccurrence.getEndIndex(),
+									tenseConstruction.name() + "-question-affirm-reg"));
 						}
 					} else {
 						if (foundIrregularOverlap) {
-							indicesStatementAffirmativeIrregular
-									.add(new TargetConstruction(tenseOccurrence.getStartIndex(),
-											tenseOccurrence.getEndIndex(), tenseConstruction.name() + "-stmt-affirm-irreg"));
+							indicesStatementAffirmativeIrregular.add(new TargetConstruction(
+									tenseOccurrence.getStartIndex(), tenseOccurrence.getEndIndex(),
+									tenseConstruction.name() + "-stmt-affirm-irreg"));
 						} else {
 							indicesStatementAffirmativeRegular.add(new TargetConstruction(
 									tenseOccurrence.getStartIndex(), tenseOccurrence.getEndIndex(),
@@ -2291,23 +2257,19 @@ public class TaskItem extends LocalizedComposite {
 			} else {
 				if (foundQuestionOverlap) {
 					if (isThirdPersonSingular) {
-						indicesQuestionAffirmative3.add(
-								new TargetConstruction(tenseOccurrence.getStartIndex(), tenseOccurrence.getEndIndex(),
-										DetailedConstruction.QUEST_AFFIRM_3));
+						indicesQuestionAffirmative3.add(new TargetConstruction(tenseOccurrence.getStartIndex(),
+								tenseOccurrence.getEndIndex(), DetailedConstruction.QUEST_AFFIRM_3));
 					} else {
-						indicesQuestionAffirmativeNot3.add(
-								new TargetConstruction(tenseOccurrence.getStartIndex(), tenseOccurrence.getEndIndex(),
-										DetailedConstruction.QUEST_AFFIRM_NOT3));
+						indicesQuestionAffirmativeNot3.add(new TargetConstruction(tenseOccurrence.getStartIndex(),
+								tenseOccurrence.getEndIndex(), DetailedConstruction.QUEST_AFFIRM_NOT3));
 					}
 				} else {
 					if (isThirdPersonSingular) {
-						indicesStatementAffirmative3.add(
-								new TargetConstruction(tenseOccurrence.getStartIndex(), tenseOccurrence.getEndIndex(),
-										DetailedConstruction.STMT_AFFIRM_3));
+						indicesStatementAffirmative3.add(new TargetConstruction(tenseOccurrence.getStartIndex(),
+								tenseOccurrence.getEndIndex(), DetailedConstruction.STMT_AFFIRM_3));
 					} else {
-						indicesStatementAffirmativeNot3.add(
-								new TargetConstruction(tenseOccurrence.getStartIndex(), tenseOccurrence.getEndIndex(),
-										DetailedConstruction.STMT_AFFIRM_NOT3));
+						indicesStatementAffirmativeNot3.add(new TargetConstruction(tenseOccurrence.getStartIndex(),
+								tenseOccurrence.getEndIndex(), DetailedConstruction.STMT_AFFIRM_NOT3));
 					}
 				}
 			}

@@ -10,6 +10,7 @@ public class ExerciseConfigData {
 	private int activity;
 	private ArrayList<ExerciseItemConfigData> itemData = new ArrayList<>();
 	private ArrayList<ExerciseTypeSpec> exerciseType = new ArrayList<>();
+	private String tocId = null;
 
 	public String getStamp() { return stamp; }
 	public int getActivity() { return activity; }
@@ -28,6 +29,12 @@ public class ExerciseConfigData {
 	}
 	public void setExerciseType(ArrayList<ExerciseTypeSpec> exerciseType) {
 		this.exerciseType = exerciseType;
+	}
+	public String getTocId() {
+		return tocId;
+	}
+	public void setTocId(String tocId) {
+		this.tocId = tocId;
 	}
 	
 }

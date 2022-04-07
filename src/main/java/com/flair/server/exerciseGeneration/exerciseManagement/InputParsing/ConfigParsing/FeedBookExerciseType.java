@@ -12,7 +12,7 @@ public class FeedBookExerciseType {
 	public static final String CATEGORIZATION = "Categorize";
 	public static final String UNDERLINE = "MarktheWords";
 	public static final String HALF_OPEN = "Half-open";
-	
+
 	public static String getContainedType(String str) {
 		if(str.contains(MEMORY)) {
 			return MEMORY;
@@ -34,7 +34,7 @@ public class FeedBookExerciseType {
 			return UNDERLINE;
 		} else if(str.contains(HALF_OPEN)) {
 			return HALF_OPEN;
-		}
+		} 
 		
 		return null;
 	}

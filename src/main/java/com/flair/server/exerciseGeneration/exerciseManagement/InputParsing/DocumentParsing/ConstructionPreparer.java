@@ -48,7 +48,7 @@ public class ConstructionPreparer {
 				}
 
 				constructionsToRemove.add(construction);
-			} else if (construction.getConstruction().toString().startsWith("COND")) {
+			} else if (construction.getConstruction().startsWith("cond")) {
 				Pair<Pair<Integer, Integer>, Pair<Integer, Integer>> clauses = nlpManager
 						.getConditionalClauses(construction.getConstructionIndices());
 				if (clauses != null) {
@@ -118,8 +118,8 @@ public class ConstructionPreparer {
 					}
 				}
 				constructionsToRemove.add(construction);
-			} else if (construction.getConstruction().toString().startsWith("ADJ")
-					|| construction.getConstruction().toString().startsWith("ADV")) {
+			} else if (construction.getConstruction().startsWith("adj")
+					|| construction.getConstruction().startsWith("adv")) {
 				if (exerciseSettings.getContentType().equals(ExerciseType.MARK_THE_WORDS)) {
 					// TODO: if we decide to allow the client to specify whether to split synthetic
 					// forms for mark, we have to do that here
@@ -132,8 +132,8 @@ public class ConstructionPreparer {
 						construction.setConstructionIndices(mainComparison);
 					}
 				}
-			} else if (construction.getConstruction().toString().startsWith("PASSIVE")
-					|| construction.getConstruction().toString().startsWith("ACTIVE")) {
+			} else if (construction.getConstruction().startsWith("passive")
+					|| construction.getConstruction().startsWith("active")) {
 				if (exerciseSettings.getContentType().equals(ExerciseType.FILL_IN_THE_BLANKS)
 						&& exerciseSettings.getBrackets().contains(BracketsProperties.ACTIVE_SENTENCE)) {
 					Pair<Integer, Integer> sentenceIndices = nlpManager
@@ -177,47 +177,46 @@ public class ConstructionPreparer {
 					constructionsToAdd.addAll(newConstructions);
 					constructionsToRemove.add(construction);
 				}
-			} else if (construction.getConstruction().toString().startsWith("QUEST")
-					|| construction.getConstruction().toString().startsWith("STMT")) {
+			} else if (construction.getConstruction().startsWith("present")) {
 				// Check if the 3rd pers. is correct
 				Boolean isThirdPerson = nlpManager.isThirdSingular(construction.getConstructionIndices());
 				if (isThirdPerson == null) {
 					constructionsToRemove.add(construction);
 				} else {
-					boolean isLabelledThirdPerson = construction.getConstruction().toString().endsWith("_3");
+					boolean isLabelledThirdPerson = construction.getConstruction().endsWith("-3");
 					if (isThirdPerson != isLabelledThirdPerson) {
 						// check if we actually want the construction
 						if (isThirdPerson
 								&& !exerciseSettings.getConstructions().stream()
-										.anyMatch((c) -> c.getConstruction().toString().endsWith("_3"))
+										.anyMatch((c) -> c.getConstruction().endsWith("-3"))
 								|| !isThirdPerson && !exerciseSettings.getConstructions().stream()
-										.anyMatch((c) -> c.getConstruction().toString().endsWith("_NOT3"))) {
+										.anyMatch((c) -> c.getConstruction().endsWith("-not3"))) {
 							constructionsToRemove.add(construction);
 						} else {
 							String correctConstruction;
 							if (isThirdPerson) {
-								if (construction.getConstruction().toString().startsWith("QUEST")) {
-									if (construction.getConstruction().toString().contains("_NEG_")) {
+								if (construction.getConstruction().contains("-question-")) {
+									if (construction.getConstruction().contains("-neg-")) {
 										correctConstruction = DetailedConstruction.QUEST_NEG_3;
 									} else {
 										correctConstruction = DetailedConstruction.QUEST_AFFIRM_3;
 									}
 								} else {
-									if (construction.getConstruction().toString().contains("_NEG_")) {
+									if (construction.getConstruction().contains("-neg-")) {
 										correctConstruction = DetailedConstruction.STMT_NEG_3;
 									} else {
 										correctConstruction = DetailedConstruction.STMT_AFFIRM_3;
 									}
 								}
 							} else {
-								if (construction.getConstruction().toString().startsWith("QUEST")) {
-									if (construction.getConstruction().toString().contains("_NEG_")) {
+								if (construction.getConstruction().contains("-question-")) {
+									if (construction.getConstruction().contains("-neg-")) {
 										correctConstruction = DetailedConstruction.QUEST_NEG_NOT3;
 									} else {
 										correctConstruction = DetailedConstruction.QUEST_AFFIRM_NOT3;
 									}
 								} else {
-									if (construction.getConstruction().toString().contains("_NEG_")) {
+									if (construction.getConstruction().contains("-neg-")) {
 										correctConstruction = DetailedConstruction.STMT_NEG_NOT3;
 									} else {
 										correctConstruction = DetailedConstruction.STMT_AFFIRM_NOT3;
@@ -228,8 +227,7 @@ public class ConstructionPreparer {
 						}
 					}
 				}
-			} else if ((construction.getConstruction().toString().startsWith("PAST")
-					|| construction.getConstruction().toString().startsWith("PRES"))
+			} else if (construction.getConstruction().startsWith("TENSE_")
 					&& exerciseSettings.getContentType().equals(ExerciseType.DRAG_AND_DROP_SINGLE)
 					&& construction.getConstructionIndices().second
 							- construction.getConstructionIndices().first > 30) {

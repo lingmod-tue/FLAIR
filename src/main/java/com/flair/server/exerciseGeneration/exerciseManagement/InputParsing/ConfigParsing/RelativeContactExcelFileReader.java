@@ -94,6 +94,11 @@ public class RelativeContactExcelFileReader extends ExcelFileReader {
 		    		cd.setStamp(columnValues.get(entry.getValue()).get(i));
 		    	} else if(entry.getValue().equals("item")) {
 		    		((RelativeExerciseItemConfigData)cd.getItemData().get(0)).setItem((int)Float.parseFloat(columnValues.get(entry.getValue()).get(i)));
+		    	} else if(entry.getValue().equals("toc nr.")) {
+		    		String value = columnValues.get(entry.getValue()).get(i);
+		    		if(value != null && !value.isEmpty()) {
+		    			cd.setTocId(value);
+		    		}
 		    	} else if(entry.getValue().equals("Main clause 1")) {
 		    		((RelativeExerciseItemConfigData)cd.getItemData().get(0)).getPositionsClause1().add(new Pair<>(1, columnValues.get(entry.getValue()).get(i)));
 		    	} else if(entry.getValue().equals("Main clause 2")) {
@@ -114,16 +119,19 @@ public class RelativeContactExcelFileReader extends ExcelFileReader {
 		}
 		
 		Collections.sort(configData, (i1, i2) -> i1.getActivity() < i2.getActivity() ? -1 : 1);
-		
+			
 		ArrayList<ExerciseConfigData> batchedExercises = new ArrayList<>();
 		int lastActivity = 0;
 		String lastStamp = "";
+		String lastTocId = "";
 		ArrayList<ExerciseItemConfigData> sentences = new ArrayList<>();
 		for(ExerciseConfigData data: configData) {
 			if(lastActivity != 0 && data.getActivity() != lastActivity) {
 				ExerciseConfigData d = new ExerciseConfigData();
 				d.setActivity(lastActivity);
 				d.setStamp(lastStamp);
+				d.setExerciseType(getExerciseTypes(d.getStamp()));
+				d.setTocId(lastTocId);
 				d.setItemData(sentences);
 				sentences = new ArrayList<>();
 				batchedExercises.add(d);
@@ -132,9 +140,46 @@ public class RelativeContactExcelFileReader extends ExcelFileReader {
 			sentences.add(data.getItemData().get(0));
 			lastStamp = data.getStamp();
 			lastActivity = data.getActivity();
+			if(data.getTocId() != null) {
+				lastTocId = data.getTocId();
+			}
+		}
+		
+		if(lastActivity != 0) {
+			ExerciseConfigData d = new ExerciseConfigData();
+			d.setActivity(lastActivity);
+			d.setStamp(lastStamp);
+			d.setItemData(sentences);
+			d.setExerciseType(getExerciseTypes(d.getStamp()));
+			d.setTocId(lastTocId);
+			batchedExercises.add(d);
 		}
 		
 		return batchedExercises;
 	}
 
+	private static final String[] exerciseTypes = new String[] {
+			"Contactclauses_Half-open",
+			"Contactclauses_Open",
+			"Contactclauses_Categorize"
+	};
+	
+	private ArrayList<ExerciseTypeSpec> getExerciseTypes(String stamp) {
+		ArrayList<ExerciseTypeSpec> types = new ArrayList<>();
+		for(String type : exerciseTypes) {
+			ExerciseTypeSpec t = new ExerciseTypeSpec();	
+			t.setSubtopic("Contact clauses");
+			if(type.equals("Contactclauses_Open")) {
+				t.setFeedbookType(FeedBookExerciseType.HALF_OPEN);
+			} else if(type.equals("Contactclauses_Half-open")) {
+				t.setFeedbookType(FeedBookExerciseType.FIB_LEMMA_DISTRACTOR_PARENTHESES);
+			} else {
+				t.setFeedbookType(FeedBookExerciseType.getContainedType(type));
+			}
+			types.add(t);
+		}
+		
+		return types;
+	}
+	
 }

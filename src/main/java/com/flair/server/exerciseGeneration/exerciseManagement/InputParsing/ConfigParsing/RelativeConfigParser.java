@@ -1,8 +1,8 @@
 package com.flair.server.exerciseGeneration.exerciseManagement.InputParsing.ConfigParsing;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Random;
 
 import org.apache.commons.lang3.StringUtils;
@@ -22,8 +22,7 @@ import com.flair.shared.exerciseGeneration.Pair;
 public class RelativeConfigParser extends ConfigParser {
 
 	@Override
-	protected ArrayList<ExerciseData> generateExerciseForConfig(List<String[]> exerciseConstellations,
-			ExerciseConfigData data) {
+	protected ArrayList<ExerciseData> generateExerciseForConfig(ExerciseConfigData data) {
 		//TODO: only for debug output:
 		if(!data.getStamp().equals("contact clauses")) {
 			for(ExerciseItemConfigData configData : data.getItemData()) {
@@ -35,11 +34,17 @@ public class RelativeConfigParser extends ConfigParser {
 					String res = getRelativeSentence((RelativeExerciseItemConfigData)configData, true, false, data.getStamp(), data.getActivity());
 					if(res != null) {
 						sb.append(";").append(res);
+					} else {
+						sb.append(";");
 					}
 					res = getRelativeSentence((RelativeExerciseItemConfigData)configData, true, true, data.getStamp(), data.getActivity());
 					if(res != null) {
 						sb.append(";").append(res);
+					} else {
+						sb.append(";");
 					}
+				} else {
+					sb.append(";;");
 				}
 				String res = getRelativeSentence((RelativeExerciseItemConfigData)configData, false, false, data.getStamp(), data.getActivity());
 				if(res != null) {
@@ -54,82 +59,66 @@ public class RelativeConfigParser extends ConfigParser {
 			}
 		}
 		// end TODO
-		
-		if(exerciseConstellations == null) {
-			return null;
-		}
-		
+				
 		ArrayList<ExerciseData> exercises = new ArrayList<>();
 
-		for (String[] configValues : exerciseConstellations) {
+		for (ExerciseTypeSpec configValues : data.getExerciseType()) {
 			try {
-				if (configValues[0].equals("relatives") && !data.getStamp().equals("contact clauses")) {	
-					ExerciseData d = null;
-					
-					if (configValues[3].equals("0")) {
-						d = generateTask("Memory", data, configValues[8] != null && configValues[8].equals("true"), configValues[8] == null || configValues[8].isEmpty(), false);
+				ExerciseData d = null;
+				Collections.shuffle(data.getItemData());
+
+				if (!configValues.getSubtopic().equals("Contact clauses")) {						
+					if (configValues.getFeedbookType().equals(FeedBookExerciseType.MEMORY)) {
+						d = generateTask("Memory", data, true, true, false);
 						d.setExerciseType(ExerciseType.MEMORY);
-					} else if (configValues[3].equals("1")) {
-						d = generateTask("Gap", data, configValues[8] != null && configValues[8].equals("true"), configValues[8] == null ||configValues[8].isEmpty(), false);
+					} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.UNDERLINE)) {
+						d = generateTask("Gap", data, true, true, false);
 						if(d != null) {
 							d.setExerciseType(ExerciseType.MARK_THE_WORDS);
 						}
-					} else if (configValues[3].equals("2")) {
-						d = generateTask("Gap", data, configValues[8] != null && configValues[8].equals("true"), configValues[8] == null ||configValues[8].isEmpty(), true);
+					} if (configValues.getFeedbookType().equals(FeedBookExerciseType.SINGLE_CHOICE_2D) || configValues.getFeedbookType().equals(FeedBookExerciseType.SINGLE_CHOICE_4D)) {
+						d = generateTask("Gap", data, true, true, true);
 						if(d != null) {
 							d.setExerciseType(ExerciseType.SINGLE_CHOICE);
 						}
-					} else if (configValues[3].equals("3")) {
-						d = generateTask("Gap", data, configValues[8] != null && configValues[8].equals("true"), configValues[8] == null ||configValues[8].isEmpty(), false);
+					} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.FIB_LEMMA_PARENTHESES)) {
+						d = generateTask("Gap", data, true, true, false);
 						if(d != null) {
 							d.setExerciseType(ExerciseType.FILL_IN_THE_BLANKS);
 						}
-					} else if (configValues[3].equals("4")) {
-						d = generateTask("Prompted", data, configValues[8] != null && configValues[8].equals("true"), configValues[8] == null ||configValues[8].isEmpty(), false);
+					} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.FIB_LEMMA_DISTRACTOR_PARENTHESES)) {
+						d = generateTask("Prompted", data, true, true, false);
 						d.setExerciseType(ExerciseType.HALF_OPEN);
-					} else if (configValues[3].equals("5")) {
+					} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.HALF_OPEN)) {
 						d = generateOpenTask(data);
 						d.setExerciseType(ExerciseType.SHORT_ANSWER);
-					} else if (configValues[3].equals("6")) {
-						d = generateJSTask(data, configValues[8] != null && configValues[8].equals("true"), configValues[8] == null ||configValues[8].isEmpty());
+					} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.JUMBLED_SENTENCES)) {
+						d = generateJSTask(data, true, true);
 						if(d != null) {
 							d.setExerciseType(ExerciseType.JUMBLED_SENTENCES);
 						}
-					} 
-	
-					if (d != null) {
-	        			d.setExerciseTitle(data.getStamp().replace("/", "_") + "/" + data.getActivity() + "/" + configValues[2] + "/" + configValues[3]);
-	        			d.setTopic(ExerciseTopic.RELATIVES);
-	        			d.setSubtopic(data.getStamp());
-						exercises.add(d);
 					}
-				} else if(configValues[0].equals("relatives_contact") && data.getStamp().equals("contact clauses")) {
-					ExerciseData d = null;
-					
-					if (configValues[3].equals("4")) {
+				} else {					
+					if (configValues.getFeedbookType().equals(FeedBookExerciseType.FIB_LEMMA_DISTRACTOR_PARENTHESES)) {
 						d = generatePromptedTaskContact(data);
-						d.setExerciseType(ExerciseType.FILL_IN_THE_BLANKS);
-					} else if (configValues[3].equals("5")) {
+						d.setExerciseType(ExerciseType.HALF_OPEN);
+					} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.HALF_OPEN)) {
 						d = generateOpenTaskContact(data);
 						d.setExerciseType(ExerciseType.SHORT_ANSWER);
-					} else if(configValues[3].equals("7")) {
+					} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.CATEGORIZATION)) {
 						d = generateCategorizeTask(data);
 						d.setExerciseType(ExerciseType.CATEGORIZE);
 					}
-					
-					if (d != null) {
-	        			d.setExerciseTitle(data.getStamp().replace("/", "_") + "/" + data.getActivity() + "/" + configValues[2] + "/" + configValues[3]);
-	        			d.setTopic(ExerciseTopic.RELATIVES);
-	        			d.setSubtopic(data.getStamp());
-						exercises.add(d);
-					}
+				}
+				
+				if (d != null) {
+        			d.setExerciseTitle(data.getTocId() + FeedBookExerciseType.getFeedbookId(configValues.getFeedbookType()));
+        			d.setTopic(ExerciseTopic.RELATIVES);
+        			d.setSubtopic(data.getStamp());
+					exercises.add(d);
 				}
 			} catch(Exception e) {
-				if(configValues != null && configValues.length > 3) {
-					ServerLogger.get().error(e, "Exercise " + data.getStamp().replace("/", "_") + "/" + data.getActivity() + "/" + configValues[2] + "/" + configValues[3] + " could not be generated.\n" + e.toString());
-				} else {
-					ServerLogger.get().error(e, "An exercise could not be generated.\n" + e.toString());
-				}
+				ServerLogger.get().error(e, "Exercise " + data.getStamp().replace("/", "_") + "/" + data.getActivity() + "/" + configValues.getSubtopic() + "/" + configValues.getFeedbookType() + " could not be generated.\n" + e.toString());
 			}
 		}
 
@@ -683,6 +672,22 @@ public class RelativeConfigParser extends ConfigParser {
 					commonReferenceClause1 = new Pair<>(position.first, position.first);
 					commonReferenceClause2 = new Pair<>(position2.first, position2.first);
 					break;
+				}
+			}
+		}
+		
+		if((commonReferenceClause1 == null || commonReferenceClause2 == null) && itemData.getPronoun().equals("where")) {
+			// there could be a preposition with the common referent
+			for(Pair<Integer, String> position : itemData.getPositionsClause1()) {
+				String posWithoutFirstToken = position.second.substring(position.second.indexOf(" ") + 1);
+				for(Pair<Integer, String> position2 : itemData.getPositionsClause2()) {
+					String pos2WithoutFirstToken = position2.second.substring(position2.second.indexOf(" ") + 1);
+					if(position.first != 2 && position2.first != 2 && (position.second.equals(pos2WithoutFirstToken) 
+							|| position2.second.equals(posWithoutFirstToken) || posWithoutFirstToken.equals(pos2WithoutFirstToken))) {
+						commonReferenceClause1 = new Pair<>(position.first, position.first);
+						commonReferenceClause2 = new Pair<>(position2.first, position2.first);
+						break;
+					}
 				}
 			}
 		}

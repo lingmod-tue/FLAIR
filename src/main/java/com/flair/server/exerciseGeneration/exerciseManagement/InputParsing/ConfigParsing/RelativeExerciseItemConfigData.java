@@ -7,8 +7,6 @@ import com.flair.shared.exerciseGeneration.Pair;
 public class RelativeExerciseItemConfigData extends ExerciseItemConfigData {
 	
 	private String pronoun;
-	private Pair<Integer, Integer> commonReferenceClause1;
-	private Pair<Integer, Integer> commonReferenceClause2;
 	private ArrayList<Pair<Integer, String>> positionsClause1 = new ArrayList<>();
 	private ArrayList<Pair<Integer, String>> positionsClause2 = new ArrayList<>();
 	private ArrayList<String> distractors = new ArrayList<>();
@@ -17,24 +15,13 @@ public class RelativeExerciseItemConfigData extends ExerciseItemConfigData {
 	private String contactRelativeSentence;
 	private String alternativeRelativeSentence;
 	private String feedback;
+	private ArrayList<RelativeSentence> relativeSentences = new ArrayList<>();
 	
 	public String getPronoun() {
 		return pronoun;
 	}
 	public void setPronoun(String pronoun) {
 		this.pronoun = pronoun;
-	}
-	public Pair<Integer,Integer> getCommonReferenceClause1() {
-		return commonReferenceClause1;
-	}
-	public void setCommonReferenceClause1(Pair<Integer, Integer> commonReferenceClause1) {
-		this.commonReferenceClause1 = commonReferenceClause1;
-	}
-	public Pair<Integer,Integer> getCommonReferenceClause2() {
-		return commonReferenceClause2;
-	}
-	public void setCommonReferenceClause2(Pair<Integer, Integer> commonReferenceClause2) {
-		this.commonReferenceClause2 = commonReferenceClause2;
 	}
 	public ArrayList<Pair<Integer, String>> getPositionsClause1() {
 		return positionsClause1;
@@ -81,5 +68,11 @@ public class RelativeExerciseItemConfigData extends ExerciseItemConfigData {
 	public void setFeedback(String feedback) {
 		this.feedback = feedback;
 	}
-									
+	public ArrayList<RelativeSentence> getRelativeSentences() {
+		return relativeSentences;
+	}
+	public void setDistractors(ArrayList<String> distractors) {
+		this.distractors = distractors;
+	}
+										
 }

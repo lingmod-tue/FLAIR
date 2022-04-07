@@ -17,6 +17,7 @@ public class RelativeHintGenerator implements HintGenerator {
 	public void generateHints(ExerciseData data) {
 		//data.setSupport("Relative clauses require <br> the use of words such as “that”, <br> “who”, “which”, “whose”, “where” or <br> “whom”. See the information <br> at the bottom.");
 		
+		/*
 		String secondInstruction = SECOND_INSTRUCTION_START;
 		if(data.getSubtopic().equals("subject who/which")) {
 			secondInstruction += WHO_EXAMPLE + WHICH_EXAMPLE;
@@ -34,6 +35,8 @@ public class RelativeHintGenerator implements HintGenerator {
 		}
 		
 		secondInstruction += SECOND_INSTRUCTION_END;
-		data.setSecondInstructions(secondInstruction);
+		data.setSecondInstructions(secondInstruction);*/
+		
+		data.setHintLink("Tip zu defining relative clauses|/media/lif/WebContent/LiF30.html");
 	}
 }

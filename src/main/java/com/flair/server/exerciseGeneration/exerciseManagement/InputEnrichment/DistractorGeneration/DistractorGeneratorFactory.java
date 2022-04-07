@@ -15,6 +15,8 @@ public class DistractorGeneratorFactory {
     	    	return new PastSCDistractorGenerator();
             } else if(topic.equals(ExerciseTopic.PRESENT)) {
             	return new PresentSCDistractorGenerator();
+        	} else if(topic.equals(ExerciseTopic.RELATIVES)) {
+            	return new RelativesSCDistractorGenerator();
         	} else {
         		throw new IllegalArgumentException();
             }            

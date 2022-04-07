@@ -580,16 +580,12 @@
 				</m:MaterialRow>
 			</m:MaterialRow>
 
-			<!-- <m:MaterialRow padding="0" margin="0" ui:field="pnlFileUplaod" visible="false"> 
-				<g:FileUpload ui:field="btnFileUpload"></g:FileUpload> </m:MaterialRow> -->
-
 			<m:MaterialRow margin="0" padding="0">
 				<m:MaterialButton ui:field="btnPreviewExercise" 
 					text="Preview" type="FLAT" visible="false"
 					textAlign="CENTER" textColor="WHITE" backgroundColor="BLUE"
 					waves="DEFAULT" margin="10" />
 			</m:MaterialRow>
-
 
 			<!-- Document part selection popup -->
 			<m:MaterialDialog ui:field="dlgDocumentSelection"

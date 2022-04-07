@@ -6,6 +6,8 @@ import org.json.simple.JSONObject;
 
 import com.flair.server.exerciseGeneration.exerciseManagement.Distractor;
 
+import edu.stanford.nlp.util.StringUtils;
+
 
 public class AdvancedFiBContentJsonGenerator extends SimpleExerciseContentJsonGenerator {
 
@@ -31,14 +33,20 @@ public class AdvancedFiBContentJsonGenerator extends SimpleExerciseContentJsonGe
     }
 
     @Override
-    protected String getPlacehholderReplacement(String construction, ArrayList<Distractor> distractorList, String feedbackId, JSONObject jsonObject) {
+    protected String getPlacehholderReplacement(String construction, ArrayList<Distractor> distractorList, String feedbackId, JSONObject jsonObject, ArrayList<String> brackets) {
 
         construction = construction.replace(":", "::").replace("/", "//");
         if(addFeedbackToJson(jsonObject, feedbackId, distractorList)) {
             construction += ":" + feedbackId;
         }
-
-        return "*" + construction + "*";
+        
+        String ret = "*" + construction + "*";
+        
+        if(brackets.size() > 0) {
+        	ret += " (" + StringUtils.join(brackets, ", ") + ")";
+        }
+        
+        return ret;
     }
     
 }

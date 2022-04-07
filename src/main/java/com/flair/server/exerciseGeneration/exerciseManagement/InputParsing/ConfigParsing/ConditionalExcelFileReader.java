@@ -111,7 +111,7 @@ public class ConditionalExcelFileReader extends ExcelFileReader {
 				if(isFirstCol) {
 					// it's a new activity
 					ExerciseConfigData cd = new ExerciseConfigData();
-					cd.getItemData().add(new RelativeExerciseItemConfigData());
+					cd.getItemData().add(new ConditionalExerciseItemConfigData());
 					configData.add(cd);
 				}
 				ExerciseConfigData cd = configData.get(i);
@@ -121,6 +121,11 @@ public class ConditionalExcelFileReader extends ExcelFileReader {
 		    		cd.setStamp(columnValues.get(entry.getValue()).get(i));
 		    	} else if(entry.getValue().equals("item")) {
 					((ConditionalExerciseItemConfigData)cd.getItemData().get(0)).setItem((int)Float.parseFloat(columnValues.get(entry.getValue()).get(i)));
+		    	} else if(entry.getValue().equals("toc nr.")) {
+		    		String value = columnValues.get(entry.getValue()).get(i);
+		    		if(value != null && !value.isEmpty()) {
+		    			cd.setTocId(value);
+		    		}
 		    	} else if(entry.getValue().equals("type 1 or type 2")) {
 		    		((ConditionalExerciseItemConfigData)cd.getItemData().get(0)).setConditionalType((int)Float.parseFloat(columnValues.get(entry.getValue()).get(i)));
 		    	} else if(entry.getValue().equals("Übersetzung if-clause")) {
@@ -275,20 +280,8 @@ public class ConditionalExcelFileReader extends ExcelFileReader {
 		ArrayList<ExerciseConfigData> batchedExercises = new ArrayList<>();
 		int lastActivity = 0;
 		String lastStamp = "";
+		String lastTocId = "";
 		ArrayList<ExerciseItemConfigData> sentences = new ArrayList<>();
-		
-		ArrayList<ExerciseTypeSpec> types = new ArrayList<>();
-		for(Object type : exerciseTypes) {
-			ExerciseTypeSpec t = new ExerciseTypeSpec();
-			String exerciseType = (String)type;
-			t.setSubtopic(exerciseType.contains("Type1vsType2") ? "conditional_types" : "conditional_form");
-			t.setIfClauseFirst(exerciseType.contains("If-clausemainclause"));
-			t.setRandomClauseOrder(exerciseType.contains("Randomclauseorder"));
-			t.setTargetIfClause(exerciseType.contains("Targetonlyif-clause") || exerciseType.contains("Targetbothclauses") || exerciseType.contains("Useif-clause"));
-			t.setTargetMainClause(exerciseType.contains("Targetonlymainclause") || exerciseType.contains("Targetbothclauses") || exerciseType.contains("Usemainclause"));
-			t.setFeedbookType(FeedBookExerciseType.getContainedType(exerciseType));
-			types.add(t);
-		}
 		
 		for(ExerciseConfigData data: configData) {
 			if(lastActivity != 0 && data.getActivity() != lastActivity) {
@@ -296,7 +289,8 @@ public class ConditionalExcelFileReader extends ExcelFileReader {
 				d.setActivity(lastActivity);
 				d.setStamp(lastStamp);
 				d.setItemData(sentences);
-				d.setExerciseType(types);
+				d.setExerciseType(getExerciseTypes(d.getStamp()));
+				d.setTocId(lastTocId);
 				sentences = new ArrayList<>();
 				batchedExercises.add(d);
 			}
@@ -304,6 +298,19 @@ public class ConditionalExcelFileReader extends ExcelFileReader {
 			sentences.add(data.getItemData().get(0));
 			lastStamp = data.getStamp();
 			lastActivity = data.getActivity();
+			if(data.getTocId() != null) {
+				lastTocId = data.getTocId();
+			}
+		}
+		
+		if(lastActivity != 0) {
+			ExerciseConfigData d = new ExerciseConfigData();
+			d.setActivity(lastActivity);
+			d.setStamp(lastStamp);
+			d.setItemData(sentences);
+			d.setExerciseType(getExerciseTypes(d.getStamp()));
+			d.setTocId(lastTocId);
+			batchedExercises.add(d);
 		}
 		
 		return batchedExercises;
@@ -430,4 +437,28 @@ public class ConditionalExcelFileReader extends ExcelFileReader {
 	          		"Formation_Randomclauseorder_JumbledSentences_Targetonlymainclause"
 	};
 	
+	private ArrayList<ExerciseTypeSpec> getExerciseTypes(String stamp) {
+		ArrayList<ExerciseTypeSpec> types = new ArrayList<>();
+		for(String exerciseType : exerciseTypes) {
+			ExerciseTypeSpec t = new ExerciseTypeSpec();
+			if(stamp.equals("Conditional Type") && exerciseType.contains("Type1vsType2")) {
+				t.setSubtopic("conditional_types");
+				t.setIfClauseFirst(exerciseType.contains("If-clausemainclause"));
+				t.setRandomClauseOrder(exerciseType.contains("Randomclauseorder"));
+				t.setTargetIfClause(exerciseType.contains("Targetonlyif-clause") || exerciseType.contains("Targetbothclauses") || exerciseType.contains("Useif-clause"));
+				t.setTargetMainClause(exerciseType.contains("Targetonlymainclause") || exerciseType.contains("Targetbothclauses") || exerciseType.contains("Usemainclause"));
+				t.setFeedbookType(FeedBookExerciseType.getContainedType(exerciseType));
+				types.add(t);
+			} else if(stamp.equals("Conditional") && exerciseType.contains("Formation")) {
+				t.setSubtopic("conditional_form");
+				t.setIfClauseFirst(exerciseType.contains("If-clausemainclause"));
+				t.setRandomClauseOrder(exerciseType.contains("Randomclauseorder"));
+				t.setTargetIfClause(exerciseType.contains("Targetonlyif-clause") || exerciseType.contains("Targetbothclauses") || exerciseType.contains("Useif-clause"));
+				t.setTargetMainClause(exerciseType.contains("Targetonlymainclause") || exerciseType.contains("Targetbothclauses") || exerciseType.contains("Usemainclause"));
+				t.setFeedbookType(FeedBookExerciseType.getContainedType(exerciseType));
+				types.add(t);
+			}
+		}
+		return types;
+	}
 }

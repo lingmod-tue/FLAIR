@@ -3,6 +3,7 @@ package com.flair.server.exerciseGeneration.exerciseManagement.nlpManagement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 
@@ -17,6 +18,7 @@ import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.pipeline.Annotation;
+import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.TreeCoreAnnotations;
@@ -31,12 +33,14 @@ import simplenlg.phrasespec.SPhraseSpec;
 public class NlpManager {
 
     public NlpManager(CoreNlpParser parser, SimpleNlgParser generator, String text, OpenNlpParser lemmatizer) {
+    	this.pipeline = parser.pipeline();
     	this.plainText = text;
-    	initializeAnnotations(parser);
+    	initializeAnnotations();
     	this.generator = generator;
     	this.lemmatizer = lemmatizer;
     }
     
+    protected StanfordCoreNLP pipeline = null;
     protected SimpleNlgParser generator;
     protected OpenNlpParser lemmatizer;
 
@@ -50,9 +54,9 @@ public class NlpManager {
      * @param parser    The NLP parser
      * @param text      The text to annotate
      */
-    private void initializeAnnotations(CoreNlpParser parser) {
+    private void initializeAnnotations() {
         Annotation docAnnotation = new Annotation(plainText);
-        parser.pipeline().annotate(docAnnotation);
+        pipeline.annotate(docAnnotation);
 
         for(CoreMap sentence : docAnnotation.get(CoreAnnotations.SentencesAnnotation.class)) {
             SentenceAnnotations annotatedSentence = annotateSentence(sentence);
@@ -67,7 +71,7 @@ public class NlpManager {
      * @param sentence  The sentence to annotate
      * @return          The annotated sentence
      */
-    private SentenceAnnotations annotateSentence(CoreMap sentence) {
+    protected SentenceAnnotations annotateSentence(CoreMap sentence) {
         if (sentence.size() == 0) {
             return null;
         }
@@ -694,14 +698,14 @@ public class NlpManager {
      * @return              The nodes governed by the governor
      */
     ArrayList<IndexedWord> getDescendants(Collection<TypedDependency> dependencies, IndexedWord governor) {
-        ArrayList<IndexedWord> descendants = new ArrayList<>();
+        HashSet<IndexedWord> descendants = new HashSet<>();
         for(TypedDependency dependency : dependencies) {
             if(dependency.gov().equals(governor)) {
                 descendants.add(dependency.dep());
             }
         }
 
-        return descendants;
+        return new ArrayList<>(descendants);
     }
 
     /**
@@ -1288,6 +1292,32 @@ public class NlpManager {
         }
     	
     	return null;
+    }
+    
+    /**
+     * Determines the dependents of the root and sorts them.
+     * @param dependencies	The annotated dependencies
+     * @param root			The item for which to determine the dependents
+     * @return	The dependents (including the root) as sorted list
+     */
+    protected ArrayList<IndexedWord> getDependents(Collection<TypedDependency> dependencies,
+                                                 IndexedWord root) {
+        HashSet<IndexedWord> components = new HashSet<>();
+        ArrayList<IndexedWord> newDescendants = getDescendants(dependencies, root);
+        while(newDescendants.size() > 0) {
+            ArrayList<IndexedWord> currentDescendants = new ArrayList<>();
+            for(IndexedWord descendant : newDescendants) {
+                currentDescendants.addAll(getDescendants(dependencies, descendant));
+            }
+            components.addAll(newDescendants);
+            newDescendants = currentDescendants;
+        }
+
+        components.add(root);
+        ArrayList<IndexedWord> comps = new ArrayList<>(components);
+        comps.sort(Comparator.comparingInt(IndexedWord::beginPosition));
+
+        return comps;
     }
     
 }

@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 
-import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.dom4j.DocumentFactory;
 import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
@@ -23,6 +23,9 @@ public abstract class SimpleExerciseXmlGenerator {
 		}
 		if(exerciseDefinition.getSupport() != null) {
 			v.setSupport(exerciseDefinition.getSupport());
+		}
+		if(exerciseDefinition.getHintLink() != null) {
+			v.setLifLink(exerciseDefinition.getHintLink());
 		}
 		
 		return generateFeedBookInputXml(v).getBytes(StandardCharsets.UTF_8);
@@ -57,12 +60,10 @@ public abstract class SimpleExerciseXmlGenerator {
 		
 	protected void addAttributes(XmlValues values, Element subTask) { 
 		subTask.addAttribute("index", values.getIndex() + "");
-		subTask.addAttribute("instruction", StringEscapeUtils.escapeXml(values.getInstructions()));
+		subTask.addAttribute("instruction", StringEscapeUtils.escapeXml11(values.getInstructions()));
 		subTask.addAttribute("non_en_input", "false");
 		subTask.addAttribute("grammar_topics", "");
 		subTask.addAttribute("task_topics", "");
-		subTask.addAttribute("instruction", values.getInstructions());
-		subTask.addAttribute("sort_index", values.getIndex() + "");
 		subTask.addAttribute("given_words", values.getGivenWords());
 		subTask.addAttribute("task_type", values.getTaskType());
 		subTask.addAttribute("task_orient", values.getTaskOrient());
@@ -70,7 +71,7 @@ public abstract class SimpleExerciseXmlGenerator {
 		subTask.addAttribute("feedback_disabled", String.valueOf(values.isFeedbackDisabled()));
 		subTask.addAttribute("support", values.getSupport());
 		subTask.addAttribute("second_instruction", values.getSecondInstruction());
-		//subTask.addAttribute("evaluate_at_completion", String.valueOf(values.isEvaluateAtComplete()));
+		subTask.addAttribute("lif_link", values.getLifLink());
 	}
 	    
     /**

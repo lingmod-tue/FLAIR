@@ -336,15 +336,17 @@ public class Indexer {
             	Pair<Integer, Integer> plainTextBlanks = plainTextConstruction.getConstructionIndices();
                 int blanksStartIndex = plainTextBlanks.first;
                 int blanksEndIndex = plainTextBlanks.second;
-                int fragmentStartIndex = fragment.getPlainTextStartIndex();
-                int fragmentEndIndex = fragmentStartIndex + fragment.getText().length();
-                int htmlToPlainTextOffset = fragment.getStartIndex() - fragmentStartIndex;
-
-                if(blanksStartIndex >= fragmentStartIndex && blanksStartIndex < fragmentEndIndex) {
-                    fragment.getBlanksBoundaries().add(new Blank(blanksStartIndex + htmlToPlainTextOffset, plainTextIndices.indexOf(plainTextConstruction)));
-                }
-                if(blanksEndIndex > fragmentStartIndex && blanksEndIndex <= fragmentEndIndex) {
-                    fragment.getBlanksBoundaries().add(new Blank(blanksEndIndex + htmlToPlainTextOffset, plainTextIndices.indexOf(plainTextConstruction), plainTextConstruction));
+                if(blanksStartIndex < blanksEndIndex - 1) {
+	                int fragmentStartIndex = fragment.getPlainTextStartIndex();
+	                int fragmentEndIndex = fragmentStartIndex + fragment.getText().length();
+	                int htmlToPlainTextOffset = fragment.getStartIndex() - fragmentStartIndex;
+	
+	                if(blanksStartIndex >= fragmentStartIndex && blanksStartIndex < fragmentEndIndex) {
+	                    fragment.getBlanksBoundaries().add(new Blank(blanksStartIndex + htmlToPlainTextOffset, plainTextIndices.indexOf(plainTextConstruction)));
+	                }
+	                if(blanksEndIndex > fragmentStartIndex && blanksEndIndex <= fragmentEndIndex) {
+	                    fragment.getBlanksBoundaries().add(new Blank(blanksEndIndex + htmlToPlainTextOffset, plainTextIndices.indexOf(plainTextConstruction), plainTextConstruction));
+	                }
                 }
             }
         }
