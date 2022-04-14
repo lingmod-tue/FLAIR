@@ -288,14 +288,13 @@ public class RelativeNlpManager extends NlpManager {
     		boolean excludeVerbFromRel) {
     	ArrayList<Token> relToks = new ArrayList<>();
     	ArrayList<Token> mainToks = new ArrayList<>();
-        Pair<Boolean, String> rv = determineClauses(dependencyGraph, tokens, rs, false, relToks, mainToks);
-        if(rv == null) {
-        	return;
-        }
-        if(!rv.first) {
+        
+        if(!determineClauses(dependencyGraph, tokens, rs, false, relToks, mainToks)) {
+        	return;	// we can't parse it correctly, so be better not use this sentence
+        	/*
         	relToks.clear();
         	mainToks.clear();
-        	determineClauses(dependencyGraph, tokens, rs, true, relToks, mainToks);
+        	determineClauses(dependencyGraph, tokens, rs, true, relToks, mainToks);*/
         }
         
         ArrayList<Pair<Integer, Integer>> chunks = new ArrayList<>();
@@ -349,7 +348,7 @@ public class RelativeNlpManager extends NlpManager {
             }
         	
             if(!standardPronouns.contains(rs.pronoun.value())) {
-            	relToks.add(new Token(rv.second == null ? "at" : rv.second, null, 0));
+            	relToks.add(new Token(rs.prepositionOfCommonReferent == null ? "at" : rs.prepositionOfCommonReferent.value(), null, 0));
             }
             
             // add the referent
@@ -375,7 +374,7 @@ public class RelativeNlpManager extends NlpManager {
         rs.chunksClause2 = getClauseChunks(mainToks, rs);
     }
     
-    private Pair<Boolean, String> determineClauses(Collection<TypedDependency> dependencyGraph, List<CoreLabel> tokens, ProcessedRelativeSentence rs,
+    private boolean determineClauses(Collection<TypedDependency> dependencyGraph, List<CoreLabel> tokens, ProcessedRelativeSentence rs,
     		boolean excludeVerbFromRel, ArrayList<Token> relToks, ArrayList<Token> mainToks) {
     	ArrayList<IndexedWord> relClDeps = null;
         IndexedWord relClauseReferent = null;
@@ -385,19 +384,38 @@ public class RelativeNlpManager extends NlpManager {
                 relClauseReferent = dep.gov();
                 
                 if(excludeVerbFromRel) {
-                	Integer startIndex = null;
-                	Integer endIndex = null;
+                	Integer si = null;
+                	Integer ei = null;
                 	for(int i = 0; i < relClDeps.size(); i++) {
+                		Integer startIndex = null;
+                    	Integer endIndex = null;
+                    	
                 		IndexedWord t = relClDeps.get(i);
                 		if(t.tag().startsWith("V") || t.tag().equalsIgnoreCase("MD")) {
-                			if(startIndex == null || startIndex > i) {
-                				startIndex = i;
+                			ArrayList<IndexedWord> verbDeps = getDependents(dependencyGraph, t);
+                			for(int j = 0; j < verbDeps.size(); j++) {
+                				if(relClDeps.contains(verbDeps.get(j))) {
+                					int index = relClDeps.indexOf(verbDeps.get(j));
+                					
+                					if(verbDeps.get(j).tag().startsWith("V") || verbDeps.get(j).tag().equalsIgnoreCase("MD")) {
+                            			if(startIndex == null || startIndex > index) {
+                            				startIndex = index;
+                            			}
+                					}
+                					if(endIndex == null || endIndex < index) {
+                						endIndex = index;
+                					}
+                				}
                 			}
-                			endIndex = i;
+                		}
+                		
+                		if(startIndex != null) {
+                			si = startIndex;
+                			ei = endIndex;
                 		}
                 	}
-                	if(startIndex != null) {
-                		for(int i = endIndex; i >= endIndex; i--) {
+                	if(si != null) {
+                		for(int i = ei; i >= si; i--) {
                 			relClDeps.remove(i);
                 		}
                 	}
@@ -408,10 +426,9 @@ public class RelativeNlpManager extends NlpManager {
         }
 
         if(relClDeps == null) {
-            return null;
+            return false;
         }
 
-        String preposition = null;
         ArrayList<IndexedWord> depsOfMainRef = getDependents(dependencyGraph, relClauseReferent);
         ArrayList<IndexedWord> depsToRemove = new ArrayList<>();
         for(IndexedWord w : depsOfMainRef) {
@@ -426,22 +443,17 @@ public class RelativeNlpManager extends NlpManager {
         for(IndexedWord w : depsToRemove) {
         	depsOfMainRef.remove(w);
         }
-
-        for(IndexedWord depOfMainRef : depsOfMainRef) {
-            if(depOfMainRef.tag().equalsIgnoreCase("IN") && dependencyGraph.stream().anyMatch(g -> g.dep().equals(depOfMainRef) && g.reln().getShortName().equalsIgnoreCase("case"))) {
-                // the common referent has a dependent with tag IN and incoming relation case, so we have a preposition for the common referent
-                preposition = depOfMainRef.value();
-                rs.commonReferentInMainHasPreposition = true;
-                break;
-            }
-        }
         
         ArrayList<IndexedWord> commonReferentWithoutPreposition = new ArrayList<>();
         for(IndexedWord depOfMainRef : depsOfMainRef) {
-            if(!depOfMainRef.tag().equalsIgnoreCase("TO") && !(depOfMainRef.tag().equalsIgnoreCase("IN") &&
-                    dependencyGraph.stream().anyMatch(g -> g.dep().equals(depOfMainRef) && g.reln().getShortName().equalsIgnoreCase("case"))) &&
-            !relClDeps.contains(depOfMainRef)) {
-                commonReferentWithoutPreposition.add(depOfMainRef);
+            if(!relClDeps.contains(depOfMainRef) && !punctuations.contains(depOfMainRef.value())) {
+            	if((commonReferentWithoutPreposition.size() > 0 || !depOfMainRef.tag().equalsIgnoreCase("TO") && !(depOfMainRef.tag().equalsIgnoreCase("IN") &&
+                        dependencyGraph.stream().anyMatch(g -> g.dep().equals(depOfMainRef) && g.reln().getShortName().equalsIgnoreCase("case"))))) {
+                    commonReferentWithoutPreposition.add(depOfMainRef);
+            	} else {
+                    rs.commonReferentInMainHasPreposition = true;
+                    rs.prepositionOfCommonReferent = depOfMainRef;
+            	}
             } 
         }
         rs.commonReferentInMain = commonReferentWithoutPreposition;
@@ -459,7 +471,8 @@ public class RelativeNlpManager extends NlpManager {
             	mainToks.add(tok);
                 mainTokens.add(token);
                 if(token.tag().equalsIgnoreCase("IN") && token.value().equalsIgnoreCase("that") && dependencyGraph.stream()
-                		.anyMatch(d -> d.dep().beginPosition() == token.beginPosition() && d.reln().getShortName().equalsIgnoreCase("mark"))) {
+                		.anyMatch(d -> d.dep().beginPosition() == token.beginPosition() && d.reln().getShortName().equalsIgnoreCase("mark")) &&
+                		!rs.commonReferentInMain.stream().anyMatch(t -> token.beginPosition() == t.beginPosition())) {
                 	rs.mainToksToExcludeInRel.add(tok);
                 }
             }
@@ -470,12 +483,13 @@ public class RelativeNlpManager extends NlpManager {
         boolean mainClauseHasVerb = false;
         for(CoreLabel token : mainTokens) {
         	//VBN is technically incorrect, but sometimes the verb is incorrectly annotated as participle and it shouln't hurt to have it here
-        	if(token.tag().equalsIgnoreCase("VBD") ||token.tag().equalsIgnoreCase("VBP") || token.tag().equalsIgnoreCase("VBZ") ||token.tag().equalsIgnoreCase("VBN")) {
+        	if(token.tag().equalsIgnoreCase("VBD") ||token.tag().equalsIgnoreCase("VBP") || token.tag().equalsIgnoreCase("VBZ") ||
+        			token.tag().equalsIgnoreCase("VBN") || token.tag().equalsIgnoreCase("MD")) {
         		mainClauseHasVerb = true;
         	}
         }
         
-        return new Pair<>(mainClauseHasVerb, preposition);
+        return mainClauseHasVerb;
     }
     
     /**
@@ -655,16 +669,33 @@ public class RelativeNlpManager extends NlpManager {
                 }
             }
 
+            // add the preposition
+            if(rs.prepositionOfCommonReferent != null && 
+            		rs.prepositionOfCommonReferent.beginPosition() >= chunksClause2.get(0).start && 
+            		rs.prepositionOfCommonReferent.endPosition() <= chunksClause2.get(chunksClause2.size() - 1).end) {
+            	chunks.add(new RelativeSentenceChunk(rs.prepositionOfCommonReferent.value()));
+            }
+            
             // add the pronoun
             RelativeSentenceChunk chunk = new RelativeSentenceChunk(rs.pronoun.value());
             chunk.setPronoun(true);
             chunks.add(chunk);
-
-            // add everything in the relative clause except for the common referent
+            
+            // add everything in the relative clause except for the common referent and the preposition
             for(Token c : chunksClause2) {
                 if(!(c.start >= commonReferent.first && c.start <= commonReferent.second) &&
                 		rs.mainToksToExcludeInRel.stream().noneMatch(t -> t.start.equals(c.start) && t.end.equals(c.end))) {
-                    chunks.add(new RelativeSentenceChunk(c.value));
+                	if(rs.prepositionOfCommonReferent != null && c.start <= rs.prepositionOfCommonReferent.beginPosition() && c.end >= rs.prepositionOfCommonReferent.endPosition()) {
+                		// we have to check whether there is something else in the chunk which we want to keep
+                		if(c.start < rs.prepositionOfCommonReferent.beginPosition()) {
+                			chunks.add(new RelativeSentenceChunk(c.value.substring(0, rs.prepositionOfCommonReferent.beginPosition() - c.start)));
+                		}
+                		if(c.end > rs.prepositionOfCommonReferent.beginPosition()) {
+                			chunks.add(new RelativeSentenceChunk(c.value.substring(rs.prepositionOfCommonReferent.endPosition() - c.start)));
+                		}
+                	} else {
+                		chunks.add(new RelativeSentenceChunk(c.value));
+                	}
                 }
             }
 
@@ -777,6 +808,7 @@ public class RelativeNlpManager extends NlpManager {
         public String clause1 = null;
         public String clause2 = null;
         public boolean commonReferentInMainHasPreposition = false;
+        public IndexedWord prepositionOfCommonReferent = null;
         public ArrayList<IndexedWord> commonReferentInMain = null;
         public ArrayList<Token> chunksClause1 = new ArrayList<>();
         public ArrayList<Token> chunksClause2 = new ArrayList<>();

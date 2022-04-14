@@ -8,6 +8,8 @@ public class ExcelFileReaderFactory {
 		if(topic.equals(ExerciseTopic.CONDITIONALS)) {   
 			if(sheet == 0) {
 				return new ConditionalExcelFileReader();
+			} else if(sheet == 1) {
+        		return new ConditionalExcelFileReader();
 			} else {
 				return null;
 			}

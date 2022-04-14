@@ -23,46 +23,32 @@ public class ConditionalExcelFileReader extends ExcelFileReader {
 		HashMap<String, ArrayList<String>> columnValues = new HashMap<>();
 		HashMap<Integer, String> columnHeaders = new HashMap<>();
 
-		// get the column index of if clause positions and main clause positions
+		// get the column indices of clause positions
 		row = sheet.getRow(0);
 		int ifClausePositionsStart = 0;
 		int mainClausePositionsStart = 0;
 		for(int c = 0; c < nCols; c++) {
 			cell = row.getCell((short)c);
-            if(cell != null && cell.toString().equals("if-clause position")) {
+			if(cell != null && cell.toString().equals("if-clause position")) {
             	ifClausePositionsStart = c;
             } else if(cell != null && cell.toString().equals("main-clause position")) {
             	mainClausePositionsStart = c;
             }
 		}
 		
-		int counter = 0;
-		int r = 0;
-		int activityCounter = 1;
-		String activityType = "";
+		int counter = 1;
+		int r = 1;
 		while(counter < nRows) {
 		    row = sheet.getRow(r);
 		    if(row != null) {    
 		        for(int c = 0; c < nCols; c++) {
 		            cell = row.getCell((short)c);
-		            
-		            if(cell != null) {
+		            if(cell != null && sheet.getRow(1).getCell((short)c) != null && !sheet.getRow(1).getCell((short)c).toString().isEmpty() && row.getCell(3) != null && !row.getCell(3).getStringCellValue().isEmpty()) {
 		            	cell.setCellType(CellType.STRING);
 		            	String cellValue = xTrim(cell.toString());
 	
 			            if(!cellValue.isEmpty()) {
-		            		
-		            		if(cellValue.equals("If-clause") || cellValue.startsWith("IV conditional type 1 vs conditional type 2")) {
-		            			activityType = cellValue.equals("If-clause") ? "if" : "1vs2";
-		            			activityCounter = 1;
-		            		}
-		            		
-			            	if(activityCounter == 1) {
-			            		if(!columnValues.containsKey("Activity type")) {
-			            			columnValues.put("Activity type", new ArrayList<String>());
-					        		columnHeaders.put(-1, "Activity type");
-			            		}
-			            	} else if(activityCounter == 2) {
+			            	if(r == 1) {
 			            		if(c >= ifClausePositionsStart && c < mainClausePositionsStart) {
 			            			cellValue = "if-clause position " + cellValue;
 			            		} else if(c >= mainClausePositionsStart) {
@@ -74,24 +60,30 @@ public class ConditionalExcelFileReader extends ExcelFileReader {
 					        		columnHeaders.put(c, cellValue);
 			            		}
 				        	} else {
-				        		if(c == 0) {
-				        			ArrayList<String> column = columnValues.get("Activity type");
-					        		column.add(activityType);
-				        		}
 				        		ArrayList<String> column = columnValues.get(columnHeaders.get(c));
-				        		column.add(cellValue);
+				        		if(column != null) {
+				        			column.add(cellValue);
+				        		}
 				        	}
 			            } else {
-			            	if(activityCounter != 1 && sheet.getRow(1).getCell((short)c) != null && !sheet.getRow(1).getCell((short)c).toString().isEmpty() && row.getCell(0) != null) {
+			            	if(r != 1 && sheet.getRow(1).getCell((short)c) != null && !sheet.getRow(1).getCell((short)c).toString().isEmpty() && row.getCell(3) != null) {
 			            		ArrayList<String> column = columnValues.get(columnHeaders.get(c));
-				        		column.add("");
+			            		if(column != null) {
+					        		column.add("");
+				        		}
 			            	}
 			            }
-		            } 
+		            } else {
+		            	if(r != 1 && sheet.getRow(1).getCell((short)c) != null && !sheet.getRow(1).getCell((short)c).toString().isEmpty() && row.getCell(3) != null && !row.getCell(3).getStringCellValue().isEmpty()) {
+		            		ArrayList<String> column = columnValues.get(columnHeaders.get(c));
+		            		if(column != null) {
+				        		column.add("");
+			        		}
+		            	}
+		            }
 		        }
 		        
 		        counter++;
-		        activityCounter++;
 		    }
 		    r++;
 		}
@@ -274,9 +266,7 @@ public class ConditionalExcelFileReader extends ExcelFileReader {
 				Collections.sort(cd.getPositionsMainClause(), (i1, i2) -> i1.first < i2.first ? -1 : 1);
 			}
 		}
-		
-		Collections.sort(configData, (i1, i2) -> i1.getActivity() < i2.getActivity() ? -1 : 1);
-		
+				
 		ArrayList<ExerciseConfigData> batchedExercises = new ArrayList<>();
 		int lastActivity = 0;
 		String lastStamp = "";
@@ -317,38 +307,6 @@ public class ConditionalExcelFileReader extends ExcelFileReader {
 	}
 	
 	private static final String[] exerciseTypes = new String[] {
-			"Type1vsType2_If-clausemainclause_SingleChoice2options_Targetonlyif-clause",
-	          		"Type1vsType2_If-clausemainclause_SingleChoice2options_Targetonlymainclause",
-	          		"Type1vsType2_If-clausemainclause_SingleChoice2options_Targetbothclauses",
-	          		"Type1vsType2_If-clausemainclause_SingleChoice4options_Targetonlyif-clause",
-	          		"Type1vsType2_If-clausemainclause_SingleChoice4options_Targetonlymainclause",
-	          		"Type1vsType2_If-clausemainclause_SingleChoice4options_Targetbothclauses",
-	          		"Type1vsType2_If-clausemainclause_Fill-in-the-Blankslemmainparentheses_Targetonlyif-clause",
-	          		"Type1vsType2_If-clausemainclause_Fill-in-the-Blankslemmainparentheses_Targetonlymainclause",
-	          		"Type1vsType2_If-clausemainclause_Fill-in-the-Blankslemmainparentheses_Targetbothclauses",
-	          		"Type1vsType2_If-clausemainclause_Fill-in-the-Blankslemmadistractorinparentheses_Targetonlyif-clause",
-	          		"Type1vsType2_If-clausemainclause_Fill-in-the-Blankslemmadistractorinparentheses_Targetonlymainclause",
-	          		"Type1vsType2_If-clausemainclause_Fill-in-the-Blankslemmadistractorinparentheses_Targetbothclauses",
-	          		"Type1vsType2_If-clausemainclause_Fill-in-the-Blankslemmasininstructions_Targetonlyif-clause",
-	          		"Type1vsType2_If-clausemainclause_Fill-in-the-Blankslemmasininstructions_Targetonlymainclause",
-	          		"Type1vsType2_If-clausemainclause_Fill-in-the-Blankslemmasininstructions_Targetbothclauses",
-	          		"Type1vsType2_If-clausemainclause_Categorize",
-	          		"Type1vsType2_Mainclauseif-clause_SingleChoice2options_Targetonlyif-clause",
-	          		"Type1vsType2_Mainclauseif-clause_SingleChoice2options_Targetonlymainclause",
-	          		"Type1vsType2_Mainclauseif-clause_SingleChoice2options_Targetbothclauses",
-	          		"Type1vsType2_Mainclauseif-clause_SingleChoice4options_Targetonlyif-clause",
-	          		"Type1vsType2_Mainclauseif-clause_SingleChoice4options_Targetonlymainclause",
-	          		"Type1vsType2_Mainclauseif-clause_SingleChoice4options_Targetbothclauses",
-	          		"Type1vsType2_Mainclauseif-clause_Fill-in-the-Blankslemmainparentheses_Targetonlyif-clause",
-	          		"Type1vsType2_Mainclauseif-clause_Fill-in-the-Blankslemmainparentheses_Targetonlymainclause",
-	          		"Type1vsType2_Mainclauseif-clause_Fill-in-the-Blankslemmainparentheses_Targetbothclauses",
-	          		"Type1vsType2_Mainclauseif-clause_Fill-in-the-Blankslemmadistractorinparentheses_Targetonlyif-clause",
-	          		"Type1vsType2_Mainclauseif-clause_Fill-in-the-Blankslemmadistractorinparentheses_Targetonlymainclause",
-	          		"Type1vsType2_Mainclauseif-clause_Fill-in-the-Blankslemmadistractorinparentheses_Targetbothclauses",
-	          		"Type1vsType2_Mainclauseif-clause_Fill-in-the-Blankslemmasininstructions_Targetonlyif-clause",
-	          		"Type1vsType2_Mainclauseif-clause_Fill-in-the-Blankslemmasininstructions_Targetonlymainclause",
-	          		"Type1vsType2_Mainclauseif-clause_Fill-in-the-Blankslemmasininstructions_Targetbothclauses",
-	          		"Type1vsType2_Mainclauseif-clause_Categorize",
 	          		"Type1vsType2_Randomclauseorder_SingleChoice2options_Targetonlyif-clause",
 	          		"Type1vsType2_Randomclauseorder_SingleChoice2options_Targetonlymainclause",
 	          		"Type1vsType2_Randomclauseorder_SingleChoice2options_Targetbothclauses",
@@ -365,53 +323,6 @@ public class ConditionalExcelFileReader extends ExcelFileReader {
 	          		"Type1vsType2_Randomclauseorder_Fill-in-the-Blankslemmasininstructions_Targetonlymainclause",
 	          		"Type1vsType2_Randomclauseorder_Fill-in-the-Blankslemmasininstructions_Targetbothclauses",
 	          		"Type1vsType2_Randomclauseorder_Categorize",
-	          		"Formation_If-clausemainclause_SingleChoice2options_Targetonlyif-clause",
-	          		"Formation_If-clausemainclause_SingleChoice2options_Targetonlymainclause",
-	          		"Formation_If-clausemainclause_SingleChoice2options_Targetbothclauses",
-	          		"Formation_If-clausemainclause_SingleChoice4options_Targetonlyif-clause",
-	          		"Formation_If-clausemainclause_SingleChoice4options_Targetonlymainclause",
-	          		"Formation_If-clausemainclause_SingleChoice4options_Targetbothclauses",
-	          		"Formation_If-clausemainclause_Fill-in-the-Blankslemmainparentheses_Targetonlyif-clause",
-	          		"Formation_If-clausemainclause_Fill-in-the-Blankslemmainparentheses_Targetonlymainclause",
-	          		"Formation_If-clausemainclause_Fill-in-the-Blankslemmainparentheses_Targetbothclauses",
-	          		"Formation_If-clausemainclause_Fill-in-the-Blankslemmadistractorinparentheses_Targetonlyif-clause",
-	          		"Formation_If-clausemainclause_Fill-in-the-Blankslemmadistractorinparentheses_Targetonlymainclause",
-	          		"Formation_If-clausemainclause_Fill-in-the-Blankslemmadistractorinparentheses_Targetbothclauses",
-	          		"Formation_If-clausemainclause_Half-open_Targetonlyif-clause",
-	          		"Formation_If-clausemainclause_Half-open_Targetonlymainclause",
-	          		"Formation_If-clausemainclause_Half-open_Targetbothclauses",
-	          		"Formation_If-clausemainclause_Fill-in-the-Blankslemmasininstructions_Targetonlyif-clause",
-	          		"Formation_If-clausemainclause_Fill-in-the-Blankslemmasininstructions_Targetonlymainclause",
-	          		"Formation_If-clausemainclause_MarktheWords_Targetonlyif-clause",
-	          		"Formation_If-clausemainclause_MarktheWords_Targetonlymainclause",
-	          		"Formation_If-clausemainclause_Memory_Useif-clause",
-	          		"Formation_If-clausemainclause_Memory_Usemainclause",
-	          		"Formation_If-clausemainclause_JumbledSentences_Targetonlyif-clause",
-	          		"Formation_If-clausemainclause_JumbledSentences_Targetonlymainclause",
-	          		"Formation_If-clausemainclause_JumbledSentences_Targetbothclauses",
-	          		"Formation_Mainclauseif-clause_SingleChoice2options_Targetonlyif-clause",
-	          		"Formation_Mainclauseif-clause_SingleChoice2options_Targetonlymainclause",
-	          		"Formation_Mainclauseif-clause_SingleChoice2options_Targetbothclauses",
-	          		"Formation_Mainclauseif-clause_SingleChoice4options_Targetonlyif-clause",
-	          		"Formation_Mainclauseif-clause_SingleChoice4options_Targetonlymainclause",
-	          		"Formation_Mainclauseif-clause_SingleChoice4options_Targetbothclauses",
-	          		"Formation_Mainclauseif-clause_Fill-in-the-Blankslemmainparentheses_Targetonlyif-clause",
-	          		"Formation_Mainclauseif-clause_Fill-in-the-Blankslemmainparentheses_Targetonlymainclause",
-	          		"Formation_Mainclauseif-clause_Fill-in-the-Blankslemmainparentheses_Targetbothclauses",
-	          		"Formation_Mainclauseif-clause_Fill-in-the-Blankslemmadistractorinparentheses_Targetonlyif-clause",
-	          		"Formation_Mainclauseif-clause_Fill-in-the-Blankslemmadistractorinparentheses_Targetonlymainclause",
-	          		"Formation_Mainclauseif-clause_Fill-in-the-Blankslemmadistractorinparentheses_Targetbothclauses",
-	          		"Formation_Mainclauseif-clause_Half-open_Targetonlyif-clause",
-	          		"Formation_Mainclauseif-clause_Half-open_Targetonlymainclause",
-	          		"Formation_Mainclauseif-clause_Half-open_Targetbothclauses",
-	          		"Formation_Mainclauseif-clause_Fill-in-the-Blankslemmasininstructions_Targetonlyif-clause",
-	          		"Formation_Mainclauseif-clause_Fill-in-the-Blankslemmasininstructions_Targetonlymainclause",
-	          		"Formation_Mainclauseif-clause_MarktheWords_Targetonlyif-clause",
-	          		"Formation_Mainclauseif-clause_MarktheWords_Targetonlymainclause",
-	          		"Formation_Mainclauseif-clause_Memory_Useif-clause",
-	          		"Formation_Mainclauseif-clause_Memory_Usemainclause",
-	          		"Formation_Mainclauseif-clause_JumbledSentences_Targetonlyif-clause",
-	          		"Formation_Mainclauseif-clause_JumbledSentences_Targetonlymainclause",
 	          		"Formation_Randomclauseorder_SingleChoice2options_Targetonlyif-clause",
 	          		"Formation_Randomclauseorder_SingleChoice2options_Targetonlymainclause",
 	          		"Formation_Randomclauseorder_SingleChoice2options_Targetbothclauses",
@@ -440,24 +351,37 @@ public class ConditionalExcelFileReader extends ExcelFileReader {
 	private ArrayList<ExerciseTypeSpec> getExerciseTypes(String stamp) {
 		ArrayList<ExerciseTypeSpec> types = new ArrayList<>();
 		for(String exerciseType : exerciseTypes) {
-			ExerciseTypeSpec t = new ExerciseTypeSpec();
-			if(stamp.equals("Conditional Type") && exerciseType.contains("Type1vsType2")) {
-				t.setSubtopic("conditional_types");
-				t.setIfClauseFirst(exerciseType.contains("If-clausemainclause"));
-				t.setRandomClauseOrder(exerciseType.contains("Randomclauseorder"));
-				t.setTargetIfClause(exerciseType.contains("Targetonlyif-clause") || exerciseType.contains("Targetbothclauses") || exerciseType.contains("Useif-clause"));
-				t.setTargetMainClause(exerciseType.contains("Targetonlymainclause") || exerciseType.contains("Targetbothclauses") || exerciseType.contains("Usemainclause"));
-				t.setFeedbookType(FeedBookExerciseType.getContainedType(exerciseType));
+			ConditionalExerciseTypeSpec t = new ConditionalExerciseTypeSpec();
+			t.setRandomClauseOrder(true);
+			t.setFeedbookType(FeedBookExerciseType.getContainedType(exerciseType));
+			t.setSubtopic(exerciseType.contains("Type1vsType2") ? "conditional_types" : "conditional_form");
+
+			if(stamp.equals("conditinal 1 vs conditional 2") && exerciseType.endsWith("Categorize")) {
 				types.add(t);
-			} else if(stamp.equals("Conditional") && exerciseType.contains("Formation")) {
-				t.setSubtopic("conditional_form");
-				t.setIfClauseFirst(exerciseType.contains("If-clausemainclause"));
-				t.setRandomClauseOrder(exerciseType.contains("Randomclauseorder"));
-				t.setTargetIfClause(exerciseType.contains("Targetonlyif-clause") || exerciseType.contains("Targetbothclauses") || exerciseType.contains("Useif-clause"));
-				t.setTargetMainClause(exerciseType.contains("Targetonlymainclause") || exerciseType.contains("Targetbothclauses") || exerciseType.contains("Usemainclause"));
-				t.setFeedbookType(FeedBookExerciseType.getContainedType(exerciseType));
-				types.add(t);
+			} else if(stamp.equals("conditinal 1 vs conditional 2") && exerciseType.contains("Type1vsType2") ||
+					!stamp.equals("conditinal 1 vs conditional 2") && exerciseType.contains("Formation") && 
+					!stamp.startsWith("Conditional negative Conditional negative ")) {
+				if(exerciseType.endsWith("if-clause") || exerciseType.endsWith("mainclause")) {
+					t.setTargetIfClause(exerciseType.endsWith("if-clause"));
+					t.setTargetMainClause(exerciseType.endsWith("mainclause"));
+					types.add(t);
+				}
+			} else if(!stamp.startsWith("Conditional negative") && exerciseType.contains("Formation")) {
+				if(stamp.endsWith("main + if clause") && exerciseType.endsWith("bothclauses")) {
+					t.setTargetIfClause(true);
+					t.setTargetMainClause(true);
+					types.add(t);
+				} else if(stamp.endsWith("if clause") && exerciseType.endsWith("if-clause")) {
+					t.setTargetIfClause(true);
+					t.setTargetMainClause(false);
+					types.add(t);
+				} else if(stamp.endsWith("main clause") && exerciseType.endsWith("mainclause")) {
+					t.setTargetIfClause(false);
+					t.setTargetMainClause(true);
+					types.add(t);
+				}
 			}
+			
 		}
 		return types;
 	}

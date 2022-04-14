@@ -31,13 +31,14 @@ public class ConditionalJsonReader extends JsonFileReader {
 		JSONArray exerciseTypes = (JSONArray)jsonObject.get("exerciseTypes");
 		ArrayList<ExerciseTypeSpec> types = new ArrayList<>();
 		for(Object type : exerciseTypes) {
-			ExerciseTypeSpec t = new ExerciseTypeSpec();
+			ConditionalExerciseTypeSpec t = new ConditionalExerciseTypeSpec();
 			String exerciseType = (String)type;
 			t.setSubtopic(exerciseType.contains("Type1vsType2") ? "conditional_types" : "conditional_form");
 			t.setIfClauseFirst(exerciseType.contains("If-clausemainclause"));
 			t.setRandomClauseOrder(exerciseType.contains("Randomclauseorder"));
 			t.setTargetIfClause(exerciseType.contains("Targetonlyif-clause") || exerciseType.contains("Targetbothclauses") || exerciseType.contains("Useif-clause"));
 			t.setTargetMainClause(exerciseType.contains("Targetonlymainclause") || exerciseType.contains("Targetbothclauses") || exerciseType.contains("Usemainclause"));
+			t.setRandomTargetClause(exerciseType.contains("Targetrandomclause"));
 			t.setFeedbookType(FeedBookExerciseType.getContainedType(exerciseType));
 			types.add(t);
 		}

@@ -1,157 +1,204 @@
 <html>
 
 <head>
-	<meta charset="utf-8">
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
-	<link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
-	<script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-	<link rel="stylesheet"
-		href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-treeview/1.2.0/bootstrap-treeview.min.css">
-	<title>Exercise Specification</title>
+<meta charset="utf-8">
+<link rel="stylesheet"
+	href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+<link
+	href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css"
+	rel="stylesheet">
+<script
+	src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-treeview/1.2.0/bootstrap-treeview.min.css">
+<title>Exercise Specification</title>
 
-	<style>
-		body {
-			padding: 20px;
-		}
+<style>
+body {
+	padding: 20px;
+}
 
-		.dropdown-item:active {
-			background-color: white;
-			color: grey;
-		}
+.dropdown-item:active {
+	background-color: white;
+	color: grey;
+}
 
-		.dropdown-item:hover {
-			background-color: grey;
-			color: white;
-		}
+.dropdown-item:hover {
+	background-color: grey;
+	color: white;
+}
 
-		.dropdown-menu {
-			border: 1px solid lightgrey;
-		}
+.dropdown-menu {
+	border: 1px solid lightgrey;
+}
 
-		.card-body {
-			background-color: lightgrey;
-		}
+.card-body {
+	background-color: lightgrey;
+}
 
-		.container {
-			width: 100%;
-			min-width: 100%;
-			padding: 0px;
-		}
+.container {
+	width: 100%;
+	min-width: 100%;
+	padding: 0px;
+}
 
-		h4 {
-			font-size: 12pt;
-			font-weight: bold;
-		}
+h4 {
+	font-size: 12pt;
+	font-weight: bold;
+}
 
-		.fa-angle-down {
-			cursor: pointer;
-		}
+.fa-angle-down {
+	cursor: pointer;
+}
 
-		.list-group-item {
-			cursor: default;
-			padding: 0px;
-		}
+.list-group-item {
+	cursor: default;
+	padding: 0px;
+}
 
-		.list-group {
-			min-height: 30px;
-			width: 200px;
-		}
+.list-group {
+	min-height: 30px;
+	width: 200px;
+}
 
-		.invisible {
-			visibility: collapse;
-			display: none;
-		}
+.sortable-group {
+	min-height: 30px;
+	width: 200px;
+	border: 1px solid gray;
+}
 
-		.floating-button {
-			position: fixed;
-			width: 50px;
-			height: 50px;
-			bottom: 20px;
-			left: 20px;
-			background: blue;
-			border-radius: 50px;
-			text-align: center;
-			color: white;
-			font-size: 25px;
-			padding-top: 10px;
-			border: none;
-			filter: drop-shadow(2px 2px 10px blue) drop-shadow(-2px -2px 10px blue);
-		}
+.invisible {
+	visibility: collapse;
+	display: none;
+}
 
-		.floating-button:hover {
-			text-decoration: none;
-			background-color: white;
-		}
+.floating-button {
+	position: fixed;
+	width: 50px;
+	height: 50px;
+	bottom: 20px;
+	left: 20px;
+	background: blue;
+	border-radius: 50px;
+	text-align: center;
+	color: white;
+	font-size: 25px;
+	padding-top: 10px;
+	border: none;
+	filter: drop-shadow(2px 2px 10px blue) drop-shadow(-2px -2px 10px blue);
+}
 
-		.close-button {
-			float: right;
-			color: white;
-		}
+.floating-button:hover {
+	text-decoration: none;
+	background-color: white;
+}
 
-		.bold-border {
-			color: red;
-			filter: drop-shadow(1px 1px 1px red) drop-shadow(-1px -1px 1px red) drop-shadow(-1px 1px 1px red) drop-shadow(1px -1px 1px red);
-		}
+.close-button {
+	float: right;
+	color: white;
+}
 
-		mark {
-			border-radius: 10%;
-			background-color: #99ccff;
-			margin: 0px;
-			padding: 0px;
-		}
-	</style>
+.bold-border {
+	color: red;
+	filter: drop-shadow(1px 1px 1px red) drop-shadow(-1px -1px 1px red)
+		drop-shadow(-1px 1px 1px red) drop-shadow(1px -1px 1px red);
+}
+
+mark {
+	border-radius: 10%;
+	background-color: #99ccff;
+	margin: 0px;
+	padding: 0px;
+}
+
+.sortable {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	width: 100%;
+}
+
+.sortable li {
+	margin: 0 3px 3px 0px;
+	height: 18px;
+}
+
+.sortable li span {
+	position: absolute;
+}
+
+.sortable li {
+	cursor: move !important;
+}
+</style>
 </head>
 
 <body>
 	<div class="container-fluid">
 		<div class="row flex-nowrap">
-			<div id="sidebar" class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark">
-				<a class="close-button" onclick="hideSidebar();" href="#"><i class="fa fa-angle-left"></i></a>
-				<div class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100"
-					style="height:100vh;">
-					<div class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-						<i class="fs-4 fa fa-book"></i><span class="ms-1 d-none d-sm-inline"
-							style="margin-left: 10px;">Exercises</span>
+			<div id="sidebar"
+				class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark">
+				<a class="close-button" onclick="hideSidebar();" href="#"><i
+					class="fa fa-angle-left"></i></a>
+				<div
+					class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100"
+					style="height: 100vh;">
+					<div
+						class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+						<i class="fs-4 fa fa-book"></i><span
+							class="ms-1 d-none d-sm-inline" style="margin-left: 10px;">Exercises</span>
 					</div>
-					<ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start">
+					<ul
+						class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start">
 						<li class="nav-item" id="add-exercise" style="margin-top: 20px;">
-							<a href="#" class="nav-link align-middle px-0" onclick="addExercise();">
-								<i class="fs-4 fa fa-plus-square-o"></i><span class="ms-1 d-none d-sm-inline"
-									style="margin-left: 10px;">Add exercise</span>
-							</a>
+							<a href="#" class="nav-link align-middle px-0"
+							onclick="addExercise();"> <i class="fs-4 fa fa-plus-square-o"></i><span
+								class="ms-1 d-none d-sm-inline" style="margin-left: 10px;">Add
+									item</span>
+						</a>
 						</li>
-						<li class="nav-item">
-							<a href="#" class="nav-link align-middle px-0" onclick="displayTypeSettings();">
-								<i class="fs-4 fa fa-puzzle-piece"></i><span class="ms-1 d-none d-sm-inline"
-									style="margin-left: 10px;">Exercise types</span>
-							</a>
-						</li>
-						<li class="nav-item">
-							<a href="#" class="nav-link align-middle px-0" onclick="save();">
-								<i class="fs-4 fa fa-floppy-o"></i><span class="ms-1 d-none d-sm-inline"
-									style="margin-left: 10px;">Save to file</span>
-							</a>
-						</li>
-						<li class="nav-item">
-							<input id="btn-upload" type="file" accept="text/json" class="invisible"
-								onchange="upload(this);">
+						<li class="nav-item"><a href="#"
+							class="nav-link align-middle px-0"
+							onclick="editExerciseAssemblies();"> <i
+								class="fs-4 fa fa-puzzle-piece"></i><span
+								class="ms-1 d-none d-sm-inline" style="margin-left: 10px;">Exercise
+									assemblies</span>
+						</a></li>
+						<li class="nav-item"><a href="#"
+							class="nav-link align-middle px-0"
+							onclick="displayTypeSettings();"> <i
+								class="fs-4 fa fa-th-large"></i><span
+								class="ms-1 d-none d-sm-inline" style="margin-left: 10px;">Exercise
+									types</span>
+						</a></li>
+						<li class="nav-item"><a href="#"
+							class="nav-link align-middle px-0" onclick="save();"> <i
+								class="fs-4 fa fa-floppy-o"></i><span
+								class="ms-1 d-none d-sm-inline" style="margin-left: 10px;">Save
+									to file</span>
+						</a></li>
+						<li class="nav-item"><input id="btn-upload" type="file"
+							accept="text/json" class="invisible" onchange="upload(this);">
 							<a href="#" class="nav-link align-middle px-0" onclick="load();">
-								<i class="fs-4 fa fa-upload"></i><span class="ms-1 d-none d-sm-inline"
-									style="margin-left: 10px;">Load from file</span>
-							</a>
-						</li>
+								<i class="fs-4 fa fa-upload"></i><span
+								class="ms-1 d-none d-sm-inline" style="margin-left: 10px;">Load
+									from file</span>
+						</a></li>
 					</ul>
 				</div>
 			</div>
 			<div class="col py-3">
 				<div class="card" style="margin-bottom: 100px;">
 					<div class="card-body" id="topicdrp">
-						<span style="font-weight: bold; margin-right: 5px;">Topic:</span><button id="btnTopic"
-							class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button"
-							data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">---</button>
-						<div class="dropdown-menu" aria-labelledby="btnTopic"><a class="dropdown-item" href="#"
-								onclick="updateDropdown(this);">Conditionals</a>
+						<span style="font-weight: bold; margin-right: 5px;">Topic:</span>
+						<button id="btnTopic"
+							class="btn btn-outline-secondary btn-sm dropdown-toggle"
+							type="button" data-toggle="dropdown" aria-haspopup="true"
+							aria-expanded="false">---</button>
+						<div class="dropdown-menu" aria-labelledby="btnTopic">
+							<a class="dropdown-item" href="#" onclick="updateDropdown(this);">Conditionals</a>
 							<a class="dropdown-item" href="#" onclick="updateDropdown(this);">Relative pronouns</a>
 						</div>
 					</div>
@@ -159,27 +206,125 @@
 						<div class="content-area">
 							<div id="content-area"></div>
 							<div id="type-settings" class="container invisible">
-								<p style="font-weight: bold;">Select the exercise types to generate for the exercise
-									specifications.</p>
+								<p style="font-weight: bold;">Select the exercise types to
+									generate for the exercise specifications.</p>
 								<div class="treeview">
-									<ul id="types-tree" class="list-group" style="width: 100%;">
+									<ul id="types-tree" class="list-group collapse-tree"
+										style="width: 100%;">
 									</ul>
 								</div>
+							</div>
+							<div id="exercise-assemblies" class="invisible">
+								<div id="assembly-container"></div>
+								<a class="fa fa-plus" href="#" id="add-assembly-button"
+									onclick="addExerciseAssembly(this);"> Add exercise</a>
 							</div>
 						</div>
 					</div>
 				</div>
-				<a id="settings-button" class="fa fa-cog floating-button invisible" onclick="showSidebar();"
-					href="#"></a>
+				<a id="settings-button" class="fa fa-cog floating-button invisible"
+					onclick="showSidebar();" href="#"></a>
 			</div>
 		</div>
 	</div>
-	<a id="downloadAnchorElem" style="display:none"></a>
+	<a id="downloadAnchorElem" style="display: none"></a>
 	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-treeview/1.2.0/bootstrap-treeview.min.js"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+	<script
+		src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-treeview/1.2.0/bootstrap-treeview.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+	<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
 	<script type="text/javascript" id="mainScript">
+	  
+		function onExerciseItemChecked(item) {
+			if(item.is(':checked')) {
+				if(item.closest(".container").find(".sortable").find("#i" + item.attr("id").substring(1)).length === 0) {
+					item.closest(".container").find(".sortable").append('<li id="i' + item.attr("id").substring(1) + '" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>' + item.closest("div").prev().find(".item").text() +': ' + item.next().text() + '</li>');
+				}
+			} else {
+				item.closest(".container").find(".sortable").find("#i" + item.attr("id").substring(1)).remove();
+			}
+		}
+		
+		function onTopItemChecked(item) {
+			onTypeChecked(item);
+			if ($(item).closest(".list-group-item").next().hasClass("collapse")) {
+				$(item).closest(".list-group-item").next().find(".form-check-input").prop('checked', $(item).is(':checked')).each(function() {
+					onExerciseItemChecked($(this));
+				});
+			}
+		}
+	
+		function onItemChecked(item) {
+			onExerciseItemChecked($(item));
+			onTypeChecked(item);
+		}
+		
+		var maxAssemblyId = 0;
+
+		function addExerciseAssembly(item) {
+			let classname;
+			if ($("#btnTopic").text() === "Conditionals") {
+				classname = "cond";
+			} else if ($("#btnTopic").text() === "Relative pronouns") {
+				classname = "rel";
+			} else {
+				return;
+			}
+			
+			let count = $("#exercise-assemblies").find("h3").length;
+			let exStr = '<div class="assembly ' + classname + '"><h3><input type="text" value="Exercise ' + ++count + '"></h3><div class="container"><div class="row"><div class="col-sm"><div class="treeview-ex"><ul id="' + ++maxAssemblyId + '" class="list-group assembly-tree collapse-tree" style="width: 100%;">';
+			
+			for (const exercise of $(".exercise-spec." + classname)) {
+				let itemname = $(exercise).find("h3").text();
+				let itemid = $(exercise).attr("id");
+
+				if($(exercise).find(".editable-chunks").length > 0) {
+					let treeItem = getAssemblyItemElementString(itemid, itemname, maxAssemblyId);
+					
+					let i = 0;
+					$(exercise).find(".editable-chunks").each(function () {
+						treeItem += getAssemblyRCElementString($(this).closest(".rel-sentence-order").attr("id"), 
+								++i, 
+								$(this).val().replaceAll("|", " "),
+								maxAssemblyId);
+					});
+					treeItem += "</div>";
+					
+					exStr += treeItem;
+				}
+			}			
+			
+			exStr += '</ul></div></div><div class="col-sm">Item order:<ul class="sortable"></ul></div></div><br></div></div>';
+			  $( ".sortable" ).sortable();
+			$("#assembly-container").append(exStr);
+		}
+				
+		function editExerciseAssemblies() {
+			let classname;
+			if ($("#btnTopic").text() === "Conditionals") {
+				classname = "cond";
+			} else if ($("#btnTopic").text() === "Relative pronouns") {
+				classname = "rel";
+			}
+			
+			if($(".exercise-spec." + classname).length > 0) {
+				$("#add-assembly-button").removeClass("invisible");
+			} else {
+				$("#add-assembly-button").addClass("invisible");
+			}
+			
+			$(".exercise-spec").addClass("invisible");
+			$("#type-settings").addClass("invisible");
+			
+			$("#exercise-assemblies").removeClass("invisible");
+			$(".assembly").addClass("invisible");
+			$(".assembly." + classname).removeClass("invisible");
+		}
+	
 		/** 
 		 Marks the clicked list item as active.
 		*/
@@ -194,29 +339,37 @@
 			$(item).parent().prev().text($(item).text());
 
 			if ($("#topicdrp").get(0) === $(item).parent().parent().get(0)) {
-				let displayType = true;
-				if($("#type-settings").hasClass("invisible")) {
-					displayType = false;
-				}
-				
-				$(".rel").addClass("invisible");
-				$(".cond").addClass("invisible");
+				onSelectedTopicChanged();
+			}
+		}
+		
+		function onSelectedTopicChanged() {
+			let displayType = true;
+			if($("#type-settings").hasClass("invisible")) {
+				displayType = false;
+			}
+			
+			let classname;
+			if ($("#btnTopic").text() === "Conditionals") {
+				classname = "cond";
+			} else if ($("#btnTopic").text() === "Relative pronouns") {
+				classname = "rel";
+			}
+			
+			if($(".exercise-spec." + classname).length > 0) {
+				$("#add-assembly-button").removeClass("invisible");
+			} else {
+				$("#add-assembly-button").addClass("invisible");
+			}
+			
+			$(".rel").addClass("invisible");
+			$(".cond").addClass("invisible");
+			
+			$("." + classname).removeClass("invisible");
+			$(".exercise-spec." + classname).addClass("invisible");
 
-				if ($("#btnTopic").text() === "Conditionals") {
-					$(".cond").removeClass("invisible");
-					$(".exercise-spec.cond").addClass("invisible");
-
-					if(displayType) {
-						displayTypeSettings();
-					}
-				} else if ($("#btnTopic").text() === "Relative pronouns") {
-					$(".rel").removeClass("invisible");
-					$(".exercise-spec.rel").addClass("invisible");
-					
-					if(displayType) {
-						displayTypeSettings();
-					}
-				}
+			if(displayType) {
+				displayTypeSettings();
 			}
 		}
 
@@ -224,36 +377,13 @@
 		 Adds the item specified in the popup to the associated list.
 		*/
 		function addDistractor(item) {
-			$(item).closest(".listItems").find(".list-group").append($("<li class=\"list-group-item\" onclick=\"addItem(this);\">" + $(item).parent().prev().find(">:first-child").val() + "</li>"));
+			let itemStr = '<li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span><span ondblclick="openEditDialog()">' + $(item).parent().prev().find(">:first-child").val() + '</span><a class="fa fa-times" style="float:right;color:red;" href="#" onclick="removeSortableItem(this);"></a></li>'
+			$(item).closest(".sortable-group").find(".sortable").append(itemStr);
 			$(item).parent().prev().find(">:first-child").val("");
 		}
-
-		/**
-		 Removes the selected list item up 1 position.
-		*/
-		function removeItem(item) {
-			let selectedItem = $(item).closest(".list-cont").find('.list-group-item.active');
-			selectedItem.remove();
-		}
-
-		/**
-	   	 Moves the selected list item up 1 position.
-	  	*/
-		function moveUp(item) {
-			let selectedItem = $(item).closest(".list-cont").find('.list-group-item.active');
-			if (selectedItem && selectedItem.length == 1) {
-				selectedItem.prev().before(selectedItem);
-			}
-		}
-
-		/**
-	   	 Moves the selected list item down 1 position.
-	  	*/
-		function moveDown(item) {
-			let selectedItem = $(item).closest(".list-cont").find('.list-group-item.active');
-			if (selectedItem && selectedItem.length == 1) {
-				selectedItem.next().after(selectedItem);
-			}
+		
+		function openEditDialog(item) {
+			console.log("TODO: implement edit dialog!");
 		}
 
 		/**
@@ -279,11 +409,58 @@
 		function changeChunks(item) {
 			updateChunks($(item));
 		}
-
+		
 		function changeRelativeChunks(item) {
 			$(item).parent().prev().empty();
 			let chunks = $(item).val().split("|");
 			chunks.forEach(chunk => $(item).parent().prev().append("<span style='border:1px solid grey; margin-right: 2px;'>" + chunk.trim() + "</span>"));
+		
+			if($(item).val().trim().length > 0) {				
+				let itemid = $(item).closest(".exercise-spec.rel").attr("id");
+				let itemname = $(item).closest(".exercise-spec.rel").find("h3").text();
+				let assemblyListItem = $(".itemid" + $(item).closest(".rel-sentence-order").attr("id"));
+				if(assemblyListItem.length > 0) {
+					// overwrite the previous text in existing entries in the trees
+					assemblyListItem.find("label").text('RC ' + (countPreviousSiblings(assemblyListItem, 0) + 1) + ' (' + $(item).val().replaceAll("|", " ") + ')');
+				} else {
+					let itemNode = $(".ti" +itemid);
+					if(itemNode.length === 0) {
+						// create a new item node
+						$(".assembly-tree").each(function() {
+							let treeItem = getAssemblyItemElementString(itemid, itemname, $(this).attr("id"));
+							$(this).append(treeItem);
+						});
+					}
+															
+					$(".assembly-tree").each(function() {
+						// create a new rc node
+						let newitem = getAssemblyRCElementString($(item).closest(".rel-sentence-order").attr("id"),
+								(countPreviousSiblings(assemblyListItem, 0) + 1),
+								$(item).val().replace("|", " "),
+								$(this).attr("id")) 
+								+ "</div>";
+						$(this).find(".e" + itemid).append(newitem);
+
+					});
+				}
+			} else {
+				removeAssemblyItem($(item));
+			}
+		}
+		
+		function getAssemblyItemElementString(itemid, itemname, assemblyId) {
+			return '<li class="list-group-item node-treeview-ex ti' + itemid + '" style="border:0px;background:none;"><span class="form-check"><input type="checkbox" class="form-check-input" onclick="onTopItemChecked(this)"><label class="form-check-label item" data-toggle="collapse" data-target="#e' + assemblyId + itemid + '" aria-expanded="true" aria-controls="e'+  assemblyId + itemid + '">' + itemname + '</label></span></li><div id="e' + assemblyId + itemid + '" class="collapse show e' + itemid + '">';
+		}
+		
+		function getAssemblyRCElementString(itemid, rcCount, rcText, assemblyId) {
+			return '<li class="list-group-item node-treeview-ex itemid' + itemid + '" style="border:0px;background:none;"><span class="form-check" style="margin-left: 10px;"><input id="l' + assemblyId + itemid + '" type="checkbox" class="form-check-input" onclick="onItemChecked(this)"><label class="form-check-label">RC ' + rcCount + ' (' + rcText + ')</label></span></li>';
+		}
+		
+		function countPreviousSiblings(item, count) {
+			if(item.prev().length > 0) {
+				return countPreviousSiblings(item.prev(), ++count);
+			}
+			return count;
 		}
 
 		/**
@@ -295,8 +472,6 @@
 			chunks.forEach(chunk => item.parent().prev().append("<span style='border:1px solid grey; margin-right: 2px;'>" + chunk.trim() + "</span>"));
 			setInputValues(item.closest(".spec").find('.idx.gap'), chunks);
 			setInputValues(item.closest(".spec").find('.idx.mtw'), chunks);
-
-			changeTitleLine(item.closest(".sentence"));
 		}
 
 		/**
@@ -310,27 +485,6 @@
 			}
 
 			changeSpinnerText(item);
-		}
-
-		/**
-		 Reacts to changes in elements which make up the title line.
-		*/
-		function onContextChanged(item) {
-			changeTitleLine($(item).closest(".sentence"));
-		}
-
-		/**
-		 Sets title line of relative sentences.
-		 Context before + clause 1 + clause 2 + context after.
-		*/
-		function changeRelativesTitleLine(item) {
-			let sentence = $(item).closest(".sentence");
-			var title = sentence.find(".contextBefore").val() + " ";
-			let mainSentence = sentence.find(".clause .highlighting").each(function () {
-				title += $(this).text() + " ";
-			});
-			title += " " + sentence.find(".contextAfter").val();
-			sentence.prev().prev().find(".context").text(title);
 		}
 
 		/**
@@ -364,7 +518,6 @@
 		 Updates the chunk preview for the associated spinner.
 		*/
 		function changeSpinnerText(item) {
-
 			let chunks = item.closest(".spec").find(".editable-chunks").val().split("|");
 
 			if (chunks.length === 1 && chunks[0] === "") {
@@ -426,79 +579,36 @@
 				$(item).closest(".exercise-spec").find(".remove-sent").addClass("invisible");
 			}
 		}
-
-		/**
-		 Adds an empty exercise sentence specification.
-		*/
-		function addSentence(item) {
-			let exercise = $(item).closest(".exercise-spec");
-			let count = exercise.find(".sentence").length + 1;
-
-			if ($("#btnTopic").text() === "Conditionals") {
-				addConditionalSentence(exercise, count);
-			} else if ($("#btnTopic").text() === "Relative pronouns") {
-				addRelativeSentence(exercise, count);
-			}
-
-			exercise.find(".move-sent-up").removeClass("invisible");
-			exercise.find(".move-sent-down").removeClass("invisible");
-			exercise.find(".remove-sent").removeClass("invisible");
-		}
-
-		/**
-		 Marks the selected text in the corresponding text field in blue color.
-		*/
-		function markReferent(item) {
-			if (typeof window.getSelection != "undefined" && window.getSelection().rangeCount === 1) {
-				var container = document.createElement("div");
-				var range = window.getSelection().getRangeAt(0);
-				let textfield = $(item).closest(".clause").find(".highlighting");
-
-				if (range.commonAncestorContainer !== textfield.get(0) && range.commonAncestorContainer.parentElement !== textfield.get(0)) {
-					return;
-				}
-
-				container.appendChild(range.cloneContents());
-				let html = container.innerHTML;
-				let start = range.startOffset;
-				if (!textfield.text().startsWith(range.startContainer.data)) {
-
-					start += textfield.html().indexOf("<mark>");
-					if (!html.startsWith("<mark>")) {
-						start += textfield.html().indexOf("</mark>") - textfield.html().indexOf("<mark>") - 6;
-					}
-				}
-				html = html.replaceAll("<mark>", "").replaceAll("</mark>", "");
-				let end = html.length + start;
-				let newText = textfield.text().substring(0, start) + "<mark>" + textfield.text().substring(start, end) + "</mark>" + textfield.text().substring(end);
-				textfield.html(newText);
-			}
-		}
+		
+		var maxRelSentenceId = 0;
 
 		/** 
 		 Adds controls to specify a possible relative clause for the sentence.
 		*/
 		function addRelativeOrderChunks(item) {
-			$(item).parent().prev().append('<tr><td><div><span></span><span class="chunksView invisible"><input class="editable-chunks" type="text" value="" onKeyUp="changeRelativeChunks(this);"/></span><a class="fa fa-pencil" onclick="displayEditChunks(this);" href="#"/></div></td><td><input type="checkbox" class="pronOpt"></td><td><input type="checkbox" class="genDist"></td><td><a class="fa fa-times" style="float:right;color:red;" href="#" onclick="deleteOrder(this);"></td></tr>');
-		}
+			$(item).parent().prev().append('<tr class="rel-sentence-order" id="' + ++maxRelSentenceId + '"><td><div><span></span><span class="chunksView invisible"><input class="editable-chunks" type="text" value="" onKeyUp="changeRelativeChunks(this);"></span><a class="fa fa-pencil" onclick="displayEditChunks(this);" href="#"></a></div></td><td style="text-align: center;"><input type="checkbox" class="pronOpt"></td><td><a class="fa fa-times" style="float:right;color:red;" href="#" onclick="deleteOrder(this);"></td></tr>');
+		 }
 
 		/**
 		 Removes the corresponding relative clause from the sentence.
 		*/
 		function deleteOrder(item) {
-			$(item).parent().parent().remove();
+			removeAssemblyItem($(item));
+			$(item).closest(".rel-sentence-order").remove();
+		}
+		
+		function removeAssemblyItem(item) {
+			if($(".itemid" + item.closest(".rel-sentence-order").attr("id")).first().parent().find("li").length == 1) {
+				$(".itemid" + item.closest(".rel-sentence-order").attr("id")).first().parent().prev().remove();
+			}
+			$(".itemid" + item.closest(".rel-sentence-order").attr("id")).prop("checked", false);
+			$(".itemid" + item.closest(".rel-sentence-order").attr("id")).find(".editable-chunks").each(function () {
+				onExerciseItemChecked($(this));
+			});
+			$(".itemid" + item.closest(".rel-sentence-order").attr("id")).remove();
 		}
 
-		/**
-		 Adds controls to specify an additional relative sentence for the exercise.
-		*/
-		function addRelativeSentence(exercise, count) {
-			exercise.find(".sentences").append('<div class="sentence-unit"><div class="form-check"><input type="checkbox" class="form-check-input checkable-sentence"><div class="fa fa-angle-down" data-toggle="collapse" data-target="#sentence' + count + '" aria-expanded="true" aria-controls="sentence' + count + '"><span></span><span class="context"/></div></div></br><div id="sentence' + count + '" class="sentence collapse show" style="padding-left: 20px;"><table><tr><td>Context before: </td><td><input type="text" class="contextBefore" value="" onKeyUp="changeRelativesTitleLine(this);"></td></tr><tr><td>Context after: </td><td><input type="text" class="contextAfter" value="" onKeyUp="changeRelativesTitleLine(this);"></td></tr></table><br><table class="spec"><tr class="clause c1"><td>Clause 1:</td><td><div contenteditable="true" class="highlighting" style="border:1px solid grey; background-color: white; width:200px; display:inline-block;vertical-align:middle; padding:2px;" onKeyUp="changeRelativesTitleLine(this);"></div><button type="button" class="btn btn-outline-secondary btn-sm" style="margin-left: 20px; visibility: collapse;" onclick="markReferent(this);" data-dismiss="modal" >Use selection as common referent</button></td></tr><tr class="clause c2"><td>Clause 2:</td><td><div contenteditable="true" class="highlighting" style="border:1px solid grey; background-color: white; width:200px; display:inline-block;vertical-align:middle; padding:2px;" onKeyUp="changeRelativesTitleLine(this);"></div><button type="button" class="btn btn-outline-secondary btn-sm" style="margin-left: 20px; visibility: collapse;" onclick="markReferent(this);" data-dismiss="modal">Use selection as common referent</button></td></tr><tr class="pronouns"><td>Pronoun:</td><td><table class="list-cont"><tr class="listItems"><td><ul class="list-group" style="border: 1px solid grey;"/></td><td><div><a class="fa fa-plus-square-o" aria-hidden="true" href="#" data-toggle="modal" data-target="#pronounPopup' + count + '"/></div><!-- add item popup --><div class="modal fade" id="pronounPopup' + count + '" tabindex="-1" role="dialog" aria-labelledby="pronounPopupLabel' + count + '" aria-hidden="true"><div class="modal-dialog" role="document"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="pronounPopupLabel' + count + '">Add pronoun</h5><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div><div class="modal-body"><input type="text"></div><div class="modal-footer"><button type="button" class="btn btn-primary" onclick="addDistractor(this);" data-dismiss="modal">Add</button></div></div></div></div><div><a class="fa fa-minus-square-o" aria-hidden="true" href="#" onclick="removeItem(this);"/></div></td><td><div><a class="fa fa-arrow-circle-o-up" aria-hidden="true" href="#" onclick="moveUp(this);"/></div><div><a class="fa fa-arrow-circle-o-down" aria-hidden="true" href="#" onclick="moveDown(this);"/></div></td></tr></table></td></tr><tr class="distractors"><td>Distractors:</td><td><table class="list-cont"><tr class="listItems"><td><ul class="list-group" style="border: 1px solid grey;"/></td><td><div><a class="fa fa-plus-square-o" aria-hidden="true" href="#" data-toggle="modal" data-target="#distractorPopupMain' + count + '"/></div><!-- add item popup --><div class="modal fade" id="distractorPopupMain' + count + '" tabindex="-1" role="dialog" aria-labelledby="distractorPopupMainLabel' + count + '" aria-hidden="true"><div class="modal-dialog" role="document"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="distractorPopupMainLabel' + count + '">Add distractor</h5><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div><div class="modal-body"><input type="text"></div><div class="modal-footer"><button type="button" class="btn btn-primary" onclick="addDistractor(this);" data-dismiss="modal">Add</button></div></div></div></div><div><a class="fa fa-minus-square-o" aria-hidden="true" href="#" onclick="removeItem(this);"/></div></td><td><div><a class="fa fa-arrow-circle-o-up" aria-hidden="true" href="#" onclick="moveUp(this);"/></div><div><a class="fa fa-arrow-circle-o-down" aria-hidden="true" href="#" onclick="moveDown(this);"/></div></td></tr></table></td></tr></table><div style="font-weight:bold; margin-top:20px;">Relative clauses:</div><table class="orders" style="width: 100%;"><tr><td style="margin-right: 10px;">Chunks:</td><td style="margin-right: 10px;">Pronoun is optional:</td><td style="margin-right: 10px;">Generate distinct exercise:</td><td></td></tr></table><div><a class="fa fa-plus" href="#" onclick="addRelativeOrderChunks(this);" style="margin-top: 20px;"> Add relative clause alternative</a></div></div></div>');
-		}
-
-		function addConditionalSentence(exercise, count) {
-			exercise.find(".sentences").append('<div class="sentence-unit"><div class="form-check"><input type="checkbox" class="form-check-input checkable-sentence"><div class="fa fa-angle-down" data-toggle="collapse" data-target="#sentence' + count + '" aria-expanded="true" aria-controls="sentence' + count + '"><span></span><span class="context"/></div></div></br><div id="sentence' + count + '" class="sentence collapse show" style="padding-left: 20px;"><table><tr class="condType"><td>Conditional type:</td><td><button id="condTypeDrp' + count + '" class="btn btn-outline-secondary btn-sm dropdown-toggle btn-cond-type" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">---</button><div class="dropdown-menu" aria-labelledby="condTypeDrp' + count + '"><a class="dropdown-item" href="#" onclick="updateDropdown(this);">Type 1</a><a class="dropdown-item" href="#" onclick="updateDropdown(this);">Type 2</a></div></td></tr><tr><td>Context before: </td><td><input type="text" class="contextBefore" value="" onKeyUp="onContextChanged(this);"></td></tr><tr><td>Context after: </td><td><input type="text" class="contextAfter" value="" onKeyUp="onContextChanged(this);"></td></tr></table><br><div class="container"><div class="row"><div class="col-sm main-clause"><h4>Main clause:</h4><table class="spec"><tr class="chunks"><td>Chunks:</td><td><div><span></span><span class="chunksViewMain invisible"><input class="editable-chunks" type="text" value="" onKeyUp="changeChunks(this);"/></span><a class="fa fa-pencil" onclick="displayEditChunks(this);" href="#"/></div></td></tr><tr class="translation"><td>Translation:</td><td><input type="text"></td></tr><tr class="distractors"><td>Distractors:</td><td><table class="list-cont"><tr class="listItems"><td><ul class="list-group" style="border: 1px solid grey;"/></td><td><div><a class="fa fa-plus-square-o" aria-hidden="true" href="#" data-toggle="modal" data-target="#distractorPopupMain' + count + '"/></div><!-- add item popup --><div class="modal fade" id="distractorPopupMain' + count + '" tabindex="-1" role="dialog" aria-labelledby="distractorPopupMainLabel' + count + '" aria-hidden="true"><div class="modal-dialog" role="document"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="distractorPopupMainLabel' + count + '">Add distractor</h5><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div><div class="modal-body"><input type="text"></div><div class="modal-footer"><button type="button" class="btn btn-primary" onclick="addDistractor(this);" data-dismiss="modal">Add</button></div></div></div></div><div><a class="fa fa-minus-square-o" aria-hidden="true" href="#" onclick="removeItem(this);"/></div></td><td><div><a class="fa fa-arrow-circle-o-up" aria-hidden="true" href="#" onclick="moveUp(this);"/></div><div><a class="fa fa-arrow-circle-o-down" aria-hidden="true" href="#" onclick="moveDown(this);"/></div></td></tr></table></td></tr><tr class="given-word"><td>Given word:</td><td><input type="text"></td></tr><tr class="semantic-distractor"><td>Semantic distractor:</td><td><input type="text"></td></tr><tr class="given-words-ext"><td>Given words extended:</td><td><table class="list-cont"><tr class="listItems"><td><ul class="list-group" style="border: 1px solid grey;"/></td><td><div><a class="fa fa-plus-square-o" aria-hidden="true" href="#" data-toggle="modal" data-target="#givenWordsPopupMain' + count + '"/></div><!-- add item popup --><div class="modal fade" id="givenWordsPopupMain' + count + '" tabindex="-1" role="dialog" aria-labelledby="givenWordsPopupMainLabel' + count + '" aria-hidden="true"><div class="modal-dialog" role="document"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="givenWordsPopupMainLabel' + count + '">Add given word</h5><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div><div class="modal-body"><input type="text"></div><div class="modal-footer"><button type="button" class="btn btn-primary" onclick="addDistractor(this);" data-dismiss="modal">Add</button></div></div></div></div><div><a class="fa fa-minus-square-o" aria-hidden="true" href="#" onclick="removeItem(this);"/></div></td><td><div><a class="fa fa-arrow-circle-o-up" aria-hidden="true" href="#" onclick="moveUp(this);"/></div><div><a class="fa fa-arrow-circle-o-down" aria-hidden="true" href="#" onclick="moveDown(this);"/></div></td></tr></table></td></tr><tr class="gap"><td>Gap:</td><td><input class="idx gap spn1" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"/> - <input class="idx gap spn2" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"/><span class="spnLabel"></span></td></tr><tr class="mtw-target"><td>MtW target:</td><td><input class="idx mtw spn1" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"/> - <input class="idx mtw spn2" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"/><span class="spnLabel"></span></td></tr></table><br></div><div class="col-sm if-clause"><h4>If-clause:</h4><table class="spec"><tr class="chunks"><td>Chunks:</td><td><div><span></span><span class="chunksView invisible"><input class="editable-chunks" type="text" value="" onKeyUp="changeChunks(this);"/></span><a class="fa fa-pencil" onclick="displayEditChunks(this);" href="#"/></div></td></tr><tr class="translation"><td>Translation:</td><td><input type="text"></td></tr><tr class="distractors"><td>Distractors:</td><td><table class="list-cont"><tr class="listItems"><td><ul class="list-group" style="border: 1px solid grey;"/></td><td><div><a class="fa fa-plus-square-o" aria-hidden="true" href="#" data-toggle="modal" data-target="#distractorPopup' + count + '"/></div><!-- add item popup --><div class="modal fade" id="distractorPopup' + count + '" tabindex="-1" role="dialog" aria-labelledby="distractorPopupLabel' + count + '" aria-hidden="true"><div class="modal-dialog" role="document"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="distractorPopupLabel' + count + '">Add distractor</h5><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div><div class="modal-body"><input type="text"></div><div class="modal-footer"><button type="button" class="btn btn-primary" onclick="addDistractor(this);" data-dismiss="modal">Add</button></div></div></div></div><div><a class="fa fa-minus-square-o" aria-hidden="true" href="#" onclick="removeItem(this);"/></div></td><td><div><a class="fa fa-arrow-circle-o-up" aria-hidden="true" href="#" onclick="moveUp(this);"/></div><div><a class="fa fa-arrow-circle-o-down" aria-hidden="true" href="#" onclick="moveDown(this);"/></div></td></tr></table></td></tr><tr class="given-word"><td>Given word:</td><td><input type="text"></td></tr><tr class="semantic-distractor"><td>Semantic distractor:</td><td><input type="text"></td></tr><tr class="given-words-ext"><td>Given words extended:</td><td><table class="list-cont"><tr class="listItems"><td><ul class="list-group" style="border: 1px solid grey;"/></td><td><div><a class="fa fa-plus-square-o" aria-hidden="true" href="#" data-toggle="modal" data-target="#givenWordsPopup' + count + '"/></div><!-- add item popup --><div class="modal fade" id="givenWordsPopup' + count + '" tabindex="-1" role="dialog" aria-labelledby="givenWordsPopupLabel' + count + '" aria-hidden="true"><div class="modal-dialog" role="document"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="givenWordsPopupLabel' + count + '">Add given word</h5><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div><div class="modal-body"><input type="text"></div><div class="modal-footer"><button type="button" class="btn btn-primary" onclick="addDistractor(this);" data-dismiss="modal">Add</button></div></div></div></div><div><a class="fa fa-minus-square-o" aria-hidden="true" href="#" onclick="removeItem(this);"/></div></td><td><div><a class="fa fa-arrow-circle-o-up" aria-hidden="true" href="#" onclick="moveUp(this);"/></div><div><a class="fa fa-arrow-circle-o-down" aria-hidden="true" href="#" onclick="moveDown(this);"/></div></td></tr></table></td></tr><tr class="gap"><td>Gap:</td><td><input class="idx gap spn1" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"/> - <input class="idx gap spn2" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"/><span class="spnLabel"></span></td></tr><tr class="mtw-target"><td>MtW target:</td><td><input class="idx mtw spn1" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"/> - <input class="idx mtw spn2" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"/><span class="spnLabel"></span></td></tr></table></div></div></div><br></div></div>');
-		}
+		var maxExerciseId = 0;
 
 		/**
 		 Adds an empty exercise item.
@@ -513,9 +623,10 @@
 				className = "rel";
 			}
 
-			let count = $(".exercise-spec." + className).length + 1;
+			let count = ++maxExerciseId;
 			$(".exercise-spec").addClass("invisible");
 			$("#type-settings").addClass("invisible");
+			$("#exercise-assemblies").addClass("invisible");
 
 			if ($("#btnTopic").text() === "Conditionals") {
 				addConditionalExercise(count);
@@ -524,7 +635,7 @@
 			}
 
 			if (className) {
-				$("#add-exercise").before('<li id="nav-ex' + count + '" class="nav-item ' + className + '"><a href="#" class="nav-link align-middle px-0" onclick="displayExercise(\'#exercise-spec-' + className + count + '\');"><span class="ms-1 d-none d-sm-inline">Exercise</span> <span class="fs-4">' + count + '</span></a></li>');
+				$("#add-exercise").before('<li id="nav-ex' + count + '" class="nav-item ' + className + '"><a href="#" class="nav-link align-middle px-0" onclick="displayExercise(\'#exercise-spec-' + className + count + '\');"><span class="ms-1 d-none d-sm-inline">Item</span> <span class="fs-4">' + count + '</span><span class="ms-1 d-none d-sm-inline custom-title"></span></a></li>');
 			}
 		}
 
@@ -533,7 +644,16 @@
 		 Adds the link in the sidebar and displays the new exercise in the main part.
 		*/
 		function addConditionalExercise(count) {
-			$("#content-area").append('<div class="exercise-spec cond" id="exercise-spec-cond' + count + '"><a class="fa fa-times" style="float:right;color:red;" href="#" onclick="deleteExercise(this);"></a><h3>Exercise ' + count + '</h3><div class="card"><div class="card-body subtopic"><span style="font-weight: bold; margin-right: 5px;">Sub topic:</span><button class="btn btn-outline-secondary btn-sm dropdown-toggle btn-subtopic" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">---</button><div class="dropdown-menu"><a class="dropdown-item" href="#" onclick="updateDropdown(this);">Formation</a><a class="dropdown-item" href="#" onclick="updateDropdown(this);">Type 1 vs Type 2</a></div></div></div><table><tr><td style="padding-right:10px;"><div><a class="fa fa-arrow-circle-o-up invisible move-sent-up" aria-hidden="true" href="#" onclick="moveSentenceUp(this);"/></div><div><a id="move-sent-down" class="fa fa-arrow-circle-o-down invisible move-sent-down" aria-hidden="true" href="#" onclick="moveSentenceDown(this);"/></div><div><a class="fa fa-minus-square-o invisible remove-sent" aria-hidden="true" href="#" onclick="removeSentence(this);"/></div></td><td class="sentences"/></tr></table><br><a class="fa fa-plus" href="#" onclick="addSentence(this);"> Add exercise sentence</a></div>');
+			$("#content-area").append('<div class="exercise-spec cond" id="exercise-spec-con' + count + '"><a class="fa fa-trash" style="float:right;color:red;" href="#" onclick="deleteExercise(this);"></a><h3>Item ' + count + '</h3><div class="sentence-unit"><table><tr class="condType"><td>Conditional type:</td><td><button id="condTypeDrp' + count + '" class="btn btn-outline-secondary btn-sm dropdown-toggle btn-cond-type" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">---</button><div class="dropdown-menu" aria-labelledby="condTypeDrp' + count + '"><a class="dropdown-item" href="#" onclick="updateDropdown(this);">Type 1</a><a class="dropdown-item" href="#" onclick="updateDropdown(this);">Type 2</a></div></td></tr><tr><td>Context before: </td><td><input type="text" class="contextBefore" value=""></td></tr><tr><td>Context after: </td><td><input type="text" class="contextAfter" value=""></td></tr></table><br><div class="container"><div class="row"><div class="col-sm main-clause"><h4>Main clause:</h4><table class="spec"><tr class="chunks"><td>Chunks:</td><td><div><span></span><span class="chunksViewMain invisible"><input class="editable-chunks" type="text" value="" onKeyUp="changeChunks(this);"></span><a class="fa fa-pencil" onclick="displayEditChunks(this);" href="#"></a></div></td></tr><tr class="translation"><td>Translation:</td><td><input type="text"></td></tr>' + 
+					getSortableItemsWidgetString("distractors", "Distractors:", "distractorPopupMain", "Add distractor", count) + 
+					'<tr class="given-word"><td>Given word:</td><td><input type="text"></td></tr><tr class="semantic-distractor"><td>Semantic distractor:</td><td><input type="text"></td></tr>' + 
+					getSortableItemsWidgetString("given-words-ext", "Given words extended:", "givenWordsPopupMain", "Add given word", count) + 
+					'<tr class="gap"><td>Gap:</td><td><input class="idx gap spn1" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"> - <input class="idx gap spn2" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"><span class="spnLabel"></span></td></tr><tr class="mtw-target"><td>MtW target:</td><td><input class="idx mtw spn1" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"> - <input class="idx mtw spn2" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"><span class="spnLabel"></span></td></tr></table><br></div><div class="col-sm if-clause"><h4>If-clause:</h4><table class="spec"><tr class="chunks"><td>Chunks:</td><td><div><span></span><span class="chunksView invisible"><input class="editable-chunks" type="text" value="" onKeyUp="changeChunks(this);"></span><a class="fa fa-pencil" onclick="displayEditChunks(this);" href="#"></a></div></td></tr><tr class="translation"><td>Translation:</td><td><input type="text"></td></tr>' + 
+					getSortableItemsWidgetString("distractors", "Distractors:", "distractorPopup", "Add distractor", count) + 
+					'<tr class="given-word"><td>Given word:</td><td><input type="text"></td></tr><tr class="semantic-distractor"><td>Semantic distractor:</td><td><input type="text"></td></tr>' + 
+					getSortableItemsWidgetString("given-words-ext", "Given words extended:", "givenWordsPopup", "Add given word", count) + 
+					'<tr class="gap"><td>Gap:</td><td><input class="idx gap spn1" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"> - <input class="idx gap spn2" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"><span class="spnLabel"></span></td></tr><tr class="mtw-target"><td>MtW target:</td><td><input class="idx mtw spn1" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"> - <input class="idx mtw spn2" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"><span class="spnLabel"></span></td></tr></table></div></div></div><br></div></div>');
+			  $( ".sortable" ).sortable();
 		}
 
 		/**
@@ -541,9 +661,21 @@
 		 Adds the link in the sidebar and displays the new exercise in the main part.
 		*/
 		function addRelativeExercise(count) {
-			$("#content-area").append('<div class="exercise-spec rel" id="exercise-spec-rel' + count + '"><a class="fa fa-times" style="float:right;color:red;" href="#" onclick="deleteExercise(this);"></a><h3>Exercise ' + count + '</h3><div class="card"><div class="card-body subtopic"><span style="font-weight: bold; margin-right: 5px;">Sub topic:</span><button class="btn btn-outline-secondary btn-sm dropdown-toggle btn-subtopic" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">---</button><div class="dropdown-menu"><a class="dropdown-item" href="#" onclick="updateDropdown(this);">Subject who/which</a><a class="dropdown-item" href="#" onclick="updateDropdown(this);">Object which/whom</a><a class="dropdown-item" href="#" onclick="updateDropdown(this);">Whose</a><a class="dropdown-item" href="#" onclick="updateDropdown(this);">Where</a><a class="dropdown-item" href="#" onclick="updateDropdown(this);">Contact clauses</a></div></div></div><table><tr><td style="padding-right:10px;"><div><a class="fa fa-arrow-circle-o-up invisible move-sent-up" aria-hidden="true" href="#" onclick="moveSentenceUp(this);"/></div><div><a id="move-sent-down" class="fa fa-arrow-circle-o-down invisible move-sent-down" aria-hidden="true" href="#" onclick="moveSentenceDown(this);"/></div><div><a class="fa fa-minus-square-o invisible remove-sent" aria-hidden="true" href="#" onclick="removeSentence(this);"/></div></td><td class="sentences"/></tr></table><br><a class="fa fa-plus" href="#" onclick="addSentence(this);"> Add exercise sentence</a></div>');
+			$("#content-area").append('<div class="exercise-spec rel" id="exercise-spec-rel' + count + '"><a class="fa fa-trash" style="float:right;color:red;" href="#" onclick="deleteExercise(this);"></a><h3>Item ' + count + '</h3><div class="sentence-unit"><span class="context"></span></div><div id="sentence' + count + '" class="sentence"><table><tr><td>Context before: </td><td><input type="text" class="contextBefore" value=""></td></tr><tr><td>Context after: </td><td><input type="text" class="contextAfter" value=""></td></tr></table><br><table class="spec"><tr class="clause c1"><td>Clause 1:</td><td><input type="text"></td></tr><tr class="clause c2"><td>Clause 2:</td><td><input type="text"></td></tr>' + 
+					getSortableItemsWidgetString("pronouns", "Pronoun:", "pronounPopup", "Add pronoun", count) + 
+					getSortableItemsWidgetString("distractors", "Distractors:", "distractorPopupMain", "Add distractor", count) + 
+					'</table><div style="font-weight:bold; margin-top:20px;">Relative clauses:</div><table class="orders"><tr><td style="width: 400px; margin-right: 10px;">Chunks:</td><td style="margin-right: 10px;">Pronoun is optional:</td><td></td></tr></table><div><a class="fa fa-plus" href="#" onclick="addRelativeOrderChunks(this);" style="margin-top: 20px;"> Add relative clause alternative</a></div></div></div>');
+			  $( ".sortable" ).sortable();
 		}
-
+		
+		function getSortableItemsWidgetString(classname, title, popupId, popupTitle, count) {
+			return '<tr class="' + classname + '"><td>' + title + '</td><td><table class="list-cont"><tr class="listItems"><td><div class="sortable-group"><ul class="sortable"></ul><!-- add item popup --><div class="modal fade" id="' + popupId + count + '" tabindex="-1" role="dialog" aria-labelledby="' + popupId + 'Label' + count + '" aria-hidden="true"><div class="modal-dialog" role="document"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="' + popupId + 'Label' + count + '">' + popupTitle + '</h5><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div><div class="modal-body"><input type="text"></div><div class="modal-footer"><button type="button" class="btn btn-primary" onclick="addDistractor(this);" data-dismiss="modal">Add</button></div></div></div></div></div></td><td><a class="fa fa-plus" aria-hidden="true" href="#" data-toggle="modal" data-target="#' + popupId + count + '"></a></td></tr></table></td></tr>';
+		}
+		
+		function removeSortableItem(item) {
+			$(item).parent().remove();
+		}
+		
 		/**
 		 Sets the clicked exercise to visible in the main panel.
 		 Hides all other exercise items.
@@ -551,6 +683,7 @@
 		function displayExercise(exerciseId) {
 			$(".exercise-spec").addClass("invisible");
 			$("#type-settings").addClass("invisible");
+			$("#exercise-assemblies").addClass("invisible");
 			$(exerciseId).removeClass("invisible");
 		}
 
@@ -565,8 +698,12 @@
 		 Removes the specified exercise from the main part and the sidebar.
 		*/
 		function deleteExerciseItem(exercise) {
-			$("#nav-ex" + exercise.attr("id").substring(13)).remove();
+			exercise.find(".editable-chunks").each(function() {
+				removeAssemblyItem($(this));
+			});
+			$("#nav-ex" + exercise.attr("id").substring(17)).remove();
 			exercise.remove();
+			//TODO: update item titles
 		}
 
 		/**
@@ -590,6 +727,7 @@
 		*/
 		function displayTypeSettings() {
 			$(".exercise-spec").addClass("invisible");
+			$("#exercise-assemblies").addClass("invisible");
 			$("#type-settings").removeClass("invisible");
 		}
 
@@ -655,7 +793,7 @@
 			let has_changed = true;
 			while (has_changed) {
 				has_changed = false;
-				for (const item of $("#types-tree").find("input")) {
+				for (const item of $(".collapse-tree").find("input")) {
 					let parent = $(item).closest(".collapse").prev().find(".form-check-input");
 					if (parent.length > 0) {
 						let siblings = $(item).closest(".collapse").find(".form-check-input");
@@ -670,7 +808,7 @@
 						parent.prop('checked', allChildrenChecked);
 
 						// add/ remove styling for "some children checked"
-						if (siblings.length > 0 && siblings.length !== checked_siblings.length) {
+						if (siblings.length > 0 && siblings.length !== checked_siblings.length && checked_siblings.length > 0) {
 							parent.addClass("bold-border");
 						} else {
 							parent.removeClass("bold-border");
@@ -713,7 +851,7 @@
 				var sents = [];
 				ex["sentences"] = sents;
 				exercises.push(ex);
-				var sentences = $(exercise).find(".sentence");
+				var sentences = $(exercise).find(".sentence-unit");
 				for (const sentence of sentences) {
 					var sent = {
 						"contextBefore": $(sentence).find(".contextBefore").val(),
@@ -784,7 +922,7 @@
 				var sents = [];
 				ex["sentences"] = sents;
 				exercises.push(ex);
-				var sentences = $(exercise).find(".sentence");
+				var sentences = $(exercise).find(".sentence-unit");
 				for (const sentence of sentences) {
 					var sent = {
 						"condType": $(sentence).find(".btn-cond-type").text(),
@@ -912,8 +1050,8 @@
 						}
 
 						for (const sent of ex["sentences"]) {
-							addSentence(exercise);
-							let newSentences = exercise.find(".sentence");
+							//addSentence(exercise);
+							let newSentences = exercise.find(".sentence-unit");
 							let sentence = $(newSentences[newSentences.length - 1]);
 
 							sentence.find(".contextBefore").val(sent["contextBefore"]);
@@ -942,7 +1080,7 @@
 								}
 
 								for (const relSent of sent["relativeClauses"]) {
-									sentence.find(".orders").append('<tr><td><div><span></span><span class="chunksView invisible"><input class="editable-chunks" type="text" value="' + relSent["chunks"].join('|') + '" onKeyUp="changeRelativeChunks(this);"/></span><a class="fa fa-pencil" onclick="displayEditChunks(this);" href="#"/></div></td><td><input type="checkbox" class="pronOpt"' + (relSent["pronounIsOptional"] ? " checked" : "") + '></td><td><input type="checkbox" class="genDist"' + (relSent["generateDistinctExercise"] ? " checked" : "") + '></td><td><a class="fa fa-times" style="float:right;color:red;" href="#" onclick="deleteOrder(this);"></td></tr>')
+									sentence.find(".orders").append('<tr><td><div><span></span><span class="chunksView invisible"><input class="editable-chunks" type="text" value="' + relSent["chunks"].join('|') + '" onKeyUp="changeRelativeChunks(this);"></span><a class="fa fa-pencil" onclick="displayEditChunks(this);" href="#"></a></div></td><td><input type="checkbox" class="pronOpt"' + (relSent["pronounIsOptional"] ? " checked" : "") + '></td><td><input type="checkbox" class="genDist"' + (relSent["generateDistinctExercise"] ? " checked" : "") + '></td><td><a class="fa fa-times" style="float:right;color:red;" href="#" onclick="deleteOrder(this);"></td></tr>')
 
 								}
 							}
@@ -996,6 +1134,7 @@
 		var targetClauses = {
 			"Target only if-clause": null,
 			"Target only main clause": null,
+			"Target random clause": null,
 			"Target both clauses": null
 		};
 		var exerciseTypes = ["Single Choice (2 options)", "Single Choice (4 options)", "Fill-in-the-Blanks (lemma in parentheses)",
@@ -1014,10 +1153,12 @@
 			clauseOrderDict[el] = exerciseTypeDict;
 		}
 
-		var typeExerciseTypesAllClauses = ["Single Choice (2 options)", "Single Choice (4 options)", "Fill-in-the-Blanks (lemma in parentheses)",
-			"Fill-in-the-Blanks (lemma + distractor in parentheses)", "Half-open"
+		var typeExerciseTypesAllClauses = ["Single Choice (2 options)", "Single Choice (4 options)", 
+			"Fill-in-the-Blanks (lemma in parentheses)",
+			"Fill-in-the-Blanks (lemma + distractor in parentheses)", "Half-open", 
+			"Fill-in-the-Blanks (lemmas in instructions)", "Memory", "Jumbled Sentences"
 		];
-		var typeExerciseTypesWithoutBothClauses = ["Fill-in-the-Blanks (lemmas in instructions)", "Mark the Words"];
+		var typeExerciseTypesWithoutBothClauses = ["Mark the Words"];
 
 		var typeExerciseTypeDict = {};
 		for (const el of typeExerciseTypesAllClauses) {
@@ -1030,31 +1171,9 @@
 			};
 		}
 
-		typeExerciseTypeDict["Memory"] = {
-			"Use if-clause": null,
-			"Use main clause": null
-		};
-
 		var typeClauseOrderDict = {};
 		for (const el of clauseOrder) {
-			var newTypeExerciseTypeDict;
-			if (el === "If-clause + main clause") {
-				newTypeExerciseTypeDict = Object.assign({}, typeExerciseTypeDict, {
-					"Jumbled Sentences": {
-						"Target only if-clause": null,
-						"Target only main clause": null,
-						"Target both clauses": null
-					}
-				});
-			} else {
-				newTypeExerciseTypeDict = Object.assign({}, typeExerciseTypeDict, {
-					"Jumbled Sentences": {
-						"Target only if-clause": null,
-						"Target only main clause": null
-					}
-				});
-			}
-			typeClauseOrderDict[el] = newTypeExerciseTypeDict;
+			typeClauseOrderDict[el] = typeExerciseTypeDict;
 		}
 
 		var relExerciseTypes = {"Memory": null, "Mark the Words": null, "Single Choice": null, "Fill-in-the-Blanks": null, "Half-open": null, "Open": null};
@@ -1107,7 +1226,6 @@
 
 			}
 		}
-
 
 	</script>
 </body>

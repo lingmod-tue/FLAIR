@@ -8,7 +8,7 @@ public class ConfigParserFactory {
 		if(topic.equals(ExerciseTopic.CONDITIONALS)) {     
 			return new ConditionalConfigParser();
         } else if(topic.equals(ExerciseTopic.RELATIVES)) {
-        	return new RelativeConfigParser();
+        	return new LegacyRelativeConfigParser();
         } else {
     		throw new IllegalArgumentException();
         }      

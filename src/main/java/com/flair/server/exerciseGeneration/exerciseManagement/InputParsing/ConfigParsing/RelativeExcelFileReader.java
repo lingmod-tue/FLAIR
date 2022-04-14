@@ -206,9 +206,9 @@ public class RelativeExcelFileReader extends ExcelFileReader {
 		ArrayList<ExerciseTypeSpec> types = new ArrayList<>();
 		for(String type : exerciseTypes) {
 			ExerciseTypeSpec t = new ExerciseTypeSpec();	
-			
+			t.setSubtopic("Relative pronoun");
+
 			if(stamp.equals("subject who/which")) {
-				t.setSubtopic("Subject who/which");
 				if(type.equals("Relativepronoun_SingleChoice")) {
 					t.setFeedbookType(FeedBookExerciseType.SINGLE_CHOICE_2D);
 				} else if(type.equals("Relativepronoun_Fill-in-the-Blanks")) {
@@ -221,7 +221,6 @@ public class RelativeExcelFileReader extends ExcelFileReader {
 					t.setFeedbookType(FeedBookExerciseType.getContainedType(type));
 				}
 			} else if(stamp.equals("object which/whom")) {
-				t.setSubtopic("Object which/whom");
 				if(type.equals("Relativepronoun_SingleChoice")) {
 					t.setFeedbookType(FeedBookExerciseType.SINGLE_CHOICE_2D);
 				} else if(type.equals("Relativepronoun_Fill-in-the-Blanks")) {
@@ -234,7 +233,6 @@ public class RelativeExcelFileReader extends ExcelFileReader {
 					t.setFeedbookType(FeedBookExerciseType.getContainedType(type));
 				}
 			} else if(stamp.equals("whose (+which, who and whom)")) {
-				t.setSubtopic("Whose (+which, who and whom)");
 				if(type.equals("Relativepronoun_SingleChoice")) {
 					t.setFeedbookType(FeedBookExerciseType.SINGLE_CHOICE_4D);
 				} else if(type.equals("Relativepronoun_Fill-in-the-Blanks")) {
@@ -247,7 +245,6 @@ public class RelativeExcelFileReader extends ExcelFileReader {
 					t.setFeedbookType(FeedBookExerciseType.getContainedType(type));
 				}
 			} else if(stamp.equals("where (+ which, whose, who)")) {
-				t.setSubtopic("Where (+ which, whose, who)");
 				if(type.equals("Relativepronoun_SingleChoice")) {
 					t.setFeedbookType(FeedBookExerciseType.SINGLE_CHOICE_4D);
 				} else if(type.equals("Relativepronoun_Fill-in-the-Blanks")) {

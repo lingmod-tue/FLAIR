@@ -160,7 +160,6 @@ public class ConditionalSpecificationGenerator implements SpecificationGenerator
 			JSONObject exercise = new JSONObject();
 			exercises.add(exercise);
 			
-			exercise.put("subtopic", d.getStamp().equals("Conditional") ? "Formation" : "Type 1 vs Type 2");
 			JSONArray sentences = new JSONArray();
 	        exercise.put("sentences", sentences);
 

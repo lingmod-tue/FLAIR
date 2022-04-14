@@ -4,19 +4,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseData;
-import com.flair.server.exerciseGeneration.exerciseManagement.TextPart;
-import com.flair.server.exerciseGeneration.exerciseManagement.InputParsing.ConfigParsing.ConditionalExerciseItemConfigData;
 import com.flair.server.exerciseGeneration.exerciseManagement.InputParsing.ConfigParsing.ExerciseConfigData;
 import com.flair.server.exerciseGeneration.exerciseManagement.InputParsing.ConfigParsing.ExerciseItemConfigData;
 import com.flair.server.exerciseGeneration.exerciseManagement.InputParsing.ConfigParsing.RelativeExerciseItemConfigData;
 import com.flair.server.exerciseGeneration.exerciseManagement.InputParsing.ConfigParsing.RelativeSentence;
-import com.flair.server.exerciseGeneration.exerciseManagement.nlpManagement.ConditionalNlpManager;
-import com.flair.server.exerciseGeneration.exerciseManagement.nlpManagement.ConditionalSentence;
 import com.flair.server.exerciseGeneration.exerciseManagement.nlpManagement.RelativeNlpManager;
 import com.flair.server.exerciseGeneration.exerciseManagement.nlpManagement.RelativeSentenceAlternative;
 import com.flair.server.exerciseGeneration.exerciseManagement.nlpManagement.RelativeSentenceChunk;
@@ -57,7 +52,6 @@ public class RelativeSpecificationGenerator implements SpecificationGenerator {
 			JSONObject exercise = new JSONObject();
 			exercises.add(exercise);
 			
-			exercise.put("subtopic", StringUtils.capitalize(d.getStamp()));
 			JSONArray sentences = new JSONArray();
 	        exercise.put("sentences", sentences);
 

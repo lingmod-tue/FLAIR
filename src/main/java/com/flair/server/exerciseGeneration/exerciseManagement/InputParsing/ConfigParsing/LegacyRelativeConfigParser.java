@@ -19,63 +19,99 @@ import com.flair.shared.exerciseGeneration.ExerciseTopic;
 import com.flair.shared.exerciseGeneration.ExerciseType;
 import com.flair.shared.exerciseGeneration.Pair;
 
-public class RelativeConfigParser extends ConfigParser {
+public class LegacyRelativeConfigParser extends ConfigParser {
 
 	@Override
 	protected ArrayList<ExerciseData> generateExerciseForConfig(ExerciseConfigData data) {
+		//TODO: only for debug output:
+		if(!data.getStamp().equals("contact clauses")) {
+			for(ExerciseItemConfigData configData : data.getItemData()) {
+				RelativeTargetAndClauseItems clauseItems = determineClauseItems((RelativeExerciseItemConfigData)configData, true);
+				StringBuilder sb = new StringBuilder();
+				sb.append(clauseItems.getSentenceClause1() + " " + clauseItems.getSentenceClause2());
+	
+				if(!((RelativeExerciseItemConfigData)configData).getPronoun().equals("whose")) {
+					String res = getRelativeSentence((RelativeExerciseItemConfigData)configData, true, false, data.getStamp(), data.getActivity());
+					if(res != null) {
+						sb.append(";").append(res);
+					} else {
+						sb.append(";");
+					}
+					res = getRelativeSentence((RelativeExerciseItemConfigData)configData, true, true, data.getStamp(), data.getActivity());
+					if(res != null) {
+						sb.append(";").append(res);
+					} else {
+						sb.append(";");
+					}
+				} else {
+					sb.append(";;");
+				}
+				String res = getRelativeSentence((RelativeExerciseItemConfigData)configData, false, false, data.getStamp(), data.getActivity());
+				if(res != null) {
+					sb.append(";").append(res);
+				}
+				res = getRelativeSentence((RelativeExerciseItemConfigData)configData, false, true, data.getStamp(), data.getActivity());
+				if(res != null) {
+					sb.append(";").append(res);
+				}
+	
+				System.out.println(sb.toString());
+			}
+		}
+		// end TODO
+				
 		ArrayList<ExerciseData> exercises = new ArrayList<>();
 
 		for (ExerciseTypeSpec configValues : data.getExerciseType()) {
 			try {
-				ArrayList<ExerciseData> ed = new ArrayList<>();
+				ExerciseData d = null;
 				Collections.shuffle(data.getItemData());
 
 				if (configValues.getSubtopic().equals("Relative pronoun")) {						
 					if (configValues.getFeedbookType().equals(FeedBookExerciseType.MEMORY)) {
-						ExerciseData d = generateTask("Memory", data, true, true, false);
+						d = generateTask("Memory", data, true, true, false);
 						d.setExerciseType(ExerciseType.MEMORY);
-						ed.add(d);
 					} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.UNDERLINE)) {
-						ExerciseData d = generateTask("Gap", data, true, true, false);
+						d = generateTask("Gap", data, true, true, false);
 						if(d != null) {
 							d.setExerciseType(ExerciseType.MARK_THE_WORDS);
 						}
 					} if (configValues.getFeedbookType().equals(FeedBookExerciseType.SINGLE_CHOICE_2D) || configValues.getFeedbookType().equals(FeedBookExerciseType.SINGLE_CHOICE_4D)) {
-						ExerciseData d = generateTask("Gap", data, true, true, true);
+						d = generateTask("Gap", data, true, true, true);
 						if(d != null) {
 							d.setExerciseType(ExerciseType.SINGLE_CHOICE);
 						}
 					} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.FIB_LEMMA_PARENTHESES)) {
-						ExerciseData d = generateTask("Gap", data, true, true, false);
+						d = generateTask("Gap", data, true, true, false);
 						if(d != null) {
 							d.setExerciseType(ExerciseType.FILL_IN_THE_BLANKS);
 						}
 					} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.FIB_LEMMA_DISTRACTOR_PARENTHESES)) {
-						ExerciseData d = generateTask("Prompted", data, true, true, false);
+						d = generateTask("Prompted", data, true, true, false);
 						d.setExerciseType(ExerciseType.HALF_OPEN);
 					} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.HALF_OPEN)) {
-						ExerciseData d = generateOpenTask(data);
+						d = generateOpenTask(data);
 						d.setExerciseType(ExerciseType.SHORT_ANSWER);
 					} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.JUMBLED_SENTENCES)) {
-						ExerciseData d = generateJSTask(data, true, true);
+						d = generateJSTask(data, true, true);
 						if(d != null) {
 							d.setExerciseType(ExerciseType.JUMBLED_SENTENCES);
 						}
 					}
 				} else {					
 					if (configValues.getFeedbookType().equals(FeedBookExerciseType.FIB_LEMMA_DISTRACTOR_PARENTHESES)) {
-						ExerciseData d = generatePromptedTaskContact(data);
+						d = generatePromptedTaskContact(data);
 						d.setExerciseType(ExerciseType.HALF_OPEN);
 					} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.HALF_OPEN)) {
-						ExerciseData d = generateOpenTaskContact(data);
+						d = generateOpenTaskContact(data);
 						d.setExerciseType(ExerciseType.SHORT_ANSWER);
 					} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.CATEGORIZATION)) {
-						ExerciseData d = generateCategorizeTask(data);
+						d = generateCategorizeTask(data);
 						d.setExerciseType(ExerciseType.CATEGORIZE);
 					}
 				}
 				
-				for(ExerciseData d : ed) {
+				if (d != null) {
         			d.setExerciseTitle(data.getTocId() + FeedBookExerciseType.getFeedbookId(configValues.getFeedbookType()));
         			d.setTopic(ExerciseTopic.RELATIVES);
         			d.setSubtopic(data.getStamp());
