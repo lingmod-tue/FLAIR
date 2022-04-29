@@ -37,8 +37,10 @@ public class JSXmlGenerator extends SimpleExerciseXmlGenerator {
 						Collections.shuffle(sentenceParts.get(0));
 						item.setText(StringUtils.join(sentenceParts.get(0), "|"));
 						item.setInputType("JUMBLED_SENTENCE_PARTS");
-						if(previousElement.getDistractors().size() > 0 && previousElement.getDistractors().get(0).getFeedback() != null) {
-							item.setFeedback(previousElement.getDistractors().get(0).getFeedback());
+
+						if(previousElement.getFallbackFeedback() != null) {
+							item.setFeedback(previousElement.getFallbackFeedback());
+							
 							if(previousElement.getConstructionType().equals(DetailedConstruction.REL_CLAUSE)) {
 								item.setLanguageConstruct("RELATIVE_CLAUSE");
 							}
@@ -73,8 +75,9 @@ public class JSXmlGenerator extends SimpleExerciseXmlGenerator {
 			Collections.shuffle(sentenceParts.get(0));
 			item.setText(StringUtils.join(sentenceParts.get(0), "|"));
 			item.setInputType("JUMBLED_SENTENCE_PARTS");
-			if(previousElement.getDistractors().size() > 0 && previousElement.getDistractors().get(0).getFeedback() != null) {
-				item.setFeedback(previousElement.getDistractors().get(0).getFeedback());
+			if(previousElement.getFallbackFeedback() != null) {
+				item.setFeedback(previousElement.getFallbackFeedback());
+				
 				if(previousElement.getConstructionType().equals(DetailedConstruction.REL_CLAUSE)) {
 					item.setLanguageConstruct("RELATIVE_CLAUSE");
 				}

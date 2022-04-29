@@ -107,7 +107,7 @@ DocumentPreviewPane	COLUMN_RELFREQ	Relative Frequency %
 
 ExerciseGenerationWidget	btnAddTask	Add Exercise
 ExerciseGenerationWidget	btnDeleteTasks	Delete all Exercises
-ExerciseGenerationWidget	btnGenerateExercises	Generate Exercises
+ExerciseGenerationWidget	btnGenerateExercises	Generate
 ExerciseGenerationWidget	icoDownload	Download generated exercises
 ExerciseGenerationWidget	icoXmlDownload	Download generated exercises as XML for FeedBook
 

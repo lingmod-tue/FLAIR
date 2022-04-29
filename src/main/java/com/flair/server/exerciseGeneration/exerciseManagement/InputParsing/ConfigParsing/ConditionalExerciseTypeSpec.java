@@ -6,6 +6,21 @@ public class ConditionalExerciseTypeSpec extends ExerciseTypeSpec {
 	private boolean targetIfClause = false;
 	private boolean targetMainClause = false;
 	private boolean randomTargetClause = false;
+	private boolean randomClauseOrder = false;
+		
+	public ConditionalExerciseTypeSpec(String feedbookType, boolean ifClauseFirst,
+			boolean targetIfClause, boolean targetMainClause, boolean randomTargetClause, boolean randomClauseOrder) {
+		super(feedbookType);
+		this.ifClauseFirst = ifClauseFirst;
+		this.targetIfClause = targetIfClause;
+		this.targetMainClause = targetMainClause;
+		this.randomTargetClause = randomTargetClause;
+		this.setRandomClauseOrder(randomClauseOrder);
+	}
+
+	public ConditionalExerciseTypeSpec() {
+		super();
+	}
 	
 	public boolean isIfClauseFirst() {
 		return ifClauseFirst;
@@ -30,6 +45,14 @@ public class ConditionalExerciseTypeSpec extends ExerciseTypeSpec {
 	}
 	public void setRandomTargetClause(boolean randomTargetClause) {
 		this.randomTargetClause = randomTargetClause;
+	}
+
+	public boolean isRandomClauseOrder() {
+		return randomClauseOrder;
+	}
+
+	public void setRandomClauseOrder(boolean randomClauseOrder) {
+		this.randomClauseOrder = randomClauseOrder;
 	}
 	
 }

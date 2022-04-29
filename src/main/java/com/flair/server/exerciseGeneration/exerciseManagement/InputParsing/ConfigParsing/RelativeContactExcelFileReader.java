@@ -100,22 +100,44 @@ public class RelativeContactExcelFileReader extends ExcelFileReader {
 		    			cd.setTocId(value);
 		    		}
 		    	} else if(entry.getValue().equals("Main clause 1")) {
-		    		((RelativeExerciseItemConfigData)cd.getItemData().get(0)).getPositionsClause1().add(new Pair<>(1, columnValues.get(entry.getValue()).get(i)));
+		    		((RelativeExerciseItemConfigData)cd.getItemData().get(0)).setClause1(columnValues.get(entry.getValue()).get(i));
 		    	} else if(entry.getValue().equals("Main clause 2")) {
-		    		((RelativeExerciseItemConfigData)cd.getItemData().get(0)).getPositionsClause2().add(new Pair<>(1, columnValues.get(entry.getValue()).get(i)));
+		    		((RelativeExerciseItemConfigData)cd.getItemData().get(0)).setClause2(columnValues.get(entry.getValue()).get(i));
 		    	} else if(entry.getValue().equals("Main clause 1 as relative clause")) {
-		    		((RelativeExerciseItemConfigData)cd.getItemData().get(0)).setRelativeSentence(columnValues.get(entry.getValue()).get(i));
+		    		RelativeSentence relativeSentence = new RelativeSentence();
+		    		relativeSentence.setUseToGenerateExercise(true);
+		    		ArrayList<RelativeClausePosition> chunks = new ArrayList<>();
+		    		chunks.add(new RelativeClausePosition(columnValues.get(entry.getValue()).get(i)));
+		    		relativeSentence.setChunks(chunks);
+		    		((RelativeExerciseItemConfigData)cd.getItemData().get(0)).getRelativeSentences().add(relativeSentence);
 		    	} else if(entry.getValue().equals("Main clause 1 as contact relative clause")) {
-		    		((RelativeExerciseItemConfigData)cd.getItemData().get(0)).setContactRelativeSentence(columnValues.get(entry.getValue()).get(i));
+		    		String contactClause = columnValues.get(entry.getValue()).get(i);
+		    		if(!contactClause.equals(((RelativeExerciseItemConfigData)cd.getItemData().get(0)).getRelativeSentences().get(0).getChunks().get(0).getValue())) {
+		    			ArrayList<RelativeClausePosition> chunks = splitAtPronoun(((RelativeExerciseItemConfigData)cd.getItemData().get(0)).getRelativeSentences().get(0).getChunks().get(0).getValue(), contactClause);
+			    		((RelativeExerciseItemConfigData)cd.getItemData().get(0)).getRelativeSentences().get(0).setChunks(chunks);
+		    		}
 		    	} else if(entry.getValue().equals("Main clause 2 as contact relative clause")) {
-		    		((RelativeExerciseItemConfigData)cd.getItemData().get(0)).setAlternativeRelativeSentence(columnValues.get(entry.getValue()).get(i));
+		    		RelativeSentence relativeSentence = new RelativeSentence();
+		    		ArrayList<RelativeClausePosition> chunks = new ArrayList<>();
+		    		chunks.add(new RelativeClausePosition(columnValues.get(entry.getValue()).get(i)));
+		    		relativeSentence.setChunks(chunks);
+		    		relativeSentence.setPronounIsOptional(true);
+		    		((RelativeExerciseItemConfigData)cd.getItemData().get(0)).getRelativeSentences().add(relativeSentence);
 		    	} else if(entry.getValue().equals("richtig")) {
-		    		((RelativeExerciseItemConfigData)cd.getItemData().get(0)).setContact(columnValues.get(entry.getValue()).get(i).equals("Yes"));
+		    		((RelativeExerciseItemConfigData)cd.getItemData().get(0)).getRelativeSentences().get(0).setPronounIsOptional(columnValues.get(entry.getValue()).get(i).equals("Yes"));
 		    	} else if(entry.getValue().equals("Feedback bei falscher Antwort")) {
 		    		((RelativeExerciseItemConfigData)cd.getItemData().get(0)).setFeedback(columnValues.get(entry.getValue()).get(i));
 		    	} 
 			}	
 			isFirstCol = false;
+		}
+		
+		for(ExerciseConfigData cd : configData) {
+			for(ExerciseItemConfigData id : cd.getItemData()) {
+				for(RelativeSentence rs : ((RelativeExerciseItemConfigData)id).getRelativeSentences()) {
+					rs.setChunks(splitAfterPrompt(rs.getChunks()));
+				}
+			}
 		}
 		
 		Collections.sort(configData, (i1, i2) -> i1.getActivity() < i2.getActivity() ? -1 : 1);
@@ -158,28 +180,53 @@ public class RelativeContactExcelFileReader extends ExcelFileReader {
 		return batchedExercises;
 	}
 
-	private static final String[] exerciseTypes = new String[] {
-			"Contactclauses_Half-open",
-			"Contactclauses_Open",
-			"Contactclauses_Categorize"
-	};
-	
 	private ArrayList<ExerciseTypeSpec> getExerciseTypes(String stamp) {
 		ArrayList<ExerciseTypeSpec> types = new ArrayList<>();
-		for(String type : exerciseTypes) {
-			ExerciseTypeSpec t = new ExerciseTypeSpec();	
-			t.setSubtopic("Contact clauses");
-			if(type.equals("Contactclauses_Open")) {
-				t.setFeedbookType(FeedBookExerciseType.HALF_OPEN);
-			} else if(type.equals("Contactclauses_Half-open")) {
-				t.setFeedbookType(FeedBookExerciseType.FIB_LEMMA_DISTRACTOR_PARENTHESES);
-			} else {
-				t.setFeedbookType(FeedBookExerciseType.getContainedType(type));
+		types.add(new RelativeExerciseTypeSpec(FeedBookExerciseType.HALF_OPEN, true));
+		types.add(new RelativeExerciseTypeSpec(FeedBookExerciseType.FIB_LEMMA_DISTRACTOR_PARENTHESES, true));
+		types.add(new RelativeExerciseTypeSpec(FeedBookExerciseType.CATEGORIZATION, true));
+
+		return types;
+	}
+	
+	private ArrayList<RelativeClausePosition> splitAtPronoun(String rs, String contactClause) {
+		ArrayList<RelativeClausePosition> chunks = new ArrayList<>();
+		for(int i = 1; i <= contactClause.length(); i++) {
+			if(!rs.startsWith(contactClause.substring(0, i))) {
+				// we have found the first difference, so this is the pronoun
+				// now we need to find the start of the pronoun
+				int startIndex = rs.substring(0, i).lastIndexOf(" ");
+				int endIndex = rs.indexOf(" ", i);
+				
+				chunks.add(new RelativeClausePosition(rs.substring(0, startIndex).trim()));
+				RelativeClausePosition chunk = new RelativeClausePosition(rs.substring(startIndex, endIndex).trim());
+				chunk.setPronoun(true);
+				chunks.add(chunk);
+				chunks.add(new RelativeClausePosition(rs.substring(endIndex).trim()));
+
+				return chunks;
 			}
-			types.add(t);
 		}
 		
-		return types;
+		chunks.add(new RelativeClausePosition(contactClause));
+		return chunks;
+	}
+	
+	private ArrayList<RelativeClausePosition> splitAfterPrompt(ArrayList<RelativeClausePosition> oldChunks) {
+		ArrayList<RelativeClausePosition> chunks = new ArrayList<>();
+		int indexFirstBlank = oldChunks.get(0).getValue().indexOf(" ");
+		int indexSecondBlank = oldChunks.get(0).getValue().indexOf(" ", indexFirstBlank + 1);
+		
+		RelativeClausePosition promptChunk = new RelativeClausePosition(oldChunks.get(0).getValue().substring(0, indexSecondBlank).trim());
+		promptChunk.setLastCommonReferent(true);
+		chunks.add(promptChunk);
+		chunks.add(new RelativeClausePosition(oldChunks.get(0).getValue().substring(indexSecondBlank).trim()));
+		
+		for(int i = 1; i < oldChunks.size(); i++) {
+			chunks.add(oldChunks.get(i));
+		}
+		
+		return chunks;
 	}
 	
 }

@@ -305,83 +305,73 @@ public class ConditionalExcelFileReader extends ExcelFileReader {
 		
 		return batchedExercises;
 	}
-	
-	private static final String[] exerciseTypes = new String[] {
-	          		"Type1vsType2_Randomclauseorder_SingleChoice2options_Targetonlyif-clause",
-	          		"Type1vsType2_Randomclauseorder_SingleChoice2options_Targetonlymainclause",
-	          		"Type1vsType2_Randomclauseorder_SingleChoice2options_Targetbothclauses",
-	          		"Type1vsType2_Randomclauseorder_SingleChoice4options_Targetonlyif-clause",
-	          		"Type1vsType2_Randomclauseorder_SingleChoice4options_Targetonlymainclause",
-	          		"Type1vsType2_Randomclauseorder_SingleChoice4options_Targetbothclauses",
-	          		"Type1vsType2_Randomclauseorder_Fill-in-the-Blankslemmainparentheses_Targetonlyif-clause",
-	          		"Type1vsType2_Randomclauseorder_Fill-in-the-Blankslemmainparentheses_Targetonlymainclause",
-	          		"Type1vsType2_Randomclauseorder_Fill-in-the-Blankslemmainparentheses_Targetbothclauses",
-	          		"Type1vsType2_Randomclauseorder_Fill-in-the-Blankslemmadistractorinparentheses_Targetonlyif-clause",
-	          		"Type1vsType2_Randomclauseorder_Fill-in-the-Blankslemmadistractorinparentheses_Targetonlymainclause",
-	          		"Type1vsType2_Randomclauseorder_Fill-in-the-Blankslemmadistractorinparentheses_Targetbothclauses",
-	          		"Type1vsType2_Randomclauseorder_Fill-in-the-Blankslemmasininstructions_Targetonlyif-clause",
-	          		"Type1vsType2_Randomclauseorder_Fill-in-the-Blankslemmasininstructions_Targetonlymainclause",
-	          		"Type1vsType2_Randomclauseorder_Fill-in-the-Blankslemmasininstructions_Targetbothclauses",
-	          		"Type1vsType2_Randomclauseorder_Categorize",
-	          		"Formation_Randomclauseorder_SingleChoice2options_Targetonlyif-clause",
-	          		"Formation_Randomclauseorder_SingleChoice2options_Targetonlymainclause",
-	          		"Formation_Randomclauseorder_SingleChoice2options_Targetbothclauses",
-	          		"Formation_Randomclauseorder_SingleChoice4options_Targetonlyif-clause",
-	          		"Formation_Randomclauseorder_SingleChoice4options_Targetonlymainclause",
-	          		"Formation_Randomclauseorder_SingleChoice4options_Targetbothclauses",
-	          		"Formation_Randomclauseorder_Fill-in-the-Blankslemmainparentheses_Targetonlyif-clause",
-	          		"Formation_Randomclauseorder_Fill-in-the-Blankslemmainparentheses_Targetonlymainclause",
-	          		"Formation_Randomclauseorder_Fill-in-the-Blankslemmainparentheses_Targetbothclauses",
-	          		"Formation_Randomclauseorder_Fill-in-the-Blankslemmadistractorinparentheses_Targetonlyif-clause",
-	          		"Formation_Randomclauseorder_Fill-in-the-Blankslemmadistractorinparentheses_Targetonlymainclause",
-	          		"Formation_Randomclauseorder_Fill-in-the-Blankslemmadistractorinparentheses_Targetbothclauses",
-	          		"Formation_Randomclauseorder_Half-open_Targetonlyif-clause",
-	          		"Formation_Randomclauseorder_Half-open_Targetonlymainclause",
-	          		"Formation_Randomclauseorder_Half-open_Targetbothclauses",
-	          		"Formation_Randomclauseorder_Fill-in-the-Blankslemmasininstructions_Targetonlyif-clause",
-	          		"Formation_Randomclauseorder_Fill-in-the-Blankslemmasininstructions_Targetonlymainclause",
-	          		"Formation_Randomclauseorder_MarktheWords_Targetonlyif-clause",
-	          		"Formation_Randomclauseorder_MarktheWords_Targetonlymainclause",
-	          		"Formation_Randomclauseorder_Memory_Useif-clause",
-	          		"Formation_Randomclauseorder_Memory_Usemainclause",
-	          		"Formation_Randomclauseorder_JumbledSentences_Targetonlyif-clause",
-	          		"Formation_Randomclauseorder_JumbledSentences_Targetonlymainclause"
-	};
-	
+
 	private ArrayList<ExerciseTypeSpec> getExerciseTypes(String stamp) {
 		ArrayList<ExerciseTypeSpec> types = new ArrayList<>();
-		for(String exerciseType : exerciseTypes) {
-			ConditionalExerciseTypeSpec t = new ConditionalExerciseTypeSpec();
-			t.setRandomClauseOrder(true);
-			t.setFeedbookType(FeedBookExerciseType.getContainedType(exerciseType));
-			t.setSubtopic(exerciseType.contains("Type1vsType2") ? "conditional_types" : "conditional_form");
-
-			if(stamp.equals("conditinal 1 vs conditional 2") && exerciseType.endsWith("Categorize")) {
-				types.add(t);
-			} else if(stamp.equals("conditinal 1 vs conditional 2") && exerciseType.contains("Type1vsType2") ||
-					!stamp.equals("conditinal 1 vs conditional 2") && exerciseType.contains("Formation") && 
-					!stamp.startsWith("Conditional negative Conditional negative ")) {
-				if(exerciseType.endsWith("if-clause") || exerciseType.endsWith("mainclause")) {
-					t.setTargetIfClause(exerciseType.endsWith("if-clause"));
-					t.setTargetMainClause(exerciseType.endsWith("mainclause"));
-					types.add(t);
-				}
-			} else if(!stamp.startsWith("Conditional negative") && exerciseType.contains("Formation")) {
-				if(stamp.endsWith("main + if clause") && exerciseType.endsWith("bothclauses")) {
-					t.setTargetIfClause(true);
-					t.setTargetMainClause(true);
-					types.add(t);
-				} else if(stamp.endsWith("if clause") && exerciseType.endsWith("if-clause")) {
-					t.setTargetIfClause(true);
-					t.setTargetMainClause(false);
-					types.add(t);
-				} else if(stamp.endsWith("main clause") && exerciseType.endsWith("mainclause")) {
-					t.setTargetIfClause(false);
-					t.setTargetMainClause(true);
-					types.add(t);
-				}
-			}
-			
+		
+		if(stamp.equals("conditinal 1 vs conditional 2")) {
+			types.add(new ConditionalExerciseTypeSpec(
+					FeedBookExerciseType.SINGLE_CHOICE_4D, false, false, false, true, true));
+			types.add(new ConditionalExerciseTypeSpec(
+					FeedBookExerciseType.FIB_LEMMA_PARENTHESES, false, false, false, true, true));
+			types.add(new ConditionalExerciseTypeSpec(
+					FeedBookExerciseType.FIB_LEMMA_DISTRACTOR_PARENTHESES, false, false, false, true, true));
+			types.add(new ConditionalExerciseTypeSpec(
+					FeedBookExerciseType.JUMBLED_SENTENCES, false, false, false, true, true));
+			types.add(new ConditionalExerciseTypeSpec(
+					FeedBookExerciseType.CATEGORIZATION, false, false, false, false, true));
+		} else if(stamp.equals("Conditional negative if clause")) {
+			types.add(new ConditionalExerciseTypeSpec(
+					FeedBookExerciseType.SINGLE_CHOICE_4D, false, true, false, false, true));
+			types.add(new ConditionalExerciseTypeSpec(
+					FeedBookExerciseType.FIB_LEMMA_PARENTHESES, false, true, false, false, true));
+			types.add(new ConditionalExerciseTypeSpec(
+					FeedBookExerciseType.FIB_LEMMA_DISTRACTOR_PARENTHESES, false, true, false, false, true));
+			types.add(new ConditionalExerciseTypeSpec(
+					FeedBookExerciseType.HALF_OPEN, false, true, false, false, true));
+			types.add(new ConditionalExerciseTypeSpec(
+					FeedBookExerciseType.MEMORY, false, true, false, false, true));
+			types.add(new ConditionalExerciseTypeSpec(
+					FeedBookExerciseType.JUMBLED_SENTENCES, false, true, false, false, true));
+		} else if(stamp.equals("Conditional negative main clause")) {
+			types.add(new ConditionalExerciseTypeSpec(
+					FeedBookExerciseType.SINGLE_CHOICE_4D, false, false, true, false, true));
+			types.add(new ConditionalExerciseTypeSpec(
+					FeedBookExerciseType.FIB_LEMMA_PARENTHESES, false, false, true, false, true));
+			types.add(new ConditionalExerciseTypeSpec(
+					FeedBookExerciseType.FIB_LEMMA_DISTRACTOR_PARENTHESES, false, false, true, false, true));
+			types.add(new ConditionalExerciseTypeSpec(
+					FeedBookExerciseType.HALF_OPEN, false, false, true, false, true));
+			types.add(new ConditionalExerciseTypeSpec(
+					FeedBookExerciseType.MEMORY, false, false, true, false, true));
+			types.add(new ConditionalExerciseTypeSpec(
+					FeedBookExerciseType.JUMBLED_SENTENCES, false, false, true, false, true));
+		} else if(stamp.equals("Conditional negative main + if clause")) {
+			types.add(new ConditionalExerciseTypeSpec(
+					FeedBookExerciseType.SINGLE_CHOICE_4D, false, true, true, false, true));
+			types.add(new ConditionalExerciseTypeSpec(
+					FeedBookExerciseType.FIB_LEMMA_PARENTHESES, false, true, true, false, true));
+			types.add(new ConditionalExerciseTypeSpec(
+					FeedBookExerciseType.FIB_LEMMA_DISTRACTOR_PARENTHESES, false, true, true, false, true));
+			types.add(new ConditionalExerciseTypeSpec(
+					FeedBookExerciseType.HALF_OPEN, false, true, true, false, true));
+			types.add(new ConditionalExerciseTypeSpec(
+					FeedBookExerciseType.MEMORY, false, false, false, true, true));
+			types.add(new ConditionalExerciseTypeSpec(
+					FeedBookExerciseType.JUMBLED_SENTENCES, false, false, false, true, true));
+		} else if(stamp.equals("conditional question") || stamp.equals("Conditional affirmative")) {
+			types.add(new ConditionalExerciseTypeSpec(
+					FeedBookExerciseType.SINGLE_CHOICE_4D, false, false, false, true, true));
+			types.add(new ConditionalExerciseTypeSpec(
+					FeedBookExerciseType.FIB_LEMMA_PARENTHESES, false, false, false, true, true));
+			types.add(new ConditionalExerciseTypeSpec(
+					FeedBookExerciseType.FIB_LEMMA_DISTRACTOR_PARENTHESES, false, false, false, true, true));
+			types.add(new ConditionalExerciseTypeSpec(
+					FeedBookExerciseType.HALF_OPEN, false, false, false, true, true));
+			types.add(new ConditionalExerciseTypeSpec(
+					FeedBookExerciseType.MEMORY, false, false, false, true, true));
+			types.add(new ConditionalExerciseTypeSpec(
+					FeedBookExerciseType.JUMBLED_SENTENCES, false, false, false, true, true));
 		}
 		return types;
 	}

@@ -35,8 +35,9 @@ public class SCXmlGenerator extends SimpleExerciseXmlGenerator {
 				previousGap = new Item();
 				previousGap.setTarget(element.getValue());
 				previousGap.setInputType("MUL_CHOICE_BLANK");
-				if(((ConstructionTextPart)element).getDistractors().size() > 0 && ((ConstructionTextPart)element).getDistractors().get(0).getFeedback() != null) {
-					previousGap.setFeedback(((ConstructionTextPart)element).getDistractors().get(0).getFeedback());
+				if(((ConstructionTextPart)element).getFallbackFeedback() != null) {
+					previousGap.setFeedback(((ConstructionTextPart)element).getFallbackFeedback());
+					
 					if(((ConstructionTextPart)element).getConstructionType().equals(DetailedConstruction.REL_CLAUSE)) {
 						previousGap.setLanguageConstruct("RELATIVE_CLAUSE");
 					}

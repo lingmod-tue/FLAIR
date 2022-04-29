@@ -31,6 +31,8 @@ public class ConditionalConfigParser extends ConfigParser {
 			ConditionalExerciseTypeSpec configValues = (ConditionalExerciseTypeSpec)cv;
 			try {
 				ExerciseData d = null;
+				System.out.println(data.getStamp() + ";" + configValues.getFeedbookType() + ";" + (configValues.isTargetIfClause() && configValues.isTargetMainClause() ? "both" : 
+					(configValues.isTargetIfClause() ? "if" : (configValues.isTargetMainClause() ? "main" : "random"))));
 				if (configValues.getFeedbookType().equals(FeedBookExerciseType.MEMORY)) {
 					d = generateMemoryTask(data, configValues.isTargetIfClause(), configValues.isTargetMainClause(), 
 							configValues.isRandomTargetClause());
@@ -71,7 +73,6 @@ public class ConditionalConfigParser extends ConfigParser {
 							configValues.isRandomClauseOrder());
 					d.setExerciseType(ExerciseType.CATEGORIZE);
 				} else if (configValues.getFeedbookType().equals(FeedBookExerciseType.UNDERLINE)) {
-					// The didi score mechanism can only correctly process a single item per underline, so we need to make a separate exercise for each sentence
 					d = generateGapTask(data, configValues.isIfClauseFirst(), configValues.isTargetIfClause(),
 							configValues.isTargetMainClause(), 0, configValues.isRandomClauseOrder(), false, false, false,
 							false, true, configValues.isRandomTargetClause());
@@ -82,72 +83,23 @@ public class ConditionalConfigParser extends ConfigParser {
 							false, configValues.isRandomTargetClause());
 					d.setExerciseType(ExerciseType.HALF_OPEN);
 				}
+				
+				if(data.getStamp().equals("Conditional negative main + if clause")) {
+					d.getBracketsProperties().add(BracketsProperties.CONDITIONAL_TYPE);
+				}
 
-				d.setExerciseTitle(adjustTocId(data, configValues) + FeedBookExerciseType.getFeedbookId(configValues.getFeedbookType()));
-    			//d.setExerciseTitle(adjustStamp(data, configValues) + "/" + data.getActivity() + "/" + FeedBookExerciseType.getFeedbookId(configValues.getFeedbookType()));
+
+				d.setExerciseTitle(data.getTocId() + FeedBookExerciseType.getFeedbookId(configValues.getFeedbookType()));
     			d.setTopic(ExerciseTopic.CONDITIONALS);
 				exercises.add(d);
 			} catch(Exception e) {
-				ServerLogger.get().error(e, "Exercise " + adjustTocId(data, configValues) + FeedBookExerciseType.getFeedbookId(configValues.getFeedbookType()) + " could not be generated.\n" + e.toString());
+				ServerLogger.get().error(e, "Exercise " + data.getTocId() + FeedBookExerciseType.getFeedbookId(configValues.getFeedbookType()) + " could not be generated.\n" + e.toString());
 			}
 		}
 
 		return exercises;
 	}
 	
-	private String adjustTocId(ExerciseConfigData data, ConditionalExerciseTypeSpec configValues) {
-		if(!data.getStamp().endsWith("clause") && configValues.isTargetIfClause()) {
-				return (Integer.parseInt(data.getTocId()) + 1) + "";
-		} else {
-			return data.getTocId();
-		}
-	}
-	
-	private String adjustStamp(ExerciseConfigData data, ConditionalExerciseTypeSpec configValues) {
-		if(!data.getStamp().endsWith("clause")) {
-			if(configValues.isTargetIfClause()) {
-				return data.getStamp() + " if clause";
-			} else {
-				return data.getStamp() + " main clause";
-			}
-		} else {
-			return data.getStamp();
-		}
-	}
-	
-	/**
-	 * Determines the block ID for FeedBook xml output.
-	 * @param spec	The exercise specification
-	 * @return	The block id
-	 */
-	private int determineBlockId(ConditionalExerciseTypeSpec spec) {
-		if(spec.isRandomClauseOrder()) {
-			if(spec.isTargetIfClause() && spec.isTargetMainClause()) {
-				return 1;
-			} else if(spec.isTargetIfClause()) {
-				return 2;
-			} else {
-				return 3;
-			}
-		} else if(spec.isIfClauseFirst()) {
-			if(spec.isTargetIfClause() && spec.isTargetMainClause()) {
-				return 4;
-			} else if(spec.isTargetIfClause()) {
-				return 5;
-			} else {
-				return 6;
-			}
-		} else {
-			if(spec.isTargetIfClause() && spec.isTargetMainClause()) {
-				return 7;
-			} else if(spec.isTargetIfClause()) {
-				return 8;
-			} else {
-				return 9;
-			}
-		}
-	}
-
 	/**
 	 * Compiles the exercise information for Categorization exercises.
 	 * 
@@ -185,7 +137,9 @@ public class ConditionalConfigParser extends ConfigParser {
 				String category = itemData.getConditionalType() == 1 ? "Type 1" : "Type 2";
 
 				ConstructionTextPart c = new ConstructionTextPart(sentence, sentenceId++);
+				c.setConstructionType(itemData.getConditionalType() == 1 ? DetailedConstruction.CONDREAL : DetailedConstruction.CONDUNREAL);
 				c.setCategory(category);
+				c.setFallbackFeedback(itemData.getFeedback());
 				parts.add(c);
 			}
 		}
@@ -236,6 +190,7 @@ public class ConditionalConfigParser extends ConfigParser {
 				: itemData.getTranslationMainClause();
 
 		ConstructionTextPart c = new ConstructionTextPart(targetClause, sentenceId);
+		c.setConstructionType(itemData.getConditionalType() == 1 ? DetailedConstruction.CONDREAL : DetailedConstruction.CONDUNREAL);
 		c.getDistractors().add(new Distractor(translationTargetClause));
 		return c;
 	}
@@ -300,7 +255,8 @@ public class ConditionalConfigParser extends ConfigParser {
 					if (inConstruction) {
 						addConstructionPart(positionParts, sentenceId, nDistractors, targetAndClauseItems,
 								targetEntireClause, lemmasInBrackets, allLemmas, useDistractorLemma,
-								giveLemmasInInstructions, allDistractorLemmas, parts, constructionType);
+								giveLemmasInInstructions, allDistractorLemmas, parts, constructionType,
+								itemData.getFeedback());
 					}
 					positionParts.add(position);
 					inConstruction = false;
@@ -323,7 +279,7 @@ public class ConditionalConfigParser extends ConfigParser {
 			if (inConstruction) {
 				addConstructionPart(positionParts, sentenceId, nDistractors, targetAndClauseItems, targetEntireClause,
 						lemmasInBrackets, allLemmas, useDistractorLemma, giveLemmasInInstructions, allDistractorLemmas,
-						parts, constructionType);
+						parts, constructionType, itemData.getFeedback());
 			}
 			String punctuation = configData.getStamp().contains("question") ? "?" : ".";
 			if(positionParts.size() == 0 || !positionParts.get(positionParts.size() - 1).second.endsWith(punctuation)) {
@@ -382,11 +338,16 @@ public class ConditionalConfigParser extends ConfigParser {
 					itemData.getGapMainClause(), false, randomizeTargetClause, true);
 
 			for (Pair<Integer, String> position : targetAndClauseItems.getPositions()) {
-				parts.add(new ConstructionTextPart(position.second, sentenceId));
+				ConstructionTextPart c = new ConstructionTextPart(position.second, sentenceId);
+				c.setConstructionType(itemData.getConditionalType() == 1 ? DetailedConstruction.CONDREAL : DetailedConstruction.CONDUNREAL);
+				parts.add(c);
 			}
 			String punctuation = configData.getStamp().contains("question") ? "?" : ".";
 			if(!parts.get(parts.size() - 1).getValue().endsWith(punctuation)) {
-				parts.add(new ConstructionTextPart(punctuation, sentenceId));
+				ConstructionTextPart c = new ConstructionTextPart(punctuation, sentenceId);
+				c.setConstructionType(itemData.getConditionalType() == 1 ? DetailedConstruction.CONDREAL : DetailedConstruction.CONDUNREAL);
+				c.setFallbackFeedback(itemData.getFeedback());
+				parts.add(c);
 			}
 
 			sentenceId++;
@@ -424,11 +385,12 @@ public class ConditionalConfigParser extends ConfigParser {
 	private void addConstructionPart(ArrayList<Pair<Integer, String>> positionParts, int sentenceId, int nDistractors,
 			ConditionalTargetAndClauseItems targetAndClauseItems, boolean targetEntireClause, boolean lemmasInBrackets,
 			HashSet<String> allLemmas, boolean useDistractorLemma, boolean giveLemmasInInstructions,
-			HashSet<String> allDistractorLemmas, ArrayList<TextPart> parts, int type) {
+			HashSet<String> allDistractorLemmas, ArrayList<TextPart> parts, int type, String feedback) {
 		String constructionText = generateSentencesFromPositions(positionParts);
 		ConstructionTextPart c = new ConstructionTextPart(constructionText, sentenceId);
 		c.setConstructionType(type == 1 ? DetailedConstruction.CONDREAL : DetailedConstruction.CONDUNREAL);
-
+		c.setFallbackFeedback(feedback);
+		
 		if (nDistractors > 0) {
 			ArrayList<Distractor> distractors = new ArrayList<>();
 			for (ArrayList<Pair<Integer, String>> distractorList : targetAndClauseItems.getTargetDistractors()) {

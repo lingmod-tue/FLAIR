@@ -3,13 +3,14 @@ package com.flair.server.exerciseGeneration.exerciseManagement.InputParsing.Conf
 import java.util.ArrayList;
 
 public class RelativeSentence {
-	private ArrayList<String> chunks = null;
+	private ArrayList<RelativeClausePosition> chunks = new ArrayList<>();
 	private boolean pronounIsOptional = false;
 	private boolean useToGenerateExercise = true;
-	public ArrayList<String> getChunks() {
+
+	public ArrayList<RelativeClausePosition> getChunks() {
 		return chunks;
 	}
-	public void setChunks(ArrayList<String> sentence) {
+	public void setChunks(ArrayList<RelativeClausePosition> sentence) {
 		this.chunks = sentence;
 	}
 	public boolean isPronounIsOptional() {
@@ -24,6 +25,4 @@ public class RelativeSentence {
 	public void setUseToGenerateExercise(boolean useToGenerateExercise) {
 		this.useToGenerateExercise = useToGenerateExercise;
 	}
-	
-	
 }

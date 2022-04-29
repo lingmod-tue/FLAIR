@@ -2,7 +2,10 @@ package com.flair.server.exerciseGeneration.exerciseManagement.InputEnrichment.I
 
 import java.util.ArrayList;
 
+import com.flair.server.exerciseGeneration.exerciseManagement.ConstructionTextPart;
 import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseData;
+import com.flair.shared.exerciseGeneration.BracketsProperties;
+import com.flair.shared.exerciseGeneration.DetailedConstruction;
 
 public class SCConditionalInstructionGenerator extends InstructionGenerator {
 
@@ -14,7 +17,18 @@ public class SCConditionalInstructionGenerator extends InstructionGenerator {
 
         
         
-		data.setInstructions("Pick the correct answer for each gap.");
+		String instructions = "Pick the correct answer for each gap.";
+		
+		if(data.getBracketsProperties().contains(BracketsProperties.CONDITIONAL_TYPE)) {
+			int type = 2;
+			if(data.getParts().stream().anyMatch(part -> part instanceof ConstructionTextPart && 
+					((ConstructionTextPart)part).getConstructionType().startsWith(DetailedConstruction.CONDREAL))) {
+				type = 1;
+			}
+			instructions += " Use conditional Type " + type + ".";
+		}
+		
+		data.setInstructions(instructions);
 	}
 	
 }

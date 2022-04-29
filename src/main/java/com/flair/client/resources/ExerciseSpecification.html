@@ -144,12 +144,14 @@ mark {
 					class="fa fa-angle-left"></i></a>
 				<div
 					class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100"
-					style="height: 100vh;">
-					<div
+					style="min-height: 100vh;">				
+					<div data-toggle="collapse" data-target="#exercise-list" aria-expanded="true" aria-controls="exercise-list"
 						class="d-flex align-items-center pb-3 mb-md-0 me-md-auto text-white text-decoration-none">
 						<i class="fs-4 fa fa-book"></i><span
 							class="ms-1 d-none d-sm-inline" style="margin-left: 10px;">Exercises</span>
 					</div>
+					<ul id="exercise-list" 
+					class="nav nav-pills flex-column  align-items-center align-items-sm-start"></ul>
 					<ul
 						class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start">
 						<li class="nav-item" id="add-exercise" style="margin-top: 20px;">
@@ -229,20 +231,30 @@ mark {
 	</div>
 	<a id="downloadAnchorElem" style="display: none"></a>
 	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+	
+	<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+	<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
 	<script
 		src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
 	<script
 		src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
 	<script
 		src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-treeview/1.2.0/bootstrap-treeview.min.js"></script>
-	<script src="https://code.jquery.com/jquery-3.6.0.js"></script>
-	<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
 	<script type="text/javascript" id="mainScript">
 	  
+		function onExerciseItemCheckedWrapper(item) {
+			onExerciseItemChecked($(item));
+		}
+		
 		function onExerciseItemChecked(item) {
 			if(item.is(':checked')) {
 				if(item.closest(".container").find(".sortable").find("#i" + item.attr("id").substring(1)).length === 0) {
-					item.closest(".container").find(".sortable").append('<li id="i' + item.attr("id").substring(1) + '" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>' + item.closest("div").prev().find(".item").text() +': ' + item.next().text() + '</li>');
+					let itemText = item.closest("div").prev().find(".item").text();
+					if(itemText.trim().length > 0) {
+						itemText += ": ";
+					}
+					item.closest(".container").find(".sortable").append('<li id="i' + item.attr("id").substring(1) + '" class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span>' + itemText + item.next().text() + '</li>');
+					$( ".sortable" ).sortable();	
 				}
 			} else {
 				item.closest(".container").find(".sortable").find("#i" + item.attr("id").substring(1)).remove();
@@ -259,13 +271,17 @@ mark {
 		}
 	
 		function onItemChecked(item) {
-			onExerciseItemChecked($(item));
-			onTypeChecked(item);
+			onItemCheckedWrapper($(item));
+		}
+		
+		function onItemCheckedWrapper(item) {
+			onExerciseItemChecked(item);
+			onTypeCheckedWrapper(item);
 		}
 		
 		var maxAssemblyId = 0;
 
-		function addExerciseAssembly(item) {
+		function addExerciseAssembly() {
 			let classname;
 			if ($("#btnTopic").text() === "Conditionals") {
 				classname = "cond";
@@ -276,31 +292,45 @@ mark {
 			}
 			
 			let count = $("#exercise-assemblies").find("h3").length;
-			let exStr = '<div class="assembly ' + classname + '"><h3><input type="text" value="Exercise ' + ++count + '"></h3><div class="container"><div class="row"><div class="col-sm"><div class="treeview-ex"><ul id="' + ++maxAssemblyId + '" class="list-group assembly-tree collapse-tree" style="width: 100%;">';
+			let exStr = '<div class="assembly ' + classname + '"><h3><input type="text" value="Exercise ' + ++count + 
+					'"></h3><a class="fa fa-trash" style="float:right;color:red;" href="#" onclick="deleteAssembly(this);"></a><div class="container"><div class="row"><div class="col-sm"><div class="treeview-ex"><ul id="a' + 
+					++maxAssemblyId + '" class="list-group assembly-tree ' + classname + ' collapse-tree" style="width: 100%;">';
 			
 			for (const exercise of $(".exercise-spec." + classname)) {
 				let itemname = $(exercise).find("h3").text();
 				let itemid = $(exercise).attr("id");
-
-				if($(exercise).find(".editable-chunks").length > 0) {
-					let treeItem = getAssemblyItemElementString(itemid, itemname, maxAssemblyId);
-					
-					let i = 0;
-					$(exercise).find(".editable-chunks").each(function () {
-						treeItem += getAssemblyRCElementString($(this).closest(".rel-sentence-order").attr("id"), 
-								++i, 
-								$(this).val().replaceAll("|", " "),
-								maxAssemblyId);
-					});
-					treeItem += "</div>";
-					
-					exStr += treeItem;
+				
+				if(classname === "cond") {
+					exStr += getAssemblyCondElementString(itemid, itemname, maxAssemblyId);
+				} else if(classname === "rel") {
+					if($(exercise).find(".editable-chunks").length > 0) {
+						let treeItem = getAssemblyItemElementString(itemid, itemname, maxAssemblyId);
+						
+						let i = 0;
+						$(exercise).find(".editable-chunks").each(function () {
+							treeItem += getAssemblyRCElementString($(this).closest(".rel-sentence-order").attr("id"), 
+									++i, 
+									$(this).text().replaceAll("|", " "),
+									maxAssemblyId);
+						});
+						treeItem += "</div>";
+						
+						exStr += treeItem;
+					}
 				}
 			}			
 			
-			exStr += '</ul></div></div><div class="col-sm">Item order:<ul class="sortable"></ul></div></div><br></div></div>';
-			  $( ".sortable" ).sortable();
+			exStr += '</ul></div></div><div class="col-sm">Item order:<div class="card"><div class="card-body" style="padding: 0px; padding-left: 25px;"><input type="checkbox" class="form-check-input" onclick="displayOrderSortable(this)"><label class="form-check-label">Randomize</label></div><div class="card-footer"><ul class="sortable"></ul></div></div></div><br></div></div>';
+			$( ".sortable" ).sortable();
 			$("#assembly-container").append(exStr);
+		}
+		
+		function displayOrderSortable(item) {
+			if($(item).is(':checked')) {
+				$(item).closest(".card").find(".card-footer").addClass("invisible");
+			} else {
+				$(item).closest(".card").find(".card-footer").removeClass("invisible");
+			}
 		}
 				
 		function editExerciseAssemblies() {
@@ -373,17 +403,38 @@ mark {
 			}
 		}
 
+		
+		
+		function openModal(item, popupId) {
+			$(popupId).find("input").val($(item).text());
+		    $(popupId).modal('toggle');
+		}
+		
 		/**
 		 Adds the item specified in the popup to the associated list.
 		*/
 		function addDistractor(item) {
-			let itemStr = '<li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span><span ondblclick="openEditDialog()">' + $(item).parent().prev().find(">:first-child").val() + '</span><a class="fa fa-times" style="float:right;color:red;" href="#" onclick="removeSortableItem(this);"></a></li>'
+			maxPopupId++;
+			let itemStr = '<li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span><span ondblclick="openModal(this, \'#p' + 
+					maxPopupId + '\');">' + $(item).parent().prev().find(">:first-child").val() + '</span>' + 
+					getPopupString("Edit distractor", "changeSortableText", "OK") + 
+					'<a class="fa fa-times" style="float:right;color:red;" href="#" onclick="removeSortableItem(this);"></a></li>'
 			$(item).closest(".sortable-group").find(".sortable").append(itemStr);
 			$(item).parent().prev().find(">:first-child").val("");
 		}
 		
-		function openEditDialog(item) {
-			console.log("TODO: implement edit dialog!");
+		var maxPopupId = 0;
+		
+		function getPopupString(popupTitle, callback, buttonText) {
+			return '<div class="modal hide fade" id="p' + maxPopupId + '" tabindex="-1" role="dialog" aria-labelledby="p' + maxPopupId + 
+					'Label" aria-hidden="true"><div class="modal-dialog" role="document"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="p' + 
+					maxPopupId + 'Label">' + popupTitle + 
+					'</h5><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div><div class="modal-body"><input type="text"></div><div class="modal-footer"><button type="button" class="btn btn-primary" onclick="' + 
+					callback + '(this);" data-dismiss="modal">' + buttonText + '</button></div></div></div></div></div>'
+		}
+		
+		function changeSortableText(item) {
+			$(item).closest(".modal").prev().text($(item).closest(".modal").find("input").val());
 		}
 
 		/**
@@ -412,7 +463,7 @@ mark {
 		
 		function changeRelativeChunks(item) {
 			$(item).parent().prev().empty();
-			let chunks = $(item).val().split("|");
+			let chunks = $(item).text().split("|");
 			chunks.forEach(chunk => $(item).parent().prev().append("<span style='border:1px solid grey; margin-right: 2px;'>" + chunk.trim() + "</span>"));
 		
 			if($(item).val().trim().length > 0) {				
@@ -426,13 +477,13 @@ mark {
 					let itemNode = $(".ti" +itemid);
 					if(itemNode.length === 0) {
 						// create a new item node
-						$(".assembly-tree").each(function() {
+						$(".assembly-tree.rel").each(function() {
 							let treeItem = getAssemblyItemElementString(itemid, itemname, $(this).attr("id"));
 							$(this).append(treeItem);
 						});
 					}
 															
-					$(".assembly-tree").each(function() {
+					$(".assembly-tree.rel").each(function() {
 						// create a new rc node
 						let newitem = getAssemblyRCElementString($(item).closest(".rel-sentence-order").attr("id"),
 								(countPreviousSiblings(assemblyListItem, 0) + 1),
@@ -440,12 +491,13 @@ mark {
 								$(this).attr("id")) 
 								+ "</div>";
 						$(this).find(".e" + itemid).append(newitem);
-
 					});
-				}
+				}				
 			} else {
 				removeAssemblyItem($(item));
 			}
+
+			setInputValues($(item).closest(".chunks-container").find('.idx'));
 		}
 		
 		function getAssemblyItemElementString(itemid, itemname, assemblyId) {
@@ -454,6 +506,10 @@ mark {
 		
 		function getAssemblyRCElementString(itemid, rcCount, rcText, assemblyId) {
 			return '<li class="list-group-item node-treeview-ex itemid' + itemid + '" style="border:0px;background:none;"><span class="form-check" style="margin-left: 10px;"><input id="l' + assemblyId + itemid + '" type="checkbox" class="form-check-input" onclick="onItemChecked(this)"><label class="form-check-label">RC ' + rcCount + ' (' + rcText + ')</label></span></li>';
+		}
+		
+		function getAssemblyCondElementString(itemid, itemname, assemblyId) {
+			return '<div id="e' + assemblyId + itemid + '" class="e' + itemid + '"><li class="list-group-item node-treeview-ex itemid' + itemid + '" style="border:0px;background:none;"><span class="form-check"><input id="l' + assemblyId + itemid + '" type="checkbox" class="form-check-input" onclick="onExerciseItemCheckedWrapper(this)"><label class="form-check-label">' + itemname + '</label></span></li></div>';
 		}
 		
 		function countPreviousSiblings(item, count) {
@@ -468,10 +524,48 @@ mark {
 		*/
 		function updateChunks(item) {
 			item.parent().prev().empty();
-			let chunks = item.val().split("|");
-			chunks.forEach(chunk => item.parent().prev().append("<span style='border:1px solid grey; margin-right: 2px;'>" + chunk.trim() + "</span>"));
-			setInputValues(item.closest(".spec").find('.idx.gap'), chunks);
-			setInputValues(item.closest(".spec").find('.idx.mtw'), chunks);
+			let chunkString = item.html();
+
+			let pronounStart = item.html().indexOf("<mark>");
+			if(pronounStart != - 1) {
+				let pronounEnd = item.html().indexOf("</mark>");
+				let newString = chunkString.substring(0, pronounStart).trim();
+				if(!newString.endsWith("|")) {
+					newString += "|";
+				}
+				newString += chunkString.substring(pronounStart, pronounEnd + 7).trim().replaceAll("|", " ");
+				
+				let newPart = chunkString.substring(pronounEnd + 7).trim();
+				if(!newPart.startsWith("|")) {
+					newPart = "|" + newPart;
+				}
+				chunkString = newString + newPart;
+			}
+			
+			chunkString = chunkString.trim();
+			
+			if(chunkString.startsWith("|")) {
+				chunkString = chunkString.substring(1)
+			}
+			if(chunkString.endsWith("|")) {
+				chunkString = chunkString.substring(0, chunkString.length - 1);
+			}
+			chunkString = chunkString.trim();
+			
+			item.html(chunkString);
+			 	
+			let chunks = chunkString.split("|");
+			chunks.forEach(chunk => {
+				if(chunk.includes("<mark>") && !chunk.startsWith("<mark>")) {
+					chunk += "</mark>";
+				} else if(chunk.includes("</mark>") && !chunk.includes("<mark>")) {
+					chunk = "<mark>" + chunk;
+				}
+				item.parent().prev().append("<span style='border:1px solid grey; margin-right: 2px;'>" + chunk.trim() + "</span>");
+			});
+			item.closest(".spec").find('.idx.gap').each(function () {
+				setInputValues($(this));
+			});
 		}
 
 		/**
@@ -479,7 +573,7 @@ mark {
 		 Sets them to 0 and empty values if the chunks have been removed entirely.
 		 Sets them to 1 and the chunk if a chunk has been added and no chunk has been there before.
 		*/
-		function setInputValues(item, chunks) {
+		function setInputValues(item) {
 			if (item.val() == 0) {
 				item.val(1);
 			}
@@ -518,7 +612,7 @@ mark {
 		 Updates the chunk preview for the associated spinner.
 		*/
 		function changeSpinnerText(item) {
-			let chunks = item.closest(".spec").find(".editable-chunks").val().split("|");
+			let chunks = item.closest(".chunks-container").find(".editable-chunks").text().split("|");
 
 			if (chunks.length === 1 && chunks[0] === "") {
 				item.parent().find(".idx").attr("max", 0);
@@ -532,62 +626,73 @@ mark {
 					}
 				}
 
-				let lowerValue = item.parent().find(".spn1").val();
+				let spn1 = item.parent().find(".spn1");
+				let lowerValue = 1;
+				if(spn1.length > 0) {
+					lowerValue = item.parent().find(".spn1").val();
+				}
 				let upperValue = item.parent().find(".spn2").val();
-
+				
 				item.parent().find(".idx").attr("max", chunks.length);
 				item.parent().find(".idx").attr("min", 1);
-
 
 				if (!(chunks.length === 1 && chunks[0] === "")) {
 					let chunks_in_range = [];
 					for (let i = lowerValue - 1; i < upperValue; i++) {
 						chunks_in_range.push(chunks[i]);
 					}
-
+					
 					item.parent().find(".spnLabel").text("(" + chunks_in_range.join(" ") + ")");
 				}
 			}
 		}
 
-		/**
-		 Moves the selected exercise sentence up 1 position.
-		*/
-		function moveSentenceUp(item) {
-			if ($(".checkable-sentence:checked").length == 1) {
-				$(".checkable-sentence:checked").closest(".sentence-unit").prev().before($(".checkable-sentence:checked").closest(".sentence-unit"));
-			}
-		}
-
-		/**
-		 Moves the selected exercise sentence down 1 position.
-		*/
-		function moveSentenceDown(item) {
-			if ($(".checkable-sentence:checked").length == 1) {
-				$(".checkable-sentence:checked").closest(".sentence-unit").next().after($(".checkable-sentence:checked").closest(".sentence-unit"));
-			}
-		}
-
-		/**
-		 Removes the selected exercise sentence.
-		*/
-		function removeSentence(item) {
-			$(".checkable-sentence:checked").closest(".sentence-unit").remove();
-			if ($(".sentence-unit").length === 0) {
-				$(item).closest(".exercise-spec").find(".move-sent-up").addClass("invisible");
-				$(item).closest(".exercise-spec").find(".move-sent-down").addClass("invisible");
-				$(item).closest(".exercise-spec").find(".remove-sent").addClass("invisible");
-			}
-		}
-		
 		var maxRelSentenceId = 0;
 
+		function addRelativeOrderChunks(item) {
+			addRelativeOrder($(item).parent().prev());
+		 }
+		
 		/** 
 		 Adds controls to specify a possible relative clause for the sentence.
 		*/
-		function addRelativeOrderChunks(item) {
-			$(item).parent().prev().append('<tr class="rel-sentence-order" id="' + ++maxRelSentenceId + '"><td><div><span></span><span class="chunksView invisible"><input class="editable-chunks" type="text" value="" onKeyUp="changeRelativeChunks(this);"></span><a class="fa fa-pencil" onclick="displayEditChunks(this);" href="#"></a></div></td><td style="text-align: center;"><input type="checkbox" class="pronOpt"></td><td><a class="fa fa-times" style="float:right;color:red;" href="#" onclick="deleteOrder(this);"></td></tr>');
-		 }
+		function addRelativeOrder(orderItem) {
+			 orderItem.append('<tr class="rel-sentence-order chunks-container" id="' + ++maxRelSentenceId + '"><td><div><span></span><span class="chunksView invisible"><span contenteditable="true" class="highlighting editable-chunks" style="border:1px solid grey; background-color: white; width:200px; display:inline-block;vertical-align:middle; padding:2px;" onKeyUp="changeRelativeChunks(this);"></span><button type="button" class="btn btn-outline-secondary btn-sm fa fa-i-cursor" style="margin-right: 20px;" onclick="markReferent(this);" data-dismiss="modal" ></button></span><a style="margin-left: 10px;" class="fa fa-pencil" onclick="displayEditChunks(this);" href="#"></a></div></td><td>1 - <input class="idx gap spn2" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"><span class="spnLabel"></span></td><td style="text-align: center;"><input type="checkbox" class="pronOpt"></td><td><a class="fa fa-times" style="float:right;color:red;" href="#" onclick="deleteOrder(this);"></td></tr>');
+		}
+		
+		/**
+		 Marks the selected text in the corresponding text field in blue color.
+		*/
+		function markReferent(item) {
+			if (typeof window.getSelection != "undefined" && window.getSelection().rangeCount === 1) {
+				var container = document.createElement("div");
+				var range = window.getSelection().getRangeAt(0);
+				let textfield = $(item).closest("td").find(".highlighting");
+
+				if (range.commonAncestorContainer !== textfield.get(0) && range.commonAncestorContainer.parentElement !== textfield.get(0)
+						&& range.commonAncestorContainer.parentElement.parentElement !== textfield.get(0)) {
+					return;
+				}
+
+				container.appendChild(range.cloneContents());
+				let html = container.innerHTML;
+				let start = range.startOffset;	// start within the container
+	
+				if (textfield.html().includes("</mark>") && textfield.html().endsWith($(range.startContainer).text())) {
+					start += textfield.html().indexOf("</mark>") - 6;
+				} else if(!textfield.html().startsWith($(range.startContainer).text())) {
+					start += textfield.html().indexOf("<mark>");
+				}
+				
+				html = html.replaceAll("<mark>", "").replaceAll("</mark>", "");
+
+				let end = html.length + start;
+				let newText = textfield.text().substring(0, start) + "<mark>" + textfield.text().substring(start, end) + "</mark>" + textfield.text().substring(end);
+				textfield.html(newText);
+				
+				updateChunks(textfield);
+			}
+		}
 
 		/**
 		 Removes the corresponding relative clause from the sentence.
@@ -635,7 +740,19 @@ mark {
 			}
 
 			if (className) {
-				$("#add-exercise").before('<li id="nav-ex' + count + '" class="nav-item ' + className + '"><a href="#" class="nav-link align-middle px-0" onclick="displayExercise(\'#exercise-spec-' + className + count + '\');"><span class="ms-1 d-none d-sm-inline">Item</span> <span class="fs-4">' + count + '</span><span class="ms-1 d-none d-sm-inline custom-title"></span></a></li>');
+				$("#exercise-list").append('<li id="nav-ex' + count + '" class="nav-item ' + className + '"><a href="#" class="nav-link align-middle px-0" onclick="displayExercise(\'#exercise-spec-' + className + count + '\');"><span class="ms-1 d-none d-sm-inline">Item</span> <span class="fs-4">' + count + '</span><span class="ms-1 d-none d-sm-inline custom-title"></span></a></li>');
+			}
+			
+			if ($("#btnTopic").text() === "Conditionals") {
+				let itemid = $(".exercise-spec").last().attr("id");
+				let itemname = $(".exercise-spec").last().find("h3").text();											
+				$(".assembly-tree.cond").each(function() {
+					// create a new cond node
+					let newitem = getAssemblyCondElementString(itemid,
+							itemname,
+							$(this).attr("id"));
+					$(this).append(newitem);
+				});
 			}
 		}
 
@@ -644,11 +761,13 @@ mark {
 		 Adds the link in the sidebar and displays the new exercise in the main part.
 		*/
 		function addConditionalExercise(count) {
-			$("#content-area").append('<div class="exercise-spec cond" id="exercise-spec-con' + count + '"><a class="fa fa-trash" style="float:right;color:red;" href="#" onclick="deleteExercise(this);"></a><h3>Item ' + count + '</h3><div class="sentence-unit"><table><tr class="condType"><td>Conditional type:</td><td><button id="condTypeDrp' + count + '" class="btn btn-outline-secondary btn-sm dropdown-toggle btn-cond-type" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">---</button><div class="dropdown-menu" aria-labelledby="condTypeDrp' + count + '"><a class="dropdown-item" href="#" onclick="updateDropdown(this);">Type 1</a><a class="dropdown-item" href="#" onclick="updateDropdown(this);">Type 2</a></div></td></tr><tr><td>Context before: </td><td><input type="text" class="contextBefore" value=""></td></tr><tr><td>Context after: </td><td><input type="text" class="contextAfter" value=""></td></tr></table><br><div class="container"><div class="row"><div class="col-sm main-clause"><h4>Main clause:</h4><table class="spec"><tr class="chunks"><td>Chunks:</td><td><div><span></span><span class="chunksViewMain invisible"><input class="editable-chunks" type="text" value="" onKeyUp="changeChunks(this);"></span><a class="fa fa-pencil" onclick="displayEditChunks(this);" href="#"></a></div></td></tr><tr class="translation"><td>Translation:</td><td><input type="text"></td></tr>' + 
+			$("#content-area").append('<div class="exercise-spec cond" id="exercise-spec-cond' + count + '"><a class="fa fa-trash" style="float:right;color:red;" href="#" onclick="deleteExercise(this);"></a><h3>Item ' + 
+					count + '</h3><div class="sentence-unit"><table><tr class="condType"><td>Conditional type:</td><td><button id="condTypeDrp' + count + '" class="btn btn-outline-secondary btn-sm dropdown-toggle btn-cond-type" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">---</button><div class="dropdown-menu" aria-labelledby="condTypeDrp' + 
+					count + '"><a class="dropdown-item" href="#" onclick="updateDropdown(this);">Type 1</a><a class="dropdown-item" href="#" onclick="updateDropdown(this);">Type 2</a></div></td></tr><tr><td>Context before: </td><td><input type="text" class="contextBefore" value=""></td></tr><tr><td>Context after: </td><td><input type="text" class="contextAfter" value=""></td></tr><tr><td>Feedback: </td><td><input type="text" class="feedback" value=""></td></tr></table><br><div class="container"><div class="row"><div class="col-sm main-clause"><h4>Main clause:</h4><table class="spec chunks-container"><tr class="chunks"><td>Chunks:</td><td><div><span></span><span class="chunksViewMain invisible"><span contenteditable="true" class="highlighting" style="border:1px solid grey; background-color: white; width:200px; display:inline-block;vertical-align:middle; padding:2px;" class="editable-chunks" onKeyUp="changeChunks(this);"></span><button type="button" class="btn btn-outline-secondary btn-sm fa fa-i-cursor" style="margin-right: 20px;" onclick="markReferent(this);" data-dismiss="modal" ></span><a class="fa fa-pencil" onclick="displayEditChunks(this);" href="#"></a></div></td></tr><tr class="translation"><td>Translation:</td><td><input type="text"></td></tr>' + 
 					getSortableItemsWidgetString("distractors", "Distractors:", "distractorPopupMain", "Add distractor", count) + 
 					'<tr class="given-word"><td>Given word:</td><td><input type="text"></td></tr><tr class="semantic-distractor"><td>Semantic distractor:</td><td><input type="text"></td></tr>' + 
 					getSortableItemsWidgetString("given-words-ext", "Given words extended:", "givenWordsPopupMain", "Add given word", count) + 
-					'<tr class="gap"><td>Gap:</td><td><input class="idx gap spn1" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"> - <input class="idx gap spn2" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"><span class="spnLabel"></span></td></tr><tr class="mtw-target"><td>MtW target:</td><td><input class="idx mtw spn1" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"> - <input class="idx mtw spn2" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"><span class="spnLabel"></span></td></tr></table><br></div><div class="col-sm if-clause"><h4>If-clause:</h4><table class="spec"><tr class="chunks"><td>Chunks:</td><td><div><span></span><span class="chunksView invisible"><input class="editable-chunks" type="text" value="" onKeyUp="changeChunks(this);"></span><a class="fa fa-pencil" onclick="displayEditChunks(this);" href="#"></a></div></td></tr><tr class="translation"><td>Translation:</td><td><input type="text"></td></tr>' + 
+					'<tr class="gap"><td>Gap:</td><td><input class="idx gap spn1" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"> - <input class="idx gap spn2" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"><span class="spnLabel"></span></td></tr><tr class="mtw-target"><td>MtW target:</td><td><input class="idx mtw spn1" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"> - <input class="idx mtw spn2" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"><span class="spnLabel"></span></td></tr></table><br></div><div class="col-sm if-clause"><h4>If-clause:</h4><table class="spec chunks-container"><tr class="chunks"><td>Chunks:</td><td><div><span></span><span class="chunksView invisible"><span contenteditable="true" class="highlighting" style="border:1px solid grey; background-color: white; width:200px; display:inline-block;vertical-align:middle; padding:2px;" class="editable-chunks" onKeyUp="changeChunks(this);"></span><button type="button" class="btn btn-outline-secondary btn-sm fa fa-i-cursor" style="margin-right: 20px;" onclick="markReferent(this);" data-dismiss="modal" ></span><a class="fa fa-pencil" onclick="displayEditChunks(this);" href="#"></a></div></td></tr><tr class="translation"><td>Translation:</td><td><input type="text"></td></tr>' + 
 					getSortableItemsWidgetString("distractors", "Distractors:", "distractorPopup", "Add distractor", count) + 
 					'<tr class="given-word"><td>Given word:</td><td><input type="text"></td></tr><tr class="semantic-distractor"><td>Semantic distractor:</td><td><input type="text"></td></tr>' + 
 					getSortableItemsWidgetString("given-words-ext", "Given words extended:", "givenWordsPopup", "Add given word", count) + 
@@ -661,15 +780,23 @@ mark {
 		 Adds the link in the sidebar and displays the new exercise in the main part.
 		*/
 		function addRelativeExercise(count) {
-			$("#content-area").append('<div class="exercise-spec rel" id="exercise-spec-rel' + count + '"><a class="fa fa-trash" style="float:right;color:red;" href="#" onclick="deleteExercise(this);"></a><h3>Item ' + count + '</h3><div class="sentence-unit"><span class="context"></span></div><div id="sentence' + count + '" class="sentence"><table><tr><td>Context before: </td><td><input type="text" class="contextBefore" value=""></td></tr><tr><td>Context after: </td><td><input type="text" class="contextAfter" value=""></td></tr></table><br><table class="spec"><tr class="clause c1"><td>Clause 1:</td><td><input type="text"></td></tr><tr class="clause c2"><td>Clause 2:</td><td><input type="text"></td></tr>' + 
+			$("#content-area").append('<div class="exercise-spec rel" id="exercise-spec-rel' + count + 
+					'"><a class="fa fa-trash" style="float:right;color:red;" href="#" onclick="deleteExercise(this);"></a><h3>Item ' + 
+					count + '</h3><div class="sentence-unit"><span class="context"></span></div><div id="sentence' + count + 
+					'" class="sentence"><table><tr><td>Context before: </td><td><input type="text" class="contextBefore" value=""></td></tr><tr><td>Context after: </td><td><input type="text" class="contextAfter" value=""></td></tr></table><br><table class="spec"><tr class="clause c1"><td>Clause 1:</td><td><input type="text"></td></tr><tr class="clause c2"><td>Clause 2:</td><td><input type="text"></td></tr>' + 
 					getSortableItemsWidgetString("pronouns", "Pronoun:", "pronounPopup", "Add pronoun", count) + 
 					getSortableItemsWidgetString("distractors", "Distractors:", "distractorPopupMain", "Add distractor", count) + 
-					'</table><div style="font-weight:bold; margin-top:20px;">Relative clauses:</div><table class="orders"><tr><td style="width: 400px; margin-right: 10px;">Chunks:</td><td style="margin-right: 10px;">Pronoun is optional:</td><td></td></tr></table><div><a class="fa fa-plus" href="#" onclick="addRelativeOrderChunks(this);" style="margin-top: 20px;"> Add relative clause alternative</a></div></div></div>');
+					'<tr><td>Feedback: </td><td><input type="text" class="feedback" value=""></td></tr></table><div style="font-weight:bold; margin-top:20px;">Relative clauses:</div><table class="orders"><tr><td style="width: 400px; margin-right: 10px;">Chunks:</td><td>Use as prompt:</td><td style="margin-right: 10px;">Pronoun is optional:</td><td></td></tr></table><div><a class="fa fa-plus" href="#" onclick="addRelativeOrderChunks(this);" style="margin-top: 20px;"> Add relative clause alternative</a></div></div></div>');
 			  $( ".sortable" ).sortable();
 		}
 		
 		function getSortableItemsWidgetString(classname, title, popupId, popupTitle, count) {
-			return '<tr class="' + classname + '"><td>' + title + '</td><td><table class="list-cont"><tr class="listItems"><td><div class="sortable-group"><ul class="sortable"></ul><!-- add item popup --><div class="modal fade" id="' + popupId + count + '" tabindex="-1" role="dialog" aria-labelledby="' + popupId + 'Label' + count + '" aria-hidden="true"><div class="modal-dialog" role="document"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="' + popupId + 'Label' + count + '">' + popupTitle + '</h5><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button></div><div class="modal-body"><input type="text"></div><div class="modal-footer"><button type="button" class="btn btn-primary" onclick="addDistractor(this);" data-dismiss="modal">Add</button></div></div></div></div></div></td><td><a class="fa fa-plus" aria-hidden="true" href="#" data-toggle="modal" data-target="#' + popupId + count + '"></a></td></tr></table></td></tr>';
+			maxPopupId++;
+			return '<tr class="' + classname + '"><td>' + title + 
+			'</td><td><table class="list-cont"><tr class="listItems"><td><div class="sortable-group"><ul class="sortable"></ul>' + 
+			getPopupString(popupTitle, "addDistractor", "Add") + 
+			'</div></td><td><a class="fa fa-plus" aria-hidden="true" href="#" data-toggle="modal" data-target="#p' + maxPopupId + 
+			'"></a></td></tr></table></td></tr>';
 		}
 		
 		function removeSortableItem(item) {
@@ -701,7 +828,7 @@ mark {
 			exercise.find(".editable-chunks").each(function() {
 				removeAssemblyItem($(this));
 			});
-			$("#nav-ex" + exercise.attr("id").substring(17)).remove();
+			$("#nav-ex" + exercise.attr("id").substring(exercise.attr("id").indexOf(exercise.attr("id").match(/\d/)))).remove();
 			exercise.remove();
 			//TODO: update item titles
 		}
@@ -728,7 +855,7 @@ mark {
 		function displayTypeSettings() {
 			$(".exercise-spec").addClass("invisible");
 			$("#exercise-assemblies").addClass("invisible");
-			$("#type-settings").removeClass("invisible");
+			$("#type-settings").removeClass("invisible");			
 		}
 
 		/**
@@ -779,11 +906,15 @@ mark {
 		Reacts to checking or unchecking tree items of the exercise types to generate.
 		*/
 		function onTypeChecked(item) {
+			onTypeCheckedWrapper($(item));
+		}
+		
+		function onTypeCheckedWrapper(item) {
 			// remove styling for "some children checked"
-			$(item).removeClass("bold-border");
+			item.removeClass("bold-border");
 			// check/ uncheck children
-			if ($(item).closest(".list-group-item").next().hasClass("collapse")) {
-				$(item).closest(".list-group-item").next().find(".form-check-input").prop('checked', $(item).is(':checked'));
+			if (item.closest(".list-group-item").next().hasClass("collapse")) {
+				item.closest(".list-group-item").next().find(".form-check-input").prop('checked', item.is(':checked'));
 			}
 
 			setExerciseTypeCheckboxes();
@@ -842,52 +973,66 @@ mark {
 				"topic": $("#btnTopic").text()
 			};
 			var exercises = [];
-			spec["exercises"] = exercises;
+			spec["items"] = exercises;
 
 			for (const exercise of $(".exercise-spec.rel")) {
 				var ex = {
-					"subtopic": $(exercise).find(".btn-subtopic").text()
-				};
-				var sents = [];
-				ex["sentences"] = sents;
+						"contextBefore": $(exercise).find(".contextBefore").val(),
+						"contextAfter": $(exercise).find(".contextAfter").val(),
+						"clause1": $(exercise).find(".c1 input").val(),
+						"clause2": $(exercise).find(".c2 input").val(), 
+						"feedback": $(exercise).find(".feedback").val()
+						};
 				exercises.push(ex);
-				var sentences = $(exercise).find(".sentence-unit");
-				for (const sentence of sentences) {
-					var sent = {
-						"contextBefore": $(sentence).find(".contextBefore").val(),
-						"contextAfter": $(sentence).find(".contextAfter").val()
-					};
-					sents.push(sent);
 
-					sent["clause1"] = $(sentence).find(".c1 .highlighting").text();
-					sent["clause2"] = $(sentence).find(".c2 .highlighting").text();
-
-					var distractors = [];
-					for (const distr of $(sentence).find(".distractors .list-group .list-group-item")) {
-						distractors.push($(distr).text());
-					}
-					sent["distractors"] = distractors;
-
-					var pronouns = [];
-					for (const pron of $(sentence).find(".pronouns .list-group .list-group-item")) {
-						pronouns.push($(pron).text());
-					}
-					sent["pronouns"] = pronouns;
-
-					let relativeClauses = [];
-					$(sentence).find(".editable-chunks").each(function () {
-						let clauseChunks = $(this).val().split("|");
-						let pronounIsOptional = $(this).closest("tr").find(".pronOpt").prop("checked");
-						let generateDistinctExercise = $(this).closest("tr").find(".genDist").prop("checked");
-						relativeClauses.push({"chunks": clauseChunks, "pronounIsOptional": pronounIsOptional, "generateDistinctExercise": generateDistinctExercise});
-					});
-
-					sent["relativeClauses"] = relativeClauses;
+				var distractors = [];
+				
+				for (const distr of $(exercise).find(".distractors .listItems li")) {
+					distractors.push($(distr).find("span").last().text());
 				}
+				ex["distractors"] = distractors;
+
+				var pronouns = [];
+				for (const pron of $(exercise).find(".pronouns .listItems li")) {
+					pronouns.push($(pron).find("span").last().text());
+				}
+				ex["pronouns"] = pronouns;
+
+				let relativeClauses = [];
+				$(exercise).find(".editable-chunks").each(function () {
+					let clauseChunks = $(this).text().split("|");
+					let chunks = [];
+					let n = 1;
+					let pronounIndex = 1;
+					for (const chunk of clauseChunks) {
+						if(chunk.trim().startsWith("<mark>")) {
+							chunks.add(chunk.trim().replace("<mark>", "").replace("</mark>", ""));
+						} else {
+							chunks.add(chunk.trim());
+							pronounIndex++;
+						}
+					}
+					let pronounIsOptional = $(this).closest("tr").find(".pronOpt").prop("checked");
+					let generateDistinctExercise = $(this).closest("tr").find(".genDist").prop("checked");
+					
+					let prompt = parseInt($(this).find(".spn2").val());
+					relativeClauses.push({"id": $(this).closest(".rel-sentence-order").attr("id"), "chunks": chunks, 
+						"pronounIsOptional": pronounIsOptional, "generateDistinctExercise": generateDistinctExercise,
+						"pronounIndex": pronounIndex, "prompt": prompt});
+				});
+
+				ex["relativeClauses"] = relativeClauses;
 			}
 
-			let exercise_types = [];
+			spec["exerciseTypes"] = getSelectedExerciseTypes();
+			spec["exerciseItemMap"] = getExerciseItemMap();
 
+			return spec;
+		}
+		
+		function getSelectedExerciseTypes() {
+			let exercise_types = [];
+			
 			for (const ti of $("#types-tree").find("input:checked")) {
 				if (!$(ti).parent().parent().hasClass("invisible")) {
 					let attr = $(ti).attr("id");
@@ -898,10 +1043,21 @@ mark {
 					}
 				}
 			}
-
-			spec["exerciseTypes"] = exercise_types;
-
-			return spec;
+			
+			return exercise_types;
+		}
+		
+		function getExerciseItemMap() {
+			let exerciseItemMap = [];
+			$(".assembly").each(function() {
+				let sentencesList = [];
+				$(this).find(".sortable li").each(function() {
+					sentencesList.push($(this).attr("id").substring(2));
+				});
+				exerciseItemMap.push({"Title": $(this).find("h3 input").val(), "sentences": sentencesList})
+			});
+			
+			return exerciseItemMap;
 		}
 
 
@@ -913,65 +1069,41 @@ mark {
 				"topic": $("#btnTopic").text()
 			};
 			var exercises = [];
-			spec["exercises"] = exercises;
+			spec["items"] = exercises;
 
 			for (const exercise of $(".exercise-spec.cond")) {
 				var ex = {
-					"subtopic": $(exercise).find(".btn-subtopic").text()
-				};
-				var sents = [];
-				ex["sentences"] = sents;
+						"condType": $(exercise).find(".btn-cond-type").text(),
+						"contextBefore": $(exercise).find(".contextBefore").val(),
+						"contextAfter": $(exercise).find(".contextAfter").val(),
+						"mainClause": getClauseValues("main-clause", $(exercise)),
+						"ifClause": getClauseValues("if-clause", $(exercise)),
+						"id": $(exercise).attr("id"),
+						"feedback": $(exercise).find(".feedback").val()
+						};
 				exercises.push(ex);
-				var sentences = $(exercise).find(".sentence-unit");
-				for (const sentence of sentences) {
-					var sent = {
-						"condType": $(sentence).find(".btn-cond-type").text(),
-						"contextBefore": $(sentence).find(".contextBefore").val(),
-						"contextAfter": $(sentence).find(".contextAfter").val()
-					};
-					sents.push(sent);
-
-					var mainClause = getClauseValues("main-clause", $(sentence));
-					sent["mainClause"] = mainClause;
-
-
-					var ifClause = getClauseValues("if-clause", $(sentence));
-					sent["ifClause"] = ifClause;
-				}
 			}
 
-			let exercise_types = [];
-
-			for (const ti of $("#types-tree").find("input:checked")) {
-				if (!$(ti).parent().parent().hasClass("invisible")) {
-					let attr = $(ti).attr("id");
-
-					if (typeof attr !== 'undefined' && attr !== false) {
-						// it's an inner element
-						exercise_types.push($(ti).attr("id"));
-					}
-				}
-			}
-
-			spec["exerciseTypes"] = exercise_types;
+			spec["exerciseTypes"] = getSelectedExerciseTypes();
+			spec["exerciseItemMap"] = getExerciseItemMap();
 
 			return spec;
 		}
 
 		function getClauseValues(clauseStr, sentence) {
 			var clauseSpec = {};
-			clauseSpec["chunks"] = sentence.find("." + clauseStr + " .editable-chunks").val().split("|");
+			clauseSpec["chunks"] = sentence.find("." + clauseStr + " .editable-chunks").text().split("|");
 			clauseSpec["translation"] = sentence.find("." + clauseStr + " .translation input").val();
 			var distractors = [];
-			for (const distr of sentence.find("." + clauseStr + " .distractors .list-group .list-group-item")) {
-				distractors.push($(distr).text());
+			for (const distr of sentence.find(".distractors .listItems li")) {
+				distractors.push($(distr).find("span").last().text());
 			}
 			clauseSpec["distractors"] = distractors;
 			clauseSpec["givenWord"] = sentence.find("." + clauseStr + " .given-word input").val();
 			clauseSpec["semanticDistractor"] = sentence.find("." + clauseStr + " .semantic-distractor input").val();
 			var givenWordsExt = [];
-			for (const gwe of sentence.find("." + clauseStr + " .given-words-ext .list-group .list-group-item")) {
-				givenWordsExt.push($(gwe).text());
+			for (const gwe of sentence.find(".given-words-ext .listItems li")) {
+				givenWordsExt.push($(gwe).find("span").last().text());
 			}
 			clauseSpec["givenWordsExtended"] = givenWordsExt;
 			clauseSpec["gap"] = [parseInt(sentence.find("." + clauseStr + " .gap .spn1").val()), parseInt(sentence.find("." + clauseStr + " .gap .spn2").val())];
@@ -1013,6 +1145,10 @@ mark {
 
 			fr.readAsText(fileContent);
 		}
+		
+		function deleteAssembly(item) {
+			$(item).closest(".assembly").remove();
+		}
 
 		/**
 		Populates the UI with the exercises specified in the JSON file.
@@ -1024,6 +1160,9 @@ mark {
 			for (const e of $(".exercise-spec")) {
 				deleteExerciseItem($(e));
 			}
+			for (const e of $(".assembly")) {
+				$(e).remove();
+			}
 
 			try {
 				if ($("#topicdrp").find(".dropdown-item:contains('" + json["topic"] + "')").length > 0) {
@@ -1033,7 +1172,7 @@ mark {
 				}
 
 				if (is_valid) {
-					for (const ex of json["exercises"]) {
+					for (const sent of json["items"]) {
 						if (!is_valid) {
 							break;
 						}
@@ -1042,51 +1181,60 @@ mark {
 						let newExercises = $(".exercise-spec");
 						let exercise = $(newExercises[newExercises.length - 1]);
 
-						if (exercise.find(".subtopic .dropdown-item:contains('" + ex["subtopic"] + "')").length > 0) {
-							exercise.find(".btn-subtopic").text(ex["subtopic"]);
-						} else {
-							is_valid = false;
-							break;
-						}
+						exercise.find(".contextBefore").val(sent["contextBefore"]);
+						exercise.find(".contextAfter").val(sent["contextAfter"]);
+						exercise.find(".feedback").val(sent["feedback"]);
 
-						for (const sent of ex["sentences"]) {
-							//addSentence(exercise);
-							let newSentences = exercise.find(".sentence-unit");
-							let sentence = $(newSentences[newSentences.length - 1]);
-
-							sentence.find(".contextBefore").val(sent["contextBefore"]);
-							sentence.find(".contextAfter").val(sent["contextAfter"]);
-
-							if ($("#btnTopic").text() === "Conditionals") {
-								if (sentence.find(".condType .dropdown-item:contains('" + sent["condType"] + "')").length > 0) {
-									sentence.find(".btn-cond-type").text(sent["condType"]);
-								} else {
-									is_valid = false;
-									break;
-								}
-
-								fillClause(sent["mainClause"], "main-clause", sentence);
-								fillClause(sent["ifClause"], "if-clause", sentence);
-							} else if ($("#btnTopic").text() === "Relative pronouns") {
-								sentence.find(".c1 .highlighting").text(sent["clause1"]);
-								sentence.find(".c2 .highlighting").text(sent["clause2"]);
-
-								for (const pronoun of sent["pronouns"]) {
-									sentence.find(".pronouns .list-group").append($("<li class=\"list-group-item\" onclick=\"addItem(this);\">" + pronoun + "</li>"));
-								}
-
-								for (const distractor of sent["distractors"]) {
-									sentence.find(".distractors .list-group").append($("<li class=\"list-group-item\" onclick=\"addItem(this);\">" + distractor + "</li>"));
-								}
-
-								for (const relSent of sent["relativeClauses"]) {
-									sentence.find(".orders").append('<tr><td><div><span></span><span class="chunksView invisible"><input class="editable-chunks" type="text" value="' + relSent["chunks"].join('|') + '" onKeyUp="changeRelativeChunks(this);"></span><a class="fa fa-pencil" onclick="displayEditChunks(this);" href="#"></a></div></td><td><input type="checkbox" class="pronOpt"' + (relSent["pronounIsOptional"] ? " checked" : "") + '></td><td><input type="checkbox" class="genDist"' + (relSent["generateDistinctExercise"] ? " checked" : "") + '></td><td><a class="fa fa-times" style="float:right;color:red;" href="#" onclick="deleteOrder(this);"></td></tr>')
-
-								}
+						if ($("#btnTopic").text() === "Conditionals") {
+							if (exercise.find(".condType .dropdown-item:contains('" + sent["condType"] + "')").length > 0) {
+								exercise.find(".btn-cond-type").text(sent["condType"]);
+							} else {
+								is_valid = false;
+								break;
 							}
 
+							fillClause(sent["mainClause"], "main-clause", exercise);
+							fillClause(sent["ifClause"], "if-clause", exercise);
+						} else if ($("#btnTopic").text() === "Relative pronouns") {
+							exercise.find(".c1 input").val(sent["clause1"]);
+							exercise.find(".c2 input").val(sent["clause2"]);
+							exercise.find(".feedback").val(sent["feedback"]);
 
+							for (const pronoun of sent["pronouns"]) {
+								exercise.find(".pronouns .modal input").val(pronoun);
+								addDistractor(exercise.find(".pronouns .modal button"));
+							}
 
+							for (const distractor of sent["distractors"]) {
+								exercise.find(".distractors .modal input").val(distractor);
+								addDistractor(exercise.find(".distractors .modal button"));
+							}
+
+							for (const relSent of sent["relativeClauses"]) {
+								addRelativeOrder($(".orders").last());
+														
+								let chunkTexts = [];
+								let n = 1;
+								let chunkTextbox = $(".rel-sentence-order").last().find(".editable-chunks");
+								for (const chunk of relSent["chunks"]) {
+									if(n === relSent["pronounIndex"]) {
+										chunkTextbox.parent().prev().append("<span style='border:1px solid grey; margin-right: 2px;'><mark>" + chunk.trim() + "</mark></span>");
+										chunkTexts.push("<mark>" + chunk + "</mark>");
+									} else {
+										chunkTextbox.parent().prev().append("<span style='border:1px solid grey; margin-right: 2px;'>" + chunk.trim() + "</span>");
+										chunkTexts.push(chunk);
+									}
+									n++;									
+								}
+								
+								chunkTextbox.html(chunkTexts.join("|"));
+								if(relSent["pronounIsOptional"]) {
+									$(".rel-sentence-order input").last().prop("checked", true);
+								}
+								
+								$(".rel-sentence-order").last().find(".spn2").val(relSent["prompt"]);
+								setInputValues(chunkTextbox.closest(".chunks-container").find('.idx'));
+							}
 						}
 					}
 
@@ -1097,8 +1245,35 @@ mark {
 
 					for (const ti of json["exerciseTypes"]) {
 						$("#" + ti).prop("checked", true);
+					}				
+					
+					for (const item of json["exerciseItemMap"]) {
+						addExerciseAssembly();
+						$("#assembly-container").children().last().find("h3 input").val(item["Title"]);
+						for (const sentence of item["sentences"]) {
+							let i = 0;
+							let itemId;
+							loop1: for (const sent of json["items"]) {
+								for(const relCl of sent["relativeClauses"]) {
+									if(relCl["id"] == sentence) {
+										let newExercises = $(".rel-sentence-order");
+										let exercise = $(newExercises[i]);
+										itemId = exercise.attr("id");
+										break loop1;
+									}
+									i++;
+								}
+							}
+							let itemToCheck = $("#assembly-container").children().last().find("#l" + maxAssemblyId + itemId);
+							itemToCheck.prop("checked", true);
+							onExerciseItemChecked(itemToCheck);
+						}
 					}
+					
 					setExerciseTypeCheckboxes();
+					
+					onSelectedTopicChanged();
+					displayExercise("#" + $(".exercise-spec").first().attr("id"));
 				}
 			} catch (e) {
 				console.log(e);
@@ -1106,22 +1281,31 @@ mark {
 			}
 
 			if (!is_valid) {
-				$(".exercise-spec").remove();
+				// remove all exercises
+				for (const e of $(".exercise-spec")) {
+					deleteExerciseItem($(e));
+				}
+				for (const e of $(".assembly")) {
+					$(e).remove();
+				}
+				
 				alert("The exercise file is invalid.");
 			}
 		}
 
 		function fillClause(clause, clauseStr, sentence) {
-			sentence.find("." + clauseStr + " .editable-chunks").val(clause["chunks"].join('|'));
+			sentence.find("." + clauseStr + " .editable-chunks").text(clause["chunks"].join('|'));
 			updateChunks(sentence.find("." + clauseStr + " .editable-chunks"));
 			sentence.find("." + clauseStr + " .translation input").val(clause["translation"]);
 			for (const distractor of clause["distractors"]) {
-				sentence.find("." + clauseStr + " .distractors .list-group").append($("<li class=\"list-group-item\" onclick=\"addItem(this);\">" + distractor + "</li>"));
+				sentence.find("." + clauseStr + " .distractors .modal input").val(distractor);
+				addDistractor(sentence.find("." + clauseStr + " .distractors .modal button"));
 			}
 			sentence.find("." + clauseStr + " .given-word input").val(clause["givenWord"]);
 			sentence.find("." + clauseStr + " .semantic-distractor input").val(clause["semanticDistractor"]);
 			for (const givenWordExt of clause["givenWordsExtended"]) {
-				sentence.find("." + clauseStr + " .given-words-ext .list-group").append($("<li class=\"list-group-item\" onclick=\"addItem(this);\">" + givenWordExt + "</li>"));
+				sentence.find("." + clauseStr + " .given-words-ext .modal input").val(givenWordExt);
+				addDistractor(sentence.find("." + clauseStr + " .given-words-ext .modal button"));
 			}
 			sentence.find("." + clauseStr + " .gap .spn1").val(clause["gap"][0]);
 			sentence.find("." + clauseStr + " .gap .spn2").val(clause["gap"][1]);
@@ -1177,7 +1361,7 @@ mark {
 		}
 
 		var relExerciseTypes = {"Memory": null, "Mark the Words": null, "Single Choice": null, "Fill-in-the-Blanks": null, "Half-open": null, "Open": null};
-		var relClauseOrder = ["Main clause + relative clause", "Relative clause + main clause", "Random clause order"];
+		var relClauseOrder = ["Clause 1 + clause 2", "Clause 2 + clause 1", "Random clause order"];
 		var relClauseOrderDict = {};
 		for (const el of relClauseOrder) {
 			relClauseOrderDict[el] = relExerciseTypes;

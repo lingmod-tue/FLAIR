@@ -10,6 +10,7 @@ import org.json.simple.JSONObject;
 import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseData;
 import com.flair.server.exerciseGeneration.exerciseManagement.InputParsing.ConfigParsing.ExerciseConfigData;
 import com.flair.server.exerciseGeneration.exerciseManagement.InputParsing.ConfigParsing.ExerciseItemConfigData;
+import com.flair.server.exerciseGeneration.exerciseManagement.InputParsing.ConfigParsing.RelativeClausePosition;
 import com.flair.server.exerciseGeneration.exerciseManagement.InputParsing.ConfigParsing.RelativeExerciseItemConfigData;
 import com.flair.server.exerciseGeneration.exerciseManagement.InputParsing.ConfigParsing.RelativeSentence;
 import com.flair.server.exerciseGeneration.exerciseManagement.nlpManagement.RelativeNlpManager;
@@ -42,19 +43,17 @@ public class RelativeSpecificationGenerator implements SpecificationGenerator {
 			types.add(type);
 		}
 		spec.put("exerciseTypes", types);
-		
-		JSONArray exercises = new JSONArray();
-		spec.put("exercises", exercises);
+				
+		JSONArray exerciseItemMap = new JSONArray();
+		spec.put("exerciseItemMap", exerciseItemMap);
 		
 		for(ExerciseData ed : data) {
 			ExerciseConfigData d = generateConfigData(parser, generator, lemmatizer, ed);
-			
-			JSONObject exercise = new JSONObject();
-			exercises.add(exercise);
-			
-			JSONArray sentences = new JSONArray();
-	        exercise.put("sentences", sentences);
 
+			JSONArray sentences = new JSONArray();
+			spec.put("items", sentences);
+
+	        int counter = 0;
 			for(ExerciseItemConfigData s : d.getItemData()) {
 				JSONObject sent = new JSONObject();
 				sentences.add(sent);
@@ -63,11 +62,11 @@ public class RelativeSpecificationGenerator implements SpecificationGenerator {
 		        sent.put("contextBefore", item.getContextBefore());
 		        sent.put("contextAfter", item.getContextAfter());
 		        
-		        sent.put("clause1", item.getPositionsClause1().get(0).second); 
-		        sent.put("clause2", item.getPositionsClause2().get(0).second); 
+		        sent.put("clause1", item.getClause1()); 
+		        sent.put("clause2", item.getClause2()); 
 
 		        JSONArray pronouns = new JSONArray();
-		        pronouns.add(item.getPronoun());
+		        pronouns.add(item.getPronouns());
 		        sent.put("pronouns", pronouns);
 		        
 		        JSONArray distractors = new JSONArray();
@@ -78,16 +77,43 @@ public class RelativeSpecificationGenerator implements SpecificationGenerator {
 		        JSONArray relativeClauses = new JSONArray();
 		        sent.put("relativeClauses", relativeClauses);
 		        		        
+				int i = 1;
 		        for(RelativeSentence rs : item.getRelativeSentences()) {
+		        	i++;
 		        	JSONObject relSent = new JSONObject();
 		        	JSONArray chunks = new JSONArray();
-		        	for(String chunk : rs.getChunks()) {
-		        		chunks.add(chunk);
+		        	int j = 1;
+		        	for(RelativeClausePosition chunk : rs.getChunks()) {
+		        		chunks.add(chunk.getValue());
+		        		if(chunk.isPronoun()) {
+				        	relSent.put("pronounIndex", j);
+		        		}
+		        		if(chunk.isLastCommonReferent()) {
+				        	relSent.put("prompt", j);
+		        		}
+		        		j++;
 		        	}
+		        	relSent.put("id", ++counter);
 		        	relSent.put("chunks", chunks);
-		        	relSent.put("pronounIsOptional", rs.isPronounIsOptional());
-		        	relSent.put("generateDistinctExercise", rs.isUseToGenerateExercise());
+		        	
 		        	relativeClauses.add(relSent);
+		        	
+		        	JSONArray exerciseSentences = null;
+		        	for(Object mapItem : exerciseItemMap) {
+		        		if(((JSONObject)mapItem).get("Title").equals("Exercise " + i)) {
+		        			exerciseSentences = (JSONArray)((JSONObject)mapItem).get("sentences");
+		        			break;
+		        		}
+		        	}
+		        	if(exerciseSentences == null) {
+		        		exerciseSentences = new JSONArray();
+		        		JSONObject mapItem = new JSONObject();
+		        		exerciseItemMap.add(mapItem);
+		        		mapItem.put("Title", "Exercise " + i);
+		        		mapItem.put("sentences", exerciseSentences);
+		        	}
+		        	
+		        	exerciseSentences.add("" + counter);
 		        }
 			}
 		}
@@ -111,37 +137,48 @@ public class RelativeSpecificationGenerator implements SpecificationGenerator {
 			}
 		}
 		
-		String stamp = nlpManager.getStamp(pronouns);
-		if(stamp == null) {
-			return null;
-		}
-		configData.setStamp(stamp);
-				
+		HashSet<String> distinctPronouns = new HashSet<>();
+		
 		for(com.flair.server.exerciseGeneration.exerciseManagement.nlpManagement.RelativeSentence relativeSentence : relativeSentences) {
 			RelativeExerciseItemConfigData item = new RelativeExerciseItemConfigData();
 			configData.getItemData().add(item);
 			item.setContextBefore(relativeSentence.contextBefore);
 			item.setContextAfter(relativeSentence.contextAfter);	
-			item.getPositionsClause1().add(new Pair<>(0, relativeSentence.clause1));
-			item.getPositionsClause2().add(new Pair<>(0, relativeSentence.clause2));
+			item.setClause1(relativeSentence.clause1);
+			item.setClause2(relativeSentence.clause2);
 			for(RelativeSentenceChunk chunk : relativeSentence.relativeSentences.get(0).getChunks()) {
 				if(chunk.isPronoun()) {
-					item.setPronoun(chunk.getValue());
+					item.getPronouns().add(chunk.getValue());
 					break;
 				}
 			}
-			item.setDistractors(nlpManager.getDistractors(item.getPronoun(), stamp));
+			distinctPronouns.add(item.getPronouns().get(0));
 						
 			for(RelativeSentenceAlternative rs : relativeSentence.relativeSentences) {
 				RelativeSentence relativeClause = new RelativeSentence();
 				item.getRelativeSentences().add(relativeClause);
 				relativeClause.setPronounIsOptional(rs.isPronounIsOptional());
 				relativeClause.setUseToGenerateExercise(rs.isUseToGenerateExercise());
+				int j = 1;
 				for(RelativeSentenceChunk c : rs.getChunks()) {
-					relativeClause.getChunks().add(c.getValue());
+					RelativeClausePosition position = new RelativeClausePosition(c.getValue());
+					if(rs.getPronounIndex() == j) {
+						position.setPronoun(true);
+					}
+					if(rs.getPromptEndIndex() == j) {
+						position.setLastCommonReferent(true);
+					}
+					relativeClause.getChunks().add(position);
+					j++;
 				}
 			}
 		}
+		
+		for(ExerciseItemConfigData item : configData.getItemData()) {
+			((RelativeExerciseItemConfigData)item).setDistractors(
+					nlpManager.getDistractors(((RelativeExerciseItemConfigData)item).getPronouns().get(0), distinctPronouns));
+		}
+
 		
 		return configData;
 	}

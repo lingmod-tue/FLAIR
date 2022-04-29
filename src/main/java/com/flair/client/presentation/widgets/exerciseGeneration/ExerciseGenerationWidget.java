@@ -16,7 +16,6 @@ import com.flair.client.presentation.interfaces.ExerciseGenerationService;
 import com.flair.client.presentation.widgets.DocumentPreviewPane;
 import com.flair.client.utilities.JSUtility;
 import com.flair.shared.exerciseGeneration.ExerciseSettings;
-import com.flair.shared.interop.dtos.RankableDocument;
 import com.flair.shared.interop.dtos.RankableDocumentImpl;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -35,7 +34,6 @@ import gwt.material.design.client.ui.MaterialIcon;
 import gwt.material.design.client.ui.MaterialPreLoader;
 import gwt.material.design.client.ui.MaterialRadioButton;
 import gwt.material.design.client.ui.MaterialTitle;
-import gwt.material.design.client.ui.MaterialToast;
 import gwt.material.design.client.ui.html.Option;
 
 public class ExerciseGenerationWidget extends LocalizedComposite implements ExerciseGenerationService {
@@ -158,7 +156,7 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     	setConfigCheckboxVisibility(true);
 		chkFeedbookXml.setEnabled(true);
 		chkH5p.setEnabled(true);
-		chkGenerateFeedback.setVisible(true);
+		chkGenerateFeedback.setVisible(!chkGenerateFeedback.isVisible());
 		
 		for(Widget task : wdgtTasks.getChildrenList()) {
             if(task instanceof TaskItem) {
@@ -392,7 +390,7 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
      */
     public void setFeedbackGenerationVisiblity() {
     	boolean setVisible = false;
-    	if(rbtExercise.getValue() && chkH5p.getValue() || rbtSpecification.getValue()) {
+    	if(rbtExercise.getValue() && chkH5p.getValue()) {
 	    	for(Widget existingTask : wdgtTasks.getChildrenList()) {
 	    		if (((TaskItem)existingTask).supportsFeedbackGeneration()) {
 	    			setVisible = true;

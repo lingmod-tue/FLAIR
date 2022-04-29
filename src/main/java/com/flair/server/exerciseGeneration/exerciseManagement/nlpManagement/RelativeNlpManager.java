@@ -3,7 +3,6 @@ package com.flair.server.exerciseGeneration.exerciseManagement.nlpManagement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -18,11 +17,8 @@ import com.flair.server.parser.SimpleNlgParser;
 import com.flair.shared.exerciseGeneration.DetailedConstruction;
 import com.flair.shared.exerciseGeneration.Pair;
 
-import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.IndexedWord;
-import edu.stanford.nlp.pipeline.Annotation;
-import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.trees.TypedDependency;
 
 public class RelativeNlpManager extends NlpManager {
@@ -112,7 +108,7 @@ public class RelativeNlpManager extends NlpManager {
             return null;
         }
         
-        ArrayList<RelativeSentenceAlternative> relativeSentences = generateRelativeSentences(rs);
+        ArrayList<RelativeSentenceAlternative> relativeSentences = generateRelativeSentences(rs, sentence);
         if(relativeSentences == null || relativeSentences.size() == 0) {
         	return null;
         }
@@ -582,7 +578,7 @@ public class RelativeNlpManager extends NlpManager {
         return sb.toString();
     }
     
-    private ArrayList<RelativeSentenceAlternative> generateRelativeSentences(ProcessedRelativeSentence rs) {
+    private ArrayList<RelativeSentenceAlternative> generateRelativeSentences(ProcessedRelativeSentence rs, SentenceAnnotations sentence) {
     	ArrayList<RelativeSentenceAlternative> relativeSentences = new ArrayList<>();
 
         // It wouldn't normally make sense to have all those orderings, but we need to know which orders must be accepted for jumbled sentences.
@@ -591,18 +587,26 @@ public class RelativeNlpManager extends NlpManager {
 
         // original order
         relativeSentences.add(getRelativeSentence(rs, false, rs.chunksClause2, rs.chunksClause1,
-                rs.pronIsObj));
-        relativeSentences.add(getRelativeSentence(rs, true, rs.chunksClause2, rs.chunksClause1,
-                rs.pronIsObj));
+                rs.pronIsObj, sentence, false));
+        addRelativeSentenceIfNotContained(relativeSentences, getRelativeSentence(rs, true, rs.chunksClause2, rs.chunksClause1,
+                rs.pronIsObj, sentence, false));
+        addRelativeSentenceIfNotContained(relativeSentences, getRelativeSentence(rs, false, rs.chunksClause2, rs.chunksClause1,
+                rs.pronIsObj, sentence, true));
+        addRelativeSentenceIfNotContained(relativeSentences, getRelativeSentence(rs, true, rs.chunksClause2, rs.chunksClause1,
+                rs.pronIsObj, sentence, true));        
 
         // reversed order
         // if both referents are objects or both are subjects, the pronoun is the same (object or subject) as in the original order; otherwise, it's reversed
         if(rs.pronoun.value().equals("who") || rs.pronoun.value().equals("which") || rs.pronoun.value().equals("that") || rs.pronoun.value().equals("whom") && rs.pronIsObj ||
                 !rs.pronoun.value().equals("whom") && !rs.pronoun.value().equals("whose") && rs.commonReferentInMainHasPreposition) {
-            relativeSentences.add(getRelativeSentence(rs, false, rs.chunksClause1, rs.chunksClause2,
-            		(rs.pronIsObj == rs.referentIsObject) == rs.pronIsObj));
-            relativeSentences.add(getRelativeSentence(rs, true, rs.chunksClause1, rs.chunksClause2,
-                    (rs.pronIsObj == rs.referentIsObject) == rs.pronIsObj));
+        	addRelativeSentenceIfNotContained(relativeSentences, getRelativeSentence(rs, false, rs.chunksClause1, rs.chunksClause2,
+            		(rs.pronIsObj == rs.referentIsObject) == rs.pronIsObj, sentence, false));
+        	addRelativeSentenceIfNotContained(relativeSentences, getRelativeSentence(rs, true, rs.chunksClause1, rs.chunksClause2,
+                    (rs.pronIsObj == rs.referentIsObject) == rs.pronIsObj, sentence, false));
+        	addRelativeSentenceIfNotContained(relativeSentences, getRelativeSentence(rs, false, rs.chunksClause1, rs.chunksClause2,
+            		(rs.pronIsObj == rs.referentIsObject) == rs.pronIsObj, sentence, true));
+        	addRelativeSentenceIfNotContained(relativeSentences, getRelativeSentence(rs, true, rs.chunksClause1, rs.chunksClause2,
+                    (rs.pronIsObj == rs.referentIsObject) == rs.pronIsObj, sentence, true));
         }
 
        //TODO: remove 
@@ -620,12 +624,32 @@ public class RelativeNlpManager extends NlpManager {
         return relativeSentences;
     }
     
+    private void addRelativeSentenceIfNotContained(ArrayList<RelativeSentenceAlternative> relativeSentences,
+    		RelativeSentenceAlternative newSentence) {
+    	for(RelativeSentenceAlternative oldSentence : relativeSentences) {
+    		if(oldSentence.getChunks().size() == newSentence.getChunks().size()) {
+    			boolean allSame = true;
+    			for(int i = 0; i < newSentence.getChunks().size(); i++) {
+    				if(!oldSentence.getChunks().get(i).getValue().equals(newSentence.getChunks().get(i).getValue())) {
+    					allSame = false;
+    					break;
+    				}
+    			}
+    			if(allSame) {
+    				return;
+    			}
+    		}
+    	}
+    	
+    	// if we end up here, there was no identical relative sentence, so we add the new one
+    	relativeSentences.add(newSentence);
+    }
     
     
     private RelativeSentenceAlternative getRelativeSentence(ProcessedRelativeSentence rs, boolean extrapose,
             ArrayList<Token> chunksClause1,
             ArrayList<Token> chunksClause2,
-            boolean referentClause2IsObject) {
+            boolean referentClause2IsObject, SentenceAnnotations sentence, boolean prepositionStranding) {
     	ArrayList<RelativeSentenceChunk> chunks = new ArrayList<>();
     	
     	Pair<Integer, Integer> commonReferent = 
@@ -648,11 +672,33 @@ public class RelativeNlpManager extends NlpManager {
             chunks.add(chunk);
 
             // add everything in the relative clause except for the common referent
+            String preposition = null;
             for(Token c : chunksClause2) {
-                if(!(c.start >= commonReferent.first && c.start <= commonReferent.second) &&
+            	if(prepositionStranding && rs.prepositionOfCommonReferent != null && rs.prepositionOfCommonReferent.beginPosition() >= c.start && rs.prepositionOfCommonReferent.endPosition() <= c.end) {
+            		// we have a preposition in the relative clause, so if we need preposition stranding, we need to put it to the end
+            		preposition = rs.prepositionOfCommonReferent.value();
+            		if(rs.prepositionOfCommonReferent.beginPosition() > c.start) {
+            			// we have something before the preposition, so it needs its own chunk
+            			if(!(c.start >= commonReferent.first && c.start <= commonReferent.second) &&
+                        		rs.mainToksToExcludeInRel.stream().noneMatch(t -> t.start.equals(c.start) && t.end.equals(c.end))) {
+                            chunks.add(new RelativeSentenceChunk(c.value.substring(0, rs.prepositionOfCommonReferent.beginPosition() - c.start).trim()));
+                        }
+            		}
+            		if(rs.prepositionOfCommonReferent.beginPosition() < c.end) {
+            			// we have something after the preposition, so it needs its own chunk
+            			if(!(c.start >= commonReferent.first && c.start <= commonReferent.second) &&
+                        		rs.mainToksToExcludeInRel.stream().noneMatch(t -> t.start.equals(c.start) && t.end.equals(c.end))) {
+                            chunks.add(new RelativeSentenceChunk(c.value.substring(c.value.length() - (c.end - rs.prepositionOfCommonReferent.endPosition())).trim()));
+                        }
+            		}
+            	} else if(!(c.start >= commonReferent.first && c.start <= commonReferent.second) &&
                 		rs.mainToksToExcludeInRel.stream().noneMatch(t -> t.start.equals(c.start) && t.end.equals(c.end))) {
                     chunks.add(new RelativeSentenceChunk(c.value));
                 }
+            }
+            // add the preposition for preposition stranding
+            if(preposition != null) {
+                chunks.add(new RelativeSentenceChunk(preposition));
             }
         } else {
             // add everything in the main clause until after the common referent
@@ -670,7 +716,7 @@ public class RelativeNlpManager extends NlpManager {
             }
 
             // add the preposition
-            if(rs.prepositionOfCommonReferent != null && 
+            if(!prepositionStranding && rs.prepositionOfCommonReferent != null && 
             		rs.prepositionOfCommonReferent.beginPosition() >= chunksClause2.get(0).start && 
             		rs.prepositionOfCommonReferent.endPosition() <= chunksClause2.get(chunksClause2.size() - 1).end) {
             	chunks.add(new RelativeSentenceChunk(rs.prepositionOfCommonReferent.value()));
@@ -697,6 +743,13 @@ public class RelativeNlpManager extends NlpManager {
                 		chunks.add(new RelativeSentenceChunk(c.value));
                 	}
                 }
+            }
+            
+            // add the preposition for preposition stranding
+            if(prepositionStranding && rs.prepositionOfCommonReferent != null && 
+            		rs.prepositionOfCommonReferent.beginPosition() >= chunksClause2.get(0).start && 
+            		rs.prepositionOfCommonReferent.endPosition() <= chunksClause2.get(chunksClause2.size() - 1).end) {
+            	chunks.add(new RelativeSentenceChunk(rs.prepositionOfCommonReferent.value()));
             }
 
             // add the rest of the main clause
@@ -740,63 +793,29 @@ public class RelativeNlpManager extends NlpManager {
 
         RelativeSentenceAlternative s = new RelativeSentenceAlternative();
         s.setChunks(chunks);
-        s.setPronounIsOptional(referentClause2IsObject);     
+        s.setPronounIsOptional(referentClause2IsObject);    
+        
+        int j = 1;
+        for(RelativeSentenceChunk chunk : chunks) {
+        	if(chunk.isPronoun()) {
+                s.setPronounIndex(j);
+        	}
+        	if(chunk.isCommonReferent()) {
+        		s.setPromptEndIndex(j);
+        	}
+        	
+        	j++;
+        }
 
         return s;
     }
     
-    public String getStamp(HashSet<String> pronouns) {
-        if(pronouns.stream().allMatch(p -> p.equalsIgnoreCase("who") || p.equalsIgnoreCase("which"))) {
-            return "Subject who/which";
-        } else if(pronouns.stream().allMatch(p -> p.equalsIgnoreCase("which") || p.equalsIgnoreCase("whom"))) {
-            return "Object which/whom";
-        } else if(pronouns.stream().anyMatch(p -> p.equalsIgnoreCase("whose"))) {
-        	// it could still also be "Whose", but we have to make a decision at some point
-            return "Whose";
-        } else if(pronouns.stream().anyMatch(p -> p.equalsIgnoreCase("where"))) {
-            return "Where";
+    public ArrayList<String> getDistractors(String pronoun, HashSet<String> distinctPronouns) {
+        ArrayList<String> distractors = new ArrayList<>(distinctPronouns);
+        if(distinctPronouns.contains(pronoun)) {
+        	distractors.remove(pronoun);
         }
-
-        return null;
-    }
-    
-    public ArrayList<String> getDistractors(String pronoun, String subtopic) {
-        ArrayList<String> distractors = new ArrayList<>();
-        if(subtopic.equals("Subject who/which")) {
-            distractors.add(pronoun.equals("who") ? "which" : "who");
-        } else if(subtopic.equals("Object which/whom")) {
-            distractors.add(pronoun.equals("which") ? "whom" : "which");
-        } else if(subtopic.equals("Whose")) {
-            if(pronoun.equals("who") || pronoun.equals("whom")) {
-                distractors.add("which");
-                distractors.add("whose");
-            } else if(pronoun.equals("which")) {
-                distractors.add("who");
-                distractors.add("whose");
-            } else if(pronoun.equals("whose")) {
-                distractors.add("whom");
-                distractors.add("which");
-            }
-        } else if(subtopic.equals("Where")) {
-            if (pronoun.equals("where")) {
-                distractors.add("whose");
-                distractors.add("which");
-                distractors.add("who");
-            } else if (pronoun.equals("which")) {
-                distractors.add("whose");
-                distractors.add("where");
-                distractors.add("who");
-            } else if (pronoun.equals("who")) {
-                distractors.add("whose");
-                distractors.add("where");
-                distractors.add("which");
-            } else if (pronoun.equals("whose")) {
-                distractors.add("whom");
-                distractors.add("where");
-                distractors.add("which");
-            }
-        }
-
+        
         return distractors;
     }
         
@@ -822,8 +841,8 @@ public class RelativeNlpManager extends NlpManager {
     	public String value;
     	public Integer start;
     	public Integer end;
+    	
 		public Token(String value, Integer start, Integer end) {
-			super();
 			this.value = value;
 			this.start = start;
 			this.end = end;

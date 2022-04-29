@@ -313,11 +313,6 @@ public class TaskItem extends LocalizedComposite {
 	public MaterialCheckBox chkUseConfig;
 	@UiField
 	MaterialRow pnlConfig;
-	/*
-	 * @UiField MaterialRow pnlFileUplaod;
-	 * 
-	 * @UiField FileUpload btnFileUpload;
-	 */
 	@UiField
 	MaterialColumn colType;
 	@UiField

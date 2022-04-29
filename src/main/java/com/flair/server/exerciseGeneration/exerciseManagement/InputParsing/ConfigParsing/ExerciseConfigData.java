@@ -11,6 +11,7 @@ public class ExerciseConfigData {
 	private ArrayList<ExerciseItemConfigData> itemData = new ArrayList<>();
 	private ArrayList<ExerciseTypeSpec> exerciseType = new ArrayList<>();
 	private String tocId = null;
+	private String title = "";
 
 	public String getStamp() { return stamp; }
 	public int getActivity() { return activity; }
@@ -35,6 +36,12 @@ public class ExerciseConfigData {
 	}
 	public void setTocId(String tocId) {
 		this.tocId = tocId;
+	}
+	public String getTitle() {
+		return title;
+	}
+	public void setTitle(String title) {
+		this.title = title;
 	}
 	
 }

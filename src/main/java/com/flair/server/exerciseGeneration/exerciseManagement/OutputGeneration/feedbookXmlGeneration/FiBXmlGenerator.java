@@ -38,8 +38,8 @@ public class FiBXmlGenerator extends SimpleExerciseXmlGenerator {
 				targets.addAll(((ConstructionTextPart)element).getTargetAlternatives());
 				previousGap.setTarget(StringUtils.join(targets, "|"));
 				previousGap.setInputType(previousGap.getTarget().matches(".*?[\\s\\h\\v].*?") ? "PHRASE" : "WORD");	
-				if(((ConstructionTextPart)element).getDistractors().size() > 0 && ((ConstructionTextPart)element).getDistractors().get(0).getFeedback() != null) {
-					previousGap.setFeedback(((ConstructionTextPart)element).getDistractors().get(0).getFeedback());
+				if(((ConstructionTextPart)element).getFallbackFeedback() != null) {
+					previousGap.setFeedback(((ConstructionTextPart)element).getFallbackFeedback());
 					if(((ConstructionTextPart)element).getConstructionType().equals(DetailedConstruction.REL_CLAUSE)) {
 						previousGap.setLanguageConstruct("RELATIVE_CLAUSE");
 					}

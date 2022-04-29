@@ -107,7 +107,7 @@ DocumentPreviewPane	COLUMN_RELFREQ	Relative Häufigkeit in %
 
 ExerciseGenerationWidget	btnAddTask	Neue Aufgabe
 ExerciseGenerationWidget	btnDeleteTasks	Alle Aufgaben löschen
-ExerciseGenerationWidget	btnGenerateExercises	Aufgaben generieren
+ExerciseGenerationWidget	btnGenerateExercises	Generieren
 ExerciseGenerationWidget	icoDownload	Generierte Aufgaben herunterladen
 ExerciseGenerationWidget	icoXmlDownload	Generierte Aufgaben als XML für FeedBook herunterladen
 

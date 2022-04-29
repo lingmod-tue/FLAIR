@@ -2,8 +2,10 @@ package com.flair.server.exerciseGeneration.exerciseManagement.InputEnrichment.I
 
 import java.util.ArrayList;
 
+import com.flair.server.exerciseGeneration.exerciseManagement.ConstructionTextPart;
 import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseData;
 import com.flair.shared.exerciseGeneration.BracketsProperties;
+import com.flair.shared.exerciseGeneration.DetailedConstruction;
 import com.flair.shared.exerciseGeneration.InstructionsProperties;
 
 public class FiBConditionalInstructionGenerator extends InstructionGenerator {
@@ -29,6 +31,13 @@ public class FiBConditionalInstructionGenerator extends InstructionGenerator {
 			instructions = "Fill in the gap to form a correct sentence.";
 		}
 		
+		int type = 2;
+		if(data.getParts().stream().anyMatch(part -> part instanceof ConstructionTextPart && 
+				((ConstructionTextPart)part).getConstructionType().startsWith(DetailedConstruction.CONDREAL))) {
+			type = 1;
+		}
+		instructions += " Use conditional Type " + type + ".";
+				
 		data.setInstructions(instructions);
 	}
 	

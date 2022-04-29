@@ -8,7 +8,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseData;
-import com.flair.server.exerciseGeneration.exerciseManagement.TextPart;
 import com.flair.server.exerciseGeneration.exerciseManagement.InputParsing.ConfigParsing.ConditionalExerciseItemConfigData;
 import com.flair.server.exerciseGeneration.exerciseManagement.InputParsing.ConfigParsing.ExerciseConfigData;
 import com.flair.server.exerciseGeneration.exerciseManagement.InputParsing.ConfigParsing.ExerciseItemConfigData;

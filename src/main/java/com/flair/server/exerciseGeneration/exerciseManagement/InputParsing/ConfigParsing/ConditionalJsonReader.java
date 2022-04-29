@@ -33,7 +33,6 @@ public class ConditionalJsonReader extends JsonFileReader {
 		for(Object type : exerciseTypes) {
 			ConditionalExerciseTypeSpec t = new ConditionalExerciseTypeSpec();
 			String exerciseType = (String)type;
-			t.setSubtopic(exerciseType.contains("Type1vsType2") ? "conditional_types" : "conditional_form");
 			t.setIfClauseFirst(exerciseType.contains("If-clausemainclause"));
 			t.setRandomClauseOrder(exerciseType.contains("Randomclauseorder"));
 			t.setTargetIfClause(exerciseType.contains("Targetonlyif-clause") || exerciseType.contains("Targetbothclauses") || exerciseType.contains("Useif-clause"));
@@ -44,23 +43,36 @@ public class ConditionalJsonReader extends JsonFileReader {
 		}
 
 		int k = 1;
-		for(Object exercise : (JSONArray)jsonObject.get("exercises")) {
+		for(Object exercise : (JSONArray)jsonObject.get("exerciseItemMap")) {
 			ExerciseConfigData data = new ExerciseConfigData();
 			configData.add(data);
 			data.setExerciseType(types);
-			String subtopic = (String)((JSONObject)exercise).get("subtopic");
-			data.setStamp(subtopic.equals("Formation") ? "Conditional" : "Conditional Type"); 
 			data.setActivity(k);
+			data.setTitle((String)((JSONObject)exercise).get("Title"));
 
 			JSONArray sentences = (JSONArray)((JSONObject)exercise).get("sentences");
 			int n = 1;
 			for(Object sentence : sentences) {
+				JSONObject sent = null;
+				for(Object item : (JSONArray)jsonObject.get("items")) {
+					if(((JSONObject)item).get("id").equals((String)sentence)) {
+						sent = (JSONObject)item;
+						break;
+					}
+				}
+				
+				if(sent == null) {
+					System.out.println("Invalid exercise configuration: Id " + sentence);
+					continue;
+				}
+			
 		        ConditionalExerciseItemConfigData cd = new ConditionalExerciseItemConfigData();
-		        cd.setConditionalType(((String)((JSONObject)sentence).get("condType")).equals("Type 1") ? 1 : 2);
-				cd.setContextBefore((String)((JSONObject)sentence).get("contextBefore"));
-				cd.setContextAfter((String)((JSONObject)sentence).get("contextAfter"));
-		        
-				JSONObject mainClause = (JSONObject)((JSONObject)sentence).get("mainClause");
+		        cd.setConditionalType(((String)((JSONObject)sent).get("condType")).equals("Type 1") ? 1 : 2);
+				cd.setContextBefore((String)((JSONObject)sent).get("contextBefore"));
+				cd.setContextAfter((String)((JSONObject)sent).get("contextAfter"));
+				cd.setFeedback((String)((JSONObject)sent).get("feedback"));
+
+				JSONObject mainClause = (JSONObject)((JSONObject)sent).get("mainClause");
 				JSONArray chunks = (JSONArray)((JSONObject)mainClause).get("chunks");
 				ArrayList<Pair<Integer, String>> chunksDef = new ArrayList<>();
 				int i = 0;
@@ -96,7 +108,7 @@ public class ConditionalJsonReader extends JsonFileReader {
 				targetsMtw.add(new Pair<>((int)((long)targetMtwIndices.get(0)), (int)((long)targetMtwIndices.get(1))));
 				cd.setUnderlineMainClause(targetsMtw);
 				
-				JSONObject ifClause = (JSONObject)((JSONObject)sentence).get("ifClause");
+				JSONObject ifClause = (JSONObject)((JSONObject)sent).get("ifClause");
 				chunks = (JSONArray)((JSONObject)ifClause).get("chunks");
 				chunksDef = new ArrayList<>();
 				i = 0;

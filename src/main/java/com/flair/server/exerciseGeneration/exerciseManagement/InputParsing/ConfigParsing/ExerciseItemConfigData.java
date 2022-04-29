@@ -5,8 +5,9 @@ public abstract class ExerciseItemConfigData {
 	public ExerciseItemConfigData() { }
 		
 	private int item;
-	private String contextBefore;
-	private String contextAfter;
+	private String contextBefore = "";
+	private String contextAfter = "";
+	private String feedback = null;
 
 	public int getItem() { return item; }
 	
@@ -23,5 +24,10 @@ public abstract class ExerciseItemConfigData {
 	public void setContextAfter(String contextAfter) {
 		this.contextAfter = contextAfter;
 	}
-	
+	public String getFeedback() {
+		return feedback;
+	}
+	public void setFeedback(String feedback) {
+		this.feedback = feedback;
+	}
 }

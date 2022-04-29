@@ -19,6 +19,7 @@ public class ConstructionTextPart extends TextPart {
 	private Pair<Integer, Integer> indicesRelatedConstruction = null;
 	private int targetIndex = 0;
 	private ArrayList<String> targetAlternatives = new ArrayList<>();
+	private String fallbackFeedback = null;
 
 	public Pair<Integer, Integer> getIndicesRelatedConstruction() {
 		return indicesRelatedConstruction;
@@ -82,6 +83,14 @@ public class ConstructionTextPart extends TextPart {
 
 	public ArrayList<String> getTargetAlternatives() {
 		return targetAlternatives;
+	}
+
+	public String getFallbackFeedback() {
+		return fallbackFeedback;
+	}
+
+	public void setFallbackFeedback(String fallbackFeedback) {
+		this.fallbackFeedback = fallbackFeedback;
 	}
 
 }
