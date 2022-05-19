@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -150,34 +151,35 @@ public class ConditionalSpecificationGenerator implements SpecificationGenerator
 		}
 		spec.put("exerciseTypes", types);
 		
-		JSONArray exercises = new JSONArray();
-		spec.put("exercises", exercises);
+		JSONArray exerciseItemMap = new JSONArray();
+		spec.put("exerciseItemMap", exerciseItemMap);
 		
+		JSONArray exercises = new JSONArray();
+		spec.put("items", exercises);
+		
+		int id = 0;
 		for(ExerciseData ed : data) {
 			ExerciseConfigData d = generateConfigData(parser, generator, lemmatizer, ed);
 			
-			JSONObject exercise = new JSONObject();
-			exercises.add(exercise);
-			
-			JSONArray sentences = new JSONArray();
-	        exercise.put("sentences", sentences);
-
 			for(ExerciseItemConfigData s : d.getItemData()) {
 				JSONObject sent = new JSONObject();
-				sentences.add(sent);
 		        ConditionalExerciseItemConfigData item = (ConditionalExerciseItemConfigData)s;
 		        
 		        sent.put("condType", item.getConditionalType() == 1 ? "Type 1" : "Type 2");
 		        sent.put("contextBefore", item.getContextBefore());
 		        sent.put("contextAfter", item.getContextAfter());
-		        
+		        sent.put("feedback", item.getFeedback());
+
+		        JSONArray condSents = new JSONArray();
+		        sent.put("conditionalSentences", condSents);
+
+		        id++;
+		        condSents.add(getChunks(item, id, true));
+		        id++;
+		        condSents.add(getChunks(item, id, false));
+		        		        
 		        JSONObject mainClause = new JSONObject();
 		        sent.put("mainClause", mainClause);
-		        JSONArray chunks = new JSONArray();
-		        for(Pair<Integer, String> chunk : item.getPositionsMainClause()) {
-		        	chunks.add(chunk.second);
-		        }
-		        mainClause.put("chunks", chunks);
 		        mainClause.put("translation", item.getTranslationMainClause());
 		        JSONArray distractors = new JSONArray();
 		        for(Pair<Integer, String> distractor : item.getDistractorsMainClause()) {
@@ -191,22 +193,9 @@ public class ConditionalSpecificationGenerator implements SpecificationGenerator
 		        	givenWordsExtended.add(gwe);
 		        }
 		        mainClause.put("givenWordsExtended", givenWordsExtended);
-		        JSONArray gaps = new JSONArray();
-		        gaps.add(item.getGapMainClause().get(0).first);
-		        gaps.add(item.getGapMainClause().get(0).second);
-		        mainClause.put("gap", gaps);
-		        gaps = new JSONArray();
-		        gaps.add(item.getUnderlineMainClause().get(0).first);
-		        gaps.add(item.getUnderlineMainClause().get(0).second);
-		        mainClause.put("mtwTarget", gaps);
-
+		        
 		        JSONObject ifClause = new JSONObject();
 		        sent.put("ifClause", ifClause);
-		        chunks = new JSONArray();
-		        for(Pair<Integer, String> chunk : item.getPositionsIfClause()) {
-		        	chunks.add(chunk.second);
-		        }
-		        ifClause.put("chunks", chunks);
 		        ifClause.put("translation", item.getTranslationIfClause());
 		        distractors = new JSONArray();
 		        for(Pair<Integer, String> distractor : item.getDistractorsIfClause()) {
@@ -220,18 +209,95 @@ public class ConditionalSpecificationGenerator implements SpecificationGenerator
 		        	givenWordsExtended.add(gwe);
 		        }
 		        ifClause.put("givenWordsExtended", givenWordsExtended);
-		        gaps = new JSONArray();
-		        gaps.add(item.getGapIfClause().get(0).first);
-		        gaps.add(item.getGapIfClause().get(0).second);
-		        ifClause.put("gap", gaps);
-		        gaps = new JSONArray();
-		        gaps.add(item.getUnderlineIfClause().get(0).first);
-		        gaps.add(item.getUnderlineIfClause().get(0).second);
-		        ifClause.put("mtwTarget", gaps);
+		        
+		        
+		        JSONArray exerciseSentences = null;
+	        	for(Object mapItem : exerciseItemMap) {
+	        		if(((JSONObject)mapItem).get("Title").equals("Exercise " + id)) {
+	        			exerciseSentences = (JSONArray)((JSONObject)mapItem).get("sentences");
+	        			break;
+	        		}
+	        	}
+	        	if(exerciseSentences == null) {
+	        		exerciseSentences = new JSONArray();
+	        		JSONObject mapItem = new JSONObject();
+	        		exerciseItemMap.add(mapItem);
+	        		mapItem.put("Title", "Exercise " + id);
+	        		mapItem.put("sentences", exerciseSentences);
+	        	}
+	        	
+				exercises.add(sent);
+	        	exerciseSentences.add("" + id);
 			}
 		}
 		
 		return spec.toJSONString().getBytes(StandardCharsets.UTF_8);
+	}
+	
+	private JSONObject getChunks(ConditionalExerciseItemConfigData item, int id, boolean ifFirst) {
+		JSONArray chunksMain = getChunksOfClause(item, ifFirst, false);
+        JSONArray chunksIf = getChunksOfClause(item, ifFirst, true);
+               
+        JSONObject condSent = new JSONObject();
+        
+        JSONObject clause1 = new JSONObject();
+        JSONObject clause2 = new JSONObject();
+        
+        JSONArray chunksC1;
+        JSONArray chunksC2;
+        if(ifFirst) {
+        	chunksC1 = chunksIf;
+        	chunksC2 = chunksMain;
+        	clause1.put("if", true);
+    	    clause2.put("if", false);
+        } else {
+        	chunksC1 = chunksMain;
+        	chunksC2 = chunksIf;
+        	clause1.put("if", false);
+    	    clause2.put("if", true);
+        }
+        
+        JSONObject dotChunk = new JSONObject();
+        dotChunk.put("isTarget", false);
+        dotChunk.put("text", item.getPunctuationMark());
+        chunksC2.add(dotChunk);
+        
+        clause1.put("chunks", chunksC1);
+	    clause2.put("chunks", chunksC2);
+	    
+        condSent.put("clause1", clause1);
+	    condSent.put("clause2", clause2);
+        
+        condSent.put("id", id);
+        
+        return condSent;
+	}
+	
+	private JSONArray getChunksOfClause(ConditionalExerciseItemConfigData item, boolean ifFirst, boolean ifClause) {
+		JSONArray chunks = new JSONArray();
+		Pair<Integer, Integer> gap = ifClause ? item.getGapIfClause().get(0) : item.getGapMainClause().get(0);
+		ArrayList<Pair<Integer, String>> positions = ifClause ? item.getPositionsIfClause() : item.getPositionsMainClause();
+        int m = 1;
+        for(Pair<Integer, String> chunk : positions) {
+        	JSONObject chunkDef = new JSONObject();
+        	chunkDef.put("isTarget", m >= gap.first && m <= gap.second);
+        	String text = chunk.second;
+        	if(ifClause == ifFirst && m == 1) {
+        		text = StringUtils.capitalize(text);
+        	}
+        	chunkDef.put("text", text);
+        	chunks.add(chunkDef);
+        	m++;
+        }
+        
+        if(ifFirst && ifClause) {
+        	JSONObject commaChunk = new JSONObject();
+        	commaChunk.put("isTarget", false);
+        	commaChunk.put("text", ",");
+        	chunks.add(commaChunk);
+        }
+        
+        return chunks;
 	}
 	
 	private ExerciseConfigData generateConfigData(CoreNlpParser parser, SimpleNlgParser generator, OpenNlpParser lemmatizer, ExerciseData data) {
@@ -244,14 +310,13 @@ public class ConditionalSpecificationGenerator implements SpecificationGenerator
 		for(com.flair.server.exerciseGeneration.exerciseManagement.nlpManagement.ConditionalSentence s : conditionalSentences) {
 			types.add(s.conditionalType);
 		}
-		
-		configData.setStamp(types.size() == 1 ? "Conditional" : "Conditional Type");
-				
+						
 		for(ConditionalSentence conditionalSentence : conditionalSentences) {
 			ConditionalExerciseItemConfigData item = new ConditionalExerciseItemConfigData();
 			item.setConditionalType(conditionalSentence.conditionalType.equals("Type 1") ? 1 : 2);
 			item.setContextBefore(conditionalSentence.contextBefore);
-			item.setContextAfter(conditionalSentence.contextAfter);			
+			item.setContextAfter(conditionalSentence.contextAfter);	
+			item.setPunctuationMark(conditionalSentence.punctuationMark);
 			
 			ArrayList<Pair<Integer, String>> mainChunks = new ArrayList<>();
 			for(int i = 0; i < conditionalSentence.mainClause.chunks.size(); i++) {

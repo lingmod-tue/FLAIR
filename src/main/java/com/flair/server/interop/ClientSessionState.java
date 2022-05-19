@@ -463,6 +463,7 @@ class ClientSessionState {
 		HashMap<String, byte[]> h5pFiles = new HashMap<>();
 		HashMap<String, byte[]> specifications = new HashMap<>();
 
+		Integer specFileIndex = null;
 		for (ResultComponents result : generatedPackages) {
 			if(result.getXmlFiles() != null) {
 	        	for(Entry<String, byte[]> entry : result.getXmlFiles().entrySet()) {
@@ -489,9 +490,12 @@ class ClientSessionState {
 	        	for(Entry<String, byte[]> entry : result.getSpecification().entrySet()) {
 	        		if(entry.getValue() != null && entry.getValue().length > 0) {
 	        			specifications.put(entry.getKey() + ".json", entry.getValue());
+	    	        	temporaryClientData.customCorpusData.byteContents.add(entry.getValue());
+						temporaryClientData.customCorpusData.fileNames.add(entry.getKey() + ".json");
+	    	        	specFileIndex = temporaryClientData.customCorpusData.byteContents.size() - 1;
 	        		}
 	        	}
-			}
+	        }
         }
 		
 		HashMap<String, byte[]> outputFiles = new HashMap<>();
@@ -533,6 +537,7 @@ class ClientSessionState {
 		msg.setFile(outputFile);
 		msg.setFileName(name);
 		msg.setPreviews(previews);
+		msg.setIndex(specFileIndex);
 		messageChannel.send(msg);
 
 		generatedPackages.clear();

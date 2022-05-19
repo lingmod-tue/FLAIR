@@ -2,6 +2,7 @@ package com.flair.client.presentation.widgets.exerciseGeneration;
 
 import java.util.ArrayList;
 
+import com.flair.shared.exerciseGeneration.ExerciseTopic;
 import com.google.gwt.user.client.ui.Widget;
 
 public class CompareMemoryVisibilityManager extends VisibilityManager {
@@ -15,14 +16,14 @@ public class CompareMemoryVisibilityManager extends VisibilityManager {
 		ArrayList<Widget> visibleSettings = new ArrayList<Widget>();
 		
 		visibleSettings.add(taskItem.grpPos);
-		addConstructionIfOccurs("adj", "Compare", 1, visibleSettings, taskItem.chkPosAdj, numberExercises); 
-		addConstructionIfOccurs("adv", "Compare", 1, visibleSettings, taskItem.chkPosAdv, numberExercises); 
+		addConstructionIfOccurs("adj", ExerciseTopic.COMPARISON, 1, visibleSettings, taskItem.chkPosAdj, numberExercises); 
+		addConstructionIfOccurs("adv", ExerciseTopic.COMPARISON, 1, visibleSettings, taskItem.chkPosAdv, numberExercises); 
 		visibleSettings.add(taskItem.grpCompForm);
-		addConstructionIfOccurs("comp", "Compare", 2, visibleSettings, taskItem.chkFormComparatives, numberExercises); 
-		addConstructionIfOccurs("sup", "Compare", 2, visibleSettings, taskItem.chkFormSuperlatives, numberExercises); 
+		addConstructionIfOccurs("comp", ExerciseTopic.COMPARISON, 2, visibleSettings, taskItem.chkFormComparatives, numberExercises); 
+		addConstructionIfOccurs("sup", ExerciseTopic.COMPARISON, 2, visibleSettings, taskItem.chkFormSuperlatives, numberExercises); 
 		visibleSettings.add(taskItem.grpForms);
-		addConstructionIfOccurs("syn", "Compare", 3, visibleSettings, taskItem.chkFormSynthetic, numberExercises); 
-		addConstructionIfOccurs("ana", "Compare", 3, visibleSettings, taskItem.chkFormAnalytic, numberExercises);
+		addConstructionIfOccurs("syn", ExerciseTopic.COMPARISON, 3, visibleSettings, taskItem.chkFormSynthetic, numberExercises); 
+		addConstructionIfOccurs("ana", ExerciseTopic.COMPARISON, 3, visibleSettings, taskItem.chkFormAnalytic, numberExercises);
 		
 		return visibleSettings;
 	}

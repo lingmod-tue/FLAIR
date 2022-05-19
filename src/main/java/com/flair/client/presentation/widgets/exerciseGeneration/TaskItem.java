@@ -941,12 +941,12 @@ public class TaskItem extends LocalizedComposite {
 	 */
 	private void initUI() {
 		possibleTopics = new ArrayList<Pair<String, String>>();
-		possibleTopics.add(new Pair<String, String>("Comparative", "Compare"));
-		possibleTopics.add(new Pair<String, String>("Simple Present", "Present"));
-		possibleTopics.add(new Pair<String, String>("Past tense", "Past"));
-		possibleTopics.add(new Pair<String, String>("Passive", "Passive"));
-		possibleTopics.add(new Pair<String, String>("Conditionals", "'if'"));
-		possibleTopics.add(new Pair<String, String>("Relative Pronouns", "Relatives"));
+		possibleTopics.add(new Pair<String, String>("Comparative", ExerciseTopic.COMPARISON));
+		possibleTopics.add(new Pair<String, String>("Simple Present", ExerciseTopic.PRESENT));
+		possibleTopics.add(new Pair<String, String>("Past tense", ExerciseTopic.PAST));
+		possibleTopics.add(new Pair<String, String>("Passive", ExerciseTopic.PASSIVE));
+		possibleTopics.add(new Pair<String, String>("Conditionals", ExerciseTopic.CONDITIONALS));
+		possibleTopics.add(new Pair<String, String>("Relative Pronouns", ExerciseTopic.RELATIVES));
 
 		constructionComponents = new ConstructionComponentsCollection(this);
 
@@ -1291,7 +1291,7 @@ public class TaskItem extends LocalizedComposite {
 		// If we use both clauses of the conditional sentence as targets, we have double
 		// the amount of blanks
 		String topic = getTopic();
-		if (topic.equals("'if'") && rbtBothClauses.getValue()) {
+		if (topic.equals(ExerciseTopic.CONDITIONALS) && rbtBothClauses.getValue()) {
 			nExercises = nExercises * 2;
 		}
 
@@ -1698,7 +1698,7 @@ public class TaskItem extends LocalizedComposite {
 		ArrayList<Pair<MaterialCheckBox, String>> thirdLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();
 		ArrayList<Pair<MaterialCheckBox, String>> fourthLevelConstructions = new ArrayList<Pair<MaterialCheckBox, String>>();
 
-		if (topic.equals("Compare")) {
+		if (topic.equals(ExerciseTopic.COMPARISON)) {
 			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "adj"));
 			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "adv"));
 
@@ -1707,7 +1707,7 @@ public class TaskItem extends LocalizedComposite {
 
 			thirdLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "syn"));
 			thirdLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "ana"));
-		} else if (topic.equals("Present")) {
+		} else if (topic.equals(ExerciseTopic.PRESENT)) {
 			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "present"));
 
 			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "question"));
@@ -1718,7 +1718,7 @@ public class TaskItem extends LocalizedComposite {
 
 			fourthLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "3"));
 			fourthLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "not3"));
-		} else if (topic.equals("Past")) {
+		} else if (topic.equals(ExerciseTopic.PAST)) {
 			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "TENSE_PAST_SIMPLE"));
 			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "TENSE_PRESENT_PERFECT"));
 			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "TENSE_PAST_PERFECT"));
@@ -1734,7 +1734,7 @@ public class TaskItem extends LocalizedComposite {
 
 			fourthLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "irreg"));
 			fourthLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "reg"));
-		} else if (topic.equals("Passive")) {
+		} else if (topic.equals(ExerciseTopic.PASSIVE)) {
 			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "active"));
 			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "passive"));
 
@@ -1750,10 +1750,10 @@ public class TaskItem extends LocalizedComposite {
 			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "TENSE_PAST_SIMPLE"));
 			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "TENSE_PRESENT_PERFECT"));
 			secondLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "TENSE_PAST_PERFECT"));
-		} else if (topic.equals("'if'")) {
+		} else if (topic.equals(ExerciseTopic.CONDITIONALS)) {
 			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "condReal"));
 			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "condUnreal"));
-		} else if (topic.equals("Relatives")) {
+		} else if (topic.equals(ExerciseTopic.RELATIVES)) {
 			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "who"));
 			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "which"));
 			firstLevelConstructions.add(new Pair<MaterialCheckBox, String>(null, "that"));

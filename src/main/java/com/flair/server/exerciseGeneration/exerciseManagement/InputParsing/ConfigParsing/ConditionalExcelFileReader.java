@@ -245,10 +245,39 @@ public class ConditionalExcelFileReader extends ExcelFileReader {
 			    		}
 		    		}
 		    	} else if(entry.getValue().startsWith("if-clause position ") && !columnValues.get(entry.getValue()).get(i).isEmpty()) {
-		    		((ConditionalExerciseItemConfigData)cd.getItemData().get(0)).getPositionsIfClause().add(new Pair<>((int)Float.parseFloat(xTrim(entry.getValue().substring(19))), columnValues.get(entry.getValue()).get(i)));
+		    		String[] v = columnValues.get(entry.getValue()).get(i).split("/");
+		    		((ConditionalExerciseItemConfigData)cd.getItemData().get(0)).getPositionsIfClause().add(new Pair<>((int)Float.parseFloat(xTrim(entry.getValue().substring(19))), v[0].trim()));
+		    		if(v.length > 1) {
+		    			((ConditionalExerciseItemConfigData)cd.getItemData().get(0)).setAlternativeTarget(v[1].trim());
+		    		}
 		    	} else if(entry.getValue().startsWith("main-clause position ") && !columnValues.get(entry.getValue()).get(i).isEmpty()) {
 		    		((ConditionalExerciseItemConfigData)cd.getItemData().get(0)).getPositionsMainClause().add(new Pair<>((int)Float.parseFloat(xTrim(entry.getValue().substring(21))), columnValues.get(entry.getValue()).get(i)));
-		    	}
+		    	} else if(entry.getValue().equals("referent if")) {
+		    		String value = columnValues.get(entry.getValue()).get(i);
+		    		if(value != null) {
+			    		String[] indices = value.split(",");
+			    		for(String index : indices) {
+			    			if(!index.trim().isEmpty()) {
+			    				((ConditionalExerciseItemConfigData)cd.getItemData().get(0)).getDifferingValuesIfClause().add(new Pair<>(Integer.parseInt(index.trim()), ""));
+			    			}	
+			    		}
+		    		}
+		    	} else if(entry.getValue().equals("referent main")) {
+		    		String value = columnValues.get(entry.getValue()).get(i);
+		    		if(value != null) {
+			    		String[] indices = value.split(",");
+			    		for(String index : indices) {
+			    			if(!index.trim().isEmpty()) {
+			    				((ConditionalExerciseItemConfigData)cd.getItemData().get(0)).getDifferingValuesMainClause().add(new Pair<>(Integer.parseInt(index.trim()), ""));
+			    			}
+			    		}
+		    		}
+		    	} else if(entry.getValue().equals("only if first")) {
+		    		String value = columnValues.get(entry.getValue()).get(i);
+		    		if(value != null && value.equals("TRUE")) {
+		    			((ConditionalExerciseItemConfigData)cd.getItemData().get(0)).setForceIfFirst(true);
+		    		}
+		    	} 
 			}	
 			isFirstCol = false;
 		}

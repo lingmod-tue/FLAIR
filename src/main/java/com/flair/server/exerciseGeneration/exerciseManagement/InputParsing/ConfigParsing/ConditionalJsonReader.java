@@ -54,14 +54,18 @@ public class ConditionalJsonReader extends JsonFileReader {
 			int n = 1;
 			for(Object sentence : sentences) {
 				JSONObject sent = null;
+				JSONObject relevantSentence = null;
 				for(Object item : (JSONArray)jsonObject.get("items")) {
-					if(((JSONObject)item).get("id").equals((String)sentence)) {
-						sent = (JSONObject)item;
-						break;
+					for(Object s : (JSONArray)((JSONObject)item).get("conditionalSentences")) {
+						if(("" + (long)((JSONObject)s).get("id")).equals((String)sentence)) {
+							sent = (JSONObject)item;
+							relevantSentence = (JSONObject)s;
+							break;
+						}
 					}
 				}
 				
-				if(sent == null) {
+				if(sent == null || relevantSentence == null) {
 					System.out.println("Invalid exercise configuration: Id " + sentence);
 					continue;
 				}
@@ -71,16 +75,62 @@ public class ConditionalJsonReader extends JsonFileReader {
 				cd.setContextBefore((String)((JSONObject)sent).get("contextBefore"));
 				cd.setContextAfter((String)((JSONObject)sent).get("contextAfter"));
 				cd.setFeedback((String)((JSONObject)sent).get("feedback"));
-
-				JSONObject mainClause = (JSONObject)((JSONObject)sent).get("mainClause");
-				JSONArray chunks = (JSONArray)((JSONObject)mainClause).get("chunks");
+				
+				JSONObject clause1 = (JSONObject)((JSONObject)relevantSentence).get("clause1");
+				JSONArray chunks = (JSONArray)((JSONObject)clause1).get("chunks");
 				ArrayList<Pair<Integer, String>> chunksDef = new ArrayList<>();
 				int i = 0;
 				for(Object chunk : chunks) {
-					chunksDef.add(new Pair<>(++i, (String)chunk));
+					chunksDef.add(new Pair<>(++i, (String)((JSONObject)chunk).get("text")));
+					
+					if((boolean)((JSONObject)chunk).get("isTarget")) {
+						ArrayList<Pair<Integer, Integer>> gaps = new ArrayList<>();
+						gaps.add(new Pair<>(i, i));
+						cd.setGapMainClause(gaps);
+						
+						ArrayList<Pair<Integer, Integer>> targetsMtw = new ArrayList<>();
+						targetsMtw.add(new Pair<>(i, i));
+						cd.setUnderlineMainClause(targetsMtw);
+					}
 				}
-				cd.setPositionsMainClause(chunksDef);
+				if((boolean)((JSONObject)clause1).get("if")) {
+					cd.setPositionsIfClause(chunksDef);
+				} else {
+					cd.setPositionsMainClause(chunksDef);
+				}
+				
+				JSONObject clause2 = (JSONObject)((JSONObject)relevantSentence).get("clause2");
+				chunks = (JSONArray)((JSONObject)clause2).get("chunks");
+				chunksDef = new ArrayList<>();
+				i = 0;
+				for(Object chunk : chunks) {
+					chunksDef.add(new Pair<>(++i, (String)((JSONObject)chunk).get("text")));
+					
+					if((boolean)((JSONObject)chunk).get("isTarget")) {
+						ArrayList<Pair<Integer, Integer>> gaps = new ArrayList<>();
+						gaps.add(new Pair<>(i, i));
+						if((boolean)((JSONObject)clause2).get("if")) {
+							cd.setGapIfClause(gaps);
+						} else {
+							cd.setGapMainClause(gaps);
+						}
+						
+						ArrayList<Pair<Integer, Integer>> targetsMtw = new ArrayList<>();
+						targetsMtw.add(new Pair<>(i, i));
+						if((boolean)((JSONObject)clause2).get("if")) {
+							cd.setUnderlineIfClause(targetsMtw);
+						} else {
+							cd.setUnderlineMainClause(targetsMtw);
+						}
+					}
+				}
+				if((boolean)((JSONObject)clause2).get("if")) {
+					cd.setPositionsIfClause(chunksDef);
+				} else {
+					cd.setPositionsMainClause(chunksDef);
+				}
 
+				JSONObject mainClause = (JSONObject)((JSONObject)sent).get("mainClause");
 				cd.setTranslationMainClause((String)((JSONObject)mainClause).get("translation"));
 				JSONArray distractors = (JSONArray)((JSONObject)mainClause).get("distractors");
 				ArrayList<Pair<Integer, String>> distractorsDef = new ArrayList<>();
@@ -98,25 +148,9 @@ public class ConditionalJsonReader extends JsonFileReader {
 				}
 				cd.setBracketsMainClause(brackets);
 				
-				JSONArray gapIndices = (JSONArray)((JSONObject)mainClause).get("gap");
-				ArrayList<Pair<Integer, Integer>> gaps = new ArrayList<>();
-				gaps.add(new Pair<>((int)((long)gapIndices.get(0)), (int)((long)gapIndices.get(1))));
-				cd.setGapMainClause(gaps);
 				
-				JSONArray targetMtwIndices = (JSONArray)((JSONObject)mainClause).get("mtwTarget");
-				ArrayList<Pair<Integer, Integer>> targetsMtw = new ArrayList<>();
-				targetsMtw.add(new Pair<>((int)((long)targetMtwIndices.get(0)), (int)((long)targetMtwIndices.get(1))));
-				cd.setUnderlineMainClause(targetsMtw);
 				
 				JSONObject ifClause = (JSONObject)((JSONObject)sent).get("ifClause");
-				chunks = (JSONArray)((JSONObject)ifClause).get("chunks");
-				chunksDef = new ArrayList<>();
-				i = 0;
-				for(Object chunk : chunks) {
-					chunksDef.add(new Pair<>(++i, (String)chunk));
-				}
-				cd.setPositionsIfClause(chunksDef);
-
 				cd.setTranslationIfClause((String)((JSONObject)ifClause).get("translation"));
 				distractors = (JSONArray)((JSONObject)ifClause).get("distractors");
 				distractorsDef = new ArrayList<>();
@@ -133,16 +167,6 @@ public class ConditionalJsonReader extends JsonFileReader {
 					brackets.add((String)givenWord);
 				}
 				cd.setBracketsIfClause(brackets);
-				
-				gapIndices = (JSONArray)((JSONObject)ifClause).get("gap");
-				gaps = new ArrayList<>();
-				gaps.add(new Pair<>((int)((long)gapIndices.get(0)), (int)((long)gapIndices.get(1))));
-				cd.setGapIfClause(gaps);
-				
-				targetMtwIndices = (JSONArray)((JSONObject)ifClause).get("mtwTarget");
-				targetsMtw = new ArrayList<>();
-				targetsMtw.add(new Pair<>((int)((long)targetMtwIndices.get(0)), (int)((long)targetMtwIndices.get(1))));
-				cd.setUnderlineIfClause(targetsMtw);
 				
 				cd.setItem(n);
 				n++;

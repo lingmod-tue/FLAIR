@@ -89,10 +89,9 @@ public final class GramParsingPipeline {
 		Properties pipelineProps = new Properties();
 		switch (lang) {
 		case ENGLISH:
-			pipelineProps.put("annotators", "tokenize, ssplit, pos, lemma, stopword, parse");
+			pipelineProps.put("annotators", "tokenize, ssplit, pos, lemma, stopword, parse, depparse");
 			pipelineProps.put("parse.originalDependencies", "true");
 			pipelineProps.setProperty("parse.model", com.flair.server.parser.corenlp.Constants.ENGLISH_SR_PARSER_MODEL);
-
 			break;
 		case GERMAN:
 			pipelineProps.put("annotators", "tokenize, ssplit, pos, stopword, parse");

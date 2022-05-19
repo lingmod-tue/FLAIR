@@ -77,7 +77,7 @@ public class RelativeSpecificationGenerator implements SpecificationGenerator {
 		        JSONArray relativeClauses = new JSONArray();
 		        sent.put("relativeClauses", relativeClauses);
 		        		        
-				int i = 1;
+				int i = 0;
 		        for(RelativeSentence rs : item.getRelativeSentences()) {
 		        	i++;
 		        	JSONObject relSent = new JSONObject();

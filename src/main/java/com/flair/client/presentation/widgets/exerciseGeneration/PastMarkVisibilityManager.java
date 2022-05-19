@@ -2,6 +2,7 @@ package com.flair.client.presentation.widgets.exerciseGeneration;
 
 import java.util.ArrayList;
 
+import com.flair.shared.exerciseGeneration.ExerciseTopic;
 import com.google.gwt.user.client.ui.Widget;
 
 public class PastMarkVisibilityManager extends VisibilityManager {
@@ -16,15 +17,15 @@ public class PastMarkVisibilityManager extends VisibilityManager {
 		
 		visibleSettings.add(taskItem.grpTenses);
 		visibleSettings.add(taskItem.lblTensesWords);
-		addConstructionIfOccurs("TENSE_PAST_SIMPLE", "Past", 1, visibleSettings, taskItem.chkPastSimple, numberExercises);
-		addConstructionIfOccurs("TENSE_PRESENT_PERFECT", "Past", 1, visibleSettings, taskItem.chkPresentPerfect, numberExercises);
-		addConstructionIfOccurs("TENSE_PAST_PERFECT", "Past", 1, visibleSettings, taskItem.chkPastPerfect, numberExercises);        
-		addConstructionIfOccurs("TENSE_PAST_PROGRESSIVE", "Past", 1, visibleSettings, taskItem.chkPastProgressive, numberExercises);
-		addConstructionIfOccurs("TENSE_PRESENT_PERFECT_PROGRESSIVE", "Past", 1, visibleSettings, taskItem.chkPresentPerfectProg, numberExercises);
-		addConstructionIfOccurs("TENSE_PAST_PERFECT_PROGRESSIVE", "Past", 1, visibleSettings, taskItem.chkPastPerfectProg, numberExercises);      			
+		addConstructionIfOccurs("TENSE_PAST_SIMPLE", ExerciseTopic.PAST, 1, visibleSettings, taskItem.chkPastSimple, numberExercises);
+		addConstructionIfOccurs("TENSE_PRESENT_PERFECT", ExerciseTopic.PAST, 1, visibleSettings, taskItem.chkPresentPerfect, numberExercises);
+		addConstructionIfOccurs("TENSE_PAST_PERFECT", ExerciseTopic.PAST, 1, visibleSettings, taskItem.chkPastPerfect, numberExercises);        
+		addConstructionIfOccurs("TENSE_PAST_PROGRESSIVE", ExerciseTopic.PAST, 1, visibleSettings, taskItem.chkPastProgressive, numberExercises);
+		addConstructionIfOccurs("TENSE_PRESENT_PERFECT_PROGRESSIVE", ExerciseTopic.PAST, 1, visibleSettings, taskItem.chkPresentPerfectProg, numberExercises);
+		addConstructionIfOccurs("TENSE_PAST_PERFECT_PROGRESSIVE", ExerciseTopic.PAST, 1, visibleSettings, taskItem.chkPastPerfectProg, numberExercises);      			
 		visibleSettings.add(taskItem.grpVerbForms);
-		addConstructionIfOccurs("irreg", "Past", 4, visibleSettings, taskItem.chkIrregularVerbs, numberExercises);   
-		addConstructionIfOccurs("reg", "Past", 4, visibleSettings, taskItem.chkRegularVerbs, numberExercises);  
+		addConstructionIfOccurs("irreg", ExerciseTopic.PAST, 4, visibleSettings, taskItem.chkIrregularVerbs, numberExercises);   
+		addConstructionIfOccurs("reg", ExerciseTopic.PAST, 4, visibleSettings, taskItem.chkRegularVerbs, numberExercises);  
 		visibleSettings.add(taskItem.grpInstructions);
 		visibleSettings.add(taskItem.chkNTargets);
 

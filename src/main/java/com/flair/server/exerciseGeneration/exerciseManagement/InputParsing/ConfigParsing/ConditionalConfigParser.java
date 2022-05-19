@@ -26,7 +26,6 @@ public class ConditionalConfigParser extends ConfigParser {
 	@Override
 	protected ArrayList<ExerciseData> generateExerciseForConfig(ExerciseConfigData data) {	
 		ArrayList<ExerciseData> exercises = new ArrayList<>();
-
 		for (ExerciseTypeSpec cv : data.getExerciseType()) {
 			ConditionalExerciseTypeSpec configValues = (ConditionalExerciseTypeSpec)cv;
 			try {
@@ -119,21 +118,13 @@ public class ConditionalConfigParser extends ConfigParser {
 		for (ExerciseItemConfigData id : configData.getItemData()) {
 			ConditionalExerciseItemConfigData itemData = (ConditionalExerciseItemConfigData) id;
 			if (itemData.getConditionalType() == 1 || itemData.getConditionalType() == 2) {
-				String ifClause = generateSentencesFromPositions(itemData.getPositionsIfClause());
-				String mainClause = generateSentencesFromPositions(itemData.getPositionsMainClause());
+				ConditionalTargetAndClauseItems targetAndClauseItems = getTargetAndClauseItems(itemData, randomizeClauseOrder,
+						ifClauseFirst, false, false,
+						itemData.getGapIfClause(),
+						itemData.getGapMainClause(), true,
+						randomizeClauseOrder, false);
 
-				if (randomizeClauseOrder) {
-					ifClauseFirst = Math.random() > 0.5;
-				}
-
-				String firstClause = StringUtils.capitalize(ifClauseFirst ? ifClause : mainClause);
-				String secondClause = ifClauseFirst ? mainClause : ifClause;
-				String delimiter = ifClauseFirst ? ", " : " ";
-				String sentence = firstClause + delimiter + secondClause;
-				String punctuation = configData.getStamp().contains("question") ? "?" : ".";
-				if(!sentence.endsWith(punctuation)) {
-					sentence += punctuation;
-				}
+				String sentence = generateSentencesFromPositions(targetAndClauseItems.getPositions());
 				String category = itemData.getConditionalType() == 1 ? "Type 1" : "Type 2";
 
 				ConstructionTextPart c = new ConstructionTextPart(sentence, sentenceId++);
@@ -164,7 +155,7 @@ public class ConditionalConfigParser extends ConfigParser {
 
 		for (ExerciseItemConfigData id : configData.getItemData()) {
 			if (randomizeTargetClause) {
-				useIfClause = Math.random() > 0.5;
+				useIfClause = rand.nextBoolean();
 				useMainClause = !useIfClause;
 			}
 			
@@ -256,7 +247,7 @@ public class ConditionalConfigParser extends ConfigParser {
 						addConstructionPart(positionParts, sentenceId, nDistractors, targetAndClauseItems,
 								targetEntireClause, lemmasInBrackets, allLemmas, useDistractorLemma,
 								giveLemmasInInstructions, allDistractorLemmas, parts, constructionType,
-								itemData.getFeedback());
+								itemData.getFeedback(), targetAndClauseItems.getAlternativeTarget());
 					}
 					positionParts.add(position);
 					inConstruction = false;
@@ -279,7 +270,7 @@ public class ConditionalConfigParser extends ConfigParser {
 			if (inConstruction) {
 				addConstructionPart(positionParts, sentenceId, nDistractors, targetAndClauseItems, targetEntireClause,
 						lemmasInBrackets, allLemmas, useDistractorLemma, giveLemmasInInstructions, allDistractorLemmas,
-						parts, constructionType, itemData.getFeedback());
+						parts, constructionType, itemData.getFeedback(), targetAndClauseItems.getAlternativeTarget());
 			}
 			String punctuation = configData.getStamp().contains("question") ? "?" : ".";
 			if(positionParts.size() == 0 || !positionParts.get(positionParts.size() - 1).second.endsWith(punctuation)) {
@@ -325,7 +316,8 @@ public class ConditionalConfigParser extends ConfigParser {
 	 * @return The exercise information
 	 */
 	private ExerciseData generateJSTask(ExerciseConfigData configData, boolean ifClauseFirst,
-			boolean randomizeClauseOrder, boolean targetIfClause, boolean targetMainClause, boolean randomizeTargetClause) {
+			boolean randomizeClauseOrder, boolean targetIfClause, boolean targetMainClause, 
+			boolean randomizeTargetClause) {
 
 		ArrayList<TextPart> parts = new ArrayList<>();
 		int sentenceId = 1;
@@ -385,11 +377,15 @@ public class ConditionalConfigParser extends ConfigParser {
 	private void addConstructionPart(ArrayList<Pair<Integer, String>> positionParts, int sentenceId, int nDistractors,
 			ConditionalTargetAndClauseItems targetAndClauseItems, boolean targetEntireClause, boolean lemmasInBrackets,
 			HashSet<String> allLemmas, boolean useDistractorLemma, boolean giveLemmasInInstructions,
-			HashSet<String> allDistractorLemmas, ArrayList<TextPart> parts, int type, String feedback) {
+			HashSet<String> allDistractorLemmas, ArrayList<TextPart> parts, int type, String feedback,
+			String targetAlternative) {
 		String constructionText = generateSentencesFromPositions(positionParts);
 		ConstructionTextPart c = new ConstructionTextPart(constructionText, sentenceId);
 		c.setConstructionType(type == 1 ? DetailedConstruction.CONDREAL : DetailedConstruction.CONDUNREAL);
 		c.setFallbackFeedback(feedback);
+		if(targetAlternative != null) {
+			c.getTargetAlternatives().add(targetAlternative);
+		}
 		
 		if (nDistractors > 0) {
 			ArrayList<Distractor> distractors = new ArrayList<>();
@@ -404,7 +400,7 @@ public class ConditionalConfigParser extends ConfigParser {
 
 			Collections.shuffle(distractors);
 			c.setDistractors(distractors);
-			c.setTargetIndex(new Random().nextInt(distractors.size() + 1));
+			c.setTargetIndex(rand.nextInt(distractors.size() + 1));
 		}
 
 		if (giveLemmasInInstructions) {
@@ -480,10 +476,14 @@ public class ConditionalConfigParser extends ConfigParser {
 		ArrayList<ArrayList<String>> givenLemmas = new ArrayList<>();
 
 		if (randomizeClauseOrder) {
-			ifClauseFirst = Math.random() > 0.5;
+			ifClauseFirst = rand.nextBoolean();
 		}
+		if(itemData.isForceIfFirst()) {
+			ifClauseFirst = true;
+		}
+		
 		if (randomizeTargetClause) {
-			targetIfClause = Math.random() > 0.5;
+			targetIfClause = rand.nextBoolean();
 			targetMainClause = !targetIfClause;
 		}
 
@@ -538,6 +538,17 @@ public class ConditionalConfigParser extends ConfigParser {
 			}
 
 		} else {
+			int k = 0;
+			for(Pair<Integer, String> diffPos : itemData.getDifferingValuesIfClause()) {
+				ifPositions.set(diffPos.first - 1, new Pair<>(ifPositions.get(diffPos.first - 1).first, itemData.getPositionsMainClause().get(itemData.getDifferingValuesMainClause().get(k).first - 1).second));
+				k++;
+			}
+			k = 0;
+			for(Pair<Integer, String> diffPos : itemData.getDifferingValuesMainClause()) {
+				mainPositions.set(diffPos.first - 1, new Pair<>(mainPositions.get(diffPos.first - 1).first, itemData.getPositionsIfClause().get(itemData.getDifferingValuesIfClause().get(k).first - 1).second));
+				k++;
+			}
+			
 			positions = new ArrayList<>(mainPositions);
 			if(concatenateNonTargetPositions && !targetMainClause) {
 				String clausePosition = generateSentencesFromPositions(positions);
@@ -567,7 +578,20 @@ public class ConditionalConfigParser extends ConfigParser {
 				}
 				distractorLemmas.add(itemData.getDistractorLemmaMainClause());
 				lemmas.add(itemData.getLemmaMainClause());
-				givenLemmas.add(itemData.getBracketsMainClause());
+				
+				ArrayList<String> brackets = itemData.getBracketsMainClause();
+				k = 0;
+				for(Pair<Integer, String> diffPos : itemData.getDifferingValuesMainClause()) {
+					for(int j = 0; j < brackets.size(); j++) {
+						String bracket = brackets.get(j);
+						if(bracket.equals(itemData.getPositionsMainClause().get(diffPos.first - 1).second)) {
+							brackets.set(j, itemData.getPositionsIfClause().get(itemData.getDifferingValuesIfClause().get(k).first - 1).second);
+						}
+					}
+					k++;
+				}
+				
+				givenLemmas.add(brackets);
 			}
 
 			if (targetIfClause) {
@@ -583,14 +607,34 @@ public class ConditionalConfigParser extends ConfigParser {
 				}
 				distractorLemmas.add(itemData.getDistractorLemmaIfClause());
 				lemmas.add(itemData.getLemmaIfClause());
+				
+				ArrayList<String> brackets = itemData.getBracketsIfClause();
+				k = 0;
+				for(Pair<Integer, String> diffPos : itemData.getDifferingValuesIfClause()) {
+					for(int j = 0; j < brackets.size(); j++) {
+						String bracket = brackets.get(j);
+						if(bracket.equals(itemData.getPositionsIfClause().get(diffPos.first - 1).second)) {
+							brackets.set(j, itemData.getPositionsMainClause().get(itemData.getDifferingValuesMainClause().get(k).first - 1).second);
+						}
+					}
+					k++;
+				}
+				
+				givenLemmas.add(brackets);
 				givenLemmas.add(itemData.getBracketsIfClause());
 			}
 		}
 
 		positions.set(0, new Pair<>(positions.get(0).first, StringUtils.capitalize(positions.get(0).second)));
 
+		String targetAlternatives = null;
+		if(targetIfClause && itemData.getAlternativeTarget() != null) {
+			targetAlternatives = itemData.getAlternativeTarget();
+		}
 		return new ConditionalTargetAndClauseItems(positions, targetPositions, targetDistractors, lemmas, distractorLemmas,
-				givenLemmas);
+				givenLemmas, targetAlternatives);
 	}
-
+	
+	private Random rand = new Random(1);
+	
 }

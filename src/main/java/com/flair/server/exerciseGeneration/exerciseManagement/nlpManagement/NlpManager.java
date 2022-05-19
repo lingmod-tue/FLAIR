@@ -40,6 +40,8 @@ public class NlpManager {
     	this.lemmatizer = lemmatizer;
     }
     
+    protected static final String sentenceFinalPunctuations = ".:!?";
+
     protected StanfordCoreNLP pipeline = null;
     protected SimpleNlgParser generator;
     protected OpenNlpParser lemmatizer;

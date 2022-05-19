@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Properties;
 
 import com.flair.server.exerciseGeneration.downloadManagement.ResourceDownloader;
+import com.flair.server.grammar.StopwordsList;
 import com.flair.server.parser.CoreNlpParser;
 import com.flair.server.parser.OpenNlpParser;
 import com.flair.server.parser.SimpleNlgParser;
+import com.flair.server.parser.corenlp.StopwordAnnotator;
 import com.flair.server.pipelines.common.PipelineOp;
 import com.flair.server.scheduler.AsyncExecutorService;
 import com.flair.server.scheduler.ThreadPool;
@@ -68,12 +70,18 @@ public final class ExerciseGenerationPipeline {
 	private Properties initializeAnnotationProperties() {
         Properties pipelineProps = new Properties();
 
-        pipelineProps.put("annotators", "tokenize, ssplit, pos, lemma, parse, depparse");
+        pipelineProps.put("annotators", "tokenize, ssplit, pos, lemma, stopword, parse, depparse");
         pipelineProps.put("parse.originalDependencies", "true");
         pipelineProps.setProperty("parse.model", "edu/stanford/nlp/models/srparser/englishSR.ser.gz");
 
         pipelineProps.put("tokenize.options", "tokenizePerLine");
         pipelineProps.put("ssplit.newlineIsSentenceBreak", "two");
+        
+		StringBuilder stopwords = new StringBuilder();
+		StopwordsList.get(Language.ENGLISH).forEach(e -> stopwords.append(e).append(","));
+		pipelineProps.setProperty("customAnnotatorClass.stopword", "com.flair.server.parser.corenlp.StopwordAnnotator");
+		pipelineProps.setProperty(StopwordAnnotator.STOPWORDS_LIST, stopwords.toString());
+		pipelineProps.setProperty(StopwordAnnotator.IGNORE_STOPWORD_CASE, "true");
 
         return pipelineProps;
     }

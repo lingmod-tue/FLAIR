@@ -13,6 +13,7 @@ public class SmExGenEvent implements Message.Payload {
 	private byte[] file;
 	private String fileName;
 	private HashMap<String, String> previews;
+	private Integer index = null;
 
 	public SmExGenEvent() {}
 
@@ -51,5 +52,13 @@ public class SmExGenEvent implements Message.Payload {
 		sb.append("event=" + event).append(" | ");
 		sb.append("fileSize=" + file.length);
 		return sb.toString();
+	}
+
+	public Integer getIndex() {
+		return index;
+	}
+
+	public void setIndex(Integer index) {
+		this.index = index;
 	}
 }

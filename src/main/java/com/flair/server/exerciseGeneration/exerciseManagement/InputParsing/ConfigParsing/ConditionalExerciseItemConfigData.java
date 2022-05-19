@@ -23,6 +23,11 @@ public class ConditionalExerciseItemConfigData extends ExerciseItemConfigData {
 	private ArrayList<Pair<Integer, Integer>> underlineMainClause = new ArrayList<>();
 	private ArrayList<Pair<Integer, String>> positionsIfClause = new ArrayList<>();
 	private ArrayList<Pair<Integer, String>> positionsMainClause = new ArrayList<>();
+	private ArrayList<Pair<Integer, String>> differingValuesIfClause = new ArrayList<>();
+	private ArrayList<Pair<Integer, String>> differingValuesMainClause = new ArrayList<>();
+	private boolean forceIfFirst = false;
+	private String alternativeTarget = null;
+	private String punctuationMark = ".";
 
 	public int getConditionalType() { return conditionalType; }
 	public String getTranslationIfClause() { return translationIfClause; }
@@ -78,6 +83,36 @@ public class ConditionalExerciseItemConfigData extends ExerciseItemConfigData {
 	}
 	public void setPositionsMainClause(ArrayList<Pair<Integer, String>> positionsMainClause) {
 		this.positionsMainClause = positionsMainClause;
+	}
+	public ArrayList<Pair<Integer, String>> getDifferingValuesIfClause() {
+		return differingValuesIfClause;
+	}
+	public void setDifferingValuesIfClause(ArrayList<Pair<Integer, String>> differingValuesIfClause) {
+		this.differingValuesIfClause = differingValuesIfClause;
+	}
+	public ArrayList<Pair<Integer, String>> getDifferingValuesMainClause() {
+		return differingValuesMainClause;
+	}
+	public void setDifferingValuesMainClause(ArrayList<Pair<Integer, String>> differengValuesMainClause) {
+		this.differingValuesMainClause = differengValuesMainClause;
+	}
+	public boolean isForceIfFirst() {
+		return forceIfFirst;
+	}
+	public void setForceIfFirst(boolean forceIfFirst) {
+		this.forceIfFirst = forceIfFirst;
+	}
+	public String getAlternativeTarget() {
+		return alternativeTarget;
+	}
+	public void setAlternativeTarget(String alternativeTarget) {
+		this.alternativeTarget = alternativeTarget;
+	}
+	public String getPunctuationMark() {
+		return punctuationMark;
+	}
+	public void setPunctuationMark(String punctuationMark) {
+		this.punctuationMark = punctuationMark;
 	}
 									
 }

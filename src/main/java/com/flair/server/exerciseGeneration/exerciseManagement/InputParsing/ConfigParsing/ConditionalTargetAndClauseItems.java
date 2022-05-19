@@ -9,13 +9,15 @@ public class ConditionalTargetAndClauseItems {
 	public ConditionalTargetAndClauseItems(ArrayList<Pair<Integer, String>> positions,
 			ArrayList<Pair<Integer, Integer>> targetPositions,
 			ArrayList<ArrayList<Pair<Integer, String>>> targetDistractors, ArrayList<String> lemmas,
-			ArrayList<String> distractorLemmas, ArrayList<ArrayList<String>> givenLemmas) {
+			ArrayList<String> distractorLemmas, ArrayList<ArrayList<String>> givenLemmas,
+			String alternativeTarget) {
 		this.positions = positions;
 		this.targetPositions = targetPositions;
 		this.targetDistractors = targetDistractors;
 		this.lemmas = lemmas;
 		this.distractorLemmas = distractorLemmas;
 		this.givenLemmas = givenLemmas;
+		this.alternativeTarget = alternativeTarget;
 	}
 	
 	private ArrayList<Pair<Integer,String>> positions;
@@ -24,6 +26,7 @@ public class ConditionalTargetAndClauseItems {
 	ArrayList<String> lemmas = new ArrayList<>();
 	ArrayList<String> distractorLemmas = new ArrayList<>();
 	ArrayList<ArrayList<String>> givenLemmas = new ArrayList<>();
+	private String alternativeTarget = null;
 	
 	public ArrayList<Pair<Integer, String>> getPositions() {
 		return positions;
@@ -42,6 +45,12 @@ public class ConditionalTargetAndClauseItems {
 	}
 	public ArrayList<ArrayList<String>> getGivenLemmas() {
 		return givenLemmas;
+	}
+	public String getAlternativeTarget() {
+		return alternativeTarget;
+	}
+	public void setAlternativeTarget(String alternativeTarget) {
+		this.alternativeTarget = alternativeTarget;
 	}
 	
 }

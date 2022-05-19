@@ -132,6 +132,20 @@ mark {
 .sortable li {
 	cursor: move !important;
 }
+
+.chunk-input {
+	border:1px solid grey; 
+	background-color: white; 
+	width:200px; 
+	display:inline-block;
+	vertical-align:middle; 
+	padding:2px;
+}
+
+.chunk {
+	border:1px solid grey; 
+	margin-right: 2px;
+}
 </style>
 </head>
 
@@ -140,7 +154,7 @@ mark {
 		<div class="row flex-nowrap">
 			<div id="sidebar"
 				class="col-auto col-md-3 col-xl-2 px-sm-2 px-0 bg-dark">
-				<a class="close-button" onclick="hideSidebar();" href="#"><i
+				<a class="close-button" onclick="hideSidebar();" href="#/"><i
 					class="fa fa-angle-left"></i></a>
 				<div
 					class="d-flex flex-column align-items-center align-items-sm-start px-3 pt-2 text-white min-vh-100"
@@ -155,27 +169,27 @@ mark {
 					<ul
 						class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start">
 						<li class="nav-item" id="add-exercise" style="margin-top: 20px;">
-							<a href="#" class="nav-link align-middle px-0"
+							<a href="#/" class="nav-link align-middle px-0"
 							onclick="addExercise();"> <i class="fs-4 fa fa-plus-square-o"></i><span
 								class="ms-1 d-none d-sm-inline" style="margin-left: 10px;">Add
 									item</span>
 						</a>
 						</li>
-						<li class="nav-item"><a href="#"
+						<li class="nav-item"><a href="#/"
 							class="nav-link align-middle px-0"
 							onclick="editExerciseAssemblies();"> <i
 								class="fs-4 fa fa-puzzle-piece"></i><span
 								class="ms-1 d-none d-sm-inline" style="margin-left: 10px;">Exercise
 									assemblies</span>
 						</a></li>
-						<li class="nav-item"><a href="#"
+						<li class="nav-item"><a href="#/"
 							class="nav-link align-middle px-0"
 							onclick="displayTypeSettings();"> <i
 								class="fs-4 fa fa-th-large"></i><span
 								class="ms-1 d-none d-sm-inline" style="margin-left: 10px;">Exercise
 									types</span>
 						</a></li>
-						<li class="nav-item"><a href="#"
+						<li class="nav-item"><a href="#/"
 							class="nav-link align-middle px-0" onclick="save();"> <i
 								class="fs-4 fa fa-floppy-o"></i><span
 								class="ms-1 d-none d-sm-inline" style="margin-left: 10px;">Save
@@ -183,7 +197,7 @@ mark {
 						</a></li>
 						<li class="nav-item"><input id="btn-upload" type="file"
 							accept="text/json" class="invisible" onchange="upload(this);">
-							<a href="#" class="nav-link align-middle px-0" onclick="load();">
+							<a href="#/" class="nav-link align-middle px-0" onclick="load();">
 								<i class="fs-4 fa fa-upload"></i><span
 								class="ms-1 d-none d-sm-inline" style="margin-left: 10px;">Load
 									from file</span>
@@ -200,8 +214,8 @@ mark {
 							type="button" data-toggle="dropdown" aria-haspopup="true"
 							aria-expanded="false">---</button>
 						<div class="dropdown-menu" aria-labelledby="btnTopic">
-							<a class="dropdown-item" href="#" onclick="updateDropdown(this);">Conditionals</a>
-							<a class="dropdown-item" href="#" onclick="updateDropdown(this);">Relative pronouns</a>
+							<a class="dropdown-item" href="#/" onclick="updateDropdown(this);">Conditionals</a>
+							<a class="dropdown-item" href="#/" onclick="updateDropdown(this);">Relative pronouns</a>
 						</div>
 					</div>
 					<div class="card-footer">
@@ -218,14 +232,14 @@ mark {
 							</div>
 							<div id="exercise-assemblies" class="invisible">
 								<div id="assembly-container"></div>
-								<a class="fa fa-plus" href="#" id="add-assembly-button"
+								<a class="fa fa-plus" href="#/" id="add-assembly-button"
 									onclick="addExerciseAssembly(this);"> Add exercise</a>
 							</div>
 						</div>
 					</div>
 				</div>
 				<a id="settings-button" class="fa fa-cog floating-button invisible"
-					onclick="showSidebar();" href="#"></a>
+					onclick="showSidebar();" href="#/"></a>
 			</div>
 		</div>
 	</div>
@@ -293,7 +307,7 @@ mark {
 			
 			let count = $("#exercise-assemblies").find("h3").length;
 			let exStr = '<div class="assembly ' + classname + '"><h3><input type="text" value="Exercise ' + ++count + 
-					'"></h3><a class="fa fa-trash" style="float:right;color:red;" href="#" onclick="deleteAssembly(this);"></a><div class="container"><div class="row"><div class="col-sm"><div class="treeview-ex"><ul id="a' + 
+					'"></h3><a class="fa fa-trash" style="float:right;color:red;" href="#/" onclick="deleteAssembly(this);"></a><div class="container"><div class="row"><div class="col-sm"><div class="treeview-ex"><ul id="a' + 
 					++maxAssemblyId + '" class="list-group assembly-tree ' + classname + ' collapse-tree" style="width: 100%;">';
 			
 			for (const exercise of $(".exercise-spec." + classname)) {
@@ -301,14 +315,27 @@ mark {
 				let itemid = $(exercise).attr("id");
 				
 				if(classname === "cond") {
-					exStr += getAssemblyCondElementString(itemid, itemname, maxAssemblyId);
+					if($(exercise).find(".editable-chunks").length > 0) {
+						let treeItem = getAssemblyItemElementString(itemid, itemname, maxAssemblyId);
+						
+						let i = 0;
+						$(exercise).find(".cond-sentence-order").each(function () {
+							treeItem += getAssemblyCondElementString($(this).attr("id"), 
+									++i, 
+									$(this),
+									maxAssemblyId);
+						});
+						treeItem += "</div>";
+						
+						exStr += treeItem;
+					}
 				} else if(classname === "rel") {
 					if($(exercise).find(".editable-chunks").length > 0) {
 						let treeItem = getAssemblyItemElementString(itemid, itemname, maxAssemblyId);
 						
 						let i = 0;
 						$(exercise).find(".editable-chunks").each(function () {
-							treeItem += getAssemblyRCElementString($(this).closest(".rel-sentence-order").attr("id"), 
+							treeItem += getAssemblyElementString($(this).closest(".rel-sentence-order").attr("id"), 
 									++i, 
 									$(this).text().replaceAll("|", " "),
 									maxAssemblyId);
@@ -418,7 +445,7 @@ mark {
 			let itemStr = '<li class="ui-state-default"><span class="ui-icon ui-icon-arrowthick-2-n-s"></span><span ondblclick="openModal(this, \'#p' + 
 					maxPopupId + '\');">' + $(item).parent().prev().find(">:first-child").val() + '</span>' + 
 					getPopupString("Edit distractor", "changeSortableText", "OK") + 
-					'<a class="fa fa-times" style="float:right;color:red;" href="#" onclick="removeSortableItem(this);"></a></li>'
+					'<a class="fa fa-times" style="float:right;color:red;" href="#/" onclick="removeSortableItem(this);"></a></li>'
 			$(item).closest(".sortable-group").find(".sortable").append(itemStr);
 			$(item).parent().prev().find(">:first-child").val("");
 		}
@@ -453,6 +480,27 @@ mark {
 				$(item).addClass("fa-pencil");
 			}
 		}
+		
+		function displayCondEditChunks(item) {
+			if ($(item).closest(".cond-sentence-order").find(".chunksView").first().hasClass("invisible")) {
+				$(item).closest(".cond-sentence-order").find(".chunksView").removeClass("invisible");
+				$(item).closest(".cond-sentence-order").find(".display-chunks").addClass("invisible");
+				$(item).addClass("fa-eye");
+				$(item).removeClass("fa-pencil");
+			} else {
+				$(item).closest(".cond-sentence-order").find(".chunksView").addClass("invisible");
+				$(item).closest(".cond-sentence-order").find(".display-chunks").removeClass("invisible");
+				$(item).removeClass("fa-eye");
+				$(item).addClass("fa-pencil");
+				
+				if($(item).closest(".cond-sentence-order").find(".display-chunks.target-main").text().length == 0) {
+					$(item).closest(".cond-sentence-order").find(".display-chunks.target-main").addClass("invisible");
+				}
+				if($(item).closest(".cond-sentence-order").find(".display-chunks.target-if").text().length == 0) {
+					$(item).closest(".cond-sentence-order").find(".display-chunks.target-if").addClass("invisible");
+				}
+			}
+		}
 
 		/**
 		 Reacts to changes in the chunks edit view.
@@ -472,7 +520,7 @@ mark {
 				let assemblyListItem = $(".itemid" + $(item).closest(".rel-sentence-order").attr("id"));
 				if(assemblyListItem.length > 0) {
 					// overwrite the previous text in existing entries in the trees
-					assemblyListItem.find("label").text('RC ' + (countPreviousSiblings(assemblyListItem, 0) + 1) + ' (' + $(item).val().replaceAll("|", " ") + ')');
+					assemblyListItem.find("label").text('Sentence ' + (countPreviousSiblings(assemblyListItem, 0) + 1) + ' (' + $(item).val().replaceAll("|", " ") + ')');
 				} else {
 					let itemNode = $(".ti" +itemid);
 					if(itemNode.length === 0) {
@@ -504,12 +552,18 @@ mark {
 			return '<li class="list-group-item node-treeview-ex ti' + itemid + '" style="border:0px;background:none;"><span class="form-check"><input type="checkbox" class="form-check-input" onclick="onTopItemChecked(this)"><label class="form-check-label item" data-toggle="collapse" data-target="#e' + assemblyId + itemid + '" aria-expanded="true" aria-controls="e'+  assemblyId + itemid + '">' + itemname + '</label></span></li><div id="e' + assemblyId + itemid + '" class="collapse show e' + itemid + '">';
 		}
 		
-		function getAssemblyRCElementString(itemid, rcCount, rcText, assemblyId) {
-			return '<li class="list-group-item node-treeview-ex itemid' + itemid + '" style="border:0px;background:none;"><span class="form-check" style="margin-left: 10px;"><input id="l' + assemblyId + itemid + '" type="checkbox" class="form-check-input" onclick="onItemChecked(this)"><label class="form-check-label">RC ' + rcCount + ' (' + rcText + ')</label></span></li>';
+		function getAssemblyElementString(itemid, rcCount, rcText, assemblyId) {
+			return '<li class="list-group-item node-treeview-ex itemid' + itemid + '" style="border:0px;background:none;"><span class="form-check" style="margin-left: 10px;"><input id="l' + assemblyId + itemid + '" type="checkbox" class="form-check-input" onclick="onItemChecked(this)"><label class="form-check-label">Sentence ' + rcCount + ' (' + rcText + ')</label></span></li>';
 		}
 		
-		function getAssemblyCondElementString(itemid, itemname, assemblyId) {
-			return '<div id="e' + assemblyId + itemid + '" class="e' + itemid + '"><li class="list-group-item node-treeview-ex itemid' + itemid + '" style="border:0px;background:none;"><span class="form-check"><input id="l' + assemblyId + itemid + '" type="checkbox" class="form-check-input" onclick="onExerciseItemCheckedWrapper(this)"><label class="form-check-label">' + itemname + '</label></span></li></div>';
+		function getAssemblyCondElementString(itemid, condCount, order, assemblyId) {
+			let itemname = "";
+			for(const chunk of order.find(".chunk")) {
+				itemname += $(chunk).text() + " ";
+			}
+			itemname = itemname.trim();
+			
+			return (getAssemblyElementString(itemid, condCount, itemname, assemblyId));
 		}
 		
 		function countPreviousSiblings(item, count) {
@@ -519,6 +573,10 @@ mark {
 			return count;
 		}
 
+		function changeCondTarget(item) {			
+			updateTargetInCoditionalSentences($(item), $(item).val());
+		}
+		
 		/**
 		 Updates the spinners and the title line when the chunks have been modified.
 		*/
@@ -613,6 +671,7 @@ mark {
 		*/
 		function changeSpinnerText(item) {
 			let chunks = item.closest(".chunks-container").find(".editable-chunks").text().split("|");
+			let chunks_in_range = [];
 
 			if (chunks.length === 1 && chunks[0] === "") {
 				item.parent().find(".idx").attr("max", 0);
@@ -637,7 +696,6 @@ mark {
 				item.parent().find(".idx").attr("min", 1);
 
 				if (!(chunks.length === 1 && chunks[0] === "")) {
-					let chunks_in_range = [];
 					for (let i = lowerValue - 1; i < upperValue; i++) {
 						chunks_in_range.push(chunks[i]);
 					}
@@ -645,6 +703,27 @@ mark {
 					item.parent().find(".spnLabel").text("(" + chunks_in_range.join(" ") + ")");
 				}
 			}
+		}
+		
+		function updateTargetInCoditionalSentences(item, target) {
+			item.closest(".exercise-spec.cond").find(".cond-sentence-order").each(function () {
+				let className = "target-if";
+				if(item.closest(".main-clause").length > 0) {
+					className = "target-main";
+				}
+				
+				let chunkEditField = $(this).find(".display-chunks." + className).next().find(".editable-chunks").first();
+				chunkEditField.text(target.replaceAll(" ", "|"));
+				changeConditionalChunks(chunkEditField, true);
+				
+				if ($(this).find(".chunksView").first().hasClass("invisible")) {	
+					if($(this).find(".display-chunks." + className).text().length == 0) {
+						$(this).find(".chunk." + className).addClass("invisible");
+					} else {
+						$(this).find(".chunk." + className).removeClass("invisible");
+					}
+				}
+			});
 		}
 
 		var maxRelSentenceId = 0;
@@ -657,17 +736,114 @@ mark {
 		 Adds controls to specify a possible relative clause for the sentence.
 		*/
 		function addRelativeOrder(orderItem) {
-			 orderItem.append('<tr class="rel-sentence-order chunks-container" id="' + ++maxRelSentenceId + '"><td><div><span></span><span class="chunksView invisible"><span contenteditable="true" class="highlighting editable-chunks" style="border:1px solid grey; background-color: white; width:200px; display:inline-block;vertical-align:middle; padding:2px;" onKeyUp="changeRelativeChunks(this);"></span><button type="button" class="btn btn-outline-secondary btn-sm fa fa-i-cursor" style="margin-right: 20px;" onclick="markReferent(this);" data-dismiss="modal" ></button></span><a style="margin-left: 10px;" class="fa fa-pencil" onclick="displayEditChunks(this);" href="#"></a></div></td><td>1 - <input class="idx gap spn2" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"><span class="spnLabel"></span></td><td style="text-align: center;"><input type="checkbox" class="pronOpt"></td><td><a class="fa fa-times" style="float:right;color:red;" href="#" onclick="deleteOrder(this);"></td></tr>');
+			 orderItem.append('<tr class="rel-sentence-order chunks-container" id="' + ++maxRelSentenceId + '"><td><div><span></span><span class="chunksView invisible"><span contenteditable="true" class="highlighting editable-chunks chunk-input" onKeyUp="changeRelativeChunks(this);"></span><button type="button" class="btn btn-outline-secondary btn-sm fa fa-i-cursor" style="margin-right: 20px;" onclick="markReferent(this, true);" data-dismiss="modal" ></button></span><a style="margin-left: 10px;" class="fa fa-pencil" onclick="displayEditChunks(this);" href="#/"></a></div></td><td>1 - <input class="idx gap spn2" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"><span class="spnLabel"></span></td><td style="text-align: center;"><input type="checkbox" class="pronOpt"></td><td><a class="fa fa-times" style="float:right;color:red;" href="#/" onclick="deleteOrder(this);"></td></tr>');
+		}
+		
+		var maxCondSentenceId = 0;
+
+		function addConditionalOrderChunks(item) {
+			addConditionalOrder($(item).parent().prev());
+		 }
+		
+		/** 
+		 Adds controls to specify a possible conditional sentence for the clauses.
+		*/
+		function addConditionalOrder(orderItem) {			 
+			 let textfield = $(orderItem).closest(".exercise-spec").find(".main-clause .target-input");
+			 let targetMain = textfield.val();
+			 let textfieldIf = $(orderItem).closest(".exercise-spec").find(".if-clause .target-input");
+			 let targetIf = textfieldIf.val();
+			 			 
+			 orderItem.append('<tr class="cond-sentence-order chunks-container" id="' + ++maxCondSentenceId + '"><td class="c1"><div><span class="display-chunks"></span><span class="chunksView invisible"><span contenteditable="true" class="editable-chunks chunk-input" onKeyUp="changeConditionalChunks(this, false);"></span></span><span class="display-chunks target-main"></span><span class="chunksView invisible target-main" style="margin-left: 2px; margin-right: 2px;"><span class="editable-chunks"></span></span><span class="display-chunks"></span><span class="chunksView invisible"><span contenteditable="true" class="editable-chunks chunk-input" onKeyUp="changeConditionalChunks(this, false);"></span></span></div></td><td class="c2"><div><span class="display-chunks"></span><span class="chunksView invisible"><span contenteditable="true" class="editable-chunks chunk-input" onKeyUp="changeConditionalChunks(this, false);"></span></span><span class="display-chunks target-if"></span><span class="chunksView target-if invisible" style="margin-left: 2px; margin-right: 2px;"><span class="editable-chunks"></span></span><span class="display-chunks"></span><span class="chunksView invisible"><span contenteditable="true" class="editable-chunks chunk-input" onKeyUp="changeConditionalChunks(this, false);"></span></span></div></td><td><a style="margin-left: 5px; margin-right: 5px;" class="fa fa-pencil" onclick="displayCondEditChunks(this);" href="#/"></a><button type="button" class="btn btn-outline-secondary btn-sm fa fa-exchange" style="margin-right: 20px;" onclick="swapTargets(this);" data-dismiss="modal" ></button></td><td><a class="fa fa-times" style="float:right;color:red;" href="#/" onclick="deleteOrder(this);"></td></tr>');
+			 
+			 updateTargetInCoditionalSentences(textfield, targetMain);
+			 updateTargetInCoditionalSentences(textfieldIf, targetIf);
+		 }
+		
+		function changeConditionalChunks(item, isTarget) {
+			$(item).parent().prev().empty();
+			let chunkString = $(item).text().trim();		 	
+			
+			chunkString.split("|").forEach(chunk => {
+				if(chunk.trim().length > 0) {
+					$(item).parent().prev().append("<span class='chunk'" + (isTarget ? " style='background-color: #99ccff;'" : "") + ">" + chunk.trim() + "</span>");
+				}
+			});
+						
+			if($(item).closest(".exercise-spec.cond").find(".editable-chunks").length > 0) {
+				let itemid = $(item).closest(".exercise-spec.cond").attr("id");
+				let itemname = $(item).closest(".exercise-spec.cond").find("h3").text();
+				let assemblyListItem = $(".itemid" + $(item).closest(".cond-sentence-order").attr("id"));
+				if(assemblyListItem.length > 0) {
+					// overwrite the previous text in existing entries in the trees
+					assemblyListItem.find("label").text('Sentence ' + (countPreviousSiblings(assemblyListItem, 0) + 1) + ' (' + $(item).val().replaceAll("|", " ") + ')');
+				} else {
+					let itemNode = $(".ti" +itemid);
+					if(itemNode.length === 0) {
+						// create a new item node
+						$(".assembly-tree.cond").each(function() {
+							let treeItem = getAssemblyItemElementString(itemid, itemname, $(this).attr("id"));
+							$(this).append(treeItem);
+						});
+					}
+															
+					$(".assembly-tree.cond").each(function() {
+						let itemname = "";
+						for(const chunk of order.find(".chunk")) {
+							itemname += $(chunk).text() + " ";
+						}
+						itemname = itemname.trim();
+						
+						let newitem = getAssemblyElementString($(item).closest(".cond-sentence-order").attr("id"), 
+								(countPreviousSiblings(assemblyListItem, 0) + 1), itemname, $(this).attr("id"))
+								+ "</div>";
+
+						$(this).find(".e" + itemid).append(newitem);
+					});
+				}				
+			} else {
+				removeAssemblyItem($(item));
+			}
+		}
+		
+		function swapTargets(item) {
+			let mainChunkEditField = $(item).closest(".cond-sentence-order").find(".target-main.display-chunks");
+			let ifChunkEditField = $(item).closest(".cond-sentence-order").find(".target-if.display-chunks");
+			let mainText = mainChunkEditField.text();
+			let ifText = ifChunkEditField.text();
+			mainChunkEditField.text(ifText);
+			ifChunkEditField.text(mainText);
+			
+			let mainChunksContainer = $(item).closest(".cond-sentence-order").find(".target-main.chunksView");
+			let ifChunksContainer = $(item).closest(".cond-sentence-order").find(".target-if.chunksView");
+			let mainChunks = mainChunksContainer.children();
+			let ifChunks = ifChunksContainer.children();
+			mainChunksContainer.empty();
+			ifChunksContainer.empty();
+			mainChunksContainer.append(ifChunks);
+			ifChunksContainer.append(mainChunks);
+			
+			let mainClauses = $(item).closest(".cond-sentence-order").find(".target-main");
+			let ifClauses = $(item).closest(".cond-sentence-order").find(".target-if");
+						
+			mainClauses.removeClass("target-main");
+			mainClauses.addClass("target-if");
+			ifClauses.removeClass("target-if");
+			ifClauses.addClass("target-main");
 		}
 		
 		/**
 		 Marks the selected text in the corresponding text field in blue color.
 		*/
-		function markReferent(item) {
+		function markReferent(item, update) {
+			markReferentUnwrapped($(item), update)
+		}
+		
+		function markReferentUnwrapped(item, update) {
 			if (typeof window.getSelection != "undefined" && window.getSelection().rangeCount === 1) {
 				var container = document.createElement("div");
 				var range = window.getSelection().getRangeAt(0);
-				let textfield = $(item).closest("td").find(".highlighting");
+				let textfield = item.closest("td").find(".highlighting");
 
 				if (range.commonAncestorContainer !== textfield.get(0) && range.commonAncestorContainer.parentElement !== textfield.get(0)
 						&& range.commonAncestorContainer.parentElement.parentElement !== textfield.get(0)) {
@@ -687,30 +863,43 @@ mark {
 				html = html.replaceAll("<mark>", "").replaceAll("</mark>", "");
 
 				let end = html.length + start;
-				let newText = textfield.text().substring(0, start) + "<mark>" + textfield.text().substring(start, end) + "</mark>" + textfield.text().substring(end);
+				let targetString = textfield.text().substring(start, end);
+				let newText = textfield.text().substring(0, start) + "<mark>" + targetString + "</mark>" + textfield.text().substring(end);
 				textfield.html(newText);
 				
-				updateChunks(textfield);
+				if(update) {
+					updateChunks(textfield);
+				} else {
+					updateTargetInCoditionalSentences(item, targetString);
+				}
 			}
 		}
-
+		
 		/**
 		 Removes the corresponding relative clause from the sentence.
 		*/
 		function deleteOrder(item) {
-			removeAssemblyItem($(item));
-			$(item).closest(".rel-sentence-order").remove();
+			let order = $(item).closest(".rel-sentence-order");
+			if(order.length == 0) {
+				order = $(item).closest(".cond-sentence-order");
+			}
+			
+			removeAssemblyItem(order);
+			order.remove();
 		}
 		
-		function removeAssemblyItem(item) {
-			if($(".itemid" + item.closest(".rel-sentence-order").attr("id")).first().parent().find("li").length == 1) {
-				$(".itemid" + item.closest(".rel-sentence-order").attr("id")).first().parent().prev().remove();
+		function removeAssemblyItem(order) {
+			if(order.length > 0) {
+				let itemToRemove = $(".itemid" + order.attr("id"));
+				if(itemToRemove.first().parent().find("li").length == 1) {
+					itemToRemove.first().parent().prev().remove();
+				}
+				itemToRemove.find("input").prop("checked", false);
+				itemToRemove.find("input").each(function () {
+					onExerciseItemChecked($(this));
+				});
+				itemToRemove.remove();
 			}
-			$(".itemid" + item.closest(".rel-sentence-order").attr("id")).prop("checked", false);
-			$(".itemid" + item.closest(".rel-sentence-order").attr("id")).find(".editable-chunks").each(function () {
-				onExerciseItemChecked($(this));
-			});
-			$(".itemid" + item.closest(".rel-sentence-order").attr("id")).remove();
 		}
 
 		var maxExerciseId = 0;
@@ -740,38 +929,28 @@ mark {
 			}
 
 			if (className) {
-				$("#exercise-list").append('<li id="nav-ex' + count + '" class="nav-item ' + className + '"><a href="#" class="nav-link align-middle px-0" onclick="displayExercise(\'#exercise-spec-' + className + count + '\');"><span class="ms-1 d-none d-sm-inline">Item</span> <span class="fs-4">' + count + '</span><span class="ms-1 d-none d-sm-inline custom-title"></span></a></li>');
-			}
-			
-			if ($("#btnTopic").text() === "Conditionals") {
-				let itemid = $(".exercise-spec").last().attr("id");
-				let itemname = $(".exercise-spec").last().find("h3").text();											
-				$(".assembly-tree.cond").each(function() {
-					// create a new cond node
-					let newitem = getAssemblyCondElementString(itemid,
-							itemname,
-							$(this).attr("id"));
-					$(this).append(newitem);
-				});
+				$("#exercise-list").append('<li id="nav-ex' + count + '" class="nav-item ' + className + '"><a href="#/" class="nav-link align-middle px-0" onclick="displayExercise(\'#exercise-spec-' + className + count + '\');"><span class="ms-1 d-none d-sm-inline">Item</span> <span class="fs-4">' + count + '</span><span class="ms-1 d-none d-sm-inline custom-title"></span></a></li>');
 			}
 		}
-
+		
 		/**
 		 Adds controls to specify an additional conditional exercise.
 		 Adds the link in the sidebar and displays the new exercise in the main part.
 		*/
 		function addConditionalExercise(count) {
-			$("#content-area").append('<div class="exercise-spec cond" id="exercise-spec-cond' + count + '"><a class="fa fa-trash" style="float:right;color:red;" href="#" onclick="deleteExercise(this);"></a><h3>Item ' + 
+			$("#content-area").append('<div class="exercise-spec cond" id="exercise-spec-cond' + count + '"><a class="fa fa-trash" style="float:right;color:red;" href="#/" onclick="deleteExercise(this);"></a><h3>Item ' + 
 					count + '</h3><div class="sentence-unit"><table><tr class="condType"><td>Conditional type:</td><td><button id="condTypeDrp' + count + '" class="btn btn-outline-secondary btn-sm dropdown-toggle btn-cond-type" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">---</button><div class="dropdown-menu" aria-labelledby="condTypeDrp' + 
-					count + '"><a class="dropdown-item" href="#" onclick="updateDropdown(this);">Type 1</a><a class="dropdown-item" href="#" onclick="updateDropdown(this);">Type 2</a></div></td></tr><tr><td>Context before: </td><td><input type="text" class="contextBefore" value=""></td></tr><tr><td>Context after: </td><td><input type="text" class="contextAfter" value=""></td></tr><tr><td>Feedback: </td><td><input type="text" class="feedback" value=""></td></tr></table><br><div class="container"><div class="row"><div class="col-sm main-clause"><h4>Main clause:</h4><table class="spec chunks-container"><tr class="chunks"><td>Chunks:</td><td><div><span></span><span class="chunksViewMain invisible"><span contenteditable="true" class="highlighting" style="border:1px solid grey; background-color: white; width:200px; display:inline-block;vertical-align:middle; padding:2px;" class="editable-chunks" onKeyUp="changeChunks(this);"></span><button type="button" class="btn btn-outline-secondary btn-sm fa fa-i-cursor" style="margin-right: 20px;" onclick="markReferent(this);" data-dismiss="modal" ></span><a class="fa fa-pencil" onclick="displayEditChunks(this);" href="#"></a></div></td></tr><tr class="translation"><td>Translation:</td><td><input type="text"></td></tr>' + 
+					count + '"><a class="dropdown-item" href="#/" onclick="updateDropdown(this);">Type 1</a><a class="dropdown-item" href="#/" onclick="updateDropdown(this);">Type 2</a></div></td></tr><tr><td>Context before: </td><td><input type="text" class="contextBefore" value=""></td></tr><tr><td>Context after: </td><td><input type="text" class="contextAfter" value=""></td></tr><tr><td>Feedback: </td><td><input type="text" class="feedback" value=""></td></tr></table><br><div class="container"><div class="row"><div class="col-sm main-clause"><h4>Main clause:</h4><table class="spec chunks-container"><tr class="chunks"><td>Target:</td><td><div><input type="text" class="target-input" onKeyUp="changeCondTarget(this);"></div></td></tr><tr class="translation"><td>Translation:</td><td><input type="text"></td></tr>' + 
 					getSortableItemsWidgetString("distractors", "Distractors:", "distractorPopupMain", "Add distractor", count) + 
 					'<tr class="given-word"><td>Given word:</td><td><input type="text"></td></tr><tr class="semantic-distractor"><td>Semantic distractor:</td><td><input type="text"></td></tr>' + 
 					getSortableItemsWidgetString("given-words-ext", "Given words extended:", "givenWordsPopupMain", "Add given word", count) + 
-					'<tr class="gap"><td>Gap:</td><td><input class="idx gap spn1" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"> - <input class="idx gap spn2" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"><span class="spnLabel"></span></td></tr><tr class="mtw-target"><td>MtW target:</td><td><input class="idx mtw spn1" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"> - <input class="idx mtw spn2" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"><span class="spnLabel"></span></td></tr></table><br></div><div class="col-sm if-clause"><h4>If-clause:</h4><table class="spec chunks-container"><tr class="chunks"><td>Chunks:</td><td><div><span></span><span class="chunksView invisible"><span contenteditable="true" class="highlighting" style="border:1px solid grey; background-color: white; width:200px; display:inline-block;vertical-align:middle; padding:2px;" class="editable-chunks" onKeyUp="changeChunks(this);"></span><button type="button" class="btn btn-outline-secondary btn-sm fa fa-i-cursor" style="margin-right: 20px;" onclick="markReferent(this);" data-dismiss="modal" ></span><a class="fa fa-pencil" onclick="displayEditChunks(this);" href="#"></a></div></td></tr><tr class="translation"><td>Translation:</td><td><input type="text"></td></tr>' + 
+					'</table><br></div><div class="col-sm if-clause"><h4>If-clause:</h4><table class="spec chunks-container"><tr class="chunks"><td>Target:</td><td><div><input type="text" class="target-input" onKeyUp="changeCondTarget(this);"></div></td></tr><tr class="translation"><td>Translation:</td><td><input type="text"></td></tr>' + 
 					getSortableItemsWidgetString("distractors", "Distractors:", "distractorPopup", "Add distractor", count) + 
 					'<tr class="given-word"><td>Given word:</td><td><input type="text"></td></tr><tr class="semantic-distractor"><td>Semantic distractor:</td><td><input type="text"></td></tr>' + 
 					getSortableItemsWidgetString("given-words-ext", "Given words extended:", "givenWordsPopup", "Add given word", count) + 
-					'<tr class="gap"><td>Gap:</td><td><input class="idx gap spn1" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"> - <input class="idx gap spn2" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"><span class="spnLabel"></span></td></tr><tr class="mtw-target"><td>MtW target:</td><td><input class="idx mtw spn1" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"> - <input class="idx mtw spn2" type="number" value="0" min="0" max="0" step="1" onchange="onSpinnerChanged(this);" style="width:50px;"><span class="spnLabel"></span></td></tr></table></div></div></div><br></div></div>');
+					'</table>' +
+					'</div></div></div><div style="font-weight:bold; margin-top:20px;">Conditional sentences:</div><table class="orders"><tr><td style="width: 800px; margin-right: 10px;">Chunks clause 1:</td><td>Chunks clause 2:</td><td></td><td></td></tr></table><div><a class="fa fa-plus" href="#/" onclick="addConditionalOrderChunks(this);" style="margin-top: 20px;"> Add conditional sentence alternative</a></div>'
+					+ '<br></div></div>');
 			  $( ".sortable" ).sortable();
 		}
 
@@ -781,12 +960,12 @@ mark {
 		*/
 		function addRelativeExercise(count) {
 			$("#content-area").append('<div class="exercise-spec rel" id="exercise-spec-rel' + count + 
-					'"><a class="fa fa-trash" style="float:right;color:red;" href="#" onclick="deleteExercise(this);"></a><h3>Item ' + 
+					'"><a class="fa fa-trash" style="float:right;color:red;" href="#/" onclick="deleteExercise(this);"></a><h3>Item ' + 
 					count + '</h3><div class="sentence-unit"><span class="context"></span></div><div id="sentence' + count + 
 					'" class="sentence"><table><tr><td>Context before: </td><td><input type="text" class="contextBefore" value=""></td></tr><tr><td>Context after: </td><td><input type="text" class="contextAfter" value=""></td></tr></table><br><table class="spec"><tr class="clause c1"><td>Clause 1:</td><td><input type="text"></td></tr><tr class="clause c2"><td>Clause 2:</td><td><input type="text"></td></tr>' + 
 					getSortableItemsWidgetString("pronouns", "Pronoun:", "pronounPopup", "Add pronoun", count) + 
 					getSortableItemsWidgetString("distractors", "Distractors:", "distractorPopupMain", "Add distractor", count) + 
-					'<tr><td>Feedback: </td><td><input type="text" class="feedback" value=""></td></tr></table><div style="font-weight:bold; margin-top:20px;">Relative clauses:</div><table class="orders"><tr><td style="width: 400px; margin-right: 10px;">Chunks:</td><td>Use as prompt:</td><td style="margin-right: 10px;">Pronoun is optional:</td><td></td></tr></table><div><a class="fa fa-plus" href="#" onclick="addRelativeOrderChunks(this);" style="margin-top: 20px;"> Add relative clause alternative</a></div></div></div>');
+					'<tr><td>Feedback: </td><td><input type="text" class="feedback" value=""></td></tr></table><div style="font-weight:bold; margin-top:20px;">Relative clauses:</div><table class="orders"><tr><td style="width: 400px; margin-right: 10px;">Chunks:</td><td>Use as prompt:</td><td style="margin-right: 10px;">Pronoun is optional:</td><td></td></tr></table><div><a class="fa fa-plus" href="#/" onclick="addRelativeOrderChunks(this);" style="margin-top: 20px;"> Add relative clause alternative</a></div></div></div>');
 			  $( ".sortable" ).sortable();
 		}
 		
@@ -795,7 +974,7 @@ mark {
 			return '<tr class="' + classname + '"><td>' + title + 
 			'</td><td><table class="list-cont"><tr class="listItems"><td><div class="sortable-group"><ul class="sortable"></ul>' + 
 			getPopupString(popupTitle, "addDistractor", "Add") + 
-			'</div></td><td><a class="fa fa-plus" aria-hidden="true" href="#" data-toggle="modal" data-target="#p' + maxPopupId + 
+			'</div></td><td><a class="fa fa-plus" aria-hidden="true" href="#/" data-toggle="modal" data-target="#p' + maxPopupId + 
 			'"></a></td></tr></table></td></tr>';
 		}
 		
@@ -1070,20 +1249,48 @@ mark {
 			};
 			var exercises = [];
 			spec["items"] = exercises;
+			let condSents = [];
 
 			for (const exercise of $(".exercise-spec.cond")) {
 				var ex = {
 						"condType": $(exercise).find(".btn-cond-type").text(),
 						"contextBefore": $(exercise).find(".contextBefore").val(),
 						"contextAfter": $(exercise).find(".contextAfter").val(),
+						"feedback": $(exercise).find(".feedback").val(),
 						"mainClause": getClauseValues("main-clause", $(exercise)),
-						"ifClause": getClauseValues("if-clause", $(exercise)),
-						"id": $(exercise).attr("id"),
-						"feedback": $(exercise).find(".feedback").val()
+						"ifClause": getClauseValues("if-clause", $(exercise))
 						};
 				exercises.push(ex);
+				
+				$(exercise).find(".cond-sentence-order").each(function () {
+					let c1 = {}
+					let chunksC1 = [];
+					for (const chunk of $(this).find(".c1").find(".chunk")) {
+						chunksC1.push({
+							"text": $(chunk).text(), 
+							"isTarget": ($(chunk).parent().hasClass("target-if") || $(chunk).parent().hasClass("target-main"))}
+						);
+					}
+					c1["if"] = $(chunk).parent().hasClass("target-if");
+					c1["chunks"] = chunksC1;
+					
+					let c2 = {}
+					let chunksC2 = [];
+					for (const chunk of $(this).find(".c2").find(".chunk")) {
+						chunksC2.push({
+							"text": $(chunk).text(), 
+							"isTarget": ($(chunk).parent().hasClass("target-if") || $(chunk).parent().hasClass("target-main"))}
+						);
+					}
+					c2["if"] = $(chunk).parent().hasClass("target-main");
+					c2["chunks"] = chunksC2;
+					
+					condSents.push({"id": $(this).closest(".cond-sentence-order").attr("id"), "clause1": c1, "clause2": c2});
+				});
 			}
-
+			
+			ex["conditionalSentences"] = condSents;
+			
 			spec["exerciseTypes"] = getSelectedExerciseTypes();
 			spec["exerciseItemMap"] = getExerciseItemMap();
 
@@ -1092,7 +1299,6 @@ mark {
 
 		function getClauseValues(clauseStr, sentence) {
 			var clauseSpec = {};
-			clauseSpec["chunks"] = sentence.find("." + clauseStr + " .editable-chunks").text().split("|");
 			clauseSpec["translation"] = sentence.find("." + clauseStr + " .translation input").val();
 			var distractors = [];
 			for (const distr of sentence.find(".distractors .listItems li")) {
@@ -1106,8 +1312,6 @@ mark {
 				givenWordsExt.push($(gwe).find("span").last().text());
 			}
 			clauseSpec["givenWordsExtended"] = givenWordsExt;
-			clauseSpec["gap"] = [parseInt(sentence.find("." + clauseStr + " .gap .spn1").val()), parseInt(sentence.find("." + clauseStr + " .gap .spn2").val())];
-			clauseSpec["mtwTarget"] = [parseInt(sentence.find("." + clauseStr + " .mtw-target .spn1").val()), parseInt(sentence.find("." + clauseStr + " .mtw-target .spn2").val())];
 
 			return clauseSpec;
 		}
@@ -1168,6 +1372,7 @@ mark {
 				if ($("#topicdrp").find(".dropdown-item:contains('" + json["topic"] + "')").length > 0) {
 					$("#btnTopic").text(json["topic"]);
 				} else {
+					console.log("Invalid topic");
 					is_valid = false;
 				}
 
@@ -1190,11 +1395,20 @@ mark {
 								exercise.find(".btn-cond-type").text(sent["condType"]);
 							} else {
 								is_valid = false;
+								console.log("Invalid conditional type: " + sent["condType"]);
 								break;
 							}
-
 							fillClause(sent["mainClause"], "main-clause", exercise);
 							fillClause(sent["ifClause"], "if-clause", exercise);
+														
+							let isFirst = true;
+							for (const condSent of sent["conditionalSentences"]) {
+								addConditionalOrder(exercise.find(".orders").last());
+								
+								fillCondClause(exercise, "1", isFirst, condSent);
+								fillCondClause(exercise, "2", isFirst, condSent);
+								isFirst = false;
+							}
 						} else if ($("#btnTopic").text() === "Relative pronouns") {
 							exercise.find(".c1 input").val(sent["clause1"]);
 							exercise.find(".c2 input").val(sent["clause2"]);
@@ -1211,11 +1425,11 @@ mark {
 							}
 
 							for (const relSent of sent["relativeClauses"]) {
-								addRelativeOrder($(".orders").last());
+								addRelativeOrder(exercise.find(".orders").last());
 														
 								let chunkTexts = [];
 								let n = 1;
-								let chunkTextbox = $(".rel-sentence-order").last().find(".editable-chunks");
+								let chunkTextbox = exercise.find(".rel-sentence-order").last().find(".editable-chunks");
 								for (const chunk of relSent["chunks"]) {
 									if(n === relSent["pronounIndex"]) {
 										chunkTextbox.parent().prev().append("<span style='border:1px solid grey; margin-right: 2px;'><mark>" + chunk.trim() + "</mark></span>");
@@ -1229,51 +1443,64 @@ mark {
 								
 								chunkTextbox.html(chunkTexts.join("|"));
 								if(relSent["pronounIsOptional"]) {
-									$(".rel-sentence-order input").last().prop("checked", true);
+									exercise.find(".rel-sentence-order input").last().prop("checked", true);
 								}
 								
-								$(".rel-sentence-order").last().find(".spn2").val(relSent["prompt"]);
+								exercise.find(".rel-sentence-order").last().find(".spn2").val(relSent["prompt"]);
 								setInputValues(chunkTextbox.closest(".chunks-container").find('.idx'));
 							}
 						}
 					}
-
-					// uncheck all tree items 
-					for (const ti of $("#types-tree").find("input")) {
-						$(ti).prop("checked", false);
-					}
-
-					for (const ti of json["exerciseTypes"]) {
-						$("#" + ti).prop("checked", true);
-					}				
 					
-					for (const item of json["exerciseItemMap"]) {
-						addExerciseAssembly();
-						$("#assembly-container").children().last().find("h3 input").val(item["Title"]);
-						for (const sentence of item["sentences"]) {
-							let i = 0;
-							let itemId;
-							loop1: for (const sent of json["items"]) {
-								for(const relCl of sent["relativeClauses"]) {
-									if(relCl["id"] == sentence) {
-										let newExercises = $(".rel-sentence-order");
-										let exercise = $(newExercises[i]);
-										itemId = exercise.attr("id");
-										break loop1;
-									}
-									i++;
-								}
-							}
-							let itemToCheck = $("#assembly-container").children().last().find("#l" + maxAssemblyId + itemId);
-							itemToCheck.prop("checked", true);
-							onExerciseItemChecked(itemToCheck);
+					if(is_valid) {
+						// uncheck all tree items 
+						for (const ti of $("#types-tree").find("input")) {
+							$(ti).prop("checked", false);
 						}
+
+						for (const ti of json["exerciseTypes"]) {
+							$("#" + ti).prop("checked", true);
+						}				
+						
+						let sentencesKey = "";
+						let className = "";
+						if ($("#btnTopic").text() === "Conditionals") {
+							sentencesKey = "conditionalSentences";
+							className = "cond";
+						} else if ($("#btnTopic").text() === "Relative pronouns") {
+							sentencesKey = "relativeClauses";
+							className = "rel";
+						}
+						
+						for (const item of json["exerciseItemMap"]) {
+							addExerciseAssembly();
+							$("#assembly-container").children().last().find("h3 input").val(item["Title"]);
+
+							for (const sentence of item["sentences"]) {
+								let i = 0;
+								let itemId;
+								loop1: for (const sent of json["items"]) {
+									for(const s of sent[sentencesKey]) {
+										if(s["id"] == sentence) {
+											let newExercises = $("." + className + "-sentence-order");
+											let exercise = $(newExercises[i]);
+											itemId = exercise.attr("id");
+											break loop1;
+										}
+										i++;
+									}
+								}
+								let itemToCheck = $("#assembly-container").children().last().find("#l" + maxAssemblyId + itemId);
+								itemToCheck.prop("checked", true);
+								onExerciseItemChecked(itemToCheck);
+							}
+						}
+						
+						setExerciseTypeCheckboxes();
+						
+						onSelectedTopicChanged();
+						displayExercise("#" + $(".exercise-spec").first().attr("id"));
 					}
-					
-					setExerciseTypeCheckboxes();
-					
-					onSelectedTopicChanged();
-					displayExercise("#" + $(".exercise-spec").first().attr("id"));
 				}
 			} catch (e) {
 				console.log(e);
@@ -1292,10 +1519,45 @@ mark {
 				alert("The exercise file is invalid.");
 			}
 		}
+		
+		function fillCondClause(exercise, clauseNumber, isFirst, condSent) {
+			let chunkTexts = [];
+			let clause = $(".cond-sentence-order").last().find(".c" + clauseNumber);
+			let boxToFill = clause.find(".editable-chunks").first();
+
+			if(condSent["clause" + clauseNumber]["if"] && clauseNumber == 1) {
+				swapTargets(clause);
+			}
+					
+			let targetField;
+			for (const chunk of condSent["clause" + clauseNumber]["chunks"]) {
+				if(chunk["isTarget"]) {
+					if(chunkTexts.length > 0) {
+						boxToFill.html(chunkTexts.join("|"));
+						chunkTexts = [];
+						boxToFill = clause.find(".editable-chunks").last();
+					}
+					
+					if(isFirst) {
+						targetField = exercise.find("." + (condSent["clause" + clauseNumber]["if"] ? "if-clause" : "main-clause") + " .target-input");
+						targetField.val((targetField.val() + " " + chunk["text"]).trim());
+					}
+				} else {
+					boxToFill.parent().prev().append("<span style='border:1px solid grey; margin-right: 2px;'>" + chunk["text"].trim() + "</span>");
+					chunkTexts.push(chunk["text"]);
+				}									
+			}
+			
+			if(chunkTexts.length > 0) {
+				boxToFill.html(chunkTexts.join("|"));
+			}
+
+			if(targetField) {
+				updateTargetInCoditionalSentences(boxToFill, targetField.val());
+			}
+		}
 
 		function fillClause(clause, clauseStr, sentence) {
-			sentence.find("." + clauseStr + " .editable-chunks").text(clause["chunks"].join('|'));
-			updateChunks(sentence.find("." + clauseStr + " .editable-chunks"));
 			sentence.find("." + clauseStr + " .translation input").val(clause["translation"]);
 			for (const distractor of clause["distractors"]) {
 				sentence.find("." + clauseStr + " .distractors .modal input").val(distractor);
@@ -1307,12 +1569,6 @@ mark {
 				sentence.find("." + clauseStr + " .given-words-ext .modal input").val(givenWordExt);
 				addDistractor(sentence.find("." + clauseStr + " .given-words-ext .modal button"));
 			}
-			sentence.find("." + clauseStr + " .gap .spn1").val(clause["gap"][0]);
-			sentence.find("." + clauseStr + " .gap .spn2").val(clause["gap"][1]);
-			changeSpinnerText(sentence.find("." + clauseStr + " .gap .spn1"));
-			sentence.find("." + clauseStr + " .mtw-target .spn1").val(clause["mtwTarget"][0]);
-			sentence.find("." + clauseStr + " .mtw-target .spn2").val(clause["mtwTarget"][1]);
-			changeSpinnerText(sentence.find("." + clauseStr + " .mtw-target .spn1"));
 		}
 
 		var targetClauses = {

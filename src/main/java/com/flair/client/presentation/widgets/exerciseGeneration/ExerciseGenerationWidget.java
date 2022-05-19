@@ -34,6 +34,7 @@ import gwt.material.design.client.ui.MaterialIcon;
 import gwt.material.design.client.ui.MaterialPreLoader;
 import gwt.material.design.client.ui.MaterialRadioButton;
 import gwt.material.design.client.ui.MaterialTitle;
+import gwt.material.design.client.ui.MaterialToast;
 import gwt.material.design.client.ui.html.Option;
 
 public class ExerciseGenerationWidget extends LocalizedComposite implements ExerciseGenerationService {
@@ -88,6 +89,7 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     
     private byte[] generatedExercises = null;
     private String fileName = null;
+    private Integer linkingId = null;
     
     private ArrayList<Integer> taskIds = new ArrayList<>();
     
@@ -126,7 +128,7 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
                 	d.setText(new String(generatedExercises, StandardCharsets.UTF_8));
                 	d.setFileExtension(".json");
                 	d.setTitle(fileName);
-                	d.setLinkingId(1);
+                	d.setLinkingId(linkingId);
                 	((TaskItem)task).doc = d;
                 	((TaskItem)task).lblDocTitle.setText(fileName);
                 	((TaskItem)task).chkUseConfig.setValue(true);
@@ -422,10 +424,11 @@ public class ExerciseGenerationWidget extends LocalizedComposite implements Exer
     InterruptHandler interruptHandler;
     
 	@Override
-	public void provideForDownload(byte[] file, String fileName, HashMap<String, String> previews) {	
+	public void provideForDownload(byte[] file, String fileName, HashMap<String, String> previews, Integer linkingId) {	
 		enableButton();
 		generatedExercises = file;
 		this.fileName = fileName;
+		this.linkingId = linkingId;
     	
 		if(file != null && file.length > 0) {
 			icoDownload.setVisible(true);

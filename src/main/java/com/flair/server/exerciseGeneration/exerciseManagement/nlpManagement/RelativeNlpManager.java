@@ -32,7 +32,6 @@ public class RelativeNlpManager extends NlpManager {
      * Punctuation marks before which no space is to be inserted
      */
     private static final String punctuations = ".,:;!?'";
-    private static final String sentenceFinalPunctuations = ".:!?";
 
     private String plainText = null;
     
@@ -590,10 +589,14 @@ public class RelativeNlpManager extends NlpManager {
                 rs.pronIsObj, sentence, false));
         addRelativeSentenceIfNotContained(relativeSentences, getRelativeSentence(rs, true, rs.chunksClause2, rs.chunksClause1,
                 rs.pronIsObj, sentence, false));
-        addRelativeSentenceIfNotContained(relativeSentences, getRelativeSentence(rs, false, rs.chunksClause2, rs.chunksClause1,
-                rs.pronIsObj, sentence, true));
-        addRelativeSentenceIfNotContained(relativeSentences, getRelativeSentence(rs, true, rs.chunksClause2, rs.chunksClause1,
-                rs.pronIsObj, sentence, true));        
+        
+        // add sentence with stranded preposition, but not for 'that' or contact clauses
+        if(!rs.pronoun.value().equals("that")) {
+	        addRelativeSentenceIfNotContained(relativeSentences, getRelativeSentence(rs, false, rs.chunksClause2, rs.chunksClause1,
+	                rs.pronIsObj, sentence, true));
+	        addRelativeSentenceIfNotContained(relativeSentences, getRelativeSentence(rs, true, rs.chunksClause2, rs.chunksClause1,
+	                rs.pronIsObj, sentence, true));    
+        }
 
         // reversed order
         // if both referents are objects or both are subjects, the pronoun is the same (object or subject) as in the original order; otherwise, it's reversed
@@ -603,10 +606,13 @@ public class RelativeNlpManager extends NlpManager {
             		(rs.pronIsObj == rs.referentIsObject) == rs.pronIsObj, sentence, false));
         	addRelativeSentenceIfNotContained(relativeSentences, getRelativeSentence(rs, true, rs.chunksClause1, rs.chunksClause2,
                     (rs.pronIsObj == rs.referentIsObject) == rs.pronIsObj, sentence, false));
-        	addRelativeSentenceIfNotContained(relativeSentences, getRelativeSentence(rs, false, rs.chunksClause1, rs.chunksClause2,
-            		(rs.pronIsObj == rs.referentIsObject) == rs.pronIsObj, sentence, true));
-        	addRelativeSentenceIfNotContained(relativeSentences, getRelativeSentence(rs, true, rs.chunksClause1, rs.chunksClause2,
-                    (rs.pronIsObj == rs.referentIsObject) == rs.pronIsObj, sentence, true));
+        	
+            if(!rs.pronoun.value().equals("that")) {
+	        	addRelativeSentenceIfNotContained(relativeSentences, getRelativeSentence(rs, false, rs.chunksClause1, rs.chunksClause2,
+	            		(rs.pronIsObj == rs.referentIsObject) == rs.pronIsObj, sentence, true));
+	        	addRelativeSentenceIfNotContained(relativeSentences, getRelativeSentence(rs, true, rs.chunksClause1, rs.chunksClause2,
+	                    (rs.pronIsObj == rs.referentIsObject) == rs.pronIsObj, sentence, true));
+            }
         }
 
        //TODO: remove 
@@ -793,7 +799,7 @@ public class RelativeNlpManager extends NlpManager {
 
         RelativeSentenceAlternative s = new RelativeSentenceAlternative();
         s.setChunks(chunks);
-        s.setPronounIsOptional(referentClause2IsObject);    
+        s.setPronounIsOptional(referentClause2IsObject && !prepositionStranding);    
         
         int j = 1;
         for(RelativeSentenceChunk chunk : chunks) {

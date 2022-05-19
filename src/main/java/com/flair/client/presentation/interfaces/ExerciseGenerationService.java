@@ -20,7 +20,7 @@ public interface ExerciseGenerationService {
 	}
 
 
-	void provideForDownload(byte[] file, String fileName, HashMap<String, String> previews);
+	void provideForDownload(byte[] file, String fileName, HashMap<String, String> previews, Integer linkingId);
 
 	void setGenerateHandler(GenerateHandler handler);
 	void setInterruptHandler(InterruptHandler handler);

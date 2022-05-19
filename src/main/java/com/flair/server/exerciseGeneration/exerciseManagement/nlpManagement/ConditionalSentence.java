@@ -7,5 +7,6 @@ public class ConditionalSentence {
     public String conditionalType = "Type 1";
     public String contextBefore = "";
     public String contextAfter = "";
+    public String punctuationMark = ".";
     
 }

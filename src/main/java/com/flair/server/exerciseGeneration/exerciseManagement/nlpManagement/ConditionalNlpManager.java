@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -165,6 +166,13 @@ public class ConditionalNlpManager extends NlpManager {
         ConditionalSentence condSent = new ConditionalSentence();
         condSent.ifClause = ifClause;
         condSent.mainClause = mainClause;
+        
+        String lastToken = sentence.getTokens().get(sentence.getTokens().size() - 1).value();
+        String puncutatioMark = lastToken.substring(lastToken.length() - 1);
+        if(sentenceFinalPunctuations.contains(puncutatioMark)) {
+        	condSent.punctuationMark = puncutatioMark;
+        }
+        
         return condSent;
     }
 
@@ -512,7 +520,12 @@ public class ConditionalNlpManager extends NlpManager {
     private void getTranslation(Clause clause) {
     	String text = plainText.substring(clause.indices.first, clause.indices.second);
     	
-        String url = "https://translate.googleapis.com/translate_a/single?"+"client=gtx&"+"sl=en&tl=de&dt=t&q=" + URLEncoder.encode(text, StandardCharsets.UTF_8);
+        String url = null;
+		try {
+			url = "https://translate.googleapis.com/translate_a/single?"+"client=gtx&"+"sl=en&tl=de&dt=t&q=" + URLEncoder.encode(text, "UTF-8");
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		}
         HttpURLConnection con;
         try {
             con = (HttpURLConnection) new URL(url).openConnection();

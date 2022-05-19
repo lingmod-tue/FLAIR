@@ -2,6 +2,7 @@ package com.flair.client.presentation.widgets.exerciseGeneration;
 
 import java.util.ArrayList;
 
+import com.flair.shared.exerciseGeneration.ExerciseTopic;
 import com.google.gwt.user.client.ui.Widget;
 
 public class ConditionalSelectVisibilityManager extends VisibilityManager {
@@ -18,8 +19,8 @@ public class ConditionalSelectVisibilityManager extends VisibilityManager {
 		visibleSettings.add(taskItem.chkDistractorsWrongConditional);
 		visibleSettings.add(taskItem.chkDistractorsWrongClause);
 		visibleSettings.add(taskItem.grpCondTypes);
-		addConstructionIfOccurs("condUnreal", "'if'", 1, visibleSettings, taskItem.chkscopeType1, numberExercises);  
-		addConstructionIfOccurs("condReal", "'if'", 1, visibleSettings, taskItem.chkscopeType2, numberExercises); 
+		addConstructionIfOccurs("condUnreal", ExerciseTopic.CONDITIONALS, 1, visibleSettings, taskItem.chkscopeType1, numberExercises);  
+		addConstructionIfOccurs("condReal", ExerciseTopic.CONDITIONALS, 1, visibleSettings, taskItem.chkscopeType2, numberExercises); 
 		visibleSettings.add(taskItem.grpClauses);
 		
 		return visibleSettings;
