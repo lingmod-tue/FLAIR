@@ -31,13 +31,15 @@ public class FiBConditionalInstructionGenerator extends InstructionGenerator {
 			instructions = "Fill in the gap to form a correct sentence.";
 		}
 		
-		int type = 2;
-		if(data.getParts().stream().anyMatch(part -> part instanceof ConstructionTextPart && 
-				((ConstructionTextPart)part).getConstructionType().startsWith(DetailedConstruction.CONDREAL))) {
-			type = 1;
+		if(data.getBracketsProperties().contains(BracketsProperties.CONDITIONAL_TYPE)) {
+			int type = 2;
+			if(data.getParts().stream().anyMatch(part -> part instanceof ConstructionTextPart && 
+					((ConstructionTextPart)part).getConstructionType().startsWith(DetailedConstruction.CONDREAL))) {
+				type = 1;
+			}
+			instructions += " Use conditional Type " + type + ".";
 		}
-		instructions += " Use conditional Type " + type + ".";
-				
+		
 		data.setInstructions(instructions);
 	}
 	

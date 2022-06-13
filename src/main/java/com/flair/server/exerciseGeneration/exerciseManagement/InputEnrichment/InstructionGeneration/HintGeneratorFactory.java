@@ -8,6 +8,9 @@ public class HintGeneratorFactory {
 		if(topic.equals(ExerciseTopic.RELATIVES)) {
 			return new RelativeHintGenerator();
 		} 
+		if(topic.equals(ExerciseTopic.CONDITIONALS)) {
+			return new ConditionalHintGenerator();
+		} 
 					
     	return null;
     }

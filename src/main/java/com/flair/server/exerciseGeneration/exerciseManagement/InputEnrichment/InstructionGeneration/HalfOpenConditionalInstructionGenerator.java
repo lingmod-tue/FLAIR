@@ -2,6 +2,7 @@ package com.flair.server.exerciseGeneration.exerciseManagement.InputEnrichment.I
 
 import com.flair.server.exerciseGeneration.exerciseManagement.ConstructionTextPart;
 import com.flair.server.exerciseGeneration.exerciseManagement.ExerciseData;
+import com.flair.shared.exerciseGeneration.BracketsProperties;
 import com.flair.shared.exerciseGeneration.DetailedConstruction;
 
 public class HalfOpenConditionalInstructionGenerator extends InstructionGenerator {
@@ -16,6 +17,16 @@ public class HalfOpenConditionalInstructionGenerator extends InstructionGenerato
 		} else {
 			instructions = "Use the verbs in brackets to form an if-clause.";
 		}
+		
+		if(data.getBracketsProperties().contains(BracketsProperties.CONDITIONAL_TYPE)) {
+			int type = 2;
+			if(data.getParts().stream().anyMatch(part -> part instanceof ConstructionTextPart && 
+					((ConstructionTextPart)part).getConstructionType().startsWith(DetailedConstruction.CONDREAL))) {
+				type = 1;
+			}
+			instructions += " Use conditional Type " + type + ".";
+		}
+		
 		data.setInstructions(instructions);
 	}
 	

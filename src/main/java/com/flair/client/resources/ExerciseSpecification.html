@@ -1185,9 +1185,9 @@ mark {
 					let pronounIndex = 1;
 					for (const chunk of clauseChunks) {
 						if(chunk.trim().startsWith("<mark>")) {
-							chunks.add(chunk.trim().replace("<mark>", "").replace("</mark>", ""));
+							chunks.push(chunk.trim().replace("<mark>", "").replace("</mark>", ""));
 						} else {
-							chunks.add(chunk.trim());
+							chunks.push(chunk.trim());
 							pronounIndex++;
 						}
 					}

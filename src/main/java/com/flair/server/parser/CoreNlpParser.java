@@ -14,30 +14,9 @@ public class CoreNlpParser implements ThreadSafeParser<CoreNlpParser,
 		private Factory() {}
 		@Override
 		public CoreNlpParser create(Language lang, Properties properties) {
-			for(InstantiatedParser ip : instantiatedParsers) {
-				if(ip.language.equals(lang) && ip.props.equals(properties)) {
-					return ip.parser;
-				}
-			}
-			
-			InstantiatedParser ip = new InstantiatedParser(new CoreNlpParser(lang, properties), lang, properties);
-			instantiatedParsers.add(ip);
-			return ip.parser;
+			return new CoreNlpParser(lang, properties);
 		}
 		
-		private static final class InstantiatedParser {
-			CoreNlpParser parser;
-			Language language;
-			Properties props;
-			
-			public InstantiatedParser(CoreNlpParser parser, Language language, Properties props) {
-				this.parser = parser;
-				this.language = language;
-				this.props = props;
-			}
-		}
-		
-		private static final ArrayList<InstantiatedParser> instantiatedParsers = new ArrayList<>();
 	}
 
 	private final StanfordCoreNLP pipeline;

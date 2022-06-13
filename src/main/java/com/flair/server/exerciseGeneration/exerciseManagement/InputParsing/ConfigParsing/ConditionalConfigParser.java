@@ -83,7 +83,7 @@ public class ConditionalConfigParser extends ConfigParser {
 					d.setExerciseType(ExerciseType.HALF_OPEN);
 				}
 				
-				if(data.getStamp().equals("Conditional negative main + if clause")) {
+				if(!data.getStamp().equals("conditinal 1 vs conditional 2")) {
 					d.getBracketsProperties().add(BracketsProperties.CONDITIONAL_TYPE);
 				}
 
@@ -124,6 +124,7 @@ public class ConditionalConfigParser extends ConfigParser {
 						itemData.getGapMainClause(), true,
 						randomizeClauseOrder, false);
 
+				targetAndClauseItems.getPositions().add(new Pair<>(targetAndClauseItems.getPositions().size(), "."));
 				String sentence = generateSentencesFromPositions(targetAndClauseItems.getPositions());
 				String category = itemData.getConditionalType() == 1 ? "Type 1" : "Type 2";
 
@@ -228,7 +229,7 @@ public class ConditionalConfigParser extends ConfigParser {
 			ConditionalExerciseItemConfigData itemData = (ConditionalExerciseItemConfigData) id;
 
 			if (parts.size() > 0) {
-				parts.add(new HtmlTextPart(" <br>", sentenceId));
+				parts.add(new HtmlTextPart(targetEntireClause ? " <br><br>" : " <br>", sentenceId));
 			}
 
 			ConditionalTargetAndClauseItems targetAndClauseItems = getTargetAndClauseItems(itemData, randomizeClauseOrder,
@@ -330,9 +331,11 @@ public class ConditionalConfigParser extends ConfigParser {
 					itemData.getGapMainClause(), false, randomizeTargetClause, true);
 
 			for (Pair<Integer, String> position : targetAndClauseItems.getPositions()) {
-				ConstructionTextPart c = new ConstructionTextPart(position.second, sentenceId);
-				c.setConstructionType(itemData.getConditionalType() == 1 ? DetailedConstruction.CONDREAL : DetailedConstruction.CONDUNREAL);
-				parts.add(c);
+				if(position.second.trim().length() > 0) {
+					ConstructionTextPart c = new ConstructionTextPart(position.second, sentenceId);
+					c.setConstructionType(itemData.getConditionalType() == 1 ? DetailedConstruction.CONDREAL : DetailedConstruction.CONDUNREAL);
+					parts.add(c);
+				}
 			}
 			String punctuation = configData.getStamp().contains("question") ? "?" : ".";
 			if(!parts.get(parts.size() - 1).getValue().endsWith(punctuation)) {
@@ -393,8 +396,12 @@ public class ConditionalConfigParser extends ConfigParser {
 				Collections.shuffle(distractorList);
 			}
 			while (distractors.size() < nDistractors) {
-				distractors.add(new Distractor(
-						targetAndClauseItems.getTargetDistractors().get(0).get(distractors.size()).second));
+				String distractor = targetAndClauseItems.getTargetDistractors().get(0).get(distractors.size()).second;
+				if(Character.isUpperCase(constructionText.charAt(0))) {
+					distractor = StringUtils.capitalize(distractor);
+				}
+				
+				distractors.add(new Distractor(distractor));
 			}
 			targetAndClauseItems.getTargetDistractors().remove(0);
 
@@ -499,7 +506,7 @@ public class ConditionalConfigParser extends ConfigParser {
 			
 			ArrayList<Pair<Integer, String>> positionsToAdd = new ArrayList<>();
 			for (Pair<Integer, String> p : mainPositions) {
-				positions.add(new Pair<>(ifPositions.size() + 1 + p.first, p.second));
+				positionsToAdd.add(new Pair<>(ifPositions.size() + 1 + p.first, p.second));
 			}
 			
 			if(concatenateNonTargetPositions && !targetMainClause) {
