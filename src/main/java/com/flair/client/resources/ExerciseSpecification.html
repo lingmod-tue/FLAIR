@@ -218,6 +218,15 @@ mark {
 							<a class="dropdown-item" href="#/" onclick="updateDropdown(this);">Relative pronouns</a>
 						</div>
 					</div>
+					<div class="card-body" id="subtopicdrp" style="padding-top: 0px;">
+						<span style="font-weight: bold; margin-right: 5px;">Sub-topic:</span>
+						<button id="btnSubtopic"
+							class="btn btn-outline-secondary btn-sm dropdown-toggle"
+							type="button" data-toggle="dropdown" aria-haspopup="true"
+							aria-expanded="false">---</button>
+						<div class="dropdown-menu" aria-labelledby="btnSubtopic" id="subtopicDrp">
+						</div>
+					</div>
 					<div class="card-footer">
 						<div class="content-area">
 							<div id="content-area"></div>
@@ -231,6 +240,8 @@ mark {
 								</div>
 							</div>
 							<div id="exercise-assemblies" class="invisible">
+								<span>Start ID: </span><input type="number" value="1" id="startId">
+							
 								<div id="assembly-container"></div>
 								<a class="fa fa-plus" href="#/" id="add-assembly-button"
 									onclick="addExerciseAssembly(this);"> Add exercise</a>
@@ -401,6 +412,9 @@ mark {
 		}
 		
 		function onSelectedTopicChanged() {
+			$("#subtopicDrp").empty();
+			$("#btnSubtopic").text("---");
+		
 			let displayType = true;
 			if($("#type-settings").hasClass("invisible")) {
 				displayType = false;
@@ -409,10 +423,20 @@ mark {
 			let classname;
 			if ($("#btnTopic").text() === "Conditionals") {
 				classname = "cond";
+				
+				$("#subtopicDrp").append('<a class="dropdown-item" href="#/" onclick="updateDropdown(this);">Affirmative</a>');
+				$("#subtopicDrp").append('<a class="dropdown-item" href="#/" onclick="updateDropdown(this);">Negative</a>');
+				$("#subtopicDrp").append('<a class="dropdown-item" href="#/" onclick="updateDropdown(this);">Questions</a>');
+				$("#subtopicDrp").append('<a class="dropdown-item" href="#/" onclick="updateDropdown(this);">Type 1 vs Type 2</a>');
 			} else if ($("#btnTopic").text() === "Relative pronouns") {
 				classname = "rel";
+				$("#subtopicDrp").append('<a class="dropdown-item" href="#/" onclick="updateDropdown(this);">Subject who/which</a>');
+				$("#subtopicDrp").append('<a class="dropdown-item" href="#/" onclick="updateDropdown(this);">Object which/whom</a>');
+				$("#subtopicDrp").append('<a class="dropdown-item" href="#/" onclick="updateDropdown(this);">Whose</a>');
+				$("#subtopicDrp").append('<a class="dropdown-item" href="#/" onclick="updateDropdown(this);">Where</a>');
+				$("#subtopicDrp").append('<a class="dropdown-item" href="#/" onclick="updateDropdown(this);">Contact clauses</a>');
 			}
-			
+
 			if($(".exercise-spec." + classname).length > 0) {
 				$("#add-assembly-button").removeClass("invisible");
 			} else {
@@ -1149,7 +1173,9 @@ mark {
 
 		function getRelativeSpec() {
 			var spec = {
-				"topic": $("#btnTopic").text()
+				"topic": $("#btnTopic").text(),
+				"subtopic": $("#subtopicDrp").text(),
+				"startId": $("#startId").val()
 			};
 			var exercises = [];
 			spec["items"] = exercises;
@@ -1245,7 +1271,9 @@ mark {
 		*/
 		function getConditionalSpec() {
 			var spec = {
-				"topic": $("#btnTopic").text()
+				"topic": $("#btnTopic").text(),
+				"subtopic": $("#subtopicDrp").text(),
+				"startId": $("#startId").val()
 			};
 			var exercises = [];
 			spec["items"] = exercises;
@@ -1377,6 +1405,16 @@ mark {
 				}
 
 				if (is_valid) {
+					if ($("#subtopicDrp").find(".dropdown-item:contains('" + json["subtopic"] + "')").length > 0) {
+						$("#subtopicDrp").text(json["subtopic"]);
+					} else {
+						console.log("Invalid sub-topic");
+						is_valid = false;
+					}
+				}
+
+				if (is_valid) {
+					$("#startId").val(json["startId"]);
 					for (const sent of json["items"]) {
 						if (!is_valid) {
 							break;
