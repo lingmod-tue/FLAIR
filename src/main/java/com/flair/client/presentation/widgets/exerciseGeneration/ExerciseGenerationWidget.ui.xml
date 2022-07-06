@@ -30,10 +30,12 @@
 					<m:MaterialColumn padding="0" margin="0" grid="s6 m6 l6">
 					<m:MaterialRadioButton ui:field="rbtExercise" value="true"
 						name="rbtGrpFormats" type="GAP" text="Exercise" />
-						<m:MaterialCheckBox padding="0" margin="0" paddingLeft="20"
+						<m:MaterialRow paddingLeft="20">
+						<m:MaterialCheckBox
 						ui:field="chkH5p" value="true" text="H5P" />
-					<m:MaterialCheckBox padding="0" margin="0" paddingLeft="20"
+					<m:MaterialCheckBox
 						ui:field="chkFeedbookXml" value="true" text="FeedBook XML" />
+						</m:MaterialRow>
 					</m:MaterialColumn>
 					<m:MaterialColumn padding="0" margin="0" grid="s6 m6 l6">
 					<m:MaterialRadioButton
@@ -45,11 +47,11 @@
 
 				<m:MaterialRow paddingTop="0" paddingBottom="0"
 					marginTop="0">
-					<m:MaterialCheckBox padding="0" margin="0"
+					<m:MaterialCheckBox
 						ui:field="chkGenerateFeedback" value="true"
 						text="Generate feedback" />
 				</m:MaterialRow>
-				<m:MaterialCheckBox padding="0" margin="0"
+				<m:MaterialCheckBox
 					ui:field="chkDownloadResources" value="false"
 					text="Download resources" />
 			</m:MaterialRow>
@@ -102,7 +104,7 @@
 				<m:MaterialTitle ui:field="titleCopyrightNoticeUI"
 					title="Please respect the copyright of the texts!"
 					description="desc" />
-				<m:MaterialCheckBox padding="0" margin="0"
+				<m:MaterialCheckBox 
 					ui:field="chkDontShowCopyrightNoticeUI"
 					text="Do not show this notification again." type="FILLED" />
 			</m:MaterialDialogContent>

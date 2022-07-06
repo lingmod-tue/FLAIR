@@ -64,7 +64,7 @@
 		<m:MaterialCollapsibleBody padding="10">
 
 			<m:MaterialRow>
-				<m:MaterialCheckBox ui:field="chkUseConfig" padding="0" margin="0"
+				<m:MaterialCheckBox ui:field="chkUseConfig"
 					value="false" text="Use configuration file" />
 			</m:MaterialRow>
 
@@ -160,7 +160,7 @@
 						addStyleNames="{style.bgGrey} {style.lowercase}" waves="DEFAULT" />
 				</m:MaterialRow>
 				<m:MaterialRow>
-					<m:MaterialCheckBox ui:field="chkOnlyText" padding="0" margin="0"
+					<m:MaterialCheckBox ui:field="chkOnlyText"
 						value="false" text="Use only sections with text" />
 				</m:MaterialRow>
 
@@ -171,11 +171,11 @@
 								textColor="BLACK" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox ui:field="chkPosAdj" padding="0" margin="0"
+							<m:MaterialCheckBox ui:field="chkPosAdj"
 								value="true" text="Adjectives" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox ui:field="chkPosAdv" padding="0" margin="0"
+							<m:MaterialCheckBox ui:field="chkPosAdv" 
 								value="true" text="Adverbs" />
 						</m:MaterialRow>
 					</m:MaterialRow>
@@ -186,11 +186,11 @@
 								text="Comparison forms of target words:" textColor="BLACK" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox padding="0" margin="0"
+							<m:MaterialCheckBox 
 								ui:field="chkFormComparatives" value="true" text="Comparatives" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox padding="0" margin="0"
+							<m:MaterialCheckBox 
 								ui:field="chkFormSuperlatives" value="true" text="Superlatives" />
 						</m:MaterialRow>
 					</m:MaterialRow>
@@ -200,11 +200,11 @@
 							<m:MaterialLabel text="Forms of target words:" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox padding="0" margin="0"
+							<m:MaterialCheckBox 
 								ui:field="chkFormSynthetic" value="true" text="Short forms" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox ui:field="chkFormAnalytic" padding="0" margin="0"
+							<m:MaterialCheckBox ui:field="chkFormAnalytic" 
 								value="true" text="Long forms" />
 						</m:MaterialRow>
 					</m:MaterialRow>
@@ -225,11 +225,11 @@
 								text="Conditional types of target sentences:" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox ui:field="chkscopeType1" padding="0" margin="0"
+							<m:MaterialCheckBox ui:field="chkscopeType1"
 								value="true" text="Real conditionals" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox ui:field="chkscopeType2" padding="0" margin="0"
+							<m:MaterialCheckBox ui:field="chkscopeType2"
 								value="true" text="Unreal conditionals" />
 						</m:MaterialRow>
 					</m:MaterialRow>
@@ -254,11 +254,11 @@
 								text="Sentence types of target sentences:" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox ui:field="chkScopeActive" padding="0" margin="0"
+							<m:MaterialCheckBox ui:field="chkScopeActive"
 								value="true" text="Active sentences" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox ui:field="chkScopePassive" padding="0" margin="0"
+							<m:MaterialCheckBox ui:field="chkScopePassive"
 								value="true" text="Passive sentences" enabled="false" />
 						</m:MaterialRow>
 					</m:MaterialRow>
@@ -273,56 +273,56 @@
 								text="Tenses of target words" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox padding="0" margin="0"
+							<m:MaterialCheckBox
 								ui:field="chkPresentSimple" value="true" text="Present simple" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox ui:field="chkPastSimple" padding="0" margin="0"
+							<m:MaterialCheckBox ui:field="chkPastSimple"
 								value="true" text="Past simple" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox ui:field="chkFutureSimple" padding="0" margin="0"
+							<m:MaterialCheckBox ui:field="chkFutureSimple"
 								value="true" text="Future simple" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox padding="0" margin="0"
+							<m:MaterialCheckBox
 								ui:field="chkPresentProgressive" value="true"
 								text="Present progressive" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox padding="0" margin="0"
+							<m:MaterialCheckBox
 								ui:field="chkPastProgressive" value="true"
 								text="Past progressive" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox padding="0" margin="0"
+							<m:MaterialCheckBox
 								ui:field="chkFutureProgressive" value="true"
 								text="Future progressive" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox padding="0" margin="0"
+							<m:MaterialCheckBox
 								ui:field="chkPresentPerfect" value="true" text="Present perfect" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox ui:field="chkPastPerfect" padding="0" margin="0"
+							<m:MaterialCheckBox ui:field="chkPastPerfect"
 								value="true" text="Past perfect" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox padding="0" margin="0"
+							<m:MaterialCheckBox
 								ui:field="chkFuturePerfect" value="true" text="Future perfect" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox padding="0" margin="0"
+							<m:MaterialCheckBox
 								ui:field="chkPresentPerfectProg" value="true"
 								text="Present perfect progressive" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox padding="0" margin="0"
+							<m:MaterialCheckBox
 								ui:field="chkPastPerfectProg" value="true"
 								text="Past perfect progressive" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox padding="0" margin="0"
+							<m:MaterialCheckBox 
 								ui:field="chkFuturePerfectProg" value="true"
 								text="Future perfect progressive" />
 						</m:MaterialRow>
@@ -343,11 +343,11 @@
 							<m:MaterialLabel text="Target words:" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox ui:field="chkAgents" padding="0" margin="0"
+							<m:MaterialCheckBox ui:field="chkAgents"
 								value="true" text="Agents" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox ui:field="chkPatients" padding="0" margin="0"
+							<m:MaterialCheckBox ui:field="chkPatients"
 								value="true" text="Patients" />
 						</m:MaterialRow>
 					</m:MaterialRow>
@@ -358,20 +358,20 @@
 								text="Sentence types of target sentences:" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox padding="0" margin="0"
+							<m:MaterialCheckBox
 								ui:field="chkAffirmativeSent" value="true"
 								text="Affirmative sentences" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox ui:field="chkNegatedSent" padding="0" margin="0"
+							<m:MaterialCheckBox ui:field="chkNegatedSent"
 								value="true" text="Negated sentences" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox ui:field="chkQuestions" padding="0" margin="0"
+							<m:MaterialCheckBox ui:field="chkQuestions"
 								value="true" text="Questions" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox ui:field="chkStatements" padding="0" margin="0"
+							<m:MaterialCheckBox ui:field="chkStatements"
 								value="true" text="Statements" />
 						</m:MaterialRow>
 					</m:MaterialRow>
@@ -382,11 +382,11 @@
 								text="Verb forms of target words:" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox ui:field="chkRegularVerbs" padding="0" margin="0"
+							<m:MaterialCheckBox ui:field="chkRegularVerbs"
 								value="true" text="Regular verbs" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox padding="0" margin="0"
+							<m:MaterialCheckBox
 								ui:field="chkIrregularVerbs" value="true" text="Irregular verbs" />
 						</m:MaterialRow>
 					</m:MaterialRow>
@@ -396,11 +396,11 @@
 							<m:MaterialLabel text="Person of target words:" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox ui:field="chk3Pers" padding="0" margin="0"
+							<m:MaterialCheckBox ui:field="chk3Pers"
 								value="true" text="3rd ps. sg." />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox ui:field="chkNot3Pers" padding="0" margin="0"
+							<m:MaterialCheckBox ui:field="chkNot3Pers"
 								value="true" text="Not 3rd ps. sg." />
 						</m:MaterialRow>
 					</m:MaterialRow>
@@ -411,19 +411,19 @@
 								text="Pronoun type of target words:" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox ui:field="chkWho" padding="0" margin="0"
+							<m:MaterialCheckBox ui:field="chkWho"
 								value="true" text="'who'" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox ui:field="chkWhich" padding="0" margin="0"
+							<m:MaterialCheckBox ui:field="chkWhich"
 								value="true" text="'which'" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox ui:field="chkThat" padding="0" margin="0"
+							<m:MaterialCheckBox ui:field="chkThat"
 								value="true" text="'that'" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox ui:field="chkOtherRelPron" padding="0" margin="0"
+							<m:MaterialCheckBox ui:field="chkOtherRelPron"
 								value="true" text="Other relative pronouns" />
 						</m:MaterialRow>
 					</m:MaterialRow>
@@ -434,19 +434,19 @@
 								textColor="BLACK" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox ui:field="chkLemmas" padding="0" margin="0"
+							<m:MaterialCheckBox ui:field="chkLemmas"
 								value="false" text="Lemmas" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox ui:field="chkTenses" padding="0" margin="0"
+							<m:MaterialCheckBox ui:field="chkTenses"
 								value="false" text="Tense(s)" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox ui:field="chkProgressive" padding="0" margin="0"
+							<m:MaterialCheckBox ui:field="chkProgressive"
 								value="false" text="Simple/Progressive" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox ui:field="chkNTargets" padding="0" margin="0"
+							<m:MaterialCheckBox ui:field="chkNTargets"
 								value="true" text="Number of target words" />
 						</m:MaterialRow>
 					</m:MaterialRow>
@@ -457,47 +457,47 @@
 								textColor="BLACK" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox padding="0" margin="0"
+							<m:MaterialCheckBox
 								ui:field="chkBracketsLemma" value="true" text="Lemma" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox padding="0" margin="0"
+							<m:MaterialCheckBox
 								ui:field="chkBracketsDistractorLemma" value="true"
 								text="Distractor lemma" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox ui:field="chkBracketsPos" padding="0" margin="0"
+							<m:MaterialCheckBox ui:field="chkBracketsPos"
 								value="true" text="POS" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox ui:field="chkBracketsForm" padding="0" margin="0"
+							<m:MaterialCheckBox ui:field="chkBracketsForm"
 								value="true" text="Comparison Form" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox padding="0" margin="0"
+							<m:MaterialCheckBox
 								ui:field="chkBracketsConditional" value="true"
 								text="Conditional type" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox ui:field="chkBracketsWill" padding="0" margin="0"
+							<m:MaterialCheckBox ui:field="chkBracketsWill"
 								value="true" text="Modal of main clauses" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox padding="0" margin="0"
+							<m:MaterialCheckBox
 								ui:field="chkBracketsSentenceType" value="true"
 								text="Sentence type" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox padding="0" margin="0"
+							<m:MaterialCheckBox
 								ui:field="chkBracketsTense" value="true" text="Tense" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox padding="0" margin="0"
+							<m:MaterialCheckBox
 								ui:field="chkBracketsProgressive" value="true"
 								text="Simple/Progressive" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox padding="0" margin="0"
+							<m:MaterialCheckBox
 								ui:field="chkBracketsActiveSentence" value="true"
 								text="Active Sentence" />
 						</m:MaterialRow>
@@ -509,52 +509,52 @@
 								textColor="BLACK" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox padding="0" margin="0"
+							<m:MaterialCheckBox
 								ui:field="chkDistractorsOtherForm" value="true"
 								text="Correct forms in other comparison form" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox padding="0" margin="0"
+							<m:MaterialCheckBox
 								ui:field="chkDistractorsOtherVariant" value="true"
 								text="Correctly formed synthetic/analytic variant" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox padding="0" margin="0"
+							<m:MaterialCheckBox
 								ui:field="chkDistractorsOtherPast" value="true"
 								text="Correct forms in other past tenses" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox padding="0" margin="0"
+							<m:MaterialCheckBox
 								ui:field="chkDistractorsOtherTense" value="true"
 								text="Correct forms in future or present tenses" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox padding="0" margin="0"
+							<m:MaterialCheckBox
 								ui:field="chkDistractorsProgressive" value="true"
 								text="Correct forms in simple/progressive counterpart" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox padding="0" margin="0"
+							<m:MaterialCheckBox
 								ui:field="chkDistractorsIncorrectForms" value="true"
 								text="Incorrectly formed forms" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox padding="0" margin="0"
+							<m:MaterialCheckBox
 								ui:field="chkDistractorsWrongConditional" value="true"
 								text="Forms of wrong conditional type" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox padding="0" margin="0"
+							<m:MaterialCheckBox
 								ui:field="chkDistractorsWrongClause" value="true"
 								text="Forms of wrong clause" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox padding="0" margin="0"
+							<m:MaterialCheckBox
 								ui:field="chkDistractorsWrongSuffixUse" value="true"
 								text="Form for wrong person" />
 						</m:MaterialRow>
 						<m:MaterialRow padding="0" margin="0">
-							<m:MaterialCheckBox padding="0" margin="0"
+							<m:MaterialCheckBox
 								ui:field="chkDistractorsWrongSuffix" value="true"
 								text="Form with incorrectly formed suffix" />
 						</m:MaterialRow>

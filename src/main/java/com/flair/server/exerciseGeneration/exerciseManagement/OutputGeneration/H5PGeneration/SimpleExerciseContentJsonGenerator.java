@@ -92,6 +92,12 @@ public abstract class SimpleExerciseContentJsonGenerator extends ContentJsonGene
 			}
 		}
 		
+		if(previousWasPlaintext && questionBuilder.length() > 0) {
+	        String plainText = "<span data-internal=\"" + questionId + "\">" + questionBuilder.toString() + "</span>";
+			sb.append(plainText);
+			htmlArray.add(questionId + " " + "sentenceHtml " + previousSentenceId);
+		}
+		
 		String plainText = sb.toString();
 		jsonObject.put("textField", plainText);
 		jsonObject.put("htmlElements", htmlArray);		

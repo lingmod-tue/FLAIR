@@ -1,7 +1,10 @@
 package com.flair.server.interop;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -153,14 +156,25 @@ class ClientSessionState {
 		try {
 			for (int i = 0; i < uploadCache.size(); i++) {
 				if(i >= start && i < end) {
-					temporaryClientData.customCorpusData.contents.add(uploadCache.get(i).getStream().toString());
+					ByteArrayOutputStream baos = new ByteArrayOutputStream();
+					org.apache.commons.io.IOUtils.copy(uploadCache.get(i).getStream(), baos);
+					byte[] bytes = baos.toByteArray();
+					
+					InputStreamReader isReader = new InputStreamReader(new ByteArrayInputStream(bytes));
+					BufferedReader reader = new BufferedReader(isReader);
+				    StringBuffer sb = new StringBuffer();
+				    String str;
+				    while((str = reader.readLine())!= null){
+				       sb.append(str);
+				    }
+				      
+					temporaryClientData.customCorpusData.contents.add(sb.toString());
 
-					sources.add(new UploadedFileDocumentSource(uploadCache.get(i).getStream(),
+					sources.add(new UploadedFileDocumentSource(new ByteArrayInputStream(bytes),
 							uploadCache.get(i).getFilename(),
 							msg.getLanguage(),
 							i + 1,
 							uploadCache.get(i).getExtension()));
-					i++;
 				}
 			}
 		} catch (Throwable ex) {

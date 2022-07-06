@@ -22,44 +22,42 @@
          }
 	</ui:style>
 
-	<ma.window:MaterialWindow
-		ui:field="mdlVisualizerUI" width="100vw" height="100vh" maximize="true"
-		title="Visualize" padding="20">
-		<m:MaterialRow margin="20" marginBottom="20">
-			<m:MaterialLabel ui:field="lblTitleUI"
-				text="Select ranges by dragging the pointers up and down. Change the order of axes by dragging them left and right. Add or remove axes via checkboxes on the right." />
-		</m:MaterialRow>
-		<m:MaterialRow>
-		<g:FlowPanel addStyleNames="{style.outer}">
-				<g:FlowPanel ui:field="pnlSVGContainerUI" addStyleNames="{style.alignMiddle}"/>
-		</g:FlowPanel>
-		</m:MaterialRow>
-		<m:MaterialRow>
-			<m:MaterialCheckBox ui:field="chkAxisWordsUI"
-				value="true" text="# of words" paddingLeft="10"/>
-			<m:MaterialCheckBox ui:field="chkAxisSentencesUI"
-				value="true" text="# of sentences" paddingLeft="10"/>
-			<m:MaterialCheckBox ui:field="chkAxisComplexityUI"
-				value="true" text="complexity" paddingLeft="10"/>
-			<m:MaterialCheckBox ui:field="chkAxisKeywordsUI"
-				value="true" text="keywords" paddingLeft="10"/>
-
-			<m:MaterialRow ui:field="pnlToggleContainerUI">
-				<flair.pak:ConstructionSliderBundleEnglish
-					ui:field="bdlEnglishSlidersUI" />
-				<flair.pak:ConstructionSliderBundleGerman
-					ui:field="bdlGermanSlidersUI" />
-			</m:MaterialRow>
-			
-			<m:MaterialRow>
-				<m:MaterialButton ui:field="btnApplyUI" margin="5"
-					backgroundColor="BLUE" textColor="WHITE" iconType="FILTER_LIST"
-					iconPosition="RIGHT" text="Filter" />
-				<m:MaterialButton ui:field="btnResetUI" margin="5"
-					backgroundColor="RED" textColor="WHITE" iconType="UNDO"
-					iconPosition="RIGHT" text="Reset" />
-			</m:MaterialRow>
-		</m:MaterialRow>
-
+	<ma.window:MaterialWindow ui:field="mdlVisualizerUI" 
+		width="100%" height="100%" maximize="true" title="Visualize" overflow="HIDDEN">
+		<m:MaterialPanel layoutPosition="RELATIVE" grid="l12 m12 s12" padding="25" overflow="HIDDEN">
+			<ma.splitpanel:MaterialSplitPanel ui:field="pnlSplitContainer" backgroundColor="GREY_LIGHTEN_5" 
+				leftMin="400" leftMax="400" barPosition="30" overflow="HIDDEN" axis="HORIZONTAL" dock="RIGHT">
+				<m:MaterialPanel grid="l4 m4 s6" padding="20">
+					<m:MaterialLabel ui:field="lblTitleUI"
+						text="Select ranges by dragging the pointers up and down. Change the order of axes by dragging them left and right. Add or remove axes via checkboxes on the right."/>
+						
+					<m:MaterialRow textAlign="CENTER" padding="20">
+						<m:MaterialButton ui:field="btnApplyUI" margin="5" 
+							backgroundColor="BLUE" textColor="WHITE" iconType="FILTER_LIST" iconPosition="RIGHT"
+							text="Filter"/>	
+						<m:MaterialButton ui:field="btnResetUI" margin="5"
+							backgroundColor="RED" textColor="WHITE" iconType="UNDO" iconPosition="RIGHT"
+							text="Reset"/>
+					</m:MaterialRow>
+					
+					
+					<m:MaterialCheckBox ui:field="chkAxisWordsUI" value="true" text="# of words"/>
+					<m:MaterialCheckBox ui:field="chkAxisSentencesUI" value="true" text="# of sentences"/>
+					<m:MaterialCheckBox ui:field="chkAxisComplexityUI" value="true" text="complexity"/>
+					<m:MaterialCheckBox ui:field="chkAxisKeywordsUI" value="true" text="keywords"/>
+					
+					<m:MaterialRow ui:field="pnlToggleContainerUI" marginTop="20">
+						<flair.pak:ConstructionSliderBundleEnglish ui:field="bdlEnglishSlidersUI"/>
+						<flair.pak:ConstructionSliderBundleGerman ui:field="bdlGermanSlidersUI"/>
+					</m:MaterialRow>
+				</m:MaterialPanel>
+				
+				<m:MaterialPanel grid="l8 m8 s6" padding="20" overflow="HIDDEN">
+					<g:ScrollPanel>
+						<g:FlowPanel ui:field="pnlSVGContainerUI" />
+					</g:ScrollPanel>
+				</m:MaterialPanel>
+			</ma.splitpanel:MaterialSplitPanel>
+		</m:MaterialPanel>
 	</ma.window:MaterialWindow>
 </ui:UiBinder> 
