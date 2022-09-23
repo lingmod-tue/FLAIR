@@ -41,3 +41,7 @@ src/main/webapp/WEB-INF/lib/
 
 # Sekrit stuff
 BingSearchAgent.properties
+
+# Output files
+war/
+gwt-unitCache/
