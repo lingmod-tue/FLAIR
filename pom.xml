@@ -24,7 +24,7 @@
         <repository>
             <id>clojars</id>
             <name>Clojars Repository</name>
-            <url>http://clojars.org/repo/</url>
+            <url>https://repo.clojars.org/</url>
         </repository>
     </repositories>
 
